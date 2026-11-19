@@ -82,7 +82,7 @@ fault (a broken `cause_from_segment_id` chain, which the public skills cannot kn
 (value turns, setup/payoff, tension curve, openings) is replaced by the vendored text instead of our paraphrase.
 **Vendor list for W1:** `sw-story-structure` (with `reference.md`), `sw-premise-theme`, `sw-workflow` (its `terms.md` is linked
 from the others). **Not vendored:** `sw-writers-room`, danjdewhurst's two skills (reference files only if the plan thread wants
-them). **Not opened:** `sw-truby-anatomy` (named in plan S2): no verdict, W1 should not vendor it until someone has read it.
+them). **`sw-truby-anatomy`** (21 KB, headings, sections 1-2 and the workflow interface read; plan S2 names it): Truby's 22 steps, middle-act machinery (ghost, fake ally, fake defeat), four-corner opposition, moral-argument chain. It says itself that it is used after or instead of the page-map skill for long forms. Wrong scale for a 6 minute explainer: **do not vendor now**; revisit if an episode needs a long middle act.
 **To code (SK-2), listed for W2:** on a v4 script `story_lint` has no code for ST-01, ST-03..ST-12, ST-15..ST-20, ST-22..ST-24
 (want and flaw, join words, midpoint band, turn gap, loops, needs, objectivity): they exist only on the pre-v4 path.
 A new check "a value charge change at least every N seconds" has no number yet: it is a hypothesis until two source types

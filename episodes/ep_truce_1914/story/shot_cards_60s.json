@@ -3,10 +3,27 @@
  "episode_id": "ep_truce_1914",
  "slice": "S01_SH001..S02_SH005 (the 60 s)",
  "clock_source": "HF explainer-engine/demo_truce_1914/clock/timing.json (episode_timing/1, 24 fps, read_s 268.08)",
+ "notes": [
+  "Cards are grouped by location run; shot order of the slice is in shot_order.",
+  "Image prompt = STYLE_BLOCK (verbatim, no depth of field) + delta + lens clause + reference note.",
+  "Place refs point at vault originals (location masters), never at a generated last frame."
+ ],
+ "shot_order": [
+  "S01_SH001",
+  "S01_SH002",
+  "S01_SH003",
+  "S01_SH004",
+  "S01_SH005",
+  "S02_SH001",
+  "S02_SH002",
+  "S02_SH003",
+  "S02_SH004",
+  "S02_SH005"
+ ],
  "cards": [
   {
    "schema": "continuity_card/1",
-   "scene_id": "S01@loc_no_mans_land:S01_SH001",
+   "scene_id": "S01@loc_no_mans_land",
    "model": "gemini_3_1_flash_image",
    "style_line": "Flanders, Christmas 1914, a frozen winter world.",
    "location": {
@@ -43,16 +60,23 @@
    "cast": {
     "char_thomas_hale": {
      "name": "the young British private",
-     "description": "Private Thomas Hale, a lean 20-year-old English infantry private with a pale freckled face, short sandy-brown hair, light grey eyes, a soft khaki 1914 winter trench cap with a floppy crown, no stiff wire, a short soft peak and ear flaps tied up over the top, a khaki 1902 service-dress tunic with brass buttons, 1908 webbing, muddy puttees, a long khaki greatcoat open over the tunic, bare cold chapped hands with no gloves",
-     "sheet": "plan_v5_2026-11-19/pictures_B/round0/ (Round 0 collage thomas_v1..v4; the creator picks one, not yet recorded)",
+     "description": "Private Thomas Hale, a lean 20-year-old English infantry private with a pale freckled face, short sandy-brown hair, light grey eyes, a khaki wool peaked service cap with a soft crown, a short peak and small ear-flap straps folded at the sides, a single-breasted khaki 1902 service-dress tunic with brass buttons, cream-khaki 1908 webbing straps, muddy puttees and boots, a long double-breasted khaki greatcoat with brass buttons open over the tunic, bare cold chapped hands with no gloves",
+     "sheet": "plan_v5_2026-11-19/pictures_B/round0/thomas_v2.jpeg",
      "costumes": {
-      "service": "soft khaki winter trench cap with ear flaps tied up, long khaki greatcoat open over the tunic, every brass tunic button in place, bare hands"
+      "service": "khaki wool peaked service cap with soft crown and folded ear-flap straps, long khaki greatcoat open over the tunic, every brass tunic button in place, bare hands"
      }
     }
    },
    "shots": [
     {
      "shot_id": "S01_SH001",
+     "duration": {
+      "seconds": 3.0,
+      "frames": 72,
+      "start_frame": 0,
+      "fps": 24,
+      "source": "HF explainer-engine/demo_truce_1914/clock/timing.json (episode_timing/1, 24 fps, read_s 268.08)"
+     },
      "is_master": true,
      "shot_size": "WS",
      "angle": "eye",
@@ -95,10 +119,10 @@
      "narrative_information": "Where and when: Flanders, Christmas morning 1914, a quiet field between two lines.",
      "environment": "Frozen field, wire on stakes in front, ice-skinned shell hole and broken willow in the middle, the German parapet with small fir trees faint in fog at the far right.",
      "time_and_light": "Dawn, low golden sun glowing through heavy ground fog behind the German parapet.",
-     "camera_position": "160 cm above the ground at the British wire, looking east along the field; British side is out of frame to the left.",
-     "lens": "24 mm",
+     "camera_position": "160 cm above the ground at the British wire, looking east along the field; the British side is out of frame to the left.",
+     "lens": "24 mm, f/8, deep focus (wire to parapet sharp, fog softens the far distance)",
      "character_action": "none: nobody in the frame",
-     "background_action": "ground fog drifts slowly from right to left and thins toward the parapet",
+     "background_action": "ground fog thins and drifts slowly from right to left; the glow on the far parapet brightens",
      "acting_lane": "none",
      "route": "still_25d",
      "audio_events": [
@@ -106,27 +130,22 @@
       "S01_SH001.M2 mist: ambience_only",
       "S01_SH001.M3 sun_shaft_drift: ambience_only"
      ],
-     "duration": {
-      "seconds": 3.0,
-      "frames": 72,
-      "start_frame": 0,
-      "fps": 24,
-      "source": "HF explainer-engine/demo_truce_1914/clock/timing.json (episode_timing/1, 24 fps, read_s 268.08)"
-     },
      "continuity_constraints": [
-      "British side screen left, German side screen right (axis, director book)",
+      "British side screen left, German side screen right (axis)",
       "zero people in the frame",
       "the German parapet is the only far landmark",
-      "no steel helmets, torches, horses, dogs, glass lamps or any text"
+      "no steel helmets, torches, horses, dogs, glass lamps or text",
+      "this picture is the location master for S01_SH003 and S01_SH004"
      ],
-     "image_prompt": "Photoreal live-action cinematic film still, shot on 35 mm film, natural low winter sun, ground haze and breath vapour, muted earthy palette of frost white, mud brown, khaki and field grey, fine film grain, shallow depth of field. Faces are photoreal but slightly stylised by ONE shared rule for every person: firmer planar brow, cheek and jaw facets, the same handwriting on every face, no single face deformed differently. 16:9. Flanders, Christmas morning 1914. An empty frozen field between two trench lines at dawn: frost-white barbed wire on wooden stakes in the foreground, an ice-skinned shell hole and a broken willow in the middle ground, the low German parapet faint in thick ground fog at the right with small fir trees standing on it, a low golden sun glowing through the fog. Nobody in the frame. Wide shot, eye level, 24 mm, the field running away from the camera toward the German line. Use the reference images only for photographic look, light, grain and the face rule; copy none of their objects, animals, costumes or buildings.",
-     "motion_prompt": "The ground fog thins as it drifts slowly from right to left, and the golden glow on the far parapet brightens.",
+     "image_prompt": "Photoreal live-action cinematic film still, shot on 35 mm film, natural low winter sun, ground haze and breath vapour, muted earthy palette of frost white, mud brown, khaki and field grey, fine film grain. Faces are photoreal but slightly stylised by ONE shared rule for every person: firmer planar brow, cheek and jaw facets, the same handwriting on every face, no single face deformed differently. 16:9. Flanders, Christmas morning 1914. An empty frozen field between two trench lines at dawn: frost-white barbed wire on wooden stakes in the foreground, an ice-skinned shell hole and a broken willow in the middle ground, the low German parapet faint in thick ground fog at the right with small fir trees standing on it, a low golden sun glowing through the fog. Nobody in the frame. Wide shot, eye level 160 cm. Lens 24 mm at f/8, focused at 8 m: deep focus, the wire and the parapet both sharp, only the fog softens the far distance. Use the reference images only for photographic look, light, grain and the face rule; copy none of their objects, animals, costumes or buildings.",
+     "motion_prompt": "The camera creeps slowly forward over the near wire toward the parapet.",
      "motion_kind": "layers25d",
      "acceptance_questions": [
       "image: How many people are in the picture? (expected 0)",
       "image: Is the German parapet with small fir trees visible in fog on the right?",
       "image: Is frost-covered barbed wire on stakes in the foreground?",
-      "image: Does the main light come from a low sun ahead, behind the far parapet?",
+      "image: Is the main light a low sun ahead, behind the far parapet?",
+      "image: Is the whole field in focus, wire to parapet (deep focus)?",
       "image: Is any steel helmet, horse, dog, torch, lamp or text visible? (expected none)",
       "image: Does it read as a live-action photograph, not ink or cartoon?",
       "clip: Does the push-in move in one direction only and settle?",
@@ -135,6 +154,13 @@
     },
     {
      "shot_id": "S01_SH003",
+     "duration": {
+      "seconds": 6.625,
+      "frames": 159,
+      "start_frame": 190,
+      "fps": 24,
+      "source": "HF explainer-engine/demo_truce_1914/clock/timing.json (episode_timing/1, 24 fps, read_s 268.08)"
+     },
      "shot_size": "WS",
      "angle": "eye",
      "camera_side": "A",
@@ -146,9 +172,9 @@
        "depth": "mid",
        "facing": "away",
        "costume": "service",
-       "eyeline": "off_right",
        "expression": "not visible (from behind)",
-       "action": "walks alone across the frozen field, empty bare hands held a little out from his sides"
+       "action": "walks alone across the frozen field, empty bare hands held a little out from his sides",
+       "eyeline": "off_right"
       }
      ],
      "camera_move": "tracking_shot",
@@ -183,38 +209,36 @@
        "role": "style"
       },
       {
-       "path": "plan_v5_2026-11-19/pictures_B/round0/ (Round 0 collage thomas_v1..v4; the creator picks one, not yet recorded)",
+       "path": "plan_v5_2026-11-19/pictures_B/round0/thomas_v2.jpeg",
        "role": "character",
        "of": "char_thomas_hale"
       }
      ],
      "dramatic_purpose": "Make the act visible: one unarmed man crossing the ground that has killed men for a few yards of mud.",
      "narrative_information": "He is unarmed; the field is empty between him and the German line.",
-     "environment": "Frozen field with wire stakes either side of a path of frost, the German parapet small on the right horizon.",
+     "environment": "Frozen field with frosted wire stakes either side of a path of frost, the German parapet small on the right horizon.",
      "time_and_light": "Dawn, low golden sun ahead of him through lifting fog, his long shadow reaching back toward the camera.",
      "camera_position": "160 cm above the ground, 6 m behind Thomas, moving at his walking pace.",
-     "lens": "24 mm",
+     "lens": "24 mm, f/8, deep focus",
      "character_action": "walks steadily away from camera toward the German line, empty bare hands a little out from his sides",
      "background_action": "fog lifts slowly; frost glints on the wire stakes",
      "acting_lane": "P1",
      "route": "video",
-     "audio_events": [],
-     "duration": {
-      "seconds": 6.625,
-      "frames": 159,
-      "start_frame": 190,
-      "fps": 24,
-      "source": "HF explainer-engine/demo_truce_1914/clock/timing.json (episode_timing/1, 24 fps, read_s 268.08)"
-     },
+     "audio_events": [
+      "S01_SH003.A1 footsteps on frozen ground (one soft crunch per step): earned by his walk, foley, close under the narrator",
+      "S01_SH003.A2 greatcoat cloth swish: low foley with each stride",
+      "S01_SH003.A3 frost-stiff wire creaking once in the wind: ambience accent, no music",
+      "S01_SH003.A4 wind bed over the open field: the continuous bed carries the place"
+     ],
      "continuity_constraints": [
-      "place reference = the S01_SH001 picture once W9 has it accepted (fresh keyframe from references, not a chain)",
-      "same soft winter trench cap and greatcoat as S01_SH002, bare hands",
+      "place ref = the scene master picture from the vault original, not a last frame or a derivation (chain_depth 0) (SH001 is the location master)",
+      "same cap, greatcoat and bare hands as the picked reference thomas_v2 and S01_SH002",
       "nobody else enters the field",
       "sun ahead, shadow toward camera",
       "one 5.5 s take, no extend (CT-1: first frame only)",
       "end state: still walking, smaller in frame, hands still out"
      ],
-     "image_prompt": "Photoreal live-action cinematic film still, shot on 35 mm film, natural low winter sun, ground haze and breath vapour, muted earthy palette of frost white, mud brown, khaki and field grey, fine film grain, shallow depth of field. Faces are photoreal but slightly stylised by ONE shared rule for every person: firmer planar brow, cheek and jaw facets, the same handwriting on every face, no single face deformed differently. 16:9. Flanders, Christmas morning 1914. Private Thomas Hale, a lean 20-year-old English infantry private with a pale freckled face, short sandy-brown hair, light grey eyes, a soft khaki 1914 winter trench cap with a floppy crown, no stiff wire, a short soft peak and ear flaps tied up over the top, a khaki 1902 service-dress tunic with brass buttons, 1908 webbing, muddy puttees, a long khaki greatcoat open over the tunic, bare cold chapped hands with no gloves (reference image 5), seen from behind, walking alone across a frozen field between frosted wire stakes toward the German line, empty bare hands held a little out from his sides, the hem of the greatcoat frosted, the low golden sun ahead of him through lifting fog, his long shadow stretching back toward the camera, the German parapet small and faint on the right horizon. Wide shot, eye level, 24 mm, space ahead of him for the camera to follow. Use the reference images only for photographic look, light, grain and the face rule; copy none of their objects, animals, costumes or buildings.",
+     "image_prompt": "Photoreal live-action cinematic film still, shot on 35 mm film, natural low winter sun, ground haze and breath vapour, muted earthy palette of frost white, mud brown, khaki and field grey, fine film grain. Faces are photoreal but slightly stylised by ONE shared rule for every person: firmer planar brow, cheek and jaw facets, the same handwriting on every face, no single face deformed differently. 16:9. Flanders, Christmas morning 1914. Private Thomas Hale, a lean 20-year-old English infantry private with a pale freckled face, short sandy-brown hair, light grey eyes, a khaki wool peaked service cap with a soft crown, a short peak and small ear-flap straps folded at the sides, a single-breasted khaki 1902 service-dress tunic with brass buttons, cream-khaki 1908 webbing straps, muddy puttees and boots, a long double-breasted khaki greatcoat with brass buttons open over the tunic, bare cold chapped hands with no gloves (reference image 5), seen from behind, walking alone across a frozen field between frosted wire stakes toward the German line, empty bare hands held a little out from his sides, the hem of the greatcoat frosted, the low golden sun ahead of him through lifting fog, his long shadow stretching back toward the camera, the German parapet small and faint on the right horizon. Wide shot, eye level 160 cm. Lens 24 mm at f/8, focused at 6 m: deep focus, the man, the wire and the parapet all sharp, only the fog softens the far distance. Use the reference images only for photographic look, light, grain and the face rule; copy none of their objects, animals, costumes or buildings.",
      "motion_prompt": "Thomas walks forward at a steady pace across the frost with his empty hands a little out from his sides, ending smaller in the frame and still walking.",
      "motion_kind": "ltx",
      "acceptance_questions": [
@@ -222,18 +246,103 @@
       "image: Is it the same field as the master picture S01_SH001 (wire, shell hole, parapet with fir trees)?",
       "image: Is he seen from behind with empty bare hands out from his sides?",
       "image: Is the sun ahead of him and his shadow toward the camera?",
+      "image: Is the whole frame in focus (deep focus)?",
       "image: Is any rifle, helmet, horse, torch or text visible? (expected none)",
       "clip: Does he walk at an ordinary pace with feet planted on the frost (no floating, no sliding)?",
       "clip: Does anyone else appear in the field? (expected no)",
       "clip: Does the camera follow behind at his pace without drifting sideways?",
       "clip: Does he end smaller in the frame, still walking, hands still out?"
      ]
+    },
+    {
+     "shot_id": "S01_SH004",
+     "duration": {
+      "seconds": 5.125,
+      "frames": 123,
+      "start_frame": 349,
+      "fps": 24,
+      "source": "HF explainer-engine/demo_truce_1914/clock/timing.json (episode_timing/1, 24 fps, read_s 268.08)"
+     },
+     "shot_size": "EWS",
+     "angle": "high",
+     "camera_side": "A",
+     "head_count": 24,
+     "extras": 24,
+     "characters": [],
+     "camera_move": "slow_pull_back",
+     "hook_up": "time_cut",
+     "derive_from": "original",
+     "chain_depth": 0,
+     "angle_change_deg": 35,
+     "axis_cross_reason": "neutral_shot",
+     "landmarks": [
+      {
+       "id": "wire",
+       "side": "centre"
+      },
+      {
+       "id": "german_parapet",
+       "side": "right"
+      }
+     ],
+     "refs": [
+      {
+       "path": "plan_v5_2026-11-19/pictures_B/new_style_B/S01_SH001.jpeg",
+       "role": "place"
+      },
+      {
+       "path": "style_new_2026-11-19/new_style_mongol_empire.jpg",
+       "role": "style"
+      },
+      {
+       "path": "style_new_2026-11-19/new_style_mesopotamia.jpg",
+       "role": "style"
+      },
+      {
+       "path": "style_new_2026-11-19/new_style_roman_britain.jpg",
+       "role": "style"
+      }
+     ],
+     "dramatic_purpose": "Widen from one man to many so the viewer knows it is history, not one story.",
+     "narrative_information": "Thousands did the same: soldiers of both sides walk out unarmed to meet in the middle.",
+     "environment": "The same frozen field seen from above, both trench lines running into the fog, frozen tussocks in front.",
+     "time_and_light": "Christmas morning, low golden sun from the German side, long shadows toward the camera, frost haze.",
+     "camera_position": "6 m above the ground at the British wire, looking down 30 degrees along the field.",
+     "lens": "24 mm, f/8, deep focus",
+     "character_action": "about two dozen British soldiers in khaki greatcoats and peaked service caps walk out from the left, about as many German soldiers in field-grey coats and soft round caps from the right, all unarmed, small groups meeting in the middle",
+     "background_action": "ground fog drifts over the field; the groups sway slightly as they walk",
+     "acting_lane": "P4",
+     "route": "still_25d",
+     "audio_events": [
+      "S01_SH004.M1 pull: silent_by_design",
+      "S01_SH004.M2 subject_sway: ambience_only",
+      "S01_SH004.M3 mist: ambience_only"
+     ],
+     "continuity_constraints": [
+      "place ref = the scene master picture from the vault original, not a last frame or a derivation (chain_depth 0)",
+      "British from screen left, Germans from screen right (axis)",
+      "no weapons visible, no steel helmets",
+      "figures stay small and faceless (no named face)",
+      "same field landmarks as S01_SH001"
+     ],
+     "image_prompt": "Photoreal live-action cinematic film still, shot on 35 mm film, natural low winter sun, ground haze and breath vapour, muted earthy palette of frost white, mud brown, khaki and field grey, fine film grain. Faces are photoreal but slightly stylised by ONE shared rule for every person: firmer planar brow, cheek and jaw facets, the same handwriting on every face, no single face deformed differently. 16:9. Flanders, Christmas morning 1914. A wide high view of the frozen field: about two dozen British soldiers in khaki greatcoats and peaked service caps walking out from the left and about two dozen German soldiers in field-grey coats and soft round caps walking out from the right, all unarmed with empty hands, small groups meeting in the middle, frozen tussocks in the foreground, both trench lines running into the fog, low golden sun, long shadows. Extreme wide shot, high angle, camera 6 m above the ground tilted down 30 degrees. Lens 24 mm at f/8, focused at 25 m: deep focus, every figure sharp, only the fog softens the far trench lines. Use the reference images only for photographic look, light, grain and the face rule; copy none of their objects, animals, costumes or buildings.",
+     "motion_prompt": "The camera pulls slowly back and up from the field.",
+     "motion_kind": "layers25d",
+     "acceptance_questions": [
+      "image: Are there roughly 20 to 30 figures on each side (not 3, not 300)?",
+      "image: Are British figures coming from the left and German figures from the right?",
+      "image: Does anyone carry a rifle? (expected none)",
+      "image: Is any steel helmet visible? (expected none)",
+      "image: Is it the same field as S01_SH001 (wire, parapet with fir trees)?",
+      "image: Are the figures undistorted (no merged bodies, no extra limbs)?",
+      "clip: Does the pull-back move in one direction and keep both groups in frame?"
+     ]
     }
    ]
   },
   {
    "schema": "continuity_card/1",
-   "scene_id": "S01@loc_british_trench:S01_SH002",
+   "scene_id": "S01@loc_british_trench",
    "model": "gemini_3_1_flash_image",
    "style_line": "Flanders, Christmas 1914, a frozen winter world.",
    "location": {
@@ -256,7 +365,7 @@
       "text": "duckboards over brown floodwater"
      }
     ],
-    "master_frame": "S01_SH002_start"
+    "master_frame": "plan_v5_2026-11-19/pictures_B/new_style_B/S01_SH002.jpeg"
    },
    "light": {
     "key_light_dir": "back",
@@ -266,16 +375,23 @@
    "cast": {
     "char_thomas_hale": {
      "name": "the young British private",
-     "description": "Private Thomas Hale, a lean 20-year-old English infantry private with a pale freckled face, short sandy-brown hair, light grey eyes, a soft khaki 1914 winter trench cap with a floppy crown, no stiff wire, a short soft peak and ear flaps tied up over the top, a khaki 1902 service-dress tunic with brass buttons, 1908 webbing, muddy puttees, a long khaki greatcoat open over the tunic, bare cold chapped hands with no gloves",
-     "sheet": "plan_v5_2026-11-19/pictures_B/round0/ (Round 0 collage thomas_v1..v4; the creator picks one, not yet recorded)",
+     "description": "Private Thomas Hale, a lean 20-year-old English infantry private with a pale freckled face, short sandy-brown hair, light grey eyes, a khaki wool peaked service cap with a soft crown, a short peak and small ear-flap straps folded at the sides, a single-breasted khaki 1902 service-dress tunic with brass buttons, cream-khaki 1908 webbing straps, muddy puttees and boots, a long double-breasted khaki greatcoat with brass buttons open over the tunic, bare cold chapped hands with no gloves",
+     "sheet": "plan_v5_2026-11-19/pictures_B/round0/thomas_v2.jpeg",
      "costumes": {
-      "service": "soft khaki winter trench cap with ear flaps tied up, long khaki greatcoat open over the tunic, every brass tunic button in place, bare hands"
+      "service": "khaki wool peaked service cap with soft crown and folded ear-flap straps, long khaki greatcoat open over the tunic, every brass tunic button in place, bare hands"
      }
     }
    },
    "shots": [
     {
      "shot_id": "S01_SH002",
+     "duration": {
+      "seconds": 4.9167,
+      "frames": 118,
+      "start_frame": 72,
+      "fps": 24,
+      "source": "HF explainer-engine/demo_truce_1914/clock/timing.json (episode_timing/1, 24 fps, read_s 268.08)"
+     },
      "is_master": true,
      "shot_size": "MWS",
      "angle": "low",
@@ -288,9 +404,9 @@
        "depth": "mid",
        "facing": "away",
        "costume": "service",
-       "eyeline": "up",
        "expression": "still, set",
-       "action": "stands at the foot of the ladder, bare hands gripping the rails at chest height, head tilted up toward the parapet lip"
+       "action": "stands at the foot of the ladder, bare hands gripping the rails at chest height, head tilted up toward the parapet lip",
+       "eyeline": "up"
       }
      ],
      "camera_move": "tilt_up",
@@ -321,7 +437,7 @@
        "role": "style"
       },
       {
-       "path": "plan_v5_2026-11-19/pictures_B/round0/ (Round 0 collage thomas_v1..v4; the creator picks one, not yet recorded)",
+       "path": "plan_v5_2026-11-19/pictures_B/round0/thomas_v2.jpeg",
        "role": "character",
        "of": "char_thomas_hale"
       }
@@ -331,39 +447,569 @@
      "environment": "The foot of a wooden trench ladder against a frosted sandbag wall, brown water under the duckboards.",
      "time_and_light": "Dawn, golden haze above the parapet, sun behind the parapet edge.",
      "camera_position": "40 cm above the duckboards, behind and below Thomas, tilted up 10 degrees.",
-     "lens": "35 mm",
-     "character_action": "tightens both bare hands on the ladder rails and lifts his chin toward the parapet; one breath mists",
+     "lens": "35 mm, f/4, focused on his hands (parapet softly out of focus)",
+     "character_action": "lifts his chin toward the parapet lip while his bare hands stay on the ladder rails; one breath mists",
      "background_action": "golden haze above the parapet drifts slowly",
      "acting_lane": "P1",
      "route": "video",
-     "audio_events": [],
-     "duration": {
-      "seconds": 4.9167,
-      "frames": 118,
-      "start_frame": 72,
-      "fps": 24,
-      "source": "HF explainer-engine/demo_truce_1914/clock/timing.json (episode_timing/1, 24 fps, read_s 268.08)"
-     },
+     "audio_events": [
+      "S01_SH002.A1 bare hands gripping frozen wooden rails: one short dry creak as he looks up, foley, earned by the grip",
+      "S01_SH002.A2 one breath misting: soft exhale, breath foley",
+      "S01_SH002.A3 water dripping under the duckboards: ambience accent, low",
+      "S01_SH002.A4 wind bed: the continuous bed carries the trench"
+     ],
      "continuity_constraints": [
-      "soft khaki winter trench cap with ear flaps tied up, never a steel helmet or a stiff peaked cap",
+      "the cap as drawn in the picked reference thomas_v2 (khaki wool peaked service cap, soft crown, folded ear-flap straps), never a steel helmet",
       "bare chapped hands, no gloves",
-      "no rifle in his hands (leaning on the sandbags or absent)",
+      "no rifle in his hands",
       "one person only",
       "hands end on the rails"
      ],
-     "image_prompt": "Photoreal live-action cinematic film still, shot on 35 mm film, natural low winter sun, ground haze and breath vapour, muted earthy palette of frost white, mud brown, khaki and field grey, fine film grain, shallow depth of field. Faces are photoreal but slightly stylised by ONE shared rule for every person: firmer planar brow, cheek and jaw facets, the same handwriting on every face, no single face deformed differently. 16:9. Flanders, Christmas morning 1914. Private Thomas Hale, a lean 20-year-old English infantry private with a pale freckled face, short sandy-brown hair, light grey eyes, a soft khaki 1914 winter trench cap with a floppy crown, no stiff wire, a short soft peak and ear flaps tied up over the top, a khaki 1902 service-dress tunic with brass buttons, 1908 webbing, muddy puttees, a long khaki greatcoat open over the tunic, bare cold chapped hands with no gloves (reference image 4), seen from behind and below, standing unarmed at the foot of a wooden trench ladder, both bare hands gripping the ladder rails at chest height, head tilted up toward the parapet lip, frost on the sandbags, golden dawn haze above the parapet. Medium wide shot, worm's-eye camera 40 cm off the duckboards tilted up 10 degrees, 35 mm, 30 % of the frame empty above him. Use the reference images only for photographic look, light, grain and the face rule; copy none of their objects, animals, costumes or buildings.",
-     "motion_prompt": "Thomas tightens both bare hands on the ladder rails and lifts his chin toward the parapet, one breath misting in the cold; he ends with his hands still on the rails and his eyes on the parapet lip.",
+     "image_prompt": "Photoreal live-action cinematic film still, shot on 35 mm film, natural low winter sun, ground haze and breath vapour, muted earthy palette of frost white, mud brown, khaki and field grey, fine film grain. Faces are photoreal but slightly stylised by ONE shared rule for every person: firmer planar brow, cheek and jaw facets, the same handwriting on every face, no single face deformed differently. 16:9. Flanders, Christmas morning 1914. Private Thomas Hale, a lean 20-year-old English infantry private with a pale freckled face, short sandy-brown hair, light grey eyes, a khaki wool peaked service cap with a soft crown, a short peak and small ear-flap straps folded at the sides, a single-breasted khaki 1902 service-dress tunic with brass buttons, cream-khaki 1908 webbing straps, muddy puttees and boots, a long double-breasted khaki greatcoat with brass buttons open over the tunic, bare cold chapped hands with no gloves (reference image 4), seen from behind and below, standing unarmed at the foot of a wooden trench ladder, both bare hands gripping the ladder rails at chest height, head tilted up toward the parapet lip, frost on the sandbags, golden dawn haze above the parapet. Medium wide shot, worm's-eye camera 40 cm off the duckboards tilted up 10 degrees, 30 % of the frame empty above him. Lens 35 mm at f/4, focused at his hands at 1.8 m: moderate depth, the man and the ladder sharp, the parapet and the haze softly out of focus. Use the reference images only for photographic look, light, grain and the face rule; copy none of their objects, animals, costumes or buildings.",
+     "motion_prompt": "Thomas slowly lifts his chin toward the parapet lip, his bare hands staying on the ladder rails and one breath misting in the cold.",
      "motion_kind": "ltx",
      "acceptance_questions": [
       "image: How many people are in the picture? (expected 1)",
-      "image: Is his cap a soft khaki cap with ear flaps tied up, not a helmet?",
+      "image: Does his cap match the reference thomas_v2 (khaki wool peaked service cap, soft crown, folded ear flaps), not a helmet?",
       "image: Are his hands bare and on the ladder rails?",
       "image: Is he seen from behind and below, with room above him?",
+      "image: Is he sharp and the parapet soft?",
       "image: Is any rifle, torch, lamp or text visible? (expected none)",
-      "clip: Does the only body motion = hands tighten and chin lifts?",
+      "clip: Is the only body motion the chin lifting (hands stay on the rails)?",
       "clip: Does the clip end with hands on the rails and eyes on the parapet?",
       "clip: Does the camera tilt up once, slowly, and settle on the parapet lip?",
       "clip: Does his face stay the same person from first to last frame?"
+     ]
+    }
+   ]
+  },
+  {
+   "schema": "continuity_card/1",
+   "scene_id": "S01@loc_british_parapet",
+   "model": "gemini_3_1_flash_image",
+   "style_line": "Flanders, Christmas 1914, a frozen winter world.",
+   "location": {
+    "id": "loc_british_parapet",
+    "where_when": "British parapet looking over no-man's-land / Dawn",
+    "int_ext": "EXT",
+    "time_of_day": "dawn",
+    "weather": "fog",
+    "landmarks": [
+     {
+      "id": "sandbag",
+      "text": "a frost-covered sandbag on the parapet"
+     },
+     {
+      "id": "wire",
+      "text": "barbed wire across the field"
+     }
+    ],
+    "master_frame": "plan_v5_2026-11-19/pictures_B/new_style_B/S01_SH005.jpeg"
+   },
+   "light": {
+    "key_light_dir": "back",
+    "light_source": "the low winter sun just above the German parapet, 8-12 degrees, golden, hard through fog; fog is the only fill",
+    "colour_key": "golden sun, frost-white and mud-brown shadows"
+   },
+   "cast": {
+    "char_thomas_hale": {
+     "name": "the young British private",
+     "description": "Private Thomas Hale, a lean 20-year-old English infantry private with a pale freckled face, short sandy-brown hair, light grey eyes, a khaki wool peaked service cap with a soft crown, a short peak and small ear-flap straps folded at the sides, a single-breasted khaki 1902 service-dress tunic with brass buttons, cream-khaki 1908 webbing straps, muddy puttees and boots, a long double-breasted khaki greatcoat with brass buttons open over the tunic, bare cold chapped hands with no gloves",
+     "sheet": "plan_v5_2026-11-19/pictures_B/round0/thomas_v2.jpeg",
+     "costumes": {
+      "service": "khaki wool peaked service cap with soft crown and folded ear-flap straps, long khaki greatcoat open over the tunic, every brass tunic button in place, bare hands"
+     }
+    }
+   },
+   "shots": [
+    {
+     "shot_id": "S01_SH005",
+     "duration": {
+      "seconds": 9.3333,
+      "frames": 224,
+      "start_frame": 472,
+      "fps": 24,
+      "source": "HF explainer-engine/demo_truce_1914/clock/timing.json (episode_timing/1, 24 fps, read_s 268.08)"
+     },
+     "is_master": true,
+     "shot_size": "WS",
+     "angle": "eye",
+     "camera_side": "A",
+     "head_count": 0,
+     "characters": [],
+     "camera_move": "pan_right",
+     "hook_up": "first",
+     "derive_from": "original",
+     "chain_depth": 0,
+     "landmarks": [
+      {
+       "id": "sandbag",
+       "side": "left"
+      },
+      {
+       "id": "wire",
+       "side": "right"
+      }
+     ],
+     "refs": [
+      {
+       "path": "style_new_2026-11-19/new_style_mongol_empire.jpg",
+       "role": "style"
+      },
+      {
+       "path": "style_new_2026-11-19/new_style_mesopotamia.jpg",
+       "role": "style"
+      },
+      {
+       "path": "style_new_2026-11-19/new_style_roman_britain.jpg",
+       "role": "style"
+      }
+     ],
+     "dramatic_purpose": "Carry the promise (\"how it began, with a song\") over the quiet field and the one object left from the night before.",
+     "narrative_information": "A burnt-out candle stub on a sandbag: last night's light is gone; the field is silent.",
+     "environment": "A frost-covered sandbag on the British parapet in the foreground, barbed wire and mist across the field beyond.",
+     "time_and_light": "Dawn, low golden sun through frost haze, behind the far line.",
+     "camera_position": "160 cm above the ground at the British parapet, 60 cm from the sandbag.",
+     "lens": "35 mm, f/2.8, shallow (candle stub sharp, wire and field soft)",
+     "character_action": "none: nobody in the frame",
+     "background_action": "morning mist drifts across the wire beyond the stub",
+     "acting_lane": "none",
+     "route": "still_25d",
+     "audio_events": [
+      "S01_SH005.M1 truck: silent_by_design",
+      "S01_SH005.M2 fire_flicker: silent_by_design",
+      "S01_SH005.M3 mist: ambience_only"
+     ],
+     "continuity_constraints": [
+      "the stub stands directly on the sandbag: no holder, no glass (picture task; the script text says tin holder: open item)",
+      "British parapet looking east; the pan goes right toward the German side",
+      "no people",
+      "the stub must stay in frame at the start of the pan",
+      "no steel helmets, torches, horses, dogs, glass lamps or text"
+     ],
+     "image_prompt": "Photoreal live-action cinematic film still, shot on 35 mm film, natural low winter sun, ground haze and breath vapour, muted earthy palette of frost white, mud brown, khaki and field grey, fine film grain. Faces are photoreal but slightly stylised by ONE shared rule for every person: firmer planar brow, cheek and jaw facets, the same handwriting on every face, no single face deformed differently. 16:9. Flanders, Christmas morning 1914. In the foreground a single burnt-out candle stub with a blackened wick standing directly on a frost-covered sandbag, no holder and no glass, beyond it silent barbed wire and mist across the field in golden dawn light. Wide shot, eye level 160 cm, room to pan right. Lens 35 mm at f/2.8, focused at the candle stub at 60 cm: shallow depth of field, the stub and the frost on the sandbag sharp, the wire and the field soft in the mist. Use the reference images only for photographic look, light, grain and the face rule; copy none of their objects, animals, costumes or buildings.",
+     "motion_prompt": "The view pans slowly right along the frosted parapet past the candle stub.",
+     "motion_kind": "layers25d",
+     "acceptance_questions": [
+      "image: Is there exactly one burnt-out candle stub, standing on a sandbag?",
+      "image: Is there a holder, glass or any lamp around it? (expected none)",
+      "image: Is the stub sharp and the field beyond soft?",
+      "image: Is any person, helmet or text visible? (expected none)",
+      "image: Is there room on the right for the pan?",
+      "clip: Does the pan move right only, slowly, with the stub visible at the start?",
+      "clip: Does the stub stay the same object throughout (no vanishing)?"
+     ]
+    }
+   ]
+  },
+  {
+   "schema": "continuity_card/1",
+   "scene_id": "S02@loc_western_front_map",
+   "model": "gemini_3_1_flash_image",
+   "style_line": "Flanders, Christmas 1914, a frozen winter world.",
+   "shots": [
+    {
+     "shot_id": "S02_SH001",
+     "duration": {
+      "seconds": 5.7083,
+      "frames": 137,
+      "start_frame": 696,
+      "fps": 24,
+      "source": "HF explainer-engine/demo_truce_1914/clock/timing.json (episode_timing/1, 24 fps, read_s 268.08)"
+     },
+     "route": "map_action",
+     "camera_move": "parallax_dolly",
+     "hook_up": "time_cut",
+     "acting_lane": "none",
+     "map": {
+      "map_id": "western_front_1914_08",
+      "region": "Belgium and northern France",
+      "date_shown": "August 1914",
+      "change_shown": "An arrow sweeps from the German border through Belgium toward the Marne.",
+      "laws": [
+       "CMP-01",
+       "CMP-02",
+       "CMP-03",
+       "CMP-04",
+       "CMP-05",
+       "CMP-06",
+       "CMP-07",
+       "CMP-08"
+      ]
+     },
+     "dramatic_purpose": "Show how the war began: a fast march, the promise of a short war.",
+     "narrative_information": "An arrow sweeps from the German border through Belgium toward the Marne.",
+     "environment": "Belgium and northern France; relief terrain; north at the top",
+     "time_and_light": "map look (no light source: drawn plate)",
+     "camera_position": "top-down 60 degrees bird-eye over the plate",
+     "lens": "n/a (Python plate, parallax move)",
+     "character_action": "none",
+     "background_action": "terrain relief stays still under the move",
+     "audio_events": [
+      "map move: silent_by_design, the place bed carries it (decision recorded by W6)"
+     ],
+     "continuity_constraints": [
+      "no generated picture: the plate is drawn by explainer_engine/maps (plate.py, draw.py); no Gemini prompt",
+      "north at the top; west left, east right (same axis as S01)",
+      "every label and unit appears on its spoken word (CMP-04); at most the label count of CMP-03",
+      "map type is our own, no third-party map imagery"
+     ],
+     "motion_prompt": "A route arrow sweeps from the German border through Belgium toward the Marne, eased, following the land.",
+     "motion_kind": "map",
+     "acceptance_questions": [
+      "clip: Does exactly one arrow appear and move west then south?",
+      "clip: Is north at the top?",
+      "clip: Does the route follow land and avoid water?",
+      "clip: Is the number of labels within the CMP-03 limit?",
+      "clip: Does anything sit frozen from frame 1? (expected no)"
+     ]
+    },
+    {
+     "shot_id": "S02_SH002",
+     "duration": {
+      "seconds": 7.9583,
+      "frames": 191,
+      "start_frame": 833,
+      "fps": 24,
+      "source": "HF explainer-engine/demo_truce_1914/clock/timing.json (episode_timing/1, 24 fps, read_s 268.08)"
+     },
+     "route": "map_action",
+     "camera_move": "parallax_dolly",
+     "hook_up": "time_cut",
+     "acting_lane": "none",
+     "map": {
+      "map_id": "western_front_1914_12",
+      "region": "Belgium, France and Switzerland",
+      "date_shown": "December 1914",
+      "change_shown": "The front line draws from the coast to the Swiss border and the August arrow fades.",
+      "laws": [
+       "CMP-01",
+       "CMP-02",
+       "CMP-03",
+       "CMP-04",
+       "CMP-05",
+       "CMP-06",
+       "CMP-07",
+       "CMP-08"
+      ]
+     },
+     "dramatic_purpose": "Show how the march froze into one line from the sea to Switzerland.",
+     "narrative_information": "The front line draws from the coast to the Swiss border and the August arrow fades.",
+     "environment": "Belgium, France and Switzerland; relief terrain; north at the top",
+     "time_and_light": "map look (no light source: drawn plate)",
+     "camera_position": "top-down 60 degrees bird-eye over the plate",
+     "lens": "n/a (Python plate, parallax move)",
+     "character_action": "none",
+     "background_action": "terrain relief stays still under the move",
+     "audio_events": [
+      "map move: silent_by_design, the place bed carries it (decision recorded by W6)"
+     ],
+     "continuity_constraints": [
+      "no generated picture: the plate is drawn by explainer_engine/maps (plate.py, draw.py); no Gemini prompt",
+      "north at the top; west left, east right (same axis as S01)",
+      "every label and unit appears on its spoken word (CMP-04); at most the label count of CMP-03",
+      "map type is our own, no third-party map imagery"
+     ],
+     "motion_prompt": "The August arrow fades and the front line draws itself from the North Sea coast to the Swiss border.",
+     "motion_kind": "map",
+     "acceptance_questions": [
+      "clip: Does the August arrow fade before the line draws?",
+      "clip: Does the line run unbroken from the coast to the Swiss border?",
+      "clip: Is north at the top?",
+      "clip: Is only one change running at a time?"
+     ]
+    },
+    {
+     "shot_id": "S02_SH003",
+     "duration": {
+      "seconds": 5.5,
+      "frames": 132,
+      "start_frame": 1024,
+      "fps": 24,
+      "source": "HF explainer-engine/demo_truce_1914/clock/timing.json (episode_timing/1, 24 fps, read_s 268.08)"
+     },
+     "route": "map_action",
+     "camera_move": "parallax_dolly",
+     "hook_up": "time_cut",
+     "acting_lane": "none",
+     "map": {
+      "map_id": "flanders_sector_1914_12",
+      "region": "Flanders",
+      "date_shown": "December 1914",
+      "change_shown": "The view flies to Flanders and one sector of the front glows.",
+      "laws": [
+       "CMP-01",
+       "CMP-02",
+       "CMP-03",
+       "CMP-04",
+       "CMP-05",
+       "CMP-06",
+       "CMP-07",
+       "CMP-08"
+      ]
+     },
+     "dramatic_purpose": "Take the viewer to Flanders, the sector of the story, where the lines nearly touch.",
+     "narrative_information": "The view flies to Flanders and one sector of the front glows.",
+     "environment": "Flanders; relief terrain; north at the top",
+     "time_and_light": "map look (no light source: drawn plate)",
+     "camera_position": "top-down 60 degrees bird-eye over the plate",
+     "lens": "n/a (Python plate, parallax move)",
+     "character_action": "none",
+     "background_action": "terrain relief stays still under the move",
+     "audio_events": [
+      "map move: silent_by_design, the place bed carries it (decision recorded by W6)"
+     ],
+     "continuity_constraints": [
+      "no generated picture: the plate is drawn by explainer_engine/maps (plate.py, draw.py); no Gemini prompt",
+      "north at the top; west left, east right (same axis as S01)",
+      "every label and unit appears on its spoken word (CMP-04); at most the label count of CMP-03",
+      "map type is our own, no third-party map imagery"
+     ],
+     "motion_prompt": "The view flies to Flanders and one sector of the front line glows.",
+     "motion_kind": "map",
+     "acceptance_questions": [
+      "clip: Does the view end over Flanders?",
+      "clip: Does exactly one sector glow, the rest dimmed?",
+      "clip: Is the glow the only change at that moment?",
+      "clip: Is the label count within the CMP-03 limit?"
+     ]
+    }
+   ]
+  },
+  {
+   "schema": "continuity_card/1",
+   "scene_id": "S02@loc_british_trench",
+   "model": "gemini_3_1_flash_image",
+   "style_line": "Flanders, Christmas 1914, a frozen winter world.",
+   "location": {
+    "id": "loc_british_trench_dec",
+    "where_when": "Flooded British front-line trench in December / Day",
+    "int_ext": "EXT",
+    "time_of_day": "day",
+    "weather": "fog",
+    "landmarks": [
+     {
+      "id": "sandbags",
+      "text": "waist-high frosted sandbag walls"
+     },
+     {
+      "id": "fire_step",
+      "text": "the fire step"
+     },
+     {
+      "id": "duckboards",
+      "text": "duckboards under brown floodwater"
+     },
+     {
+      "id": "brazier",
+      "text": "a small glowing coke brazier"
+     }
+    ],
+    "master_frame": "plan_v5_2026-11-19/pictures_B/new_style_B/S02_SH004.jpeg"
+   },
+   "light": {
+    "key_light_dir": "left",
+    "light_source": "the low winter afternoon sun over the British side, gold through haze",
+    "colour_key": "gold light, brown water, grey sky"
+   },
+   "cast": {
+    "char_thomas_hale": {
+     "name": "the young British private",
+     "description": "Private Thomas Hale, a lean 20-year-old English infantry private with a pale freckled face, short sandy-brown hair, light grey eyes, a khaki wool peaked service cap with a soft crown, a short peak and small ear-flap straps folded at the sides, a single-breasted khaki 1902 service-dress tunic with brass buttons, cream-khaki 1908 webbing straps, muddy puttees and boots, a long double-breasted khaki greatcoat with brass buttons open over the tunic, bare cold chapped hands with no gloves",
+     "sheet": "plan_v5_2026-11-19/pictures_B/round0/thomas_v2.jpeg",
+     "costumes": {
+      "service": "khaki wool peaked service cap with soft crown and folded ear-flap straps, long khaki greatcoat open over the tunic, every brass tunic button in place, bare hands"
+     }
+    }
+   },
+   "shots": [
+    {
+     "shot_id": "S02_SH004",
+     "duration": {
+      "seconds": 7.7917,
+      "frames": 187,
+      "start_frame": 1156,
+      "fps": 24,
+      "source": "HF explainer-engine/demo_truce_1914/clock/timing.json (episode_timing/1, 24 fps, read_s 268.08)"
+     },
+     "is_master": true,
+     "shot_size": "MWS",
+     "angle": "eye",
+     "camera_side": "A",
+     "head_count": 3,
+     "extras": 3,
+     "characters": [],
+     "camera_move": "parallax_dolly",
+     "hook_up": "first",
+     "derive_from": "original",
+     "chain_depth": 0,
+     "landmarks": [
+      {
+       "id": "fire_step",
+       "side": "centre"
+      },
+      {
+       "id": "duckboards",
+       "side": "left"
+      }
+     ],
+     "refs": [
+      {
+       "path": "style_new_2026-11-19/new_style_mongol_empire.jpg",
+       "role": "style"
+      },
+      {
+       "path": "style_new_2026-11-19/new_style_mesopotamia.jpg",
+       "role": "style"
+      },
+      {
+       "path": "style_new_2026-11-19/new_style_roman_britain.jpg",
+       "role": "style"
+      }
+     ],
+     "dramatic_purpose": "Make the cold and the danger physical before we meet the hero.",
+     "narrative_information": "Mud to the knee, water in every boot, a sniper: the trench in December.",
+     "environment": "A flooded British trench: brown water over the duckboards, frosted sandbag walls, timber props, the fire step.",
+     "time_and_light": "Winter afternoon, low gold light from the left through haze, grey sky.",
+     "camera_position": "160 cm above the duckboards, 4 m from the three men, looking along the trench at 45 degrees.",
+     "lens": "35 mm, f/5.6, focused at 4 m (foreground water, the men and the parapet all readable in layers)",
+     "character_action": "three huddled soldiers in greatcoats and peaked service caps sit on the fire step; one ducks his head below the parapet",
+     "background_action": "water shimmers faintly; haze drifts",
+     "acting_lane": "P4",
+     "route": "still_25d",
+     "audio_events": [
+      "S02_SH004.M1 truck: silent_by_design",
+      "S02_SH004.M2 water_shimmer: silent_by_design",
+      "S02_SH004.M3 fire_flicker: silent_by_design"
+     ],
+     "continuity_constraints": [
+      "exactly three soldiers, none a named hero face",
+      "greatcoats and khaki peaked service caps, no steel helmets",
+      "water level at the duckboards stays the same",
+      "nobody holds a rifle at the parapet in view of the camera",
+      "no steel helmets, torches, horses, dogs, glass lamps or text"
+     ],
+     "image_prompt": "Photoreal live-action cinematic film still, shot on 35 mm film, natural low winter sun, ground haze and breath vapour, muted earthy palette of frost white, mud brown, khaki and field grey, fine film grain. Faces are photoreal but slightly stylised by ONE shared rule for every person: firmer planar brow, cheek and jaw facets, the same handwriting on every face, no single face deformed differently. 16:9. Flanders, December 1914. A flooded British front-line trench in winter: brown water over the duckboards, waist-high frosted sandbag walls, timber props, three huddled soldiers in khaki greatcoats and peaked service caps sitting on the fire step, one of them ducking his head below the parapet, low gold winter afternoon light from the left through haze, grey sky. Medium wide shot, eye level 160 cm, the trench running from the left into depth, foreground water, the men and the parapet as separate layers. Lens 35 mm at f/5.6, focused at 4 m: moderate depth of field, the foreground water, the three men and the parapet all readable, the far trench softens in haze. Use the reference images only for photographic look, light, grain and the face rule; copy none of their objects, animals, costumes or buildings.",
+     "motion_prompt": "The camera drifts slowly sideways along the trench.",
+     "motion_kind": "layers25d",
+     "acceptance_questions": [
+      "image: How many soldiers are in the picture? (expected 3)",
+      "image: Is one man ducking below the parapet?",
+      "image: Are the caps peaked service caps and the coats greatcoats, with no steel helmets?",
+      "image: Is brown water over the duckboards in the foreground?",
+      "image: Are foreground, the men and the background separate layers (for parallax)?",
+      "image: Is light from the left and low?",
+      "clip: Does the drift go one way only, slowly?"
+     ]
+    },
+    {
+     "shot_id": "S02_SH005",
+     "duration": {
+      "seconds": 5.2917,
+      "frames": 127,
+      "start_frame": 1343,
+      "fps": 24,
+      "source": "HF explainer-engine/demo_truce_1914/clock/timing.json (episode_timing/1, 24 fps, read_s 268.08)"
+     },
+     "shot_size": "MCU",
+     "angle": "high",
+     "camera_side": "A",
+     "head_count": 1,
+     "time_of_day": "dusk",
+     "key_light_dir": "front",
+     "hook_up": "time_cut",
+     "characters": [
+      {
+       "id": "char_thomas_hale",
+       "screen_pos": "centre",
+       "depth": "mid",
+       "facing": "away",
+       "costume": "service",
+       "expression": "not visible (over the shoulder)",
+       "action": "holds an open pencil-written letter in his two bare chapped hands beside a small glowing coke brazier",
+       "eyeline": "down"
+      }
+     ],
+     "camera_move": "slow_push_in",
+     "derive_from": "original",
+     "chain_depth": 0,
+     "changes": [
+      {
+       "entity": "scene",
+       "field": "time_of_day",
+       "from": "day",
+       "to": "dusk",
+       "cause": "time passes between the two shots of the trench"
+      },
+      {
+       "entity": "scene",
+       "field": "key_light_dir",
+       "from": "left",
+       "to": "front",
+       "cause": "at dusk the brazier is the key light"
+      }
+     ],
+     "landmarks": [
+      {
+       "id": "brazier",
+       "side": "right"
+      }
+     ],
+     "refs": [
+      {
+       "path": "plan_v5_2026-11-19/pictures_B/new_style_B/S02_SH004.jpeg",
+       "role": "place"
+      },
+      {
+       "path": "style_new_2026-11-19/new_style_mongol_empire.jpg",
+       "role": "style"
+      },
+      {
+       "path": "style_new_2026-11-19/new_style_mesopotamia.jpg",
+       "role": "style"
+      },
+      {
+       "path": "style_new_2026-11-19/new_style_roman_britain.jpg",
+       "role": "style"
+      },
+      {
+       "path": "plan_v5_2026-11-19/pictures_B/round0/thomas_v2.jpeg",
+       "role": "character",
+       "of": "char_thomas_hale"
+      }
+     ],
+     "dramatic_purpose": "Plant the letter motif: the line from home the story will answer at the end.",
+     "narrative_information": "Thomas has read the same line all week: \"home by Christmas\".",
+     "environment": "The trench at dusk beside a small coke brazier; the letter is mud-smudged.",
+     "time_and_light": "Dusk, warm brazier glow from the front and below, blue dusk behind.",
+     "camera_position": "180 cm above the duckboards, over his shoulder, looking down 30 degrees at the letter.",
+     "lens": "50 mm, f/2, focused on the letter at 70 cm (brazier glow soft)",
+     "character_action": "holds the open letter in two bare, cold, chapped hands",
+     "background_action": "brazier embers glow and flicker faintly",
+     "acting_lane": "P3",
+     "route": "still_25d",
+     "audio_events": [
+      "S02_SH005.M1 push: silent_by_design",
+      "S02_SH005.M2 fire_flicker: silent_by_design",
+      "S02_SH005.M3 embers: silent_by_design"
+     ],
+     "continuity_constraints": [
+      "place ref = the scene master picture from the vault original, not a last frame or a derivation (chain_depth 0) (S02_SH004 is the location master)",
+      "bare chapped hands, no gloves, same hands as the hero reference",
+      "the only readable words on the letter: \"home by Christmas\" (set in post if the generator garbles them, R1)",
+      "brazier lit: no lamp, no candle, no glass",
+      "no steel helmets, torches, horses, dogs, glass lamps or text"
+     ],
+     "image_prompt": "Photoreal live-action cinematic film still, shot on 35 mm film, natural low winter sun, ground haze and breath vapour, muted earthy palette of frost white, mud brown, khaki and field grey, fine film grain. Faces are photoreal but slightly stylised by ONE shared rule for every person: firmer planar brow, cheek and jaw facets, the same handwriting on every face, no single face deformed differently. 16:9. Flanders, December 1914. Private Thomas Hale, a lean 20-year-old English infantry private with a pale freckled face, short sandy-brown hair, light grey eyes, a khaki wool peaked service cap with a soft crown, a short peak and small ear-flap straps folded at the sides, a single-breasted khaki 1902 service-dress tunic with brass buttons, cream-khaki 1908 webbing straps, muddy puttees and boots, a long double-breasted khaki greatcoat with brass buttons open over the tunic, bare cold chapped hands with no gloves (reference image 5), seen over his shoulder: an open mud-smudged letter in pencil handwriting held in his two bare, cold, chapped hands beside a small glowing coke brazier at dusk, the only readable words on the page \"home by Christmas\". Medium close-up, high angle, camera 180 cm above the duckboards looking down 30 degrees. Lens 50 mm at f/2, focused at the letter at 70 cm: shallow depth of field, the letter and the fingers sharp, the brazier glow soft. Use the reference images only for photographic look, light, grain and the face rule; copy none of their objects, animals, costumes or buildings.",
+     "motion_prompt": "The camera pushes slowly toward the handwritten line.",
+     "motion_kind": "layers25d",
+     "acceptance_questions": [
+      "image: Are the hands bare and chapped (no gloves)?",
+      "image: Does the letter read \"home by Christmas\" on one line, spelled correctly?",
+      "image: Is the brazier lit and the light warm from the front and below?",
+      "image: Is any lamp, candle, glass or other text visible? (expected none)",
+      "image: Is the letter sharp and the brazier soft?",
+      "clip: Does the push-in go one way only and end on the line?"
      ]
     }
    ]

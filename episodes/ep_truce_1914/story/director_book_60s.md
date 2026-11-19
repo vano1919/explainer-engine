@@ -67,15 +67,16 @@ Routes are frozen as measured: 5 `still_25d`, 3 `map_action`, 2 `video`. No rout
 
 ## Continuity bible (strings are pasted verbatim into every prompt; do not improve them)
 - `STYLE_BLOCK`: "Photoreal live-action cinematic film still, shot on 35 mm film, natural low winter sun, ground haze and breath vapour,
-  muted earthy palette of frost white, mud brown, khaki and field grey, fine film grain, shallow depth of field. Faces are photoreal but
+  muted earthy palette of frost white, mud brown, khaki and field grey, fine film grain. Faces are photoreal but
   slightly stylised by ONE shared rule for every person: firmer planar brow, cheek and jaw facets, the same handwriting on every face,
   no single face deformed differently. 16:9." (from the picture task; the creator's style note 11-19)
 - `ID_THOMAS`: "Private Thomas Hale, a lean 20-year-old English infantry private with a pale freckled face, short sandy-brown hair, light grey
-  eyes, a soft khaki 1914 winter trench cap with a floppy crown, no stiff wire, a short soft peak and ear flaps tied up over the top, a
-  khaki 1902 service-dress tunic with brass buttons, 1908 webbing, muddy puttees, a long khaki greatcoat open over the tunic, bare cold
-  chapped hands with no gloves". **Open conflict, reported:** the world bible still says "khaki peaked service cap"; the picture task and the
-  11-13 note say soft cap. This book follows the soft cap. The Round 0 collage pick (four variants) is still the reference image; until
-  the creator picks one, `refs` names the folder, not a file.
+  eyes, a khaki wool peaked service cap with a soft crown, a short peak and small ear-flap straps folded at the sides, a single-breasted khaki
+  1902 service-dress tunic with brass buttons, cream-khaki 1908 webbing straps, muddy puttees and boots, a long double-breasted khaki greatcoat
+  with brass buttons open over the tunic, bare cold chapped hands with no gloves". **Identity is the creator's pick:** Round 0 variant `thomas_v2`
+  (card cmsg_01Hnu5zB86sjUj5GtTgaUkPWCvxrAVdHqqFuCQZJkz7p4m, 18:02 Tbilisi; plan-thread note), file `plan_v5_2026-11-19/pictures_B/round0/thomas_v2.jpeg`,
+  described above as v2 shows it (invariant 6). It supersedes both older texts: the world bible's "peaked service cap" and the picture task's
+  "soft winter trench cap with ear flaps tied up". Reference status: PASS.
 - `LOCK_NML`: "a frozen field between two trench lines in Flanders, frost-white barbed wire on wooden stakes, an ice-skinned shell
   hole, a broken willow, the low German parapet with small fir trees standing on it, thick ground fog".
 - `LOCK_TRENCH`: "a British front-line trench in winter, waist-high frosted sandbag breastwork, duckboards over brown floodwater, a wooden
@@ -118,7 +119,7 @@ F16 style drift, F17 framing, F18 seam on extend, F19 object permanence.
 | Shot | Watch | Why it is likely here |
 |---|---|---|
 | S01_SH001 | F8, F9, F16, F12 | an empty field invites a stray figure or a steel-helmet silhouette; the old ink look can leak; fog light must stay one golden source |
-| S01_SH002 | F1, F8, F10, F5, F6 | soft cap vs peaked cap; bare hands on rails; clip must end with hands still on the rails and eyes on the parapet; only the tilt moves |
+| S01_SH002 | F1, F8, F10, F5, F6 | cap must match thomas_v2 (peaked service cap, not a helmet); bare hands on rails; clip must end with hands still on the rails and eyes on the parapet; only the tilt moves |
 | S01_SH003 | F13, F14, F1, F9, F18 | walking speed and foot contact on frost; nobody else may enter the field; no extend, one 5.5 s take |
 | S01_SH004 | F3, F9, F8, F17 | crowd warping and weapons appearing; helmets; the extreme wide must keep both groups inside the frame |
 | S01_SH005 | F8, F19, F2 | a holder or glass around the candle stub; the stub must not vanish during the pan; the pan must be visible |
@@ -132,6 +133,7 @@ Repair path (the skill's cost ladder L1-L7, our P-5 limit: at most two generativ
 keyframe or reference, R4 fall back to 2.5D. A clip with two codes is re-planned, not re-prompted (skill skip rule b).
 
 ## Open items for the plan thread
-1. World bible cap text is stale (peaked vs soft); the book follows the soft cap.
-2. Thomas reference: the Round 0 collage pick is not recorded; cards cite the folder.
-3. Maps: the schema needs a location for a map plate; cards use a nominal `EXT / day / clear` and `route: map_action`. Say if you want a `MAP` value instead.
+1. Cap text in the world bible and in the picture task are both superseded by the v2 pick (record in PROGRESS).
+2. Maps carry an optional `map` object and no location (plan-thread answer).
+3. S01_SH005: the script says a candle stub in a tin holder with a row of candle-lit fir trees behind; the picture task says no holder, no glass and no trees. The card follows the picture task; the script text is the older one.
+4. Depth of field is per shot from lens and aperture (STYLE_BLOCK carries none); the style block text above was edited accordingly.
