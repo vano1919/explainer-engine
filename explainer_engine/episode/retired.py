@@ -95,7 +95,7 @@ ACTIVE_ROOTS = ("explainer_engine.episode.run", "explainer_engine.aivideo.wan_ad
                 "explainer_engine.videolane.scene", "explainer_engine.training.pods.ltx.scene_run",
                 "explainer_engine.training.pods.ltx.modal_ltx_jobs",
                 # the RunPod A/B launchers (D-132, W5, OR-34 audit of PR 214): the LTX A/B and the Klein pictures
-                "explainer_engine.training.pods.ltx.runpod_ltx_jobs", "explainer_engine.training.pods.klein.klein_jobs")
+                "explainer_engine.training.pods.ltx.runpod_ltx_jobs", "explainer_engine.training.pods.klein.klein_jobs", "explainer_engine.training.pods.klein.modal_klein_jobs")
 
 
 def _module_file(mod: str, root: Path) -> Path | None:
