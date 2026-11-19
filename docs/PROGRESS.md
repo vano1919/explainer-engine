@@ -6682,3 +6682,6 @@ files (128 passed, 1 skipped). Render waits for the creator's OK.
 
 ## 2026-11-19: V4.1 Step 0.3: decisions recorded (D-139), docs only
 Thread "Step 0 და Step 1-ის კოდის წერა", base PR #196 head `e4521cd`. The creator approved the final action plan (card option "კი, Claude წერს", 13:46 Georgia time). `docs/DECISIONS_AND_OPEN_QUESTIONS.md` gets D-139 (P1.2 accepted, MA-01..MA-18 accepted, one render path `episode/run.py`, no BBC RemArc in a monetised master, precedence) and a conflict table; the plan and Gemini's review are copied to `docs/architecture/V4_1_*` and indexed. No code, no media, $0. Check: `python -m explainer_engine.docs_lint`.
+
+## 2026-11-19: V4.1 Step 0.4b: slice scope check in CI
+`explainer_engine/scope_check.py` + `docs/architecture/v4_1_allowlists.json` (one entry per slice: exact head branch + allowed paths) + a first step of `quality.yml` (`fetch-depth: 0`, pull requests only). The list is read from the PR's base ref, so a slice cannot widen itself; only slice 0.4b may list the control files; branches that are no slice branch are exempt. Tests: `tests/unit/test_scope_check.py` (pure rules plus a real git repo). A real red run on a test branch follows.
