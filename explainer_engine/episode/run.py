@@ -280,8 +280,11 @@ def run_stage(ep: Episode, stage: str) -> dict:
     ss_resets = SS.check_all(ep.root)   # W3: a file that changed since it was bound resets every later shot state (plan 5.1)
     t0 = time.time()
     fp = fingerprint(ep, stage)
-    obs_rows = OBS.gate_rows(ep.root, stage)   # W4 (OB-1): no picture or clip moves on without an observation record of its hash
     try:
+        try:   # W4 (OB-1): no picture or clip moves on without an observation record of its hash
+            obs_rows = OBS.gate_rows(ep.root, stage)
+        except (ValueError, OSError, KeyError) as exc:   # unreadable records are this stage's recorded FAIL row, never a crash
+            raise ContractError(f"observation gate could not read its records: {type(exc).__name__}: {exc}") from exc
         if any(r["status"] == G.FAIL for r in obs_rows) and not rehearsal:
             raise ContractError("observation gate: " + obs_rows[0]["detail"])
         rows, outputs = STAGE_FUNCS[stage](ep, rehearsal)

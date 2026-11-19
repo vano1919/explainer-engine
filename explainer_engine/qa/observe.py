@@ -11,7 +11,7 @@ and wrote that into the record (``review``). Defects map to one action R1..R4 in
 
     python -m explainer_engine.qa.observe status <episode folder>
     python -m explainer_engine.qa.observe gate <episode folder> --stage clips|assemble
-    python -m explainer_engine.qa.observe review <episode folder> <record_id> --by session|owner [--note T] [--message-id M]
+    python -m explainer_engine.qa.observe review <episode folder> <record_id> --by session|owner [--note T] [--evidence FILE] [--message-id M]
     python -m explainer_engine.qa.observe accept <observer> --message-id cmsg_... --words "<his words>"
 
 ``review --by owner`` needs his message id recorded as ``observation_review`` of ``<episode>:<shot>:<sha256[:12]>`` (governance ok);
@@ -39,9 +39,12 @@ KINDS = ("image", "clip", "voice")
 OBSERVERS = ("claude", "gemini_chat", "gemini_api", "ffmpeg", "transcript")
 # The observers whose PASS needs a look of the session or the creator until their calibration report is accepted.
 AUTOMATIC = ("ffmpeg", "transcript", "gemini_api")
+OPTIONAL = {"image": ("gemini_chat", "gemini_api")}
 # What each kind needs before it may move on: every group must hold a PASS (one observer of the group is enough to be present;
 # the worst record of the group decides).
-REQUIRED = {"image": (("claude", "gemini_chat", "gemini_api"),),
+# A picture is made in the Gemini chat, so Gemini alone may never accept it (MA-15, Amendment D: the observer is not the generator):
+# an image needs the claude look; gemini_chat / gemini_api are optional extra eyes whose miss still counts against the asset.
+REQUIRED = {"image": (("claude",),),
             "clip": (("ffmpeg",), ("claude", "gemini_chat", "gemini_api")),
             "voice": (("transcript",),)}
 STAGE_KIND = {"clips": ("image", "image"), "assemble": ("clip", "clip")}   # stage -> (kind, shot_state asset key)
@@ -107,15 +110,32 @@ def review_target(rec: dict) -> str:
     return f"{rec['episode_id']}:{rec['shot_id']}:{rec['asset_sha256'][:12]}"
 
 
-def check_reviewed(rec: dict) -> None:
-    """A ``reviewed`` stamp must be earned: the session names what it looked at (a note), the creator carries his chat message id
-    and that id is recorded (``observation_review``, ``governance ok``). Raises ValueError otherwise."""
+def evidence_stamp(root: Path, evidence: str) -> dict:
+    """``{"evidence_path", "evidence_sha256"}`` of an existing evidence file (relative to the episode folder or absolute)."""
+    p = Path(evidence)
+    p = p if p.is_absolute() else Path(root) / p
+    sha = SS.sha256_of(p)
+    if sha is None:
+        raise ValueError(f"evidence file {evidence} does not exist: a review names a file it looked at")
+    return {"evidence_path": str(evidence), "evidence_sha256": sha}
+
+
+def check_reviewed(rec: dict, root: Path) -> None:
+    """A ``reviewed`` stamp must be earned: the session names a note AND an evidence file that exists (sheet, frame, transcript
+    diff) whose sha256 is stored with the stamp; the creator carries his chat message id and that id is recorded
+    (``observation_review``, ``governance ok``). Raises ValueError otherwise."""
     from explainer_engine.governance import records
     rv = rec.get("reviewed")
     if not rv:
         return
-    if rv["by"] == "session" and not (rv.get("note") or "").strip():
-        raise ValueError("a session review needs a note that names what was looked at (sheet, frame, transcript diff)")
+    if rv["by"] == "session":
+        if not (rv.get("note") or "").strip():
+            raise ValueError("a session review needs a note that names what was looked at (sheet, frame, transcript diff)")
+        if not rv.get("evidence_path") or not rv.get("evidence_sha256"):
+            raise ValueError("a session review needs the evidence file it looked at (path and sha256)")
+        stamp = evidence_stamp(root, rv["evidence_path"])
+        if stamp["evidence_sha256"] != rv["evidence_sha256"]:
+            raise ValueError("the evidence file changed since the review stamp was made")
     if rv["by"] == "owner":
         mid = rv.get("message_id") or ""
         if not MSG_ID.fullmatch(mid) or records.find(REVIEW_ACTION, review_target(rec), mid, root=GOVERNANCE_ROOT) is None:
@@ -184,8 +204,8 @@ def write(root: Path, rec: dict) -> dict:
     """Validate, append, link the vault record and move the shot state. Returns the record plus ``settled`` (what the shot
     state did). One record never accepts alone: ``settle`` rolls every required observer up."""
     contracts.validate(rec)
-    check_reviewed(rec)
     root = Path(root)
+    check_reviewed(rec, root)
     rows = load(root) + [rec]
     _rewrite(root, rows)
     _link_vault(root, rec)
@@ -223,6 +243,9 @@ def asset_status(root: Path, shot: str, kind: str, sha: str) -> tuple[str, str]:
         worst.append(ST.rollup(verdicts))
         if worst[-1] == ST.PASS and not all(counts(r) for r in got):
             return "UNREVIEWED", f"{'/'.join(r['observer'] for r in got)}: PASS not looked at and not calibrated"
+    for o in OPTIONAL.get(kind, ()):   # extra eyes never accept alone, but a miss of theirs is not ignored
+        if o in recs:
+            worst.append(ST.canon(recs[o]["verdict"]) if ST.canon(recs[o]["verdict"]) != ST.PASS else ST.PASS)
     s = ST.rollup(worst)
     return s, ", ".join(f"{o}={ST.canon(r['verdict'])}" for o, r in sorted(recs.items()))
 
@@ -265,7 +288,7 @@ def settle(root: Path, shot: str, kind: str, path: str, sha: str) -> dict:
     return out
 
 
-def review(root: Path, rid: str, by: str, note: str = "", message_id: str | None = None) -> dict:
+def review(root: Path, rid: str, by: str, note: str = "", message_id: str | None = None, evidence: str | None = None) -> dict:
     """Stamp a record: the session or the creator looked at its evidence (never an automatic PASS without it)."""
     root = Path(root)
     rows = load(root)
@@ -273,8 +296,10 @@ def review(root: Path, rid: str, by: str, note: str = "", message_id: str | None
     if rec is None:
         raise KeyError(f"no observation record {rid!r}")
     rec["reviewed"] = {"by": by, "at": _now(), "note": note, "message_id": message_id}
+    if evidence:
+        rec["reviewed"].update(evidence_stamp(root, evidence))
     contracts.validate(rec)
-    check_reviewed(rec)
+    check_reviewed(rec, root)
     _rewrite(root, rows)
     return {**rec, "settled": settle(root, rec["shot_id"], rec["kind"], rec["asset_path"], rec["asset_sha256"])}
 
@@ -335,6 +360,7 @@ def _cli(argv=None) -> int:
     r.add_argument("--by", required=True, choices=("session", "owner"))
     r.add_argument("--note", default="")
     r.add_argument("--message-id", default=None)
+    r.add_argument("--evidence", default=None, help="the sheet / frame / transcript diff that was looked at (a session review needs it)")
     c = sub.add_parser("accept", help="record the creator's acceptance of an observer's calibration report")
     c.add_argument("observer", choices=AUTOMATIC)
     c.add_argument("--message-id", required=True)
@@ -357,7 +383,7 @@ def _cli(argv=None) -> int:
         for row in rows:
             print(json.dumps(row, ensure_ascii=False))
         return 1 if any(x["status"] == G.FAIL for x in rows) else 0
-    print(json.dumps(review(root, a.record_id, a.by, a.note, a.message_id)["reviewed"], ensure_ascii=False))
+    print(json.dumps(review(root, a.record_id, a.by, a.note, a.message_id, a.evidence)["reviewed"], ensure_ascii=False))
     return 0
 
 

@@ -57,7 +57,7 @@ def _records(root: Path, doc: dict, files: dict, observer: str, reviewed, eviden
         if owner_message_id:   # stamp "owner" only when his word for this asset is recorded; else an unstamped record
             rec["reviewed"] = {"by": "owner", "at": OB._now(), "note": "Gemini chat run by the creator", "message_id": owner_message_id}
             try:
-                OB.check_reviewed(rec)
+                OB.check_reviewed(rec, root)
             except ValueError as exc:
                 rec["reviewed"] = None
                 rec["note"] = ((rec.get("note") or "") + f" owner stamp refused: {exc}").strip()

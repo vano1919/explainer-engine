@@ -18,7 +18,7 @@ from explainer_engine.qa.observers import ffmpeg as OF
 from explainer_engine.qa.observers import gemini as GM
 from explainer_engine.qa.observers import transcript as OT
 
-SESSION = {"by": "session", "note": "looked at the sheet and the full frame"}
+SESSION = {"by": "session", "note": "looked at the sheet and the full frame"}   # sentinel: _sess() adds the evidence file
 HAS_FFMPEG = shutil.which("ffmpeg") is not None and shutil.which("ffprobe") is not None
 
 
@@ -35,7 +35,18 @@ def _ep(tmp_path, with_clip=True):
     return r
 
 
+def _sess(r, note="looked at the sheet and the full frame"):
+    """A session review stamp backed by a real evidence file (path + sha256) in the episode folder."""
+    ev = r / "qa" / "sheet.png"
+    ev.parent.mkdir(parents=True, exist_ok=True)
+    if not ev.exists():
+        ev.write_bytes(b"contact-sheet")
+    return {"by": "session", "note": note, **OB.evidence_stamp(r, "qa/sheet.png")}
+
+
 def _rec(r, kind, observer, path, defects=None, reviewed=None, verdict=None):
+    if reviewed is SESSION:
+        reviewed = _sess(r)
     return OB.write(r, OB.build(r, "S1", kind, observer, path, defects=defects, reviewed=reviewed, verdict=verdict))
 
 
@@ -100,7 +111,7 @@ def test_an_automatic_pass_needs_a_look_or_an_accepted_calibration(tmp_path, mon
     sha = SS.sha256_of(r / "assets/c.mp4")
     assert OB.asset_status(r, "S1", "clip", sha)[0] == "UNREVIEWED"
     rid = [x for x in OB.load(r) if x["observer"] == "ffmpeg"][0]["record_id"]
-    OB.review(r, rid, "session", "looked at the numbers")
+    OB.review(r, rid, "session", "looked at the numbers", evidence="assets/c.mp4")
     assert OB.asset_status(r, "S1", "clip", sha)[0] == "PASS"
     # calibration accepted instead of a look: only by accept(), which records his word
     r2 = _ep(tmp_path / "b")
@@ -142,7 +153,7 @@ def test_a_session_review_needs_a_note_and_an_owner_review_needs_a_recorded_id(t
     assert out["verdict"] == "PASS"
     with pytest.raises(ValueError, match="owner review"):
         OB.review(r, out["record_id"], "owner", "x", "cmsg_other")
-    OB.review(r, out["record_id"], "session", "re-opened the sheet and the full frame")
+    OB.review(r, out["record_id"], "session", "re-opened the sheet and the full frame", evidence="assets/p.png")
 
 
 def test_zero_bound_assets_is_not_run_and_a_state_past_the_asset_without_one_is_blocked(tmp_path):
@@ -262,9 +273,12 @@ def test_ffmpeg_observer_reports_a_corrupt_file(tmp_path):
 def test_claude_look_record_refuses_an_unknown_code_and_takes_the_session_answers(tmp_path):
     r = _ep(tmp_path)
     with pytest.raises(ContractError):
-        CL.record(r, "S1", "image", "assets/p.png", {"answers": {}, "defects": [{"code": "Z9", "where": "f", "severity": "major"}]})
-    out = CL.record(r, "S1", "image", "assets/p.png", {"answers": {"people?": "0"}, "defects": []})
-    assert out["verdict"] == "PASS" and out["reviewed"]["by"] == "session"
+        CL.record(r, "S1", "image", "assets/p.png", {"answers": {}, "defects": [{"code": "Z9", "where": "f", "severity": "major"}]},
+                  evidence=["assets/p.png"])
+    with pytest.raises(ValueError, match="evidence"):
+        CL.record(r, "S1", "image", "assets/p.png", {"answers": {}, "defects": []})
+    out = CL.record(r, "S1", "image", "assets/p.png", {"answers": {"people?": "0"}, "defects": []}, evidence=["assets/p.png"])
+    assert out["verdict"] == "PASS" and out["reviewed"]["by"] == "session" and out["reviewed"]["evidence_sha256"]
 
 
 def test_gemini_chat_task_and_ingest(tmp_path, monkeypatch):
@@ -349,6 +363,57 @@ def test_run_stage_blocks_clips_on_an_unobserved_picture_and_runs_after_a_record
     called.clear()
     rec = RUN.run_stage(ep, "clips")
     assert called == [] and rec["verdict"]["status"] == "FAIL" and "S1: MISSING" in rec["rows"][0]["detail"]
-    OB.write(root, OB.build(root, "S1", "image", "claude", "assets/p.png", reviewed=SESSION))
+    OB.write(root, OB.build(root, "S1", "image", "claude", "assets/p.png", reviewed=_sess(root)))
     rec = RUN.run_stage(RUN.Episode(root, force=True), "clips")
     assert called == ["clips"] and rec["verdict"]["status"] == "PASS"
+
+
+def test_a_session_review_needs_an_existing_evidence_file_with_its_hash(tmp_path):
+    r = _ep(tmp_path)
+    for bad in ({"by": "session", "note": "looked"},                                              # free text only
+                {"by": "session", "note": "looked", "evidence_path": "qa/none.png", "evidence_sha256": "0" * 64}):   # no such file
+        with pytest.raises(ValueError, match="evidence"):
+            _rec(r, "image", "claude", "assets/p.png", reviewed=bad)
+    st = _sess(r)
+    (r / "qa" / "sheet.png").write_bytes(b"another sheet")                                       # the evidence changed after the stamp
+    with pytest.raises(ValueError, match="changed"):
+        _rec(r, "image", "claude", "assets/p.png", reviewed=st)
+    with pytest.raises(ValueError, match="evidence"):
+        OB.evidence_stamp(r, "qa/missing.png")
+
+
+def test_an_image_is_never_accepted_by_a_generator_observer_alone(tmp_path, monkeypatch):
+    monkeypatch.setattr(OB, "GOVERNANCE_ROOT", tmp_path / "gov")
+    r = _ep(tmp_path)
+    sha = SS.sha256_of(r / "assets/p.png")
+    GR.add(OB.REVIEW_ACTION, f"ep_t:S1:{sha[:12]}", "cmsg_g1", "ran the chat", root=tmp_path / "gov")
+    _rec(r, "image", "gemini_chat", "assets/p.png", reviewed={"by": "owner", "message_id": "cmsg_g1"})
+    assert OB.asset_status(r, "S1", "image", SS.sha256_of(r / "assets/p.png"))[0] != "PASS"                  # the Gemini chat made the picture: its PASS cannot accept it
+    assert OB.gate_rows(r, "clips")[0]["status"] != "PASS"
+    _rec(r, "image", "claude", "assets/p.png", reviewed=SESSION)
+    assert OB.asset_status(r, "S1", "image", SS.sha256_of(r / "assets/p.png"))[0] == "PASS"
+    _rec(r, "image", "gemini_chat", "assets/p.png", defects=[{"code": "F12", "where": "frame", "severity": "major"}],
+         reviewed={"by": "owner", "message_id": "cmsg_g1"})
+    assert OB.asset_status(r, "S1", "image", SS.sha256_of(r / "assets/p.png"))[0] != "PASS"                  # but an optional eye's miss still counts
+
+
+def test_run_stage_records_a_corrupt_observations_file_as_a_fail_row(tmp_path, monkeypatch):
+    from explainer_engine.episode import run as RUN
+    from tests.unit.test_qa_status import _episode
+    called = []
+    monkeypatch.setattr(RUN, "STAGE_FUNCS", {s: (lambda ep, rh, s=s: (called.append(s) or [RUN.G.row(f"{s}_ran", True, "ok")], {}))
+                                             for s in RUN.STAGES})
+    root = _episode(tmp_path)
+    (root / "assets").mkdir()
+    (root / "assets" / "p.png").write_bytes(b"picture-1")
+    st = SS.ShotStates(root)
+    st.bind("S1", "image", "assets/p.png")
+    st.save()
+    (root / "qa").mkdir(exist_ok=True)
+    (root / "qa" / "observations.jsonl").write_text("{not json\n", encoding="utf-8")
+    ep = RUN.Episode(root)
+    for stage in ("script", "sound_plan", "pictures", "voice"):
+        RUN.run_stage(ep, stage)
+    called.clear()
+    rec = RUN.run_stage(ep, "clips")      # must not raise
+    assert called == [] and rec["verdict"]["status"] == "FAIL" and "could not read its records" in json.dumps(rec["rows"])

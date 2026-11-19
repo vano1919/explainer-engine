@@ -77,6 +77,8 @@ def request(root: Path, shot: str, kind: str, path: str, out_dir: Path) -> dict:
 def record(root: Path, shot: str, kind: str, path: str, answers_doc: dict, evidence: list[str] | None = None) -> dict:
     """Write the ``claude`` record from the session's answers; the verdict follows the defects (OB-2), not a free yes."""
     root = Path(root)
+    if not evidence:   # a look names the sheet or picture it was made from
+        raise ValueError("record needs the evidence file(s) the session looked at (the sheet or the picture)")
     defects = answers_doc.get("defects", [])
     for d in defects:
         RR.action_for_defect(d["code"])   # refuses an unknown code
@@ -84,6 +86,6 @@ def record(root: Path, shot: str, kind: str, path: str, answers_doc: dict, evide
     left = RR.RETRY_LEFT(states, shot, kind if kind == "image" else "clip") > 0 if kind in ("image", "clip") else True
     rec = OB.build(root, shot, kind, "claude", path, questions=list(answers_doc.get("answers", {})), answers=answers_doc.get("answers", {}),
                    defects=defects, evidence=evidence, note=answers_doc.get("note"), generative_left=left,
-                   reviewed={"by": "session", "at": OB._now(),
-                             "note": "looked at " + (", ".join(Path(e).name for e in (evidence or [])) or "the sheet and the full frame")})
+                   reviewed={"by": "session", "at": OB._now(), "note": "looked at " + ", ".join(Path(e).name for e in evidence),
+                             **OB.evidence_stamp(root, evidence[0])})
     return OB.write(root, rec)

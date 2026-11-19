@@ -30,9 +30,9 @@ and the two retries are spent.
 
 `episode/run.py` calls `observe.gate_rows` in `run_stage` before `clips` (every bound picture) and before `assemble` (every bound clip).
 An asset passes only with a counted PASS record for its **current** sha256; a changed file has another hash, so its records no longer
-count (and `shot_state.check_all` has already reset its states). Required observers: a picture needs one look (claude, gemini_chat or
-gemini_api); a clip needs `ffmpeg` and one look; a voice take needs `transcript`. MISSING, NOT_RUN, RETRY, BLOCK and an unlooked
-automatic PASS give a BLOCK row listing the shots (the stage does not run, except in a rehearsal, which never ships); only REVIEW
+count (and `shot_state.check_all` has already reset its states). Required observers: a picture needs the `claude` look (the Gemini chat makes the pictures, so
+`gemini_chat` / `gemini_api` are optional extra eyes: their miss counts, their PASS never accepts alone, MA-15); a clip needs `ffmpeg` and one look; a voice take needs `transcript`. MISSING, NOT_RUN, RETRY, BLOCK and an unlooked
+automatic PASS give a BLOCK row listing the shots (the stage does not run, except in a rehearsal, which never ships; unreadable records are the same BLOCK, recorded as a FAIL row, never a crash); only REVIEW
 records give a REVIEW row, which needs the creator's `approve` bound to his message id before the next stage. Nothing bound to any
 shot is a NOT_RUN row (never a pass, P-6), and a shot whose state is past the asset (`IMAGE_OBSERVED`.. for pictures, `VIDEO_OBSERVED`..
 for clips) with no bound asset is a BLOCK line.
@@ -47,7 +47,8 @@ An automatic observer (ffmpeg, transcript, gemini_api) decides alone only after 
 record to `jobs/creator_ok.jsonl` and the entry `accepted.<observer>` = {message_id, words, at} in `config/observer_calibration.json`, which
 starts empty; a hand-edited entry does not count, only one whose message id is recorded). Until then its PASS counts only after the session
 or the creator looked at its evidence: `python -m explainer_engine.qa.observe review <episode> <record_id> --by session --note "<what was
-looked at>"`. A session review needs that note; an owner review needs his chat message id recorded as `observation_review` of
+looked at>" --evidence <file>`. A session review needs that note and an existing evidence file (sheet, frame, transcript diff) whose
+sha256 is stored with the stamp (a changed file voids it); an owner review needs his chat message id recorded as `observation_review` of
 `<episode>:<shot>:<sha256[:12]>` (`governance ok`); `gemini_chat` records carry the owner stamp only when it is recorded.
 Report: [OBSERVATION_CALIBRATION_2026-11-20](OBSERVATION_CALIBRATION_2026-11-20.md).
 
@@ -126,6 +127,6 @@ creator's: the handshake break of S04_SH014 lasts under a second, so fps 1 may m
 ```
 python -m explainer_engine.qa.observe status <episode folder>
 python -m explainer_engine.qa.observe gate <episode folder> --stage clips|assemble
-python -m explainer_engine.qa.observe review <episode folder> <record_id> --by session|owner [--note T] [--message-id M]
+python -m explainer_engine.qa.observe review <episode folder> <record_id> --by session|owner [--note T] [--evidence FILE] [--message-id M]
 python -m explainer_engine.qa.observers.calibration <clips dir> <labels.json> <whisper.json> <shot_plan.json> [--claude answers.json]
 ```
