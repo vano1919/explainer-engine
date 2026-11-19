@@ -71,3 +71,29 @@ def test_a_scene_without_an_accepted_keyframe_has_no_key(tmp_path, monkeypatch):
     rows = RUN._finish_rows(ep, tmp_path / "m.mp4", RECORDS)
     assert any(r["gate"] == "VAL-CLR-01:S02" and r["status"] == G.NOT_RUN for r in rows)
     assert "S02" not in seen["scene_keys"]
+
+
+def test_a_missing_key_file_is_a_not_run_row_not_a_crash(tmp_path, monkeypatch):
+    import explainer_engine.finish.chain as FIN
+    monkeypatch.setattr(FIN, "finish_rows", lambda master, out, **k: [])
+    img = tmp_path / "k.png"
+    from PIL import Image
+    Image.new("RGB", (32, 18), (120, 60, 30)).save(img)
+    ss, sha = SS.ShotStates(tmp_path), SS.sha256_of(img)
+    for st in ("IMAGE_GENERATED", "IMAGE_OBSERVED", "IMAGE_ACCEPTED"):
+        ss.advance("S01_SH001", st, sha=sha, path="k.png")
+    img.write_bytes(b"not an image")        # readable path, unreadable picture (has_valid would also notice; both end NOT_RUN)
+    rows = RUN._finish_rows(SimpleNamespace(root=tmp_path, fps=24), tmp_path / "m.mp4", RECORDS[:1])
+    assert any(r["gate"] == "VAL-CLR-01:S01" and r["status"] == G.NOT_RUN for r in rows)
+
+
+def test_master_json_names_the_graded_file_that_was_measured(tmp_path, monkeypatch):
+    ep, calls = _ep(tmp_path), []
+    _patch(monkeypatch, ep, 48, calls)
+    graded = tmp_path / "renders/final/finish/ep_master_graded.mp4"
+    graded.parent.mkdir(parents=True)
+    monkeypatch.setattr(RUN, "_finish_rows", lambda e, m, r: (graded.write_bytes(b"graded"), [G.row("finish_probe", True, "ran")])[1])
+    RUN.stage_assemble(ep, False)
+    doc = json.loads((tmp_path / "production/master.json").read_text())
+    assert doc["graded_master"]["path"] == "renders/final/finish/ep_master_graded.mp4"
+    assert doc["graded_master"]["sha256"] == SS.sha256_of(graded)

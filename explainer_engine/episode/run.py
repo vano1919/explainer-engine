@@ -1681,8 +1681,11 @@ def _finish_rows(ep: Episode, master: Path, records: list[dict]) -> list[dict]:
             rows.append(G.row(f"VAL-CLR-01:{sid}", None, f"NOT_RUN: scene {sid} has no accepted keyframe (shot {first_shot} is not IMAGE_ACCEPTED)"))
             continue
         from PIL import Image
-        with Image.open(ep.root / h["path"]) as im:
-            keys[sid] = (np.asarray(im.convert("RGB").resize((256, 144)), np.float32) / 255.0, (a, b))
+        try:
+            with Image.open(ep.root / h["path"]) as im:
+                keys[sid] = (np.asarray(im.convert("RGB").resize((256, 144)), np.float32) / 255.0, (a, b))
+        except (OSError, ValueError) as exc:   # a missing or unreadable key file is a NOT_RUN row, never a crash of G9
+            rows.append(G.row(f"VAL-CLR-01:{sid}", None, f"NOT_RUN: the keyframe of scene {sid} cannot be read ({exc})"))
     try:
         return rows + FIN.finish_rows(master, master.parent / "finish", scene_keys=keys, fps=ep.fps, expected_frames=frame)
     except (ContractError, OSError, ValueError) as exc:
@@ -1762,6 +1765,11 @@ def stage_assemble(ep: Episode, rehearsal: bool):
         write_json_atomic(ep.path("qa/final_frame_manifest.json"), ff_manifest)
     if not left and master.is_file() and not rehearsal and all(r["status"] == G.PASS for r in rows):   # W7: only a master that passed G9
         rows += _finish_rows(ep, master, records)
+        graded = master.parent / "finish" / (master.stem + "_graded.mp4")
+        if graded.is_file():   # the finishing rows measured the graded copy: master.json names it with its hash, never silently the other file
+            from explainer_engine.episode.shot_state import sha256_of
+            res["graded_master"] = {"path": str(graded.relative_to(ep.root)), "sha256": sha256_of(graded),
+                                    "source_master_sha256": sha256_of(master)}
     write_json_atomic(ep.path("production/master.json"), res)
     return rows, {"master": str(master.relative_to(ep.root)) if not left else None, "chunks": res["chunks"]["count"],
                   "left": left}
