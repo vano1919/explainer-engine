@@ -626,6 +626,23 @@ def find_upscaler():
     return run
 
 
+def _vault_promoted(root: Path, ep: str, row: dict, master: Path) -> None:
+    """Ingest the accepted Chat picture (kind ``image_<start|end>``) and its working master (``master``, parent = the picture)
+    into the asset vault. Only for an episode folder inside a repo's ``episodes/`` (the vault root is two levels up)."""
+    from explainer_engine.imagegen import vault as AV
+    if root.resolve().parent.name != "episodes":
+        return
+    base = root.resolve().parents[1]
+    m = re.match(r"^(.*)_(start|end)$", row["id"])
+    shot, which = (m.group(1), m.group(2)) if m else (row["id"], "ref")   # an anchor (hero, place) has no start/end
+    src = root / row["file"]
+    if not src.is_file():
+        return
+    pic = AV.ingest(src, ep, shot, f"image_{which}", "gemini_chat_image", None, None, None, None, None, 0.0, root=base)
+    m = AV.ingest(master, ep, shot, f"master_{which}", "local_upscale", None, None, [pic["asset_id"]], None, None, 0.0, root=base)
+    del m
+
+
 def promote(root: Path, upscaler=None) -> dict:
     """Upscale every accepted draft to its working master and gate the result (decodes, 16:9, long side >= the episode's
     ``image_min_long_side``). Each result is a ledger row with ``grade`` ``master`` (or the draft stays, with the reason)."""
@@ -659,6 +676,8 @@ def promote(root: Path, upscaler=None) -> dict:
         _append(root, {"id": r["id"], "file": str(dst.relative_to(root)), "sha256": sha256(dst), "from_sha256": r["sha256"],
                        "status": "accepted" if ok else "rejected", "grade": "master" if ok else "draft", "gates": [gate],
                        "at": now()})
+        if ok:   # W3: the Chat picture and its master become untouched originals with a record (imagegen/vault)
+            _vault_promoted(root, man["episode_id"], r, dst)
         (out["promoted"] if ok else out["failed"]).append(r["id"] if ok else {"id": r["id"], "detail": gate["detail"]})
     return out
 

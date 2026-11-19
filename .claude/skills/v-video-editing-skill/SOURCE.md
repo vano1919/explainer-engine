@@ -1,0 +1,56 @@
+# SOURCE: v-video-editing-skill
+
+repo: https://github.com/kajisho5/video-editing-skill
+path: .
+commit: 2f77b39f55e75c00474e1a9885e360a29639b940
+commit_date: 2026-11-19
+retrieved: 2026-11-19
+author: kajisho5
+licence: MIT (LICENSE)
+stars_seen: not obtainable (GitHub API blocked in the session)
+stage: S14
+tool: tools/vendor_skill.py (byte-for-byte copy; upstream files are never edited)
+name_clash: upstream frontmatter name 'video-editing-skill' differs from folder 'v-video-editing-skill'; Claude Code uses the folder name
+excluded:
+  - --exclude brand: 7 files (brand)
+  - --exclude tests: 14 files (tests)
+  - skip-dir: 119 files (.git, .github)
+
+files:
+195c2544ef7a1b82e404c21faf245d5605f1d982b2e854b775f9fb70ae2f1233  .fetched
+d8125f44b8b8b216a610d9cd1c008c83cfaa44376e85a8f612ec5f616072a5df  .gitattributes
+d838619db42042450d66173c4a4c586585f600c780ffea48bb8307602979a2c3  .gitignore
+4a1f926fbb9d558b6e5c549f8ea28c760f0391a8804a8c9df585cf198a02293c  CHANGELOG.md
+69995ab9c7c97bea2935dd41462b13a17a439f417bfa8a67b4d431240f2de976  CLAUDE.md
+3fcb160373617fb0bb7349a0e4e008c2f5cbc8ea1fbc0230ffc0ff257869f9e8  ECOSYSTEM_ROADMAP.md
+7522b29e4d6e90f2a8fab15f07d224b1064c70692a872be9996ac1a88cf474e9  LICENSE
+62935143241decd778e6cf67a2cf10d1dfa6ea4e6ad56c89a5b399c69d68a257  README.md
+8920c294b7991353178ebca8bf515521d1bd9ff378666ceedab1d80ba8948db1  SKILL.md
+f7c3443972149cf6b0a5c3a9e573cc85253c6de1cb898834c37f6f8530c6c742  contract/contract.json
+96471925eb15b0567370225edb4dcc1ffdd2426092959fcfb7c433b544d31ae0  contract/generate.py
+e46a0d2a0ce81d68d119a419a9c8f424ce59f1f5cc31d5c64d0c43ee0242ab53  docs/contract.md
+cb4f2b7c8d4f1563901c68b80e1f09a6038b329d58c8fed96aa075ece324a450  docs/decisions.md
+ae01e7e71881a6c29bf72f030e9056e32ec53c97a29896ccef980599ee600fe2  docs/operations.md
+26afc43a0335d55f1c07b2be1b719976fb592ba6dcc7d4f5ecfc4449d2f07c77  docs/security.md
+01a5c1d6f9fb5a8c00993ed3d5c0ac7c75ddfba299afd68b325c978a61adb6f1  examples/multi-aspect.json
+2055dec6830555c049906a5f351d5eabe8c3d5b4591a70a91f114fad5bc15020  examples/request.json
+93f7733d18d1ed13d7486e5974f99188ffac3431063f7268425cedc4732696bc  pyproject.toml
+e463d8d11360f74ea0a20541f4f497985f983fc474e97708d1474bb5c3058182  src/video_editing_skill/__init__.py
+7afeadd4522552160b4980dc798d62c6351e23026023c4dc3f40ef0a286a8f3d  src/video_editing_skill/__main__.py
+1d4f5be8a2516ce7414dfb8ad5e36e89aea612660d46c383ee40002f04851ed0  src/video_editing_skill/alpha.py
+ea4c4288e034e0444abfbcb0dc5eaff60a33fe2548db69df9517a411e8f90128  src/video_editing_skill/canonical.py
+349bc5f1e2f94ef9dd92bcb9be0c83dc1055a853b5affe4c728b41ef142b9316  src/video_editing_skill/cli.py
+f68de02583ed50ab2159515ccb50eb41b29c8d211812e15c791737389ddb4523  src/video_editing_skill/compiler.py
+595b822bfc1c03c5b89542ce4337fc3f4c35840b37253cb6beed1c6fb913a131  src/video_editing_skill/contract.py
+ea188e744ffc22da2778e8457e953e68ce358b90b76742943a5ad17ed610e3c7  src/video_editing_skill/contract_check.py
+279a74f262a0810ed66362870829011d630c8e5a4d3dff2f20fccc500a6665f1  src/video_editing_skill/doctor.py
+5270b1d9a5092825760162e1e831c0941710f37c25092891a796b3e54cdf58cb  src/video_editing_skill/errors.py
+76759ea6764a9fcb55bc285c3f96fa7795cb2bb321a1c59791d7ce6b659e0de9  src/video_editing_skill/executor.py
+60db250c2756e93e0a43104e9deb310253b505a233604733ddec6cd0c40e7874  src/video_editing_skill/ffmpeg_skill.py
+7da589cfd7cc3d08ae9878a91f722ee91f7c3ee152010a5dc4189fafeffb16a1  src/video_editing_skill/operations.py
+0bc6fc57437d07a46d7a2f0c331c614922503805d508de1f8f9f531efdb5ab35  src/video_editing_skill/paths.py
+21fc5791b8cf1c7b1d0e866c64552fa45a3ab8fb0a955bd20f3b89f4a3352b93  src/video_editing_skill/project.py
+6c38f83e4fb7b2c85213f715bbc96558fff7df6f15d06543ed2a7d0dbd21edac  src/video_editing_skill/proposals.py
+74dc8a3e90980cbeef4216e01307ba1b251e67423a7d4fb07f2b378ba7bb4c82  src/video_editing_skill/response.py
+53ec04e84fd26d04e88741650c23f5a0802522a624a69a8c43bcb05da0cd7bfd  src/video_editing_skill/timebase.py
+7de26fe839418504db46350aae9e95b79801ab337ec83bc249a59e54f12e519f  src/video_editing_skill/timeline.py

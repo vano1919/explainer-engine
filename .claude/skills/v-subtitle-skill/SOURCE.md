@@ -1,0 +1,74 @@
+# SOURCE: v-subtitle-skill
+
+repo: https://github.com/kajisho5/subtitle-skill
+path: .
+commit: abbf8effae494abc6ce27222346832f97d0357f0
+commit_date: 2026-11-19
+retrieved: 2026-11-19
+author: kajisho5
+licence: MIT (LICENSE)
+stars_seen: not obtainable (GitHub API blocked in the session)
+stage: S18
+tool: tools/vendor_skill.py (byte-for-byte copy; upstream files are never edited)
+name_clash: upstream frontmatter name 'subtitle-skill' differs from folder 'v-subtitle-skill'; Claude Code uses the folder name
+excluded:
+  - --exclude brand: 7 files (brand)
+  - --exclude tests: 79 files (tests)
+  - larger than 1048576 bytes: 1 files (assets)
+  - skip-dir: 35 files (.git, .github)
+
+files:
+de12e0267e570d0e6155a735d2dbaa1c07d52b17c415fab3368afd646f584304  .fetched
+d8125f44b8b8b216a610d9cd1c008c83cfaa44376e85a8f612ec5f616072a5df  .gitattributes
+675dda56bc3b22a2f488d6f6b18bb66defb89bbb3cd019335ca558cef1131372  .gitignore
+b60bae2f39d14f665c52f6466e1926515cf327f6cc8f2633788c017d22721729  CHANGELOG.md
+f25504d98111e94d62f961ba57160b367df8aeaec4ed3bb0dcc228fa0968745a  CLAUDE.md
+7c0fde0512daf72361621f118a77f77e0d4af9d0eb536085c28b0958efdcd73d  ECOSYSTEM_ROADMAP.md
+7522b29e4d6e90f2a8fab15f07d224b1064c70692a872be9996ac1a88cf474e9  LICENSE
+2d24e6449b38c394ab709b08169bebe496ca42e64ae863e5344dc924276eed0c  README.md
+2e26bd76af943383f7dd2315ec003caacfd7b215bf339590c0e847576519f068  SECURITY.md
+8ff292b3b17b42a75c2e950bf106ae46cce2d9700a32157bb7249921de195c69  SKILL.md
+cf7a488f59a46d2c17e4e2ca814a2d16c7dd28447367d5fc61dba3f579037acf  contract/contract.json
+ca0ca05a056e5c4e5f7aab302352eb4f361f5389f847ed253d5c328ebb566b4f  contract/generate.py
+57c7b7eab2c3df7b700a1c7880d3d6b3755dea70b281d5aea8debf80b15749d1  docs/adr/ADR-001-locale-profiles.md
+e971b741a2a12bdf79ade8c59d68c632ab8c5fdc113d28f0e84e07bd9b327a15  docs/adr/ADR-002-provides-tool-id-prefix.md
+048dbee63b8b38f38c805d007df01c82a2308bc13bdaf2e1a51fc98516ef7d25  docs/adr/ADR-003-single-source-version.md
+22163fa1639497147dbe4d70f037fcf954222aa8d683e8ca4d51616518eb56e8  docs/adr/ADR-004-translation-engine.md
+bda6ae3d28cdbec99da3db12fb0e5e2cd25880a243b78d81ad93cb11e04a46be  docs/adr/ADR-005-multi-language-mux.md
+f8fe1e7f8e635000d066a05957d626945c8207312f746e6bd87031e515635002  docs/adr/ADR-006-caption-placement.md
+fd052bb1244144c3900f54e7ef7313856cf62d9fa9ef5bd8807f92ea3adf900f  docs/adr/ADR-007-ttml-output.md
+f0c7d1a8aa27d837756f69b6ad6e8420d77a828ea85b9dc58d049810825f6a3a  docs/adr/ADR-008-regional-profiles.md
+1628fb37c566fefe2282197fd3dbca7408b3fd75a640d90a65271849ef4e575a  docs/adr/ADR-009-shorts-captions.md
+07094a7c3a3d6d1f235bcb2a053899ccf3c4a7cf61ced370aa9206d49b5a042c  docs/adr/ADR-010-fonts-dir.md
+91990f5c608cb5c5d420b6943fb7ce5c5d4503d211bd811bf97f78a100089c8a  docs/adr/ADR-011-animated-captions.md
+c3e5fd105812fd65c12445df8a72c3d9a19aceab9fdaf067fa7b83264348870c  pyproject.toml
+b5f57530212b797d2fda1e5dac1842b636c0a12307d213a05e058e5cc72c820b  scripts/bump_version.py
+0196c448032d065c295e76a8193e86fc72d42cff11bd530ac24cbe56db90f867  scripts/check_vendor_drift.py
+ddb9426d009eba3c5354525b7c4372d03622a36114832aa03571b4f66cd7b728  scripts/dependabot_release_labels.py
+8ff292b3b17b42a75c2e950bf106ae46cce2d9700a32157bb7249921de195c69  src/subtitle_skill/SKILL.md
+c865465e239a28808c0e257c6b643c535f8b2ace8c5b2a6ff549d2589f3445cb  src/subtitle_skill/__init__.py
+307299fda7b77d22c64cb51430ec75e5f59d78e9c948786afb3b2544fe45e4b7  src/subtitle_skill/__main__.py
+6ddbc512017bde942afb54d974c898bfe3dcfce56a0b1e963086a0889083bca2  src/subtitle_skill/cli.py
+9307f64caa44af6e2f66e43740f1a1c104b522e101ef52a0b74d429fd5a9b405  src/subtitle_skill/contract.py
+69ebca1cc250dc6011319c2bcc6adea329c5720c847230cf86a7a318724a53f4  src/subtitle_skill/doctor.py
+81789e99b6ae33a6faf044350bf728be354be54e5591d1802fe41d2fe988353f  src/subtitle_skill/engine.py
+ad27a56ea562c543b314dd789b057ce1919513b3bb58e6fa1651e75fad9fb397  src/subtitle_skill/errors.py
+f783d7d7d3ae2b166bc5e992867cdd54689d75b1bd3338a91d0df9d2757779e2  src/subtitle_skill/fonts.py
+b2a77510ddb3607e30f3831210ac60beed86e10e805008c9c0aa1d5f38dc9c23  src/subtitle_skill/formats/__init__.py
+963e4176212dd2a7cd302e213bce2b19cec1a132fce928bd6e18d84520c56fa6  src/subtitle_skill/formats/_text.py
+fc00a73422c714235921146729dece41ec4d47723f699e30a73d5be3d76ed969  src/subtitle_skill/formats/ass.py
+836ce20bee6e39440347ac0d38d827be177d8d762bc4be2a797edf3d67da926a  src/subtitle_skill/formats/srt.py
+09f1feb2043e4c8d10b456c89403fbb4bfdf335705538523ae114dc585614419  src/subtitle_skill/formats/ttml.py
+f53c914994e8e23074f69dfe74a24a6c395eeb923bd4fde2bd15e59400fed5f7  src/subtitle_skill/formats/vtt.py
+b060223d2be582991baf5b8966ee0f828684da054b61b024d1e307cfc56a1a46  src/subtitle_skill/installer.py
+5c099853647d836254adcfb8eb7ccf9ce089236cfe0c88dfd545e5e4d7fb518a  src/subtitle_skill/locales.py
+2fbd3ccb8caf4e5380f3df1d8e2fb3d6c0256160b8dbd4c5475182d736417cdb  src/subtitle_skill/models.py
+c13d8357c6637d3c1bc1bf62b769a9c139d906491fdcadb186175ded8baccd8a  src/subtitle_skill/operations.py
+3e463b65319229edd985a0416de05cdb23c1a283cfe8f8b0842aa82a329cba2f  src/subtitle_skill/pathpolicy.py
+931b1b150f2b6d8d9c0529a9b78e84d05e70c0a8c8f0aecb27d297c65eaa8030  src/subtitle_skill/placement.py
+a44200e7ab7fa174f6904fd285d281ded59757594088fdcb07760a44aac4466e  src/subtitle_skill/provenance.py
+dbb965b4020f299ede58f4e43e8a3e90fdcf1b31479117e13790ff729dcb96fd  src/subtitle_skill/regional.py
+e13dd47ac2a9973694479f2b7c0ed8811f958d1997fac6122d5aca6b463a0a4d  src/subtitle_skill/security.py
+1ed30a18debb3dcb8b70303d73a8831c412c84d84b0af5d60cf9fe1be0af9430  src/subtitle_skill/shorts.py
+ab06899bcbec9a558281e9e2e890963b8cdd257245a8cdeeec91e673f62fbe8d  src/subtitle_skill/translation.py
+a525a5b5f017713e7c4e6c4cb1300cfa02a4a400131445982c7f9904b129ba85  src/subtitle_skill/validation.py

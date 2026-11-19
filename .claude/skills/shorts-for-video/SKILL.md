@@ -95,3 +95,11 @@ The numbers that bind a Short live only in the registry (`explainer_engine/stand
 - BP-47: the first Short goes up within 3 days of the video, then at most one a day, the ten spread over at least 14 days.
 - BP-135, BP-136, BP-137: three promises before the scenario, the midpoint retention gate, the Shorts length limit (all
   hypothesis, REVIEW; checklist above).
+
+## Vendored skills (W1, P-1/P-2): when to load them
+
+Upstream text lives in the `v-*` folders (pinned in `docs/VENDORED_SKILLS.md`); nothing from it is copied here.
+
+- Load `v-viral-youtube-shorts` for Shorts hooks, retention and the link back to the long video.
+- The 9:16 crop around named heroes, one Short per upload and "never public" stay in this skill.
+- Validator: `explainer_engine/validators/shorts.py` (planned, W2) and `explainer_engine/shorts/planner.py` (planned, P9).

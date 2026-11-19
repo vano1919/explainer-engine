@@ -95,7 +95,7 @@ def test_every_hook_command_names_an_existing_module_and_hook():
     assert names == set(hooks.HOOKS)  # every hook is wired
 
 
-PLANNED = re.compile(r"`[^`\n]*`\s*\(planned, P\d+[a-z]?\)")
+PLANNED = re.compile(r"`[^`\n]*`\s*\(planned, (?:P\d+[a-z]?|W\d+)\)")  # P = blueprint phase, W = final-plan stream (W1 overlays name W2 validators)
 
 
 def _named(text: str):
@@ -112,7 +112,8 @@ def _module_exists(mod: str) -> bool:
 
 def test_everything_an_agent_or_a_skill_names_exists():
     missing = []
-    files = list((ROOT / ".claude").rglob("*.md"))
+    # vendored upstream skills (`v-*`) are byte-pinned third-party text: tests/unit/test_vendored_skills.py guards them, not this scan
+    files = [f for f in (ROOT / ".claude").rglob("*.md") if not any(part.startswith("v-") for part in f.relative_to(ROOT / ".claude").parts)]
     for f in files:
         # only a reference directly followed by the marker "(planned, P8)" may name a module a later phase builds; the marker is the
         # contract and exempts nothing else on the line
@@ -120,7 +121,7 @@ def test_everything_an_agent_or_a_skill_names_exists():
         mods, paths, skills = _named(text)
         missing += [f"{f.name}: module {m}" for m in mods if not _module_exists(m)]
         missing += [f"{f.name}: {p}" for p in paths if not (ROOT / p).exists()]
-        missing += [f"{f.name}: skill {s}" for s in skills if not (ROOT / ".claude/skills" / s / "SKILL.md").exists() and s not in {n for n in NAMES}]
+        missing += [f"{f.name}: skill {s}" for s in skills if not (ROOT / ".claude/skills" / s / "SKILL.md").exists() and not (ROOT / ".claude/skills/_archive" / s / "SKILL.md").exists() and s not in {n for n in NAMES}]
     assert not missing, missing
 
 
@@ -142,13 +143,13 @@ def test_the_blueprint_packages_that_must_not_exist_do_not():
 # ---- T4 (plan_v2 wave 2): CP-12 route notes, N-06 docstring scope, the select_screen move ------------------------------------------
 
 def test_cp12_edit_planner_and_shot_visuals_carry_a_route_note_and_no_live_2512():
-    for rel in (".claude/agents/edit-planner.md", ".claude/skills/shot-visuals/SKILL.md"):
+    for rel in (".claude/agents/edit-planner.md", ".claude/skills/_archive/shot-visuals/SKILL.md"):
         lines = (ROOT / rel).read_text(encoding="utf-8").splitlines()
         assert any("Route note" in l and "D-43" in l and "D-80" in l for l in lines[:12]), rel
         for l in lines:
             if "2512" in l or "Edit-2511" in l:
                 assert "banned" in l, (rel, l)
-    skill = (ROOT / ".claude/skills/shot-visuals/SKILL.md").read_text(encoding="utf-8")
+    skill = (ROOT / ".claude/skills/_archive/shot-visuals/SKILL.md").read_text(encoding="utf-8")
     assert skill.index("## Still-picture route (D-43)") < skill.index("## Animated route (D-77/D-80)")
     assert skill.index("## Animated shots") > skill.index("## Animated route (D-77/D-80)")
     assert skill.index("## Procedure") < skill.index("## Animated route (D-77/D-80)")  # the sprite procedure stays in the still route

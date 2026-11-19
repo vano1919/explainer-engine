@@ -14,7 +14,7 @@ def _head(p, n):
 
 
 def test_animated_universe_skill_is_retired_in_part():
-    p = ".claude/skills/animated-universe/SKILL.md"
+    p = ".claude/skills/_archive/animated-universe/SKILL.md"
     txt = _text(p)
     assert "Retired in part" in _head(p, 15)
     assert "Use the rig's cycles" not in txt.split("#### History")[0]
@@ -36,7 +36,7 @@ def test_lora_agents_describe_one_lora_on_qwen_image_2_1():
 
 
 def test_lora_training_skill_history_precedes_the_2512_settings():
-    txt = _text(".claude/skills/lora-training/SKILL.md")
+    txt = _text(".claude/skills/_archive/lora-training/SKILL.md")
     hist = txt.index("## History (retired by D-80, lessons only)")
     assert hist < txt.index("Settings that worked (2026-10-23, Qwen-Image-2512")
     assert hist < txt.index("## Video and edit LoRAs")

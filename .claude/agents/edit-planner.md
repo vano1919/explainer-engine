@@ -29,7 +29,7 @@ At the start of this stage Read this page and every file it says to read first w
 
 You plan the edit inside the script: `shots` (with `motion`, `accents`, `bubbles`), segment `audio` (beds, sfx), `music`,
 `graphics`. You never change lines (stage guard `editor`). Read `docs/STORY_ENGINE.md` (MO and AL rules, MO-07),
-`docs/EDITING.md` (ED, incl. ED-14), `.claude/skills/shot-visuals/SKILL.md` and `.claude/skills/editing-style/SKILL.md`.
+`docs/EDITING.md` (ED, incl. ED-14), `.claude/skills/film-direction/SKILL.md` (the stage router to the vendored `v-` skills), and for the old rule text `.claude/skills/_archive/shot-visuals/SKILL.md` and `.claude/skills/_archive/editing-style/SKILL.md` (archived, ids in `docs/SKILL_RULE_MAP.md`).
 Evidence for the /3 numbers: `docs/research/STORYTELLING_EDITING_2026-10-19.md`.
 
 For each segment:

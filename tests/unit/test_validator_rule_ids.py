@@ -55,26 +55,29 @@ def test_every_enforced_by_path_of_a_validator_rule_exists():
     assert SR.check() == []
 
 
-def test_skill_rule_map_agrees_with_rule_ids_when_it_exists():
-    """W1's docs/SKILL_RULE_MAP.md: a row that points a rule at ``validators/<stage>.py`` must find that id in the module's RULE_IDS."""
+def test_skill_rule_map_is_bidirectional_with_rule_ids():
+    """W1's docs/SKILL_RULE_MAP.md: every row marked ``validator`` names ``validators/<stage>.py`` and its id is in that module's RULE_IDS;
+    every RULE_IDS id the map lists is marked ``validator`` there, with its own module."""
     path = ROOT / "docs" / "SKILL_RULE_MAP.md"
     if not path.is_file():
-        pytest.skip("docs/SKILL_RULE_MAP.md is W1's file and is not on this branch yet")
-    wrong = []
+        pytest.skip("docs/SKILL_RULE_MAP.md is W1's file and is not on this branch")
+    idx = V.rule_index()
+    listed, wrong = set(), []
     for line in path.read_text(encoding="utf-8").splitlines():
-        m = re.search(r"validators/(\w+)\.py", line)
-        if not m or m.group(1) not in V.STAGES:
+        m = re.match(r"\|\s*`((?:CRAFT|VAL)-[A-Z]+-\d+)`\s*\|", line)
+        if not m:
             continue
-        stage = m.group(1)
-        try:
-            ids = set(V.load(stage).RULE_IDS)
-        except ImportError:
-            wrong.append(f"{stage}: module missing")
-            continue
-        for rid in re.findall(r"\b((?:CRAFT|VAL)-[A-Z]+-\d+)\b", line):
-            if rid not in ids:
-                wrong.append(f"{rid} -> validators/{stage}.py")
+        rid, cells = m.group(1), [c.strip() for c in line.split("|")]
+        mapping, target = cells[5], cells[6].strip("`")
+        listed.add(rid)
+        if mapping == "validator":
+            mod = re.fullmatch(r"explainer_engine/validators/(\w+)\.py", target)
+            if not mod or idx.get(rid) != mod.group(1):
+                wrong.append(f"{rid}: marked validator -> {target}, but RULE_IDS puts it in {idx.get(rid)}")
+        elif rid in idx:
+            wrong.append(f"{rid}: is in validators/{idx[rid]}.py but the map says {mapping}")
     assert not wrong, wrong
+    assert {r for r in idx if r.startswith("CRAFT-")} <= listed, "a CRAFT rule id of RULE_IDS is missing from the map"
 
 
 def test_the_validators_read_thresholds_never_copy_them():

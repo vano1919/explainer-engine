@@ -1,0 +1,1378 @@
+{
+ "note": "clips named in asset_inventory.csv (HF full_film_2026-11-15/inventory_2026-11-16) with no hf_location: Mac only, no record possible without bytes",
+ "count": 196,
+ "missing": [
+  {
+   "asset_id": "ltx_cut:S01_SH002",
+   "category": "ltx_clip",
+   "subtype": "cut",
+   "path": "episodes/ep_truce_1914/production/video/cut/S01_SH002.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_cut:S01_SH003",
+   "category": "ltx_clip",
+   "subtype": "cut",
+   "path": "episodes/ep_truce_1914/production/video/cut/S01_SH003.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_cut:S02_SH006",
+   "category": "ltx_clip",
+   "subtype": "cut",
+   "path": "episodes/ep_truce_1914/production/video/cut/S02_SH006.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_cut:S02_SH007",
+   "category": "ltx_clip",
+   "subtype": "cut",
+   "path": "episodes/ep_truce_1914/production/video/cut/S02_SH007.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_cut:S03_SH001",
+   "category": "ltx_clip",
+   "subtype": "cut",
+   "path": "episodes/ep_truce_1914/production/video/cut/S03_SH001.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_cut:S03_SH003",
+   "category": "ltx_clip",
+   "subtype": "cut",
+   "path": "episodes/ep_truce_1914/production/video/cut/S03_SH003.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_cut:S03_SH004",
+   "category": "ltx_clip",
+   "subtype": "cut",
+   "path": "episodes/ep_truce_1914/production/video/cut/S03_SH004.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_cut:S03_SH005",
+   "category": "ltx_clip",
+   "subtype": "cut",
+   "path": "episodes/ep_truce_1914/production/video/cut/S03_SH005.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_cut:S03_SH006",
+   "category": "ltx_clip",
+   "subtype": "cut",
+   "path": "episodes/ep_truce_1914/production/video/cut/S03_SH006.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_cut:S03_SH007",
+   "category": "ltx_clip",
+   "subtype": "cut",
+   "path": "episodes/ep_truce_1914/production/video/cut/S03_SH007.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_cut:S03_SH008",
+   "category": "ltx_clip",
+   "subtype": "cut",
+   "path": "episodes/ep_truce_1914/production/video/cut/S03_SH008.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_cut:S03_SH009",
+   "category": "ltx_clip",
+   "subtype": "cut",
+   "path": "episodes/ep_truce_1914/production/video/cut/S03_SH009.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_cut:S04_SH002",
+   "category": "ltx_clip",
+   "subtype": "cut",
+   "path": "episodes/ep_truce_1914/production/video/cut/S04_SH002.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_cut:S04_SH003",
+   "category": "ltx_clip",
+   "subtype": "cut",
+   "path": "episodes/ep_truce_1914/production/video/cut/S04_SH003.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_cut:S04_SH004",
+   "category": "ltx_clip",
+   "subtype": "cut",
+   "path": "episodes/ep_truce_1914/production/video/cut/S04_SH004.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_cut:S04_SH005",
+   "category": "ltx_clip",
+   "subtype": "cut",
+   "path": "episodes/ep_truce_1914/production/video/cut/S04_SH005.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_cut:S04_SH006",
+   "category": "ltx_clip",
+   "subtype": "cut",
+   "path": "episodes/ep_truce_1914/production/video/cut/S04_SH006.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_cut:S04_SH007",
+   "category": "ltx_clip",
+   "subtype": "cut",
+   "path": "episodes/ep_truce_1914/production/video/cut/S04_SH007.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_cut:S04_SH008",
+   "category": "ltx_clip",
+   "subtype": "cut",
+   "path": "episodes/ep_truce_1914/production/video/cut/S04_SH008.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_cut:S04_SH009",
+   "category": "ltx_clip",
+   "subtype": "cut",
+   "path": "episodes/ep_truce_1914/production/video/cut/S04_SH009.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_cut:S04_SH010",
+   "category": "ltx_clip",
+   "subtype": "cut",
+   "path": "episodes/ep_truce_1914/production/video/cut/S04_SH010.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_cut:S04_SH012",
+   "category": "ltx_clip",
+   "subtype": "cut",
+   "path": "episodes/ep_truce_1914/production/video/cut/S04_SH012.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_cut:S04_SH013",
+   "category": "ltx_clip",
+   "subtype": "cut",
+   "path": "episodes/ep_truce_1914/production/video/cut/S04_SH013.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_cut:S04_SH014",
+   "category": "ltx_clip",
+   "subtype": "cut",
+   "path": "episodes/ep_truce_1914/production/video/cut/S04_SH014.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_cut:S04_SH015",
+   "category": "ltx_clip",
+   "subtype": "cut",
+   "path": "episodes/ep_truce_1914/production/video/cut/S04_SH015.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_cut:S05_SH004",
+   "category": "ltx_clip",
+   "subtype": "cut",
+   "path": "episodes/ep_truce_1914/production/video/cut/S05_SH004.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_cut:S05_SH005",
+   "category": "ltx_clip",
+   "subtype": "cut",
+   "path": "episodes/ep_truce_1914/production/video/cut/S05_SH005.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_cut:S05_SH006",
+   "category": "ltx_clip",
+   "subtype": "cut",
+   "path": "episodes/ep_truce_1914/production/video/cut/S05_SH006.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_cut:S05_SH007",
+   "category": "ltx_clip",
+   "subtype": "cut",
+   "path": "episodes/ep_truce_1914/production/video/cut/S05_SH007.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_cut:S05_SH008",
+   "category": "ltx_clip",
+   "subtype": "cut",
+   "path": "episodes/ep_truce_1914/production/video/cut/S05_SH008.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_cut:S05_SH009",
+   "category": "ltx_clip",
+   "subtype": "cut",
+   "path": "episodes/ep_truce_1914/production/video/cut/S05_SH009.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_cut:S05_SH011",
+   "category": "ltx_clip",
+   "subtype": "cut",
+   "path": "episodes/ep_truce_1914/production/video/cut/S05_SH011.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_cut:S05_SH012",
+   "category": "ltx_clip",
+   "subtype": "cut",
+   "path": "episodes/ep_truce_1914/production/video/cut/S05_SH012.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_cut:S05_SH013",
+   "category": "ltx_clip",
+   "subtype": "cut",
+   "path": "episodes/ep_truce_1914/production/video/cut/S05_SH013.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_cut:S05_SH014",
+   "category": "ltx_clip",
+   "subtype": "cut",
+   "path": "episodes/ep_truce_1914/production/video/cut/S05_SH014.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_cut:S05_SH015",
+   "category": "ltx_clip",
+   "subtype": "cut",
+   "path": "episodes/ep_truce_1914/production/video/cut/S05_SH015.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_cut:S05_SH017",
+   "category": "ltx_clip",
+   "subtype": "cut",
+   "path": "episodes/ep_truce_1914/production/video/cut/S05_SH017.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_cut:S05_SH018",
+   "category": "ltx_clip",
+   "subtype": "cut",
+   "path": "episodes/ep_truce_1914/production/video/cut/S05_SH018.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_cut:S05_SH019",
+   "category": "ltx_clip",
+   "subtype": "cut",
+   "path": "episodes/ep_truce_1914/production/video/cut/S05_SH019.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_cut:S05_SH021",
+   "category": "ltx_clip",
+   "subtype": "cut",
+   "path": "episodes/ep_truce_1914/production/video/cut/S05_SH021.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_cut:S06_SH002",
+   "category": "ltx_clip",
+   "subtype": "cut",
+   "path": "episodes/ep_truce_1914/production/video/cut/S06_SH002.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_cut:S06_SH003",
+   "category": "ltx_clip",
+   "subtype": "cut",
+   "path": "episodes/ep_truce_1914/production/video/cut/S06_SH003.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_cut:S06_SH004",
+   "category": "ltx_clip",
+   "subtype": "cut",
+   "path": "episodes/ep_truce_1914/production/video/cut/S06_SH004.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_cut:S06_SH006",
+   "category": "ltx_clip",
+   "subtype": "cut",
+   "path": "episodes/ep_truce_1914/production/video/cut/S06_SH006.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_cut:S06_SH007",
+   "category": "ltx_clip",
+   "subtype": "cut",
+   "path": "episodes/ep_truce_1914/production/video/cut/S06_SH007.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_cut:S06_SH008",
+   "category": "ltx_clip",
+   "subtype": "cut",
+   "path": "episodes/ep_truce_1914/production/video/cut/S06_SH008.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_cut:S06_SH009",
+   "category": "ltx_clip",
+   "subtype": "cut",
+   "path": "episodes/ep_truce_1914/production/video/cut/S06_SH009.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_cut:S06_SH010",
+   "category": "ltx_clip",
+   "subtype": "cut",
+   "path": "episodes/ep_truce_1914/production/video/cut/S06_SH010.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_cut:S06_SH011",
+   "category": "ltx_clip",
+   "subtype": "cut",
+   "path": "episodes/ep_truce_1914/production/video/cut/S06_SH011.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_cut:S07_SH002",
+   "category": "ltx_clip",
+   "subtype": "cut",
+   "path": "episodes/ep_truce_1914/production/video/cut/S07_SH002.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_cut:S07_SH003",
+   "category": "ltx_clip",
+   "subtype": "cut",
+   "path": "episodes/ep_truce_1914/production/video/cut/S07_SH003.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_cut:S07_SH004",
+   "category": "ltx_clip",
+   "subtype": "cut",
+   "path": "episodes/ep_truce_1914/production/video/cut/S07_SH004.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_cut:S07_SH005",
+   "category": "ltx_clip",
+   "subtype": "cut",
+   "path": "episodes/ep_truce_1914/production/video/cut/S07_SH005.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_cut:S07_SH006",
+   "category": "ltx_clip",
+   "subtype": "cut",
+   "path": "episodes/ep_truce_1914/production/video/cut/S07_SH006.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_cut:S07_SH007",
+   "category": "ltx_clip",
+   "subtype": "cut",
+   "path": "episodes/ep_truce_1914/production/video/cut/S07_SH007.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_cut:S07_SH008",
+   "category": "ltx_clip",
+   "subtype": "cut",
+   "path": "episodes/ep_truce_1914/production/video/cut/S07_SH008.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_incoming:S01_SH002",
+   "category": "ltx_clip",
+   "subtype": "incoming",
+   "path": "episodes/ep_truce_1914/production/video/incoming/S01_SH002.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_incoming:S01_SH003",
+   "category": "ltx_clip",
+   "subtype": "incoming",
+   "path": "episodes/ep_truce_1914/production/video/incoming/S01_SH003.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_incoming:S02_SH006",
+   "category": "ltx_clip",
+   "subtype": "incoming",
+   "path": "episodes/ep_truce_1914/production/video/incoming/S02_SH006.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_incoming:S02_SH007",
+   "category": "ltx_clip",
+   "subtype": "incoming",
+   "path": "episodes/ep_truce_1914/production/video/incoming/S02_SH007.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_incoming:S03_SH001",
+   "category": "ltx_clip",
+   "subtype": "incoming",
+   "path": "episodes/ep_truce_1914/production/video/incoming/S03_SH001.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_incoming:S03_SH003",
+   "category": "ltx_clip",
+   "subtype": "incoming",
+   "path": "episodes/ep_truce_1914/production/video/incoming/S03_SH003.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_incoming:S03_SH004",
+   "category": "ltx_clip",
+   "subtype": "incoming",
+   "path": "episodes/ep_truce_1914/production/video/incoming/S03_SH004.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_incoming:S03_SH005",
+   "category": "ltx_clip",
+   "subtype": "incoming",
+   "path": "episodes/ep_truce_1914/production/video/incoming/S03_SH005.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_incoming:S03_SH006",
+   "category": "ltx_clip",
+   "subtype": "incoming",
+   "path": "episodes/ep_truce_1914/production/video/incoming/S03_SH006.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_incoming:S03_SH007",
+   "category": "ltx_clip",
+   "subtype": "incoming",
+   "path": "episodes/ep_truce_1914/production/video/incoming/S03_SH007.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_incoming:S03_SH008",
+   "category": "ltx_clip",
+   "subtype": "incoming",
+   "path": "episodes/ep_truce_1914/production/video/incoming/S03_SH008.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_incoming:S03_SH009",
+   "category": "ltx_clip",
+   "subtype": "incoming",
+   "path": "episodes/ep_truce_1914/production/video/incoming/S03_SH009.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_incoming:S04_SH002",
+   "category": "ltx_clip",
+   "subtype": "incoming",
+   "path": "episodes/ep_truce_1914/production/video/incoming/S04_SH002.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_incoming:S04_SH003",
+   "category": "ltx_clip",
+   "subtype": "incoming",
+   "path": "episodes/ep_truce_1914/production/video/incoming/S04_SH003.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_incoming:S04_SH004",
+   "category": "ltx_clip",
+   "subtype": "incoming",
+   "path": "episodes/ep_truce_1914/production/video/incoming/S04_SH004.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_incoming:S04_SH005",
+   "category": "ltx_clip",
+   "subtype": "incoming",
+   "path": "episodes/ep_truce_1914/production/video/incoming/S04_SH005.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_incoming:S04_SH006",
+   "category": "ltx_clip",
+   "subtype": "incoming",
+   "path": "episodes/ep_truce_1914/production/video/incoming/S04_SH006.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_incoming:S04_SH007",
+   "category": "ltx_clip",
+   "subtype": "incoming",
+   "path": "episodes/ep_truce_1914/production/video/incoming/S04_SH007.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_incoming:S04_SH008",
+   "category": "ltx_clip",
+   "subtype": "incoming",
+   "path": "episodes/ep_truce_1914/production/video/incoming/S04_SH008.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_incoming:S04_SH009",
+   "category": "ltx_clip",
+   "subtype": "incoming",
+   "path": "episodes/ep_truce_1914/production/video/incoming/S04_SH009.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_incoming:S04_SH010",
+   "category": "ltx_clip",
+   "subtype": "incoming",
+   "path": "episodes/ep_truce_1914/production/video/incoming/S04_SH010.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_incoming:S04_SH012",
+   "category": "ltx_clip",
+   "subtype": "incoming",
+   "path": "episodes/ep_truce_1914/production/video/incoming/S04_SH012.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_incoming:S04_SH013",
+   "category": "ltx_clip",
+   "subtype": "incoming",
+   "path": "episodes/ep_truce_1914/production/video/incoming/S04_SH013.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_incoming:S04_SH014",
+   "category": "ltx_clip",
+   "subtype": "incoming",
+   "path": "episodes/ep_truce_1914/production/video/incoming/S04_SH014.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_incoming:S04_SH015",
+   "category": "ltx_clip",
+   "subtype": "incoming",
+   "path": "episodes/ep_truce_1914/production/video/incoming/S04_SH015.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_incoming:S05_SH004",
+   "category": "ltx_clip",
+   "subtype": "incoming",
+   "path": "episodes/ep_truce_1914/production/video/incoming/S05_SH004.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_incoming:S05_SH005",
+   "category": "ltx_clip",
+   "subtype": "incoming",
+   "path": "episodes/ep_truce_1914/production/video/incoming/S05_SH005.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_incoming:S05_SH006",
+   "category": "ltx_clip",
+   "subtype": "incoming",
+   "path": "episodes/ep_truce_1914/production/video/incoming/S05_SH006.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_incoming:S05_SH007",
+   "category": "ltx_clip",
+   "subtype": "incoming",
+   "path": "episodes/ep_truce_1914/production/video/incoming/S05_SH007.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_incoming:S05_SH008",
+   "category": "ltx_clip",
+   "subtype": "incoming",
+   "path": "episodes/ep_truce_1914/production/video/incoming/S05_SH008.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_incoming:S05_SH009",
+   "category": "ltx_clip",
+   "subtype": "incoming",
+   "path": "episodes/ep_truce_1914/production/video/incoming/S05_SH009.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_incoming:S05_SH011",
+   "category": "ltx_clip",
+   "subtype": "incoming",
+   "path": "episodes/ep_truce_1914/production/video/incoming/S05_SH011.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_incoming:S05_SH012",
+   "category": "ltx_clip",
+   "subtype": "incoming",
+   "path": "episodes/ep_truce_1914/production/video/incoming/S05_SH012.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_incoming:S05_SH013",
+   "category": "ltx_clip",
+   "subtype": "incoming",
+   "path": "episodes/ep_truce_1914/production/video/incoming/S05_SH013.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_incoming:S05_SH014",
+   "category": "ltx_clip",
+   "subtype": "incoming",
+   "path": "episodes/ep_truce_1914/production/video/incoming/S05_SH014.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_incoming:S05_SH015",
+   "category": "ltx_clip",
+   "subtype": "incoming",
+   "path": "episodes/ep_truce_1914/production/video/incoming/S05_SH015.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_incoming:S05_SH017",
+   "category": "ltx_clip",
+   "subtype": "incoming",
+   "path": "episodes/ep_truce_1914/production/video/incoming/S05_SH017.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_incoming:S05_SH018",
+   "category": "ltx_clip",
+   "subtype": "incoming",
+   "path": "episodes/ep_truce_1914/production/video/incoming/S05_SH018.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_incoming:S05_SH019",
+   "category": "ltx_clip",
+   "subtype": "incoming",
+   "path": "episodes/ep_truce_1914/production/video/incoming/S05_SH019.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_incoming:S05_SH021",
+   "category": "ltx_clip",
+   "subtype": "incoming",
+   "path": "episodes/ep_truce_1914/production/video/incoming/S05_SH021.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_incoming:S06_SH002",
+   "category": "ltx_clip",
+   "subtype": "incoming",
+   "path": "episodes/ep_truce_1914/production/video/incoming/S06_SH002.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_incoming:S06_SH003",
+   "category": "ltx_clip",
+   "subtype": "incoming",
+   "path": "episodes/ep_truce_1914/production/video/incoming/S06_SH003.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_incoming:S06_SH004",
+   "category": "ltx_clip",
+   "subtype": "incoming",
+   "path": "episodes/ep_truce_1914/production/video/incoming/S06_SH004.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_incoming:S06_SH006",
+   "category": "ltx_clip",
+   "subtype": "incoming",
+   "path": "episodes/ep_truce_1914/production/video/incoming/S06_SH006.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_incoming:S06_SH007",
+   "category": "ltx_clip",
+   "subtype": "incoming",
+   "path": "episodes/ep_truce_1914/production/video/incoming/S06_SH007.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_incoming:S06_SH008",
+   "category": "ltx_clip",
+   "subtype": "incoming",
+   "path": "episodes/ep_truce_1914/production/video/incoming/S06_SH008.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_incoming:S06_SH009",
+   "category": "ltx_clip",
+   "subtype": "incoming",
+   "path": "episodes/ep_truce_1914/production/video/incoming/S06_SH009.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_incoming:S06_SH010",
+   "category": "ltx_clip",
+   "subtype": "incoming",
+   "path": "episodes/ep_truce_1914/production/video/incoming/S06_SH010.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_incoming:S06_SH011",
+   "category": "ltx_clip",
+   "subtype": "incoming",
+   "path": "episodes/ep_truce_1914/production/video/incoming/S06_SH011.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_incoming:S07_SH002",
+   "category": "ltx_clip",
+   "subtype": "incoming",
+   "path": "episodes/ep_truce_1914/production/video/incoming/S07_SH002.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_incoming:S07_SH003",
+   "category": "ltx_clip",
+   "subtype": "incoming",
+   "path": "episodes/ep_truce_1914/production/video/incoming/S07_SH003.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_incoming:S07_SH004",
+   "category": "ltx_clip",
+   "subtype": "incoming",
+   "path": "episodes/ep_truce_1914/production/video/incoming/S07_SH004.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_incoming:S07_SH005",
+   "category": "ltx_clip",
+   "subtype": "incoming",
+   "path": "episodes/ep_truce_1914/production/video/incoming/S07_SH005.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_incoming:S07_SH006",
+   "category": "ltx_clip",
+   "subtype": "incoming",
+   "path": "episodes/ep_truce_1914/production/video/incoming/S07_SH006.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_incoming:S07_SH007",
+   "category": "ltx_clip",
+   "subtype": "incoming",
+   "path": "episodes/ep_truce_1914/production/video/incoming/S07_SH007.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "ltx_incoming:S07_SH008",
+   "category": "ltx_clip",
+   "subtype": "incoming",
+   "path": "episodes/ep_truce_1914/production/video/incoming/S07_SH008.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S01_SH001",
+   "category": "rendered_clip",
+   "subtype": "still_25d",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S01_SH001.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S01_SH002",
+   "category": "rendered_clip",
+   "subtype": "video",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S01_SH002.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S01_SH003",
+   "category": "rendered_clip",
+   "subtype": "video",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S01_SH003.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S01_SH004",
+   "category": "rendered_clip",
+   "subtype": "still_25d",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S01_SH004.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S01_SH005",
+   "category": "rendered_clip",
+   "subtype": "still_25d",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S01_SH005.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S02_SH001",
+   "category": "rendered_clip",
+   "subtype": "map_action",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S02_SH001.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S02_SH002",
+   "category": "rendered_clip",
+   "subtype": "map_action",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S02_SH002.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S02_SH003",
+   "category": "rendered_clip",
+   "subtype": "map_action",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S02_SH003.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S02_SH004",
+   "category": "rendered_clip",
+   "subtype": "still_25d",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S02_SH004.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S02_SH005",
+   "category": "rendered_clip",
+   "subtype": "still_25d",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S02_SH005.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S02_SH006",
+   "category": "rendered_clip",
+   "subtype": "video",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S02_SH006.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S02_SH007",
+   "category": "rendered_clip",
+   "subtype": "video",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S02_SH007.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S02_SH008",
+   "category": "rendered_clip",
+   "subtype": "still_25d",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S02_SH008.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S02_SH009",
+   "category": "rendered_clip",
+   "subtype": "still_25d",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S02_SH009.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S03_SH001",
+   "category": "rendered_clip",
+   "subtype": "video",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S03_SH001.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S03_SH002",
+   "category": "rendered_clip",
+   "subtype": "still_25d",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S03_SH002.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S03_SH003",
+   "category": "rendered_clip",
+   "subtype": "video",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S03_SH003.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S03_SH004",
+   "category": "rendered_clip",
+   "subtype": "video",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S03_SH004.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S03_SH005",
+   "category": "rendered_clip",
+   "subtype": "video",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S03_SH005.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S03_SH006",
+   "category": "rendered_clip",
+   "subtype": "video",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S03_SH006.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S03_SH007",
+   "category": "rendered_clip",
+   "subtype": "video",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S03_SH007.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S03_SH008",
+   "category": "rendered_clip",
+   "subtype": "video",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S03_SH008.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S03_SH009",
+   "category": "rendered_clip",
+   "subtype": "video",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S03_SH009.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S03_SH010",
+   "category": "rendered_clip",
+   "subtype": "still_25d",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S03_SH010.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S04_SH001",
+   "category": "rendered_clip",
+   "subtype": "still_25d",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S04_SH001.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S04_SH002",
+   "category": "rendered_clip",
+   "subtype": "video",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S04_SH002.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S04_SH003",
+   "category": "rendered_clip",
+   "subtype": "video",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S04_SH003.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S04_SH004",
+   "category": "rendered_clip",
+   "subtype": "video",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S04_SH004.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S04_SH005",
+   "category": "rendered_clip",
+   "subtype": "video",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S04_SH005.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S04_SH006",
+   "category": "rendered_clip",
+   "subtype": "video",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S04_SH006.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S04_SH007",
+   "category": "rendered_clip",
+   "subtype": "video",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S04_SH007.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S04_SH008",
+   "category": "rendered_clip",
+   "subtype": "video",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S04_SH008.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S04_SH009",
+   "category": "rendered_clip",
+   "subtype": "video",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S04_SH009.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S04_SH010",
+   "category": "rendered_clip",
+   "subtype": "video",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S04_SH010.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S04_SH011",
+   "category": "rendered_clip",
+   "subtype": "still_25d",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S04_SH011.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S04_SH012",
+   "category": "rendered_clip",
+   "subtype": "video",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S04_SH012.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S04_SH013",
+   "category": "rendered_clip",
+   "subtype": "video",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S04_SH013.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S04_SH014",
+   "category": "rendered_clip",
+   "subtype": "video",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S04_SH014.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S04_SH015",
+   "category": "rendered_clip",
+   "subtype": "video",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S04_SH015.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S05_SH001",
+   "category": "rendered_clip",
+   "subtype": "map_action",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S05_SH001.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S05_SH002",
+   "category": "rendered_clip",
+   "subtype": "map_action",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S05_SH002.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S05_SH003",
+   "category": "rendered_clip",
+   "subtype": "still_25d",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S05_SH003.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S05_SH004",
+   "category": "rendered_clip",
+   "subtype": "video",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S05_SH004.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S05_SH005",
+   "category": "rendered_clip",
+   "subtype": "video",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S05_SH005.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S05_SH006",
+   "category": "rendered_clip",
+   "subtype": "video",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S05_SH006.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S05_SH007",
+   "category": "rendered_clip",
+   "subtype": "video",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S05_SH007.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S05_SH008",
+   "category": "rendered_clip",
+   "subtype": "video",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S05_SH008.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S05_SH009",
+   "category": "rendered_clip",
+   "subtype": "video",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S05_SH009.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S05_SH010",
+   "category": "rendered_clip",
+   "subtype": "still_25d",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S05_SH010.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S05_SH011",
+   "category": "rendered_clip",
+   "subtype": "video",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S05_SH011.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S05_SH012",
+   "category": "rendered_clip",
+   "subtype": "video",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S05_SH012.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S05_SH013",
+   "category": "rendered_clip",
+   "subtype": "video",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S05_SH013.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S05_SH014",
+   "category": "rendered_clip",
+   "subtype": "video",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S05_SH014.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S05_SH015",
+   "category": "rendered_clip",
+   "subtype": "video",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S05_SH015.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S05_SH016",
+   "category": "rendered_clip",
+   "subtype": "still_25d",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S05_SH016.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S05_SH017",
+   "category": "rendered_clip",
+   "subtype": "video",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S05_SH017.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S05_SH018",
+   "category": "rendered_clip",
+   "subtype": "video",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S05_SH018.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S05_SH019",
+   "category": "rendered_clip",
+   "subtype": "video",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S05_SH019.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S05_SH020",
+   "category": "rendered_clip",
+   "subtype": "still_25d",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S05_SH020.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S05_SH021",
+   "category": "rendered_clip",
+   "subtype": "video",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S05_SH021.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S06_SH001",
+   "category": "rendered_clip",
+   "subtype": "still_25d",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S06_SH001.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S06_SH002",
+   "category": "rendered_clip",
+   "subtype": "video",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S06_SH002.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S06_SH003",
+   "category": "rendered_clip",
+   "subtype": "video",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S06_SH003.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S06_SH004",
+   "category": "rendered_clip",
+   "subtype": "video",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S06_SH004.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S06_SH005",
+   "category": "rendered_clip",
+   "subtype": "still_25d",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S06_SH005.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S06_SH006",
+   "category": "rendered_clip",
+   "subtype": "video",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S06_SH006.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S06_SH007",
+   "category": "rendered_clip",
+   "subtype": "video",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S06_SH007.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S06_SH008",
+   "category": "rendered_clip",
+   "subtype": "video",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S06_SH008.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S06_SH009",
+   "category": "rendered_clip",
+   "subtype": "video",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S06_SH009.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S06_SH010",
+   "category": "rendered_clip",
+   "subtype": "video",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S06_SH010.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S06_SH011",
+   "category": "rendered_clip",
+   "subtype": "video",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S06_SH011.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S06_SH012",
+   "category": "rendered_clip",
+   "subtype": "still_25d",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S06_SH012.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S07_SH001",
+   "category": "rendered_clip",
+   "subtype": "still_25d",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S07_SH001.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S07_SH002",
+   "category": "rendered_clip",
+   "subtype": "video",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S07_SH002.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S07_SH003",
+   "category": "rendered_clip",
+   "subtype": "video",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S07_SH003.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S07_SH004",
+   "category": "rendered_clip",
+   "subtype": "video",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S07_SH004.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S07_SH005",
+   "category": "rendered_clip",
+   "subtype": "video",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S07_SH005.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S07_SH006",
+   "category": "rendered_clip",
+   "subtype": "video",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S07_SH006.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S07_SH007",
+   "category": "rendered_clip",
+   "subtype": "video",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S07_SH007.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S07_SH008",
+   "category": "rendered_clip",
+   "subtype": "video",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S07_SH008.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S08_SH001",
+   "category": "rendered_clip",
+   "subtype": "still_25d",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S08_SH001.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S08_SH002",
+   "category": "rendered_clip",
+   "subtype": "still_25d",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S08_SH002.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S08_SH003",
+   "category": "rendered_clip",
+   "subtype": "still_25d",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S08_SH003.mp4",
+   "why": "no hf_location (Mac only)"
+  },
+  {
+   "asset_id": "clip:S08_SH004",
+   "category": "rendered_clip",
+   "subtype": "still_25d",
+   "path": "episodes/ep_truce_1914/production/shot_clips/S08_SH004.mp4",
+   "why": "no hf_location (Mac only)"
+  }
+ ]
+}
