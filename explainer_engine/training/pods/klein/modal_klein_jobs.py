@@ -410,7 +410,7 @@ LAUNCH = load_launch()
 if modal is not None:
     _m = _modal(LAUNCH)
     app = modal.App(_m.get("app_name") or "ee-klein-jobs")
-    vol = modal.Volume.from_name(_m.get("volume") or "ee-weights", version=2)
+    vol = modal.Volume.from_name(_m.get("volume") or "ee-weights", version=2, create_if_missing=True)   # the second account starts without one; a Volume is free until it holds data
     pip = LAUNCH.get("diffusers_version")
     image = (modal.Image.from_registry(LAUNCH["image"], add_python="3.12")
              .run_commands("python3 -c \"import torch; print('torch==' + torch.__version__)\" > /root/constraints.txt || true",
