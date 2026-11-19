@@ -250,16 +250,29 @@ def _wtext(w: dict) -> str:
     return str(w.get("text", w.get("word", "")))
 
 
-def drop_word_artifacts(words: list[dict]) -> tuple[list[dict], float | None]:
+def drop_word_artifacts(words: list[dict], audio=None, rate: int = 16000, notes: list | None = None) -> tuple[list[dict], float | None]:
     """The two word-only filters, in one place for the ingest cut and ``whisper_edit_points``: a duplicate opening word more than
-    0.8 s before its repeat (S06_SH008 "Maybe"), and a trailing hallucinated token after a 0.45 s gap ("You"). Returns the words
-    and the ``mute_tail_from_s`` of a dropped tail token (else None)."""
+    0.8 s before its repeat, and a trailing hallucinated token after a 0.45 s gap ("You"). Returns the words and the
+    ``mute_tail_from_s`` of a dropped tail token (else None). The duplicate is dropped ONLY when no voice is heard under it:
+    S06_SH008's two "Maybe." are two soldiers, both voiced (G1 + the creator's listen), and the first is a real line. Without
+    audio the duplicate cannot be judged and is kept (never dropped on the words alone); ``notes`` receives the REVIEW item."""
     ws = list(words)
     mute_at = None
     if len(ws) >= 2:
         w0, w1 = (re.sub(r"\W+", "", _wtext(w).lower()) for w in ws[:2])
         if w0 and w0 == w1 and float(ws[1].get("start", 0.0)) - float(ws[0].get("end", 0.0)) > 0.8:
-            ws = ws[1:]
+            a, b = float(ws[0].get("start", 0.0)), float(ws[0].get("end", 0.0))
+            if audio is not None and len(audio):
+                voiced, _ = voiced_spans(audio, rate)
+                have = sum(min(b, vb) - max(a, va) for va, vb in voiced if min(b, vb) > max(a, va))
+            else:
+                have = None
+            if have is not None and have + 1e-9 < min(WORD_MIN_VOICED_S, 0.5 * max(b - a, 0.0)):
+                ws = ws[1:]                         # unvoiced: a transcript artifact
+            elif notes is not None:
+                notes.append({"kind": "duplicate_opening_word_kept", "text": _wtext(ws[0]), "start": a, "end": b,
+                              "why": "a voice is heard under it" if have is not None else "no audio to check it against",
+                              "review": "the clip has one more spoken line than the script's text; the creator decides"})
     if len(ws) >= 2:
         last = re.sub(r"\W+", "", _wtext(ws[-1]).lower())
         if last in HALLUCINATED_TAIL_TOKENS and float(ws[-1].get("start", 0.0)) - float(ws[-2].get("end", 0.0)) >= 0.45:
@@ -293,11 +306,12 @@ def trim_decision(spans: list, words: list[dict] | None, line_text: str | None, 
     cannot be checked: ``detector`` is "none" and no word is added (it is never guessed from words alone)."""
     base = [tuple(sp) for sp in spans]
     if not spoken or not words or not line_text:
-        return {"spans": base, "mute_tail_from_s": None, "detector": "n/a", "rejected": []}
-    clean, mute_at = drop_word_artifacts(words)
+        return {"spans": base, "mute_tail_from_s": None, "detector": "n/a", "rejected": [], "notes": []}
+    notes: list = []
+    clean, mute_at = drop_word_artifacts(words, audio, rate, notes)
     acc = accept_voiced_words(clean, audio, rate)
     if acc["detector"] == "none":
-        return {"spans": base, "mute_tail_from_s": mute_at, "detector": "none", "rejected": acc["rejected"]}
+        return {"spans": base, "mute_tail_from_s": mute_at, "detector": "none", "rejected": acc["rejected"], "notes": notes}
     extra = [(a, min(dur, b)) for a, b in matched_word_spans(acc["kept"], line_text)]
     extra = [t for t in (_trim_to_sound(e, audio, rate) for e in extra) if t]
     out: list[tuple[float, float]] = []
@@ -308,7 +322,7 @@ def trim_decision(spans: list, words: list[dict] | None, line_text: str | None, 
             out.append((a, b))
     if mute_at is None and acc["kept"] and any(r["start"] >= float(acc["kept"][-1]["end"]) for r in acc["rejected"]):
         mute_at = round(float(acc["kept"][-1]["end"]) + MUTE_TAIL_AFTER_S, 3)   # a word heard after the last voiced one is not speech
-    return {"spans": out, "mute_tail_from_s": mute_at, "detector": acc["detector"], "rejected": acc["rejected"]}
+    return {"spans": out, "mute_tail_from_s": mute_at, "detector": acc["detector"], "rejected": acc["rejected"], "notes": notes}
 
 
 def speech_with_words(spans: list, words: list[dict] | None, line_text: str | None, *, spoken: bool, dur: float,
@@ -522,6 +536,7 @@ def ingest_scene(root: Path, script: dict, clips: list[dict], fps: int, *, backe
         if sid in spoken and pr["has_audio"]:
             rec["speech_words"] = words_source
             rec["speech_detector"] = speech_detector     # which voicing check decided the words (silero_vad | harmonicity | none)
+            rec["trim_notes"] = decision["notes"]        # a kept duplicate opening word etc.: REVIEW items for the creator
             rec["mute_tail_from_s"] = mute_tail          # where a hallucinated tail word starts to be muted (None: no such word)
         if trim_db:
             rec.update({"level_trim_db": trim_db, "true_peak_before": peak_before})
@@ -560,6 +575,7 @@ def start_frame_check(root: Path, shot: dict, raw: Path, pictures: dict | None, 
     pic = (Path(root) / entry["file"]) if entry and entry.get("file") else None
     if is_continuation:
         rec["reasons"].append("continuation: its start is the previous clip's frame, no pinned start picture to compare")
+        rec["continuation"] = True                   # its own uncounted state in unresolved_reviews: nothing to compare, nothing missing
         return rec
     if pic is None or not pic.is_file():
         rec["reasons"].append(f"no pinned start picture {key} in production/pictures.json")
@@ -592,12 +608,24 @@ def route_proposals(root: Path, script: dict, comparisons: dict[str, dict] | Non
     res = P.reroute_unnatural_ltx_shots(script, apply_routes=False, first_frame_comparisons=comparisons or {})
     by = {s["shot_id"]: s for s in script.get("shots", [])}
     props = []
+    scope = set(comparisons) if comparisons else set(res.get("evaluations") or {})
     for sid in res["rerouted_to_25d"]:
+        if sid not in scope:
+            continue
         ev = res["evaluations"][sid]
         props.append({"shot_id": sid, "from_route": by.get(sid, {}).get("route", "video"),
                       "to_route": ev["recommended_route"], "reason": "; ".join(ev.get("reasons") or [])[:400]})
-    write_json_atomic(Path(root) / "production" / "route_proposals.json", {"schema": "route_proposals/1", "proposals": props})
-    return props
+    path = Path(root) / "production" / "route_proposals.json"
+    kept: list[dict] = []
+    if path.is_file():                               # R3: merge by shot id, the other scenes' proposals survive this call
+        try:
+            kept = [q for q in (json.loads(path.read_text(encoding="utf-8")).get("proposals") or [])
+                    if isinstance(q, dict) and q.get("shot_id") not in scope]
+        except (OSError, ValueError):
+            kept = []
+    merged = sorted(kept + props, key=lambda q: q["shot_id"])
+    write_json_atomic(path, {"schema": "route_proposals/1", "proposals": merged})
+    return merged
 
 
 def unresolved_reviews(root: Path) -> dict:
@@ -612,10 +640,15 @@ def unresolved_reviews(root: Path) -> dict:
             continue
         why = []
         sf = (r.get("start_frame_check") or {}).get("status")
-        if sf in ("REVIEW", "NEEDS_EVIDENCE"):
+        if sf == "REVIEW" or (sf == "NEEDS_EVIDENCE" and not (r.get("start_frame_check") or {}).get("continuation")):
             why.append(f"start_frame_check {sf}")
         if r.get("status") == G.REVIEW:
+<<<<<<< HEAD
             why.append("clip findings REVIEW" + (" (frame_pad)" if r.get("frame_pad") else ""))
+=======
+            why.append("clip findings REVIEW")
+        why += [f"{n.get('kind')} ({n.get('text')})" for n in (r.get("trim_notes") or []) if isinstance(n, dict)]
+>>>>>>> claude/project-thread-f0oep6-s13
         if why:                                      # one item per clip, both reasons named
             items.append(f"{r['shot_id']}: " + " + ".join(why))
     return {"count": len(items), "items": items}
@@ -704,7 +737,9 @@ def whisper_edit_points(
             or max([float(w.get("end", 0.0)) for w in words] + [float(shot.get("target_duration_seconds") or 4.0)])
         )
         if sid in spoken and words:
-            clean_words, mute_at = drop_word_artifacts(words)   # the same filters as the runner's cut (one trim rule)
+            dup_audio = audio_by_shot.get(sid) if audio_by_shot else None
+            dup_notes: list = []
+            clean_words, mute_at = drop_word_artifacts(words, *(dup_audio or (None, 16000)), notes=dup_notes)   # the same filters as the runner's cut (one trim rule)
             detector = "none"
             if audio_by_shot and sid in audio_by_shot:   # a voice must be heard under a word (Step 1.2); clamps its times
                 x, rate = audio_by_shot[sid]
@@ -732,6 +767,8 @@ def whisper_edit_points(
                 "truncated_in_raw": avail_tail < 0.20,
                 "detector": detector,
             }
+            if dup_notes:
+                entry["trim_notes"] = dup_notes
             if mute_at is not None:
                 entry["mute_tail_from_s"] = mute_at
             clips_out[sid] = entry

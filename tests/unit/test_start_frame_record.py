@@ -105,6 +105,7 @@ def test_unresolved_reviews_counts_each_clip_once_with_both_reasons(tmp_path):
     assert "start_frame_check REVIEW + clip findings REVIEW" in r["items"][0]
 
 
+<<<<<<< HEAD
 def test_a_padded_clip_counts_in_unresolved_reviews(tmp_path):
     v = tmp_path / "production" / "video"
     v.mkdir(parents=True)
@@ -112,3 +113,34 @@ def test_a_padded_clip_counts_in_unresolved_reviews(tmp_path):
                                                   "start_frame_check": {"status": "PASS"}}), encoding="utf-8")
     r = I.unresolved_reviews(tmp_path)
     assert r["count"] == 1 and "frame_pad" in r["items"][0]
+=======
+def _two_scene_script():
+    mk = lambda sid, lid: {"shot_id": sid, "route": "video", "camera_spec": {"shot_size": "close_up"}, "character_ids": ["a"],
+                           "audio_line_ids": [lid]}
+    return {"shots": [mk("S01_SH001", "L1"), mk("S02_SH001", "L2")],
+            "audio_lines": [{"line_id": "L1", "speaker_type": "character", "text": "Hello there."},
+                            {"line_id": "L2", "speaker_type": "character", "text": "Stand to."}]}
+
+
+def test_route_proposals_of_two_scenes_are_merged_by_shot_id_not_overwritten(tmp_path):
+    script = _two_scene_script()
+    cmp_ = {"status": "PASS", "matched": True}
+    I.route_proposals(tmp_path, script, {"S01_SH001": cmp_})          # scene 1
+    merged = I.route_proposals(tmp_path, script, {"S02_SH001": cmp_})  # scene 2 must not erase scene 1's proposal
+    assert [q["shot_id"] for q in merged] == ["S01_SH001", "S02_SH001"]
+    on_disk = json.loads((tmp_path / "production" / "route_proposals.json").read_text(encoding="utf-8"))
+    assert [q["shot_id"] for q in on_disk["proposals"]] == ["S01_SH001", "S02_SH001"]
+    again = I.route_proposals(tmp_path, script, {"S01_SH001": cmp_})   # a re-ingest of scene 1 replaces only its own rows
+    assert [q["shot_id"] for q in again] == ["S01_SH001", "S02_SH001"]
+
+
+def test_a_continuation_is_not_counted_and_a_kept_duplicate_word_is(tmp_path):
+    v = tmp_path / "production" / "video"
+    v.mkdir(parents=True)
+    (v / "S01_SH001.json").write_text(json.dumps({"shot_id": "S01_SH001", "status": "PASS", "start_frame_check": {
+        "status": "NEEDS_EVIDENCE", "continuation": True}}), encoding="utf-8")
+    (v / "S01_SH002.json").write_text(json.dumps({"shot_id": "S01_SH002", "status": "PASS", "start_frame_check": {"status": "PASS"},
+        "trim_notes": [{"kind": "duplicate_opening_word_kept", "text": "Maybe."}]}), encoding="utf-8")
+    r = I.unresolved_reviews(tmp_path)
+    assert r["count"] == 1 and r["items"][0].startswith("S01_SH002") and "duplicate_opening_word_kept" in r["items"][0]
+>>>>>>> claude/project-thread-f0oep6-s13
