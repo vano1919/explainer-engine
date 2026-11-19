@@ -192,7 +192,7 @@ def run_stage(ep: Episode, stage: str) -> dict:
     if stage not in STAGES:
         raise ConfigError(f"unknown stage {stage!r}: one of {', '.join(STAGES)} or G1..G10")
     rehearsal = check_before(ep, stage)
-    SS.check_all(ep.root)   # W3: a file that changed since it was bound resets every later shot state (plan 5.1)
+    ss_resets = SS.check_all(ep.root)   # W3: a file that changed since it was bound resets every later shot state (plan 5.1)
     t0 = time.time()
     fp = fingerprint(ep, stage)
     try:
@@ -209,8 +209,8 @@ def run_stage(ep: Episode, stage: str) -> dict:
     rec = {"schema": RECORD_SCHEMA, "episode_id": ep.manifest.get("episode_id"), "stage": stage, "gate": GATES[stage],
            "verdict": verdict, "rows": rows, "outputs": outputs, "rehearsal": rehearsal, "fingerprint": fp,
            "elapsed_s": round(time.time() - t0, 2), "at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}
+    SS.hook(ep.root, stage, rec, ss_resets, rehearsal)   # W3: reset notes + bind a passing stage's files (shot_state.py)
     write_json_atomic(record_path(ep.root, stage), rec)
-    SS.record_stage(ep.root, stage)   # W3: bind this stage's pictures / clips to their shots by sha256
     return rec
 
 

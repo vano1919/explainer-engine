@@ -124,10 +124,10 @@ def test_the_runner_hooks_bind_pictures_and_clips_and_check_resets(tmp_path):
                       "S1_end": {"file": "assets/p.png", "grade": "master", "sha256": "x"}}}))
     (root / "production" / "shot_records.json").write_text(json.dumps(
         {"shots": [{"shot_id": "S1", "clip_path": "assets/c.mp4"}, {"shot_id": "S2", "clip_path": None}]}))
-    assert SS.record_stage(root, "pictures") == 1 and SS.record_stage(root, "clips") == 1
+    assert SS.record_stage(root, "pictures")["bound"] == 1 and SS.record_stage(root, "clips")["bound"] == 1
     st = SS.ShotStates(root)
     assert st.state("S1") == "IMAGE_GENERATED" and st.shot("S1")["assets"]["clip"]["sha256"] == SS.sha256_of(root / "assets/c.mp4")
-    assert SS.record_stage(root, "assemble") == 1 and st.shot("S1")
+    assert SS.record_stage(root, "assemble")["bound"] == 1 and st.shot("S1")
     (root / "assets" / "p.png").write_bytes(b"changed")
     assert SS.check_all(root)[0]["shot"] == "S1"
     assert SS.ShotStates(root).state("S1") == "PLANNED"
@@ -142,3 +142,57 @@ def test_binding_a_new_hash_resets_what_rested_on_the_old_one(tmp_path):
     st.bind("S1", "image", "assets/p.png")
     assert st.state("S1") == "IMAGE_GENERATED" and st.sha("S1", "IMAGE_GENERATED") == SS.sha256_of(root / "assets/p.png")
     assert not st.has_valid("S1", "IMAGE_OBSERVED")
+
+
+def test_an_asset_state_without_a_path_is_refused_so_check_never_drops_it_silently(tmp_path):
+    root = _root(tmp_path)
+    st = SS.ShotStates(root)
+    st.bind("S1", "image", "assets/p.png")
+    with pytest.raises(SS.ShotStateError, match="path"):
+        st.advance("S1", "IMAGE_OBSERVED", st.sha("S1", "IMAGE_GENERATED"))
+    st.advance("S1", "IMAGE_OBSERVED", st.sha("S1", "IMAGE_GENERATED"), "assets/p.png")
+    assert st.check() == [] and st.state("S1") == "IMAGE_OBSERVED"      # what W4 will do keeps its state
+    st.shot("S1")["history"][-1]["path"] = None                         # a hand-edited state with a sha and no path
+    with pytest.raises(SS.ShotStateError, match="no path"):
+        st.check()
+
+
+def _rec(status):
+    return {"verdict": {"status": status}}
+
+
+def _stage_files(root):
+    (root / "production").mkdir(exist_ok=True)
+    (root / "production" / "pictures.json").write_text(json.dumps({"pictures": {"S1_start": {"file": "assets/p.png"}}}))
+
+
+@pytest.mark.parametrize("status,rehearsal,bound", [("PASS", False, True), ("REVIEW", False, True), ("FAIL", False, False),
+                                                    ("NOT_RUN", False, False), ("PASS", True, False)])
+def test_the_hook_binds_only_a_passing_stage_that_is_not_a_rehearsal(tmp_path, status, rehearsal, bound):
+    root = _root(tmp_path)
+    _stage_files(root)
+    SS.hook(root, "pictures", _rec(status), [], rehearsal)
+    assert ("S1" in SS.ShotStates(root).doc["shots"]) is bound
+
+
+def test_the_hook_puts_the_resets_into_the_stage_record(tmp_path):
+    root = _root(tmp_path)
+    rec = _rec("FAIL")
+    SS.hook(root, "pictures", rec, [{"shot": "S1", "asset": "image", "path": "assets/p.png", "dropped": ["IMAGE_ACCEPTED"]}], False)
+    assert rec["shot_state_resets"][0]["shot"] == "S1"
+    clean = _rec("FAIL")
+    SS.hook(root, "pictures", clean, [], False)
+    assert "shot_state_resets" not in clean
+
+
+def test_a_clip_outside_the_episode_folder_is_a_not_run_note_not_a_crash(tmp_path):
+    root = _root(tmp_path)
+    outside = tmp_path / "elsewhere.mp4"
+    outside.write_bytes(b"x")
+    (root / "production").mkdir()
+    (root / "production" / "shot_records.json").write_text(json.dumps(
+        {"shots": [{"shot_id": "S1", "clip_path": str(outside)}, {"shot_id": "S2", "clip_path": "assets/c.mp4"}]}))
+    rec = _rec("PASS")
+    SS.hook(root, "clips", rec, [], False)
+    assert "S1" in rec["shot_state_not_run"][0] and "outside the episode folder" in rec["shot_state_not_run"][0]
+    assert "S2" in SS.ShotStates(root).doc["shots"] and "S1" not in SS.ShotStates(root).doc["shots"]

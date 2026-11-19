@@ -105,8 +105,8 @@ class ShotStates:
         s = self.shot(sid)
         if state not in NEXT.get(s["state"], ()):
             raise ShotStateError(f"{sid}: {s['state']} -> {state} is not allowed (next: {', '.join(NEXT[s['state']]) or 'none'})")
-        if state in NEEDS_SHA and not sha:
-            raise ShotStateError(f"{sid}: {state} must store the asset sha256")
+        if state in NEEDS_SHA and not (sha and path):
+            raise ShotStateError(f"{sid}: {state} must store the asset sha256 and the path it was hashed from")
         if state in ("IMAGE_RETRY", "VIDEO_RETRY"):
             k = "image" if state == "IMAGE_RETRY" else "video"
             if s["retries"][k] >= RETRY_CAP:
@@ -172,7 +172,9 @@ class ShotStates:
                     del s["assets"][kind]
                     out.append({"shot": k, "asset": kind, "path": a["path"], "dropped": dropped})
             for h in list(s["history"]):   # a history file the asset map no longer covers (hand-edited state)
-                if h["sha256"] and sha256_of(self.root / (h["path"] or "")) != h["sha256"]:
+                if h["sha256"] and not h["path"]:
+                    raise ShotStateError(f"{k}: {h['state']} stores a sha256 but no path, so it can never be re-checked")
+                if h["sha256"] and sha256_of(self.root / h["path"]) != h["sha256"]:
                     dropped = self.reset_after(k, s["history"][s["history"].index(h) - 1]["state"] if s["history"].index(h)
                                                else "PLANNED", f"{h['state']} file changed")
                     out.append({"shot": k, "asset": ASSET_STATES.get(h["state"]), "path": h["path"], "dropped": dropped})
@@ -192,19 +194,31 @@ def check_all(root: Path) -> list[dict]:
     return found
 
 
-def record_stage(root: Path, stage: str) -> int:
-    """After a stage wrote its record: bind the files it made to their shots (pictures -> image, clips -> clip, assemble ->
-    the master's hash on every clip it used). Returns the number of bindings."""
-    root = Path(root)
-    n = 0
+def record_stage(root: Path, stage: str) -> dict:
+    """After a PASS/REVIEW stage: bind the files it made to their shots (pictures -> image, clips -> clip, assemble -> the
+    master's hash on every clip it used). Returns {"bound": n, "not_run": [...]}: a file the episode folder does not contain
+    (an absolute path elsewhere) is skipped and named, never a crash."""
+    root = Path(root).resolve()
+    n, skipped = 0, []
     st = ShotStates(root)
+
+    def rel(p: str, sid: str) -> str | None:
+        q = Path(p)
+        q = q if q.is_absolute() else root / q
+        try:
+            return str(q.resolve().relative_to(root)) if q.is_file() else None
+        except ValueError:
+            skipped.append(f"{sid}: {p} is outside the episode folder (NOT_RUN: not bound)")
+            return None
+
     if stage == "pictures":
         p = root / "production" / "pictures.json"
         pics = json.loads(p.read_text(encoding="utf-8"))["pictures"] if p.is_file() else {}
         for pid, v in sorted(pics.items()):
             sid, _, which = pid.rpartition("_")
-            if which == "start":
-                st.bind(sid, "image", v["file"])
+            r = rel(v["file"], sid) if which == "start" else None
+            if r:
+                st.bind(sid, "image", r)
                 n += 1
     elif stage in ("clips", "assemble"):
         p = root / "production" / "shot_records.json"
@@ -216,14 +230,26 @@ def record_stage(root: Path, stage: str) -> int:
             master = sha256_of(mp if Path(mp).is_absolute() else root / mp) if mp else None
         for r in recs:
             cp = r.get("clip_path")
-            if not cp or not Path(cp).is_file() and not (root / cp).is_file():
+            c = rel(cp, r["shot_id"]) if cp else None
+            if not c:
                 continue
-            rel = str(Path(cp).resolve().relative_to(root.resolve())) if Path(cp).is_absolute() else cp
             if stage == "clips":
-                st.bind(r["shot_id"], "clip", rel)
+                st.bind(r["shot_id"], "clip", c)
             else:
                 st.mark_assembled(r["shot_id"], master)
             n += 1
     if n:
         st.save()
-    return n
+    return {"bound": n, "not_run": skipped}
+
+
+def hook(root: Path, stage: str, rec: dict, resets: list[dict], rehearsal: bool) -> None:
+    """The one call run_stage makes before it writes ``rec``: note the resets ``check_all`` made, and bind the stage's files
+    only when its verdict is PASS or REVIEW and the run is not a rehearsal (a failed or rehearsed stage binds nothing)."""
+    if resets:
+        rec["shot_state_resets"] = resets
+    if rehearsal or rec["verdict"]["status"] not in ("PASS", "REVIEW"):
+        return
+    out = record_stage(root, stage)
+    if out["not_run"]:
+        rec["shot_state_not_run"] = out["not_run"]
