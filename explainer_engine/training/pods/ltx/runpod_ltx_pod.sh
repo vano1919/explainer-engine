@@ -13,6 +13,10 @@ mkdir -p "$EE_OUT"
 export HF_HOME=/workspace/dl/hf PYTHONUNBUFFERED=1 PIP_BREAK_SYSTEM_PACKAGES=1 EE_LTX_VOL_ROOT=/workspace/dl
 trap 'exit 143' TERM
 printf '%s start\n' "$(date -u +%T)" > "$EE_OUT/progress.txt"
+mkdir -p /workspace/dl
+# keep pip from replacing the image's torch (a multi-GB download and a possible CUDA mismatch, paid on the card): every install below is constrained to it
+python3 -c "import torch; print('torch==' + torch.__version__)" > /workspace/dl/constraints.txt || exit 1
+export PIP_CONSTRAINT=/workspace/dl/constraints.txt
 pip install -q "huggingface_hub==1.33.0" || exit 1
 git clone -q https://github.com/Lightricks/LTX-2.git /workspace/LTX-2 && git -C /workspace/LTX-2 checkout -q e98f6d927d83c92ef2be6aec76c8440b19306e39 && pip install -q -e /workspace/LTX-2/packages/ltx-core -e /workspace/LTX-2/packages/ltx-pipelines || exit 1
 JOB=/workspace/job

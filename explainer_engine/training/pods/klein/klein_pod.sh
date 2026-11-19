@@ -13,6 +13,10 @@ mkdir -p "$EE_OUT"
 export HF_HOME=/workspace/dl/hf PYTHONUNBUFFERED=1 PIP_BREAK_SYSTEM_PACKAGES=1 EE_KLEIN_VOL_ROOT=/workspace/dl
 trap 'exit 143' TERM
 printf '%s start\n' "$(date -u +%T)" > "$EE_OUT/progress.txt"
+mkdir -p /workspace/dl
+# keep pip from replacing the image's torch (a multi-GB download and a possible CUDA mismatch, paid on the card): every install below is constrained to it
+python3 -c "import torch; print('torch==' + torch.__version__)" > /workspace/dl/constraints.txt || exit 1
+export PIP_CONSTRAINT=/workspace/dl/constraints.txt
 pip install -q "huggingface_hub==1.33.0" "diffusers==0.43.0" "transformers==5.22.2" || exit 1
 JOB=/workspace/job
 mkdir -p "$JOB" /workspace/ee /workspace/batch
@@ -24,7 +28,7 @@ for f in ('code/klein/ee_src.tar.gz', 'code/klein/batch.tar.gz'):
 cp "$JOB/dl/code/klein/ee_src.tar.gz" "$JOB/ee_src.tar.gz"
 cp "$JOB/dl/code/klein/batch.tar.gz" "$JOB/batch.tar.gz"
 printf '%s  %s\n' dfc931d0cb5b15750cf47ba2fd8fe98ed77aa691012271cfee5bf279dab3b98f "$JOB/ee_src.tar.gz" > "$JOB/sha.txt"
-printf '%s  %s\n' @@BATCH_SHA256@@ "$JOB/batch.tar.gz" >> "$JOB/sha.txt"
+printf '%s  %s\n' e177fcd1407c9ea24a9b21733f2cf00a41db9fa3b3ff051550f24c2470ab090b "$JOB/batch.tar.gz" >> "$JOB/sha.txt"
 sha256sum -c "$JOB/sha.txt" || exit 3
 ee_needs_check
 tar -xzf "$JOB/ee_src.tar.gz" -C /workspace/ee || exit 1

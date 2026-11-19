@@ -80,3 +80,21 @@ def test_both_pod_scripts_carry_the_two_pins_and_download_both_files():
 def test_both_scripts_pin_the_same_uploaded_code_bundle():
     pins = {s.name: B.pinned(s, "EE_SRC_SHA256") for s in B.SCRIPTS}
     assert all(p and len(p) == 64 for p in pins.values()) and len(set(pins.values())) == 1   # one bundle, uploaded to both paths
+
+
+def test_both_scripts_constrain_pip_to_the_images_torch_before_any_install():
+    for script in B.SCRIPTS:
+        lines = script.read_text(encoding="utf-8").splitlines()
+        code = [ln for ln in lines if not ln.lstrip().startswith("#")]
+        first_pip = next(i for i, ln in enumerate(code) if "pip install" in ln)
+        c = next(i for i, ln in enumerate(code) if "torch.__version__" in ln and "constraints.txt" in ln)
+        e = next(i for i, ln in enumerate(code) if "export PIP_CONSTRAINT=" in ln)
+        assert c < e < first_pip, script.name                      # read at run time on the pod, set before the first pip install
+
+
+def test_the_klein_batch_pin_is_the_plan_threads_uploaded_file():
+    klein = next(s for s in B.SCRIPTS if s.name == "klein_pod.sh")
+    assert B.pinned(klein, "BATCH_SHA256") == "e177fcd1407c9ea24a9b21733f2cf00a41db9fa3b3ff051550f24c2470ab090b"
+    assert K.script_problems(klein.read_text(encoding="utf-8")) == []
+    ltx = next(s for s in B.SCRIPTS if s.name == "runpod_ltx_pod.sh")
+    assert B.pinned(ltx, "BATCH_SHA256") is None or len(B.pinned(ltx, "BATCH_SHA256")) == 64     # the LTX batch needs the end keyframes first
