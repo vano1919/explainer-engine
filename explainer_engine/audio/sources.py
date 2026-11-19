@@ -138,7 +138,7 @@ def best_of(ids: list[str]) -> str:
 # background music"; 07:49 UTC card "yes, BBC too"): a sound effect is taken by quality, its licence recorded as information;
 # music keeps the licence gate. A temporary exception to CLAUDE.md invariant 5 for sound effects, by his recorded word.
 SFX_LICENCE_RULE = "creator 2026-11-13: sound effects by quality, licence recorded only (music keeps the licence gate)"
-SFX_EXCEPTIONS = {"bbc_remarc": "creator card 2026-11-13 07:49 UTC (yes, BBC too)"}
+SFX_EXCEPTIONS: dict[str, str] = {}   # D-139 (2026-11-19): the 2026-11-13 "yes, BBC too" card no longer covers a monetised master
 
 
 def verdict(lic: str, *, ai_workflow: bool = True, use: str = "music") -> str:

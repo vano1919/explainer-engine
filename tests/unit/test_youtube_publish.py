@@ -45,6 +45,8 @@ def episode(tmp_path: Path, pub: dict | None = None, *, stamped: bool = True, sc
         R.stamp(ep / "episode_rules.json", "final_qa", by="test", scope="all", script=ep / "production_script.json")
     (ep / "scorecard.json").write_text(json.dumps({"schema": "scorecard/1", "verdict": scorecard,
                                                    "rows": [{"id": 2, "name": "sound", "status": scorecard, "evidence": [], "human": True}]}))
+    (ep / "audio").mkdir()   # PC-10 (D-139): the runner's sound log; a master without one never passes
+    (ep / "audio" / "stems_report.json").write_text(json.dumps({"schema": "stems_report/1", "sounds_used": []}))
     (ep / "render" / "video.mp4").write_bytes(b"L" * 3000)
     for sid in ("SH01", "SH02"):
         (ep / "render" / "shorts" / f"{sid}.mp4").write_bytes(sid.encode() * 500)

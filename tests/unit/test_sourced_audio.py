@@ -365,6 +365,8 @@ def _episode(tmp_path: Path, *, stamped=True, card="PASS") -> Path:
         R.stamp(ep / "episode_rules.json", "final_qa", by="t", scope="all", script=ep / "production_script.json")
     if card:
         (ep / "scorecard.json").write_text(json.dumps({"schema": "scorecard/1", "rows": [{"id": 2, "name": "sound", "status": card}]}))
+    (ep / "audio").mkdir()   # PC-10 (D-139): the runner's sound log; a master without one never passes
+    (ep / "audio" / "stems_report.json").write_text(json.dumps({"schema": "stems_report/1", "sounds_used": []}))
     return ep
 
 
