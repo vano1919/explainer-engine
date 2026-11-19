@@ -1,0 +1,160 @@
+{
+  "created": "2026-11-19T19:02:39",
+  "caps": {
+    "runpod_usd": 1.25,
+    "gemini_usd": 10.0,
+    "bfl_usd": 3.0,
+    "fal_usd": 9.0
+  },
+  "spent": {
+    "runpod_usd": 0.0
+  },
+  "reserved": {
+    "pod:pending": {
+      "service": "runpod_usd",
+      "amount": 0.0,
+      "settled": true
+    }
+  },
+  "phases": {},
+  "items": {},
+  "failures": {
+    "placement:ee-auto": [
+      {
+        "at": "19:17:17",
+        "cause": "create: create: no pod could be made for ['NVIDIA L40S']: POST /pods: HTTP 400 {\"detail\":\"There are no longer any instances available with the requested specifications. Please refresh and try again.\",\"status\""
+      },
+      {
+        "at": "19:18:11",
+        "cause": "create: create: no pod could be made for ['NVIDIA L40S']: POST /pods: HTTP 400 {\"detail\":\"There are no longer any instances available with the requested specifications. Please refresh and try again.\",\"status\""
+      },
+      {
+        "at": "19:20:10",
+        "cause": "create: create: no pod could be made for ['NVIDIA L40S']: POST /pods: HTTP 400 {\"detail\":\"There are no longer any instances available with the requested specifications. Please refresh and try again.\",\"status\""
+      },
+      {
+        "at": "19:22:17",
+        "cause": "create: create: no pod could be made for ['NVIDIA L40S']: POST /pods: HTTP 400 {\"detail\":\"There are no longer any instances available with the requested specifications. Please refresh and try again.\",\"status\""
+      },
+      {
+        "at": "19:23:52",
+        "cause": "create: create: no pod could be made for ['NVIDIA L40S']: POST /pods: HTTP 400 {\"detail\":\"There are no longer any instances available with the requested specifications. Please refresh and try again.\",\"status\""
+      },
+      {
+        "at": "19:25:27",
+        "cause": "create: create: no pod could be made for ['NVIDIA L40S']: POST /pods: HTTP 400 {\"detail\":\"There are no longer any instances available with the requested specifications. Please refresh and try again.\",\"status\""
+      },
+      {
+        "at": "19:27:03",
+        "cause": "create: create: no pod could be made for ['NVIDIA L40S']: POST /pods: HTTP 400 {\"detail\":\"There are no longer any instances available with the requested specifications. Please refresh and try again.\",\"status\""
+      },
+      {
+        "at": "19:29:42",
+        "cause": "create: create: no pod could be made for ['NVIDIA L40S']: POST /pods: HTTP 400 {\"detail\":\"There are no longer any instances available with the requested specifications. Please refresh and try again.\",\"status\""
+      },
+      {
+        "at": "19:31:18",
+        "cause": "create: create: no pod could be made for ['NVIDIA L40S']: POST /pods: HTTP 400 {\"detail\":\"There are no longer any instances available with the requested specifications. Please refresh and try again.\",\"status\""
+      },
+      {
+        "at": "19:33:25",
+        "cause": "create: create: no pod could be made for ['NVIDIA L40S']: POST /pods: HTTP 400 {\"detail\":\"There are no longer any instances available with the requested specifications. Please refresh and try again.\",\"status\""
+      },
+      {
+        "at": "19:35:32",
+        "cause": "create: create: no pod could be made for ['NVIDIA L40S']: POST /pods: HTTP 400 {\"detail\":\"There are no longer any instances available with the requested specifications. Please refresh and try again.\",\"status\""
+      },
+      {
+        "at": "19:36:14",
+        "cause": "create: create: no pod could be made for ['NVIDIA RTX 6000 Ada Generation']: POST /pods: HTTP 400 {\"detail\":\"There are no longer any instances available with the requested specifications. Please refresh and t"
+      },
+      {
+        "at": "19:36:19",
+        "cause": "create: create: no pod could be made for ['NVIDIA L40S']: POST /pods: HTTP 400 {\"detail\":\"There are no longer any instances available with the requested specifications. Please refresh and try again.\",\"status\""
+      },
+      {
+        "at": "19:37:24",
+        "cause": "create: create: no pod could be made for ['NVIDIA RTX 6000 Ada Generation']: POST /pods: HTTP 400 {\"detail\":\"There are no longer any instances available with the requested specifications. Please refresh and t"
+      },
+      {
+        "at": "19:37:29",
+        "cause": "create: create: no pod could be made for ['NVIDIA L40S']: POST /pods: HTTP 400 {\"detail\":\"There are no longer any instances available with the requested specifications. Please refresh and try again.\",\"status\""
+      },
+      {
+        "at": "19:41:11",
+        "cause": "create: create: no pod could be made for ['NVIDIA RTX 6000 Ada Generation']: POST /pods: HTTP 400 {\"detail\":\"There are no longer any instances available with the requested specifications. Please refresh and t"
+      },
+      {
+        "at": "19:41:15",
+        "cause": "create: create: no pod could be made for ['NVIDIA L40S']: POST /pods: HTTP 400 {\"detail\":\"There are no longer any instances available with the requested specifications. Please refresh and try again.\",\"status\""
+      },
+      {
+        "at": "19:42:21",
+        "cause": "create: create: no pod could be made for ['NVIDIA RTX 6000 Ada Generation']: POST /pods: HTTP 400 {\"detail\":\"There are no longer any instances available with the requested specifications. Please refresh and t"
+      },
+      {
+        "at": "19:45:20",
+        "cause": "create: create: no pod could be made for ['NVIDIA L40S']: POST /pods: HTTP 400 {\"detail\":\"There are no longer any instances available with the requested specifications. Please refresh and try again.\",\"status\""
+      },
+      {
+        "at": "19:53:44",
+        "cause": "create: create: no pod could be made for ['NVIDIA A100-SXM4-80GB', 'NVIDIA A100 80GB PCIe']: POST /pods: HTTP 400 {\"detail\":\"There are no longer any instances available with the requested specifications. Plea"
+      },
+      {
+        "at": "19:54:52",
+        "cause": "create: create: no pod could be made for ['NVIDIA A100-SXM4-80GB', 'NVIDIA A100 80GB PCIe']: POST /pods: HTTP 400 {\"detail\":\"There are no longer any instances available with the requested specifications. Plea"
+      },
+      {
+        "at": "19:55:59",
+        "cause": "create: create: no pod could be made for ['NVIDIA A100-SXM4-80GB', 'NVIDIA A100 80GB PCIe']: POST /pods: HTTP 400 {\"detail\":\"There are no longer any instances available with the requested specifications. Plea"
+      },
+      {
+        "at": "19:57:07",
+        "cause": "create: create: no pod could be made for ['NVIDIA A100-SXM4-80GB', 'NVIDIA A100 80GB PCIe']: POST /pods: HTTP 400 {\"detail\":\"There are no longer any instances available with the requested specifications. Plea"
+      },
+      {
+        "at": "19:58:15",
+        "cause": "create: create: no pod could be made for ['NVIDIA A100-SXM4-80GB', 'NVIDIA A100 80GB PCIe']: POST /pods: HTTP 400 {\"detail\":\"There are no longer any instances available with the requested specifications. Plea"
+      },
+      {
+        "at": "19:59:22",
+        "cause": "create: create: no pod could be made for ['NVIDIA A100-SXM4-80GB', 'NVIDIA A100 80GB PCIe']: POST /pods: HTTP 400 {\"detail\":\"There are no longer any instances available with the requested specifications. Plea"
+      },
+      {
+        "at": "20:00:29",
+        "cause": "create: create: no pod could be made for ['NVIDIA A100-SXM4-80GB', 'NVIDIA A100 80GB PCIe']: POST /pods: HTTP 400 {\"detail\":\"There are no longer any instances available with the requested specifications. Plea"
+      },
+      {
+        "at": "20:01:38",
+        "cause": "create: create: no pod could be made for ['NVIDIA A100-SXM4-80GB', 'NVIDIA A100 80GB PCIe']: POST /pods: HTTP 400 {\"detail\":\"There are no longer any instances available with the requested specifications. Plea"
+      },
+      {
+        "at": "20:02:46",
+        "cause": "create: create: no pod could be made for ['NVIDIA A100-SXM4-80GB', 'NVIDIA A100 80GB PCIe']: POST /pods: HTTP 400 {\"detail\":\"There are no longer any instances available with the requested specifications. Plea"
+      },
+      {
+        "at": "20:03:54",
+        "cause": "create: create: no pod could be made for ['NVIDIA A100-SXM4-80GB', 'NVIDIA A100 80GB PCIe']: POST /pods: HTTP 400 {\"detail\":\"There are no longer any instances available with the requested specifications. Plea"
+      },
+      {
+        "at": "20:05:03",
+        "cause": "create: create: no pod could be made for ['NVIDIA A100-SXM4-80GB', 'NVIDIA A100 80GB PCIe']: POST /pods: HTTP 400 {\"detail\":\"There are no longer any instances available with the requested specifications. Plea"
+      },
+      {
+        "at": "20:06:11",
+        "cause": "create: create: no pod could be made for ['NVIDIA A100-SXM4-80GB']: POST /pods: HTTP 400 {\"detail\":\"There are no longer any instances available with the requested specifications. Please refresh and try again."
+      },
+      {
+        "at": "20:07:35",
+        "cause": "create: create: no pod could be made for ['NVIDIA A100-SXM4-80GB']: POST /pods: HTTP 400 {\"detail\":\"There are no longer any instances available with the requested specifications. Please refresh and try again."
+      }
+    ]
+  },
+  "meta": {
+    "cap_raise": {
+      "to": 1.25,
+      "basis": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWB2qsAtWtX3jWU1XUQtHEm7",
+      "at": "2026-11-19T19:51:01Z"
+    }
+  }
+}
