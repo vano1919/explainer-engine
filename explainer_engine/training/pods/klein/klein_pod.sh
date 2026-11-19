@@ -23,7 +23,7 @@ for f in ('code/klein/ee_src.tar.gz', 'code/klein/batch.tar.gz'):
 " || exit 1
 cp "$JOB/dl/code/klein/ee_src.tar.gz" "$JOB/ee_src.tar.gz"
 cp "$JOB/dl/code/klein/batch.tar.gz" "$JOB/batch.tar.gz"
-printf '%s  %s\n' @@EE_SRC_SHA256@@ "$JOB/ee_src.tar.gz" > "$JOB/sha.txt"
+printf '%s  %s\n' dfc931d0cb5b15750cf47ba2fd8fe98ed77aa691012271cfee5bf279dab3b98f "$JOB/ee_src.tar.gz" > "$JOB/sha.txt"
 printf '%s  %s\n' @@BATCH_SHA256@@ "$JOB/batch.tar.gz" >> "$JOB/sha.txt"
 sha256sum -c "$JOB/sha.txt" || exit 3
 ee_needs_check

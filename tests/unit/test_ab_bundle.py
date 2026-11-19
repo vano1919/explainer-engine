@@ -75,3 +75,8 @@ def test_both_pod_scripts_carry_the_two_pins_and_download_both_files():
         assert "@@BATCH_SHA256@@" in text or B.pinned(script, "BATCH_SHA256")     # the batch pin stays open until the plan thread's batch exists
     assert "run /workspace/batch/batch.json" in R.LAUNCHER.read_text(encoding="utf-8")
     assert "run /workspace/batch/batch.json" in K.LAUNCHER.read_text(encoding="utf-8")
+
+
+def test_both_scripts_pin_the_same_uploaded_code_bundle():
+    pins = {s.name: B.pinned(s, "EE_SRC_SHA256") for s in B.SCRIPTS}
+    assert all(p and len(p) == 64 for p in pins.values()) and len(set(pins.values())) == 1   # one bundle, uploaded to both paths
