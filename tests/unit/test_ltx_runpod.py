@@ -333,3 +333,16 @@ def test_l2_hashes_every_file_once_and_uploads_the_smoke_record(monkeypatch, tmp
     assert len(weights) == len(set(weights)) == len(res["steps"]["L2"]["files"])
     assert any(k.endswith("L3_smoke.record.json") for k in api.files)
     assert (tmp_path / "out" / "L3_smoke.record.json").is_file()
+
+
+def test_a_pod_cap_above_the_recorded_one_is_refused_before_l2(monkeypatch, tmp_path, launch):
+    monkeypatch.setattr(M, "LAUNCH", launch)
+    sh = FakeSh()
+    kw = dict(api=FakeApi(), sh=sh, download=lambda *a: None, vol_root=str(tmp_path / "dl"), tmp=str(tmp_path / "in"))
+    res = R.run(_batch(cap_usd=5.0), [_clip()], tmp_path / "o1", **kw)                  # the batch asks for more than $3.50
+    assert res["end"] == "REFUSED" and "L2" not in res["steps"] and sh.calls == []
+    monkeypatch.setenv("EE_MAX_USD", "6.9")                                             # create was given another --max-usd
+    res = R.run(_batch(), [_clip()], tmp_path / "o2", **kw)
+    assert res["end"] == "REFUSED" and any("EE_MAX_USD" in p for p in res["problems"]) and sh.calls == []
+    monkeypatch.setenv("EE_MAX_USD", "3.5")
+    assert not any("EE_MAX_USD" in p for p in R.run(_batch(), [_clip()], tmp_path / "o3", **kw).get("problems", []))

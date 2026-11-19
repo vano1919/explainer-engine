@@ -175,6 +175,10 @@ def run(batch: dict, jobs: list[dict], out, *, api=None, sh=subprocess.run, down
         return rec
 
     why = batch_problems(launch, jobs, price=price, cap_usd=cap, check_image=False)   # the image was checked by `create` (pins)
+    rec_cap = section(launch).get("cap_usd")          # the creator's recorded cap: neither the batch nor the pod's own cap may pass it
+    for name, val in (("batch cap_usd", cap), ("EE_MAX_USD", os.environ.get("EE_MAX_USD"))):
+        if val not in (None, "") and (not rec_cap or float(val) > float(rec_cap) + 1e-9):
+            why.append(f"{name} {val} is above the recorded launch.runpod.cap_usd {rec_cap}: create --max-usd must be the creator's number")
     if why:
         return end("REFUSED", problems=why)
     # L2: the first step, before any model load; any missing or mismatched file ends the pod at once
