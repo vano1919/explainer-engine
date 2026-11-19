@@ -5,6 +5,23 @@ description: Ground a Crossworld Theories "what if" episode in real science, his
 
 # Science grounding for "what if" episodes
 
+## Vendored methods (W8 phase B): when to load which
+
+Load these at step 2 and step 8 of the procedure below, read whole, paste nothing:
+- `v-source-verification`: SIFT and the durable evidence trail for any source, image, document or video you are unsure of.
+- `v-fact-check-workflow`: pre-publication claim rating and the checks before an episode goes to the creator.
+- `v-newsjack-fact-check`: lateral reading, source-tier climbing and a calibrated rating for each extracted claim.
+
+**What stays ours:** the claim map (SCRIPTING_SPEC section 2), our four labels (`established`, `model`, `reasoned`,
+`guess`), counterfactuals as arguments with premises by claim id, round-in-speech and exact-in-map numbers, and the
+rule "two independent sources for every number". Upstream rating scales map onto our labels, they do not replace them.
+**Not used:** any upstream step that publishes, emails, posts, or calls an account service; the PR-copy framing of
+`v-newsjack-fact-check` (we check our own script, not a pitch).
+**Checked by:** `scripting/claims.py` (claim map to PV-37, one source type is not a binding grade, D-59), the episode
+rulebook gates (`standards`), and `scripting/story_lint.py` ST-09 for the objectivity label per segment.
+**Known gaps (W2):** "a narrated sentence is not stronger than its claim" and "a numeric claim has two sources" have no
+validator yet; the critic checks them by hand and says so.
+
 **Episode rulebook first (D-51, OR-11):** read `python -m explainer_engine.standards brief <episode>/episode_rules.json --role research` and follow it; legal, licence, likeness and art-direction questions are decided there (docs/EPISODE_STANDARDS.md), never invented in this skill. A conflict goes back to the orchestrator.
 
 The creator's brief (2026-10-16): lean on real science and logic, be creative in the telling. The audience trusts the channel

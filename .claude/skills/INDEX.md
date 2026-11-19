@@ -7,9 +7,9 @@ Archived (not loaded): `_archive/` holds `video-editing-architect`, `shot-visual
 
 | Stage | Load (vendored) | Overlay (ours) |
 |---|---|---|
-| S1 research and claims | `v-newsjack-fact-check`, `v-source-verification`, `v-fact-check-workflow` | `science-grounding` (W8 phase B pointer) |
+| S1 research and claims | `v-newsjack-fact-check`, `v-source-verification`, `v-fact-check-workflow` | `science-grounding` |
 | S2 story structure | `v-sw-story-structure` (+ `reference.md`), `v-sw-premise-theme`, `v-sw-workflow`, `v-sw-dialogue`, `v-sw-scene-craft` | `story-engine`, `dialogue-scenes`, `time-jump-episode`, `crossover-episode` (W8 phase B pointers) |
-| S3 narration and hook | `v-viral-hooks`, `v-hook-writing` | `narration-script` (W8 phase B pointer) |
+| S3 narration and hook | `v-viral-hooks`, `v-hook-writing` | `narration-script` |
 | S4 director's book, shot list | `v-director-cinematic` | `film-direction`, `visual-beats` |
 | S5 shot prompts | `v-visual-skills-image`, `v-visual-skills-video` | `film-direction` |
 | S6 storyboards, consistency | `v-scenario-storyboards`, `v-scenario-consistency` | `film-direction` |

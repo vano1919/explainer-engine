@@ -5,6 +5,28 @@ description: Run the writers' room for a Crossworld Theories dialogue "what if" 
 
 # Story engine: the writers' room in seven stages
 
+## Vendored methods (W8 phase B): when to load which
+
+The method comes from the vendored `v-*` skills (pins and licences: `docs/VENDORED_SKILLS.md`); this page keeps the
+channel's gates, owners and fields. Load a vendored skill only at the stage named here, read it whole (SK-1), and never
+paste its text into a prompt or a file: name it and give the stage the path.
+
+| Stage | Load | What stays ours | Checked by |
+|---|---|---|---|
+| 0 premise (before 1) | `v-sw-premise-theme` (premise, controlling idea, logline, subject tests) | one-sentence premise, yes/no dramatic question, promise; the twelve-premise scoring and the creator's card (VP rules) | `scripting/story_lint.py` (ST-00), `scripting/variant_plan.py` |
+| 1 skeleton | `v-sw-story-structure` and its `reference.md` (acts, midpoint, turns, openings and endings) | the three beat templates A/B/C, BUT/THEREFORE joins, every number (midpoint share, turn gap, loop interval) | `scripting/story_lint.py` (ST-02, ST-12, ST-13, ST-05, ST-06) |
+| 1, 2 | `v-sw-workflow` (stage order and story bible as a method only) | our stage table and `stage_guard`; the project state lives in the episode folder, never in a `story-bible.md` | `scripting/stage_guard.py` |
+| 2 scenes | `v-sw-scene-craft`, `v-sw-dialogue` (through our overlay `dialogue-scenes`) | scene header, narrator hand-off unit, one-voice narration | `scripting/scene_lint.py` (SC rules, PV-48) |
+| 3 to 7 | none | performance, edit, voices, Shorts and critic stay our pages in `.claude/agents/` | `stage_guard`, `production.editorial_gate` |
+
+`sw-*` skills link to `../sw-workflow/terms.md`; that file is `.claude/skills/v-sw-workflow/terms.md` here (vendored text is not edited).
+
+**Not used:** the upstream hand-off to a novel project, Chinese-opera and series (TV) branches of `v-sw-workflow`, and any
+upstream page-count or screenplay-format rule: a 10-minute explainer has its own measured numbers in the validators.
+**Known gaps (no validator yet, W2 owns them):** on a `schema_version 4.0.0` script `story_lint` runs ST-02, ST-13, ST-14 and
+ST-21 plus the V4 rules only, and `scene_lint` v4 lacks SC-07..SC-09, SC-11 and SC-12. Until W2 closes them, the critic reads
+those rules by hand and says so in its report; do not claim a pass for a rule that did not run.
+
 Rules: `docs/STORY_ENGINE.md` (ST story, SC scenes, DW dialogue, PF performance, MO motion, AL sound layers, VC casting,
 SS Shorts) plus the existing N, EL, ED, SH, PV rules. Research behind them: `docs/research/STORY_EDIT_VOICE_2026-10-19.md`
 and, for the /3 scene system, `docs/research/STORYTELLING_EDITING_2026-10-19.md`.

@@ -5,6 +5,24 @@ description: Write or fix any scene where characters talk - the scene header, op
 
 # Dialogue scenes: a unit that turns, not a row of quips
 
+## Vendored methods (W8 phase B): when to load which
+
+Load `v-sw-dialogue` for the line (action and reaction beats, said/unsaid, exposition as ammunition, a distinct voice per
+character, cutting speeches) and `v-sw-scene-craft` for the scene (value turn, enter late and leave early, suspense and
+delay, props and details, five-step scene analysis). Read each whole, use the method, paste nothing of it. The sections
+below are ours and win on any conflict.
+
+**What stays ours (not replaced):** the scene header SC-01 and its fields; the narrator to scene to narrator hand-off unit;
+Johnston's eight planning questions; Stein's five deflection moves (DW-12); conflict modes; the v4.3 rule that a hero line
+lives inside a `video` shot, one line per clip; real-person rules (D-63). A vendored beat that needs a screenplay format,
+a phone or a car scene, or a page count does not apply: the picture task and the clip length decide.
+
+**Checked by:** `scripting/scene_lint.py` (SC-01..SC-10, DW rules, PV-48), `episode/router.talking_check` (G1) for the route,
+`scripting/stage_guard.py` (words frozen after stage 2). Judgement stays with the writer and the critic (SK-2); no number is
+copied from upstream.
+
+`sw-*` skills link to `../sw-workflow/terms.md`; that file is `.claude/skills/v-sw-workflow/terms.md` here (vendored text is not edited).
+
 **v4.3 episode-first (2026-11-12, D-131):** the dialogue lives inside the scenes, and every hero line belongs to a shot routed `video` (LTX-2.5 distilled speaks it in the clip, D-132; the old name `wan` reads as `video`); the runner's G1 (`episode/router.talking_check`) FAILs a speaker shot on another route. One line per clip (VL-02), the line ends inside its clip with BP-187's tail, a line longer than one clip is split (VL-06, G1 `video_shots_fit_the_model`); a scene is one segment in one place (docs/VIDEO_LANE.md). The scene rules below apply unchanged.
 
 Rules by id: SC-01..SC-10 and DW-01..DW-13 in `docs/STORY_ENGINE.md` (wired as PV-48, `scripting/scene_lint.py`).
