@@ -338,3 +338,104 @@ def test_a_map_without_actions_fails_and_a_wan_shot_without_pictures_still_count
     assert by["every_wan_shot_is_a_wan_clip"]["status"] == G.FAIL and by["every_wan_shot_is_a_wan_clip"]["measured"] == ["S01_SH001"]
     shots = {s["shot_id"]: s for s in json.loads((tmp_path / "ep_toba" / "production" / "shot_records.json").read_text())["shots"]}
     assert shots["S01_SH008"]["status"] == G.FAIL and "without actions" in shots["S01_SH008"]["error"]
+
+# --- P1.2: authoritative clock validation, shared load_clock, and G6-G10 clock_sha256 fingerprints --------------------------
+
+def test_p12_persist_and_load_clock_validate_v1_and_v2_and_reject_invalid_payloads(tmp_path):
+    doc = _script(("S01_SH005", "S01_SH006"), (2.0, 2.0))
+    tr, spans = _transcript(doc, [0.1, 2.3])
+    read_s = spans[-1][1] + 0.4
+    v1 = TM.retime(doc, TM.align_read(doc, tr, read_s), FPS, read_s)
+
+    # /1 persists and loads unchanged via load_clock and load
+    v1_path = tmp_path / "ep_v1" / "audio" / "timing.json"
+    saved_v1 = TM.persist_authoritative_clock(v1, v1_path)
+    assert saved_v1["schema"] == "episode_timing/1"
+    assert len(saved_v1["timing_id"]) == 16
+    loaded_v1 = TM.load_clock(v1_path)
+    assert loaded_v1 == saved_v1
+    assert TM.load(tmp_path / "ep_v1") == saved_v1
+
+    # /2 persists and loads unchanged via load_clock and load
+    v2 = TM.retime_with_edit_points(v1, doc)
+    v2_path = tmp_path / "ep_v2" / "audio" / "timing.json"
+    saved_v2 = TM.persist_authoritative_clock(v2, v2_path)
+    assert saved_v2["schema"] == "episode_timing/2"
+    assert saved_v2["render_epoch"] == f"epoch_{saved_v2['timing_id']}"
+    assert TM.load_clock(v2_path) == saved_v2
+    assert TM.clock_sha256(v2_path) == RUN._sha(v2_path)
+
+    # Stale render_epoch on persist_authoritative_clock is rejected and NOT silently repaired or written
+    stale_epoch_doc = copy.deepcopy(v2)
+    stale_epoch_doc["render_epoch"] = "epoch_0000000000000000"
+    bad_path = tmp_path / "bad" / "timing.json"
+    with pytest.raises(ContractError, match="render_epoch"):
+        TM.persist_authoritative_clock(stale_epoch_doc, bad_path)
+    assert not bad_path.exists()
+
+    # Corrupt or schema-invalid clock on disk is rejected by load_clock and map_clip._resolve_spine
+    from explainer_engine.production import map_clip as MC
+    corrupt_ep = tmp_path / "corrupt_ep"
+    (corrupt_ep / "audio").mkdir(parents=True)
+    (corrupt_ep / "audio" / "timing.json").write_text(json.dumps({"fps": 24, "shots": {}}), encoding="utf-8")
+    with pytest.raises(ContractError):
+        TM.load(corrupt_ep)
+    with pytest.raises(ContractError):
+        MC._resolve_spine({"shot_id": "S01_SH005"}, None, corrupt_ep / "production" / "shot_clips" / "S01_SH005.mp4")
+
+    # Valid clock on disk is resolved by map_clip._resolve_spine via load_clock
+    resolved_sp = MC._resolve_spine({"shot_id": "S01_SH005"}, None, (tmp_path / "ep_v2") / "production" / "shot_clips" / "S01_SH005.mp4")
+    assert resolved_sp and resolved_sp[0]["word"] == v2["spines"]["S01_SH005"][0]["word"]
+
+
+def test_p12_g6_clock_sha256_and_g7_to_g10_stage_fingerprint_invalidation(tmp_path, monkeypatch):
+    doc = _script(("S01_SH005", "S01_SH006"), (2.0, 2.0))
+    root = _episode(tmp_path, doc)
+    tr, spans = _transcript(doc, [0.1, 2.3])
+    read_s = spans[-1][1] + 0.4
+    (root / "audio").mkdir(parents=True)
+    _wav(root / "audio" / "narration.wav", read_s)
+    (root / "audio" / "narration.scribe.json").write_text(json.dumps(tr), encoding="utf-8")
+
+    # Run real stage_voice (G6) while mocking G1-G5 and G7-G10 stage functions
+    fake_funcs = _fake({})
+    fake_funcs["voice"] = RUN.stage_voice
+    monkeypatch.setattr(RUN, "STAGE_FUNCS", fake_funcs)
+
+    ep = RUN.Episode(root, rehearsal=True)
+    recs = {r["stage"]: r for r in RUN.run_to(ep, "qa")}
+    t_path = root / "audio" / "timing.json"
+    initial_sha = TM.clock_sha256(t_path)
+
+    # 1. G6 outputs include clock_sha256 and voice record has no circular dependency (remains fresh)
+    assert recs["voice"]["outputs"]["clock_sha256"] == initial_sha
+    st_before = {row["stage"]: row for row in RUN.state(ep)}
+    assert all(st_before[s]["fresh"] for s in RUN.STAGES)
+
+    # 2. G7-G10 stage inputs include audio/timing.json sha256, while G1-G6 do not
+    for s in ("script", "sound_plan", "pictures", "voice"):
+        assert "audio/timing.json" not in RUN._stage_inputs(ep, s)
+    for s in ("clips", "sound", "assemble", "qa"):
+        assert RUN._stage_inputs(ep, s)["audio/timing.json"] == initial_sha
+
+    # 3. Unchanged clock keeps all fingerprints stable
+    fps_before = {s: RUN.fingerprint(ep, s) for s in RUN.STAGES}
+    assert all(fps_before[s] == recs[s]["fingerprint"] for s in RUN.STAGES)
+
+    # 4. Modify only a word spine start_frame in audio/timing.json:
+    # legacy 16-char timing_id stays identical, but clock_sha256 and G7-G10 fingerprints change!
+    clock_doc = TM.load_clock(t_path)
+    old_tid = clock_doc["timing_id"]
+    clock_doc["spines"]["S01_SH005"][0]["start_frame"] += 1
+    assert TM.compute_timing_id(clock_doc) == old_tid
+    TM.persist_authoritative_clock(clock_doc, t_path)
+    new_sha = TM.clock_sha256(t_path)
+    assert new_sha != initial_sha
+
+    st_after = {row["stage"]: row for row in RUN.state(ep)}
+    # G1-G6 remain fresh (no circular dependency on voice), while G7-G10 become stale!
+    for s in ("script", "sound_plan", "pictures", "voice"):
+        assert st_after[s]["fresh"] is True, s
+    for s in ("clips", "sound", "assemble", "qa"):
+        assert st_after[s]["fresh"] is False, s
+        assert RUN.fingerprint(ep, s) != fps_before[s], s

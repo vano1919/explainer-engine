@@ -24,9 +24,10 @@ NEW = ["job_manifest", "script_variants", "screenplay_spine", "voice_casting", "
        # the Ink Chronicle contracts (ICW-02, D-96, roadmap section 10)
        "blender_scene_manifest", "blender_render_manifest", "render_checkpoint", "speech_mix_report", "asset_library",
        "scene_assets",  # the drawn assets of the J5 / J2 / J4 routes (D-116, ICW-11)
-       "ltx_job"]  # the LTX generations of the J2 / J4 shots (D-116, guide step 3)
+       "ltx_job",
+       "episode_timing"]  # the LTX generations of the J2 / J4 shots (D-116, guide step 3)
 V2 = ["audio_spine", "sound_mix_manifest",  # contracts whose /2 lives in the same schema file as /1 (P4, D-88)
-      "shot_spec", "shot_route", "asset_library"]  # ICW-02: the Blender spec and route, the 3D asset library (D-110)
+      "shot_spec", "shot_route", "asset_library", "episode_timing"]  # ICW-02: the Blender spec and route, the 3D asset library (D-110)
 
 
 def load(path: Path) -> dict:
@@ -388,3 +389,24 @@ def test_the_speech_report_holds_no_band_number():
     doc = load(FIX / "speech_mix_report" / "valid.json")
     assert doc["rule"] == "BP-105" and SR.T("BP-105", "nominal_narrator_share") == 0.7  # the band lives in the registry (D-99)
     assert not any(k.endswith("band") or k == "nominal" for k in doc)
+
+def test_episode_timing_v1_and_v2_validate_and_reject_semantic_breaches():
+    from explainer_engine.episode import timing as ET
+
+    v1 = load(FIX / "episode_timing" / "valid.json")
+    v1_clips = load(FIX / "episode_timing" / "valid_clips.json")
+    v2 = load(FIX / "episode_timing" / "valid_v2.json")
+    assert v1["schema"] == "episode_timing/1" and C.errors(v1) == []
+    assert v1_clips["schema"] == "episode_timing/1" and C.errors(v1_clips) == []
+    assert v2["schema"] == "episode_timing/2" and C.errors(v2) == []
+
+    # /2 allows minimal retime_with_edit_points output without /1-only fields (read_s, spines, coverage, etc.)
+    minimal_in = {
+        "fps": 24,
+        "total_frames": 48,
+        "shots": {"S01_SH001": {"segment_id": "S01", "start_frame": 0, "end_frame": 48, "frames": 48}},
+    }
+    retimed_min = ET.retime_with_edit_points(minimal_in, {"shots": [{"shot_id": "S01_SH001", "segment_id": "S01", "route": "still_25d"}]})
+    assert retimed_min["schema"] == "episode_timing/2"
+    assert "read_s" not in retimed_min and "spines" not in retimed_min
+    assert C.errors(retimed_min) == []

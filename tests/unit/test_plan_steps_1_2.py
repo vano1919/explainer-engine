@@ -106,13 +106,15 @@ def _setup_t1_episode(tmp_path: Path, monkeypatch) -> tuple[Path, dict]:
     }), encoding="utf-8")
 
     timing = {
+        "schema": "episode_timing/1",
         "fps": 24,
+        "read_s": 3.5,
         "total_frames": 84,
         "clip_timed": ["S05_SH004"],
         "shots": {
-            "S05_SH003": {"start_frame": 0, "frames": 24},
-            "S05_SH004": {"start_frame": 24, "frames": 36},
-            "S05_SH005": {"start_frame": 60, "frames": 24},
+            "S05_SH003": {"start_frame": 0, "frames": 24, "seconds": 1.0, "planned_seconds": 1.0},
+            "S05_SH004": {"start_frame": 24, "frames": 36, "seconds": 1.5, "planned_seconds": 1.5, "timed_by": "clip"},
+            "S05_SH005": {"start_frame": 60, "frames": 24, "seconds": 1.0, "planned_seconds": 1.0},
         },
         "spines": {
             "S05_SH003": [{"word": "wait", "start_frame": 0}],
@@ -126,6 +128,9 @@ def _setup_t1_episode(tmp_path: Path, monkeypatch) -> tuple[Path, dict]:
             "frames": 36,
             "duration_s": 1.5,
         }],
+        "coverage": 1.0,
+        "alignment_status": "PASS",
+        "unmatched": [],
     }
     (root / "audio" / "timing.json").write_text(json.dumps(timing), encoding="utf-8")
     _write_pcm_wav(root / "audio" / "narration.wav", 2.0, rate=48000)

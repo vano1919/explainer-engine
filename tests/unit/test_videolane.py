@@ -297,8 +297,18 @@ def _reads(root, doc, shot_s=3.2):
     from explainer_engine.videolane import plan as VP
     spoken = VP.clip_spoken(doc)
     (root / "audio").mkdir(parents=True, exist_ok=True)
-    (root / "audio" / "timing.json").write_text(json.dumps({"shots": {s["shot_id"]: {"seconds": shot_s}
-                                                                       for s in doc["shots"] if s["shot_id"] not in spoken}}))
+    t_shots, t_spines, cur_f = {}, {}, 0
+    for s in doc["shots"]:
+        if s["shot_id"] not in spoken:
+            nf = max(1, int(round(float(shot_s) * FPS)))
+            t_shots[s["shot_id"]] = {"start_frame": cur_f, "frames": nf, "seconds": float(shot_s), "planned_seconds": float(s.get("target_duration_seconds") or shot_s)}
+            t_spines[s["shot_id"]] = []
+            cur_f += nf
+    (root / "audio" / "timing.json").write_text(json.dumps({
+        "schema": "episode_timing/1", "fps": FPS, "read_s": round(cur_f / float(FPS), 4),
+        "total_frames": max(1, cur_f), "shots": t_shots, "spines": t_spines,
+        "coverage": 1.0, "alignment_status": "PASS", "unmatched": [],
+    }))
     lines = {}
     for ln in doc["audio_lines"]:
         if ln.get("speaker_type") == "character":

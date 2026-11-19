@@ -1,0 +1,828 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "episode_timing.schema.json",
+ "title": "Episode timing clock: measured shot frame spans and word spines from G6 (episode_timing/1) and edit-point/clip-reconciled authoritative film clock (episode_timing/2)",
+ "type": "object",
+ "oneOf": [
+  {
+   "$ref": "#/$defs/v1"
+  },
+  {
+   "$ref": "#/$defs/v2"
+  }
+ ],
+ "$defs": {
+  "sha256": {
+   "type": "string",
+   "pattern": "^[0-9a-f]{64}$"
+  },
+  "fileref": {
+   "type": "object",
+   "properties": {
+    "path": {
+     "type": "string",
+     "minLength": 1
+    },
+    "sha256": {
+     "$ref": "#/$defs/sha256"
+    }
+   },
+   "required": [
+    "path",
+    "sha256"
+   ],
+   "additionalProperties": false
+  },
+  "spine_word": {
+   "type": "object",
+   "properties": {
+    "word": {
+     "type": "string",
+     "minLength": 1
+    },
+    "start_frame": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "end_frame": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "frame": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "estimated": {
+     "type": "boolean"
+    },
+    "timeline_absolute": {
+     "type": "boolean"
+    },
+    "index": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "start_s": {
+     "type": "number",
+     "minimum": 0
+    },
+    "end_s": {
+     "type": "number",
+     "minimum": 0
+    }
+   },
+   "required": [
+    "word",
+    "start_frame"
+   ],
+   "additionalProperties": false
+  },
+  "insert_item": {
+   "type": "object",
+   "properties": {
+    "shot_id": {
+     "type": "string",
+     "minLength": 1
+    },
+    "shot": {
+     "type": "string",
+     "minLength": 1
+    },
+    "at_read_frame": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "frames": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "start_frame": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "timeline_start_frame": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "timeline_end_frame": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "seconds": {
+     "type": "number",
+     "minimum": 0
+    },
+    "duration_s": {
+     "type": "number",
+     "minimum": 0
+    }
+   },
+   "required": [
+    "at_read_frame",
+    "frames"
+   ],
+   "anyOf": [
+    {
+     "required": [
+      "shot_id"
+     ]
+    },
+    {
+     "required": [
+      "shot"
+     ]
+    }
+   ],
+   "additionalProperties": false
+  },
+  "trim_contract": {
+   "type": "object",
+   "properties": {
+    "in_s": {
+     "type": "number",
+     "minimum": 0
+    },
+    "out_s": {
+     "type": "number",
+     "minimum": 0
+    },
+    "trim_duration_s": {
+     "type": "number",
+     "minimum": 0
+    },
+    "frames": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "clip_path": {
+     "type": "string"
+    },
+    "clip_sha256": {
+     "type": "string"
+    },
+    "head_lead_min_s": {
+     "type": "number",
+     "minimum": 0
+    },
+    "reaction_tail_min_s": {
+     "type": "number",
+     "minimum": 0
+    },
+    "reaction_tail_target_s": {
+     "type": "number",
+     "minimum": 0
+    },
+    "single_trimmed_source": {
+     "type": "boolean"
+    },
+    "timing_source": {
+     "type": "string",
+     "minLength": 1
+    }
+   },
+   "required": [
+    "in_s",
+    "out_s",
+    "trim_duration_s",
+    "frames",
+    "clip_path",
+    "timing_source"
+   ],
+   "additionalProperties": false
+  },
+  "on_screen_item": {
+   "type": "object",
+   "properties": {
+    "line_id": {
+     "type": "string",
+     "minLength": 1
+    },
+    "speaker_type": {
+     "type": "string",
+     "minLength": 1
+    },
+    "text": {
+     "type": "string",
+     "minLength": 1
+    },
+    "fade_in_s": {
+     "type": "number",
+     "minimum": 0
+    },
+    "fade_out_s": {
+     "type": "number",
+     "minimum": 0
+    }
+   },
+   "required": [
+    "line_id",
+    "speaker_type",
+    "text"
+   ],
+   "additionalProperties": false
+  },
+  "shot_v1": {
+   "type": "object",
+   "properties": {
+    "start_frame": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "end_frame": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "frames": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "seconds": {
+     "type": "number",
+     "exclusiveMinimum": 0
+    },
+    "duration_s": {
+     "type": "number",
+     "exclusiveMinimum": 0
+    },
+    "planned_seconds": {
+     "type": "number",
+     "minimum": 0
+    },
+    "timed_by": {
+     "type": "string",
+     "enum": [
+      "clip",
+      "read",
+      "planned"
+     ]
+    },
+    "segment_id": {
+     "type": "string",
+     "minLength": 1
+    },
+    "route": {
+     "type": "string",
+     "minLength": 1
+    }
+   },
+   "required": [
+    "start_frame",
+    "frames",
+    "seconds",
+    "planned_seconds"
+   ],
+   "additionalProperties": false
+  },
+  "shot_v2": {
+   "type": "object",
+   "properties": {
+    "start_frame": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "end_frame": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "frames": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "seconds": {
+     "type": "number",
+     "exclusiveMinimum": 0
+    },
+    "duration_s": {
+     "type": "number",
+     "exclusiveMinimum": 0
+    },
+    "start_s": {
+     "type": "number",
+     "minimum": 0
+    },
+    "end_s": {
+     "type": "number",
+     "exclusiveMinimum": 0
+    },
+    "planned_seconds": {
+     "type": "number",
+     "minimum": 0
+    },
+    "timed_by": {
+     "type": "string",
+     "enum": [
+      "clip",
+      "read",
+      "planned"
+     ]
+    },
+    "segment_id": {
+     "type": "string",
+     "minLength": 1
+    },
+    "route": {
+     "type": "string",
+     "minLength": 1
+    },
+    "in_s": {
+     "type": "number",
+     "minimum": 0
+    },
+    "out_s": {
+     "type": "number",
+     "minimum": 0
+    },
+    "trim_contract": {
+     "$ref": "#/$defs/trim_contract"
+    },
+    "on_screen_text": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/on_screen_item"
+     }
+    }
+   },
+   "required": [
+    "start_frame",
+    "end_frame",
+    "frames",
+    "seconds",
+    "duration_s",
+    "start_s",
+    "end_s",
+    "segment_id"
+   ],
+   "additionalProperties": false
+  },
+  "v1": {
+   "type": "object",
+   "properties": {
+    "schema": {
+     "const": "episode_timing/1"
+    },
+    "derived_from": {
+     "type": "object",
+     "additionalProperties": {
+      "$ref": "#/$defs/fileref"
+     }
+    },
+    "fps": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "read_s": {
+     "type": "number",
+     "minimum": 0
+    },
+    "total_frames": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "shots": {
+     "type": "object",
+     "minProperties": 1,
+     "propertyNames": {
+      "type": "string",
+      "minLength": 1
+     },
+     "additionalProperties": {
+      "$ref": "#/$defs/shot_v1"
+     }
+    },
+    "spines": {
+     "type": "object",
+     "propertyNames": {
+      "type": "string",
+      "minLength": 1
+     },
+     "additionalProperties": {
+      "type": "array",
+      "items": {
+       "$ref": "#/$defs/spine_word"
+      }
+     }
+    },
+    "inserts": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/insert_item"
+     }
+    },
+    "clip_timed": {
+     "type": "array",
+     "items": {
+      "type": "string",
+      "minLength": 1
+     }
+    },
+    "coverage": {
+     "anyOf": [
+      {
+       "type": "number",
+       "minimum": 0,
+       "maximum": 1
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "alignment_status": {
+     "anyOf": [
+      {
+       "type": "string",
+       "minLength": 1
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "unmatched": {
+     "type": "array"
+    },
+    "timing_id": {
+     "type": "string",
+     "pattern": "^[0-9a-f]{16}$"
+    },
+    "render_epoch": {
+     "type": "string",
+     "pattern": "^epoch_[0-9a-f]{16}$"
+    }
+   },
+   "required": [
+    "schema",
+    "fps",
+    "read_s",
+    "total_frames",
+    "shots",
+    "spines",
+    "coverage",
+    "alignment_status",
+    "unmatched"
+   ],
+   "additionalProperties": false
+  },
+  "v2": {
+   "type": "object",
+   "properties": {
+    "schema": {
+     "const": "episode_timing/2"
+    },
+    "episode_id": {
+     "type": "string",
+     "minLength": 1
+    },
+    "derived_from": {
+     "type": "object",
+     "additionalProperties": {
+      "$ref": "#/$defs/fileref"
+     }
+    },
+    "fps": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "read_s": {
+     "type": "number",
+     "minimum": 0
+    },
+    "total_frames": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "total_seconds": {
+     "type": "number",
+     "exclusiveMinimum": 0
+    },
+    "shots": {
+     "type": "object",
+     "minProperties": 1,
+     "propertyNames": {
+      "type": "string",
+      "minLength": 1
+     },
+     "additionalProperties": {
+      "$ref": "#/$defs/shot_v2"
+     }
+    },
+    "spines": {
+     "type": "object",
+     "propertyNames": {
+      "type": "string",
+      "minLength": 1
+     },
+     "additionalProperties": {
+      "type": "array",
+      "items": {
+       "$ref": "#/$defs/spine_word"
+      }
+     }
+    },
+    "inserts": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/insert_item"
+     }
+    },
+    "clip_timed": {
+     "type": "array",
+     "items": {
+      "type": "string",
+      "minLength": 1
+     }
+    },
+    "coverage": {
+     "anyOf": [
+      {
+       "type": "number",
+       "minimum": 0,
+       "maximum": 1
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "alignment_status": {
+     "anyOf": [
+      {
+       "type": "string",
+       "minLength": 1
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "unmatched": {
+     "type": "array"
+    },
+    "segments": {
+     "type": "object",
+     "minProperties": 1,
+     "propertyNames": {
+      "type": "string",
+      "minLength": 1
+     },
+     "additionalProperties": {
+      "type": "object",
+      "properties": {
+       "segment_id": {
+        "type": "string",
+        "minLength": 1
+       },
+       "start_frame": {
+        "type": "integer",
+        "minimum": 0
+       },
+       "end_frame": {
+        "type": "integer",
+        "minimum": 1
+       },
+       "frames": {
+        "type": "integer",
+        "minimum": 1
+       },
+       "start_s": {
+        "type": "number",
+        "minimum": 0
+       },
+       "end_s": {
+        "type": "number",
+        "exclusiveMinimum": 0
+       }
+      },
+      "required": [
+       "segment_id",
+       "start_frame",
+       "end_frame",
+       "frames",
+       "start_s",
+       "end_s"
+      ],
+      "additionalProperties": false
+     }
+    },
+    "narrator_offsets": {
+     "type": "array",
+     "minItems": 1,
+     "items": {
+      "type": "object",
+      "properties": {
+       "shot_id": {
+        "type": "string",
+        "minLength": 1
+       },
+       "segment_id": {
+        "type": "string",
+        "minLength": 1
+       },
+       "timeline_start_frame": {
+        "type": "integer",
+        "minimum": 0
+       },
+       "timeline_end_frame": {
+        "type": "integer",
+        "minimum": 1
+       },
+       "read_start_frame": {
+        "type": "integer",
+        "minimum": 0
+       },
+       "read_end_frame": {
+        "type": "integer",
+        "minimum": 0
+       },
+       "paused_for_insert": {
+        "type": "boolean"
+       }
+      },
+      "required": [
+       "shot_id",
+       "segment_id",
+       "timeline_start_frame",
+       "timeline_end_frame",
+       "read_start_frame",
+       "read_end_frame",
+       "paused_for_insert"
+      ],
+      "additionalProperties": false
+     }
+    },
+    "dialogue_positions": {
+     "type": "object",
+     "propertyNames": {
+      "type": "string",
+      "minLength": 1
+     },
+     "additionalProperties": {
+      "type": "object",
+      "properties": {
+       "shot_id": {
+        "type": "string",
+        "minLength": 1
+       },
+       "segment_id": {
+        "type": "string",
+        "minLength": 1
+       },
+       "start_frame": {
+        "type": "integer",
+        "minimum": 0
+       },
+       "end_frame": {
+        "type": "integer",
+        "minimum": 1
+       },
+       "frames": {
+        "type": "integer",
+        "minimum": 1
+       },
+       "start_s": {
+        "type": "number",
+        "minimum": 0
+       },
+       "end_s": {
+        "type": "number",
+        "exclusiveMinimum": 0
+       },
+       "at_read_frame": {
+        "type": "integer",
+        "minimum": 0
+       },
+       "in_s": {
+        "type": "number",
+        "minimum": 0
+       },
+       "out_s": {
+        "type": "number",
+        "minimum": 0
+       },
+       "clip_path": {
+        "type": "string",
+        "minLength": 1
+       }
+      },
+      "required": [
+       "shot_id",
+       "segment_id",
+       "start_frame",
+       "end_frame",
+       "frames",
+       "start_s",
+       "end_s",
+       "at_read_frame",
+       "in_s",
+       "out_s",
+       "clip_path"
+      ],
+      "additionalProperties": false
+     }
+    },
+    "map_events": {
+     "type": "object",
+     "propertyNames": {
+      "type": "string",
+      "minLength": 1
+     },
+     "additionalProperties": {
+      "type": "object",
+      "properties": {
+       "shot_id": {
+        "type": "string",
+        "minLength": 1
+       },
+       "segment_id": {
+        "type": "string",
+        "minLength": 1
+       },
+       "start_frame": {
+        "type": "integer",
+        "minimum": 0
+       },
+       "end_frame": {
+        "type": "integer",
+        "minimum": 1
+       },
+       "frames": {
+        "type": "integer",
+        "minimum": 1
+       },
+       "start_s": {
+        "type": "number",
+        "minimum": 0
+       },
+       "end_s": {
+        "type": "number",
+        "exclusiveMinimum": 0
+       },
+       "duration_s": {
+        "type": "number",
+        "exclusiveMinimum": 0
+       }
+      },
+      "required": [
+       "shot_id",
+       "segment_id",
+       "start_frame",
+       "end_frame",
+       "frames",
+       "start_s",
+       "end_s",
+       "duration_s"
+      ],
+      "additionalProperties": false
+     }
+    },
+    "on_screen_texts": {
+     "type": "object",
+     "propertyNames": {
+      "type": "string",
+      "minLength": 1
+     },
+     "additionalProperties": {
+      "type": "array",
+      "items": {
+       "$ref": "#/$defs/on_screen_item"
+      }
+     }
+    },
+    "frame_deltas": {
+     "type": "object",
+     "propertyNames": {
+      "type": "string",
+      "minLength": 1
+     },
+     "additionalProperties": {
+      "type": "integer"
+     }
+    },
+    "timing_id": {
+     "type": "string",
+     "pattern": "^[0-9a-f]{16}$"
+    },
+    "render_epoch": {
+     "type": "string",
+     "pattern": "^epoch_[0-9a-f]{16}$"
+    }
+   },
+   "required": [
+    "schema",
+    "fps",
+    "total_frames",
+    "total_seconds",
+    "shots",
+    "segments",
+    "narrator_offsets",
+    "dialogue_positions",
+    "map_events",
+    "on_screen_texts",
+    "frame_deltas",
+    "timing_id",
+    "render_epoch"
+   ],
+   "additionalProperties": false
+  }
+ }
+}

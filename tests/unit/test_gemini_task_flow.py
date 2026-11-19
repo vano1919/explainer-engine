@@ -260,6 +260,28 @@ def test_queue_refuses_a_never_word_and_reports_shares_in_the_frame(env):
     assert set(doc["mix"]["frame"]) == {"map_action", "still_25d", "video"}
 
 
+def _valid_timing_v1(shot_seconds: dict[str, float], fps: int = 24) -> dict:
+    shots = {}
+    spines = {}
+    cur = 0
+    for sid, sec in shot_seconds.items():
+        nf = max(1, int(round(float(sec) * fps)))
+        shots[sid] = {"start_frame": cur, "frames": nf, "seconds": float(sec), "planned_seconds": float(sec)}
+        spines[sid] = []
+        cur += nf
+    return {
+        "schema": "episode_timing/1",
+        "fps": fps,
+        "read_s": round(cur / float(fps), 4),
+        "total_frames": cur,
+        "shots": shots,
+        "spines": spines,
+        "coverage": 1.0,
+        "alignment_status": "PASS",
+        "unmatched": [],
+    }
+
+
 def test_frame_band_and_wan_clip():
     assert TM.in_band(10.9, 10) and TM.in_band(9.1, 10) and not TM.in_band(11.2, 10)
     assert TM.wan_frames(3.0, 16) == 49 and (TM.wan_frames(2.0, 16) - 1) % 4 == 0
@@ -267,8 +289,7 @@ def test_frame_band_and_wan_clip():
 
 
 def test_timed_read_sets_lengths_and_marks_a_measure_outside_the_frame(env):
-    tim = {"fps": 24, "shots": {"S01_SH001": {"seconds": 3.2}, "S01_SH002": {"seconds": 4.0},
-                                "S01_SH003": {"seconds": 2.9}, "S01_SH004": {"seconds": 3.0}}}
+    tim = _valid_timing_v1({"S01_SH001": 3.2, "S01_SH002": 4.0, "S01_SH003": 2.9, "S01_SH004": 3.0}, fps=24)
     (env / "audio").mkdir()
     (env / "audio" / "timing.json").write_text(json.dumps(tim))
     doc = QU.build(env)
@@ -429,7 +450,7 @@ def test_full_batch_flow_references_first_mapping_by_order_limit_resume_and_redo
     scene = next(b for b in doc["batches"] if b["kind"] == "scene")
     with pytest.raises(ContractError, match="timed"):
         BT.render(env, scene["no"])                                          # voice first
-    tim = {"fps": 24, "shots": {s["shot_id"]: {"seconds": 3.0} for s in doc["shots"]}}
+    tim = _valid_timing_v1({s["shot_id"]: 3.0 for s in doc["shots"]}, fps=24)
     (env / "audio").mkdir()
     (env / "audio" / "timing.json").write_text(json.dumps(tim))
     QU.write(env, QU.build(env))
@@ -493,7 +514,7 @@ def test_queue_on_drive_needs_the_saved_queue_and_sends_p8(env, tmp_path):
     for t in ("A", "B", "E"):
         BT.approve_anchor(t, str(noise(tmp_path / "anc" / f"{t}.jpg", seed=ord(t))), "cmsg")
     (env / "audio").mkdir()
-    (env / "audio" / "timing.json").write_text(json.dumps({"fps": 24, "shots": {f"S01_SH00{k}": {"seconds": 3.0} for k in range(1, 5)}}))
+    (env / "audio" / "timing.json").write_text(json.dumps(_valid_timing_v1({f"S01_SH00{k}": 3.0 for k in range(1, 5)}, fps=24)))
     _pass_stages(env)
     doc = QU.load(env)
     assert doc["mode"] == "queue_on_drive"

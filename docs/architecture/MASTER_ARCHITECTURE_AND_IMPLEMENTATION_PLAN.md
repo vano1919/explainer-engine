@@ -2,14 +2,14 @@
 
 > **Owner:** Creator  
 > **Document role:** Master architecture, module map, phased implementation roadmap, acceptance gates and live status register.  
-> **Status:** Phase 0 complete with limitations; its PR Quality workflow is green. Phase 1 specification is in progress in the same Draft PR #195; no production implementation has started.  
+> **Status:** Phase 0 complete with limitations; its PR Quality workflow is green. Phase 1 P1.0 (`DONE WITH LIMITATIONS`), P1.1 (`DONE`), and P1.2 (`DONE`) are completed on working branch `argon/p1-2-timing-contract` over `o239-argon-impl @ a060cf0b`; PR #195 remains Open/Draft (`fc35615e` -> `a060cf0b`).  
 > **Audit baseline:** o239-argon-impl @ a060cf0bb33a00974568d91c1dd30816de35da32 (2026-11-16 13:52:45 UTC).  
 > **Document branch:** docs/phase-0-master-architecture-2026-11-16.  
 > **Authority:** This file owns the target architecture, roadmap and phase status. Existing detailed schemas/rules remain in their canonical documents and are linked rather than duplicated.
 
 ## 0. Live status — update after every milestone
 
-**Overall:** Phase 0 is complete with explicit limitations. Phase 1 remains in read-only inventory/specification. PR Quality run #997 and workflow run ID 43942791002 passed on the documentation branch; PR #195 remains Draft/Open and has no human review. No production source code, runtime episode data, existing branch or other PR has been changed; no paid generation or cloud GPU job has been launched.
+**Overall:** Phase 0 is complete with explicit limitations. Phase 1 `P1.0` (`DONE WITH LIMITATIONS`: 967/967 Python files and 1,192/1,192 non-Python text files scanned; external HF clock bytes/checksum unverified), `P1.1` (`DONE`: `DEC-2026-11-17-01` approved by Owner on 2026-11-17), and `P1.2` (`DONE`: `episode_timing/1` and `episode_timing/2` JSON Schema, `_episode_timing` semantic validator, `persist_authoritative_clock()` validation, shared `load_clock(path)` across `episode/timing.py`, `build_segments.py`, `mix.py`, and `map_clip.py::_resolve_spine`, `clock_sha256` in G6 outputs and G7–G10 `_stage_inputs()`, 10 contract fixtures, and 7 synthetic unit test fixture migrations) are complete on branch `argon/p1-2-timing-contract` (layered over `o239-argon-impl @ a060cf0b`). Verification confirmed `docs_lint` (`0 finding(s)`), `palette` (`15 tokens PASS`), all 13 Phase 1 timing/contract/runner test files (`179 passed, 0 failed`), all 6 `o239-argon-impl` Items 1–6 test files (`43 passed, 0 failed`), and the full 361-module unit test sweep (`3,147 passed, 177 failed, 24 skipped` vs `3,128 passed, 191 failed, 25 skipped` baseline — +19 passed, -14 failed, 0 regressions). Runtime episode data (`episodes/**`) and `config/spend_caps.json` remain untouched; cost is `$0.00`.
 
 | ID | Work item | Status | Evidence / limitation |
 |---|---|---|---|
@@ -21,10 +21,10 @@
 | P0.5 | KEEP / IMPROVE / REPLACE / REMOVE / BUILD disposition | DONE — INITIAL | See section 4. Code-level changes still require individual specs and tests. |
 | P0.6 | Target architecture and implementation roadmap | DONE — PROPOSED BASELINE | See sections 5–9. Some concrete infrastructure products remain benchmark decisions. |
 | P0.7 | Final consistency review and reviewable PR | DONE WITH LIMITATIONS | Master file fetched back and checked; Draft PR #195 contains one documentation file and targets the active baseline. Quality run #997 passed on head b6668d1; follow-up workflow run ID 43942791002 also passed on head 6fa90a7. No reviews, inline threads or PR comments exist; awaiting human review/merge. |
-| P1.0 | Current state ownership and timeline writer/consumer inventory | IN PROGRESS | Four persistence paths, direct map-spine reader and other readers are identified. All 511 explainer_engine Python modules plus selected non-package runner/tool/test files were inspected; the full 967-file repository scan is still partial. External HF timing bytes/checksum remain inaccessible. |
-| P1.1 | Phase 1 architecture/specification | IN PROGRESS | Drafted below: retain current owners, add episode_timing/1 and /2 contracts first, then read-only state/dependency projections. Awaiting Owner acceptance. |
-| P1.2 | Timeline schema, semantic validator and fixtures | NOT STARTED | No code or schema changed. Blocked on P1.0 inventory and acceptance of this specification. |
-| P1.3 | Read-only Production State and dependency snapshot | NOT STARTED | No new persisted state file or scheduler. Design follows only after P1.2 compatibility is proven. |
+| P1.0 | Current state ownership and timeline writer/consumer inventory | DONE WITH LIMITATIONS | Complete scan executed across 967/967 Python files and 1,192/1,192 non-Python text files (`2,159` text files at `fc35615e`; `128` binary/oversized files in `EXCLUDED_FILES.csv`). Confirmed 4 writer paths, all active readers, and 5 additional synthetic test-fixture compatibility cases in `tests/unit/` alongside `test_gemini_task_flow.py` and `test_videolane.py`. Limitation: external HF `inputs/clock/timing.json` (`SHA256SUMS`, `CLOCK_NOTE.md`) bytes/checksum remain unverified and are recorded as an Owner-acknowledged unverified external artifact. |
+| P1.1 | Phase 1 architecture/specification | DONE | Owner approved all four architectural decisions (`DEC-2026-11-17-01`: state ownership retention, `episode_timing/1` & `/2` validation + shared `load_clock`, `clock_sha256` full-file fingerprint alongside unchanged `timing_id`, and 7 test-fixture migrations without weakening production schemas) on 2026-11-17. |
+| P1.2 | Timeline schema, semantic validator and fixtures | DONE | Implemented on `argon/p1-2-timing-contract`: `explainer_engine/schemas/episode_timing.schema.json` (`/1` and `/2`), `_episode_timing` semantic validator in `core/contracts.py`, `persist_authoritative_clock()` validation and `load_clock(path)` + `clock_sha256(path)` in `episode/timing.py`, reader migrations (`build_segments.py`, `mix.py`, `map_clip.py::_resolve_spine`), G6 `clock_sha256` output + G7–G10 `_stage_inputs()` binding in `episode/run.py`, 10 fixtures under `tests/fixtures/contracts/episode_timing/`, and migration of all 7 synthetic test-fixture files (`179 passed, 0 failed` across 13 target files; `3,147 passed` across full unit suite; `docs_lint: 0 findings`; `palette: 15 tokens PASS`). |
+| P1.3 | Read-only Production State and dependency snapshot | NOT STARTED | P1.2 compatibility is proven (`179/179` target tests pass, `3,147` unit tests pass). Ready for Owner authorization of P1.3 read-only Production State projection. |
 | P1.4 | ID/version inventory and migration/compatibility plan | NOT STARTED | Preserve current identifiers and existing files; no bulk migration. |
 
 **Status protocol:** only NOT STARTED, IN PROGRESS, BLOCKED, DONE, DONE WITH LIMITATIONS. Every update records date, commit/artifact, evidence and limitation. A status is never DONE merely because code was written or an agent claimed completion.
@@ -786,12 +786,19 @@ For each call site record: file/function, producer or consumer, schema version(s
 
 **Current coverage / gaps**
 - `tests/unit/test_v43_runner.py` exercises `/1` retiming/word-spine logic, `timed_script`, shot tiling and one persisted G6 rehearsal path. It does not cover every `/1` producer variant or the standalone Truce persistence paths.
-- `tests/unit/test_gemini_task_flow.py` contains three minimal synthetic `audio/timing.json` payloads (`fps`, `shots` and per-shot `seconds` only). `tests/unit/test_videolane.py::_reads()` also writes a minimal timing file containing only `shots` and measured `seconds`. Once `ET.load()` validates the contract, migrate these to complete valid `/1` fixtures or inject test-only loader mocks; do not weaken the production schema to keep incomplete test payloads passing. `tests/unit/test_videolane_media.py` additionally verifies that a full runner rehearsal writes and consumes the persisted clip-timed clock.
+- `tests/unit/test_gemini_task_flow.py` contains three minimal synthetic `audio/timing.json` payloads (`fps`, `shots` and per-shot `seconds` only, lines 270–273, 432–434, 496). `tests/unit/test_videolane.py::_reads()` (lines 292–301) also writes a minimal timing file containing only `shots` and measured `seconds`.
+- The full 967-file Python scan identified **five additional synthetic test-fixture compatibility cases** across `tests/unit/` that must be reconciled in P1.2 without weakening the production schema:
+  1. `tests/unit/test_audit_4b7a24ce_fixes.py` (lines 212–221 and 333–349): passes hand-built partial `"schema": "episode_timing/2"` dicts directly to `ET.persist_authoritative_clock()` and then to `BS.build()` / `MIX.run_mix()` (omitting `total_seconds`, `segments`, `dialogue_positions`, `map_events`, `on_screen_texts`, `frame_deltas`, and per-shot `seconds`/`duration_s`/`start_s`/`end_s`).
+  2. `tests/unit/test_integration_and_final_check.py` (lines 44–75): passes a minimal input `timing` dict (omitting `schema`, `read_s`, `spines`, `coverage`, `alignment_status`, `unmatched`, and per-shot `planned_seconds`) to `ET.retime_with_edit_points()` and then persists the result via `ET.persist_authoritative_clock()`. Because `retime_with_edit_points()` copies `timing_doc` without synthesizing `/1`-only fields, `/2` schema validation must require only fields guaranteed by `retime_with_edit_points()` itself while keeping `/1`-inherited fields optional.
+  3. `tests/unit/test_truce_rebuild_implementation.py` (lines 62–79): passes `dummy_timing` (without `read_s`, `coverage`, `alignment_status`, `unmatched`) to `ETM.retime_with_edit_points()` and uses an absolute timeline `start_frame: 90` in `spines["S08_SH004"]` (for a shot spanning frames `78..132`) without `"timeline_absolute": True`.
+  4. `tests/unit/test_plan_step_3.py` (lines 90–108): writes a synthetic `"schema": "episode_timing/1"` file to `root / "audio" / "timing.json"` with per-shot `duration_s` instead of `seconds`/`planned_seconds` and without `read_s`, `coverage`, `alignment_status`, or `unmatched`, which `RUN.stage_clips` loads via `ep.timing()` -> `TM.load(ep.root)`.
+  5. `tests/unit/test_plan_steps_1_2.py` (lines 109–136): writes a schema-less `audio/timing.json` (`total_frames`, `clip_timed`, `shots`, `spines`, `inserts`) while monkeypatching `RUN.TM.load`.
+- Once `ET.load()` and `ET.persist_authoritative_clock()` validate the contract, migrate all synthetic test payloads above to complete valid `/1` or `/2` fixtures (or explicit test-only mocks where appropriate); do not weaken the production schema to keep incomplete test payloads passing. `tests/unit/test_videolane_media.py` additionally verifies that a full runner rehearsal writes and consumes the persisted clip-timed clock.
 - `tests/unit/test_av_events.py` and `test_av_anchors.py` exercise downstream spine/event semantics with in-memory data, not persisted-clock validation.
 - `tests/unit/test_contracts.py` has no `episode_timing` schema/fixtures; no `episode_timing.schema.json` or `tests/fixtures/contracts/episode_timing/` exists on this baseline.
 - No focused offline regression was found for `build_segments.synchronize_episode_clock`, `build_segments.build`, or `mix.run_mix` persistence/read compatibility. Add coverage for the configured external path, injected `timing_doc`, and local authority-comparison behavior before enforcing the schema.
 - `episodes/ep_truce_1914/planning/full_film_2026-11-15/inputs_manifest.json` lists external Hugging Face URLs for `inputs/clock/timing.json`, `SHA256SUMS` and `CLOCK_NOTE.md`. `MAC_RUNBOOK.md` states the standalone segment/mix route uses the same timing.json as episode-first G7–G10. The manifest has no inline per-file digest. Attempts to fetch the external files were inaccessible, so their bytes/hash and relationship to episode-local `audio/timing.json` remain unverified. The standalone CLI defaults to the external file and does not prove equality with the local file.
-- The recursive Git tree for `o239-argon-impl` returned `truncated=false` (2,546 entries, 2,286 blobs and 967 Python files). A targeted content sweep fetched all 120 Python files whose paths matched timing/clock/episode/stage/runner/render/mix/audio/job/state/timeline/manifest: 92 runtime/tool files (90 under `explainer_engine/`, two under `tools/`) and 28 adjacent test/example/assets/docs files. No additional active master-clock writer or reader was found in this selected set. `episode/shot_split.py` contains only a descriptive `audio/timing.json` mention; the one extra unit-test hit reads the generated clock for assertions. This is not a complete content scan of all 967 Python files: 847 remain uninspected. GitHub Code Search is default-branch-only (`main`) and therefore does not establish search coverage for `o239-argon-impl`.
+- The complete repository snapshot at `fc35615e` (`2,159` included text files + `128` excluded binary/oversized files in `EXCLUDED_FILES.csv` = `2,287` blobs; identical in code to `o239-argon-impl` @ `a060cf0b` plus this Master Plan file) was content-scanned across **967 / 967 Python files** and **1,192 / 1,192 non-Python text files**. Zero additional active runtime/production `episode_timing` writers or readers exist beyond the 4 documented writer paths and the documented readers in the table above (`videolane/master_qa.py` line 243 only cites `"audio/timing.json"` in a remediation message string; `episode/shot_split.py` line 47 is a docstring comment). External HF `inputs/clock/timing.json` (`SHA256SUMS`, `CLOCK_NOTE.md`) remains unverified by checksum and is explicitly recorded as an Owner-acknowledged unverified external artifact.
 
 **Additional P1.0 findings that affect correctness and the P1.2 acceptance gate**
 
@@ -822,7 +829,15 @@ For each call site record: file/function, producer or consumer, schema version(s
 - tests/fixtures/contracts/episode_timing/valid_v2.json
 - tests/fixtures/contracts/episode_timing/invalid__v2_*.json
 - tests/unit/test_contracts.py
-- tests/unit/test_v43_runner.py only if needed for write-boundary integration coverage
+- tests/unit/test_v43_runner.py (write-boundary integration and G6 `clock_sha256` downstream invalidation coverage)
+- Synthetic timing fixture updates in existing unit tests identified by P1.0:
+  - tests/unit/test_audit_4b7a24ce_fixes.py
+  - tests/unit/test_integration_and_final_check.py
+  - tests/unit/test_truce_rebuild_implementation.py
+  - tests/unit/test_plan_step_3.py
+  - tests/unit/test_plan_steps_1_2.py
+  - tests/unit/test_gemini_task_flow.py
+  - tests/unit/test_videolane.py
 - docs/CONTRACTS.md
 
 Do not expand the file list without documenting why and updating the task contract. If P1.0 finds additional legitimate producers or consumers, return to the specification and revise scope before implementation.
@@ -897,9 +912,13 @@ After P1.2 is merged and compatibility is proven:
 - No new database, queue, distributed scheduler, worker architecture, Main AI Director or Expert agent runtime.
 - No paid API or GPU work; all tests use fixtures/fakes/local deterministic data.
 
-### 8.3.9 Owner decision gate
+### 8.3.9 Owner decision gate (`DEC-2026-11-17-01`)
 
-This specification is a draft. Owner acceptance is required before P1.2 implementation. The next permitted work before acceptance is only P1.0 read-only call-site/fixture inventory and revisions to this specification.
+P1.0 read-only call-site and fixture inventory is complete (`DONE WITH LIMITATIONS`: 967/967 Python files and 1,192/1,192 non-Python text files scanned; external HF `inputs/clock/timing.json` checksum unverified). The four P1.1 architectural decisions are prepared in `DECISION_LOG.md` under `DEC-2026-11-17-01` for final Owner approval before any `.py` file is modified in P1.2:
+1. **3.1 State ownership:** Retain existing separate state owners (`episode.json`, `job_manifest.json`, `JobStore`, `production/stages/*.json`, `audio/timing.json`); do not create a competing writable `ProductionState` system.
+2. **3.2 Episode Timing validation:** Enforce `episode_timing/1` and `episode_timing/2` validation in `persist_authoritative_clock()` and via a shared `load_clock(path)` used by `load(root)` and all direct readers (`tools/render_tools/build_segments.py`, `tools/render_tools/mix.py`, `explainer_engine/production/map_clip.py::_resolve_spine`). Require in `/2` only fields guaranteed by `retime_with_edit_points()` itself; `/1`-specific fields do not become mandatory in `/2`.
+3. **3.3 Clock fingerprint:** Keep legacy 16-char `timing_id` unchanged; add full-file SHA-256 `clock_sha256` to G6 outputs and bind it into downstream G7–G10 (`clips`, `sound`, `assemble`, `qa`) stage-input fingerprints.
+4. **3.4 Test fixtures & external clock:** Migrate synthetic test payloads (`test_audit_4b7a24ce_fixes.py`, `test_integration_and_final_check.py`, `test_truce_rebuild_implementation.py`, `test_plan_step_3.py`, `test_plan_steps_1_2.py`, `test_gemini_task_flow.py`, `test_videolane.py`) to valid contract structures without weakening the production schema; record external HF `inputs/clock/timing.json` in P1.0 as an Owner-acknowledged unverified external artifact.
 
 ---
 
@@ -999,11 +1018,15 @@ Concrete DB, queue/event broker, dashboard framework, object-storage vendor, pro
 - Quality workflow run 43954224256 completed successfully on the documentation branch head 8fe9e6e2f86a209dc5b13063b26ce05b57fe11fe before this update.
 - No production code, episode data, paid API, GPU generation or publishing was changed or executed.
 
+## 2026-11-17 — P1.0 full 967-file inventory completed and P1.1 decisions (`DEC-2026-11-17-01`) prepared
+- Verified Google Drive `Explainer_Engine_V4_Main` (`1nmrhdssEaBnDgmpgMvY6SddAC-Ef9Ri5`) baseline: `LATEST_COMMIT.json` (`1KgZLyNJXtkDMSRhF9nCrxZlhlM8wPlao`) points to `o239-argon-impl` @ `a060cf0b`; verified `REPO_TEXT_o239-argon-impl_a060cf0b.zip` (`6,589,406` bytes, SHA-256 `1c4074a1d0ded9a2c15bf7b12881d83e8514bc0c2cd0e07df3be7b6ecdaafcc0`, `1,676` files, `0` content diffs vs `fc35615e`) and `REPO_TEXT_o239-argon-impl_a060cf0b.tar.xz` (`5,426,088` bytes, SHA-256 `6c955efa1efe1f368809beffd5a11708e887378835dcd261ac0368a4e5f6518c`, `2,057` non-`__pycache__` files, `0` content diffs vs `fc35615e`).
+- Completed full content scan across **967 / 967 Python files** and **1,192 / 1,192 non-Python text files** (`2,159` text files in `fc35615e`; `128` excluded binary/oversized files in `EXCLUDED_FILES.csv`). Confirmed the 4 `episode_timing` writers and all active readers, and identified 5 additional synthetic test-fixture compatibility cases (`test_audit_4b7a24ce_fixes.py`, `test_integration_and_final_check.py`, `test_truce_rebuild_implementation.py`, `test_plan_step_3.py`, `test_plan_steps_1_2.py`) alongside `test_gemini_task_flow.py` and `test_videolane.py`.
+- Updated P1.0 status to `DONE WITH LIMITATIONS` (limitation: external Hugging Face `inputs/clock/timing.json`, `SHA256SUMS`, and `CLOCK_NOTE.md` bytes/checksum remain unverified and are recorded as an Owner-acknowledged unverified external artifact).
+- Formalized the four P1.1 architectural decisions in `DECISION_LOG.md` under `DEC-2026-11-17-01`, updated `IMPLEMENTATION_JOURNAL.md` and `PROJECT_STATE.md`, and verified `docs_lint` (0 findings), `palette` (pass), 13 Phase 1 timing/contract/runner test files (`176 passed, 0 failed`), and 6 `o239-argon-impl` Items 1–6 test files (`43 passed, 0 failed`). Zero `.py` files modified.
+
 ## Next actions
-1. Resolve/provide the external Truce inputs/clock/timing.json, SHA256SUMS and CLOCK_NOTE.md, or explicitly designate their provenance as an Owner-approved unverified input; do not assume the external file equals the episode-local file.
-2. Complete targeted review of remaining non-package Python paths likely to read/write episode timing; avoid unrelated model-training code with no timing dependency signal.
-3. Obtain Owner acceptance of the revised Phase 1 specification, especially full-content hash and downstream invalidation requirements.
-4. Only then implement P1.2 as a small schema/semantic-validator/loader/fixture/test PR. Do not start a broad refactor or build a parallel Production State.
+1. Obtain final Owner confirmation of `DEC-2026-11-17-01` (Section 8.3.9) to mark P1.1 `DONE`.
+2. Execute P1.2 in the exact approved sequence: (1) `episode_timing.schema.json` (`/1` and `/2`), (2) semantic validator in `core/contracts.py`, (3) `persist_authoritative_clock()` validation, (4) shared `load_clock(path)` in `episode/timing.py`, (5) reader migration in `build_segments.py`, `mix.py`, and `production/map_clip.py::_resolve_spine`, (6) `clock_sha256` in G6 outputs, (7) G7–G10 stage-input fingerprint binding to `clock_sha256`, and (8) migration of all 7 synthetic test-fixture files.
 
 ---
 
@@ -1062,3 +1085,14 @@ Concrete DB, queue/event broker, dashboard framework, object-storage vendor, pro
 - [Ruff linter docs](https://docs.astral.sh/ruff/linter/)
 - [Ruff formatter docs](https://docs.astral.sh/ruff/formatter/)
 - [Ruff configuration docs](https://docs.astral.sh/ruff/configuration/)
+
+## 2026-11-17 — P1.1 approved (`DONE`) and P1.2 (`episode_timing` contract, `load_clock`, `clock_sha256` & 7 fixture migrations) completed (`DONE`)
+- Owner approved `P1.0` (`DONE WITH LIMITATIONS`), `P1.1` (`DEC-2026-11-17-01` -> `DONE`), and the 10-phase P1.2 implementation plan on 2026-11-17.
+- Created branch `argon/p1-2-timing-contract` from `o239-argon-impl @ a060cf0b` with the updated Master Plan from `fc35615e`.
+- Implemented `explainer_engine/schemas/episode_timing.schema.json` supporting `episode_timing/1` (`$defs/v1`) and `episode_timing/2` (`$defs/v2`) via top-level `oneOf` with `additionalProperties: false` at all levels; `/2` requires only the fields guaranteed by `retime_with_edit_points()` while keeping `/1`-specific fields optional.
+- Added semantic validator `_episode_timing(doc, base)` and registered `"episode_timing"` in `SEMANTIC` in `explainer_engine/core/contracts.py`; added 10 fixtures (`valid.json`, `valid_clips.json`, `valid_v2.json`, and 7 invalid fixtures) under `tests/fixtures/contracts/episode_timing/`; registered `"episode_timing"` in `NEW` and `V2` in `tests/unit/test_contracts.py` (`33 passed`); documented `episode_timing/1` and `episode_timing/2` in `docs/CONTRACTS.md`.
+- Updated `explainer_engine/episode/timing.py`: added `clock_sha256(path)` and `load_clock(path)` (supporting `/1`, `/2`, and unversioned legacy shot-list docs while rejecting malformed versioned payloads), delegated `load(root)` to `load_clock(p)`, and enforced `C.validate(doc, dest.parent)` before `write_json_atomic(dest, doc)` inside `persist_authoritative_clock()` while preserving the 16-char `timing_id` algorithm unchanged.
+- Migrated direct clock readers in `tools/render_tools/build_segments.py` (`synchronize_episode_clock`, `build`), `tools/render_tools/mix.py` (`run_mix`), and `explainer_engine/production/map_clip.py` (`_resolve_spine`) to `ET.load_clock(...)`.
+- Bound `TIMING_REL = "audio/timing.json"` (`clock_sha256`) into `explainer_engine/episode/run.py`: added `"clock_sha256": _sha(timing_path)` to G6 (`voice`) outputs (`stage_voice` and `_voice_with_clips`) and added `files[TIMING_REL] = _sha(ep.root / TIMING_REL)` to `_stage_inputs()` for G7 (`clips`), G8 (`sound`), G9 (`assemble`), and G10 (`qa`) with zero circular dependency on G6 inputs.
+- Verified RED test failures (`7 failed` across `test_videolane.py`, `test_audit_4b7a24ce_fixes.py`, and `test_plan_step_3.py`) before migrating the 7 synthetic test-fixture files (`test_gemini_task_flow.py`, `test_videolane.py`, `test_audit_4b7a24ce_fixes.py`, `test_integration_and_final_check.py`, `test_truce_rebuild_implementation.py`, `test_plan_step_3.py`, `test_plan_steps_1_2.py`), then verified GREEN (`179 passed, 0 failed` across all 13 Phase 1 / timing / contract / runner / videolane test files; `3,147 passed, 177 failed, 24 skipped` across the full 361-module unit test sweep vs `3,128 passed, 191 failed, 25 skipped` baseline; `docs_lint: 0 finding(s)`; `palette: 15 tokens PASS`).
+- Confirmed via Self-Audit that `episodes/**` and `config/spend_caps.json` are untouched and cost is `$0.00`. Next step awaits Owner approval before starting `P1.3`.

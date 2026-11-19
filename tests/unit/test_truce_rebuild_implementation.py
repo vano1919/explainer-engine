@@ -60,14 +60,19 @@ class TestTruceRebuildImplementation(unittest.TestCase):
         self.assertLessEqual(ep["clips"]["S02_SH004"]["mute_tail_from_s"], 1.38)
 
         dummy_timing = {
+            "schema": "episode_timing/1",
             "fps": 24,
+            "read_s": 5.5,
             "total_frames": 132,
             "inserts": [{"shot_id": "S03_SH005", "at_read_frame": 0, "frames": 78}],
             "shots": {
-                "S03_SH005": {"start_frame": 0, "end_frame": 78, "frames": 78, "seconds": 3.25},
-                "S08_SH004": {"start_frame": 78, "end_frame": 132, "frames": 54, "seconds": 2.25},
+                "S03_SH005": {"start_frame": 0, "end_frame": 78, "frames": 78, "seconds": 3.25, "planned_seconds": 3.25},
+                "S08_SH004": {"start_frame": 78, "end_frame": 132, "frames": 54, "seconds": 2.25, "planned_seconds": 2.25},
             },
-            "spines": {"S08_SH004": [{"word": "human", "start_frame": 90}]},
+            "spines": {"S08_SH004": [{"word": "human", "start_frame": 90, "timeline_absolute": True}]},
+            "coverage": 1.0,
+            "alignment_status": "PASS",
+            "unmatched": [],
         }
         retimed = ETM.retime_with_edit_points(dummy_timing, script, ep)
         self.assertEqual(retimed["shots"]["S03_SH005"]["frames"], int(round(ep["clips"]["S03_SH005"]["out"] * 24)))
