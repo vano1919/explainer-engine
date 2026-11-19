@@ -54,7 +54,28 @@ def quality_yml_problems(old: str, new: str) -> list[str]:
     import re
     def steps(t): return len(re.findall(r"^\s*-\s+name:", t, re.M)), len(re.findall(r"^\s*run:", t, re.M))
     def marks(t): return len(re.findall(r"continue-on-error|--deselect|(?<![\w-])-k\s|--ignore|pytest\.mark\.skip|-m\s+[\"']?not\s", t))
+    def commands(t):
+        """Every ``run:`` command text (one-liners and the lines of a ``run: |`` block), stripped."""
+        cmds, lines, i = set(), t.splitlines(), 0
+        while i < len(lines):
+            m = re.match(r"^(\s*)(?:-\s+)?run:\s*(.*)$", lines[i])
+            if m:
+                ind, val = len(m.group(1)), m.group(2).strip()
+                if val and val[0] not in "|>":
+                    cmds.add(val)
+                else:
+                    j = i + 1
+                    while j < len(lines) and (not lines[j].strip() or len(lines[j]) - len(lines[j].lstrip()) > ind):
+                        if lines[j].strip():
+                            cmds.add(lines[j].strip())
+                        j += 1
+                    i = j - 1
+            i += 1
+        return cmds
     out = []
+    changed = sorted(commands(old) - commands(new))
+    if changed:
+        out.append("changes or removes an existing run command (a command may only be added, never altered): " + "; ".join(changed)[:300])
     (so, ro), (sn, rn) = steps(old), steps(new)
     if sn < so or rn < ro:
         out.append(f"removes a workflow step or command ({so}->{sn} steps, {ro}->{rn} run lines)")

@@ -118,7 +118,13 @@ def test_quality_yml_changes_that_weaken_ci_still_need_the_creator(repo):
     assert write(repo, QY, BASE.replace("pytest -q", "pytest -q --deselect tests/x.py::t")) == 2
     assert write(repo, QY, BASE.replace("pytest -q", "pytest -q -k fast")) == 2
     assert write(repo, QY, BASE + "    continue-on-error: true\n") == 2
-    assert write(repo, QY, BASE.replace('"not system"', '"not system and not media"')) == 0   # the existing -m filter, not a new one
+    assert write(repo, QY, BASE.replace("pytest -q", "echo ok # pytest -q")) == 2                   # R2: a command swapped for a no-op
+    assert write(repo, QY, BASE.replace('pytest -q -m "not system"', "echo ok")) == 2
+    assert write(repo, QY, BASE.replace('"not system"', '"not system and not media"')) == 2         # R2: any changed run command, even an existing -m filter
+    assert records.quality_yml_problems(BASE, BASE) == []
+    assert records.quality_yml_problems(BASE, BASE + "  - name: x\n    run: |\n      echo added\n") == []   # only added steps/commands
+    block = "  - name: b\n    run: |\n      pytest -q\n      python -m docs\n"
+    assert records.quality_yml_problems(BASE + block, BASE + block.replace("python -m docs", "true"))                 # a line of a run block counts too
 
 
 def test_a_shell_write_to_quality_yml_cannot_be_diffed_so_it_needs_the_creator(repo):
