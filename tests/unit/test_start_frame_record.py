@@ -134,12 +134,13 @@ def test_route_proposals_of_two_scenes_are_merged_by_shot_id_not_overwritten(tmp
     assert [q["shot_id"] for q in again] == ["S01_SH001", "S02_SH001"]
 
 
-def test_a_continuation_is_not_counted_and_a_kept_duplicate_word_is(tmp_path):
+def test_a_continuation_is_not_counted_and_a_trim_note_that_asks_for_review_is(tmp_path):
     v = tmp_path / "production" / "video"
     v.mkdir(parents=True)
     (v / "S01_SH001.json").write_text(json.dumps({"shot_id": "S01_SH001", "status": "PASS", "start_frame_check": {
         "status": "NEEDS_EVIDENCE", "continuation": True}}), encoding="utf-8")
     (v / "S01_SH002.json").write_text(json.dumps({"shot_id": "S01_SH002", "status": "PASS", "start_frame_check": {"status": "PASS"},
-        "trim_notes": [{"kind": "duplicate_opening_word_kept", "text": "Maybe."}]}), encoding="utf-8")
+        "trim_notes": [{"kind": "duplicate_opening_word_kept", "text": "Maybe.", "review": "ask"},
+                       {"kind": "duplicate_opening_word_kept", "text": "decided", "decision": "kept (creator, 2026-11-19)"}]}), encoding="utf-8")
     r = I.unresolved_reviews(tmp_path)
-    assert r["count"] == 1 and r["items"][0].startswith("S01_SH002") and "duplicate_opening_word_kept" in r["items"][0]
+    assert r["count"] == 1 and r["items"][0].startswith("S01_SH002") and "duplicate_opening_word_kept (Maybe.)" in r["items"][0] and "decided" not in r["items"][0]
