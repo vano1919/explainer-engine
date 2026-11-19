@@ -103,3 +103,12 @@ def test_unresolved_reviews_counts_each_clip_once_with_both_reasons(tmp_path):
     r = I.unresolved_reviews(tmp_path)
     assert r["count"] == 2
     assert "start_frame_check REVIEW + clip findings REVIEW" in r["items"][0]
+
+
+def test_a_padded_clip_counts_in_unresolved_reviews(tmp_path):
+    v = tmp_path / "production" / "video"
+    v.mkdir(parents=True)
+    (v / "S01_SH009.json").write_text(json.dumps({"shot_id": "S01_SH009", "status": "REVIEW", "frame_pad": 1,
+                                                  "start_frame_check": {"status": "PASS"}}), encoding="utf-8")
+    r = I.unresolved_reviews(tmp_path)
+    assert r["count"] == 1 and "frame_pad" in r["items"][0]

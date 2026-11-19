@@ -1329,6 +1329,19 @@ def _insert_seconds(ins: dict, timing: dict, script: dict, fps: int) -> float:
     raise ContractError(f"cannot determine insert duration for {sid}")
 
 
+def _mute_clip_tail(ep, sid: str, clip: Path, rec: dict, clip_audio: dict) -> dict:
+    """Step 1.5 (D-139): a clip record that carries ``mute_tail_from_s`` (raw-clip seconds, set by the one trim rule in
+    ``videolane/ingest``) has its insert sound muted from there, with a short fade (``stems.mute_from``); the muted copy is what
+    the voice track lays. No field, no call, no change."""
+    from explainer_engine.audio import stems as STEMS
+    from explainer_engine.videolane import voice as VV
+    rel = max(0.0, float(rec["mute_tail_from_s"]) - float(rec.get("in_s") or 0.0))
+    x = STEMS.mute_from(VV.read_mono(clip, 48000), 48000, rel)
+    wav = VV.write_mono(ep.path("audio/insert_muted") / f"{sid}.wav", x, 48000)
+    clip_audio[sid]["path"] = str(wav)
+    return {"shot_id": sid, "mute_from_s": round(rel, 4), "mute_tail_from_s_raw": float(rec["mute_tail_from_s"])}
+
+
 def _write_silence_wav(path: Path, seconds: float, rate: int = 48000) -> Path:
     """Write a 16-bit mono PCM silent WAV of exact duration ``seconds`` at ``rate`` Hz."""
     import wave
@@ -1388,6 +1401,7 @@ def stage_sound(ep: Episode, rehearsal: bool):
     narration = polished
     voice_rep = None
     missing_inserts: list[str] = []
+    muted_tails: list[dict] = []
     if timing and timing.get("inserts"):   # VL-13: the LTX dialogue laid once on its shots, the read split around it
         from explainer_engine.videolane import ingest as VI
         from explainer_engine.videolane import voice as VV
@@ -1402,6 +1416,8 @@ def stage_sound(ep: Episode, rehearsal: bool):
                     if cp.is_file():
                         clip_audio[ins["shot_id"]] = {"path": str(cp), "speech": d.get("speech") or [],
                                                       "speaker": _clip_speaker(script, ins["shot_id"])}
+                        if d.get("mute_tail_from_s") is not None:   # Step 1.5 (D-139): the ingest's hallucinated tail word, muted here too
+                            muted_tails.append(_mute_clip_tail(ep, ins["shot_id"], cp, d, clip_audio))
         missing = [i["shot_id"] for i in timing["inserts"] if i["shot_id"] not in clip_audio]
         if missing and not rehearsal:
             raise ContractError(f"missing LTX dialogue insert clip record(s): {', '.join(missing)}; "
@@ -1441,6 +1457,7 @@ def stage_sound(ep: Episode, rehearsal: bool):
             narrated_clips[s["shot_id"]] = str(ep.root / json.loads(rp.read_text(encoding="utf-8"))["clip_path"])
     rep = STEMS.render(plan, sources, stems_dir, library_root=ep.sound_library,
                        narration=narration, shippable=not rehearsal, clip_audio=narrated_clips)
+    rep["muted_tails"] = muted_tails            # the shots whose clip record's mute_tail_from_s was applied (Step 1.5)
     write_json_atomic(ep.path("audio/stems_report.json"), rep)
     stem_audit = audit_rendered_audio_stems(stems_dir=stems_dir, script_doc=_with_line_times(script, timing), fps=ep.fps)
     write_json_atomic(ep.path("qa/audio_stem_audit.json"), stem_audit)

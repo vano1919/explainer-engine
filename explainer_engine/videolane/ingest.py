@@ -394,26 +394,36 @@ def edit_points(dur: float, spans: list, edit_plan: dict | None, planned_s: floa
     return {"in_s": round(f_in / fps, 4), "out_s": round(f_out / fps, 4), "frames": f_out - f_in}
 
 
-def cut(raw: Path, out: Path, in_s: float, frames: int, fps: int, gain_db: float = 0.0) -> Path:
+def cut(raw: Path, out: Path, in_s: float, frames: int, fps: int, gain_db: float = 0.0, info: dict | None = None) -> Path:
     """The trimmed clip: picture resampled to ``fps`` and cut to ``frames``, the sound cut by the same seconds. ``gain_db``
     (HF-4, a level trim, never a boost) is a ``volume`` filter in front of the pad and the trim; the raw file is not touched."""
     out.parent.mkdir(parents=True, exist_ok=True)
     tmp = out.with_suffix(".part.mp4")
     dur = frames / fps
+    pad = 0
     # read two frames more than the edit: the fps filter's rounding can otherwise drop the last frame (seen on CI's
     # ffmpeg with a 30 fps clip on a 24 fps episode); -frames:v caps the picture, atrim the sound
-    cmd = ["ffmpeg", "-v", "error", "-y", "-ss", f"{in_s:.4f}", "-i", str(raw), "-t", f"{dur + 2.0 / fps:.4f}",
-           "-vf", f"fps={fps}", "-frames:v", str(frames), "-c:v", "libx264", "-pix_fmt", "yuv420p", "-crf", "16",
-           "-c:a", "aac", "-b:a", "192k", "-ar", "48000",
-           "-af", (f"volume={gain_db:.3f}dB," if gain_db else "") + f"apad,atrim=0:{dur:.4f}", str(tmp)]
-    subprocess.run(cmd, check=True, capture_output=True)
-    got = subprocess.run(["ffprobe", "-v", "error", "-count_frames", "-select_streams", "v:0", "-show_entries",
-                          "stream=nb_read_frames", "-of", "csv=p=0", str(tmp)], capture_output=True, text=True,
-                         check=True).stdout.strip()
+    def _run(vf: str) -> str:
+        cmd = ["ffmpeg", "-v", "error", "-y", "-ss", f"{in_s:.4f}", "-i", str(raw), "-t", f"{dur + 2.0 / fps:.4f}",
+               "-vf", vf, "-frames:v", str(frames), "-c:v", "libx264", "-pix_fmt", "yuv420p", "-crf", "16",
+               "-c:a", "aac", "-b:a", "192k", "-ar", "48000",
+               "-af", (f"volume={gain_db:.3f}dB," if gain_db else "") + f"apad,atrim=0:{dur:.4f}", str(tmp)]
+        subprocess.run(cmd, check=True, capture_output=True)
+        return subprocess.run(["ffprobe", "-v", "error", "-count_frames", "-select_streams", "v:0", "-show_entries",
+                               "stream=nb_read_frames", "-of", "csv=p=0", str(tmp)], capture_output=True, text=True,
+                              check=True).stdout.strip()
+    got = _run(f"fps={fps}")
+    if int(got or 0) == frames - 1 and frames > 1:
+        # Step 1.5 (D-139): G9 stays exact (invariant 7); a clip short by exactly ONE frame has its last frame held once,
+        # recorded as frame_pad on the clip record with a REVIEW finding. Short by more is still refused below.
+        got = _run(f"fps={fps},tpad=stop_mode=clone:stop=1")
+        pad = 1
     if int(got or 0) != frames:   # the record must say what the file holds (the assembler refuses a short clip)
         tmp.unlink(missing_ok=True)
         raise ContractError(f"{Path(raw).name}: the cut has {got} frames, the edit {frames} (from {in_s:.3f} s)")
     tmp.replace(out)
+    if info is not None:
+        info["frame_pad"] = pad
     return out
 
 
@@ -480,14 +490,18 @@ def ingest_scene(root: Path, script: dict, clips: list[dict], fps: int, *, backe
         pts = edit_points(pr["duration"], spans, shot.get("edit_plan"), planned, fps, spoken=sid in spoken,
                           handover_s=handover_s, drop_first=is_cont, shot_id=sid,
                           audio=x if len(x) else None, rate=R.SR)
-        trimmed = cut(raw, vdir / "cut" / f"{sid}.mp4", pts["in_s"], pts["frames"], fps)
+        cut_info: dict = {}
+        trimmed = cut(raw, vdir / "cut" / f"{sid}.mp4", pts["in_s"], pts["frames"], fps, info=cut_info)
         t_spans = [(round(max(0.0, a - pts["in_s"]), 3), round(min(pts["frames"] / fps, b - pts["in_s"]), 3))
                    for a, b in spans if b > pts["in_s"] and a < pts["out_s"]]
         metrics, finds = VQ.clip_findings(trimmed, fps=fps, expect_speech=sid in spoken)
         trim_db, peak_before = _level_trim(metrics, finds)
         if trim_db:   # HF-4 (FL-401, FL-111, TD-305): CLIP-06 is judged on the trimmed cut; the model's clip stays as it is
-            trimmed = cut(raw, vdir / "cut" / f"{sid}.mp4", pts["in_s"], pts["frames"], fps, gain_db=trim_db)
+            trimmed = cut(raw, vdir / "cut" / f"{sid}.mp4", pts["in_s"], pts["frames"], fps, gain_db=trim_db, info=cut_info)
             metrics, finds = VQ.clip_findings(trimmed, fps=fps, expect_speech=sid in spoken)
+        if cut_info.get("frame_pad"):
+            finds = list(finds) + [{"rule": "FRAME-PAD", "severity": "REVIEW", "status": "REVIEW",
+                                    "detail": "the raw clip was one frame short; its last frame was held once (frame_pad 1)"}]
         bad = [f for f in finds if f.get("status") == "FAIL" or f.get("severity") == "FAIL"]
         rec = {"schema": SCHEMA, "shot_id": sid, "route": "video", "backend": backend,
                "status": G.FAIL if bad else (G.REVIEW if any((f.get("status") or f.get("severity")) == "REVIEW"
@@ -497,7 +511,7 @@ def ingest_scene(root: Path, script: dict, clips: list[dict], fps: int, *, backe
                "raw_seconds": round(pr["duration"], 4), "fps": fps, "in_s": pts["in_s"], "out_s": pts["out_s"],
                "frames": pts["frames"], "speech_raw": spans, "speech": t_spans, "clip_spoken": sid in spoken,
                "chain_from_frame": c.get("chain_from_frame"), "ends_on_handover": handover_s is not None,
-               "findings": finds, "attempts": c.get("attempts") or []}
+               "findings": finds, "attempts": c.get("attempts") or [], "frame_pad": int(cut_info.get("frame_pad") or 0)}
         rec["trim_contract"] = build_trim_contract(rec, sid)
         rec["start_frame_check"] = start_frame_check(root, shot, raw, pictures, is_continuation=is_cont)
         if (rec["start_frame_check"].get("frame0_vs_source") or {}).get("status") in ("PASS", "FAIL"):
@@ -598,7 +612,7 @@ def unresolved_reviews(root: Path) -> dict:
         if sf in ("REVIEW", "NEEDS_EVIDENCE"):
             why.append(f"start_frame_check {sf}")
         if r.get("status") == G.REVIEW:
-            why.append("clip findings REVIEW")
+            why.append("clip findings REVIEW" + (" (frame_pad)" if r.get("frame_pad") else ""))
         if why:                                      # one item per clip, both reasons named
             items.append(f"{r['shot_id']}: " + " + ".join(why))
     return {"count": len(items), "items": items}

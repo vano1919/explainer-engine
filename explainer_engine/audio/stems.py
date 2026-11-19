@@ -339,6 +339,23 @@ def mute_silent_tail(x: np.ndarray, sr: int = SR, rms_floor: float = SILENT_TAIL
     return out
 
 
+def mute_from(x: np.ndarray, sr: int, from_s: float, fade_ms: float = 80.0) -> np.ndarray:
+    """Step 1.5 (D-139): silence ``x`` from ``from_s`` on (the clip record's ``mute_tail_from_s``, seconds from this signal's
+    start): a linear fade of ``fade_ms`` that ENDS at ``from_s``'s end-of-fade, never a hard click, then zeros. A point at or past
+    the end changes nothing; a point at 0 silences everything."""
+    out = np.asarray(x, dtype=np.float32).copy()
+    if not len(out) or sr <= 0 or from_s is None:
+        return out
+    i = int(round(max(0.0, float(from_s)) * sr))
+    if i >= len(out):
+        return out
+    fl = min(int(round(fade_ms / 1000.0 * sr)), len(out) - i)
+    if fl > 0:
+        out[i:i + fl] *= np.linspace(1.0, 0.0, fl, dtype=np.float32)
+    out[i + fl:] = 0.0
+    return out
+
+
 def clip_audio_layer(plan: dict, clip_audio: dict | None, n: int) -> tuple[np.ndarray, list[dict], str]:
     """FA-13 (Fable audit P6): the narrated LTX clips' own sound (``{shot_id: wav path}``) laid on their shots as the
     ``clip_audio`` layer of the effects stem, CLIP_AUDIO_DB down, with BP-188's seam fade at both edges, ducked by the
