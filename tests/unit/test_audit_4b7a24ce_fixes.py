@@ -209,14 +209,20 @@ def test_b2d_build_segments_rejects_pad_or_truncate_beyond_one_frame_and_hashes_
     script = {"shots": [{"shot_id": "S01_SH001", "segment_id": "S01", "route": "video"}]}
     (ep_dir / "story" / "production_script.json").write_text(json.dumps(script), encoding="utf-8")
 
-    bad_timing = {
-        "schema": "episode_timing/2",
-        "fps": 24,
-        "total_frames": 72,
-        "shots": {"S01_SH001": {"segment_id": "S01", "start_frame": 0, "end_frame": 72, "frames": 72}},
-    }
-    bad_timing["timing_id"] = ET.compute_timing_id(bad_timing)
-    bad_timing["render_epoch"] = f"epoch_{bad_timing['timing_id']}"
+    bad_timing = ET.retime_with_edit_points(
+        {
+            "schema": "episode_timing/1",
+            "fps": 24,
+            "read_s": 3.0,
+            "total_frames": 72,
+            "shots": {"S01_SH001": {"segment_id": "S01", "start_frame": 0, "end_frame": 72, "frames": 72, "seconds": 3.0, "planned_seconds": 3.0}},
+            "spines": {"S01_SH001": []},
+            "coverage": 1.0,
+            "alignment_status": "PASS",
+            "unmatched": [],
+        },
+        script,
+    )
     t_path = ep_dir / "audio" / "timing.json"
     ET.persist_authoritative_clock(bad_timing, t_path)
 
@@ -330,21 +336,24 @@ def test_b4a_mix_populates_ambience_beds_or_records_intentional_absence_and_remo
             unplanned_map_shot,
         ],
     }
-    timing_doc = {
-        "schema": "episode_timing/2",
-        "fps": 24,
-        "total_frames": 144,
-        "narrator_offsets": [
-            {"shot_id": "S01_SH001", "segment_id": "S01", "timeline_start_frame": 0, "timeline_end_frame": 48, "read_start_frame": 0, "read_end_frame": 48, "paused_for_insert": False},
-        ],
-        "shots": {
-            "S01_SH001": {"segment_id": "S01", "start_frame": 0, "end_frame": 48, "frames": 48},
-            "S01_SH002": {"segment_id": "S01", "start_frame": 48, "end_frame": 96, "frames": 48},
-            "S02_SH001": {"segment_id": "S01", "start_frame": 96, "end_frame": 144, "frames": 48},
+    timing_doc = ET.retime_with_edit_points(
+        {
+            "schema": "episode_timing/1",
+            "fps": 24,
+            "read_s": 6.0,
+            "total_frames": 144,
+            "shots": {
+                "S01_SH001": {"segment_id": "S01", "start_frame": 0, "end_frame": 48, "frames": 48, "seconds": 2.0, "planned_seconds": 2.0},
+                "S01_SH002": {"segment_id": "S01", "start_frame": 48, "end_frame": 96, "frames": 48, "seconds": 2.0, "planned_seconds": 2.0},
+                "S02_SH001": {"segment_id": "S01", "start_frame": 96, "end_frame": 144, "frames": 48, "seconds": 2.0, "planned_seconds": 2.0},
+            },
+            "spines": {"S01_SH001": [], "S01_SH002": [], "S02_SH001": []},
+            "coverage": 1.0,
+            "alignment_status": "PASS",
+            "unmatched": [],
         },
-    }
-    timing_doc["timing_id"] = ET.compute_timing_id(timing_doc)
-    timing_doc["render_epoch"] = f"epoch_{timing_doc['timing_id']}"
+        script_doc,
+    )
     t_path = tmp_path / "clock" / "timing.json"
     ET.persist_authoritative_clock(timing_doc, t_path)
 

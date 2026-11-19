@@ -127,7 +127,8 @@ def _resolve_spine(shot: dict, spine, out_path: Path):
             return doc.get("words") or doc.get("spine") if isinstance(doc, dict) else doc
         tm_file = parent / "audio" / "timing.json"
         if tm_file.is_file():
-            doc = json.loads(tm_file.read_text(encoding="utf-8"))
+            from explainer_engine.episode import timing as ET
+            doc = ET.load_clock(tm_file)
             sp = (doc.get("spines") or {}).get(sid)
             if sp:
                 return [{"word": w["word"], "start_frame": w["start_frame"]} for w in sp]

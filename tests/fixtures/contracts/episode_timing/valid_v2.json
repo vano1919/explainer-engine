@@ -1,0 +1,202 @@
+{
+  "schema": "episode_timing/2",
+  "fps": 24,
+  "read_s": 4.0,
+  "total_frames": 132,
+  "shots": {
+    "S01_SH001": {
+      "start_frame": 0,
+      "frames": 48,
+      "seconds": 2.0,
+      "planned_seconds": 2.0,
+      "end_frame": 48,
+      "duration_s": 2.0,
+      "start_s": 0.0,
+      "end_s": 2.0,
+      "segment_id": "S01"
+    },
+    "S01_SH002": {
+      "start_frame": 48,
+      "frames": 48,
+      "seconds": 2.0,
+      "planned_seconds": 2.0,
+      "end_frame": 96,
+      "duration_s": 2.0,
+      "start_s": 2.0,
+      "end_s": 4.0,
+      "segment_id": "S01"
+    },
+    "S01_SH003": {
+      "start_frame": 96,
+      "frames": 36,
+      "seconds": 1.5,
+      "planned_seconds": 1.5,
+      "timed_by": "clip",
+      "duration_s": 1.5,
+      "trim_contract": {
+        "in_s": 0.1,
+        "out_s": 1.6,
+        "trim_duration_s": 1.5,
+        "frames": 36,
+        "clip_path": "production/video/cut/S01_SH003.mp4",
+        "clip_sha256": "",
+        "head_lead_min_s": 0.4,
+        "reaction_tail_min_s": 0.5,
+        "reaction_tail_target_s": 0.55,
+        "single_trimmed_source": true,
+        "timing_source": "edit_points"
+      },
+      "end_frame": 132,
+      "start_s": 4.0,
+      "end_s": 5.5,
+      "segment_id": "S01"
+    }
+  },
+  "spines": {
+    "S01_SH001": [
+      {
+        "word": "christmas",
+        "start_frame": 2,
+        "estimated": false
+      },
+      {
+        "word": "morning",
+        "start_frame": 14,
+        "estimated": false
+      },
+      {
+        "word": "arrived",
+        "start_frame": 29,
+        "estimated": false
+      }
+    ],
+    "S01_SH002": [
+      {
+        "word": "silence",
+        "start_frame": 5,
+        "estimated": false
+      },
+      {
+        "word": "held",
+        "start_frame": 17,
+        "estimated": false
+      },
+      {
+        "word": "the",
+        "start_frame": 26,
+        "estimated": false
+      },
+      {
+        "word": "line",
+        "start_frame": 34,
+        "estimated": false
+      }
+    ],
+    "S01_SH003": [
+      {
+        "word": "no",
+        "start_frame": 5,
+        "estimated": true
+      },
+      {
+        "word": "fire",
+        "start_frame": 13,
+        "estimated": true
+      },
+      {
+        "word": "today",
+        "start_frame": 21,
+        "estimated": true
+      }
+    ]
+  },
+  "inserts": [
+    {
+      "shot_id": "S01_SH003",
+      "at_read_frame": 96,
+      "frames": 36,
+      "seconds": 1.5,
+      "timeline_start_frame": 96,
+      "timeline_end_frame": 132
+    }
+  ],
+  "clip_timed": [
+    "S01_SH003"
+  ],
+  "coverage": 1.0,
+  "alignment_status": "PASS",
+  "unmatched": [],
+  "total_seconds": 5.5,
+  "segments": {
+    "S01": {
+      "segment_id": "S01",
+      "start_frame": 0,
+      "end_frame": 132,
+      "frames": 132,
+      "start_s": 0.0,
+      "end_s": 5.5
+    }
+  },
+  "narrator_offsets": [
+    {
+      "shot_id": "S01_SH001",
+      "segment_id": "S01",
+      "timeline_start_frame": 0,
+      "timeline_end_frame": 48,
+      "read_start_frame": 0,
+      "read_end_frame": 48,
+      "paused_for_insert": false
+    },
+    {
+      "shot_id": "S01_SH002",
+      "segment_id": "S01",
+      "timeline_start_frame": 48,
+      "timeline_end_frame": 96,
+      "read_start_frame": 48,
+      "read_end_frame": 96,
+      "paused_for_insert": false
+    },
+    {
+      "shot_id": "S01_SH003",
+      "segment_id": "S01",
+      "timeline_start_frame": 96,
+      "timeline_end_frame": 132,
+      "read_start_frame": 96,
+      "read_end_frame": 96,
+      "paused_for_insert": true
+    }
+  ],
+  "dialogue_positions": {
+    "S01_SH003": {
+      "shot_id": "S01_SH003",
+      "segment_id": "S01",
+      "start_frame": 96,
+      "end_frame": 132,
+      "frames": 36,
+      "start_s": 4.0,
+      "end_s": 5.5,
+      "at_read_frame": 96,
+      "in_s": 0.1,
+      "out_s": 1.6,
+      "clip_path": "production/video/cut/S01_SH003.mp4"
+    }
+  },
+  "map_events": {
+    "S01_SH002": {
+      "shot_id": "S01_SH002",
+      "segment_id": "S01",
+      "start_frame": 48,
+      "end_frame": 96,
+      "frames": 48,
+      "start_s": 2.0,
+      "end_s": 4.0,
+      "duration_s": 2.0
+    }
+  },
+  "on_screen_texts": {},
+  "frame_deltas": {
+    "S01_SH003": 0
+  },
+  "timing_id": "df56408fc6b2bbc9",
+  "render_epoch": "epoch_df56408fc6b2bbc9"
+}

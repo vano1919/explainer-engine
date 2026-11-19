@@ -261,9 +261,34 @@ def spines_of(timing: dict | None) -> dict:
             for sid, sp in timing["spines"].items() if sp}
 
 
+def clock_sha256(path: Path | str) -> str:
+    """Full-file SHA-256 hex digest of a persisted timing clock file."""
+    from explainer_engine.core.contracts import sha256_file
+    p = Path(path)
+    if not p.is_file():
+        raise ContractError(f"Timing clock file does not exist: {p}")
+    return sha256_file(p)
+
+
+def load_clock(path: Path | str) -> dict:
+    """Load and validate an authoritative ``episode_timing/1`` or ``episode_timing/2`` document from ``path`` without mutating it."""
+    from explainer_engine.core import contracts as C
+    p = Path(path)
+    if not p.is_file():
+        raise ContractError(f"Timing clock file does not exist: {p}")
+    try:
+        doc = json.loads(p.read_text(encoding="utf-8"))
+    except Exception as exc:
+        raise ContractError(f"Invalid JSON in timing clock {p}: {exc}") from exc
+    if not isinstance(doc, dict):
+        raise ContractError(f"Timing clock {p} must be a JSON object")
+    C.validate(doc, p.parent)
+    return doc
+
+
 def load(root: Path) -> dict | None:
     p = Path(root) / "audio" / "timing.json"
-    return json.loads(p.read_text(encoding="utf-8")) if p.is_file() else None
+    return load_clock(p) if p.is_file() else None
 
 
 _ON_SCREEN_RE = re.compile(r"\(\s*on\s+screen\s*:\s*([^)]+?)\s*\)", re.I)
@@ -602,12 +627,17 @@ def retime_with_edit_points(
 
 
 def persist_authoritative_clock(timing_doc: dict, path: Path) -> dict:
-    """Persist the authoritative retimed clock atomically to ``path`` with ``timing_id`` and ``render_epoch``."""
+    """Validate and persist the authoritative retimed clock atomically to ``path`` with ``timing_id`` and ``render_epoch``."""
+    from explainer_engine.core import contracts as C
+    if not isinstance(timing_doc, dict):
+        raise ContractError("timing_doc must be a dict")
     doc = copy.deepcopy(timing_doc)
     doc["schema"] = doc.get("schema") or SCHEMA_V2
     doc["timing_id"] = compute_timing_id(doc)
     doc["render_epoch"] = doc.get("render_epoch") or f"epoch_{doc['timing_id']}"
-    write_json_atomic(Path(path), doc)
+    dest = Path(path)
+    C.validate(doc, dest.parent)
+    write_json_atomic(dest, doc)
     return doc
 
 

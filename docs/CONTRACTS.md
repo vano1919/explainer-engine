@@ -65,6 +65,8 @@ produce the derived files belong to the phases named in the table (P3, P4, P5, P
 | `ltx_job/1` | `ltx_jobs.json` (vault `route_test_2026-11/`) | `edit/ltx_jobs.py` (the J2/J4 spec writer, [LTX_JOBS](LTX_JOBS.md)) | derived from the route shots + layout manifests; never by hand | the route-test pod (`training/pods/p14`) |
 | `asset_library/1` | `assets/library.json` | `assets/library.py` ([WORLD_BIBLE](WORLD_BIBLE.md)) | hand (approved assets) | `library verify`, the shot writers |
 | `asset_library/2` | `assets/library.json` (once `assets/library.py` moves to it) | `assets/library.py` | hand (approved 3D assets, licences) | the Blender router, `library verify` |
+| `episode_timing/1` | `audio/timing.json` | `episode/timing.py` (`retime`, `retime_with_clips`) | **derived** from `audio/narration.wav` + `audio/narration.scribe.json` (+ clip timings) | `episode/run.py` (G6–G10), `videolane/scene.py`, `gemini_task/timing.py`, `production/map_clip.py` |
+| `episode_timing/2` | `audio/timing.json` and `TRUCE_TIMING_JSON` | `episode/timing.py` (`retime_with_edit_points`, `persist_authoritative_clock`) | **derived** from `episode_timing/1` + `production_script.json` + edit points / clip records | `episode/run.py` (G6–G10), `tools/render_tools/build_segments.py`, `tools/render_tools/mix.py`, `production/map_clip.py` |
 
 `editorial_review/2` already exists (D-60, the integrated review of `production_script/3`); the department layers are
 therefore version 3, not a new meaning of 2. `continuity_card/2` (P6) takes its camera side, eyeline, landmarks and
@@ -108,6 +110,8 @@ times are seconds (number, 3 decimals) and frames are integers at the job's fps;
 - **channel_voices/1**: `voices[]` (`voice_id`, `name`, `role` narrator|character, `status` channel|candidate|retired,
   `model`, `note`, `baseline` null or `{kind preview|read, ref, sha256?, centroid_hz, tilt_db, f0_median_hz?}`); at most one
   channel narrator (VC-08).
+- **episode_timing/1** (RN-03, D-131): `fps`, `read_s`, `total_frames`, `shots{<shot_id>: {start_frame, frames, seconds, planned_seconds, timed_by?}}`, `spines{<shot_id>: [{word, start_frame, estimated?}]}`, `coverage` (0..1 or null), `alignment_status` (string or null), `unmatched[]`, and optional `inserts[]` (`shot_id`, `at_read_frame`, `frames`), `clip_timed[]`, `timing_id`, `render_epoch`. Shots tile `[0, total_frames]` without gaps or overlaps and word spines stay inside their shot's frames (CN-01).
+- **episode_timing/2** (BP-201): `fps`, `total_frames`, `total_seconds`, `shots{<shot_id>: {start_frame, end_frame, frames, seconds, duration_s, start_s, end_s, segment_id, planned_seconds?, timed_by?, route?, trim_contract?, on_screen_text?}}`, `segments{<seg_id>: {segment_id, start_frame, end_frame, frames, start_s, end_s}}`, `narrator_offsets[]`, `dialogue_positions{}`, `map_events{}`, `on_screen_texts{}`, `frame_deltas{}`, `timing_id` (16-char SHA-256 geometry fingerprint), and `render_epoch` (`epoch_<timing_id>`), plus optional `/1`-inherited fields (`read_s`, `spines`, `coverage`, `alignment_status`, `unmatched`, `inserts`, `clip_timed`).
 - **audio_spine/1**: `derived_from{words, timed}`, `fps`, `duration_s`, `total_frames`, `words[]` (`i`, `text`,
   `start_s`, `end_s`, `start_frame`, `end_frame`, `segment`, `line`), `segments[]` (`id`, `start_frame`, `end_frame`),
   `post_hoc_shots[]` (LTX-native dialogue shots whose words are timed from the rendered clip, P4).

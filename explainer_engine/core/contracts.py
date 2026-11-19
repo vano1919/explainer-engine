@@ -657,12 +657,141 @@ def _script_variants(doc: dict, base) -> list[dict]:
     return [f for v in doc["variants"] for f in variant_sums(v)]
 
 
+def _episode_timing(doc: dict, base) -> list[dict]:
+    """CN-01 on ``episode_timing/1`` and ``episode_timing/2``: ordered shots tile ``[0, total_frames]`` without gaps or
+    overlaps, per-shot seconds and ``total_seconds`` agree with ``frames / fps``, word spines reference valid shots and
+    in-range frame coordinates, and ``/2`` validates ``timing_id``, ``render_epoch``, and derived schedule bounds."""
+    from explainer_engine.episode import timing as ET
+
+    out: list[dict] = []
+    ver = doc.get("schema")
+    fps = int(doc["fps"])
+    total_frames = int(doc["total_frames"])
+    tol = max(0.01, 0.51 / float(fps))
+    shots = doc["shots"]
+
+    ordered = sorted(shots.items(), key=lambda kv: (int(kv[1]["start_frame"]), kv[0]))
+    cur = 0
+    for sid, sh in ordered:
+        sf = int(sh["start_frame"])
+        nf = int(sh["frames"])
+        ef = int(sh.get("end_frame", sf + nf))
+        if ver == "episode_timing/2" and int(sh["end_frame"]) != sf + nf:
+            out.append(_f("CN-01", f"shots.{sid}.end_frame", f"end_frame {sh['end_frame']} != start_frame {sf} + frames {nf}"))
+        elif "end_frame" in sh and int(sh["end_frame"]) != sf + nf:
+            out.append(_f("CN-01", f"shots.{sid}.end_frame", f"end_frame {sh['end_frame']} != start_frame {sf} + frames {nf}"))
+        if sf != cur:
+            kind = "overlaps" if sf < cur else "leaves a gap after"
+            out.append(_f("CN-01", f"shots.{sid}", f"starts at frame {sf} and {kind} previous shot end {cur}"))
+        secs = float(sh["seconds"])
+        if abs(secs - nf / float(fps)) > tol:
+            out.append(_f("CN-01", f"shots.{sid}.seconds", f"seconds {secs} disagrees with {nf} frames at {fps} fps"))
+        if ver == "episode_timing/2":
+            dur_s = float(sh["duration_s"])
+            if abs(dur_s - nf / float(fps)) > tol:
+                out.append(_f("CN-01", f"shots.{sid}.duration_s", f"duration_s {dur_s} disagrees with {nf} frames at {fps} fps"))
+            if abs(float(sh["start_s"]) - sf / float(fps)) > tol:
+                out.append(_f("CN-01", f"shots.{sid}.start_s", f"start_s {sh['start_s']} disagrees with start_frame {sf} at {fps} fps"))
+            if abs(float(sh["end_s"]) - (sf + nf) / float(fps)) > tol:
+                out.append(_f("CN-01", f"shots.{sid}.end_s", f"end_s {sh['end_s']} disagrees with end_frame {sf + nf} at {fps} fps"))
+        cur = sf + nf
+
+    if cur != total_frames:
+        out.append(_f("CN-01", "total_frames", f"shots end at frame {cur}, which differs from total_frames {total_frames}"))
+
+    for sid, words in (doc.get("spines") or {}).items():
+        if sid not in shots:
+            out.append(_f("CN-01", f"spines.{sid}", f"spine references unknown shot {sid!r}"))
+            continue
+        sh = shots[sid]
+        sf_shot = int(sh["start_frame"])
+        nf_shot = int(sh["frames"])
+        ef_shot = sf_shot + nf_shot
+        for idx, w in enumerate(words):
+            wf = int(w["start_frame"])
+            if ver == "episode_timing/1":
+                if wf < 0 or wf > nf_shot:
+                    out.append(_f("CN-01", f"spines.{sid}[{idx}]", f"word {w['word']!r} start_frame {wf} is outside shot frames 0..{nf_shot}"))
+            else:
+                if w.get("timeline_absolute"):
+                    if wf < sf_shot or wf > ef_shot:
+                        out.append(_f("CN-01", f"spines.{sid}[{idx}]", f"word {w['word']!r} absolute start_frame {wf} is outside {sf_shot}..{ef_shot}"))
+                else:
+                    in_rel = 0 <= wf <= nf_shot
+                    in_abs = sf_shot <= wf <= ef_shot
+                    if not (in_rel or in_abs):
+                        out.append(_f("CN-01", f"spines.{sid}[{idx}]", f"word {w['word']!r} start_frame {wf} is outside shot window"))
+
+    for idx, ins in enumerate(doc.get("inserts") or []):
+        ins_sid = ins.get("shot_id") or ins.get("shot")
+        if ins_sid not in shots:
+            out.append(_f("CN-01", f"inserts[{idx}]", f"insert references unknown shot {ins_sid!r}"))
+
+    for idx, c_sid in enumerate(doc.get("clip_timed") or []):
+        if c_sid not in shots:
+            out.append(_f("CN-01", f"clip_timed[{idx}]", f"clip_timed references unknown shot {c_sid!r}"))
+
+    if doc.get("timing_id") is not None:
+        expected_tid = ET.compute_timing_id(doc)
+        if doc["timing_id"] != expected_tid:
+            out.append(_f("CN-01", "timing_id", f"timing_id {doc['timing_id']!r} != computed {expected_tid!r}"))
+        if doc.get("render_epoch") is not None and doc["render_epoch"] != f"epoch_{expected_tid}":
+            out.append(_f("CN-01", "render_epoch", f"render_epoch {doc['render_epoch']!r} != expected {'epoch_' + expected_tid!r}"))
+    elif doc.get("render_epoch") is not None:
+        expected_tid = ET.compute_timing_id(doc)
+        if doc["render_epoch"] != f"epoch_{expected_tid}":
+            out.append(_f("CN-01", "render_epoch", f"render_epoch {doc['render_epoch']!r} != expected {'epoch_' + expected_tid!r}"))
+
+    if ver == "episode_timing/2":
+        tot_s = float(doc["total_seconds"])
+        if abs(tot_s - total_frames / float(fps)) > tol:
+            out.append(_f("CN-01", "total_seconds", f"total_seconds {tot_s} disagrees with {total_frames} frames at {fps} fps"))
+
+        for seg_key, seg in (doc.get("segments") or {}).items():
+            s_sf = int(seg["start_frame"])
+            s_ef = int(seg["end_frame"])
+            s_nf = int(seg["frames"])
+            if seg["segment_id"] != seg_key:
+                out.append(_f("CN-01", f"segments.{seg_key}", f"segment_id {seg['segment_id']!r} != key {seg_key!r}"))
+            if s_ef <= s_sf or s_ef > total_frames or s_nf != s_ef - s_sf:
+                out.append(_f("CN-01", f"segments.{seg_key}", f"invalid segment frame bounds {s_sf}..{s_ef} (frames={s_nf}, total={total_frames})"))
+
+        for idx, row in enumerate(doc.get("narrator_offsets") or []):
+            r_sid = row["shot_id"]
+            if r_sid not in shots:
+                out.append(_f("CN-01", f"narrator_offsets[{idx}]", f"references unknown shot {r_sid!r}"))
+                continue
+            sh = shots[r_sid]
+            if int(row["timeline_start_frame"]) != int(sh["start_frame"]) or int(row["timeline_end_frame"]) != int(sh["end_frame"]):
+                out.append(_f("CN-01", f"narrator_offsets[{idx}]", f"timeline bounds do not match shot {r_sid}"))
+            if int(row["read_end_frame"]) < int(row["read_start_frame"]):
+                out.append(_f("CN-01", f"narrator_offsets[{idx}]", "read_end_frame < read_start_frame"))
+
+        for d_sid, dp in (doc.get("dialogue_positions") or {}).items():
+            if d_sid not in shots:
+                out.append(_f("CN-01", f"dialogue_positions.{d_sid}", f"references unknown shot {d_sid!r}"))
+                continue
+            sh = shots[d_sid]
+            if int(dp["start_frame"]) != int(sh["start_frame"]) or int(dp["end_frame"]) != int(sh["end_frame"]) or int(dp["frames"]) != int(sh["frames"]):
+                out.append(_f("CN-01", f"dialogue_positions.{d_sid}", f"frame bounds do not match shot {d_sid}"))
+
+        for m_sid, me in (doc.get("map_events") or {}).items():
+            if m_sid not in shots:
+                out.append(_f("CN-01", f"map_events.{m_sid}", f"references unknown shot {m_sid!r}"))
+                continue
+            sh = shots[m_sid]
+            if int(me["start_frame"]) != int(sh["start_frame"]) or int(me["end_frame"]) != int(sh["end_frame"]) or int(me["frames"]) != int(sh["frames"]):
+                out.append(_f("CN-01", f"map_events.{m_sid}", f"frame bounds do not match shot {m_sid}"))
+
+    return out
+
+
 SEMANTIC = {"film_shots": _film_shots, "script_variants": _script_variants, "shot_spec": _shot_spec, "audio_spine": _audio_spine, "visual_comp_manifest": _visual_comp,
             "comp_spec": _comp_spec, "sound_mix_manifest": _sound_mix, "qa_report": _qa_report, "distribution_package": _distribution,
             "job_manifest": _job_manifest, "shot_route": _shot_route, "blender_scene_manifest": _blender_scene,
             "blender_render_manifest": _blender_render, "render_checkpoint": _render_checkpoint, "asset_library": _asset_library,
             "speech_mix_report": _speech_mix, "scene_assets": _scene_assets,
-            "ltx_job": _ltx_job}
+            "ltx_job": _ltx_job, "episode_timing": _episode_timing}
 
 
 def derived_findings(doc: dict, base) -> list[dict]:

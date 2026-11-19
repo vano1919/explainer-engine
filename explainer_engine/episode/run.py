@@ -42,6 +42,7 @@ RECORD_SCHEMA = "episode_stage/1"
 SCRIPT_REL = "story/production_script.json"
 READ_REL = "audio/narration.wav"            # the episode's real read (ElevenLabs), the lines in the shots' order
 TRANSCRIPT_REL = "audio/narration.scribe.json"   # its Scribe transcript (words with times)
+TIMING_REL = "audio/timing.json"                 # the G6 persisted authoritative episode clock
 WAN_LEDGER_REL = "logs/wan_ledger.jsonl"
 GO_ON = (G.PASS, G.REVIEW)
 DEFAULT_SIZE = (1920, 1080)
@@ -138,6 +139,8 @@ def _stage_inputs(ep: Episode, stage: str) -> dict:
         files["narrator_polish_chain"] = hashlib.sha256(NP.CHAIN.encode("utf-8")).hexdigest()
     if stage == "clips":
         files[WAN_LEDGER_REL] = _sha(ep.root / WAN_LEDGER_REL)
+    if stage in ("clips", "sound", "assemble", "qa"):
+        files[TIMING_REL] = _sha(ep.root / TIMING_REL)
     if stage == "voice":   # VL-07: the clip records of the clip-spoken shots time them (G7 re-cuts only the others)
         from explainer_engine.videolane import plan as VP
         for sid in sorted(VP.clip_spoken(ep.script)):
@@ -473,7 +476,8 @@ def stage_voice(ep: Episode, rehearsal: bool):
                   f"{aligned['coverage']:.1%} of the written words heard (needs {SW.MIN_COVERAGE:.0%})",
                   aligned["unmatched"][:20], level=G.REVIEW)]
     rows += _anchor_rows(ep, timing)
-    return rows, {"timing": "audio/timing.json", "read_s": round(read_s, 3), "planned_s": round(planned, 3),
+    return rows, {"timing": "audio/timing.json", "clock_sha256": _sha(timing_path),
+                  "read_s": round(read_s, 3), "planned_s": round(planned, 3),
                   "total_frames": timing["total_frames"]}
 
 
@@ -876,7 +880,8 @@ def _voice_with_clips(ep: Episode, read: Path, tr: Path, timing_path: Path):
                       f"{len(spoken)} clip-spoken shot(s) timed by their trimmed LTX clip", missing[:20]))
     rows += _anchor_rows(ep, timing)
     planned = sum(float(s.get("target_duration_seconds") or 0) for s in ep.script["shots"])
-    return rows, {"timing": "audio/timing.json", "read_s": round(read_s, 3), "planned_s": round(planned, 3),
+    return rows, {"timing": "audio/timing.json", "clock_sha256": _sha(timing_path),
+                  "read_s": round(read_s, 3), "planned_s": round(planned, 3),
                   "total_frames": timing["total_frames"], "clip_timed": timing["clip_timed"],
                   "inserts": len(timing["inserts"])}
 

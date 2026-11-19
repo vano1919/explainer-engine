@@ -42,14 +42,20 @@ def test_p0_1_retime_with_edit_points_updates_all_shots_and_downstream_schedules
         "inserts": [{"shot_id": "S01_SH001", "kind": "character"}],
     }
     timing = {
+        "schema": "episode_timing/1",
         "fps": 24,
+        "read_s": 12.0,
         "total_frames": 288,
         "inserts": [{"shot_id": "S01_SH001", "at_read_frame": 0, "frames": 96}],
         "shots": {
-            "S01_SH001": {"segment_id": "S01", "start_frame": 0, "end_frame": 96, "frames": 96},
-            "S01_SH002": {"segment_id": "S01", "start_frame": 96, "end_frame": 192, "frames": 96},
-            "S01_SH003": {"segment_id": "S01", "start_frame": 192, "end_frame": 288, "frames": 96},
+            "S01_SH001": {"segment_id": "S01", "start_frame": 0, "end_frame": 96, "frames": 96, "seconds": 4.0, "planned_seconds": 4.0},
+            "S01_SH002": {"segment_id": "S01", "start_frame": 96, "end_frame": 192, "frames": 96, "seconds": 4.0, "planned_seconds": 4.0},
+            "S01_SH003": {"segment_id": "S01", "start_frame": 192, "end_frame": 288, "frames": 96, "seconds": 4.0, "planned_seconds": 4.0},
         },
+        "spines": {"S01_SH001": [], "S01_SH002": [], "S01_SH003": []},
+        "coverage": 1.0,
+        "alignment_status": "PASS",
+        "unmatched": [],
     }
     edit_points = {
         "clips": {

@@ -95,15 +95,21 @@ def _make_episode(tmp_path: Path, shots: list[dict], audio_lines: list[dict] | N
             timing_shots[sid] = {
                 "start_frame": t_frame,
                 "frames": n_frames,
+                "seconds": round(n_frames / FPS, 4),
                 "duration_s": round(n_frames / FPS, 4),
+                "planned_seconds": float(s["target_duration_seconds"]),
             }
             t_frame += n_frames
         timing_doc = {
             "schema": "episode_timing/1",
             "fps": FPS,
+            "read_s": round(t_frame / FPS, 4),
             "total_frames": t_frame,
             "shots": timing_shots,
             "spines": spines,
+            "coverage": 1.0,
+            "alignment_status": "PASS",
+            "unmatched": [],
         }
         (root / "audio" / "timing.json").write_text(json.dumps(timing_doc, indent=2), encoding="utf-8")
     return root

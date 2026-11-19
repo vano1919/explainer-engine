@@ -167,7 +167,7 @@ def synchronize_episode_clock(
 ) -> dict:
     """Retime and persist the single authoritative film clock before building segments or mixing audio."""
     episode_dir = Path(episode_dir)
-    timing_doc = json.loads(Path(timing_path).read_text(encoding="utf-8"))
+    timing_doc = ET.load_clock(timing_path)
     script_p = Path(script_path) if script_path else (episode_dir / RENDERER_SCRIPT_REL)
     script_doc = json.loads(script_p.read_text(encoding="utf-8")) if script_p.is_file() else {}
     ep_p = Path(edit_points_path) if edit_points_path else (episode_dir / "planning" / "full_film_2026-11-15" / "edit_points.json")
@@ -216,7 +216,7 @@ def build(
         timing_doc = synchronize_episode_clock(R, T_PATH)
 
     auth_clock_path = T_PATH if T_PATH.is_file() else (R / "audio" / "timing.json" if (R / "audio" / "timing.json").is_file() else None)
-    auth_clock = json.loads(auth_clock_path.read_text(encoding="utf-8")) if auth_clock_path is not None else timing_doc
+    auth_clock = ET.load_clock(auth_clock_path) if auth_clock_path is not None else timing_doc
     align_findings = ET.verify_clock_alignment(auth_clock, timing_doc)
     if align_findings:
         raise ContractError(f"{sid}: clock alignment check failed in build_segments: {align_findings[0]['detail']}")

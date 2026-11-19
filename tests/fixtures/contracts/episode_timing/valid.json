@@ -1,0 +1,64 @@
+{
+  "schema": "episode_timing/1",
+  "fps": 24,
+  "read_s": 4.0,
+  "total_frames": 96,
+  "shots": {
+    "S01_SH001": {
+      "start_frame": 0,
+      "frames": 48,
+      "seconds": 2.0,
+      "planned_seconds": 2.0
+    },
+    "S01_SH002": {
+      "start_frame": 48,
+      "frames": 48,
+      "seconds": 2.0,
+      "planned_seconds": 2.0
+    }
+  },
+  "spines": {
+    "S01_SH001": [
+      {
+        "word": "christmas",
+        "start_frame": 2,
+        "estimated": false
+      },
+      {
+        "word": "morning",
+        "start_frame": 14,
+        "estimated": false
+      },
+      {
+        "word": "arrived",
+        "start_frame": 29,
+        "estimated": false
+      }
+    ],
+    "S01_SH002": [
+      {
+        "word": "silence",
+        "start_frame": 5,
+        "estimated": false
+      },
+      {
+        "word": "held",
+        "start_frame": 17,
+        "estimated": false
+      },
+      {
+        "word": "the",
+        "start_frame": 26,
+        "estimated": false
+      },
+      {
+        "word": "line",
+        "start_frame": 34,
+        "estimated": false
+      }
+    ]
+  },
+  "coverage": 1.0,
+  "alignment_status": "PASS",
+  "unmatched": []
+}

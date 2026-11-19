@@ -621,12 +621,12 @@ def run_mix(
         ep_file = R / "planning" / "full_film_2026-11-15" / "edit_points.json"
         edit_points = json.loads(ep_file.read_text(encoding="utf-8")).get("clips", {}) if ep_file.is_file() else {}
     if timing_doc is None:
-        raw_t = json.loads(T_PATH.read_text(encoding="utf-8"))
+        raw_t = ET.load_clock(T_PATH)
         timing_doc = ET.retime_with_edit_points(raw_t, script_doc, edit_points, episode_dir=R)
         ET.persist_authoritative_clock(timing_doc, T_PATH)
 
     auth_clock_p = T_PATH if T_PATH.is_file() else (R / "audio" / "timing.json" if (R / "audio" / "timing.json").is_file() else None)
-    auth_clock = json.loads(auth_clock_p.read_text(encoding="utf-8")) if auth_clock_p is not None else timing_doc
+    auth_clock = ET.load_clock(auth_clock_p) if auth_clock_p is not None else timing_doc
     align_findings = ET.verify_clock_alignment(auth_clock, timing_doc)
     if align_findings:
         raise ContractError(f"Clock alignment check failed in mix: {align_findings[0]['detail']}")
