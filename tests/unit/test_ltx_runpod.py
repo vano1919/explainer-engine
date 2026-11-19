@@ -45,14 +45,15 @@ def _guided(shot="S07_SH008", **kw):
 @pytest.fixture
 def launch():
     lf = copy.deepcopy(LAUNCH)
-    lf["runpod"]["image"] = "ghcr.io/x/y@sha256:" + "0" * 64
     return lf
 
 
 def test_the_launch_has_a_runpod_section_with_open_items_marked():
     sec = LAUNCH["runpod"]
     assert [c["gpu"] for c in sec["cards"]][0].startswith("NVIDIA RTX PRO 6000 Blackwell")
-    assert sec["image"] is None and "OPEN" in sec["image_why"]                      # nothing is assumed (OR-22)
+    assert sec["image"].endswith("@sha256:6852f3d9e49de298606baf19fada5ee57a32cc74f3bef8b8f88ed35e890b68c0") and "L3" in sec["image_why"]
+    from explainer_engine.cloud import pins
+    assert pins.check_image(sec["image"]) == []                                  # the digest cloud_pins.json lists
     assert sec["cap_usd"] == 3.5 and "cmsg_01Hnu5zB86sjUj5GtTgaUkPWGUyHxz8RE3yqtyNBBTRw4z" in sec["cap_why"]
     assert "network volume" in sec["container_disk_why"]
     assert R.card_of(LAUNCH) == ("NVIDIA RTX PRO 6000 Blackwell Server Edition", 1.69)
@@ -80,7 +81,12 @@ def test_batch_files_hold_the_guided_files_only_for_a_batch_that_needs_them():
 def test_the_local_refusals(launch):
     ok = R.batch_problems(launch, [_clip()], price=1.69, cap_usd=3.5, pins=PINS)
     assert ok == []
-    assert any("no pinned image" in p for p in R.batch_problems(LAUNCH, [_clip()], price=1.69, cap_usd=3.5, pins=PINS))
+    noimg = copy.deepcopy(launch)
+    noimg["runpod"]["image"] = None
+    assert any("no pinned image" in p for p in R.batch_problems(noimg, [_clip()], price=1.69, cap_usd=3.5, pins=PINS))
+    other = copy.deepcopy(launch)
+    other["runpod"]["image"] = "ghcr.io/x/y@sha256:" + "0" * 64
+    assert any("cloud_pins" in p for p in R.batch_problems(other, [_clip()], price=1.69, cap_usd=3.5, pins=PINS))
     assert any("no cap" in p for p in R.batch_problems(launch, [_clip()], price=1.69, cap_usd=None, pins=PINS))
     assert any("per_pod_usd" in p for p in R.batch_problems(launch, [_clip()], price=1.69, cap_usd=99.0, pins=PINS))
     assert any("CT1_MAX_HOP" in p for p in R.batch_problems(launch, [_clip(hop=3)], price=1.69, cap_usd=3.5, pins=PINS))
@@ -287,14 +293,14 @@ def test_the_pod_script_passes_the_lint_and_the_dryrun_rules_but_is_unbuilt():
     assert dryrun.static_problems(text) == []
     assert "runpod_ltx_jobs run" in text and "/workspace/dl" in text and "network" not in text.split("\n", 12)[-1]
     assert R.script_problems(text)                                            # the bundle sha is a placeholder until built
-    assert R.script_problems(text.replace("@@EE_SRC_SHA256@@", SHA)) == []
-    rec = dryrun.run(text.replace("@@EE_SRC_SHA256@@", SHA), offline=True, folder=R.LAUNCHER.parent)
+    assert R.script_problems(text.replace("@@EE_SRC_SHA256@@", SHA).replace("@@BATCH_SHA256@@", SHA)) == []
+    rec = dryrun.run(text.replace("@@EE_SRC_SHA256@@", SHA).replace("@@BATCH_SHA256@@", SHA), offline=True, folder=R.LAUNCHER.parent)
     assert isinstance(rec, dict) and "sha256" in rec
 
 
-def test_plan_reads_job_files_only_and_refuses_without_image_and_cap(tmp_path):
+def test_plan_reads_job_files_only_and_stays_closed_until_the_pins_are_filled(tmp_path):
     out = R.plan([], cap_usd=None)                                            # the recorded $3.50 applies
-    assert out["ok"] is False and any("no pinned image" in p for p in out["problems"]) and out["cap_usd"] == 3.5
+    assert out["ok"] is False and out["cap_usd"] == 3.5 and not any("no pinned image" in p for p in out["problems"])
     assert not any("no cap" in p for p in out["problems"])
     assert any("sha256" in p for p in out["problems"])                        # the unbuilt script
     assert out["estimate"] is None and out["card"].startswith("NVIDIA RTX PRO 6000")

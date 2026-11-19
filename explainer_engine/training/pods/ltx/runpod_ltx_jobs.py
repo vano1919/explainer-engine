@@ -75,8 +75,12 @@ def batch_problems(launch: dict, jobs: list[dict], *, price: float, cap_usd: flo
     caps = caps if caps is not None else spend_caps.runpod()
     bad = []
     sec = section(launch)
-    if check_image and not sec.get("image"):
-        bad.append(f"runpod: no pinned image ({sec.get('image_why', 'launch.json runpod.image')})")
+    if check_image:
+        if not sec.get("image"):
+            bad.append(f"runpod: no pinned image ({sec.get('image_why', 'launch.json runpod.image')})")
+        else:
+            from explainer_engine.cloud import pins as cloud_pins
+            bad += [f"runpod: image: {p} (config/cloud_pins.json)" for p in cloud_pins.check_image(sec["image"])]
     if not cap_usd or cap_usd <= 0:
         bad.append("runpod: no cap: the creator's cap answer is not recorded (pass --cap-usd only from his word)")
     elif cap_usd > float(caps["per_pod_usd"]) + 1e-9:
@@ -122,6 +126,11 @@ def script_problems(text: str | None = None) -> list[str]:
     and is refused here first."""
     text = LAUNCHER.read_text(encoding="utf-8") if text is None else text
     return ["runpod_ltx_pod.sh: the code bundle sha256 is not filled in (@@EE_SRC_SHA256@@): build the bundle first"] if "@@" in text else []
+
+
+def _ab():
+    from explainer_engine.training.pods.ltx import ab_bundle
+    return ab_bundle
 
 
 def smoke_job(launch: dict, first: dict) -> dict:
@@ -237,6 +246,7 @@ def plan(job_paths: list[str], *, card: int = 0, cloud: str = "COMMUNITY", cap_u
     jobs = [M.read_job(p, launch) for p in job_paths]
     gpu, price = card_of(launch, card, cloud)
     why = batch_problems(launch, jobs, price=price, cap_usd=cap_usd) + script_problems()
+    why += [w for w in _ab().code_problems(LAUNCHER) if "is not filled in" not in w or not script_problems()]
     return {"ok": not why, "problems": why, "review": batch_review(launch, jobs, price=price, cap_usd=cap_usd), "card": gpu, "cloud": cloud, "price_usd_per_h": price, "cap_usd": cap_usd,
             "estimate": estimate(launch, jobs, price) if jobs else None, "l2_files": sorted(batch_files(launch, jobs)),
             "problem_at_usd": round(float(section(launch)["problem_at"]) * cap_usd, 2) if cap_usd else None}
@@ -256,6 +266,7 @@ def main(argv=None):
         raise SystemExit(0 if res["ok"] else 2)
     if cmd == "run":
         batch = json.loads(Path(argv[0]).read_text(encoding="utf-8"))
+        os.chdir(Path(argv[0]).resolve().parent)            # job specs and pictures are relative to the unpacked batch
         jobs = [M.read_job(p) for p in batch["jobs"]]
         from huggingface_hub import HfApi
         res = run(batch, jobs, os.environ.get("EE_OUT", "/workspace/out"), api=HfApi(token=M._tok()))

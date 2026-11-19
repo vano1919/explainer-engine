@@ -117,8 +117,8 @@
         "note": "no stock 2026-11-19"
       }
     ],
-    "image": null,
-    "image_why": "OPEN (OR-22): no image digest in config/cloud_pins.json is proven for this card; the launcher refuses `plan` for a create until a digest with its CUDA 12.8+ proof is pinned there and named here",
+    "image": "ghcr.io/vano1919/tmr-pod@sha256:6852f3d9e49de298606baf19fada5ee57a32cc74f3bef8b8f88ed35e890b68c0",
+    "image_why": "the pinned tmr_pod digest of config/cloud_pins.json (the Modal LTX base_image too). Evidence read by the plan thread from its ghcr config 2026-11-19 ~18:18 UTC (not read here): CUDA_VERSION 12.8.1, cuDNN 9.8, NVIDIA_REQUIRE_CUDA cuda>=12.8, Ubuntu 24.04, python 3.12. cloud_pins keeps smoke_verified false: the L3 smoke on the card decides; if it fails on Blackwell the pod stops after setup and that cost is inside the cap",
     "container_disk_gb": 220,
     "container_disk_why": "~120 GB of bf16 weights (an estimate, not measured) plus clips and the code bundle; a network volume is never used (it bills while stopped)",
     "min_cuda": "12.8",

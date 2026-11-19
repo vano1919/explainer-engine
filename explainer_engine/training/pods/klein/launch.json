@@ -56,8 +56,8 @@
   "pipeline_class": "ModularPipeline",
   "diffusers_version": "0.43.0",
   "pipeline_why": "the model card says `pip install git+https://github.com/huggingface/diffusers.git`; the released diffusers 0.43.0 (PyPI, 2026-11-12) was opened here and contains Flux3DistilledAutoBlocks, Flux3Transformer2DModel, AutoencoderKLFlux2, ModularPipeline and the flux3 prompt_upsampler block, so it is pinned instead of a git main commit (a reviewed choice: the model's own index says 0.41.0.dev0; L3 on the card proves it loads). The runner loads from a scratch copy of the verified files whose index points at the local folder (no hub id, prompt upsampler entries removed) with HF_HUB_OFFLINE=1",
-  "image": null,
-  "image_why": "OPEN: the same pinned image as the LTX pod (one CUDA 12.8+ proof for both): runpod section of ltx/launch.json",
+  "image": "ghcr.io/vano1919/tmr-pod@sha256:6852f3d9e49de298606baf19fada5ee57a32cc74f3bef8b8f88ed35e890b68c0",
+  "image_why": "the pinned tmr_pod digest of config/cloud_pins.json (the Modal LTX base_image too). Evidence read by the plan thread from its ghcr config 2026-11-19 ~18:18 UTC (not read here): CUDA_VERSION 12.8.1, cuDNN 9.8, NVIDIA_REQUIRE_CUDA cuda>=12.8, Ubuntu 24.04, python 3.12. cloud_pins keeps smoke_verified false: the L3 smoke on the card decides; if it fails on Blackwell the pod stops after setup and that cost is inside the cap; the same image as the LTX pod (one CUDA 12.8 proof for both)",
   "cards": [
     {
       "gpu": "NVIDIA L40S",
@@ -107,6 +107,6 @@
   "hf_out": "explainer-engine/klein_out",
   "model_why": "plan thread, 2026-11-19 18:11 UTC: the owner chose FLUX 3 Klein; `models` can hold another id, `model` picks it",
   "diffusers_wheel_sha256": "8afb8ff1b09d693854de0412d8bdc94fc9e6e6e4efefb2386c616f64a4dc9ac6",
-  "transformers_version": null,
-  "transformers_why": "OPEN: the text encoder is Qwen3VLForConditionalGeneration; the transformers version it needs is not stated by the model card and not guessed: pin one proven to load it (L0 import check on a CPU is free, L3 decides on the card)"
+  "transformers_version": "5.22.2",
+  "transformers_why": "pinned after an import proof, not a load proof: in a clean CPU venv with diffusers 0.43.0, huggingface_hub 1.33.0 and transformers 5.22.2 (PyPI 2026-11-06), ModularPipeline, Flux3Transformer2DModel, AutoencoderKLFlux2, Flux3DistilledAutoBlocks, Qwen3VLForConditionalGeneration and Qwen3VLProcessor import; and with the real modular_model_index.json of the pinned revision rewritten by `local_modular_index`, `ModularPipeline.from_pretrained(local).blocks`, `pop('prompt_upsampler')` and `init_pipeline(local)` build a Flux3DistilledModularPipeline with components text_encoder, tokenizer, image_processor, vae, transformer, scheduler, offline. The weights load is proved only by L3 on the card"
 }

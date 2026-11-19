@@ -72,6 +72,9 @@ def open_pins(launch: dict) -> list[str]:
         out.append(f"transformers version is open ({launch.get('transformers_why', 'launch.json transformers_version')})")
     if not launch.get("image"):
         out.append(f"no pinned image ({launch.get('image_why', 'launch.json image')})")
+    else:
+        from explainer_engine.cloud import pins as cloud_pins
+        out += [f"image: {p} (config/cloud_pins.json)" for p in cloud_pins.check_image(launch["image"])]
     return out
 
 
@@ -343,7 +346,9 @@ def plan(batch_path: str, *, card: int = 0, launch=None) -> dict:
     batch = json.loads(Path(batch_path).read_text(encoding="utf-8"))
     c = launch["cards"][card]
     cap = batch.get("cap_usd") if batch.get("cap_usd") is not None else launch.get("cap_usd")
+    from explainer_engine.training.pods.ltx import ab_bundle
     why = batch_problems(launch, batch, price=float(c["usd_per_h"]), cap_usd=cap) + script_problems()
+    why += [w for w in ab_bundle.code_problems(LAUNCHER) if "is not filled in" not in w or not script_problems()]
     n = len(batch.get("jobs") or [])
     return {"ok": not why, "problems": why, "review": batch_review(launch, batch, price=float(c["usd_per_h"]), cap_usd=cap),
             "card": c["gpu"], "cloud": c["cloud"], "price_usd_per_h": c["usd_per_h"], "cap_usd": cap, "model": launch["model"],

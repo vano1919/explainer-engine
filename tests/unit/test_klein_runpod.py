@@ -15,6 +15,7 @@ from explainer_engine.training.pods.klein import klein_jobs as K
 from explainer_engine.training.pods.ltx import modal_ltx_jobs as M
 
 SHA = "cd" * 32
+IMAGE = "ghcr.io/vano1919/tmr-pod@sha256:6852f3d9e49de298606baf19fada5ee57a32cc74f3bef8b8f88ed35e890b68c0"
 REV = "3b767ff9b5261d71645e2ec49d87d298d955238d"
 
 
@@ -24,7 +25,7 @@ def launch():
     lf = copy.deepcopy(K.LAUNCH)
     m = lf["models"][lf["model"]]
     m["files"] = {"transformer/model.safetensors": SHA, "vae/model.safetensors": "ef" * 32, "vae/config.json": "12" * 20}
-    lf.update(transformers_version="0.0.0", image="ghcr.io/x/y@sha256:" + "0" * 64, cap_usd=0.6)
+    lf.update(cap_usd=0.6)
     return lf
 
 
@@ -56,10 +57,10 @@ def test_the_real_launch_pins_what_was_read_and_keeps_the_rest_open():
     assert 19.5e9 < sum(m["sizes"].values()) < 21e9 and set(m["sizes"]) == set(files)
     assert all(len(h) in (40, 64) for h in files.values())
     assert lf["pipeline_class"] == "ModularPipeline" and lf["diffusers_version"] == "0.43.0" and len(lf["diffusers_wheel_sha256"]) == 64
-    pins = K.open_pins(lf)                                                     # what is still open
-    assert any("transformers version" in p for p in pins) and any("no pinned image" in p for p in pins)
-    assert not any("file list" in p or "pipeline class" in p for p in pins)
-    assert K.batch_problems(lf, _batch(), price=1.09, cap_usd=0.6) and K.script_problems()
+    assert lf["transformers_version"] == "5.22.2" and "import proof" in lf["transformers_why"]
+    assert lf["image"] == IMAGE and K.open_pins(lf) == []                      # every pin is filled; the L3 smoke decides the rest
+    assert K.batch_problems(lf, _batch(), price=1.09, cap_usd=0.6) == []        # nothing in the launch blocks a create now
+    assert K.script_problems()                                                 # the bundle and batch sha256 lines are still placeholders
 
 
 def test_the_local_index_has_no_hub_id_and_no_upsampler(tmp_path):
@@ -237,19 +238,21 @@ def test_the_pod_refuses_a_cap_or_max_usd_above_the_recorded_one(tmp_path, launc
     assert res["end"] == "REFUSED" and any("EE_MAX_USD" in p for p in res["problems"]) and gen.calls == []
 
 
-def test_the_real_launch_pod_refuses_to_run_with_open_pins(tmp_path):
+def test_a_launch_with_an_open_pin_refuses_to_run(tmp_path):
+    lf = copy.deepcopy(K.LAUNCH)
+    lf["models"][lf["model"]]["files"] = None
     gen = Gen()
-    res = K.run(_batch(), tmp_path / "out", api=Api(), generate=gen, vol_root=str(tmp_path / "dl"), tmp=str(tmp_path / "in"))
+    res = K.run(_batch(), tmp_path / "out", api=Api(), generate=gen, launch=lf, vol_root=str(tmp_path / "dl"), tmp=str(tmp_path / "in"))
     assert res["end"] == "REFUSED" and gen.calls == []
 
 
 def test_the_pod_script_passes_lint_and_is_unbuilt_until_the_pins_are_filled():
     from explainer_engine.cloud import dryrun, runpod
     text = K.LAUNCHER.read_text(encoding="utf-8")
-    assert runpod.lint_pod_script(text) == [] and runpod.is_wrapper_script(text) and dryrun.static_problems(text.replace("@@TRANSFORMERS_VERSION@@", "0.0.0").replace("@@EE_SRC_SHA256@@", SHA)) == []
+    assert runpod.lint_pod_script(text) == [] and runpod.is_wrapper_script(text) and dryrun.static_problems(text.replace("@@EE_SRC_SHA256@@", SHA).replace("@@BATCH_SHA256@@", SHA)) == []
     assert "klein_jobs run" in text and "/workspace/dl" in text and "diffusers==0.43.0" in text
     assert K.script_problems(text)
-    assert K.script_problems(text.replace("@@TRANSFORMERS_VERSION@@", "0.0.0").replace("@@EE_SRC_SHA256@@", SHA)) == []
+    assert K.script_problems(text.replace("@@EE_SRC_SHA256@@", SHA).replace("@@BATCH_SHA256@@", SHA)) == []
 
 
 def test_plan_reads_the_batch_file_only(tmp_path):

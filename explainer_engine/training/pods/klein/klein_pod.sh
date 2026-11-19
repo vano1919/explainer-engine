@@ -7,24 +7,29 @@
 # heartbeat: datasets/vano1919/tmr-artifacts:klein_out/beat.txt
 # stall-minutes: 20
 # needs: /workspace/job/ee_src.tar.gz 1000000
-# (why: the code bundle and the batch file are sha256-pinned below; diffusers 0.43.0 is the pinned release)
+# needs: /workspace/job/batch.tar.gz 100
+# (why: the code bundle and the batch (prompts, settings, refs) are two separate sha256-pinned files, below; diffusers 0.43.0 is the pinned release)
 mkdir -p "$EE_OUT"
 export HF_HOME=/workspace/dl/hf PYTHONUNBUFFERED=1 PIP_BREAK_SYSTEM_PACKAGES=1 EE_KLEIN_VOL_ROOT=/workspace/dl
 trap 'exit 143' TERM
 printf '%s start\n' "$(date -u +%T)" > "$EE_OUT/progress.txt"
-pip install -q "huggingface_hub==1.33.0" "diffusers==0.43.0" "transformers==@@TRANSFORMERS_VERSION@@" || exit 1
+pip install -q "huggingface_hub==1.33.0" "diffusers==0.43.0" "transformers==5.22.2" || exit 1
 JOB=/workspace/job
-mkdir -p "$JOB" /workspace/ee
+mkdir -p "$JOB" /workspace/ee /workspace/batch
 python3 -c "
 from huggingface_hub import hf_hub_download
-hf_hub_download('vano1919/tmr-artifacts', 'code/klein/ee_src.tar.gz', repo_type='dataset', local_dir='$JOB/dl')
+for f in ('code/klein/ee_src.tar.gz', 'code/klein/batch.tar.gz'):
+    hf_hub_download('vano1919/tmr-artifacts', f, repo_type='dataset', local_dir='$JOB/dl')
 " || exit 1
 cp "$JOB/dl/code/klein/ee_src.tar.gz" "$JOB/ee_src.tar.gz"
+cp "$JOB/dl/code/klein/batch.tar.gz" "$JOB/batch.tar.gz"
 printf '%s  %s\n' @@EE_SRC_SHA256@@ "$JOB/ee_src.tar.gz" > "$JOB/sha.txt"
+printf '%s  %s\n' @@BATCH_SHA256@@ "$JOB/batch.tar.gz" >> "$JOB/sha.txt"
 sha256sum -c "$JOB/sha.txt" || exit 3
 ee_needs_check
 tar -xzf "$JOB/ee_src.tar.gz" -C /workspace/ee || exit 1
+tar -xzf "$JOB/batch.tar.gz" -C /workspace/batch || exit 1
 cd /workspace/ee || exit 1
 if [ "${DRY:-0}" = "1" ]; then exit 0; fi
-python3 -m explainer_engine.training.pods.klein.klein_jobs run /workspace/ee/klein_batch.json
+python3 -m explainer_engine.training.pods.klein.klein_jobs run /workspace/batch/batch.json
 exit $?

@@ -7,7 +7,8 @@
 # heartbeat: datasets/vano1919/tmr-artifacts:ltx_route/runpod_beat/beat.txt
 # stall-minutes: 30
 # needs: /workspace/job/ee_src.tar.gz 1000000
-# (why: the code bundle and the batch files are sha256-pinned below)
+# needs: /workspace/job/batch.tar.gz 100
+# (why: the code bundle and the batch (prompts, job specs, pictures) are two separate sha256-pinned files, below)
 mkdir -p "$EE_OUT"
 export HF_HOME=/workspace/dl/hf PYTHONUNBUFFERED=1 PIP_BREAK_SYSTEM_PACKAGES=1 EE_LTX_VOL_ROOT=/workspace/dl
 trap 'exit 143' TERM
@@ -15,17 +16,21 @@ printf '%s start\n' "$(date -u +%T)" > "$EE_OUT/progress.txt"
 pip install -q "huggingface_hub==1.33.0" || exit 1
 git clone -q https://github.com/Lightricks/LTX-2.git /workspace/LTX-2 && git -C /workspace/LTX-2 checkout -q e98f6d927d83c92ef2be6aec76c8440b19306e39 && pip install -q -e /workspace/LTX-2/packages/ltx-core -e /workspace/LTX-2/packages/ltx-pipelines || exit 1
 JOB=/workspace/job
-mkdir -p "$JOB" /workspace/ee
+mkdir -p "$JOB" /workspace/ee /workspace/batch
 python3 -c "
 from huggingface_hub import hf_hub_download
-hf_hub_download('vano1919/tmr-artifacts', 'code/ltx_ab/ee_src.tar.gz', repo_type='dataset', local_dir='$JOB/dl')
+for f in ('code/ltx_ab/ee_src.tar.gz', 'code/ltx_ab/batch.tar.gz'):
+    hf_hub_download('vano1919/tmr-artifacts', f, repo_type='dataset', local_dir='$JOB/dl')
 " || exit 1
 cp "$JOB/dl/code/ltx_ab/ee_src.tar.gz" "$JOB/ee_src.tar.gz"
+cp "$JOB/dl/code/ltx_ab/batch.tar.gz" "$JOB/batch.tar.gz"
 printf '%s  %s\n' @@EE_SRC_SHA256@@ "$JOB/ee_src.tar.gz" > "$JOB/sha.txt"
+printf '%s  %s\n' @@BATCH_SHA256@@ "$JOB/batch.tar.gz" >> "$JOB/sha.txt"
 sha256sum -c "$JOB/sha.txt" || exit 3
 ee_needs_check
 tar -xzf "$JOB/ee_src.tar.gz" -C /workspace/ee || exit 1
+tar -xzf "$JOB/batch.tar.gz" -C /workspace/batch || exit 1
 cd /workspace/ee || exit 1
 if [ "${DRY:-0}" = "1" ]; then exit 0; fi
-python3 -m explainer_engine.training.pods.ltx.runpod_ltx_jobs run /workspace/ee/ltx_batch.json
+python3 -m explainer_engine.training.pods.ltx.runpod_ltx_jobs run /workspace/batch/batch.json
 exit $?
