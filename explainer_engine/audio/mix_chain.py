@@ -47,6 +47,8 @@ CARVE_BAND_HZ = tuple(float(v) for v in C.T("BP-214", "carve_band_hz"))
 TP_MARGIN_DB = float(C.T("BP-214", "tp_margin_db"))      # the limiter's ceiling sits this far under BP-50's true_peak_max (AAC overshoot)
 MASTER_GAIN_MAX_DB = float(C.T("BP-214", "master_gain_max_db"))   # the master gain never moves the mix by more than this
 AAC_KBPS = int(C.T("BP-63", "aac_kbps"))                 # the delivery bitrate, as production/assemble reads it
+LIMITER_REDUCTION_MAX_DB = float(C.T("BP-214", "limiter_reduction_max_db"))   # a deeper limiter reduction is a REVIEW
+LIMITER_SHARE_FLOOR_DB = float(C.T("BP-214", "limiter_share_floor_db"))       # the share of time above this reduction is reported
 GAP_MARGIN_LU = float(C.T("BP-214", "gap_margin_lu"))    # the music is trimmed to the gap plus this, so the measured gap is not on the edge
 SPEECH_THRESHOLD = 0.02       # the voice's control level where a window counts as speech (stems / mix_check)
 
@@ -199,10 +201,20 @@ def mix_stems(nar: np.ndarray, amb: np.ndarray, sfx: np.ndarray, mus: np.ndarray
         stems = {k: (v * g * env[:, None]).astype(np.float32) for k, v in stems.items()}
         final = integrated_lufs(total * g * env[:, None])
         capped = abs(gain_db) >= MASTER_GAIN_MAX_DB - 1e-6 and not abs(final - lufs_target) <= TIGHT_BAND
-        rec["rows"] = [G.row("master_gain_cap", False,
+        rows = [G.row("master_gain_cap", False,
                              f"the master gain reached its cap of {MASTER_GAIN_MAX_DB:g} dB (BP-214) and the mix is at {final:.1f} LUFS, "
                              f"off BP-50's target: the input is too quiet or too loud to fix by gain", round(gain_db, 2),
                              level=G.REVIEW)] if capped else []
+        gr_db = -20 * np.log10(np.maximum(env, 1e-9))
+        max_gr, share = float(gr_db.max()), float((gr_db > LIMITER_SHARE_FLOOR_DB).mean())
+        rows.append(G.row("limiter_reduction", max_gr <= LIMITER_REDUCTION_MAX_DB,
+                          f"the master limiter's deepest reduction is {max_gr:.1f} dB (BP-214 review above {LIMITER_REDUCTION_MAX_DB:g}); "
+                          f"{share * 100:.1f} % of the time above {LIMITER_SHARE_FLOOR_DB:g} dB: the stems going in sit far from the target "
+                          f"and the limiter catches the peaks (fix the stem levels in the plan, not here)", round(max_gr, 2),
+                          level=G.REVIEW))
+        rec["rows"] = rows
+        rec["limiter"] = {"max_reduction_db": round(max_gr, 2), "share_above_floor": round(share, 4),
+                          "floor_db": LIMITER_SHARE_FLOOR_DB}
         rec["master"] = {"gain_db": round(gain_db, 2), "gain_capped": bool(capped), "limiter_ceiling_dbtp": ceiling,
                          "max_gain_reduction_db": round(float(-20 * np.log10(max(1e-9, float(env.min())))), 2)}
     else:

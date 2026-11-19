@@ -201,8 +201,21 @@ def test_a_very_quiet_input_is_not_lifted_by_tens_of_db_and_says_so():
     stems, rec = MC.mix_stems(nar * k, amb * k, sfx * k, mus * k, voice, bed_duck_db=6.0, music_duck_db=duck.DEPTH_DB)
     assert rec["master"]["gain_db"] <= MC.MASTER_GAIN_MAX_DB + 1e-6 and rec["master"]["gain_capped"] is True
     assert rec["measured"]["lufs"] < MC.LUFS_TARGET - MC.TIGHT_BAND
-    row = rec["rows"][0]
+    row = [r for r in rec["rows"] if r["gate"] == "master_gain_cap"][0]
     assert row["gate"] == "master_gain_cap" and row["status"] == "REVIEW"
     # a normal input is not capped and has no such row
     _, ok = _chain()[1]
-    assert ok["master"]["gain_capped"] is False and ok["rows"] == []
+    assert ok["master"]["gain_capped"] is False and not [r for r in ok["rows"] if r["gate"] == "master_gain_cap"]
+
+
+def test_a_deep_limiter_reduction_is_a_review_and_a_light_one_passes():
+    voice, nar, amb, sfx, mus = _scene()
+    hot = sfx.copy()
+    hot[int(6 * SR):int(6.2 * SR)] = np.stack([_noise(0.2, 21)] * 2, axis=1) * 6.0     # an effect far over the mix
+    stems, rec = MC.mix_stems(nar, amb, hot, mus, voice, bed_duck_db=6.0, music_duck_db=duck.DEPTH_DB)
+    row = {r["gate"]: r for r in rec["rows"]}["limiter_reduction"]
+    assert rec["limiter"]["max_reduction_db"] > MC.LIMITER_REDUCTION_MAX_DB and row["status"] == "REVIEW"
+    assert 0.0 < rec["limiter"]["share_above_floor"] < 1.0
+    _, ok = _chain()[1]
+    assert {r["gate"]: r for r in ok["rows"]}["limiter_reduction"]["status"] == "PASS"
+    assert ok["limiter"]["max_reduction_db"] <= MC.LIMITER_REDUCTION_MAX_DB
