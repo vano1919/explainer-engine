@@ -492,15 +492,24 @@ def weights_root(launch, vol_root="/w"):
 STAGE_CPU, STAGE_MEM_GIB, STAGE_TIMEOUT_S = 4, 16, 3600   # CPU only, ~$0.32 an hour at the 2026-11-07 table
 
 
-def all_model_files(launch) -> dict:
-    """Every pinned file the worker may read: the clip route's model_files plus the guided kinds' kind_model_files (W5)."""
-    return {**(launch.get("model_files") or {}), **(launch.get("kind_model_files") or {})}
+def needed_files(launch, job=None, with_kind=False) -> dict:
+    """The pinned files to stage or check: the clip route's model_files always; the guided kinds' kind_model_files only for a job
+    whose kind needs them (kind_needs) or when ``with_kind`` asks for all of them (staging the guided files, ~45 GB, on purpose)."""
+    out = dict(launch.get("model_files") or {})
+    kf, ku = launch.get("kind_model_files") or {}, launch.get("kind_uses") or {}
+    if with_kind:
+        out.update(kf)
+    elif job is not None:
+        for role in kind_needs(job):
+            f = ku.get(role)
+            out[f if f else f"<kind_uses.{role} unpinned>"] = kf.get(f, "")
+    return out
 
 
-def check_weights(launch, vol_root="/w") -> list[str]:
+def check_weights(launch, vol_root="/w", job=None, with_kind=False) -> list[str]:
     """L2: every model file of the launch on the Volume with its sha256 (the paid function never downloads weights)."""
     root, bad = weights_root(launch, vol_root), []
-    for f, want in all_model_files(launch).items():
+    for f, want in needed_files(launch, job, with_kind).items():
         p = root / f
         if not p.is_file():
             bad.append(f"missing {f}")
@@ -509,18 +518,19 @@ def check_weights(launch, vol_root="/w") -> list[str]:
     return bad
 
 
-def sizes_ok(launch, vol_root="/w") -> list[str]:
-    """The paid function's cheap check: every file there (its full sha256 was proved on L2 for this launch file)."""
+def sizes_ok(launch, vol_root="/w", job=None) -> list[str]:
+    """The paid function's cheap check: every file there (its full sha256 was proved on L2 for this launch file); a guided kind job
+    also needs its dev transformer and distilled LoRA, a clip job does not."""
     root = weights_root(launch, vol_root)
-    return [f"missing {f}" for f in all_model_files(launch) if not (root / f).is_file() or (root / f).stat().st_size == 0]
+    return [f"missing {f}" for f in needed_files(launch, job) if not (root / f).is_file() or (root / f).stat().st_size == 0]
 
 
-def stage_weights(launch, vol_root="/w", download=None) -> list[str]:
+def stage_weights(launch, vol_root="/w", download=None, with_kind=False) -> list[str]:
     root = weights_root(launch, vol_root)
-    missing = [f for f in all_model_files(launch) if not (root / f).is_file()]
+    missing = [f for f in needed_files(launch, None, with_kind) if not (root / f).is_file()]
     if missing:
         (download or _hf_download)(launch["model_repo"], launch["model_revision"], missing, root)
-    return check_weights(launch, vol_root)
+    return check_weights(launch, vol_root, None, with_kind)
 
 
 def _hf_download(repo, revision, files, root):
@@ -629,7 +639,7 @@ def distilled_engine(job: dict) -> bool:
 
 
 def kind_needs(job: dict) -> tuple:
-    return () if distilled_engine(job) else KIND_PIPELINES[kind_of(job)]["needs"]
+    return () if distilled_engine(job) or kind_of(job) not in KIND_PIPELINES else KIND_PIPELINES[kind_of(job)]["needs"]
 
 
 def kind_problems(launch: dict, job: dict, pins: dict | None = None) -> list[str]:
@@ -1345,7 +1355,7 @@ def body(job: dict, launch: dict, timeout_s: int, *, vol_root="/w", commit=lambd
             raise RuntimeError("the start picture changed in transit")
         if job.get("launch_sha") and job["launch_sha"] != launch_sha(launch):
             raise RuntimeError("the launch file changed between the spec and the container")
-        bad = sizes_ok(launch, vol_root)
+        bad = sizes_ok(launch, vol_root, job)
         if bad:
             raise RuntimeError("weights not on the Volume: " + "; ".join(bad[:5]))
         rows, prev, prev_s, prev_sub = [], None, None, None
@@ -1463,13 +1473,13 @@ if modal is not None:
         return import_check(module)
 
     @app.function(image=image, cpu=(2.0, 2.0), memory=(4096, 4096), timeout=1800, retries=0, volumes={"/w": vol})
-    def weights_check(launch: dict):
-        return check_weights(launch)
+    def weights_check(launch: dict, with_kind: bool = False):
+        return check_weights(launch, with_kind=with_kind)
 
     @app.function(image=image, cpu=(float(STAGE_CPU),) * 2, memory=(STAGE_MEM_GIB * 1024,) * 2, timeout=STAGE_TIMEOUT_S,
                   retries=0, volumes={"/w": vol}, secrets=secrets)
-    def weights_stage(launch: dict):
-        bad = stage_weights(launch)
+    def weights_stage(launch: dict, with_kind: bool = False):
+        bad = stage_weights(launch, with_kind=with_kind)
         vol.commit()
         return bad
 

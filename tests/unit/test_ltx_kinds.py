@@ -244,21 +244,32 @@ def test_the_distilled_engine_binds_the_end_keyframe_on_the_launchs_own_pipeline
     assert any("engine" in p for p in L.kind_problems(LAUNCH, _job(engine="turbo"), PINS))
 
 
-def test_guided_kind_files_are_staged_and_checked_before_any_gpu(tmp_path):
-    """Review W5 fix 1: the dev transformer and the distilled LoRA are part of staging, L2 and the paid body's size check."""
-    launch = copy.deepcopy(LAUNCH)
-    kf = launch["kind_model_files"]
-    assert set(kf) <= set(L.all_model_files(launch))
+def _stage_base(tmp_path, launch):
     root = L.weights_root(launch, str(tmp_path))
     for f in launch["model_files"]:
         (root / f).parent.mkdir(parents=True, exist_ok=True)
         (root / f).write_bytes(b"x")
-    missing = L.sizes_ok(launch, str(tmp_path))
-    assert sorted(missing) == sorted(f"missing {f}" for f in kf)
-    assert any(f"missing {f}" in L.check_weights(launch, str(tmp_path)) for f in kf)
+
+
+def test_guided_kind_files_are_checked_only_for_a_job_that_needs_them(tmp_path):
+    """Review W5 fix 1 (re-check): a clip job passes without the ~45 GB guided files, a guided keyframes job is refused before any
+    GPU start, a distilled-engine keyframes job and a retake need none; staging them is an explicit with_kind step."""
+    launch = copy.deepcopy(LAUNCH)
+    kf = launch["kind_model_files"]
+    _stage_base(tmp_path, launch)
+    assert L.sizes_ok(launch, str(tmp_path), {}) == [] and L.sizes_ok(launch, str(tmp_path)) == []
+    guided = L.sizes_ok(launch, str(tmp_path), _job("keyframes"))
+    assert sorted(guided) == sorted(f"missing {launch['kind_uses'][r]}" for r in ("dev_transformer", "distilled_lora"))
+    assert L.sizes_ok(launch, str(tmp_path), _job("keyframes", engine="distilled")) == []
+    assert L.sizes_ok(launch, str(tmp_path), _job("retake")) == []
+    assert L.check_weights(launch, str(tmp_path), None, True) == [f"missing {f}" for f in kf] or set(
+        f"missing {f}" for f in kf) <= set(L.check_weights(launch, str(tmp_path), None, True))
     got = []
-    L.stage_weights(launch, str(tmp_path), download=lambda repo, rev, files, r: got.extend(files))
+    L.stage_weights(launch, str(tmp_path), download=lambda repo, rev, files, r: got.extend(files), with_kind=True)
     assert set(kf) <= set(got)
+    got.clear()
+    L.stage_weights(launch, str(tmp_path), download=lambda repo, rev, files, r: got.extend(files))
+    assert not set(kf) & set(got)
 
 
 def test_retake_records_only_what_the_cli_is_given():
