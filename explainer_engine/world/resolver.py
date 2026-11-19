@@ -117,3 +117,29 @@ def check_text(text: str, world: dict, look: dict | None = None, *, plate: bool 
                                                 [c for v in world["visitors"] for c in v["costume"]]):
         add("UR-24", "people without a costume from the world's costume list", "REVIEW")
     return found
+
+
+# --- route scope (final plan W7, W8 finding) ---------------------------------------------------------------------------------
+# UR-22..27 are the lint of the legacy ink route (look v2 thread, one light key from the era codex, costume list). A v4.3 new-style
+# prompt (realism with stylized faces, a lens named, no look thread) fails every one of them by design, so it is checked by
+# ``validators/prompts.py`` (VAL-PRM-xx) instead. ``check_prompt`` is the one entry that picks by route; ``check_text`` stays the
+# legacy lint and its callers (``edit/prompt_v2``) are unchanged.
+LEGACY_ROUTE = "legacy_ink"
+NEW_STYLE_ROUTE = "v43"
+ROUTES = (LEGACY_ROUTE, NEW_STYLE_ROUTE)
+UR_RULES = ("UR-22", "UR-23", "UR-24", "UR-25", "UR-26", "UR-27")
+
+
+def check_prompt(text: str, route: str, world: dict | None = None, **kw) -> list[dict]:
+    """Findings ``[{rule, severity, detail}]`` of one prompt for its route. ``legacy_ink``: UR-22..27 through ``check_text`` (needs
+    ``world``). ``v43``: no UR rule applies; the slop-word row of ``validators.prompts`` (VAL-PRM-01) is returned in the same shape
+    (a full shot is checked with ``validators.prompts.validate``). An unknown route is an error, never a silent pass."""
+    if route == LEGACY_ROUTE:
+        if world is None:
+            raise ValueError("the legacy ink route needs the resolved world for UR-22..27")
+        return check_text(text, world, **kw)
+    if route == NEW_STYLE_ROUTE:
+        from explainer_engine.validators import prompts as P
+        row = P.slop_words([{"shot_id": "prompt", "image_prompt": {"start_frame_prompt": text}}])
+        return [{"rule": "VAL-PRM-01", "severity": row["status"], "detail": row["detail"]}] if row["status"] != "PASS" else []
+    raise ValueError(f"unknown route {route!r}: expected one of {ROUTES}")

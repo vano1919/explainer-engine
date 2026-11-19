@@ -13,7 +13,7 @@ from pathlib import Path
 from explainer_engine.qa import gates as G
 from explainer_engine.validators import _common as C
 
-RULE_IDS = ("VAL-QA-01", "VAL-QA-02", "VAL-QA-03", "VAL-QA-04", "VAL-QA-05", "VAL-QA-06")
+RULE_IDS = ("VAL-QA-01", "VAL-QA-02", "VAL-QA-03", "VAL-QA-04", "VAL-QA-05", "VAL-QA-06", "VAL-QA-07", "VAL-QA-08")
 
 
 def tools_present() -> bool:
@@ -110,3 +110,15 @@ def check_file(path, expected: dict | None = None) -> list[dict]:
         rows.append(C.check("VAL-QA-06", -early <= off_ms <= late, "BP-54", f"audio starts {off_ms:+.0f} ms from the picture "
                             f"(window -{early}..+{late})", off_ms))
     return rows
+
+
+def skill_check(path, platform: str = "youtube") -> dict:
+    """VAL-QA-07 (W7): the vendored ffmpeg-skill ``check`` (platform spec rows plus black / frozen / silent / dropout / flash)."""
+    from explainer_engine.finish import qa_steps
+    return qa_steps.check_row(path, platform, gate="VAL-QA-07")
+
+
+def skill_look(path, out_png, tiles: str = "4x3") -> dict:
+    """VAL-QA-08 (W7): the vendored ffmpeg-skill ``look`` contact sheet exists for the observer; REVIEW, never PASS (looking is W4's)."""
+    from explainer_engine.finish import qa_steps
+    return qa_steps.look_row(path, out_png, tiles, gate="VAL-QA-08")

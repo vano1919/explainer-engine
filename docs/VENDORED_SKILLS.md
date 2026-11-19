@@ -102,16 +102,16 @@ The trial task per skill (P-3) is done by the stream that first uses it, before 
 |---|---|---|
 | `v-animate-characters` | W5 | NOT_RUN |
 | `v-audio-production-skill` | W6 | NOT_RUN |
-| `v-color-grading-skill` | W7 | NOT_RUN |
+| `v-color-grading-skill` | W7 | NOT_USED W7: LUT application goes through ffmpeg-skill `color --lut`; not run |
 | `v-design-sound` | W6 | NOT_RUN |
 | `v-director-cinematic` | W8 | NOT_RUN |
-| `v-edit-video` | W7 | NOT_RUN |
+| `v-edit-video` | W7 | DONE W7 2026-11-19: check_blended_cuts.py loaded by path; found an xfade dissolve, passed a hard cut (test); other scripts unused |
 | `v-elevenlabs-music` | W6 | NOT_RUN |
 | `v-elevenlabs-sound-effects` | W6 | NOT_RUN |
 | `v-elevenlabs-speech-to-text` | W6 | NOT_RUN |
 | `v-elevenlabs-text-to-speech` | W6 | NOT_RUN |
 | `v-fact-check-workflow` | W8 | NOT_RUN |
-| `v-ffmpeg-skill` | W7 | NOT_RUN |
+| `v-ffmpeg-skill` | W7 | DONE W7 2026-11-19: join --copy, audio --replace, check --content, look, color --lut, caption --mode mux run on synthetic and old clips; scripts need their own folder on the path (no `python -I`); stars not re-verified |
 | `v-hook-writing` | W8 | NOT_RUN |
 | `v-ltxv2-video` (D-132) | W5 | NOT_RUN |
 | `v-media-analysis-skill` | W4 | NOT_RUN |
@@ -120,9 +120,9 @@ The trial task per skill (P-3) is done by the stream that first uses it, before 
 | `v-scenario-consistency` | W9 | NOT_RUN |
 | `v-scenario-quality-gate` | W4 | NOT_RUN |
 | `v-scenario-storyboards` | W9 | NOT_RUN |
-| `v-scenario-video-color-grade` | W7 | NOT_RUN |
+| `v-scenario-video-color-grade` | W7 | METHOD W7 2026-11-19: Lab Reinhard to a key baked in a 33^3 .cube, applied once; implemented in finish/grade.py (our Lab code already existed); upstream scripts not run |
 | `v-source-verification` | W8 | NOT_RUN |
-| `v-subtitle-skill` | W7 | NOT_RUN |
+| `v-subtitle-skill` | W7 | DONE W7 2026-11-19: `subtitle_skill.cli run` generate -> SRT with LINE_TOO_LONG / READING_SPEED observations; absolute output paths are refused (workspace-relative only) |
 | `v-superpowers-subagent-driven-development` | every code thread (before first use) | NOT_RUN |
 | `v-superpowers-systematic-debugging` | every code thread (before first use) | NOT_RUN |
 | `v-superpowers-test-driven-development` | every code thread (before first use) | NOT_RUN |
@@ -132,10 +132,10 @@ The trial task per skill (P-3) is done by the stream that first uses it, before 
 | `v-sw-scene-craft` | W8 | NOT_RUN |
 | `v-sw-story-structure` | W8 | NOT_RUN |
 | `v-sw-workflow` | W8 | NOT_RUN |
-| `v-thumbnail-skill` | W7 | NOT_RUN |
+| `v-thumbnail-skill` | W7 | DONE W7 2026-11-19: `thumbnail_skill.cli render` 1280x720 JPEG with a text element; only registered font ids (no Bangers); Pillow 12.3 here (the skill asks 13 on py3.11+) still renders |
 | `v-transcription-skill` | W6 | NOT_RUN |
-| `v-video-editing-skill` | W7 | NOT_RUN |
+| `v-video-editing-skill` | W7 | NOT_USED W7: its typed trim/concat is covered by ffmpeg-skill join/cut for our operations; not run |
 | `v-viral-hooks` | W8 | NOT_RUN |
-| `v-viral-youtube-shorts` | W7 | NOT_RUN |
+| `v-viral-youtube-shorts` | W7 | NOT_USED W7: Shorts text rules are W8's; no W7 code path uses it |
 | `v-visual-skills-image` | W9 | NOT_RUN |
 | `v-visual-skills-video` | W9 | NOT_RUN |
