@@ -6796,3 +6796,5 @@ W5 LTX continuity, free part (2026-11-19, final plan P-6 / CT-1 / CT-2, $0, base
 - W5 Klein on Modal, image Python (2026-11-19): L1's first run on the new image got past the secret and failed on "serialized Function defined with Python 3.13, image has 3.12": the image's `add_python` now follows the launcher's Python minor version (torch 2.8.0 cu128 has wheels for it); L1 shows the torch and CUDA versions.
 
 - W5 Klein on Modal, L1 container import (2026-11-19): L1 built the image and then failed at startup in the container with `IndexError: 3` (`KLEIN_DIR.parents[3]` for the ladder folder; the worker file sits in /root there). The ladder folder is now picked by `_ladder_dir()` (shared folder, else the repo's jobs folder, else beside the file); two tests.
+
+- W5 Klein on Modal, L1 result type (2026-11-19): the container check ran but its answer carried `torch.__version__` (a `TorchVersion` object), which cannot be unpickled in the launcher (no torch there): `env_check` now returns plain strings.

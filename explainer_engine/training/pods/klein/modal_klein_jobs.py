@@ -466,7 +466,7 @@ if modal is not None:
         info = {}
         try:
             import torch
-            info = {"torch": torch.__version__, "cuda": torch.version.cuda}
+            info = {"torch": str(torch.__version__), "cuda": str(torch.version.cuda)}      # plain str: TorchVersion would not unpickle locally
             if info["torch"].split("+")[0] != _m.get("torch_pin"):
                 bad.append(f"torch {info['torch']} is not the pinned {_m.get('torch_pin')}")
         except Exception:  # noqa: BLE001 - already in bad
