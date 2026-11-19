@@ -42,3 +42,6 @@ id_ed25519*
 assets/audio/originals/
 assets/audio/library/catalog.sqlite
 assets/audio/previews/
+
+# asset vault (W3): untouched generated originals stay out of git, only the JSONL records are committed
+assets/originals/
