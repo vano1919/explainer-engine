@@ -631,7 +631,7 @@ def unresolved_reviews(root: Path) -> dict:
             why.append(f"start_frame_check {sf}")
         if r.get("status") == G.REVIEW:
             why.append("clip findings REVIEW")
-        why += [f"{n.get('kind')} ({n.get('text')})" for n in (r.get("trim_notes") or []) if isinstance(n, dict)]
+        why += [f"{n.get('kind')} ({n.get('text')})" for n in (r.get("trim_notes") or []) if isinstance(n, dict) and n.get("review")]
         if why:                                      # one item per clip, both reasons named
             items.append(f"{r['shot_id']}: " + " + ".join(why))
     return {"count": len(items), "items": items}
