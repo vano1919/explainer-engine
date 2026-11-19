@@ -1,0 +1,365 @@
+manifest_id: V4.1-MANIFEST-02-G2
+architecture_version: 4.1.0
+generated_utc: '2026-11-19'
+repository: vano1919/explainer-engine
+base_commit_pr196: e4521cd
+base_ci_verified: 4476 passed, 24 skipped, 3 deselected, 1 xfailed, 0 failed
+local_snapshot_branch: argon/p1-2-timing-contract
+local_snapshot_code_sha: eb80e4434ea120f48cb9aea094ebd7b2b423d8f0
+precedence_order:
+- Creator Decision Log
+- 'DEC-2026-11-17-01 and PR #195 plan'
+- PLAN_AMENDMENTS_v1_1.md
+- 'V4.1 as amended by MA-01..MA-18 (MA wins over PR #195 on explicit conflicts)'
+ma_conflict_table:
+- id: CONF-01
+  area: Render path & audio source
+  pr195_or_prior: mix.py synthesized beds/maps/music since 0e299cd
+  resolution: 'One render path: episode/run.py; sound only from G8 audio/stems; mix.py preview-only (Creator
+    2026-11-19).'
+- id: CONF-02
+  area: BBC RemArc sound licensing
+  pr195_or_prior: 2026-11-13 card allowed BBC RemArc
+  resolution: No BBC RemArc in monetised masters; replaced from licence-safe pools; PC-10 enforces (Creator
+    2026-11-19).
+- id: CONF-03
+  area: av_events/1 schema name
+  pr195_or_prior: V4.1 draft reused av_events/1
+  resolution: 'MA-02: renamed V4.1 timeline contract to av_event_timeline/1; existing av_events/1 untouched.'
+- id: CONF-04
+  area: CI unit marker & git diff depth
+  pr195_or_prior: pytest -m unit selected 0 tests; shallow checkout broke diff scope checks
+  resolution: 'MA-11/0.4b: python -m pytest -q -m ''not system and not media''; actions/checkout fetch-depth:
+    0; explicit PR-to-slice binding.'
+g2_contract_sha256:
+  v4_1_schemas.json: 359c2d89623e3b119bfde48dd695d04f9ad87a2b1e77c440991e79c3ffc94462
+  v4_1_schema_fixtures.json: 0f29046f6999eb8075e103ed7ff4ecf60f1d7b17692eea6557b88ff478cc5eca
+  V4_1_G2_MISSING_SPECIFICATIONS.md: 36222dde69fb06df24ebe0b8902d05147c893f2cfd83bbe87d55a763115e2be8
+proposed_adrs:
+  approval_status: PENDING_CREATOR_SIGN_OFF
+  ids:
+  - ADR-V41-01
+  - ADR-V41-02
+  - ADR-V41-03
+  - ADR-V41-04
+  - ADR-V41-05
+  - ADR-V41-06
+  - ADR-V41-07
+  - ADR-V41-08
+  - ADR-V41-09
+  - ADR-V41-10
+  - ADR-V41-11
+protected_files:
+- config/picture_route.json
+- config/model_routing.json
+- config/spend_caps.json
+- config/retired_era.json
+- docs/architecture/v4_1_allowlists.json
+- .github/workflows/quality.yml
+ci_policy:
+  checkout_fetch_depth: 0
+  default_test_command: python -m pytest -q -m "not system and not media"
+  pr_slice_binding: 'PR commit trailer ''V4.1-slice: <WP-ID>'' or branch prefix ''v4-1/<wp-id>-'''
+  paid_modal_ltx_rule_ma09: Any edit to modal_ltx_jobs.py requires a paid L3 ladder smoke test ($0.50
+    cap, Creator-approved) and MUST NOT be labelled $0.00.
+work_packages:
+- id: WP-00
+  priority: P0
+  name: Repository Baseline and Read-Only Test Triage (MA-10)
+  depends_on: []
+  paid_budget_usd: 0.0
+  allowed_modify: []
+  allowed_create:
+  - docs/architecture/v4_1_wp00_test_triage.json
+  required_tests:
+  - python -m explainer_engine.docs_lint
+  - python -m pytest -q -m "not system and not media"
+  acceptance_criteria:
+  - Zero modifications to tests/ or production code (read-only triage per MA-10)
+  - docs_lint returns 0 findings
+  - 100% of any failures classified in v4_1_wp00_test_triage.json
+  rollback: git rm docs/architecture/v4_1_wp00_test_triage.json
+  stop_conditions:
+  - Any unexpected modification outside allowed_create
+- id: WP-01
+  priority: P0
+  name: Data Contracts, Boundary media_clocks, and Read-Only RouteRegistry
+  depends_on:
+  - WP-00
+  paid_budget_usd: 0.0
+  allowed_modify:
+  - explainer_engine/core/contracts.py
+  allowed_create:
+  - explainer_engine/core/media_clocks.py
+  - explainer_engine/core/shot_state.py
+  - explainer_engine/core/route_registry.py
+  - explainer_engine/schemas/shot_intent.schema.json
+  - explainer_engine/schemas/observed_image.schema.json
+  - explainer_engine/schemas/i2v_prompt_binding.schema.json
+  - explainer_engine/schemas/inspection_plan.schema.json
+  - explainer_engine/schemas/observed_video.schema.json
+  - explainer_engine/schemas/media_clocks.schema.json
+  - explainer_engine/schemas/audio_evidence.schema.json
+  - explainer_engine/schemas/cut_decision.schema.json
+  - explainer_engine/schemas/av_event_timeline.schema.json
+  - explainer_engine/schemas/continuity_memory.schema.json
+  - explainer_engine/schemas/qa_result_v2.schema.json
+  - tests/unit/test_v41_schemas.py
+  - tests/unit/test_v41_media_clocks.py
+  - tests/unit/test_v41_shot_state.py
+  - tests/unit/test_v41_route_registry.py
+  required_tests:
+  - python -m pytest -q tests/unit/test_v41_schemas.py tests/unit/test_v41_media_clocks.py tests/unit/test_v41_shot_state.py
+    tests/unit/test_v41_route_registry.py
+  acceptance_criteria:
+  - "All 11 schemas + Step 1 \xA70.3 contracts validate against v4_1_schema_fixtures.json"
+  - Existing episodes/ep_truce_1914/production/av_events.json remains untouched and valid under av_events/1
+  - RouteRegistry performs zero writes to config/*.json
+  rollback: Revert WP-01 commit; zero existing contracts altered
+  stop_conditions:
+  - Any collision with av_events/1 or config mutation
+- id: WP-02
+  priority: P0
+  name: Single-Shot Closed-Loop Proof (Milestone 1)
+  depends_on:
+  - WP-01
+  paid_budget_usd: 0.0
+  allowed_modify:
+  - explainer_engine/episode/run.py
+  - explainer_engine/videolane/scene.py
+  allowed_create:
+  - explainer_engine/qa/observe_image.py
+  - explainer_engine/qa/observe_video.py
+  - explainer_engine/edit/action_cut.py
+  - explainer_engine/audio/event_sync.py
+  - tests/integration/test_v41_wp02_single_shot_closed_loop.py
+  required_tests:
+  - python -m pytest -q tests/integration/test_v41_wp02_single_shot_closed_loop.py
+  mandatory_negative_tests:
+  - T1_image_mismatch
+  - T2_post_observe_swap
+  - T3_motion_timing_diff
+  - T4_mid_word_and_ghost_speech
+  - T5_intentional_cut_on_action
+  - T6_av_clock_offset
+  - T7_qa_blocker_halt
+  acceptance_criteria:
+  - All 7 mandatory negative tests pass with fail-closed assertions
+  - NO_PERCEPTION_INPUT halts downstream progression
+  rollback: Revert WP-02 commit
+  stop_conditions:
+  - Any negative test returning PASS or silent fallback
+- id: WP-03
+  priority: P1
+  name: Adaptive Video Inspection Router and Audio Evidence Fusion
+  depends_on:
+  - WP-02
+  paid_budget_usd: 0.0
+  allowed_modify:
+  - explainer_engine/qa/observe_video.py
+  - explainer_engine/videolane/ingest.py
+  allowed_create:
+  - explainer_engine/qa/video_inspection_router.py
+  - explainer_engine/audio/evidence_fusion.py
+  - tests/unit/test_v41_inspection_router.py
+  - tests/unit/test_v41_audio_fusion.py
+  required_tests:
+  - python -m pytest -q tests/unit/test_v41_inspection_router.py tests/unit/test_v41_audio_fusion.py
+  acceptance_criteria:
+  - T0 deterministic gate blocks alone before any VLM tier
+  - All 4 adversarial audio fusion cases (ADV-AUD-01..04) pass
+  - Silero VAD primary + harmonicity fallback recorded explicitly
+  rollback: Revert WP-03 commit
+  stop_conditions:
+  - Unrecorded voicing_backend or silent PASS on missing VAD
+- id: WP-04
+  priority: P1
+  name: Action-Aware Editing, Cut-on-Action, and Event Sync
+  depends_on:
+  - WP-02
+  - WP-03
+  paid_budget_usd: 0.0
+  allowed_modify:
+  - explainer_engine/audio/sfx_planner.py
+  - explainer_engine/audio/spine.py
+  - explainer_engine/videolane/plan.py
+  - explainer_engine/episode/timing.py
+  allowed_create:
+  - tests/unit/test_v41_action_cut_and_sync.py
+  required_tests:
+  - python -m pytest -q tests/unit/test_v41_action_cut_and_sync.py
+  regression_fixtures:
+  - 1914-F01
+  - 1914-F02
+  - 1914-F03
+  - 1914-F04
+  - 1914-F05
+  - 1914-F06
+  - 1914-F10
+  acceptance_criteria:
+  - cut_decision/1 feeds retime_with_edit_points with out_frame > in_frame
+  - All 7 1914 regression fixtures pass
+  rollback: Revert WP-04 commit
+  stop_conditions:
+  - Any regression on episode/timing.py P1.2 contract tests
+- id: WP-05
+  priority: P1
+  name: Wire Disconnected QA, Continuity Memory, and PC-10 Provenance
+  depends_on:
+  - WP-02
+  paid_budget_usd: 0.0
+  allowed_modify:
+  - explainer_engine/qa/retry_router.py
+  - explainer_engine/qa/loop.py
+  - explainer_engine/qa/publish_check.py
+  - explainer_engine/imagegen/turn_pack.py
+  - explainer_engine/episode/run.py
+  allowed_create:
+  - tests/unit/test_v41_wp05_qa_wiring.py
+  required_tests:
+  - python -m pytest -q tests/unit/test_v41_wp05_qa_wiring.py
+  acceptance_criteria:
+  - continuity_memory/1 written per shot at acceptance, not stage_qa
+  - PC-10 writes qa/third_party_media.json covering all 7 media classes and flags BBC/missing provenance
+  - unresolved_reviews printed by publish_check.py
+  rollback: Revert WP-05 commit
+  stop_conditions:
+  - Any media class omitted from PC-10 or silent PASS on missing provenance
+- id: WP-06
+  priority: P1
+  name: Head-to-Head 2.5D Renderer Benchmark (layers25d vs directed25d)
+  depends_on:
+  - WP-00
+  - WP-05
+  paid_budget_usd: 0.0
+  allowed_modify: []
+  allowed_create:
+  - scripts/benchmark_25d_v1_v6.py
+  - tests/unit/test_v41_benchmark_25d_smoke.py
+  required_tests:
+  - python -m pytest -q tests/unit/test_v41_benchmark_25d_smoke.py
+  acceptance_criteria:
+  - Reproducible offline comparison report emitted without modifying production renderers
+  rollback: Delete benchmark script and smoke test
+  stop_conditions:
+  - Any paid API call or production renderer mutation
+- id: WP-07
+  priority: P1
+  name: Split Paid Empirical Benchmarks (Video/Retake, Restoration, Foley)
+  depends_on:
+  - WP-03
+  - WP-05
+  requires_creator_budget_approval: true
+  split_caps_usd:
+    experiment_1_video_retake: 8.0
+    experiment_2_restoration: 3.0
+    experiment_3_foley: 2.5
+    modal_ltx_l3_smoke_if_touched: 0.5
+  allowed_modify: []
+  allowed_create:
+  - scripts/run_v41_empirical_benchmarks.py
+  - docs/architecture/v4_1_empirical_benchmark_report.md
+  required_tests:
+  - python -m pytest -q -m "not system and not media"
+  acceptance_criteria:
+  - Explicit Creator budget approval recorded before execution
+  - Calibration ledger records >= 1 call per VLM critic capability before leaving advisory mode
+  rollback: Stop run immediately if spend approaches cap; no production code touched
+  stop_conditions:
+  - Missing Creator budget approval
+  - Spend exceeds split cap
+- id: WP-08
+  priority: P2
+  name: 60-Second End-to-End Closed-Loop Parity Slice
+  depends_on:
+  - WP-04
+  - WP-05
+  - WP-06
+  - WP-07
+  requires_creator_budget_approval: true
+  allowed_modify:
+  - explainer_engine/episode/run.py
+  allowed_create:
+  - tests/integration/test_v41_60s_parity_slice.py
+  - docs/architecture/v4_1_60s_parity_report.md
+  required_tests:
+  - python -m pytest -q tests/integration/test_v41_60s_parity_slice.py
+  acceptance_criteria:
+  - Single render path (episode/run.py) verified end-to-end with G8 audio/stems only
+  - build_segments guard placement in G9 decided and verified
+  rollback: Revert WP-08 commit
+  stop_conditions:
+  - Audio sourced from mix.py instead of G8 stems
+- id: WP-09
+  priority: P2
+  name: 12-Minute Full Episode Production Validation
+  depends_on:
+  - WP-08
+  requires_creator_budget_approval: true
+  allowed_modify: []
+  allowed_create:
+  - docs/architecture/v4_1_full_episode_validation.md
+  required_tests:
+  - python -m pytest -q -m "not system and not media"
+  acceptance_criteria:
+  - PC-01..PC-10 pass with zero BBC RemArc assets in monetised master
+  - Creator sign-off recorded in publish.json
+  rollback: Do not publish; retain draft artifacts only
+  stop_conditions:
+  - Any PC-01..PC-10 FAIL or unresolved BLOCKER
+- id: WP-10
+  priority: P2
+  name: Additive Domain Skills Expansion (MA-13)
+  depends_on:
+  - WP-08
+  paid_budget_usd: 0.0
+  skills_policy_ma13:
+    preserve_existing_skills_count: 21
+    preserve_existing_agents_count: 16
+    additive_new_skills:
+    - ltx-video-generation
+    - gemini-picture-correction
+    - media-timing-and-clocks
+    - foley-and-sound-design
+    - film-qa-and-provenance
+    removed_from_new_list_already_in_repo:
+    - PySceneDetect (scenedetect>=0.6 already present)
+    - OTIO export (production/assemble.export_otio already present)
+  allowed_modify: []
+  allowed_create:
+  - docs/skills/ltx_video_generation.md
+  - docs/skills/gemini_picture_correction.md
+  - docs/skills/media_timing_and_clocks.md
+  - docs/skills/foley_and_sound_design.md
+  - docs/skills/film_qa_and_provenance.md
+  required_tests:
+  - python -m explainer_engine.docs_lint
+  acceptance_criteria:
+  - All 21 existing skills and 16 agents preserved intact
+  - docs_lint returns 0 findings
+  rollback: Remove additive skill docs
+  stop_conditions:
+  - Deletion or overwrite of any existing skill/agent
+- id: WP-B1
+  priority: P1
+  name: 3D Blender 10% Cartography, Terrain & Infographics Lab (Parallel Sandbox)
+  depends_on:
+  - WP-01
+  paid_budget_usd: 0.0
+  requires_creator_d131_carveout_for_promotion: true
+  allowed_modify: []
+  allowed_create:
+  - explainer_engine/experimental/blender_lab/README.md
+  - explainer_engine/experimental/blender_lab/scene_builder.py
+  - tests/unit/test_v41_blender_lab_manifest.py
+  forbidden_modify:
+  - explainer_engine/episode/run.py
+  - config/retired_era.json
+  required_tests:
+  - python -m pytest -q tests/unit/test_v41_blender_lab_manifest.py
+  acceptance_criteria:
+  - Isolated under experimental/blender_lab with zero production pipeline imports
+  - Promotion to production blocked until Creator signs D-131 carveout
+  rollback: Delete explainer_engine/experimental/blender_lab/
+  stop_conditions:
+  - Any import from blender_lab into episode/run.py
