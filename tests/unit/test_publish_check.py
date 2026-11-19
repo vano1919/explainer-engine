@@ -69,3 +69,13 @@ def test_unresolved_reviews_count_clips_and_third_party_under_their_own_headings
     r = PC.unresolved_reviews(found, tmp_path)
     assert r["count"] == 2 and len(r["clips"]) == 1 and r["third_party_media"] == ["pictures: no provenance record"]
     assert PC.unresolved_reviews(found, None)["count"] == 1
+
+
+def test_known_differences_of_the_episode_are_counted_and_listed(tmp_path):
+    import json
+    (tmp_path / "qa").mkdir()
+    (tmp_path / "qa" / "known_review_items.json").write_text(json.dumps({"items": ["DIPS not ported: 7 of 9"]}), encoding="utf-8")
+    r = PC.unresolved_reviews([], tmp_path)
+    assert r["count"] == 1 and r["known_differences"] == ["DIPS not ported: 7 of 9"]
+    (tmp_path / "qa" / "known_review_items.json").write_text("not json", encoding="utf-8")
+    assert PC.unresolved_reviews([], tmp_path)["count"] == 0
