@@ -80,6 +80,9 @@ hard cap of **$4.50** (the expected total) with the 80 % stop rule below. Each r
 - Stop earlier if: the L3 smoke or the first guided run fails or exceeds its timeout (then arm c is dropped, not retried blind); two
   runs in a row end FAILED or UPLOAD_UNVERIFIED; an unmeasured cost is already above the max of its row.
 - Order: shot by shot (S07_SH008 first, arms a, b, d, c), so the creator can stop after stage 1.
+- Arm a may reuse an existing raw take instead of a new run (review of PR #214, D-132): only when the launch pins, seed, prompt and
+  seconds of that take equal the A/B job's; the record names the take path and its sha256 (the metrics read the file as any arm).
+  With arm a reused for S07_SH008, stage 1 is about $1.4 expected, hard cap $2.00 (one run less than the table above).
 - OR-33: every clip is saved to the Volume and HF per clip and sha256-checked before DONE (the worker's existing path, tested for
   kinds); the run record holds seed, steps, guidance, conditioning frames and strengths and the upsampler's sha256.
 - OR-36: a Haiku low watchdog thread beside each run, every 5 minutes (the price is under $1 a run, the risk is the 22B guided load).

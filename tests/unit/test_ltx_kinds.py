@@ -32,7 +32,7 @@ def _job(kind="keyframes", **kw):
         j.update(end_picture="end.png", end_frame=200, extra={"end_sha256": SHA})
     if kind == "retake":
         j.update(source={"hf_path": "x/clip.mp4", "sha256": SHA}, start_time=2.0, end_time=4.0)
-        j["settings"] = {"num_inference_steps": 8}
+        j["settings"] = {}
     if kind == "a2v":
         j.update(audio={"hf_path": "x/line.wav", "sha256": SHA})
     return dict(j, **kw)
@@ -242,3 +242,30 @@ def test_the_distilled_engine_binds_the_end_keyframe_on_the_launchs_own_pipeline
     assert rec["spatial_upsampler"]["sha256"] == LAUNCH["model_files"][LAUNCH["uses"]["spatial_upsampler"]]
     assert L.kind_record(LAUNCH, _job(), L.kind_cmd(LAUNCH, _job(), "s", "m", end_png="e"))["engine"] == "guided"
     assert any("engine" in p for p in L.kind_problems(LAUNCH, _job(engine="turbo"), PINS))
+
+
+def test_guided_kind_files_are_staged_and_checked_before_any_gpu(tmp_path):
+    """Review W5 fix 1: the dev transformer and the distilled LoRA are part of staging, L2 and the paid body's size check."""
+    launch = copy.deepcopy(LAUNCH)
+    kf = launch["kind_model_files"]
+    assert set(kf) <= set(L.all_model_files(launch))
+    root = L.weights_root(launch, str(tmp_path))
+    for f in launch["model_files"]:
+        (root / f).parent.mkdir(parents=True, exist_ok=True)
+        (root / f).write_bytes(b"x")
+    missing = L.sizes_ok(launch, str(tmp_path))
+    assert sorted(missing) == sorted(f"missing {f}" for f in kf)
+    assert any(f"missing {f}" in L.check_weights(launch, str(tmp_path)) for f in kf)
+    got = []
+    L.stage_weights(launch, str(tmp_path), download=lambda repo, rev, files, r: got.extend(files))
+    assert set(kf) <= set(got)
+
+
+def test_retake_records_only_what_the_cli_is_given():
+    """Review W5 fix 2: retake passes no steps and no negative prompt, so the record shows none."""
+    assert any("takes no settings" in p for p in L.kind_problems(LAUNCH, _job("retake", settings={"num_inference_steps": 8}), PINS))
+    job = _job("retake")
+    cmd = L.kind_cmd(LAUNCH, job, "p", "m", source="s")
+    rec = L.kind_record(LAUNCH, job, cmd)
+    assert rec["settings"] == {} and rec["negative_prompt"] is None
+    assert "--num-inference-steps" not in cmd and "--negative-prompt" not in cmd

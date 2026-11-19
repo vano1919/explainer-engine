@@ -492,10 +492,15 @@ def weights_root(launch, vol_root="/w"):
 STAGE_CPU, STAGE_MEM_GIB, STAGE_TIMEOUT_S = 4, 16, 3600   # CPU only, ~$0.32 an hour at the 2026-11-07 table
 
 
+def all_model_files(launch) -> dict:
+    """Every pinned file the worker may read: the clip route's model_files plus the guided kinds' kind_model_files (W5)."""
+    return {**(launch.get("model_files") or {}), **(launch.get("kind_model_files") or {})}
+
+
 def check_weights(launch, vol_root="/w") -> list[str]:
     """L2: every model file of the launch on the Volume with its sha256 (the paid function never downloads weights)."""
     root, bad = weights_root(launch, vol_root), []
-    for f, want in launch["model_files"].items():
+    for f, want in all_model_files(launch).items():
         p = root / f
         if not p.is_file():
             bad.append(f"missing {f}")
@@ -507,12 +512,12 @@ def check_weights(launch, vol_root="/w") -> list[str]:
 def sizes_ok(launch, vol_root="/w") -> list[str]:
     """The paid function's cheap check: every file there (its full sha256 was proved on L2 for this launch file)."""
     root = weights_root(launch, vol_root)
-    return [f"missing {f}" for f in launch["model_files"] if not (root / f).is_file() or (root / f).stat().st_size == 0]
+    return [f"missing {f}" for f in all_model_files(launch) if not (root / f).is_file() or (root / f).stat().st_size == 0]
 
 
 def stage_weights(launch, vol_root="/w", download=None) -> list[str]:
     root = weights_root(launch, vol_root)
-    missing = [f for f in launch["model_files"] if not (root / f).is_file()]
+    missing = [f for f in all_model_files(launch) if not (root / f).is_file()]
     if missing:
         (download or _hf_download)(launch["model_repo"], launch["model_revision"], missing, root)
     return check_weights(launch, vol_root)
@@ -662,8 +667,8 @@ def kind_problems(launch: dict, job: dict, pins: dict | None = None) -> list[str
     bad += [f"{kind}: settings.{k} is not written out (the run record holds every setting)" for k in KIND_SETTINGS
             if kind != "retake" and not distilled_engine(job) and not _num(st.get(k))]
     if kind == "retake":
-        if not _num(st.get("num_inference_steps")):
-            bad.append("retake: settings.num_inference_steps is not written out")
+        if st:
+            bad.append("retake: takes no settings (the distilled retake CLI is run with its own defaults; none is passed)")
         src = job.get("source") or {}
         if not (src.get("hf_path") and HEX64.match(str(src.get("sha256") or ""))):
             bad.append("retake: source needs hf_path and the sha256 of the clip to regenerate")
@@ -763,8 +768,8 @@ def kind_record(launch: dict, job: dict, cmd: list[str]) -> dict:
            "pipeline": "DistilledPipeline" if dist else KIND_PIPELINES[kind]["cls"],
            "ltx_commit": (launch.get("ltx_code") or {}).get("commit"), "model_revision": launch["model_revision"],
            "seed": job["seed"], "frames": frames, "fps": job.get("fps"), "size": [job.get("width"), job.get("height")],
-           "settings": dict(job.get("settings") or {}), "prompt": job["motion_prompt"],
-           "negative_prompt": resolve_negative_prompt(launch, job),
+           "settings": {} if kind == "retake" else dict(job.get("settings") or {}), "prompt": job["motion_prompt"],
+           "negative_prompt": None if kind == "retake" else resolve_negative_prompt(launch, job),
            "conditioning": kind_conditioning(job, frames) if frames else [],
            "spatial_upsampler": {"file": uses["spatial_upsampler"], "sha256": files[uses["spatial_upsampler"]]},
            "argv_sha256": hashlib.sha256("\0".join(cmd).encode()).hexdigest()}
