@@ -229,3 +229,11 @@ def test_the_hook_knows_the_klein_worker_and_lets_only_its_free_rung_through_wit
     assert H.modal_refusal(f"EE_MODAL_GO=cmsg_1:abcdefabcdef modal run {KLEIN}::main --plan p.json") is None
     assert H.worker_api_refusal("python -c 'import modal_klein_jobs as m; m.GPU_FUNCS[0].remote()'")   # driven from python: refused
     assert H.paid_looking(f"python {KLEIN}")
+
+
+def test_the_creators_modal_line_is_3_50_a_run_with_no_episode_line():
+    m = spend_caps.modal()                                                                      # the creator's typed answer, 2026-11-19 20:18 UTC
+    assert m["per_run_usd"] == 3.5 and "per_episode_usd" not in m and "cmsg_01Hnu5zB86sjUj5GtTgaUkPWS3PzAxqNtHbt57o5A2pUPb" in m["decided"]
+    with pytest.raises(spend_caps.OverCeiling, match="per_episode_usd"):
+        spend_caps.modal(episode=True)                                                          # an episode's Modal runs still wait for his episode line
+    assert W.LAUNCH["modal"]["caps"]["run_usd"] <= 0.8 * m["per_run_usd"]                       # the Klein cap passes the ledger's 80 % rule

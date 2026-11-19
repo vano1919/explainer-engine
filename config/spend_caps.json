@@ -124,6 +124,11 @@
     "for": "the v4.3 video bake-off (training/pods/bakeoff/plan_v43.json): each run's cap at most 2.5, all its runs together at most 6.5; only this test: the Wan route's own `modal` line is still unset (zero budget; its per-run and episode lines follow rung L3, answer 3 of 2026-11-12 14:01 UTC)",
     "decided": "the creator, 2026-11-12 17:50 UTC, message cmsg_01Hnu5zB86sjUj5GtTgaUkPW2enCV9tSdSVx7ivWPgEYur: \"ა და ა\" (answer 1ა: $2.5 per run, $6.5 total, run the bake-off)"
   },
+  "modal": {
+    "per_run_usd": 3.5,
+    "for": "Modal runs of the W5 A/B on the creator's second Modal account (training/pods/klein/modal_klein_jobs.py: the Klein pictures at $1.00 a run; the LTX A/B later, at most $3.50): each run at most $3.5 (the ledger stops reservations at 80 %, $2.8). No per_episode_usd: the creator has not set one",
+    "decided": "the creator, 2026-11-19 20:18 UTC, his typed answer cmsg_01Hnu5zB86sjUj5GtTgaUkPWS3PzAxqNtHbt57o5A2pUPb: \"Modal-ზე ერთ გაშვებაზე $3.50, Klein $1\" (answer to the card cmsg_01Hnu5zB86sjUj5GtTgaUkPWCGDVYSLXDD3d9KzAVp3b1j, option 1, pressed 20:10:49 UTC)"
+  },
   "modal_ltx": {
     "per_run_usd": 1.5,
     "for": "the video route's LTX-2.5 distilled clips on Modal (D-132, training/pods/ltx/modal_ltx_jobs.py): each test run at most $1.5 (the ledger stops reservations at 80 %, $1.2); the episode line (per_episode_usd) follows rung L3. Not the Wan route's `modal` line, which stays unset",
