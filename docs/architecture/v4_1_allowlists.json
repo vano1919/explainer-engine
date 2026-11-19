@@ -35,7 +35,8 @@
     "1.3": {
       "branch": "claude/project-thread-f0oep6-s13",
       "paths": ["explainer_engine/videolane/ingest.py", "explainer_engine/videolane/storyboard.py", "tests/unit/test_videolane.py",
-                "tests/unit/test_videolane_media.py", "tests/unit/test_start_frame_record.py", "docs/PROGRESS.md"]
+                "tests/unit/test_videolane_media.py", "tests/unit/test_start_frame_record.py", "explainer_engine/qa/publish_check.py",
+                "tests/unit/test_publish_check.py", "docs/PROGRESS.md"]
     },
     "1.4": {
       "branch": "claude/project-thread-f0oep6-s14",

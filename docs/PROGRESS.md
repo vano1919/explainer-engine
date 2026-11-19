@@ -6694,3 +6694,5 @@ Amendments v1.1 (same slice): the plan owner's [amendments](architecture/V4_1_PL
 Amendments v1.1 for 0.4b: `fetch-depth: 0` was already set; the PR-to-slice binding is documented in `scope_check.py` (the exact head branch of a slice; any head branch under `slice_branch_prefix` that no slice lists fails; every other branch is not checked).
 
 Allowlist widened for slice 1.4 (0.4b owns the file): `explainer_engine/audio/sfx_library.py`, `docs/SOUND_LIBRARY.md`, `tests/unit/test_sfx_library.py`, `tests/unit/test_youtube_publish.py`, `tests/unit/test_sourced_audio.py`, on the creator's typed word (message cmsg_01Hnu5zB86sjUj5GtTgaUkPWPwrs8h73MrhoX5jZvx5qnX, recorded with `governance ok protected_config`).
+
+Amendment (2026-11-19, slice 0.4b, allowlist): slice 1.3 also lists `explainer_engine/qa/publish_check.py` and `tests/unit/test_publish_check.py` (it prints `unresolved_reviews`, amendment 1.3). Basis: the plan owner's decision and the creator's words "და სხვა ფაილებს რაც შენი აზრითა არის საჭირო" (10:05 UTC) and "მიდი თანხმობა გაქვს" (10:29 UTC, recorded by `governance ok protected_config`).
