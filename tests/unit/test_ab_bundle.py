@@ -70,7 +70,7 @@ def test_code_problems_catch_a_stale_or_missing_pin(tmp_path, monkeypatch):
 def test_both_pod_scripts_carry_the_two_pins_and_download_both_files():
     for script in B.SCRIPTS:
         text = script.read_text(encoding="utf-8")
-        assert text.count("ee_src.tar.gz") >= 3 and "batch.tar.gz" in text and "sha256sum -c" in text
+        assert text.count("ee_src.tar.gz") >= 3 and "batch.tar.gz" in text and "sha256sum --strict -c" in text
         assert "# needs: /workspace/job/batch.tar.gz" in text and "# needs: /workspace/job/ee_src.tar.gz" in text
         assert "@@BATCH_SHA256@@" in text or B.pinned(script, "BATCH_SHA256")     # the batch pin stays open until the plan thread's batch exists
     assert "run /workspace/batch/batch.json" in R.LAUNCHER.read_text(encoding="utf-8")
