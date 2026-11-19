@@ -392,9 +392,9 @@ CLOUDS = ("COMMUNITY", "SECURE")
 
 
 # What ``create`` reads (a flag that is not here is refused, so a typo or a flag from another command is never silently ignored, G15).
-CREATE_VALUE_FLAGS = ("--boot", "--boot-minutes", "--cap-grace-s", "--cloud", "--cuda-min", "--datacenters", "--disk", "--drill", "--gpu", "--heartbeat", "--image",
+CREATE_VALUE_FLAGS = ("--boot", "--boot-minutes", "--cap-grace-s", "--cloud", "--cuda-min", "--datacenters", "--disk", "--drill", "--exception-basis", "--gpu", "--heartbeat", "--image",
                       "--job", "--job-type", "--ledger", "--max-hours", "--max-usd", "--min-ram", "--name", "--on-cap", "--only",
-                      "--pass-s", "--hw-extra-retries", "--hw-extra-reason", "--placement-watch-reason", "--ref-hours", "--rules", "--schedule", "--script", "--script-url", "--second-pod-reason", "--setup-min", "--test", "--units",
+                      "--pass-s", "--hw-extra-retries", "--hw-extra-reason", "--placement-watch-reason", "--ref-hours", "--rule-exception", "--rules", "--schedule", "--script", "--script-url", "--second-pod-reason", "--setup-min", "--test", "--units",
                       "--upload-grace-s", "--volume", "--vram", "--wait-stock", "--work-min")
 CREATE_BOOL_FLAGS = ("--measure", "--no-guard", "--placement-watch", "--yes")
 PICK_ONLY_FLAGS = ("--only", "--cloud", "--ref-hours", "--wait-stock")  # read only when --vram picks the card
@@ -1877,7 +1877,7 @@ def main(argv=None, api=None, live=None):
         from explainer_engine.core.ledger import Run
         base = _opt(rest, "--name", "ee-" + (gpu if not picks else "auto"))
         job_base = _opt(rest, "--job", base)
-        batch_why, script_sha, weights = [], None, []
+        batch_why, script_sha, weights, waived_rules = [], None, [], {}
         if script is not None:  # RP-01/02/10 (P1c, docs/CLOUD_RUNBOOK.md): what the plan stated, what this ledger already holds
             from explainer_engine.cloud import batching, dryrun
             led = Run.open(ledger)
@@ -1886,11 +1886,16 @@ def main(argv=None, api=None, live=None):
             weights = sorted(rid for rid, kind in dryrun.all_repo_ids(script, Path(script_file).parent) if kind == "model")
             earlier = [v.get("weights") or [] for v in led.data["items"].get("pod_plans", {}).values()]
             fails = led.data.get("failures", {})
-            batch_why += batching.rp01(work_min, setup_min, measure="--measure" in rest, max_usd=max_usd, test=led.data.get("meta", {}).get("test"))
+            found = {"RP-01": batching.rp01(work_min, setup_min, measure="--measure" in rest, max_usd=max_usd, test=led.data.get("meta", {}).get("test"))}
             batch_why += batching.rp02(weights, earlier, reason=_opt(rest, "--second-pod-reason", ""))
             from explainer_engine.cloud import schedule as _sched
-            batch_why += _sched.rp11(_opt(rest, "--schedule"), max_usd=max_usd, max_hours=max_hours, measure="--measure" in rest,
-                                     test=led.data.get("meta", {}).get("test"))
+            found["RP-11"] = _sched.rp11(_opt(rest, "--schedule"), max_usd=max_usd, max_hours=max_hours, measure="--measure" in rest,
+                                         test=led.data.get("meta", {}).get("test"))
+            kept, waived_rules, ex_why = batching.rule_exceptions(_opt(rest, "--rule-exception", ""), _opt(rest, "--exception-basis", ""), found)
+            batch_why += kept + [f"exception: {w}" for w in ex_why]
+            for rule, rec in waived_rules.items():  # the refusal is still computed and shown, never hidden
+                for line in rec["refused"]:
+                    print(f"WAIVED (owner {rec['basis']}): {line}")
             batch_why += batching.rp10(len(fails.get(f"hw:{job_base}", [])), bool(fails.get(f"script:{job_base}:{script_sha[:12]}")), key=job_base,
                                       extra=int(_opt(rest, "--hw-extra-retries", "0") or 0), extra_reason=_opt(rest, "--hw-extra-reason", ""),
                                       placement_failures=len(fails.get(f"placement:{job_base}", [])), watch="--placement-watch" in rest,
@@ -1996,7 +2001,7 @@ def main(argv=None, api=None, live=None):
         Run.open(ledger).rename_reservation("pod:pending", f"pod:{pod['id']}")
         if script is not None:
             Run.open(ledger).done("pod_plans", name, weights=weights, job=job_base, script_sha=script_sha, pod=pod["id"],
-                                  second_pod_reason=_opt(rest, "--second-pod-reason", ""))
+                                  second_pod_reason=_opt(rest, "--second-pod-reason", ""), rule_exceptions=waived_rules)
         job.attach(pod["id"], gpu=pod.get("gpu"), price=pod.get("costPerHr"), name=name)
         if spec is not None:
             try:
