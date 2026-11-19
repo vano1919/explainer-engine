@@ -303,14 +303,14 @@ def record(rung: str, ok: bool, path=None, launch=None, **info):
 def kind_l2_problems(job: dict, launch: dict, ladder: dict) -> list[str]:
     """A guided kind job (kind_needs) runs only when L2 was proved WITH the guided files (``::weights --with-kind``) on this very
     launch file: otherwise its dev transformer and LoRA would meet only the size check inside the billed GPU function."""
-    need = kind_needs(job)
+    need = tuple(dict.fromkeys(r for j in all_jobs(job) for r in kind_needs(j)))
     if not need:
         return []
     l2 = (ladder.get("rungs") or {}).get("L2") or {}
     if "L2" in (ladder.get("done") or []) and l2.get("ok") and l2.get("with_kind") is True \
             and l2.get("launch_sha") == launch_sha(launch):
         return []
-    return [f"{kind_of(job)}: needs {list(need)} proved by an L2 record made with --with-kind on this launch file "
+    return [f"{'+'.join(sorted({kind_of(j) for j in all_jobs(job) if kind_needs(j)}))}: needs {list(need)} proved by an L2 record made with --with-kind on this launch file "
             "(run `::stage --with-kind` then `::weights --with-kind`); nothing was started"]
 
 
@@ -347,6 +347,12 @@ def read_job(path: str, launch: dict | None = None) -> dict:
                 raise SystemExit(f"{c.get('shot_id')}: its own start picture is not the one the pictures stage pinned; "
                                  "nothing was started")
             c = dict(c, start_sha256=pin, start_bytes=own)
+        if c.get("end_picture"):                      # a chained keyframes shot: its end keyframe, pinned like the top job's
+            end_c = Path(c["end_picture"]).read_bytes()
+            if (c.get("extra") or {}).get("end_sha256") != hashlib.sha256(end_c).hexdigest():
+                raise SystemExit(f"{c.get('shot_id')}: its end picture's sha256 is not the one the pictures stage pinned; "
+                                 "nothing was started")
+            c = dict(c, end_bytes=end_c)
         chain.append(c)
     if job.get("chain"):
         job["chain"] = chain
@@ -425,14 +431,17 @@ def preflight(launch: dict, job: dict | None = None):
         if job.get("end_picture") and kind_of(job) != "keyframes":
             bad.append(f"{job.get('shot_id')}: an end picture, but only the keyframes kind takes one (the distilled CLI takes "
                        "the frame-0 picture)")
-        if kind_of(job) != "clip":
+        if any(kind_of(j) != "clip" for j in all_jobs(job)):
             pins = None
             try:
                 pins = json.loads((Path(__file__).resolve().parents[4] / "config" / "cloud_pins.json").read_text(
                     encoding="utf-8"))["models"]["video_ltx"]
             except (OSError, KeyError, ValueError):
                 bad.append("config/cloud_pins.json (models.video_ltx) cannot be read: the kind's extra files are not proved")
-            bad += kind_problems(launch, job, pins)
+            for j in all_jobs(job):                   # every shot's kind is checked, the chained ones too
+                if kind_of(j) != "clip":
+                    sub = dict(j, **{k: job[k] for k in ("fps", "width", "height") if k not in j})
+                    bad += kind_problems(launch, sub, pins)
     from explainer_engine.cloud import cheapest        # D-133: the cheapest known combination (CH-01, CH-02, CH-04)
     why = cheapest.problems_text(cheapest.launch_problems(launch))
     if why:
@@ -507,6 +516,11 @@ def weights_root(launch, vol_root=None):
 STAGE_CPU, STAGE_MEM_GIB, STAGE_TIMEOUT_S = 4, 16, 3600   # CPU only, ~$0.32 an hour at the 2026-11-07 table
 
 
+def all_jobs(job: dict) -> list[dict]:
+    """The job and the shots chained after it, each a spec of its own (``chain_jobs`` adds the shared run keys at run time)."""
+    return [job] + [c for c in job.get("chain") or [] if isinstance(c, dict)]
+
+
 def needed_files(launch, job=None, with_kind=False) -> dict:
     """The pinned files to stage or check: the clip route's model_files always; the guided kinds' kind_model_files only for a job
     whose kind needs them (kind_needs) or when ``with_kind`` asks for all of them (staging the guided files, ~45 GB, on purpose)."""
@@ -515,9 +529,10 @@ def needed_files(launch, job=None, with_kind=False) -> dict:
     if with_kind:
         out.update(kf)
     elif job is not None:
-        for role in kind_needs(job):
-            f = ku.get(role)
-            out[f if f else f"<kind_uses.{role} unpinned>"] = kf.get(f, "")
+        for j in all_jobs(job):                       # the top job and every chained shot (a keyframes shot can be chained)
+            for role in kind_needs(j):
+                f = ku.get(role)
+                out[f if f else f"<kind_uses.{role} unpinned>"] = kf.get(f, "")
     return out
 
 

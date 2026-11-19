@@ -18,6 +18,8 @@ from explainer_engine.cloud import hooks as H
 from explainer_engine.training.pods.ltx import modal_ltx_jobs as L
 
 LAUNCH = L.load_launch()
+# the battle scene (2026-11-12) was budgeted at the cap of its day; the launch file now carries the night's A/B cap (3.5)
+OLD_CAPS = {**LAUNCH, "caps": {**LAUNCH["caps"], "run_usd": 0.97}}
 WORKER = "explainer_engine/training/pods/ltx/modal_ltx_jobs.py"
 
 
@@ -49,7 +51,7 @@ def test_preflight_needs_the_creators_modal_ltx_line_and_a_whole_chain(monkeypat
     from explainer_engine.core import spend_caps
     job = {"shot_id": "c1", "seconds": 9.5, "seed": 1, "motion_prompt": "two people talk",
            "chain": [{"shot_id": "c2", "seconds": 9.5, "seed": 2, "motion_prompt": "they go on"}]}
-    monkeypatch.setattr(spend_caps, "modal_ltx", lambda episode=False: {"per_run_usd": 2.0})
+    monkeypatch.setattr(spend_caps, "modal_ltx", lambda episode=False: {"per_run_usd": 5.0})
     L.preflight(LAUNCH, job)
     for broken in ({"chain": [{"shot_id": "c2", "seconds": 9.5, "seed": 2, "motion_prompt": " "}]},
                    {"chain": [{"shot_id": "c2", "seconds": 12.0, "seed": 2, "motion_prompt": "x"}]},
@@ -220,7 +222,7 @@ def test_the_scene_test_spec_pins_its_picture_plan_and_chain_and_the_ledger_refu
     from PIL import Image
     from explainer_engine.core import spend_caps
     from explainer_engine.training.pods.ltx import scene_run as SR
-    monkeypatch.setattr(spend_caps, "modal_ltx", lambda episode=False: {"per_run_usd": 2.0})
+    monkeypatch.setattr(spend_caps, "modal_ltx", lambda episode=False: {"per_run_usd": 5.0})
     real = json.loads((Path(L.__file__).parent / "scenes" / "love_2026-11-12.json").read_text(encoding="utf-8"))
     assert [s["shot_id"] for s in real["shots"]] == ["love_c1", "love_c2", "love_c3"]
     assert all(s["seconds"] <= L.max_seconds(LAUNCH) for s in real["shots"]) and "lantern" not in json.dumps(real["shots"])
@@ -250,7 +252,7 @@ def test_the_scene_test_spec_pins_its_picture_plan_and_chain_and_the_ledger_refu
     assert data["reserved"][SR.item(spec)]["settled"] and abs(data["spent"]["modal_ltx"] - 360 * L.usd_per_h(LAUNCH) / 3600) < 1e-3
     pic.write_bytes(b"changed")
     with pytest.raises(SystemExit, match="not the one the scene pins"):
-        SR.job_spec(sp)
+        SR.job_spec(sp, OLD_CAPS)
 
 
 def test_main_refuses_a_spec_without_its_open_reservation(tmp_path):
@@ -410,9 +412,9 @@ def test_the_battle_scene_is_cuts_of_one_line_each_within_the_creators_total():
         assert "close-up" not in s["motion_prompt"].lower() and "lantern" not in json.dumps(scene["pictures"]).replace(
             "no lanterns", "")
     assert sum(s["seconds"] for s in scene["shots"]) >= 35
-    assert SR.budget_problems(scene, LAUNCH) == []
+    assert SR.budget_problems(scene, OLD_CAPS) == []
     assert P.estimate(scene)["total"] <= scene["budget"]["pictures_usd"]
-    worst = SR.worst_gpu_usd(LAUNCH) + scene["budget"]["pictures_usd"] + scene["budget"]["cpu_checks_usd"]
+    worst = SR.worst_gpu_usd(OLD_CAPS) + scene["budget"]["pictures_usd"] + scene["budget"]["cpu_checks_usd"]
     assert worst <= scene["budget"]["total_usd"]
     tight = dict(scene, budget=dict(scene["budget"], total_usd=1.0))
     assert SR.budget_problems(tight, LAUNCH)                            # the GPU's hard bill alone does not fit a smaller total
@@ -470,12 +472,12 @@ def test_the_pictures_go_in_two_stages_once_each_and_the_job_spec_pins_their_fit
     data = json.loads(Path(scene["ledger"]["path"]).read_text())
     assert abs(data["spent"]["gemini_usd"] - P.estimate(scene)["total"]) < 1e-6
     monkeypatch.setattr(SR, "plan_sha", lambda p: "b" * 64)
-    spec = SR.job_spec(sp)
+    spec = SR.job_spec(sp, OLD_CAPS)
     assert [c["extra"]["start_sha256"] for c in spec["chain"]] == [fits[p]["sha256"] for p in ("b2", "b3", "b4")]
     assert spec["extra"]["start_sha256"] == fits["b1"]["sha256"] and spec["ledger"]["caps"] == scene["ledger"]["caps"]
     Path(fits["b3"]["path"]).write_bytes(b"other")
     with pytest.raises(SystemExit, match="not the one the scene pins"):
-        SR.job_spec(sp)
+        SR.job_spec(sp, OLD_CAPS)
 
 
 def test_the_battle_scenes_four_cuts_finish_inside_the_run_timeout_even_with_a_slow_cold_clip(container, monkeypatch):

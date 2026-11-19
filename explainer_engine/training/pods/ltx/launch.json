@@ -56,7 +56,7 @@
   "chain_overlap_why": "BP-188 (research 2026-11-12, the creator 20:07 UTC): LTX makes a clip's picture and sound together, so two chained clips meet at a hard cut with no overlap; the next clip starts from the last frame of the one before, and assembly drops that repeated first frame and gives each side a 30 ms fade. The 12-frame overlap of audit B3 served a 0.5 s crossfade that BP-188 no longer asks for",
   "caps": {
     "smoke_usd": 0.5,
-    "run_usd": 0.97,
+    "run_usd": 3.5,
     "cold_start_s": 120
   },
   "decided": {
@@ -66,7 +66,7 @@
     "at": "2026-11-12T19:10:06Z",
     "money": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWWqRxqiE28kSDxnNPn41fng ($1 per test run, 19:20 UTC)"
   },
-  "caps_why": "run_usd 0.97 for the battle scene (the creator 2026-11-12 20:44 UTC: $1 in total; card cmsg_01Hnu5zB86sjUj5GtTgaUkPWFqZzbAMMDCTETvK3bpDNzd, 20:59 UTC: '4 clips, $1.1'): the run timeout 509 s less the 75 s end path leaves 434 s for four cuts (~380 s at the love run's speed, a cold clip at the bake-off's 147 s still fits); the hard bill (run timeout + cold start) is $0.890 and the scene's budget adds the pictures and the CPU rungs (scene_run.budget_problems). Was 1.2 for the love scene",
+  "caps_why": "2026-11-19 night: run_usd 0.97 -> 3.5 for the LTX A/B (one scene, one launch, all clips): the owner's $3.50 for one Modal run (cmsg_01Hnu5zB86sjUj5GtTgaUkPWS3PzAxqNtHbt57o5A2pUPb, 20:18 UTC) inside the night's $10 (cmsg_01Hnu5zB86sjUj5GtTgaUkPWV6nm3Y6UKXYD2j2e8WKeiw, 22:25 UTC); the run timeout comes from it (about 2118 s, the hard bill with the cold start about $3.17); the older text follows. Before: run_usd 0.97 for the battle scene (the creator 2026-11-12 20:44 UTC: $1 in total; card cmsg_01Hnu5zB86sjUj5GtTgaUkPWFqZzbAMMDCTETvK3bpDNzd, 20:59 UTC: '4 clips, $1.1'): the run timeout 509 s less the 75 s end path leaves 434 s for four cuts (~380 s at the love run's speed, a cold clip at the bake-off's 147 s still fits); the hard bill (run timeout + cold start) is $0.890 and the scene's budget adds the pictures and the CPU rungs (scene_run.budget_problems). Was 1.2 for the love scene",
   "kind_model_files": {
     "diffusion_models/ltx-2.5-22b-dev-transformer-bf16.safetensors": "792a2bad501ca03262c0bc2ce7a2949e85b142ce18e30894aad5bc849c8e7584",
     "loras/ltx-2.5-22b-distilled-lora-450-bf16.safetensors": "86370bbf79a9eb4edaa158907e2b48a5188fe4c5dc8ce30c7eb8f2f131a9bbf5"

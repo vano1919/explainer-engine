@@ -93,7 +93,7 @@ def test_every_setting_must_be_written_out_and_native():
 
 def test_preflight_lets_only_the_keyframes_kind_carry_an_end_picture(monkeypatch):
     from explainer_engine.core import spend_caps
-    monkeypatch.setattr(spend_caps, "modal_ltx", lambda episode=False: {"per_run_usd": 2.0})
+    monkeypatch.setattr(spend_caps, "modal_ltx", lambda episode=False: {"per_run_usd": 5.0})
     L.preflight(LAUNCH, _job("keyframes"))
     with pytest.raises(SystemExit, match="only the keyframes kind"):
         L.preflight(LAUNCH, dict(_job("clip"), end_picture="e.png"))
@@ -295,3 +295,44 @@ def test_retake_records_only_what_the_cli_is_given():
     rec = L.kind_record(LAUNCH, job, cmd)
     assert rec["settings"] == {} and rec["negative_prompt"] is None
     assert "--num-inference-steps" not in cmd and "--negative-prompt" not in cmd
+
+
+def _chain_spec(tmp_path, chained_end_sha=None, **chained):
+    """A clip first and a keyframes shot chained after it, each with its own pinned pictures (the A/B scene)."""
+    pic, pic2, end2 = tmp_path / "s.png", tmp_path / "s2.png", tmp_path / "e2.png"
+    pic.write_bytes(_png((1, 2, 3)))
+    pic2.write_bytes(_png((2, 2, 3)))
+    end2.write_bytes(_png((3, 2, 1)))
+    plan = "p" * 64
+    sha = lambda p: hashlib.sha256(p.read_bytes()).hexdigest()    # noqa: E731
+    sub = dict(_job(shot_id="S04_SH008", **chained), start_picture=str(pic2), end_picture=str(end2),
+               extra={"start_sha256": sha(pic2), "end_sha256": chained_end_sha or sha(end2)})
+    top = dict(_job("clip"), start_picture=str(pic), plan_sha256=plan, run_id=L.run_id(plan, LAUNCH),
+               launch_sha=L.launch_sha(LAUNCH), extra={"start_sha256": sha(pic)}, chain=[sub])
+    p = tmp_path / "job.json"
+    p.write_text(json.dumps(top))
+    return p, end2
+
+
+def test_a_chained_keyframes_shot_gets_its_end_picture_pinned_like_the_top_job(tmp_path):
+    p, end2 = _chain_spec(tmp_path, engine="distilled")
+    got = L.read_job(str(p))
+    assert got["chain"][0]["end_bytes"] == end2.read_bytes() and got["chain"][0]["start_bytes"]
+    (tmp_path / "bad").mkdir()
+    p, _ = _chain_spec(tmp_path / "bad", chained_end_sha="00" * 32)
+    with pytest.raises(SystemExit, match="S04_SH008: its end picture"):
+        L.read_job(str(p))
+
+
+def test_the_guided_files_are_needed_when_a_chained_shot_is_guided(tmp_path):
+    guided_chain = dict(_job("clip"), chain=[_job("keyframes", shot_id="S04_SH008")])
+    distilled_chain = dict(_job("clip"), chain=[_job("keyframes", shot_id="S04_SH008", engine="distilled")])
+    launch = copy.deepcopy(LAUNCH)
+    _stage_base(tmp_path, launch)
+    assert sorted(L.sizes_ok(launch, str(tmp_path), guided_chain)) == sorted(
+        f"missing {launch['kind_uses'][r]}" for r in ("dev_transformer", "distilled_lora"))
+    assert L.sizes_ok(launch, str(tmp_path), distilled_chain) == []
+    lsha = L.launch_sha(LAUNCH)
+    green = {"done": ["L0", "L1", "L2"], "rungs": {"L2": {"ok": True, "launch_sha": lsha}}}
+    assert L.kind_l2_problems(guided_chain, LAUNCH, green) != [] and L.kind_l2_problems(distilled_chain, LAUNCH, green) == []
+    assert L.kind_l2_problems(guided_chain, LAUNCH, {"done": ["L2"], "rungs": {"L2": {"ok": True, "launch_sha": lsha, "with_kind": True}}}) == []
