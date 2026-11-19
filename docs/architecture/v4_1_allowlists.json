@@ -48,7 +48,17 @@
     "1.5": {
       "branch": "claude/project-thread-f0oep6-s15",
       "paths": ["tools/render_tools/mix.py", "explainer_engine/production/assemble.py",
-                "episodes/ep_truce_1914/planning/full_film_2026-11-15/MAC_RUNBOOK.md", "tests/unit/test_render_path.py", "docs/PROGRESS.md"]
+                "episodes/ep_truce_1914/planning/full_film_2026-11-15/MAC_RUNBOOK.md", "tests/unit/test_render_path.py",
+                "explainer_engine/audio/stems.py", "explainer_engine/episode/run.py", "tests/unit/test_mute_tail_g8.py",
+                "explainer_engine/videolane/ingest.py", "tests/unit/test_videolane_media.py", "tests/unit/test_start_frame_record.py",
+                "explainer_engine/qa/publish_check.py", "tests/unit/test_publish_check.py",
+                "episodes/ep_truce_1914/qa/known_review_items.json", "docs/PROGRESS.md"]
+    },
+    "0.4c": {
+      "branch": "claude/project-thread-f0oep6-s04c",
+      "paths": ["explainer_engine/governance/records.py", "explainer_engine/governance/hooks.py",
+                "explainer_engine/governance/__main__.py", "config/model_routing.json",
+                "tests/unit/test_governance_plan_thread.py", "docs/PROGRESS.md"]
     }
   }
 }
