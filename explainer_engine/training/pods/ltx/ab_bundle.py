@@ -66,6 +66,25 @@ def pinned(script, which: str) -> str | None:
     return m.group(1) if m and not m.group(1).startswith("@@") else None
 
 
+def fetch_problems(script) -> list[str]:
+    """Refusals for a pod script that fetches its bundle or batch by a name a later upload can replace (an HF path on ``main`` or a
+    ``resolve/main`` URL): a pinned script must keep working after any later upload, so the file name carries its own sha256
+    (``code/<dir>/ee_src-<sha256>.tar.gz``) and the sha check stays."""
+    return fetch_text_problems(Path(script).read_text(encoding="utf-8"), Path(script).name)
+
+
+def fetch_text_problems(text: str, name: str = "script") -> list[str]:
+    """``fetch_problems`` on a script text."""
+    bad = []
+    if re.search(r"code/\w+/(ee_src|batch)\.tar\.gz", text):
+        bad.append(f"{name}: the bundle or batch is fetched by a fixed name on main: use the sha256-named file (ee_src-<sha256>.tar.gz)")
+    if re.search(r"resolve/main|revision\s*=\s*['\"]main['\"]", text):
+        bad.append(f"{name}: a file is fetched from main: a later upload would replace it under the pin")
+    if "{stem}-{shas[name]}.tar.gz" not in text:
+        bad.append(f"{name}: the bundle and batch are not fetched by their sha256-named files")
+    return bad
+
+
 def code_problems(script) -> list[str]:
     """Refusals for a pod script's code pin: still a placeholder, or not the sha256 of the bundle the current tree builds (a changed
     file under explainer_engine/, config/ or assets/ after the pin makes the pod run other code than the one that was reviewed)."""

@@ -98,3 +98,47 @@ def test_the_klein_batch_pin_is_the_plan_threads_uploaded_file():
     assert K.script_problems(klein.read_text(encoding="utf-8")) == []
     ltx = next(s for s in B.SCRIPTS if s.name == "runpod_ltx_pod.sh")
     assert B.pinned(ltx, "BATCH_SHA256") is None or len(B.pinned(ltx, "BATCH_SHA256")) == 64     # the LTX batch needs the end keyframes first
+
+
+def _fetch_payload(script, job):
+    """The python3 -c step of a pod script that downloads the two files, with $JOB filled in."""
+    import re
+    text = script.read_text(encoding="utf-8")
+    m = re.search(r'python3 -c "\n(import shutil.*?)" \|\| exit 1', text, re.S)
+    assert m, script.name
+    return m.group(1).replace("$JOB", str(job))
+
+
+def test_both_scripts_fetch_the_bundle_and_batch_by_sha_named_files_never_by_a_name_on_main(tmp_path):
+    import subprocess
+    import sys
+    stub = tmp_path / "stub"
+    stub.mkdir()
+    (stub / "huggingface_hub.py").write_text(
+        "import json, os\ndef hf_hub_download(repo, f, repo_type=None, local_dir=None, revision=None):\n"
+        "    p = os.path.join(local_dir, f); os.makedirs(os.path.dirname(p), exist_ok=True); open(p, 'w').write('x')\n"
+        "    open(os.path.join(os.environ['ASKED']), 'a').write(f + '|' + str(revision) + '\\n'); return p\n")
+    for script in B.SCRIPTS:
+        job = tmp_path / script.stem
+        job.mkdir()
+        code, batch = "ab" * 32, "cd" * 32
+        (job / "sha.txt").write_text(f"{code}  {job}/ee_src.tar.gz\n{batch}  {job}/batch.tar.gz\n")
+        asked = tmp_path / f"asked_{script.stem}"
+        r = subprocess.run([sys.executable, "-c", _fetch_payload(script, job)], capture_output=True, text=True,
+                           env={"PYTHONPATH": str(stub), "ASKED": str(asked), "PATH": "/usr/bin"}, cwd=tmp_path)
+        assert r.returncode == 0, r.stderr
+        files = [ln.split("|")[0] for ln in asked.read_text().splitlines()]
+        d = "code/klein" if "klein" in script.name else "code/ltx_ab"
+        assert files == [f"{d}/ee_src-{code}.tar.gz", f"{d}/batch-{batch}.tar.gz"]            # the name carries the sha256
+        assert (job / "ee_src.tar.gz").exists() and (job / "batch.tar.gz").exists()          # and lands where the sha check reads it
+        assert B.fetch_problems(script) == []
+
+
+def test_the_lint_refuses_a_fixed_name_or_a_main_url():
+    import tempfile
+    for bad in ("hf_hub_download('r', 'code/klein/ee_src.tar.gz')", "curl https://huggingface.co/datasets/x/resolve/main/code/y.tar.gz",
+                "hf_hub_download('r', 'f', revision='main')"):
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "x.sh"
+            p.write_text("#!/bin/bash\n" + bad + "\n")
+            assert B.fetch_problems(p)

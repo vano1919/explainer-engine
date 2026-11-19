@@ -163,9 +163,11 @@ def batch_review(launch: dict, batch: dict, *, price: float, cap_usd: float | No
 
 
 def script_problems(text: str | None = None) -> list[str]:
+    from explainer_engine.training.pods.ltx import ab_bundle
     text = LAUNCHER.read_text(encoding="utf-8") if text is None else text
-    return ["klein_pod.sh: the code bundle sha256 or the transformers version is not filled in (@@...@@): build the bundle and pin the version first"] \
+    bad = ["klein_pod.sh: the code bundle sha256 or the transformers version is not filled in (@@...@@): build the bundle and pin the version first"] \
         if "@@" in text else []
+    return bad + ab_bundle.fetch_text_problems(text, "klein_pod.sh")      # fetched by sha256-named files, never by a name on main
 
 
 def picture_record(launch: dict, job: dict, png: Path, refs: dict) -> dict:

@@ -125,7 +125,8 @@ def script_problems(text: str | None = None) -> list[str]:
     """The pod script must be built (its code bundle's sha256 filled in) before a create: an unbuilt template fails closed in the pod
     and is refused here first."""
     text = LAUNCHER.read_text(encoding="utf-8") if text is None else text
-    return ["runpod_ltx_pod.sh: the code bundle sha256 is not filled in (@@EE_SRC_SHA256@@): build the bundle first"] if "@@" in text else []
+    bad = ["runpod_ltx_pod.sh: the code bundle sha256 is not filled in (@@EE_SRC_SHA256@@): build the bundle first"] if "@@" in text else []
+    return bad + _ab().fetch_text_problems(text, "runpod_ltx_pod.sh")      # fetched by sha256-named files, never by a name on main
 
 
 def _ab():

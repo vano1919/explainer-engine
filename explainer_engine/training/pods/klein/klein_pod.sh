@@ -20,15 +20,17 @@ export PIP_CONSTRAINT=/workspace/dl/constraints.txt
 pip install -q "huggingface_hub==1.33.0" "diffusers==0.43.0" "transformers==5.22.2" || exit 1
 JOB=/workspace/job
 mkdir -p "$JOB" /workspace/ee /workspace/batch
-python3 -c "
-from huggingface_hub import hf_hub_download
-for f in ('code/klein/ee_src.tar.gz', 'code/klein/batch.tar.gz'):
-    hf_hub_download('vano1919/tmr-artifacts', f, repo_type='dataset', local_dir='$JOB/dl')
-" || exit 1
-cp "$JOB/dl/code/klein/ee_src.tar.gz" "$JOB/ee_src.tar.gz"
-cp "$JOB/dl/code/klein/batch.tar.gz" "$JOB/batch.tar.gz"
+# the pins first: the files are fetched by a name that carries their own sha256 (never a name on main that a later upload can replace), and checked below
 printf '%s  %s\n' 9022a3451c38455088f71d8213e6295b87d3e528e492d2cd34dd152c0859e457 "$JOB/ee_src.tar.gz" > "$JOB/sha.txt"
 printf '%s  %s\n' e177fcd1407c9ea24a9b21733f2cf00a41db9fa3b3ff051550f24c2470ab090b "$JOB/batch.tar.gz" >> "$JOB/sha.txt"
+python3 -c "
+import shutil
+from huggingface_hub import hf_hub_download
+shas = {l.split()[1].rsplit('/', 1)[1]: l.split()[0] for l in open('$JOB/sha.txt')}
+for stem, name in (('ee_src', 'ee_src.tar.gz'), ('batch', 'batch.tar.gz')):
+    got = hf_hub_download('vano1919/tmr-artifacts', f'code/klein/{stem}-{shas[name]}.tar.gz', repo_type='dataset', local_dir='$JOB/dl')
+    shutil.copyfile(got, '$JOB/' + name)
+" || exit 1
 sha256sum --strict -c "$JOB/sha.txt" || exit 3
 ee_needs_check
 tar -xzf "$JOB/ee_src.tar.gz" -C /workspace/ee || exit 1
