@@ -114,7 +114,14 @@ def test_a_silent_shot_is_cut_as_before_and_no_audio_means_no_word_is_added():
 
 def test_the_ingest_cut_and_whisper_edit_points_share_the_same_filters():
     maybe = [W("Maybe.", 0.0, 0.6), W("Maybe.", 1.72, 1.92)]
-    assert I.drop_word_artifacts(maybe)[0] == maybe[1:]                               # the duplicate opening word
+    quiet = noise(3, -62)                                                              # nothing voiced under the first "Maybe."
+    assert I.drop_word_artifacts(maybe, quiet, R)[0] == maybe[1:]                      # unvoiced duplicate: a transcript artifact
+    two_soldiers = place(3, [(0, noise(3, -62)), (0.05, voice(0.55)), (1.72, voice(0.25))])
+    notes: list = []
+    assert I.drop_word_artifacts(maybe, two_soldiers, R, notes)[0] == maybe            # voiced: a real line, kept (S06_SH008)
+    assert notes and notes[0]["kind"] == "duplicate_opening_word_kept" and "creator decides" in notes[0]["review"]
+    notes2: list = []
+    assert I.drop_word_artifacts(maybe, None, R, notes2)[0] == maybe and notes2        # no audio: never dropped on words alone
     tail = [W("Stand", 1.0, 1.5), W("You", 4.0, 4.3)]
     clean, mute = I.drop_word_artifacts(tail)
     assert [w["text"] for w in clean] == ["Stand"] and mute == round(1.5 + I.MUTE_TAIL_AFTER_S, 3)
@@ -258,3 +265,15 @@ def test_s06_sh008_trim_edges_sit_on_the_measured_energy_edges():
     want = [(0.19, 0.63), (1.64, 2.15), (2.99, 3.66)]
     for (a, b), (wa, wb) in zip(SIX["S06_SH008"]["edges"], want):
         assert abs(a - wa) <= 0.15 and abs(b - wb) <= 0.15
+
+
+def test_a_voiced_duplicate_opening_word_keeps_its_line_and_is_a_review_item():
+    maybe = [W("Maybe.", 0.0, 0.6), W("Maybe.", 1.72, 1.92)]
+    two_soldiers = place(3, [(0, noise(3, -62)), (0.05, voice(0.55)), (1.72, voice(0.25))])
+    d = I.trim_decision([], maybe, "Maybe. Maybe.", spoken=True, dur=3.0, audio=two_soldiers, rate=R)
+    assert len(d["spans"]) == 2 and d["spans"][0][0] < 0.3 and d["notes"][0]["kind"] == "duplicate_opening_word_kept"
+    doc = {"clips": {"S1": {"duration": 3.0, "words": maybe}}}
+    script = {"shots": [{"shot_id": "S1", "route": "video", "audio_line_ids": ["L"]}],
+              "audio_lines": [{"line_id": "L", "speaker_type": "character", "speaker_id": "a", "text": "Maybe. Maybe."}]}
+    ep = I.whisper_edit_points(doc, script, audio_by_shot={"S1": (two_soldiers, R)})["clips"]["S1"]
+    assert ep["in"] < 0.5 and ep["trim_notes"][0]["kind"] == "duplicate_opening_word_kept"   # the in-point is not moved to the second line
