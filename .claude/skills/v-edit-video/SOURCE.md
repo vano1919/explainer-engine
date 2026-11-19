@@ -1,0 +1,36 @@
+# SOURCE: v-edit-video
+
+repo: https://github.com/codepawl/creator-generalist
+path: plugins/2d-generalist/skills/edit-video
+commit: 007290c354d95eaf2a8b83c1e96cbc779134a7e2
+commit_date: 2026-11-17
+retrieved: 2026-11-19
+author: CodePawl
+licence: MIT (LICENSE)
+stars_seen: not obtainable (GitHub API blocked in the session)
+stage: S14
+tool: tools/vendor_skill.py (byte-for-byte copy; upstream files are never edited)
+name_clash: upstream frontmatter name 'edit-video' differs from folder 'v-edit-video'; Claude Code uses the folder name
+excluded:
+  (nothing)
+
+files:
+614fcf181fd8779623f1e3ada46f56c4b9b3f15df37f942d921577f767c99c69  LICENSE
+87789fe4e85ba2a86f2a314dca4d3ede0dce391337f6ccb4b6dcf6aed542ef46  SKILL.md
+5bae1d2323fa1ef56748c3060be0b5a5350540183583051a9059e2745ed688ff  references/after-effects-motion-design.md
+c3305691bf5a3c353db42dd81ba0b00c39a7ea90b41a0279f77b72008c8ca0b3  references/capcut.md
+9f1beadd87d13b61d35113a512142f978a92c4511ad4cf11fe0c026c173e1e6b  references/color.md
+1d275a506092c5718d405650502ef4c7c3cc21b463b442e7cc299b0330f0543f  references/edit-page-and-keyframes.md
+f1ed7942e40c3c2811df9dc88002bc7e4a91639ec2dc1b48d9b34911d94f328e  references/editing-craft.md
+3efd43e5611a2094cafb0db44e36ea1b31388f409895a56be8e5f1d2459416d7  references/ffmpeg.md
+aa8fc96bb364576dde69c19c81cde7de804d59a958cd7f86c364cfb9d6410d22  references/fusion-effects.md
+339f6c08c9365df75fc275b1b19f8c77ebd19b4685cf04d0eed0ae0abb0ea5c5  references/open-source-editors.md
+b886c919a709b7da57e1039d6a1b7db8d2def782769dd154d35dbcb110a732de  references/paid-to-free.md
+5621118ca8bdb717ba937012634dba9df73b5912b7230f0559c907117a29d47b  references/premiere-and-after-effects.md
+5c940800038c42ee6de9d37aae91bbb472dfbc0bd37f81cca106e6ae23890a33  references/resolve-basics.md
+d569c0cb3b0dd1c0dd1166a47562cb033854106e9f012337a2fd247de714839f  references/retime-and-speed.md
+02d93a77d08d69a5a0d461e389eb78c9b69f14407531ee004ef9e880a967f323  references/shakes-and-camera.md
+bf5b720683282aa8268259a969b3ee1e882cb5ecf6b985a3abac828819761fb5  references/text-and-typography.md
+d4cf21157e6e666d879e5a4e3f647ea556c5cefe7aadee88569c8ddc0d6fe8b9  references/transitions.md
+8ecd31958f28376d290bc393780b8f36d235e87c6b09a7dabe876380cbe6dfdf  references/workflow-and-settings.md
+d0107bd84db70c8d80a4df8adfca9d7c7b34c2ffc2a862747761c3cb53a1c1e6  scripts/check_blended_cuts.py

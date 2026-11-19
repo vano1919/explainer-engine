@@ -1,0 +1,33 @@
+# SOURCE: v-superpowers-subagent-driven-development
+
+repo: https://github.com/obra/superpowers
+path: skills/subagent-driven-development
+commit: 22f0b463e7a5e579904dd6211a520321035526f7
+commit_date: 2026-11-03
+retrieved: 2026-11-19
+author: Jesse Vincent (obra)
+licence: MIT (LICENSE)
+stars_seen: not obtainable (GitHub API blocked in the session)
+stage: dev
+tool: tools/vendor_skill.py (byte-for-byte copy; upstream files are never edited)
+name_clash: upstream frontmatter name 'subagent-driven-development' differs from folder 'v-superpowers-subagent-driven-development'; Claude Code uses the folder name
+excluded:
+  (nothing)
+
+files:
+a37e0e9697144819e1d965176ac4ae5bc3fa02d11e7812036bbcadf6dafe2400  LICENSE
+1baf70e307bde682c462513c86116333f1f066168c6710f45145bf5f0b00828d  SKILL.md
+81dd9d5a3fb0b09b96b5829f03b9796842f3199ef7591d1ba1c2db2a515f64d0  implementer-prompt.md
+ad54d0a10f1c2c8e656456e0a46e654af5dfe5ee6bcef63428cfd69b8dcd9311  re-review-prompt.md
+b54dc7e23dbfb90db89bcb2fb3af591aabf6a271a165fbc0da4c6f9439980eac  references/batching.md
+e698713a15e0eabf1a2ab26ffe1bb04bf70c9d6d2e2060d44a0f9a1bdd4408bf  references/cannot-verify.md
+6c9e12093e46c4ad0a203bc07709c17e3470f855f1b78e55c5e7b722a012a32c  references/final-review.md
+1938ce707915efc44021e563ebc29666329e20ad861b6c50b89f305b8f4e8d8b  references/fix-loop.md
+8f759cdd4936220c38aab05b6d6c48c6df8ac8f146b0f37a6d2facbf87133c67  references/handling-reports.md
+3ea21c5fc1af1a190ac8a9d19ceb0849b47bf2ffe27b87dffcc21b6a0539776c  references/preflight.md
+ff6e38bde2276faa2a7e93513086caded0ea10edbf2ec7f349a7e3b0d7c668c4  references/resuming.md
+aed7c6e09fc660417d28898ed975e84651cb9f18f4675141cd475edfb7037f3d  scripts/review-package
+6f8256a776968d394bae679572e41ce572fd45c72074b98f9a8eb8b4f160e06f  scripts/sdd-repo
+de3af5252fa595fc2000ba05cf69e06187d5c8aae9d283cced4c167ad1813061  scripts/sdd-workspace
+0f244a12e146393c552ba62069d3eedcc85cb3f76de67b01f4e11219e5ebbcd8  scripts/task-brief
+61a04c2fb29907887d8babee1594f5e35ae26d461e7e584f5b7c283215165e08  task-reviewer-prompt.md

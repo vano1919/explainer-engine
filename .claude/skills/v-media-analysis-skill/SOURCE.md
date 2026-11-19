@@ -1,0 +1,80 @@
+# SOURCE: v-media-analysis-skill
+
+repo: https://github.com/kajisho5/media-analysis-skill
+path: .
+commit: af49b926ff3b63482478ecc2d77aab1dd6cab8a8
+commit_date: 2026-11-19
+retrieved: 2026-11-19
+author: kajisho5
+licence: MIT (LICENSE)
+stars_seen: not obtainable (GitHub API blocked in the session)
+stage: S16
+tool: tools/vendor_skill.py (byte-for-byte copy; upstream files are never edited)
+name_clash: upstream frontmatter name 'media-analysis' differs from folder 'v-media-analysis-skill'; Claude Code uses the folder name
+note: tools/ left out: the repo .gitignore ignores every tools/ directory
+excluded:
+  - --exclude assets: 1 files (assets)
+  - --exclude brand: 7 files (brand)
+  - --exclude evals: 22 files (evals)
+  - --exclude tests: 37 files (tests)
+  - --exclude tools: 1 files (tools)
+  - larger than 1048576 bytes: 1 files (assets)
+  - media/binary: 2 files (src)
+  - skip-dir: 37 files (.git, .github)
+
+files:
+c1a0cade75f5121e28422e834d9bd1f6a062979345fc8214cbb471cd6527de11  .fetched
+d8125f44b8b8b216a610d9cd1c008c83cfaa44376e85a8f612ec5f616072a5df  .gitattributes
+5d85bae83db89831db1feb526b66ce8a7a516c53fe53fb7c51af9734094e9658  .gitignore
+33455b74f777e9d1d7e4e044aab38c508ee048096dea415066292884bd130108  CHANGELOG.md
+f99a2e27cf36e0e83ea5ef515873b8713de11f6e76e1e538119dcfc6d0529004  CLAUDE.md
+56da5124d712b7ebb55e96a57b182e4046730b127f40fa512848a0fd6f1d593e  ECOSYSTEM_ROADMAP.md
+7522b29e4d6e90f2a8fab15f07d224b1064c70692a872be9996ac1a88cf474e9  LICENSE
+da332d543131f25ecd8a0415181f24cfc221b2044932de71df4a2e8c338bcd9e  README.md
+1617604923d385b824468f32202567cac4f8704e3e629380758cd141dad0aa1b  SKILL.md
+a209b2b8e42010b745a89fdb45933db7e343192bb37aa2650966995393eaaeed  STATE.md
+e36bf3a2c13edf218973cc2e8d8be4ee2fa242d16f906305110e3dff279f2d19  contract/contract.json
+d40b634e7826ad2b5c2644d06f4dd3ab2584dcfbee0666edc6028db52cd0779f  contract/generate.py
+49ed05fad9f9cecbaac2ec98622356b543541e91355c3f08189fc854484b4585  docs/architecture.md
+4b3a7ca65b873551ede387c0e43703757382cf5784476473b9aa4ba905860776  docs/decisions.md
+44f4223c0c880e3b731f6a9a97de2ae693a7bb513954e7cf593f28a1f0d39d63  docs/observation.md
+758f11b82673d651e8e565bca4ba893cb67ad6af893c2246d1076bf31a4d4aad  docs/security.md
+5939d1b135472048c2c017c0425f7e7af2181af7d976937e550d8a4d9380664d  docs/testing.md
+4f511fef2621e69b1beb197e4d9e40cea7acabd88d2534a36ee03e3ad41f8803  docs/tools.md
+13e3f2273d6d0680c0e157598ef80e2d11d601f8bec7de33373e4cc959359e82  pyproject.toml
+e468d41c4f133c2f1884d0f79ffed76feea4c63415296205a3f9ac8ba863b056  src/media_analysis/__init__.py
+7bd73835140aa0e8cd121df3ddd5cba8dd3ef4d487c52d8bf0c1e24ade2f91f8  src/media_analysis/analyzers/__init__.py
+17aa40682c60b900e716314fb3bd9d71d4fa087568800864ff5584fb80ab9c27  src/media_analysis/analyzers/base.py
+067e64fe0c6ad58ec20843b4e36977b99e8f4933018b7d274e2649e0f1dcac87  src/media_analysis/analyzers/burnin.py
+cc742e16f61ad7831ac8b90aac0b07406bcf30b3a5340f3cd09ac4ce61707bbb  src/media_analysis/analyzers/events.py
+10dfaf1013ee652a517022c0f2d4f30f2045f2d328acf1a5e09ece91ab72226e  src/media_analysis/analyzers/integrity.py
+c37db9c2235e604ca1938cf4af3b0778fe214b0a98299f0f4bf434c6f925b807  src/media_analysis/analyzers/loudness.py
+720ee9b947b0564f163ff5547770eab5214a38b86ece71b970af50efec79e985  src/media_analysis/analyzers/noise.py
+f876c5399446f320b31fcd84587b5a8aa93e175691b36cab1568bdbc2424b8ed  src/media_analysis/analyzers/probe.py
+d24e7ca03eeb21563cd118f242b65c1836f1b1bc8caf0affda235a1b56f940f4  src/media_analysis/analyzers/scenes.py
+4a98f984c62e61d5811f7a757c0c4bd12e1905025dc859aa2bffb88b7d645204  src/media_analysis/analyzers/signals.py
+3566fe293ee05af24de055e859442c11a6b3e5449d193fe93f4bcfd152b6836e  src/media_analysis/analyzers/silence.py
+bf70a61c9b39e9b9e36062fc98a45d674a4b8345ad29b0b2c10ccb20ba316877  src/media_analysis/analyzers/style.py
+46dde97f2ec9d2342fc514b2e9717f5407871c33b8bc879d0782c2bd287f6b7f  src/media_analysis/analyzers/timing.py
+fdfd183c1760b71899211a569f46b4aa22a22f908dfc8c7961c450f614c0981f  src/media_analysis/analyzers/vad.py
+2c1e85e59d6821c4561d66db60e8320cdc266bba94e13e745322c2539e00cacb  src/media_analysis/budget.py
+945e861ffc3849f00fa8af76fb268e3b12648dc1c1e18016e63916873343e891  src/media_analysis/cache.py
+0e24a77566af5480175914bc6926020297f3295a525a3882fcee42735fd59413  src/media_analysis/canonical.py
+69212fa4e4e926b4a3bb2b4ea968b1a72f022998d65eb529c75550d92e6cdf12  src/media_analysis/capabilities.py
+00ff83fb433e39f9741725fadfe44a95d39dbb123a8bedf6355b87dcc79c4538  src/media_analysis/cli.py
+dbdab3ae5cd3f52951e9d673a1727b928172eadd0eb80c5f00fc55d84a3a7e51  src/media_analysis/conformance.py
+a2017d2480982dd39b3e17766390a7ca350e72f0ee4f485dc7ad3d186010163c  src/media_analysis/contract.py
+0087194e26667adc226c96c8fbc43829c6d5e73f2c1c042f2f8a17e1acb0a09a  src/media_analysis/contract_check.py
+075562f628c267aadf0c29ec1026c2e1c751748e511cbc99deadfaa6bbb8c563  src/media_analysis/engine.py
+428b878cb527e894e5921e19236e264e8cc7683595b3ebec612fbad1d931e61e  src/media_analysis/errors.py
+29ac705d910630a17e125bbbf61bb5e2f6311a90dc093d6e579acf3b0cf512db  src/media_analysis/highlights.py
+d57353190dcc517dbe3ed657c4ef851b8cde0eeac31b6f6f5b82143794500ace  src/media_analysis/library.py
+2e63e9a38b6e8fc0c7bc37ce174caca1862870856c6daf5697cfb785e925520b  src/media_analysis/models/silero_vad.LICENSE
+506b05f3ed880ae274055fa5e23963628a43ff938efa74c8aa3f3c8618d2ec6d  src/media_analysis/models/yamnet.LICENSE
+de7115eb699bbf0b0ada43f0e27494cd392d8cc47b7972e96f6a7c601d13b007  src/media_analysis/packets.py
+117e0dbf95ab1f68f080cb6e36b44d2dc1e528a1e8f3c7bd77ea532b7ffb41b1  src/media_analysis/probe.py
+b087595bc72cd04bccba4a5af8881576aa7013f2b7541415e5ab724734038e4b  src/media_analysis/registry.py
+ecd720123018109fc36b3b1dd7f39d19f6b1893579c8516cb99557db0aebed57  src/media_analysis/runner.py
+fbb6297e4f4109dbc6fbadc5760b8bb79d16ed29e9ae91c625b5f30503151dfc  src/media_analysis/schemas.py
+9924c7da7404a07bdeccd80c92f4679ff23fd491b30a4ab2885f528aceafcb88  src/media_analysis/security.py
+293eed9fada2cd9c5acb50f68c701b6e9b4fee0e0522c2db020d5afcda8aa03b  src/media_analysis/verify.py

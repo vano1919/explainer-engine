@@ -1,0 +1,2 @@
+# vendored upstream bytes must be identical on every checkout (tools/vendor_skill.py verify)
+v-*/** -text

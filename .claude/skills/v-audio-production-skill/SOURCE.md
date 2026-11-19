@@ -1,0 +1,53 @@
+# SOURCE: v-audio-production-skill
+
+repo: https://github.com/kajisho5/audio-production-skill
+path: .
+commit: 03000d0d32bcbb1a69884485378594c5b6e78cf6
+commit_date: 2026-11-19
+retrieved: 2026-11-19
+author: kajisho5
+licence: MIT (LICENSE)
+stars_seen: not obtainable (GitHub API blocked in the session)
+stage: S13
+tool: tools/vendor_skill.py (byte-for-byte copy; upstream files are never edited)
+name_clash: upstream frontmatter name 'audio-production' differs from folder 'v-audio-production-skill'; Claude Code uses the folder name
+excluded:
+  - --exclude brand: 7 files (brand)
+  - --exclude tests: 11 files (tests)
+  - skip-dir: 114 files (.git, .github)
+
+files:
+591be2df0aa7e4b8361ce41dc34d85eaf4e1bde9d22922a6248ef820bfcc545f  .fetched
+d8125f44b8b8b216a610d9cd1c008c83cfaa44376e85a8f612ec5f616072a5df  .gitattributes
+da16155fdd4c9569dd15ccd18017d0d0edd6e2d21281a234fa735baf33931b4b  .gitignore
+913329b239a8334f3c53dd716ef89b6e6b8d31dfc8dc377b1254d8f32fd4e554  CHANGELOG.md
+d1e5cc6beca1371a2d16e1a73790ed082a05c9597b00032ab4f1a608ec132ad2  CLAUDE.md
+2b581c0d678c0462a80cb887ccbcae47c089efcc196c03d80a1862906f99f566  ECOSYSTEM_ROADMAP.md
+7522b29e4d6e90f2a8fab15f07d224b1064c70692a872be9996ac1a88cf474e9  LICENSE
+400584734cab6cd511fff39ce77aad97b8bc7512ec2bc9f456f26afe00ce07bf  README.md
+c67de5d438978398079c05c54f7e8095febe743adb069c9930b8f0dc19eba92b  SECURITY.md
+6502e67e6989d79bac806c75896503475855eee87d98efe7acf407da49181735  SKILL.md
+97af3e9a0549accdfbdf039f0ebf0e710a75718669387f93ffa724bdb6d4f116  contract/contract.json
+415e06db6cee0fc2ae07e4bd2f690585d5f0ca1672a918e3fed7b45b83835b77  contract/generate.py
+382f96879434951584877bb7860c8308a7fbc7b275c879d9c5a01c11cc2204c7  docs/STATE.md
+37454c52bd8cd06a4f06f2f2728f9551e598a50cf35f81c7026935e8b459ede2  docs/architecture.md
+3b9d57a6326844868c3619f5365e566f6242a3422a2e23ea6dc6f3f57f2705dd  docs/contract.md
+7806870ff349dc849737d3806ebdd4a6bbc0a5baf3eae988fc68de883fb085ca  docs/decisions.md
+5bf1d9a2bbf2057e990c5014fa17bcd6018a996ed7c30031bbf1632cfd50c333  docs/ffmpeg-skill.md
+177a2ffa16627d7306733ac48c1d9806ad617e39ea7b94662e5ec73871fc454f  docs/security.md
+6da6594704b464c9c388399fc921aae97c85a220dc089e63aa729c17ca81aebd  docs/testing.md
+928c6da32414bf0e9c6ba82d87057e8e8ce6adef1320421a7b6c92dd0f399877  pyproject.toml
+61e57212b590fed31b4fb59e86a14c4ad52010b3581ffb871093f224f7ecf27d  src/audio_production/__init__.py
+aea366921b64b008a5e21f7aeeedd5a66ac411b272d1d5a750dee2bc2c785694  src/audio_production/adapter.py
+9b2464543a9fe422883c4f59e59ed1f84910e290a3a8bd2cd7e5219ff1d0d524  src/audio_production/canonical.py
+09a6870428c4677b8edfd38e1d56c8d1566a410274f78280390c34cde65b6e26  src/audio_production/cli.py
+e0d12eb0601ac070d71835381f9d7be0fec5495968dec885dc160f0ac4ddcf9b  src/audio_production/contract.py
+01ba7eaf1fc2fd18ffd4f8b59349f7f84c392a959c2ab87d509c43b7030fa2a9  src/audio_production/contract_check.py
+eadcde1ef0b39a686dea2a076e12db348d723ebd9dd5c690db9e6712355badfa  src/audio_production/doctor.py
+b458ff644caa9ae52423f0eac52f0c2fce9a53bd638b684d5e017cf9a654cd17  src/audio_production/errors.py
+92149d62b27740719dbdd78866c32b39ff16f3daf7bcf4a75637d5d82219a3e8  src/audio_production/executor.py
+af8fff5546c937ae3cc89fb75feeba896d07848bb67079e04a8a1f735560f029  src/audio_production/fillers.py
+e546ea7db47c941997956bd9ba5c3ccd920a55316c34888cc844df0cc0a6430a  src/audio_production/graph.py
+a94b7575561fc229ecfd5e1a268ea18b56f1bb3492dd373275e18d5ef26574cd  src/audio_production/model.py
+d8093c2f467975ab5c31063e0724f2abe8d5321f5d71dfb1c539cca3b2d33c26  src/audio_production/security.py
+d2fd2cc2c6a2a47d856b0e8c04df3e3ea362a5e6a9c384b33518e72c90fa6f85  src/audio_production/timeline.py

@@ -72,7 +72,7 @@ def render_index() -> str:
         kinds = " / ".join(str(sum(c["check"] == k for c in crit)) for k in ("code", "critic", "eye", "manual"))
         bps = sorted({r for c in crit for r in c["rules"] if r.startswith("BP-")}, key=lambda r: int(r[3:]))
         ids = f"{crit[0]['id']}..{crit[-1]['id'].rsplit('-', 1)[1]} ({len(crit)})"
-        skill = data["skill"].split("/")[2]
+        skill = data["skill"].split("/")[-2]
         out.append(f"| {dept} | `{skill}` | `standards/craft_checklists/{dept}.json` | {ids} | {kinds} | "
                    f"{', '.join(bps) or '-'} |")
     return "\n".join(out) + "\n"
