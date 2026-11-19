@@ -291,3 +291,23 @@ def test_the_sway_starts_at_rest_so_the_shot_starts_on_its_picture(pic):
     m20 = sc.matrices(20)[sc.sway["plane"]]
     base20 = L._matrix(L.plane_view(sc.p, 20, sc.weights[sc.sway["plane"]], sc.focus), sc.W, sc.H, sc.sw, sc.sh, sc.z0)
     assert not np.allclose(m20, base20, atol=1e-6)
+
+
+# --- lanes test 2026-11-19: breath vapour (the cold-air scene had no breath effect) ----------------------------------------------
+
+def test_breath_vapour_needs_a_mouth_and_puffs_beside_it(pic):
+    with pytest.raises(ContractError, match="origin"):
+        L.plan(_shot([{"effect": "breath_vapour"}]), FPS)
+    assert L.FAMILY_OF["breath_vapour"] == "atmosphere"
+    mouth = [330 / 480, 160 / 270]
+    base = _scene(pic, [{"effect": "push"}], dur=4.0)
+    sc = _scene(pic, [{"effect": "push"}, {"effect": "breath_vapour", "origin": mouth}], dur=4.0)
+    seen = []
+    for f in range(0, 96, 6):
+        d = np.abs(_frame(sc, f) - _frame(base, f)).max(axis=2)
+        seen.append(float(d.max()))
+    assert max(seen) > 12 and min(seen) < 3, "a puff comes and goes (the breath is not a constant haze)"
+    f = int(seen.index(max(seen))) * 6
+    ys, xs = np.nonzero(np.abs(_frame(sc, f) - _frame(base, f)).max(axis=2) > 6)
+    assert abs(xs.mean() - mouth[0] * W) < W * 0.15 and abs(ys.mean() - mouth[1] * H) < H * 0.2
+    assert (_frame(sc, f) == _frame(sc, f)).all()

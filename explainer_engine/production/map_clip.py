@@ -8,6 +8,9 @@ from explainer_engine.maps import geo, plate
 from explainer_engine.maps.render import build_episode_gis_map_spec, render_frame
 
 
+RELIEF_SOFT_UPSAMPLE = 3.0   # engineering default, from the note in maps/actions.Plate.upsample ("above about 3 the relief looks soft")
+
+
 def render_episode_gis_map_clip(
     shot: dict,
     out_mp4_path,
@@ -160,7 +163,8 @@ def render_action_map_clip(shot: dict, script: dict, episode: dict, out_mp4_path
             im.save(keys[name])
     upsample = None
     if not p["card"]:
-        raster_km = 111.32 / 60.0       # Natural Earth SR_HR: 1/60 degree a pixel at the equator
+        from explainer_engine.maps import relief
+        raster_km = relief.km_per_px(base.view)       # the raster the plate was drawn from (Natural Earth or a regional one)
         upsample = round(max(base.upsample(MA.camera(p, f), raster_km) for f in range(p["frames"])), 2)
     from explainer_engine.qa import gates as G
     first_action = min((a["start"] for a in p["actions"]), default=None)
@@ -171,6 +175,10 @@ def render_action_map_clip(shot: dict, script: dict, episode: dict, out_mp4_path
             G.row("map_routes_follow_the_land", not p["path_findings"], f"{len(p['path_findings'])} route finding(s) of map "
                   "law 2 on the via-waypoint splines (maps/paths.validate, CMP-02)",
                   [x["detail"] for x in p["path_findings"]][:5], level=G.REVIEW)]
+    if upsample is not None:   # the plate's relief must not be a blur: above RELIEF_SOFT_UPSAMPLE a finer (regional) DEM is needed
+        rows.append(G.row("map_relief_sharp", upsample <= RELIEF_SOFT_UPSAMPLE, f"relief raster enlarged {upsample}x at most "
+                          f"(above {RELIEF_SOFT_UPSAMPLE} it looks soft: fetch a regional DEM, production/relief_regional)",
+                          upsample, level=G.REVIEW))
     return {"status": "generated", "provider": "python_action_map", "cost_usd": 0.0, "shot_id": p["shot_id"],
             "gates": G.verdict(rows), "relief_upsample_max": upsample,
             "card": p["card"], "word_basis": p["basis"], "actions": [{k: a[k] for k in ("kind", "word", "start", "end", "event_id")} | {"decision": a["audio"]["decision"]}

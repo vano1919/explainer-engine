@@ -16,6 +16,7 @@ raster the view covers, so a plate never shows the moire of a nearest-neighbour 
 """
 from __future__ import annotations
 
+import math
 import os
 from functools import lru_cache
 from pathlib import Path
@@ -66,10 +67,48 @@ def raster(path: Path | None = None) -> tuple[np.ndarray, tuple[float, float, fl
     return _load(str(p))
 
 
+def regional_for(view) -> Path | None:
+    """A finer regional hillshade (``tools/maps/regional/<name>.tif``, made by ``production/relief_regional``) that holds the whole
+    view, or None. The finest one wins; the global raster is the fallback for every other view."""
+    d = relief_dir() / "regional"
+    best = None
+    lon0, lat0, lon1, lat1 = view.bbox(0.02)
+    for tfw in sorted(d.glob("*.tfw")) if d.is_dir() else []:
+        tif = tfw.with_suffix(".tif")
+        if not tif.is_file():
+            continue
+        a, e, c, f = world_file(tfw)
+        from PIL import Image
+        Image.MAX_IMAGE_PIXELS = None
+        with Image.open(tif) as im:
+            w, h = im.size
+        box = (c - a / 2, f + e * (h - 0.5), c + a * (w - 0.5), f + e / 2 * -1)
+        if box[0] <= lon0 and box[1] <= lat0 and lon1 <= box[2] and lat1 <= box[3]:
+            if best is None or a < best[0]:
+                best = (a, tif)
+    return best[1] if best else None
+
+
+def source_id(view) -> str:
+    """What the relief of ``view`` is drawn from, for the plate's cache key."""
+    r = regional_for(view)
+    return f"{SOURCE_ZIP_SHA256}+{r.stem}" if r else SOURCE_ZIP_SHA256
+
+
+def km_per_px(view) -> float:
+    """The ground size of one pixel of the raster ``view`` is drawn from (km, across): Natural Earth's 1/60 degree at the equator, or
+    the regional hillshade's own pixel."""
+    r = regional_for(view)
+    if r is None:
+        return 111.32 / 60.0
+    a, e, _, _ = world_file(r.with_suffix(".tfw"))
+    return max(a * 111.32 * math.cos(math.radians(view.lat)), abs(e) * 110.57)
+
+
 def sample(view, path: Path | None = None) -> np.ndarray:
     """The relief of ``view`` at its pixel size: float32 in 0..1 (1 = lit), shape (height, width)."""
     from scipy.ndimage import map_coordinates
-    arr, (a, e, c, f) = raster(path)
+    arr, (a, e, c, f) = raster(path or regional_for(view))
     h, w = int(view.height), int(view.width)
     xs = np.arange(w, dtype=np.float64) + 0.5
     ys = np.arange(h, dtype=np.float64) + 0.5

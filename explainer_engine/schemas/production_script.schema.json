@@ -1116,7 +1116,8 @@
                   "subject_sway",
                   "shake",
                   "cloth_flap",
-                  "cloud_drift"
+                  "cloud_drift",
+                  "breath_vapour"
                 ]
               },
               "strength": {
@@ -1256,8 +1257,16 @@
                   "snap",
                   "bar_grow",
                   "progress_bar",
-                  "milestone"
+                  "milestone",
+                  "date"
                 ]
+              },
+              "side": {
+                "enum": [
+                  "a",
+                  "b"
+                ],
+                "description": "route_arrow / front_line / supply_line: the faction (CMP-06) - its token colour and its mark (a square, b triangle)"
               },
               "at_word": {
                 "type": "string",
@@ -1579,7 +1588,8 @@
                   "subject_sway",
                   "shake",
                   "cloth_flap",
-                  "cloud_drift"
+                  "cloud_drift",
+                  "breath_vapour"
                 ]
               },
               "strength": {

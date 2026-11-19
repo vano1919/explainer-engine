@@ -39,7 +39,7 @@ def spec_hash(view: geo.View, layers=LAYERS, shaded_relief: bool = False, look: 
     }
     if shaded_relief:
         from explainer_engine.maps import relief
-        body["shaded_relief"] = relief.SOURCE_ZIP_SHA256
+        body["shaded_relief"] = relief.source_id(view)
     if look:
         body["look"] = {k: look[k] for k in sorted(look)}
     return hashlib.sha256(json.dumps(body, sort_keys=True).encode("utf-8")).hexdigest()

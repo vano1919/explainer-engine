@@ -50,7 +50,7 @@ from explainer_engine.standards import sourced_rules as SR
 FAMILIES = {
     "camera": ("push", "pull", "truck", "crane", "orbit_small", "handheld", "rack_focus"),
     "light": ("fire_flicker", "lightning", "sun_shaft_drift"),
-    "atmosphere": ("ash_fall", "smoke_drift", "mist", "rain", "embers", "dust", "cloud_drift"),
+    "atmosphere": ("ash_fall", "smoke_drift", "mist", "rain", "embers", "dust", "cloud_drift", "breath_vapour"),
     "surface": ("water_shimmer", "heat_haze", "foliage_sway", "cloth_flap"),
     "subject": ("subject_sway",),
     "impact": ("shake",),
@@ -79,8 +79,10 @@ TIMED = ("shake", "lightning", "rack_focus")
 EVENT_EFFECTS = {"boom": ("shake", "lightning"), "eruption": ("shake", "lightning"), "impact": ("shake",),
                  "thunder": ("lightning",), "flash": ("lightning",)}
 
+BREATH_S = 3.4              # house default: one slow breath out in the cold every 3.4 s (a calm adult at rest breathes 12-20 a minute;
+                            # the puff is shown on every second breath at most, so it reads as breath, not as smoke)
 PLANES = 4
-RENDERER_VERSION = "layers25d/2"          # W2 (D-135): the clip cache keys on it
+RENDERER_VERSION = "layers25d/3"          # W2 (D-135): the clip cache keys on it (3: breath_vapour, lanes test 2026-11-19)
 LAYERS_MIN = int(SR.T("BP-181", "parallax_layers_min"))
 NEAR_TRAVEL = 0.05          # the near plane's travel end to end, share of the width (plan P5.2: target 4-6 %)
 TRAVEL_BAND = (0.04, 0.06)
@@ -199,6 +201,8 @@ def plan(shot: dict, fps: int = 24, events: list[dict] | None = None, script: di
                 raise ContractError(f"{sid}: shake needs at_frame, at_word or a sound event (BP-24: only on an impact)")
             impacts.append({"frame": int(at), "effects": ["shake"], "strength": s, "kind": "script"})
         else:
+            if name == "breath_vapour" and not (isinstance(e.get("origin"), (list, tuple)) and len(e["origin"]) == 2):
+                raise ContractError(f"{sid}: breath_vapour needs origin [x, y] (the mouth, share of the picture)")
             if name in NEEDS_REGION and e.get("region") is None:
                 raise ContractError(f"{sid}: {name} is a masked displacement and needs a region [x0, y0, x1, y1]")
             fx = {"effect": name, "family": FAMILY_OF[name], "strength": s, "region": _region(e, sid)}
@@ -567,6 +571,14 @@ class Scene:
                 count = int(round(count * e["strength"]))
                 st["p"] = {"x": rng.uniform(0, 1, count), "y": rng.uniform(0, 1, count), "z": rng.uniform(0, 1, count),
                            "ph": rng.uniform(0, 2 * np.pi, count), "w": rng.uniform(0.3, 1.1, count)}
+            elif name == "breath_vapour":
+                ox, oy = (float(v) for v in e["origin"])
+                d = float(self.depth[min(self.sh - 1, int(oy * self.sh)), min(self.sw - 1, int(ox * self.sw))])
+                ts = np.array(self.thresholds)
+                st["origin"] = (ox, oy)
+                st["plane"] = int(np.searchsorted(ts, d)) if ts.size else 0
+                st["phase"] = float(rng.uniform(0, BREATH_S))
+                st["tile"] = _noise_tile(rng, 144, 256, 9.0)
             elif name == "sun_shaft_drift":
                 if e.get("origin"):
                     ox, oy = e["origin"]
@@ -775,6 +787,25 @@ def render_frame(sc: Scene, f: int, out_meta: dict | None = None) -> np.ndarray:
             rgb = rgb * (1 - a[..., None]) + st["smoke_col"] * a[..., None]
         elif name in ("ash_fall", "embers", "rain", "dust"):
             rgb = _particles(sc, rgb, st, name, t, s)
+        elif name == "breath_vapour":
+            # a soft puff leaves the mouth, drifts forward and up while it widens and thins, then is gone; it moves with the
+            # plane the mouth lies in. Two breaths can overlap, each a pure function of the time.
+            fxy = cv2.invertAffineTransform(ms[min(st["plane"], len(ms) - 1)]) @ np.array([st["origin"][0] * sc.sw, st["origin"][1] * sc.sh, 1.0])
+            side = -1.0 if e.get("direction") == "left" else 1.0
+            yy, xx = np.mgrid[0:H, 0:W].astype(np.float32)
+            n = _tile_at(sc, st["tile"], 0.01 * t, -0.01 * t)
+            puff = np.zeros((H, W), np.float32)
+            for back in (0, 1):
+                tt = t + st["phase"] - back * BREATH_S
+                q = (tt % BREATH_S) / BREATH_S / 0.55
+                if tt < 0 or q >= 1.0:
+                    continue
+                cx, cy = fxy[0] + side * 0.025 * W * q, fxy[1] - 0.03 * H * q
+                r = (0.008 + 0.030 * q) * W
+                blob = np.exp(-(((xx - cx) / (r * 1.5)) ** 2 + ((yy - cy) / r) ** 2))
+                puff += blob * math.sin(math.pi * q) ** 1.3 * (0.65 + 0.7 * n)
+            a = np.clip(0.5 * s * puff, 0, 0.6)
+            rgb = rgb * (1 - a[..., None]) + np.array([232, 236, 240], np.float32) * a[..., None]
         elif name == "sun_shaft_drift":
             ox, oy = st["origin"]
             fxy = cv2.invertAffineTransform(ms[0]) @ np.array([ox * sc.sw, oy * sc.sh, 1.0])   # source -> frame
