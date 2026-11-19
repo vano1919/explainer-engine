@@ -1,0 +1,45 @@
+# ffprobe on the six raw 1914 LTX clips (vano1919/tmr-artifacts), 2026-11-19
+== S03_SH003.mp4
+stream|index=0|codec_name=h264|codec_type=video|r_frame_rate=24/1|time_base=1/12288|start_pts=0|duration=4.708333|nb_frames=113
+stream|index=1|codec_name=aac|codec_type=audio|sample_rate=48000|channels=2|initial_padding=0|r_frame_rate=0/0|time_base=1/48000|start_pts=0|duration=4.690000|nb_frames=221
+== S03_SH007.mp4
+stream|index=0|codec_name=h264|codec_type=video|r_frame_rate=24/1|time_base=1/12288|start_pts=0|duration=4.375000|nb_frames=105
+stream|index=1|codec_name=aac|codec_type=audio|sample_rate=48000|channels=2|initial_padding=0|r_frame_rate=0/0|time_base=1/48000|start_pts=0|duration=4.330000|nb_frames=204
+== S04_SH014.mp4
+stream|index=0|codec_name=h264|codec_type=video|r_frame_rate=24/1|time_base=1/12288|start_pts=0|duration=4.375000|nb_frames=105
+stream|index=1|codec_name=aac|codec_type=audio|sample_rate=48000|channels=2|initial_padding=0|r_frame_rate=0/0|time_base=1/48000|start_pts=0|duration=4.330000|nb_frames=204
+== S06_SH008.mp4
+stream|index=0|codec_name=h264|codec_type=video|r_frame_rate=24/1|time_base=1/12288|start_pts=0|duration=4.041667|nb_frames=97
+stream|index=1|codec_name=aac|codec_type=audio|sample_rate=48000|channels=2|initial_padding=0|r_frame_rate=0/0|time_base=1/48000|start_pts=0|duration=4.010000|nb_frames=189
+== S07_SH005.mp4
+stream|index=0|codec_name=h264|codec_type=video|r_frame_rate=24/1|time_base=1/12288|start_pts=0|duration=8.041667|nb_frames=193
+stream|index=1|codec_name=aac|codec_type=audio|sample_rate=48000|channels=2|initial_padding=0|r_frame_rate=0/0|time_base=1/48000|start_pts=0|duration=8.010000|nb_frames=377
+== S07_SH006.mp4
+stream|index=0|codec_name=h264|codec_type=video|r_frame_rate=24/1|time_base=1/12288|start_pts=0|duration=8.708333|nb_frames=209
+stream|index=1|codec_name=aac|codec_type=audio|sample_rate=48000|channels=2|initial_padding=0|r_frame_rate=0/0|time_base=1/48000|start_pts=0|duration=8.690000|nb_frames=409
+
+# loudness envelope (RMS per 50 ms, shown as 100 ms maxima, dBFS)
+== S06_SH008.mp4: samples=192512 dur=4.011s median=-61.2 dBFS max=-18.8 dBFS
+  100ms max dB: -72 -28 -19 -23 -28 -28 -37 -70 -75 -75 -74 -74 -75 -73 -72 -68 -24 -22 -20 -22 -30 -40 -58 -69 -69 -69 -68 -69 -64 -34 -23 -21 -30 -26 -19 -25 -33 -58 -68 -70
+  sharp onsets (s): [0.15, 0.2, 1.6, 2.95, 3.0, 3.25, 3.4]
+  last 300 ms dB: [-58.2, -65.7, -68.1, -69.5, -69.9, -71.4]
+== S03_SH007.mp4: samples=207872 dur=4.331s median=-54.3 dBFS max=-33.0 dBFS
+  100ms max dB: -56 -54 -56 -56 -56 -57 -56 -55 -54 -51 -52 -51 -50 -51 -52 -50 -53 -52 -53 -55 -54 -54 -54 -55 -39 -33 -35 -40 -46 -52 -55 -57 -57 -55 -53 -54 -55 -52 -54 -54 -53 -54 -54
+  sharp onsets (s): [2.45]
+  last 300 ms dB: [-52.6, -52.6, -53.6, -54.0, -53.7, -57.5]
+== S03_SH003.mp4: samples=225280 dur=4.693s median=-21.9 dBFS max=-13.4 dBFS
+  100ms max dB: -16 -16 -16 -17 -17 -19 -19 -23 -24 -28 -32 -40 -48 -45 -23 -26 -13 -17 -14 -15 -17 -18 -20 -25 -31 -38 -46 -51 -46 -29 -19 -16 -15 -17 -15 -17 -16 -17 -18 -20 -22 -27 -30 -34 -39 -45 -54
+  sharp onsets (s): []
+  last 300 ms dB: [-38.0, -38.8, -42.1, -45.5, -47.7, -54.2]
+== S04_SH014.mp4: samples=207872 dur=4.331s median=-38.4 dBFS max=-35.2 dBFS
+  100ms max dB: -38 -38 -39 -39 -40 -39 -40 -41 -41 -35 -40 -38 -38 -39 -40 -37 -39 -38 -38 -37 -39 -38 -37 -37 -38 -38 -36 -38 -37 -40 -38 -39 -38 -38 -36 -36 -37 -36 -36 -37 -35 -36 -37
+  sharp onsets (s): []
+  last 300 ms dB: [-35.2, -36.4, -36.3, -36.9, -37.4, -38.3]
+== S07_SH005.mp4: samples=385024 dur=8.021s median=-51.3 dBFS max=-8.2 dBFS
+  100ms max dB: -52 -51 -49 -51 -12 -8 -8 -9 -13 -17 -22 -25 -29 -33 -36 -39 -9 -9 -9 -11 -14 -19 -23 -26 -30 -34 -37 -40 -43 -47 -48 -50 -51 -53 -52 -50 -53 -51 -51 -51 -53 -52 -54 -51 -52 -50 -52 -52 -52 -49 -41 -46 -48 -52 -52 -53 -52 -54 -52 -52 -52 -49 -52 -50 -44 -39 -49 -50 -51 -51 -52 -51 -53 -49 -52 -54 -52 -53 -53 -52
+  sharp onsets (s): [0.45, 1.65]
+  last 300 ms dB: [-52.5, -53.0, -53.0, -52.7, -54.3, -51.9]
+== S07_SH006.mp4: samples=417792 dur=8.704s median=-50.4 dBFS max=-6.6 dBFS
+  100ms max dB: -51 -48 -51 -49 -52 -50 -51 -51 -50 -50 -49 -51 -51 -49 -49 -50 -52 -49 -49 -38 -50 -50 -49 -50 -49 -51 -50 -49 -39 -50 -50 -51 -51 -51 -38 -49 -51 -51 -41 -46 -51 -50 -50 -43 -48 -48 -49 -49 -50 -50 -53 -48 -45 -50 -52 -50 -50 -50 -51 -49 -47 -50 -48 -50 -53 -50 -49 -50 -49 -49 -50 -48 -49 -50 -50 -51 -50 -51 -7 -8 -8 -10 -12 -16 -20 -22 -25
+  sharp onsets (s): [7.8, 7.85]
+  last 300 ms dB: [-19.9, -20.8, -22.3, -23.9, -24.6, -28.1]
