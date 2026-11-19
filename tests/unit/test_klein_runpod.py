@@ -60,7 +60,7 @@ def test_the_real_launch_pins_what_was_read_and_keeps_the_rest_open():
     assert lf["transformers_version"] == "5.22.2" and "import proof" in lf["transformers_why"]
     assert lf["image"] == IMAGE and K.open_pins(lf) == []                      # every pin is filled; the L3 smoke decides the rest
     assert K.batch_problems(lf, _batch(), price=1.09, cap_usd=0.6) == []        # nothing in the launch blocks a create now
-    assert K.script_problems()                                                 # the bundle and batch sha256 lines are still placeholders
+    assert K.script_problems() == []                                           # the bundle and the plan thread's batch sha256 lines are pinned
 
 
 def test_the_local_index_has_no_hub_id_and_no_upsampler(tmp_path):
@@ -251,15 +251,20 @@ def test_the_pod_script_passes_lint_and_is_unbuilt_until_the_pins_are_filled():
     text = K.LAUNCHER.read_text(encoding="utf-8")
     assert runpod.lint_pod_script(text) == [] and runpod.is_wrapper_script(text) and dryrun.static_problems(text.replace("@@EE_SRC_SHA256@@", SHA).replace("@@BATCH_SHA256@@", SHA)) == []
     assert "klein_jobs run" in text and "/workspace/dl" in text and "diffusers==0.43.0" in text
-    assert K.script_problems(text)
-    assert K.script_problems(text.replace("@@EE_SRC_SHA256@@", SHA).replace("@@BATCH_SHA256@@", SHA)) == []
+    assert K.script_problems(text) == []                                       # both lines are pinned in the committed script
+    from explainer_engine.training.pods.ltx import ab_bundle
+    unbuilt = text.replace(ab_bundle.pinned(K.LAUNCHER, "EE_SRC_SHA256"), "@@EE_SRC_SHA256@@").replace(
+        ab_bundle.pinned(K.LAUNCHER, "BATCH_SHA256"), "@@BATCH_SHA256@@")
+    assert unbuilt != text and K.script_problems(unbuilt)                      # a script with its placeholders back stays refused
+    assert K.script_problems(unbuilt.replace("@@EE_SRC_SHA256@@", SHA).replace("@@BATCH_SHA256@@", SHA)) == []
 
 
 def test_plan_reads_the_batch_file_only(tmp_path):
     bp = tmp_path / "b.json"
     bp.write_text(json.dumps(_batch()))
     out = K.plan(str(bp))
-    assert out["ok"] is False and out["problems"] and out["estimate"]["expected"]["usd"] > 0 and out["card"] == "NVIDIA L40S"
+    assert out["estimate"]["expected"]["usd"] > 0 and out["card"] == "NVIDIA L40S"
+    assert not any("sha256" in w for w in out["problems"])                      # the script pins are filled and match the tree's bundle
 
 
 def test_the_retired_guard_lets_only_the_two_ab_launchers_through(tmp_path):
