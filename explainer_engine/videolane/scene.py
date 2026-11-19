@@ -285,6 +285,39 @@ def compose_prompt(
     return out
 
 
+def picture_check(root: Path, script: dict, shot: dict, pic: Path) -> dict:
+    """Step 1.1 (MA-05, D-139): the fail-closed check of a shot's own start picture before any paid LTX job.
+
+    Perception comes from the shot's own ``perception`` or from the raster of the pinned picture; a picture that cannot be read
+    and has no perception is ``NO_PERCEPTION_INPUT``, which is a refusal, never a pass (F7). The record keeps the sha256 of the
+    bytes that were checked, so ``scene_run.job_spec`` can refuse a picture that changed afterwards."""
+    from explainer_engine.production import perceive_picture as PP
+    sha = _sha(pic)
+    perception = shot.get("perception") if isinstance(shot.get("perception"), dict) else None
+    if perception is None:
+        try:
+            from PIL import Image
+            with Image.open(pic) as im:
+                im.verify()
+        except Exception:
+            return {"state": "NO_PERCEPTION_INPUT", "regeneration_required": False, "picture_sha256": sha}
+        sid = str(shot.get("shot_id") or "")
+        layers_root = Path(root) / "production" / "clips" / sid / "layers"
+        perception = PP.perceive_picture(shot, script, picture=pic, layers_root=layers_root if layers_root.exists() else None)
+    rec = _reconcile_start_state_with_perception(script, dict(shot, perception=perception), episode_dir=root, persist_conflicts=False)
+    return {"state": str(rec["reconciliation_state"]), "regeneration_required": bool(rec["regeneration_required"]),
+            "picture_sha256": sha}
+
+
+def picture_check_refusal(check: dict) -> str | None:
+    """Why a recorded ``picture_check`` blocks the paid job (None = it may go)."""
+    if check.get("state") == "NO_PERCEPTION_INPUT":
+        return "NO_PERCEPTION_INPUT: the start picture could not be perceived (a missing check is a refusal)"
+    if check.get("regeneration_required"):
+        return f"the picture contradicts the line and must be regenerated ({check.get('state')})"
+    return None
+
+
 def _sha(p: Path) -> str:
     return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 
@@ -344,6 +377,8 @@ def build(root: Path, script: dict, scene_id: str, out: Path, *, budget: dict | 
             row["line"] = {"speaker": ln.get("speaker_id"), "text": ln.get("text")}
         if ep.get("continuity_mode") == "continuation" and shots:
             row["continue_frame"] = dict({"pick": "best_tail", "window_s": 0.75}, **(ep.get("continue_frame") or {}))
+            row["picture_check"] = {"state": "CONTINUATION", "regeneration_required": False, "picture_sha256": None,
+                                    "continues": shots[-1]["shot_id"]}
         else:
             key = f"{sid}_start"
             if key not in pics:
@@ -351,6 +386,10 @@ def build(root: Path, script: dict, scene_id: str, out: Path, *, budget: dict | 
             p = root / pics[key]["file"]
             manifest[key] = {"path": str(p.resolve()), "sha256": _sha(p)}
             row["picture"] = key
+            row["picture_check"] = picture_check(root, script, s, p)
+            why = picture_check_refusal(row["picture_check"])
+            if why:
+                raise ContractError(f"{sid}: {why} (MA-05): fix or regenerate the picture before the LTX scene")
         shots.append(row)
     if not shots:
         raise ContractError(f"{scene_id}: no video shot in the scene")
@@ -394,6 +433,15 @@ def storyboard_problems(scene: dict) -> list[str]:
         why.append(f"voice cards (Q5): {'; '.join(scene['voice_problems'][:6])}")
     voices = scene.get("voices") or {}
     for row in scene.get("shots") or []:
+        chk = row.get("picture_check")
+        if not isinstance(chk, dict):
+            why.append(f"{row.get('shot_id')}: no picture_check (write the scene again, MA-05)")
+        else:
+            bad = picture_check_refusal(chk)
+            if bad:
+                why.append(f"{row.get('shot_id')}: {bad}")
+            elif chk.get("state") == "CONTINUATION" and not chk.get("continues"):
+                why.append(f"{row.get('shot_id')}: a continuation names no shot it continues")
         speech = (row.get("prompt_parts") or {}).get("speech")
         sp = (row.get("line") or {}).get("speaker")
         if speech and sp in voices and f"in {voices[sp]['description']}:" not in speech:
