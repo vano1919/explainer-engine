@@ -84,5 +84,6 @@ def record(root: Path, shot: str, kind: str, path: str, answers_doc: dict, evide
     left = RR.RETRY_LEFT(states, shot, kind if kind == "image" else "clip") > 0 if kind in ("image", "clip") else True
     rec = OB.build(root, shot, kind, "claude", path, questions=list(answers_doc.get("answers", {})), answers=answers_doc.get("answers", {}),
                    defects=defects, evidence=evidence, note=answers_doc.get("note"), generative_left=left,
-                   reviewed={"by": "session", "at": OB._now(), "note": "looked at the sheet and the full frame"})
+                   reviewed={"by": "session", "at": OB._now(),
+                             "note": "looked at " + (", ".join(Path(e).name for e in (evidence or [])) or "the sheet and the full frame")})
     return OB.write(root, rec)

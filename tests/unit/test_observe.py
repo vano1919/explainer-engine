@@ -7,6 +7,7 @@ import subprocess
 
 import pytest
 
+from explainer_engine.governance import records as GR
 from explainer_engine.core import contracts
 from explainer_engine.core.errors import ContractError
 from explainer_engine.episode import shot_state as SS
@@ -17,6 +18,7 @@ from explainer_engine.qa.observers import ffmpeg as OF
 from explainer_engine.qa.observers import gemini as GM
 from explainer_engine.qa.observers import transcript as OT
 
+SESSION = {"by": "session", "note": "looked at the sheet and the full frame"}
 HAS_FFMPEG = shutil.which("ffmpeg") is not None and shutil.which("ffprobe") is not None
 
 
@@ -59,7 +61,7 @@ def test_a_clip_without_a_record_is_blocked_before_assemble(tmp_path):
 
 def test_a_passing_claude_look_opens_the_picture_gate_and_moves_the_state(tmp_path):
     r = _ep(tmp_path)
-    out = _rec(r, "image", "claude", "assets/p.png", reviewed={"by": "session"})
+    out = _rec(r, "image", "claude", "assets/p.png", reviewed=SESSION)
     assert out["settled"]["moves"] == ["IMAGE_OBSERVED", "IMAGE_ACCEPTED"]
     assert OB.gate_rows(r, "clips")[0]["status"] == "PASS"
     assert SS.ShotStates(r).state("S1") == "IMAGE_ACCEPTED"
@@ -67,11 +69,11 @@ def test_a_passing_claude_look_opens_the_picture_gate_and_moves_the_state(tmp_pa
 
 def test_a_changed_file_loses_its_record(tmp_path):
     r = _ep(tmp_path)
-    _rec(r, "image", "claude", "assets/p.png", reviewed={"by": "session"})
+    _rec(r, "image", "claude", "assets/p.png", reviewed=SESSION)
     (r / "assets" / "p.png").write_bytes(b"picture-2")
     SS.check_all(r)   # the stage start re-hashes and resets
     row = OB.gate_rows(r, "clips")
-    assert row and row[0]["status"] != "PASS" or "no image is bound" in row[0]["detail"]
+    assert row[0]["status"] in ("FAIL", "NOT_RUN")
     sha = SS.sha256_of(r / "assets/p.png")
     assert OB.asset_status(r, "S1", "image", sha)[0] == "MISSING"
 
@@ -79,14 +81,14 @@ def test_a_changed_file_loses_its_record(tmp_path):
 def test_a_defect_makes_the_record_retry_and_blocks_the_gate(tmp_path):
     r = _ep(tmp_path)
     out = _rec(r, "image", "claude", "assets/p.png", defects=[{"code": "F8", "where": "frame", "severity": "major"}],
-               reviewed={"by": "session"})
+               reviewed=SESSION)
     assert out["verdict"] == "RETRY" and out["action"] == "R2"
     assert OB.gate_rows(r, "clips")[0]["status"] == "FAIL"
 
 
 def test_a_minor_defect_is_review_and_never_a_pass(tmp_path):
     r = _ep(tmp_path)
-    _rec(r, "image", "claude", "assets/p.png", defects=[{"code": "F12", "where": "frame", "severity": "minor"}], reviewed={"by": "session"})
+    _rec(r, "image", "claude", "assets/p.png", defects=[{"code": "F12", "where": "frame", "severity": "minor"}], reviewed=SESSION)
     row = OB.gate_rows(r, "clips")[0]
     assert row["status"] == "REVIEW"
 
@@ -94,25 +96,75 @@ def test_a_minor_defect_is_review_and_never_a_pass(tmp_path):
 def test_an_automatic_pass_needs_a_look_or_an_accepted_calibration(tmp_path, monkeypatch):
     r = _ep(tmp_path)
     _rec(r, "clip", "ffmpeg", "assets/c.mp4")
-    _rec(r, "clip", "claude", "assets/c.mp4", reviewed={"by": "session"})
+    _rec(r, "clip", "claude", "assets/c.mp4", reviewed=SESSION)
     sha = SS.sha256_of(r / "assets/c.mp4")
     assert OB.asset_status(r, "S1", "clip", sha)[0] == "UNREVIEWED"
     rid = [x for x in OB.load(r) if x["observer"] == "ffmpeg"][0]["record_id"]
     OB.review(r, rid, "session", "looked at the numbers")
     assert OB.asset_status(r, "S1", "clip", sha)[0] == "PASS"
-    # calibration accepted instead of a look
+    # calibration accepted instead of a look: only by accept(), which records his word
     r2 = _ep(tmp_path / "b")
     _rec(r2, "clip", "ffmpeg", "assets/c.mp4")
-    _rec(r2, "clip", "claude", "assets/c.mp4", reviewed={"by": "session"})
+    _rec(r2, "clip", "claude", "assets/c.mp4", reviewed=SESSION)
     cal = tmp_path / "cal.json"
-    cal.write_text(json.dumps({"accepted": {"ffmpeg": {"message_id": "m1"}}}))
+    cal.write_text(json.dumps({"accepted": {"ffmpeg": {"message_id": "cmsg_m1", "words": "accept", "at": "x"}}}))
     monkeypatch.setattr(OB, "CALIBRATION", cal)
+    monkeypatch.setattr(OB, "GOVERNANCE_ROOT", tmp_path / "gov")
+    assert OB.asset_status(r2, "S1", "clip", sha)[0] == "UNREVIEWED"   # a hand-written entry does not count
+    OB.accept("ffmpeg", "cmsg_m1", "accept the ffmpeg report", cal)
     assert OB.asset_status(r2, "S1", "clip", sha)[0] == "PASS"
+
+
+def test_accept_needs_a_chat_id_words_and_an_automatic_observer(tmp_path, monkeypatch):
+    monkeypatch.setattr(OB, "GOVERNANCE_ROOT", tmp_path / "gov")
+    cal = tmp_path / "c.json"
+    for args in (("ffmpeg", "m1", "ok"), ("ffmpeg", "cmsg_1", " "), ("claude", "cmsg_1", "ok")):
+        with pytest.raises(ValueError):
+            OB.accept(*args, cal)
+    assert not OB.calibration_accepted("ffmpeg", cal)
+    OB.accept("transcript", "cmsg_77", "yes, accept it", cal)
+    assert OB.calibration_accepted("transcript", cal) and not OB.calibration_accepted("ffmpeg", cal)
+    # a bare true, or an entry whose record was removed, does not count
+    cal.write_text(json.dumps({"accepted": {"transcript": True}}))
+    assert not OB.calibration_accepted("transcript", cal)
+
+
+def test_a_session_review_needs_a_note_and_an_owner_review_needs_a_recorded_id(tmp_path, monkeypatch):
+    monkeypatch.setattr(OB, "GOVERNANCE_ROOT", tmp_path / "gov")
+    r = _ep(tmp_path)
+    with pytest.raises(ValueError, match="note"):
+        _rec(r, "image", "claude", "assets/p.png", reviewed={"by": "session", "note": " "})
+    with pytest.raises(ValueError, match="owner review"):
+        _rec(r, "image", "claude", "assets/p.png", reviewed={"by": "owner", "message_id": "cmsg_a1"})   # not recorded
+    sha = SS.sha256_of(r / "assets/p.png")
+    GR.add(OB.REVIEW_ACTION, f"ep_t:S1:{sha[:12]}", "cmsg_a1", "looks right", root=tmp_path / "gov")
+    out = _rec(r, "image", "claude", "assets/p.png", reviewed={"by": "owner", "message_id": "cmsg_a1"})
+    assert out["verdict"] == "PASS"
+    with pytest.raises(ValueError, match="owner review"):
+        OB.review(r, out["record_id"], "owner", "x", "cmsg_other")
+    OB.review(r, out["record_id"], "session", "re-opened the sheet and the full frame")
+
+
+def test_zero_bound_assets_is_not_run_and_a_state_past_the_asset_without_one_is_blocked(tmp_path):
+    r = tmp_path / "ep_e"
+    r.mkdir()
+    row = OB.gate_rows(r, "clips")[0]
+    assert row["status"] == "NOT_RUN" and "nothing was observed" in row["detail"]
+    assert OB.gate_rows(r, "assemble")[0]["status"] == "NOT_RUN"
+    # a shot whose state says its picture was accepted, with no picture bound
+    st = SS.ShotStates(r)
+    st.shot("S1")["state"] = "IMAGE_ACCEPTED"
+    st.save()
+    rows = OB.gate_rows(r, "clips")
+    assert rows[0]["status"] == "FAIL" and "S1: state IMAGE_ACCEPTED but no image is bound" in rows[0]["detail"]
+    st.shot("S1")["state"] = "VIDEO_OBSERVED"
+    st.save()
+    assert OB.gate_rows(r, "assemble")[0]["status"] == "FAIL"
 
 
 def test_a_not_run_record_never_passes(tmp_path):
     r = _ep(tmp_path)
-    _rec(r, "image", "claude", "assets/p.png", verdict="NOT_RUN", reviewed={"by": "session"})
+    _rec(r, "image", "claude", "assets/p.png", verdict="NOT_RUN", reviewed=SESSION)
     assert OB.gate_rows(r, "clips")[0]["status"] == "FAIL"
 
 
@@ -123,7 +175,7 @@ def test_the_vault_record_gets_the_observation_id(tmp_path):
            "sha256": sha, "version": 1, "parent": None, "provider": None, "model": None, "prompt_hash": None, "references": [],
            "seed": None, "parameters": {}, "cost": None, "created": "x", "observation_record_id": None, "creator_approval": None}
     (r / "assets" / "asset_records.jsonl").write_text(json.dumps(row) + "\n")
-    out = _rec(r, "image", "claude", "assets/p.png", reviewed={"by": "session"})
+    out = _rec(r, "image", "claude", "assets/p.png", reviewed=SESSION)
     saved = json.loads((r / "assets" / "asset_records.jsonl").read_text().splitlines()[0])
     assert saved["observation_record_id"] == out["record_id"] and out["asset_id"] == row["asset_id"]
 
@@ -215,15 +267,20 @@ def test_claude_look_record_refuses_an_unknown_code_and_takes_the_session_answer
     assert out["verdict"] == "PASS" and out["reviewed"]["by"] == "session"
 
 
-def test_gemini_chat_task_and_ingest(tmp_path):
+def test_gemini_chat_task_and_ingest(tmp_path, monkeypatch):
+    monkeypatch.setattr(OB, "GOVERNANCE_ROOT", tmp_path / "gov")
     r = _ep(tmp_path)
     task = GM.chat_task(r, [{"shot": "S1", "kind": "clip", "path": "assets/c.mp4", "questions": ["Does the handshake hold?"]}], tmp_path / "t.md")
     assert "assets/c.mp4" in task.read_text() and "Does the handshake hold?" in task.read_text()
     ans = tmp_path / "a.json"
     ans.write_text(json.dumps({"shots": {"S1": {"answers": {"q": "no"}, "defects": [
         {"code": "F5", "where": "t=2.6-4.0s", "severity": "major"}, {"code": "WAT", "where": "x", "severity": "major"}]}}}))
-    out = GM.ingest_chat(r, ans, {"S1": ("clip", "assets/c.mp4")}, message_id="m9")
+    out = GM.ingest_chat(r, ans, {"S1": ("clip", "assets/c.mp4")}, message_id="cmsg_m9")
     assert out[0]["verdict"] == "RETRY" and out[0]["action"] == "R3" and "unknown code" in out[0]["note"]
+    assert out[0]["reviewed"] is None and "owner stamp refused" in out[0]["note"]   # his id is not recorded
+    sha = SS.sha256_of(r / "assets/c.mp4")
+    GR.add(OB.REVIEW_ACTION, f"ep_t:S1:{sha[:12]}", "cmsg_m9", "ran the chat", root=tmp_path / "gov")
+    out = GM.ingest_chat(r, ans, {"S1": ("clip", "assets/c.mp4")}, message_id="cmsg_m9")
     assert out[0]["reviewed"]["by"] == "owner"
 
 
@@ -267,3 +324,31 @@ def test_calibration_counts_and_expected_text():
 def test_the_calibration_config_starts_with_no_accepted_observer():
     cfg = json.loads((OB.ROOT / "config" / "observer_calibration.json").read_text(encoding="utf-8"))
     assert cfg["accepted"] == {} and not OB.calibration_accepted("ffmpeg")
+
+
+def test_run_stage_blocks_clips_on_an_unobserved_picture_and_runs_after_a_record(tmp_path, monkeypatch):
+    from explainer_engine.episode import run as RUN
+    from tests.unit.test_qa_status import _episode, _fake
+    called = []
+
+    def fake(stage):
+        def fn(ep, rehearsal):
+            called.append(stage)
+            return [RUN.G.row(f"{stage}_ran", True, "ok")], {}
+        return fn
+    monkeypatch.setattr(RUN, "STAGE_FUNCS", {s: fake(s) for s in RUN.STAGES})
+    root = _episode(tmp_path)
+    (root / "assets").mkdir()
+    (root / "assets" / "p.png").write_bytes(b"picture-1")
+    st = SS.ShotStates(root)
+    st.bind("S1", "image", "assets/p.png")
+    st.save()
+    ep = RUN.Episode(root)
+    for stage in ("script", "sound_plan", "pictures", "voice"):
+        RUN.run_stage(ep, stage)
+    called.clear()
+    rec = RUN.run_stage(ep, "clips")
+    assert called == [] and rec["verdict"]["status"] == "FAIL" and "S1: MISSING" in rec["rows"][0]["detail"]
+    OB.write(root, OB.build(root, "S1", "image", "claude", "assets/p.png", reviewed=SESSION))
+    rec = RUN.run_stage(RUN.Episode(root, force=True), "clips")
+    assert called == ["clips"] and rec["verdict"]["status"] == "PASS"

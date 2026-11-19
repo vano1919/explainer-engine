@@ -33,7 +33,9 @@ An asset passes only with a counted PASS record for its **current** sha256; a ch
 count (and `shot_state.check_all` has already reset its states). Required observers: a picture needs one look (claude, gemini_chat or
 gemini_api); a clip needs `ffmpeg` and one look; a voice take needs `transcript`. MISSING, NOT_RUN, RETRY, BLOCK and an unlooked
 automatic PASS give a BLOCK row listing the shots (the stage does not run, except in a rehearsal, which never ships); only REVIEW
-records give a REVIEW row, which needs the creator's `approve` bound to his message id before the next stage.
+records give a REVIEW row, which needs the creator's `approve` bound to his message id before the next stage. Nothing bound to any
+shot is a NOT_RUN row (never a pass, P-6), and a shot whose state is past the asset (`IMAGE_OBSERVED`.. for pictures, `VIDEO_OBSERVED`..
+for clips) with no bound asset is a BLOCK line.
 
 `ShotStates` moves when a record is written: `IMAGE_OBSERVED` then `IMAGE_ACCEPTED` (a picture), `VIDEO_GENERATED`, `VIDEO_OBSERVED`,
 `CLIP_ACCEPTED` (a clip); the accepted states only when every required observer has a counted PASS.
@@ -41,14 +43,18 @@ records give a REVIEW row, which needs the creator's `approve` bound to his mess
 ## 4. Trust: the calibration rule
 
 An automatic observer (ffmpeg, transcript, gemini_api) decides alone only after the creator accepts its calibration report
-(`config/observer_calibration.json`, `accepted.<observer>` with his message id; the file starts empty). Until then its PASS counts only
-after the session or the creator looked at its evidence: `python -m explainer_engine.qa.observe review <episode> <record_id> --by session`.
+(`python -m explainer_engine.qa.observe accept <observer> --message-id cmsg_... --words "<his words>"` writes an `observer_calibration`
+record to `jobs/creator_ok.jsonl` and the entry `accepted.<observer>` = {message_id, words, at} in `config/observer_calibration.json`, which
+starts empty; a hand-edited entry does not count, only one whose message id is recorded). Until then its PASS counts only after the session
+or the creator looked at its evidence: `python -m explainer_engine.qa.observe review <episode> <record_id> --by session --note "<what was
+looked at>"`. A session review needs that note; an owner review needs his chat message id recorded as `observation_review` of
+`<episode>:<shot>:<sha256[:12]>` (`governance ok`); `gemini_chat` records carry the owner stamp only when it is recorded.
 Report: [OBSERVATION_CALIBRATION_2026-11-20](OBSERVATION_CALIBRATION_2026-11-20.md).
 
 ## 5. Defect to action (OB-2)
 
-R1 fix in place (trim, mute, reseed, inpaint), R2 prompt patch, R3 new keyframe or reference, R4 fallback 2.5D. `generative` = it spends
-a generation and counts against the two retries of `shot_state.RETRY_CAP`; a trim, a mute and the 2.5D fallback spend none. The third
+R1 fix in place (trim, mute, reseed, inpaint), R2 prompt patch, R3 new keyframe or reference, R4 fallback 2.5D. `generative` = it spends (D-131)
+a generation and counts against the two retries of `shot_state.RETRY_CAP`; a trim, a mute and the 2.5D fallback spend none. The third (D-131)
 generative retry is refused (`retry_router.consume_retry` raises); `retry_router.decide` then answers R4 for a clip and ESCALATE for a
 picture. An unknown code has no action and is refused. The table is `retry_router.R_ACTIONS` (a test keeps this page equal to it):
 
@@ -58,9 +64,9 @@ picture. An unknown code has no action and is refused. The table is `retry_route
 | `F2` | R2 | yes | motion is written as a body mechanic (failure-modes F2) |
 | `F3` | R2 | yes | one motion source, a tighter shot size |
 | `F4` | R2 | yes | the action is rewritten as a body mechanic |
-| `F5` | R3 | yes | an end keyframe gives the clip an end state |
+| `F5` | R3 | yes | an end keyframe gives the clip an end state (D-131) |
 | `F6` | R2 | yes | exactly one named camera move with a magnitude |
-| `F7` | R3 | yes | the end state of shot N becomes the start of N+1 through a new keyframe |
+| `F7` | R3 | yes | the end state of shot N becomes the start of N+1 through a new keyframe (D-131) |
 | `F8` | R2 | yes | the era's forbidden-object list goes into the prompt |
 | `F9` | R2 | yes | the head count is declared in the prompt |
 | `F10` | R1 | yes | reseed or inpaint the hands; an insert only if two seeds fail |
@@ -72,7 +78,7 @@ picture. An unknown code has no action and is refused. The table is `retry_route
 | `F16` | R3 | yes | style is restored from the approved reference |
 | `F17` | R2 | yes | the delivery aspect is fixed in the prompt |
 | `F18` | R1 | no | cut the seam out; long beats are planned as cut sequences |
-| `F19` | R3 | yes | the prop is held in frame or handed to a cut by a new keyframe |
+| `F19` | R3 | yes | the prop is held in frame or handed to a cut by a new keyframe (D-131) |
 | `TECH-DECODE` | R1 | yes | the file does not decode: generate it again with a new seed |
 | `TECH-BLACK` | R1 | no | trim the black stretch |
 | `TECH-FREEZE` | R2 | yes | a frozen picture is F2: write the motion |
@@ -97,7 +103,7 @@ the page. Video: `aistudio.google.com/docs/video-understanding`, read 2026-11-19
 (66 at low media resolution), audio 32 tokens per second, File API 20 GB per file on the paid tier. Output tokens are an assumption
 of 1,500 per clip (answers, defect list, thinking); the measured figure replaces it after a first clip.
 
-Files: calibration set = the 12 raw LTX clips of `episodes/ep_truce_1914/qa/observer_calibration_labels.json`, 51.8 s in total; full set =
+Files: calibration set = the 12 raw LTX clips of `episodes/ep_truce_1914/qa/observer_calibration_labels.json`, 51.8 s in total; full set = (D-131)
 56 raw clips, about 242 s (12-clip mean x 56). Estimate = seconds x fps x 258 video tokens at the input price + seconds x 32 audio
 tokens at the audio price + output tokens at the output price. Standard tier (not batch).
 

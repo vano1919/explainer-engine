@@ -44,7 +44,7 @@ def chat_task(root: Path, items: list[dict], out_path: Path) -> Path:
     return out_path
 
 
-def _records(root: Path, doc: dict, files: dict, observer: str, reviewed, evidence) -> list[dict]:
+def _records(root: Path, doc: dict, files: dict, observer: str, reviewed, evidence, owner_message_id: str | None = None) -> list[dict]:
     out = []
     for shot, ans in doc.get("shots", {}).items():
         kind, path = files[shot]
@@ -54,15 +54,23 @@ def _records(root: Path, doc: dict, files: dict, observer: str, reviewed, eviden
         rec = OB.build(root, shot, kind, observer, path, questions=list(ans.get("answers", {})), answers=ans.get("answers", {}),
                        defects=defects, evidence=evidence, note=note, reviewed=reviewed,
                        verdict=ST.REVIEW if rest and not defects else None)
+        if owner_message_id:   # stamp "owner" only when his word for this asset is recorded; else an unstamped record
+            rec["reviewed"] = {"by": "owner", "at": OB._now(), "note": "Gemini chat run by the creator", "message_id": owner_message_id}
+            try:
+                OB.check_reviewed(rec)
+            except ValueError as exc:
+                rec["reviewed"] = None
+                rec["note"] = ((rec.get("note") or "") + f" owner stamp refused: {exc}").strip()
         out.append(OB.write(root, rec))
     return out
 
 
 def ingest_chat(root: Path, answers_path: Path, files: dict[str, tuple[str, str]], message_id: str | None = None) -> list[dict]:
-    """``files``: {shot: (kind, path)}. The creator ran the chat, so the records carry ``reviewed: owner``."""
+    """``files``: {shot: (kind, path)}. The creator ran the chat: a record carries ``reviewed: owner`` only when ``message_id`` is his
+    chat message id recorded as an ``observation_review`` of that asset; otherwise it is stored without the stamp (gemini_chat
+    still counts as a look)."""
     doc = json.loads(Path(answers_path).read_text(encoding="utf-8"))
-    return _records(Path(root), doc, files, "gemini_chat", {"by": "owner", "at": OB._now(), "note": "Gemini chat run by the creator",
-                                                           "message_id": message_id}, [str(answers_path)])
+    return _records(Path(root), doc, files, "gemini_chat", None, [str(answers_path)], owner_message_id=message_id)
 
 
 class GeminiApiObserver:

@@ -6,7 +6,7 @@ Question: do the free observers find the known 1914 defects and keep quiet on cl
 
 ## Set
 
-12 raw LTX clips downloaded from the HF dataset (sha256 equal to the vault records of `asset_records.jsonl`, checked): 3 labelled
+12 raw LTX clips downloaded from the HF dataset (sha256 equal to the vault records of `asset_records.jsonl`, checked): 3 labelled (D-131)
 defect clips (`S06_SH008` the word "Maybe" twice; `S03_SH007` silent beat transcribed as "Oh my God" and a white fog bloom; `S04_SH014`
 handshake breaks at the end; source `CORRECTIONS_LOG.md` part A), 8 labelled good, 1 not evaluable (`S03_SH003`: its defect, a cut word
 "Nacht", was made by the old assembly, the raw clip is complete, so no label is claimed). Good means only: no defect recorded in the corrections log.

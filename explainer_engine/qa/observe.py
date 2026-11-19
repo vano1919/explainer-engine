@@ -12,11 +12,16 @@ and wrote that into the record (``review``). Defects map to one action R1..R4 in
     python -m explainer_engine.qa.observe status <episode folder>
     python -m explainer_engine.qa.observe gate <episode folder> --stage clips|assemble
     python -m explainer_engine.qa.observe review <episode folder> <record_id> --by session|owner [--note T] [--message-id M]
+    python -m explainer_engine.qa.observe accept <observer> --message-id cmsg_... --words "<his words>"
+
+``review --by owner`` needs his message id recorded as ``observation_review`` of ``<episode>:<shot>:<sha256[:12]>`` (governance ok);
+``accept`` writes ``observer_calibration`` and the config entry; a hand-edited config entry does not count.
 """
 from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 import time
 from pathlib import Path
@@ -42,6 +47,9 @@ REQUIRED = {"image": (("claude", "gemini_chat", "gemini_api"),),
 STAGE_KIND = {"clips": ("image", "image"), "assemble": ("clip", "clip")}   # stage -> (kind, shot_state asset key)
 ROOT = Path(__file__).resolve().parents[2]
 CALIBRATION = ROOT / "config" / "observer_calibration.json"
+GOVERNANCE_ROOT = None   # where jobs/creator_ok.jsonl lives (None: the repo); tests point it at a temp folder
+CALIBRATION_ACTION, REVIEW_ACTION = "observer_calibration", "observation_review"
+MSG_ID = re.compile(r"cmsg_[A-Za-z0-9]+")
 
 
 def _now() -> str:
@@ -64,11 +72,55 @@ def _rewrite(root: Path, rows: list[dict]) -> None:
 
 
 def calibration_accepted(observer: str, path: Path | None = None) -> bool:
-    """The creator accepted this observer's calibration report (config/observer_calibration.json, ``accepted.<observer>``)."""
+    """The creator accepted this observer's calibration report: ``accepted.<observer>`` = {message_id, words, at} in
+    config/observer_calibration.json AND his recorded word of that message id (``observer_calibration`` in jobs/creator_ok.jsonl,
+    written by ``accept``). A hand-written entry, a bare ``true`` or an entry without the record does not count."""
+    from explainer_engine.governance import records
     p = Path(path or CALIBRATION)
     if not p.is_file():
         return False
-    return bool((json.loads(p.read_text(encoding="utf-8")).get("accepted") or {}).get(observer))
+    entry = (json.loads(p.read_text(encoding="utf-8")).get("accepted") or {}).get(observer)
+    if not isinstance(entry, dict) or not MSG_ID.fullmatch(str(entry.get("message_id") or "")) or not (entry.get("words") or "").strip():
+        return False
+    return records.find(CALIBRATION_ACTION, observer, entry["message_id"], root=GOVERNANCE_ROOT) is not None
+
+
+def accept(observer: str, message_id: str, words: str, path: Path | None = None) -> dict:
+    """Record the creator's acceptance of one observer's calibration report (his message id and words): a governance record
+    plus the ``accepted.<observer>`` entry. Only automatic observers have a calibration to accept."""
+    from explainer_engine.governance import records
+    if observer not in AUTOMATIC:
+        raise ValueError(f"{observer!r} has no calibration to accept: one of {', '.join(AUTOMATIC)}")
+    if not MSG_ID.fullmatch(message_id or ""):
+        raise ValueError("an acceptance needs the creator's own chat message id (cmsg_...)")
+    if not (words or "").strip():
+        raise ValueError("an acceptance needs the creator's quoted words or the card option he chose")
+    records.add(CALIBRATION_ACTION, observer, message_id, words, root=GOVERNANCE_ROOT)
+    p = Path(path or CALIBRATION)
+    cfg = json.loads(p.read_text(encoding="utf-8")) if p.is_file() else {"schema": "observer_calibration/1", "accepted": {}}
+    cfg.setdefault("accepted", {})[observer] = {"message_id": message_id, "words": words[:300], "at": _now()}
+    write_text_atomic(p, json.dumps(cfg, indent=1, ensure_ascii=False) + "\n")
+    return cfg["accepted"][observer]
+
+
+def review_target(rec: dict) -> str:
+    return f"{rec['episode_id']}:{rec['shot_id']}:{rec['asset_sha256'][:12]}"
+
+
+def check_reviewed(rec: dict) -> None:
+    """A ``reviewed`` stamp must be earned: the session names what it looked at (a note), the creator carries his chat message id
+    and that id is recorded (``observation_review``, ``governance ok``). Raises ValueError otherwise."""
+    from explainer_engine.governance import records
+    rv = rec.get("reviewed")
+    if not rv:
+        return
+    if rv["by"] == "session" and not (rv.get("note") or "").strip():
+        raise ValueError("a session review needs a note that names what was looked at (sheet, frame, transcript diff)")
+    if rv["by"] == "owner":
+        mid = rv.get("message_id") or ""
+        if not MSG_ID.fullmatch(mid) or records.find(REVIEW_ACTION, review_target(rec), mid, root=GOVERNANCE_ROOT) is None:
+            raise ValueError("an owner review needs the creator's chat message id, recorded as an observation_review of "
+                             f"{review_target(rec)} (python -m explainer_engine.governance ok)")
 
 
 def record_id(ep: str, shot: str, kind: str, observer: str, sha: str) -> str:
@@ -132,6 +184,7 @@ def write(root: Path, rec: dict) -> dict:
     """Validate, append, link the vault record and move the shot state. Returns the record plus ``settled`` (what the shot
     state did). One record never accepts alone: ``settle`` rolls every required observer up."""
     contracts.validate(rec)
+    check_reviewed(rec)
     root = Path(root)
     rows = load(root) + [rec]
     _rewrite(root, rows)
@@ -221,6 +274,7 @@ def review(root: Path, rid: str, by: str, note: str = "", message_id: str | None
         raise KeyError(f"no observation record {rid!r}")
     rec["reviewed"] = {"by": by, "at": _now(), "note": note, "message_id": message_id}
     contracts.validate(rec)
+    check_reviewed(rec)
     _rewrite(root, rows)
     return {**rec, "settled": settle(root, rec["shot_id"], rec["kind"], rec["asset_path"], rec["asset_sha256"])}
 
@@ -236,9 +290,13 @@ def gate_rows(root: Path, stage: str) -> list[dict]:
     root = Path(root)
     states = SS.ShotStates(root)
     block, review_, ok = [], [], 0
+    beyond = SS.STATES.index("IMAGE_GENERATED" if kind == "image" else "VIDEO_GENERATED")
     for shot in sorted(states.doc["shots"]):
         a = states.shot(shot)["assets"].get(key)
         if not a:
+            st = states.state(shot)
+            if SS.STATES.index(st) > beyond:   # the state says the asset exists, but none is bound: nothing to hash, nothing seen
+                block.append(f"{shot}: state {st} but no {kind} is bound to the shot")
             continue
         sha = SS.sha256_of(root / a["path"])
         if sha is None:
@@ -258,8 +316,9 @@ def gate_rows(root: Path, stage: str) -> list[dict]:
     if review_:
         return [G.row(name, False, f"OB-1: {len(review_)} {kind}(s) observed with REVIEW: " + "; ".join(review_[:25]),
                       {"review": review_, "ok": ok}, level=G.REVIEW)]
-    return [G.row(name, True, f"OB-1: {ok} {kind}(s) have a passing observation record" if ok else
-                  f"OB-1: no {kind} is bound to a shot yet; nothing to observe", {"ok": ok})]
+    if not ok:   # P-6: nothing was observed because nothing is bound: NOT_RUN, never a pass
+        return [G.row(name, None, f"NOT_RUN: no {kind} is bound to any shot (shot_state.json), so nothing was observed")]
+    return [G.row(name, True, f"OB-1: {ok} {kind}(s) have a passing observation record", {"ok": ok})]
 
 
 def _cli(argv=None) -> int:
@@ -276,7 +335,14 @@ def _cli(argv=None) -> int:
     r.add_argument("--by", required=True, choices=("session", "owner"))
     r.add_argument("--note", default="")
     r.add_argument("--message-id", default=None)
+    c = sub.add_parser("accept", help="record the creator's acceptance of an observer's calibration report")
+    c.add_argument("observer", choices=AUTOMATIC)
+    c.add_argument("--message-id", required=True)
+    c.add_argument("--words", required=True)
     a = ap.parse_args(argv)
+    if a.cmd == "accept":
+        print(json.dumps(accept(a.observer, a.message_id, a.words), ensure_ascii=False))
+        return 0
     root = Path(a.episode)
     if a.cmd == "status":
         seen = {}

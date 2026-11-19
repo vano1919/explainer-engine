@@ -23,6 +23,13 @@ TOBA = ROOT / "episodes" / "ep_toba"
 FPS = 24
 
 
+@pytest.fixture(autouse=True)
+def _runner_tests_isolate_the_observation_gate(monkeypatch):
+    """These tests fake the stage functions, which bind no picture or clip; the OB-1 gate (NOT_RUN with nothing bound) has its own
+    tests in test_observe.py, including one through ``run_stage``. Here the runner's own logic is under test."""
+    monkeypatch.setattr(RUN.OBS, "gate_rows", lambda root, stage: [])
+
+
 def _script(shot_ids=("S01_SH001", "S01_SH005", "S01_SH006"), durations=(1.0, 1.25, 1.0)) -> dict:
     doc = json.loads((TOBA / "story" / "production_script.json").read_text(encoding="utf-8"))
     by = {s["shot_id"]: s for s in doc["shots"]}
