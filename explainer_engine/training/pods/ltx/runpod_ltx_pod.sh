@@ -30,7 +30,7 @@ cp "$JOB/dl/code/ltx_ab/ee_src.tar.gz" "$JOB/ee_src.tar.gz"
 cp "$JOB/dl/code/ltx_ab/batch.tar.gz" "$JOB/batch.tar.gz"
 printf '%s  %s\n' dfc931d0cb5b15750cf47ba2fd8fe98ed77aa691012271cfee5bf279dab3b98f "$JOB/ee_src.tar.gz" > "$JOB/sha.txt"
 printf '%s  %s\n' @@BATCH_SHA256@@ "$JOB/batch.tar.gz" >> "$JOB/sha.txt"
-sha256sum -c "$JOB/sha.txt" || exit 3
+sha256sum --strict -c "$JOB/sha.txt" || exit 3
 ee_needs_check
 tar -xzf "$JOB/ee_src.tar.gz" -C /workspace/ee || exit 1
 tar -xzf "$JOB/batch.tar.gz" -C /workspace/batch || exit 1
