@@ -1332,7 +1332,9 @@ def _insert_seconds(ins: dict, timing: dict, script: dict, fps: int) -> float:
 def _mute_clip_tail(ep, sid: str, clip: Path, rec: dict, clip_audio: dict) -> dict:
     """Step 1.5 (D-139): a clip record that carries ``mute_tail_from_s`` (raw-clip seconds, set by the one trim rule in
     ``videolane/ingest``) has its insert sound muted from there, with a short fade (``stems.mute_from``); the muted copy is what
-    the voice track lays. No field, no call, no change."""
+    the voice track lays. No field, no call, no change. Scope (review S3): ingest sets ``mute_tail_from_s`` only for clip-spoken
+    shots (amendment 1.2 covers speech), and this is called only for the dialogue inserts; a narrated clip's own sound
+    (``narrated_clips``) has no such field and nothing to apply."""
     from explainer_engine.audio import stems as STEMS
     from explainer_engine.videolane import voice as VV
     rel = max(0.0, float(rec["mute_tail_from_s"]) - float(rec.get("in_s") or 0.0))
