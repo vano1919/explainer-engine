@@ -1,0 +1,69 @@
+{
+  "_doc": "The Klein picture pod of the LTX A/B (W5, plan RUNPOD_AB_PLAN.md section 5, the creator's word cmsg_01Hnu5zB86sjUj5GtTgaUkPWU9kS1kT1CnB6HveYkz5rfQ): open-weights FLUX Klein on a small RunPod pod instead of the BFL API (level 3 of picture_route.json). Every value marked null is an OPEN pin (OR-22): the runner and `plan` refuse until it is recorded; nothing here is guessed.",
+  "launcher": "explainer_engine/training/pods/klein/klein_pod.sh",
+  "model": "flux-3-image-klein",
+  "models": {
+    "flux-3-image-klein": {
+      "repo": "black-forest-labs/flux-3-image-klein",
+      "revision": "3b767ff9b5261d71645e2ec49d87d298d955238d",
+      "layout": "diffusers (transformer, text_encoder, vae); no prompt upsampler (flux-3-image-klein-pup is not loaded)",
+      "gated": true,
+      "files": null,
+      "files_why": "OPEN: the repo is gated and the project's HF token gets a 403 until the owner accepts BFL's terms as vano1919; the diffusers file list (~21 GB) and every sha256 are read from the repo then, not guessed"
+    }
+  },
+  "pipeline_class": null,
+  "diffusers_version": null,
+  "pipeline_why": "OPEN: the diffusers pipeline class and version come from the model card once access is granted; the runner passes job.settings to the pipeline call as written (no default is assumed)",
+  "image": null,
+  "image_why": "OPEN: the same pinned image as the LTX pod (one CUDA 12.8+ proof for both): runpod section of ltx/launch.json",
+  "cards": [
+    {
+      "gpu": "NVIDIA RTX PRO 4500 Blackwell",
+      "vram_gb": 32,
+      "cloud": "SECURE",
+      "usd_per_h": 0.72,
+      "note": "in stock 2026-11-19 ~18:10 UTC per the plan thread (not read here)"
+    },
+    {
+      "gpu": "NVIDIA L40S",
+      "vram_gb": 48,
+      "cloud": "SECURE",
+      "usd_per_h": 1.09,
+      "note": "fallback, per the plan thread (not read here)"
+    }
+  ],
+  "container_disk_gb": 60,
+  "container_disk_why": "~21 GB of diffusers weights (an estimate from the plan, not measured) plus pictures; no network volume",
+  "weights_dir": "/workspace/dl",
+  "cap_usd": null,
+  "cap_why": "OPEN: the plan thread reports the owner's $0.60 card answer (cmsg_01Hnu5zB86sjUj5GtTgaUkPWSwoXZ54YzeRW8d48Sfsewv), but it was not recorded here from a relay: cap_usd stays null until the creator's number is confirmed to this thread; `plan` and `run` refuse without it",
+  "problem_at": 0.8,
+  "max_pictures": 24,
+  "minutes": {
+    "boot": [
+      5,
+      8,
+      12
+    ],
+    "download": [
+      2,
+      4,
+      8
+    ],
+    "load": [
+      1,
+      2,
+      3
+    ],
+    "seconds_per_picture": [
+      10,
+      20,
+      40
+    ],
+    "source": "RUNPOD_AB_PLAN.md section 5 (18 pictures: 11 / 20 / 35 min = $0.13 / $0.24 / $0.42 at $0.72/h); estimates, not measured"
+  },
+  "hf_out": "explainer-engine/klein_out",
+  "model_why": "plan thread, 2026-11-19 18:11 UTC: the owner chose FLUX 3 Klein; `models` can hold another id, `model` picks it",
+  "recommended_cap_usd": 0.6
+}
