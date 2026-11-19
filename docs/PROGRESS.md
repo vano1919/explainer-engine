@@ -6682,3 +6682,6 @@ files (128 passed, 1 skipped). Render waits for the creator's OK.
 
 ## 2026-11-19: V4.1 Step 0.3: decisions recorded (D-139), docs only
 Thread "Step 0 და Step 1-ის კოდის წერა", base PR #196 head `e4521cd`. The creator approved the final action plan (card option "კი, Claude წერს", 13:46 Georgia time). `docs/DECISIONS_AND_OPEN_QUESTIONS.md` gets D-139 (P1.2 accepted, MA-01..MA-18 accepted, one render path `episode/run.py`, no BBC RemArc in a monetised master, precedence) and a conflict table; the plan and Gemini's review are copied to `docs/architecture/V4_1_*` and indexed. No code, no media, $0. Check: `python -m explainer_engine.docs_lint`.
+
+## 2026-11-19: V4.1 Step 0.4a: four files protected
+`config/model_routing.json` `protected_files` gains `config/picture_route.json`, `config/retired_era.json`, `docs/architecture/v4_1_allowlists.json` and `.github/workflows/quality.yml` (60 minutes, like the money caps). The creator's word is recorded with `governance ok protected_config` (his message cmsg_01Hnu5zB86sjUj5GtTgaUkPWRi7D8DbiUtkSaqoJ12zqWe in the plan thread, which names all four files; the plan listed two, he added the last two). Test: `tests/unit/test_v41_protected_files.py` (the hook refuses Edit and Write to each file until a word is recorded; the word names one file only).
