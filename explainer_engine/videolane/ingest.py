@@ -254,8 +254,9 @@ def drop_word_artifacts(words: list[dict], audio=None, rate: int = 16000, notes:
     """The two word-only filters, in one place for the ingest cut and ``whisper_edit_points``: a duplicate opening word more than
     0.8 s before its repeat, and a trailing hallucinated token after a 0.45 s gap ("You"). Returns the words and the
     ``mute_tail_from_s`` of a dropped tail token (else None). The duplicate is dropped ONLY when no voice is heard under it:
-    S06_SH008's two "Maybe." are two soldiers, both voiced (G1 + the creator's listen), and the first is a real line. Without
-    audio the duplicate cannot be judged and is kept (never dropped on the words alone); ``notes`` receives the REVIEW item."""
+    S06_SH008's two "Maybe." are two soldiers, both voiced (G1 + the creator's listen), and the first is a real line (the creator's
+    decision, 2026-11-19: all three phrases stay). Without audio the duplicate cannot be judged and is kept (never dropped on the
+    words alone); ``notes`` receives a record of the kept word, not a REVIEW item."""
     ws = list(words)
     mute_at = None
     if len(ws) >= 2:
@@ -272,7 +273,7 @@ def drop_word_artifacts(words: list[dict], audio=None, rate: int = 16000, notes:
             elif notes is not None:
                 notes.append({"kind": "duplicate_opening_word_kept", "text": _wtext(ws[0]), "start": a, "end": b,
                               "why": "a voice is heard under it" if have is not None else "no audio to check it against",
-                              "review": "the clip has one more spoken line than the script's text; the creator decides"})
+                              "decision": "kept: a voiced opening word is a real line (creator, 2026-11-19, S06_SH008 keeps all three lines)"})
     if len(ws) >= 2:
         last = re.sub(r"\W+", "", _wtext(ws[-1]).lower())
         if last in HALLUCINATED_TAIL_TOKENS and float(ws[-1].get("start", 0.0)) - float(ws[-2].get("end", 0.0)) >= 0.45:
