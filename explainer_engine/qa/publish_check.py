@@ -203,6 +203,16 @@ def third_party_findings(episode: Path, description: str = "", manifest: Path | 
     return out
 
 
+def unresolved_reviews(found: list[dict], episode: Path | None) -> dict:
+    """Open REVIEW items (D-139 field ``unresolved_reviews``): the clip records (one item per clip, ``videolane/ingest``) plus the
+    PC-10 third-party REVIEW findings under their own heading, so PC-10 and this count agree. Printed only, never blocking
+    (QA severity is Step 5)."""
+    from explainer_engine.videolane import ingest as I
+    clips = I.unresolved_reviews(episode) if episode is not None else {"count": 0, "items": []}
+    third = [f"{f['where']}: {f['detail']}" for f in found if f["rule"] == "PC-10" and f["severity"] == "REVIEW"]
+    return {"count": clips["count"] + len(third), "clips": clips["items"], "third_party_media": third}
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("publish")
@@ -216,8 +226,12 @@ def main(argv: list[str] | None = None) -> int:
     found = check(pub, doc, episode)
     for f in found:
         print(f"{f['severity']:6} {f['rule']} {f['where']}: {f['detail']}")
+    open_items = unresolved_reviews(found, episode)
     print(f"{sum(f['severity'] == 'FAIL' for f in found)} FAIL, {sum(f['severity'] == 'REVIEW' for f in found)} REVIEW "
-          f"(unresolved REVIEW items: {sum(f['severity'] == 'REVIEW' for f in found)})")
+          f"(unresolved_reviews: {open_items['count']})")
+    for heading, key in (("clips", "clips"), ("third_party_media", "third_party_media")):
+        for it in open_items[key]:
+            print(f"  unresolved [{heading}] {it}")
     return 1 if any(f["severity"] == "FAIL" for f in found) else 0
 
 
