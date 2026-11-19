@@ -112,9 +112,9 @@ generator, HF upload and sha256 verify); only the weights place differs (`EE_LTX
   sha256-checked, the pod ends on any fail before a model loads); L3 is one smoke clip on that card; L4 is the batch, each clip verified
   on HF before the next starts (OR-33). At 80 % of the cap no new clip starts.
 - Local refusals before `create` (`plan`): no pinned image, no cap, cap above `per_pod_usd`, a job refused by the Modal rules, hop > 2,
-  one run over the cap, the batch's max estimate over the cap.
-- Open (OR-22, nothing assumed): `runpod.image` is null (no digest is proven for the Blackwell card, sm_120 needs a CUDA 12.8+ torch),
-  `cap_usd` is null (the owner's cap answer), the code bundle sha256 in the pod script is a placeholder until the bundle is built, the
+  not even one clip fitting the cap, the batch's expected estimate over the cap (D-132).
+- Cap: $3.50 for all 3 shots in one pod (the owner, 2026-11-19 17:54 UTC, cmsg_01Hnu5zB86sjUj5GtTgaUkPWGUyHxz8RE3yqtyNBBTRw4z; D-132): `plan` refuses when the EXPECTED estimate is over it, the max (about $3.69) is a REVIEW line, and `create --max-usd` must be the same number.
+- Open (OR-22, nothing assumed): `runpod.image` is null (no digest is proven for the Blackwell card, sm_120 needs a CUDA 12.8+ torch), the code bundle sha256 in the pod script is a placeholder until the bundle is built, the
   ~120 GB of weights and the minutes are estimates, not measured.
 - Retired exception: `config/retired_era.json` entries `runpod` and `ltx` carry an `exception` for this one launcher; every other (D-132)
   RunPod launcher and the p15 launcher stay refused (`retired.excepted`).

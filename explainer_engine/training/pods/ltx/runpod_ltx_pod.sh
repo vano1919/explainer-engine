@@ -9,7 +9,7 @@
 # needs: /workspace/job/ee_src.tar.gz 1000000
 # (why: the code bundle and the batch files are sha256-pinned below)
 mkdir -p "$EE_OUT"
-export HF_HOME=/workspace/dl/hf PYTHONUNBUFFERED=1 PIP_BREAK_SYSTEM_PACKAGES=1 HF_HUB_ENABLE_HF_TRANSFER=1 EE_LTX_VOL_ROOT=/workspace/dl
+export HF_HOME=/workspace/dl/hf PYTHONUNBUFFERED=1 PIP_BREAK_SYSTEM_PACKAGES=1 EE_LTX_VOL_ROOT=/workspace/dl
 trap 'exit 143' TERM
 printf '%s start\n' "$(date -u +%T)" > "$EE_OUT/progress.txt"
 pip install -q "huggingface_hub==1.33.0" || exit 1

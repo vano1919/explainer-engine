@@ -52,7 +52,8 @@ def launch():
 def test_the_launch_has_a_runpod_section_with_open_items_marked():
     sec = LAUNCH["runpod"]
     assert [c["gpu"] for c in sec["cards"]][0].startswith("NVIDIA RTX PRO 6000 Blackwell")
-    assert sec["image"] is None and "OPEN" in sec["image_why"] and sec["cap_usd"] is None   # nothing is assumed (OR-22)
+    assert sec["image"] is None and "OPEN" in sec["image_why"]                      # nothing is assumed (OR-22)
+    assert sec["cap_usd"] == 3.5 and "cmsg_01Hnu5zB86sjUj5GtTgaUkPWGUyHxz8RE3yqtyNBBTRw4z" in sec["cap_why"]
     assert "network volume" in sec["container_disk_why"]
     assert R.card_of(LAUNCH) == ("NVIDIA RTX PRO 6000 Blackwell Server Edition", 1.69)
 
@@ -90,10 +91,18 @@ def test_the_local_refusals(launch):
     assert R.batch_problems(unpinned, [_guided()], price=1.69, cap_usd=3.5, pins=PINS)
     assert any("checkpoint_path" in p for p in R.batch_problems(launch, [_clip(kind="retake", checkpoint_path="/x")], price=1.69,
                                                                  cap_usd=3.5, pins=PINS))
-    # an estimate over the owner's cap, and one run alone over it
-    many = [_guided(f"S{i}") for i in range(6)]
-    assert any("over the cap" in p for p in R.batch_problems(launch, many, price=1.69, cap_usd=3.5, pins=PINS))
-    assert any("one run alone" in p for p in R.batch_problems(launch, [_guided()], price=1.69, cap_usd=0.2, pins=PINS))
+    # the expected estimate over the cap is refused; the max over it is only a REVIEW line; one run that cannot fit is refused
+    many = [_guided(f"S{i}") for i in range(20)]
+    assert any("expected estimate" in p for p in R.batch_problems(launch, many, price=1.69, cap_usd=3.5, pins=PINS))
+    assert any("not even one clip" in p for p in R.batch_problems(launch, [_guided()], price=1.69, cap_usd=0.2, pins=PINS))
+
+
+def test_the_owners_cap_passes_the_plans_all_shots_batch_and_two_dollars_does_not(launch):
+    """The owner's $3.50 (cmsg_01Hnu5zB86sjUj5GtTgaUkPWGUyHxz8RE3yqtyNBBTRw4z) and the plan's 8 distilled + 3 guided runs (max $3.69)."""
+    jobs = [_clip(f"D{i}") for i in range(8)] + [_guided(f"G{i}") for i in range(3)]
+    assert R.batch_problems(launch, jobs, price=1.69, cap_usd=3.5, pins=PINS) == []
+    assert R.batch_review(launch, jobs, price=1.69, cap_usd=3.5) and "REVIEW" in R.batch_review(launch, jobs, price=1.69, cap_usd=3.5)[0]
+    assert any("expected estimate" in p for p in R.batch_problems(launch, jobs, price=1.69, cap_usd=2.0, pins=PINS))
 
 
 def test_the_estimate_is_the_plans_table(launch):
@@ -284,8 +293,9 @@ def test_the_pod_script_passes_the_lint_and_the_dryrun_rules_but_is_unbuilt():
 
 
 def test_plan_reads_job_files_only_and_refuses_without_image_and_cap(tmp_path):
-    out = R.plan([], cap_usd=None)
-    assert out["ok"] is False and any("no pinned image" in p for p in out["problems"]) and any("no cap" in p for p in out["problems"])
+    out = R.plan([], cap_usd=None)                                            # the recorded $3.50 applies
+    assert out["ok"] is False and any("no pinned image" in p for p in out["problems"]) and out["cap_usd"] == 3.5
+    assert not any("no cap" in p for p in out["problems"])
     assert any("sha256" in p for p in out["problems"])                        # the unbuilt script
     assert out["estimate"] is None and out["card"].startswith("NVIDIA RTX PRO 6000")
 
@@ -293,3 +303,33 @@ def test_plan_reads_job_files_only_and_refuses_without_image_and_cap(tmp_path):
 def test_runpod_create_hands_its_script_to_the_retired_guard():
     src = (ROOT / "explainer_engine" / "cloud" / "runpod.py").read_text(encoding="utf-8")
     assert 'script=_opt(rest, "--script")' in src and 'retired.refuse("runpod"' in src
+
+
+def test_the_cap_clock_starts_at_the_pods_birth(monkeypatch, tmp_path, launch):
+    """EE_CREATED, not the runner's start: boot, pip and clone count against the 80 % stop."""
+    monkeypatch.setattr(M, "LAUNCH", launch)
+    dl = _stage_ok(monkeypatch, tmp_path / "dl", launch)
+    clock = Clock()
+    sh = FakeSh()
+    res = R.run(_batch(), [_clip()], tmp_path / "out", api=FakeApi(), sh=sh, download=dl, clock=clock, created=clock() - 3600 * 2,
+                vol_root=str(tmp_path / "dl"), tmp=str(tmp_path / "in"), upload_op=Op)   # 2 h old at $1.69/h = $3.38 > 80 % of $3.50
+    assert res["end"] == "CAPPED" and res["spent_usd"] >= 3.38 - 0.01 and len(sh.calls) == 1   # only the smoke clip ran
+    monkeypatch.setenv("EE_CREATED", str(clock() - 3600))
+    res = R.run(_batch(), [_clip()], tmp_path / "out2", api=FakeApi(), sh=FakeSh(), download=dl, clock=clock,
+                vol_root=str(tmp_path / "dl"), tmp=str(tmp_path / "in"), upload_op=Op)
+    assert res["end"] == "DONE" and res["spent_usd"] == pytest.approx(1.69, abs=0.01)
+
+
+def test_l2_hashes_every_file_once_and_uploads_the_smoke_record(monkeypatch, tmp_path, launch):
+    monkeypatch.setattr(M, "LAUNCH", launch)
+    dl = _stage_ok(monkeypatch, tmp_path / "dl", launch)
+    seen = []
+    inner = M._sha
+    monkeypatch.setattr(M, "_sha", lambda p: (seen.append(str(p)), inner(p))[1])
+    api = FakeApi()
+    res = R.run(_batch(), [_guided("A"), _guided("B", seed=8)], tmp_path / "out", api=api, sh=FakeSh(), download=dl,
+                vol_root=str(tmp_path / "dl"), tmp=str(tmp_path / "in"), upload_op=Op)
+    weights = [p for p in seen if "/model/" in p]
+    assert len(weights) == len(set(weights)) == len(res["steps"]["L2"]["files"])
+    assert any(k.endswith("L3_smoke.record.json") for k in api.files)
+    assert (tmp_path / "out" / "L3_smoke.record.json").is_file()

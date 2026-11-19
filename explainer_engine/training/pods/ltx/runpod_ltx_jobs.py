@@ -70,7 +70,7 @@ def estimate(launch: dict, jobs: list[dict], price: float) -> dict:
 def batch_problems(launch: dict, jobs: list[dict], *, price: float, cap_usd: float | None, pins: dict | None = None,
                    caps: dict | None = None, check_image: bool = True) -> list[str]:
     """The refusals that run locally before ``create`` (and again in the pod before L2): the Modal worker's own job refusals, hop > 2,
-    a job over the cap, the batch's estimate over the owner's cap, a cap above the creator's ceilings, no pinned image."""
+    the EXPECTED estimate over the owner's cap (the max is shown as a review line, not a refusal: the guard stops the pod at the cap), a cap above the creator's ceilings, no pinned image."""
     pins = pins if pins is not None else json.loads(PINS_PATH.read_text(encoding="utf-8"))["models"]["video_ltx"]
     caps = caps if caps is not None else spend_caps.runpod()
     bad = []
@@ -92,14 +92,26 @@ def batch_problems(launch: dict, jobs: list[dict], *, price: float, cap_usd: flo
             f = (launch.get("kind_uses") or {}).get(role)
             if f not in files:
                 bad.append(f"{sid}: {role} is not in the L2 file list of this batch")
-        if cap_usd and job_minutes(launch, j, 2) / 60.0 * price > cap_usd:
-            bad.append(f"{sid}: one run alone (max {job_minutes(launch, j, 2)} min) is over the cap ${cap_usd}")
     if cap_usd and jobs:
         est = estimate(launch, jobs, price)
-        if est["max"]["usd"] > cap_usd + 1e-9:
-            bad.append(f"runpod: the batch's max estimate ${est['max']['usd']} is over the cap ${cap_usd} "
-                       f"(expected ${est['expected']['usd']}): split it by shot or ask for another cap")
+        if est["expected"]["usd"] > cap_usd + 1e-9:
+            bad.append(f"runpod: the batch's expected estimate ${est['expected']['usd']} is over the cap ${cap_usd} "
+                       f"(max ${est['max']['usd']}): split it by shot or ask for another cap")
+        worst_one = max(job_minutes(launch, j, 2) for j in jobs)
+        setup_max = sum(_minutes(launch, k, 2) for k in ("boot", "download", "load", "smoke"))
+        if (setup_max + worst_one) / 60.0 * price > cap_usd + 1e-9:
+            bad.append(f"runpod: setup (max {setup_max} min) plus the largest single run (max {worst_one} min) is over the cap "
+                       f"${cap_usd}: not even one clip would fit")
     return bad
+
+
+def batch_review(launch: dict, jobs: list[dict], *, price: float, cap_usd: float | None) -> list[str]:
+    """Lines for the owner, not refusals: the worst case may pass the cap; the guard stops the pod there (a stop, not a refund)."""
+    if not (cap_usd and jobs):
+        return []
+    mx = estimate(launch, jobs, price)["max"]["usd"]
+    return [f"REVIEW: the max estimate ${mx} is over the cap ${cap_usd}: the guard stops the pod at the cap, clips not yet made stay unmade"] \
+        if mx > cap_usd + 1e-9 else []
 
 
 LAUNCHER = Path(__file__).with_name("runpod_ltx_pod.sh")
@@ -143,7 +155,7 @@ def progress(out: Path, text: str):
 
 
 def run(batch: dict, jobs: list[dict], out, *, api=None, sh=subprocess.run, download=None, clock=time.time,
-        vol_root=None, tmp="/workspace/tmp/in", upload_op=None) -> dict:
+        vol_root=None, tmp="/workspace/tmp/in", upload_op=None, created=None) -> dict:
     """The pod side. ``batch``: card, price, cap_usd, prefix (HF folder). ``jobs``: read_job results. Returns the end word and the
     per-step records (also written under ``out``): DONE, L2_FAILED, L3_FAILED, CAPPED, UPLOAD_FAILED, CLIP_FAILED, REFUSED."""
     launch, out = M.LAUNCH, Path(out)
@@ -152,7 +164,7 @@ def run(batch: dict, jobs: list[dict], out, *, api=None, sh=subprocess.run, down
     sec = section(launch)
     vol = vol_root or sec["weights_dir"]
     os.environ["EE_LTX_VOL_ROOT"] = str(vol)
-    t0 = clock()
+    t0 = float(created if created is not None else (os.environ.get("EE_CREATED") or clock()))   # the pod's birth: boot, pip, clone count
     rec = {"card": batch.get("card"), "price_usd_per_h": price, "cap_usd": cap, "launch_sha": M.launch_sha(launch), "steps": {}}
     spent = lambda: (clock() - t0) / 3600.0 * price      # noqa: E731 - measured pod seconds times the card price
 
@@ -169,10 +181,8 @@ def run(batch: dict, jobs: list[dict], out, *, api=None, sh=subprocess.run, down
     progress(out, "L2 weights")
     files = batch_files(launch, jobs)
     with_kind = any(M.kind_needs(j) for j in jobs)
-    bad = M.stage_weights(launch, vol, download=download, with_kind=with_kind)
-    bad += [b for b in M.check_weights(launch, vol, None, False) if b not in bad]
-    for j in jobs:
-        bad += [b for b in M.check_weights(launch, vol, j, False) if b not in bad]
+    assert set(files) <= set(M.needed_files(launch, None, with_kind)), "L2 must cover the batch's whole file list in one pass"
+    bad = M.stage_weights(launch, vol, download=download, with_kind=with_kind)   # one download and one sha256 pass over the union
     rec["steps"]["L2"] = {"ok": not bad, "files": sorted(files), "with_kind": with_kind, "problems": bad}
     if bad:
         return end("L2_FAILED", problems=bad)
@@ -184,6 +194,10 @@ def run(batch: dict, jobs: list[dict], out, *, api=None, sh=subprocess.run, down
     row = M.generate(sm, launch, smoke_out, M.Deadline(SMOKE_TIMEOUT_S, margin_s=0), sh=sh, tmp=tmp)
     rec["steps"]["L3"] = {"ok": row.get("state") == "DONE", "card": batch.get("card"), "gen_s": row.get("gen_s"),
                           "s_per_clip_s": row.get("s_per_clip_s"), "state": row.get("state")}
+    write(out, "L3_smoke.record.json", {"shot_id": sm["shot_id"], "step": rec["steps"]["L3"], "record": row.get("record"),
+                                             "card": batch.get("card"), "launch_sha": M.launch_sha(launch)})
+    if api is not None:
+        M.upload_round(api, out, prefix, {}, final=True, op=upload_op)
     if row.get("state") != "DONE":
         return end("L3_FAILED", problems=[f"smoke clip {row.get('state')} rc={row.get('rc')}"])
     # L4: the batch, shot by shot; at 80 % of the cap no new clip starts; each clip is verified on HF before the next one
@@ -215,10 +229,11 @@ def run(batch: dict, jobs: list[dict], out, *, api=None, sh=subprocess.run, down
 def plan(job_paths: list[str], *, card: int = 0, cloud: str = "COMMUNITY", cap_usd: float | None = None, launch=None) -> dict:
     """What ``create`` may be asked for: the refusals, the estimate and the L2 list. Reads files only: no pod, no money."""
     launch = launch or M.LAUNCH
+    cap_usd = cap_usd if cap_usd is not None else section(launch).get("cap_usd")   # the creator's recorded $3.50 unless another is passed
     jobs = [M.read_job(p, launch) for p in job_paths]
     gpu, price = card_of(launch, card, cloud)
     why = batch_problems(launch, jobs, price=price, cap_usd=cap_usd) + script_problems()
-    return {"ok": not why, "problems": why, "card": gpu, "cloud": cloud, "price_usd_per_h": price, "cap_usd": cap_usd,
+    return {"ok": not why, "problems": why, "review": batch_review(launch, jobs, price=price, cap_usd=cap_usd), "card": gpu, "cloud": cloud, "price_usd_per_h": price, "cap_usd": cap_usd,
             "estimate": estimate(launch, jobs, price) if jobs else None, "l2_files": sorted(batch_files(launch, jobs)),
             "problem_at_usd": round(float(section(launch)["problem_at"]) * cap_usd, 2) if cap_usd else None}
 

@@ -124,8 +124,8 @@
     "min_cuda": "12.8",
     "weights_dir": "/workspace/dl",
     "recommended_cap_usd": 3.5,
-    "cap_usd": null,
-    "cap_why": "recommended by the plan thread (guard stop, PROBLEM at 80 %); the owner's cap answer is not recorded, so cap_usd stays null and `plan` needs --cap-usd",
+    "cap_usd": 3.5,
+    "cap_why": "the creator's answer to the cap card, 2026-11-19 17:54 UTC, decision cmsg_01Hnu5zB86sjUj5GtTgaUkPWGUyHxz8RE3yqtyNBBTRw4z: $3.50 for all 3 shots in one pod. `create --max-usd` must be this same number; the guard stops at it, PROBLEM at 80 % ($2.80). A ceiling, not a target.",
     "problem_at": 0.8,
     "minutes": {
       "boot": [
