@@ -105,7 +105,6 @@ def test_unresolved_reviews_counts_each_clip_once_with_both_reasons(tmp_path):
     assert "start_frame_check REVIEW + clip findings REVIEW" in r["items"][0]
 
 
-<<<<<<< HEAD
 def test_a_padded_clip_counts_in_unresolved_reviews(tmp_path):
     v = tmp_path / "production" / "video"
     v.mkdir(parents=True)
@@ -113,7 +112,8 @@ def test_a_padded_clip_counts_in_unresolved_reviews(tmp_path):
                                                   "start_frame_check": {"status": "PASS"}}), encoding="utf-8")
     r = I.unresolved_reviews(tmp_path)
     assert r["count"] == 1 and "frame_pad" in r["items"][0]
-=======
+
+
 def _two_scene_script():
     mk = lambda sid, lid: {"shot_id": sid, "route": "video", "camera_spec": {"shot_size": "close_up"}, "character_ids": ["a"],
                            "audio_line_ids": [lid]}
@@ -143,4 +143,3 @@ def test_a_continuation_is_not_counted_and_a_kept_duplicate_word_is(tmp_path):
         "trim_notes": [{"kind": "duplicate_opening_word_kept", "text": "Maybe."}]}), encoding="utf-8")
     r = I.unresolved_reviews(tmp_path)
     assert r["count"] == 1 and r["items"][0].startswith("S01_SH002") and "duplicate_opening_word_kept" in r["items"][0]
->>>>>>> claude/project-thread-f0oep6-s13
