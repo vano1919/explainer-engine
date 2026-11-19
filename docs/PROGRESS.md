@@ -6288,3 +6288,9 @@ the edit (capped by `-frames:v`, the sound by `atrim`) and refuses a cut whose f
 - Done: `credit_from_summary` uses `abs(adjustments.credits)`, `metered_cost` only when that field is missing; the docs and the
   skill say how the cloud reaches it. Test fixture is Modal's real shape (22.49 / -17.03 / -5.32 / -0.14 / billed 0 -> 12.97);
   the no-credits fallback has its own assert. LTX worker and launch.json untouched, nothing paid.
+
+## 2026-11-19 — Graphify tested; usage rules written (docs only)
+- Asked: the creator 2026-11-19 (msgs cmsg_01Hnu5zB86sjUj5GtTgaUkPWDVsY2gg4Ah9sybHhnQnjGQ, cmsg_01Hnu5zB86sjUj5GtTgaUkPWKiRXUz9gMfeVC6v6rHk7Zs): test Graphify, then write down when it is truly needed.
+- Measured (free, CPU): `graphifyy` 0.9.112 `extract --code-only` on systemic/next-video 8e29be8: 18051 nodes, 44360 edges, 40 s; `update` 30 s.
+  Good for `affected` / `path` / `explain`; plain search is as good with grep; GRAPH_REPORT.md is 150 KB with unnamed communities.
+- Done: `docs/GRAPHIFY_RULES_ka.md` (triggers, no `graphify claude install`, commands, where the graph lives, who decides). No code or config changed.
