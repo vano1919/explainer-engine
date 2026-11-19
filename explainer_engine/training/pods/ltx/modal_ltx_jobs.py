@@ -1013,7 +1013,10 @@ class LtxSession:
                 tiling_config=D.AUTO_TILING, generated_keyframes=args.num_generated_keyframes,
                 decode_with_keyframes=args.decode_with_keyframes, chunk_config=chunk_config,
             )
-            if neg_prompt is not None:
+            import inspect       # the distilled pipeline has no CFG: its stream_chunks takes a negative prompt only if it declares one
+            if neg_prompt is not None and getattr(args, "negative_prompt", None) \
+                    and any(p.name == "negative_prompt" or p.kind is p.VAR_KEYWORD
+                            for p in inspect.signature(self.pipe.stream_chunks).parameters.values()):
                 stream_kw["negative_prompt"] = neg_prompt
             chunks, num_frames, tiling_config = self.pipe.stream_chunks(**stream_kw)
             if chunk_config is not None:

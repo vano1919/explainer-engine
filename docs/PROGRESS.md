@@ -6815,3 +6815,5 @@ W5 LTX continuity, free part (2026-11-19, final plan P-6 / CT-1 / CT-2, $0, base
 Scene reordered (plan thread audit, 22:40 UTC): b top, a x3, b x2, c x3 last; scene sha12 now 89de1b10b8be (GO follows it). F1: night_reserve/night_settle wired before/after the launch calls (e6c5fa9).
 
 L3 on 2026-11-19 22:46 found that the distilled CLI takes no --negative-prompt ("unrecognized arguments", $0.00x, red rung); ltx_cmd and the distilled kind_cmd no longer pass it (the guided CLI still does; the run record keeps the resolved text). Painterly-negative test updated accordingly. A/B pictures switched to batch2 (plan thread 22:48; sha prefixes verified), S07_SH006 and S04_SH008 prompts written to match the pictures; scene sha12 d192ff5152ae.
+
+L3 smoke 22:56: the in-process distilled session also passed negative_prompt to DistilledPipeline.stream_chunks, which has none (TypeError, FAILED, red rung, ~$0.12). The session now passes it only when the pipeline declares it; test_b1 updated to the real API (premise was wrong for this pipeline); the text stays resolved in the run record and goes to the guided CLI.
