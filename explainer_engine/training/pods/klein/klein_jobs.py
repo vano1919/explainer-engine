@@ -28,7 +28,11 @@ LAUNCH_PATH = Path(__file__).with_name("launch.json")
 LAUNCHER = Path(__file__).with_name("klein_pod.sh")
 EXIT = {"DONE": 0, "L2_FAILED": 3, "L3_FAILED": 4, "CAPPED": 5, "UPLOAD_FAILED": 6, "PICTURE_FAILED": 7, "REFUSED": 8}
 KINDS = ("edit", "sample")
+import re
+
 HEX64 = M.HEX64
+HEX40 = re.compile(r"^[0-9a-f]{40}$")
+OFFLINE_ENV = "HF_HUB_OFFLINE"
 
 
 def load_launch(path=LAUNCH_PATH) -> dict:
@@ -60,9 +64,12 @@ def open_pins(launch: dict) -> list[str]:
     if not m.get("files"):
         out.append(f"{launch['model']}: file list with sha256 is open ({m.get('files_why', 'launch.json models.files')})")
     else:
-        out += [f"{launch['model']}: {f} has no sha256" for f, h in m["files"].items() if not HEX64.match(str(h))]
+        out += [f"{launch['model']}: {f} has no sha256 (64 hex) or git blob id (40 hex)" for f, h in m["files"].items()
+                if not (HEX64.match(str(h)) or HEX40.match(str(h)))]
     if not launch.get("pipeline_class") or not launch.get("diffusers_version"):
         out.append(f"pipeline class and diffusers version are open ({launch.get('pipeline_why', 'launch.json')})")
+    if not launch.get("transformers_version"):
+        out.append(f"transformers version is open ({launch.get('transformers_why', 'launch.json transformers_version')})")
     if not launch.get("image"):
         out.append(f"no pinned image ({launch.get('image_why', 'launch.json image')})")
     return out
@@ -78,8 +85,6 @@ def job_problems(job: dict, *, smoke: bool = False) -> list[str]:
         bad.append(f"{sid}: no prompt (the plan thread writes every prompt)")
     if not isinstance(job.get("seed"), int):
         bad.append(f"{sid}: seed is not written out")
-    if not (isinstance(job.get("width"), int) and isinstance(job.get("height"), int) and job["width"] > 0 and job["height"] > 0):
-        bad.append(f"{sid}: width and height are not written out")
     if not isinstance(job.get("settings"), dict) or not job["settings"]:
         bad.append(f"{sid}: settings are not written out (the pipeline call takes them as written; no default is assumed)")
     refs = job.get("refs") or []
@@ -156,7 +161,7 @@ def batch_review(launch: dict, batch: dict, *, price: float, cap_usd: float | No
 
 def script_problems(text: str | None = None) -> list[str]:
     text = LAUNCHER.read_text(encoding="utf-8") if text is None else text
-    return ["klein_pod.sh: the code bundle sha256 or the diffusers version is not filled in (@@...@@): build the bundle and pin the version first"] \
+    return ["klein_pod.sh: the code bundle sha256 or the transformers version is not filled in (@@...@@): build the bundle and pin the version first"] \
         if "@@" in text else []
 
 
@@ -164,31 +169,71 @@ def picture_record(launch: dict, job: dict, png: Path, refs: dict) -> dict:
     """Every setting of the picture: prompt, reference sha256, seed, settings, model repo + revision + file shas, pipeline, diffusers."""
     m = model_of(launch)
     return {"id": job["id"], "kind": job.get("kind", "sample"), "variant": job.get("variant"), "prompt": job["prompt"], "seed": job["seed"],
-            "size": [job["width"], job["height"]], "settings": dict(job["settings"]),
+            "size": [job.get("width"), job.get("height")], "settings": dict(job["settings"]),
             "refs": [{"hf_path": r["hf_path"], "sha256": r["sha256"]} for r in job.get("refs") or []],
             "model": launch["model"], "repo": m["repo"], "revision": m["revision"], "files": dict(m["files"] or {}),
             "pipeline_class": launch["pipeline_class"], "diffusers_version": launch["diffusers_version"],
             "launch_sha": launch_sha(launch), "png_sha256": M._sha(png)}
 
 
+def file_id(path, want: str) -> str:
+    """The id a pin is written in: sha256 for a 64-hex pin (an LFS file), git blob sha1 for a 40-hex pin (a small file)."""
+    return M._sha(path) if len(want) == 64 else M.git_blob_id(path)
+
+
+def local_modular_index(index: dict, local_root: str, drop=("prompt_upsampler", "prompt_upsampler_processor")) -> dict:
+    """The model's modular_model_index.json rewritten for the verified local copy: every component points at ``local_root`` (its
+    subfolder kept, revision cleared) instead of a hub repo id, and the prompt upsampler components are removed (no 18.8 GB model)."""
+    out = {}
+    for k, v in index.items():
+        if k in drop:
+            continue
+        if isinstance(v, list) and len(v) == 3 and isinstance(v[2], dict) and "pretrained_model_name_or_path" in v[2]:
+            v = [v[0], v[1], dict(v[2], pretrained_model_name_or_path=str(local_root), revision=None)]
+        out[k] = v
+    return out
+
+
+def prepare_local_dir(launch: dict, vol_root, scratch) -> Path:
+    """A scratch folder holding symlinks to the verified files and the rewritten index: what the pipeline loads from, so nothing it
+    reads was fetched from the hub after L2 (``HF_HUB_OFFLINE`` is set for the generation)."""
+    root, scratch = weights_root(launch, vol_root), Path(scratch)
+    scratch.mkdir(parents=True, exist_ok=True)
+    for f in model_of(launch)["files"]:
+        dst = scratch / f
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        if not dst.exists() and f != "modular_model_index.json":
+            dst.symlink_to(root / f)
+    idx = json.loads((root / "modular_model_index.json").read_text(encoding="utf-8"))
+    (scratch / "modular_model_index.json").write_text(json.dumps(local_modular_index(idx, scratch), indent=2), encoding="utf-8")
+    return scratch
+
+
 _PIPE: dict = {}
 
 
 def diffusers_generate(job: dict, launch: dict, refs: dict, png: Path) -> None:
-    """The real picture: the pinned pipeline class from the model directory, ``job.settings`` as the call's keywords. Nothing is
-    defaulted: the class and the version are launch pins (open until proven), the call's arguments are the plan thread's."""
-    import diffusers
+    """The real picture, as the model card shows it: the ModularPipeline with the prompt_upsampler block popped (the plan thread writes
+    full captions), components in bf16 and the VAE in fp32, the references as ``image``, the seed as a CPU generator. ``job.settings``
+    are passed to the call as written; nothing is defaulted. Loaded from the verified local copy with the hub switched off."""
     import torch
-    if "pipe" not in _PIPE:
-        cls = getattr(diffusers, launch["pipeline_class"])
-        _PIPE["pipe"] = cls.from_pretrained(str(weights_root(launch)), torch_dtype=torch.bfloat16).to("cuda")
+    from diffusers import ModularPipeline
     from PIL import Image
+    if "pipe" not in _PIPE:
+        os.environ[OFFLINE_ENV] = "1"
+        local = prepare_local_dir(launch, None, Path(os.environ.get("EE_KLEIN_SCRATCH", "/workspace/tmp/klein_local")))
+        blocks = ModularPipeline.from_pretrained(str(local)).blocks
+        blocks.sub_blocks.pop("prompt_upsampler", None)
+        pipe = blocks.init_pipeline(str(local))
+        pipe.load_components(dtype={"vae": torch.float32, "default": torch.bfloat16})
+        pipe.to("cuda")
+        _PIPE["pipe"] = pipe
     kw = dict(job["settings"])
     if job.get("refs"):
-        kw["image"] = [Image.open(refs[r["hf_path"]]).convert("RGB") for r in job["refs"]]
-    kw.update(prompt=job["prompt"], width=job["width"], height=job["height"],
-              generator=torch.Generator("cuda").manual_seed(job["seed"]))
-    _PIPE["pipe"](**kw).images[0].save(png)
+        imgs = [Image.open(refs[r["hf_path"]]).convert("RGB") for r in job["refs"]]
+        kw["image"] = imgs[0] if len(imgs) == 1 else imgs
+    kw.update(prompt=job["prompt"], generator=torch.Generator().manual_seed(job["seed"]), output="images")
+    _PIPE["pipe"](**kw)[0].save(png)
 
 
 def run(batch: dict, out, *, api=None, download=None, generate=None, fetch=None, clock=time.time, vol_root=None, created=None,
@@ -231,8 +276,8 @@ def run(batch: dict, out, *, api=None, download=None, generate=None, fetch=None,
         p = root / f
         if not p.is_file() or p.stat().st_size == 0:
             bad.append(f"missing {f}")
-        elif M._sha(p) != want:
-            bad.append(f"sha256 mismatch {f}")
+        elif file_id(p, want) != want:
+            bad.append(f"{'sha256' if len(want) == 64 else 'git blob id'} mismatch {f}")
     rec["steps"]["L2"] = {"ok": not bad, "files": sorted(m["files"]), "problems": bad}
     if bad:
         return end("L2_FAILED", problems=bad)

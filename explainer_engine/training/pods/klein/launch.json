@@ -6,31 +6,72 @@
     "flux-3-image-klein": {
       "repo": "black-forest-labs/flux-3-image-klein",
       "revision": "3b767ff9b5261d71645e2ec49d87d298d955238d",
-      "layout": "diffusers (transformer, text_encoder, vae); no prompt upsampler (flux-3-image-klein-pup is not loaded)",
+      "layout": "diffusers modular pipeline (modular_model_index.json; transformer, text_encoder, vae); the prompt_upsampler block is popped, as the model card shows (the plan thread writes the full captions)",
       "gated": true,
-      "files": null,
-      "files_why": "OPEN: the repo is gated and the project's HF token gets a 403 until the owner accepts BFL's terms as vano1919; the diffusers file list (~21 GB) and every sha256 are read from the repo then, not guessed"
+      "files": {
+        "modular_model_index.json": "b0ce87edf5923b7ea2dbde5bf182a69c90d522a5",
+        "transformer/config.json": "84626bbb88a60c8904542727b500b6cdce2b918c",
+        "transformer/diffusion_pytorch_model.safetensors.index.json": "8f2daa0415e6bea35c8f7fb643058554050b3ed0",
+        "transformer/diffusion_pytorch_model-00001-of-00002.safetensors": "4f01de41470090586d7a25aa4aec93987724eae45db45b68de2b3f566f438a8b",
+        "transformer/diffusion_pytorch_model-00002-of-00002.safetensors": "6f6217ab2c7ce5ef177ec202f79d4c2ddab78111c4645030c8828ec615d5f02c",
+        "vae/config.json": "2410d0e0a4b381022ad7ab0ac3007c3c8a5d010c",
+        "vae/diffusion_pytorch_model.safetensors": "d64f3a68e1cc4f9f4e29b6e0da38a0204fe9a49f2d4053f0ec1fa1ca02f9c4b5",
+        "text_encoder/config.json": "22be8bb79043d39840ca5e70d7a2dab80311602c",
+        "text_encoder/generation_config.json": "e116347d7ef42621c7a5957f82c015c38d939c1f",
+        "text_encoder/chat_template.json": "e49e75bdda104c8de941eb20e0b3765184fb27bc",
+        "text_encoder/merges.txt": "20024bfe7c83998e9aeaf98a0cd6a2ce6306c2f0",
+        "text_encoder/model-00001-of-00002.safetensors": "30a01a0556622645a3cce87b655bbbbbc1f170c196099f1b666c93202c3339a9",
+        "text_encoder/model-00002-of-00002.safetensors": "046296a2a387efb43b0c997d5833c789604d168834f6e0d3064bf7bb13d002a6",
+        "text_encoder/model.safetensors.index.json": "3b52de97496e2f4501dfa92a87642f60db3e22a1",
+        "text_encoder/preprocessor_config.json": "2ea84a437d448ff71b08df68fdd949d5cc4ebb64",
+        "text_encoder/tokenizer.json": "c6cc1014128b19d1fc46b1d30a23e3b1d35db421",
+        "text_encoder/tokenizer_config.json": "d3d3763207692c78780f4bf42d4dadf49a5c8012",
+        "text_encoder/video_preprocessor_config.json": "3ba673a5ad7d4d13f54155ecd38b2a94a6dac8fe",
+        "text_encoder/vocab.json": "4783fe10ac3adce15ac8f358ef5462739852c569"
+      },
+      "files_why": "read 2026-11-19 ~18:25 UTC from the repo at the pinned revision with the project token (resolve headers): a 64-hex value is the LFS sha256 (X-Linked-ETag), a 40-hex value is the git blob sha1 of a small file (ETag); ~20.3 GB in all: modular_model_index.json, transformer/, text_encoder/ and vae/ only (no ae.safetensors copy, no variants, no prompt upsampler). The pod hashes them again in L2; they were not hashed locally from the bytes.",
+      "sizes": {
+        "modular_model_index.json": 2115,
+        "transformer/config.json": 436,
+        "transformer/diffusion_pytorch_model.safetensors.index.json": 37951,
+        "transformer/diffusion_pytorch_model-00001-of-00002.safetensors": 9907529352,
+        "transformer/diffusion_pytorch_model-00002-of-00002.safetensors": 1189878064,
+        "vae/config.json": 808,
+        "vae/diffusion_pytorch_model.safetensors": 336213556,
+        "text_encoder/config.json": 1505,
+        "text_encoder/generation_config.json": 269,
+        "text_encoder/chat_template.json": 5502,
+        "text_encoder/merges.txt": 1671839,
+        "text_encoder/model-00001-of-00002.safetensors": 4967229296,
+        "text_encoder/model-00002-of-00002.safetensors": 3908490048,
+        "text_encoder/model.safetensors.index.json": 64742,
+        "text_encoder/preprocessor_config.json": 390,
+        "text_encoder/tokenizer.json": 7032403,
+        "text_encoder/tokenizer_config.json": 10868,
+        "text_encoder/video_preprocessor_config.json": 385,
+        "text_encoder/vocab.json": 2776833
+      }
     }
   },
-  "pipeline_class": null,
-  "diffusers_version": null,
-  "pipeline_why": "OPEN: the diffusers pipeline class and version come from the model card once access is granted; the runner passes job.settings to the pipeline call as written (no default is assumed)",
+  "pipeline_class": "ModularPipeline",
+  "diffusers_version": "0.43.0",
+  "pipeline_why": "the model card says `pip install git+https://github.com/huggingface/diffusers.git`; the released diffusers 0.43.0 (PyPI, 2026-11-12) was opened here and contains Flux3DistilledAutoBlocks, Flux3Transformer2DModel, AutoencoderKLFlux2, ModularPipeline and the flux3 prompt_upsampler block, so it is pinned instead of a git main commit (a reviewed choice: the model's own index says 0.41.0.dev0; L3 on the card proves it loads). The runner loads from a scratch copy of the verified files whose index points at the local folder (no hub id, prompt upsampler entries removed) with HF_HUB_OFFLINE=1",
   "image": null,
   "image_why": "OPEN: the same pinned image as the LTX pod (one CUDA 12.8+ proof for both): runpod section of ltx/launch.json",
   "cards": [
-    {
-      "gpu": "NVIDIA RTX PRO 4500 Blackwell",
-      "vram_gb": 32,
-      "cloud": "SECURE",
-      "usd_per_h": 0.72,
-      "note": "in stock 2026-11-19 ~18:10 UTC per the plan thread (not read here)"
-    },
     {
       "gpu": "NVIDIA L40S",
       "vram_gb": 48,
       "cloud": "SECURE",
       "usd_per_h": 1.09,
-      "note": "fallback, per the plan thread (not read here)"
+      "note": "the plan thread's card (peak 31 GB BF16, upsampler off, so 32 GB is too tight), 2026-11-19 ~18:13 UTC; price not read here"
+    },
+    {
+      "gpu": "NVIDIA RTX PRO 4500 Blackwell",
+      "vram_gb": 32,
+      "cloud": "SECURE",
+      "usd_per_h": 0.72,
+      "note": "not enough margin for 31 GB peak; listed only as history"
     }
   ],
   "container_disk_gb": 60,
@@ -61,8 +102,11 @@
       20,
       40
     ],
-    "source": "RUNPOD_AB_PLAN.md section 5 (18 pictures: 11 / 20 / 35 min = $0.13 / $0.24 / $0.42 at $0.72/h); estimates, not measured"
+    "source": "RUNPOD_AB_PLAN.md section 5 minutes (made for $0.72/h; at the L40S $1.09/h expected is about $0.36, max about $0.64: a REVIEW line, the guard stops at the cap); estimates, not measured on this card"
   },
   "hf_out": "explainer-engine/klein_out",
-  "model_why": "plan thread, 2026-11-19 18:11 UTC: the owner chose FLUX 3 Klein; `models` can hold another id, `model` picks it"
+  "model_why": "plan thread, 2026-11-19 18:11 UTC: the owner chose FLUX 3 Klein; `models` can hold another id, `model` picks it",
+  "diffusers_wheel_sha256": "8afb8ff1b09d693854de0412d8bdc94fc9e6e6e4efefb2386c616f64a4dc9ac6",
+  "transformers_version": null,
+  "transformers_why": "OPEN: the text encoder is Qwen3VLForConditionalGeneration; the transformers version it needs is not stated by the model card and not guessed: pin one proven to load it (L0 import check on a CPU is free, L3 decides on the card)"
 }

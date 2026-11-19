@@ -23,8 +23,8 @@ def launch():
     """A launch with every open pin filled in a TEST copy (the real file keeps them null until proven)."""
     lf = copy.deepcopy(K.LAUNCH)
     m = lf["models"][lf["model"]]
-    m["files"] = {"transformer/model.safetensors": SHA, "vae/model.safetensors": "ef" * 32}
-    lf.update(pipeline_class="FakePipeline", diffusers_version="0.0.0", image="ghcr.io/x/y@sha256:" + "0" * 64, cap_usd=0.6)
+    m["files"] = {"transformer/model.safetensors": SHA, "vae/model.safetensors": "ef" * 32, "vae/config.json": "12" * 20}
+    lf.update(transformers_version="0.0.0", image="ghcr.io/x/y@sha256:" + "0" * 64, cap_usd=0.6)
     return lf
 
 
@@ -40,17 +40,50 @@ def _batch(n=2, **kw):
                  "smoke": _job("L3_smoke"), "jobs": [_job(f"P{i}", "edit") for i in range(n)]}, **kw)
 
 
-def test_the_real_launch_keeps_every_open_pin_null_and_refuses():
+def test_the_real_launch_pins_what_was_read_and_keeps_the_rest_open():
     lf = K.LAUNCH
     m = lf["models"][lf["model"]]
+    assert list(lf["models"]) == ["flux-3-image-klein"]                       # the 4B switch is dropped (the owner's card)
     assert m["repo"] == "black-forest-labs/flux-3-image-klein" and m["revision"] == REV and m["gated"] is True
     assert lf["cap_usd"] == 0.6 and "cmsg_01Hnu5zB86sjUj5GtTgaUkPWSuqhe7svtHM5ptNMiw84V4" in lf["cap_why"]   # the owner's own word
-    assert m["files"] is None and lf["pipeline_class"] is None and lf["diffusers_version"] is None and lf["image"] is None
-    assert "prompt upsampler" in m["layout"] or "pup" in m["layout"]
-    pins = K.open_pins(lf)
-    assert any("file list" in p for p in pins) and any("pipeline class" in p for p in pins) and any("no pinned image" in p for p in pins)
-    out = K.batch_problems(lf, _batch(), price=0.72, cap_usd=0.6)
-    assert out and K.script_problems()                                         # the script template is unbuilt too
+    assert lf["cards"][0]["gpu"] == "NVIDIA L40S" and lf["cards"][0]["usd_per_h"] == 1.09
+    # the files read from the repo at the pinned revision: transformer + text_encoder + vae + the modular index, nothing else
+    files = m["files"]
+    assert "modular_model_index.json" in files and "transformer/diffusion_pytorch_model-00001-of-00002.safetensors" in files
+    assert files["transformer/diffusion_pytorch_model-00001-of-00002.safetensors"] == "4f01de41470090586d7a25aa4aec93987724eae45db45b68de2b3f566f438a8b"
+    assert all(f.split("/")[0] in ("transformer", "text_encoder", "vae") or f == "modular_model_index.json" for f in files)
+    assert not any(f.startswith(("variants", "ae.safetensors", "model.safetensors", "assets")) for f in files)
+    assert 19.5e9 < sum(m["sizes"].values()) < 21e9 and set(m["sizes"]) == set(files)
+    assert all(len(h) in (40, 64) for h in files.values())
+    assert lf["pipeline_class"] == "ModularPipeline" and lf["diffusers_version"] == "0.43.0" and len(lf["diffusers_wheel_sha256"]) == 64
+    pins = K.open_pins(lf)                                                     # what is still open
+    assert any("transformers version" in p for p in pins) and any("no pinned image" in p for p in pins)
+    assert not any("file list" in p or "pipeline class" in p for p in pins)
+    assert K.batch_problems(lf, _batch(), price=1.09, cap_usd=0.6) and K.script_problems()
+
+
+def test_the_local_index_has_no_hub_id_and_no_upsampler(tmp_path):
+    """The pipeline loads from the verified copy only: every component path is local, the prompt upsampler entries are gone."""
+    index = json.loads((Path(K.__file__).parent / "modular_model_index.sample.json").read_text())
+    out = K.local_modular_index(index, "/scratch")
+    assert "prompt_upsampler" not in out and "prompt_upsampler_processor" not in out
+    comps = {k: v for k, v in out.items() if isinstance(v, list)}
+    assert set(comps) == {"text_encoder", "tokenizer", "transformer", "vae"}
+    assert all(v[2]["pretrained_model_name_or_path"] == "/scratch" and v[2]["revision"] is None for v in comps.values())
+    assert [v[2]["subfolder"] for v in comps.values()] == ["text_encoder", "text_encoder", "transformer", "vae"]
+    assert "black-forest-labs" not in json.dumps(out)
+
+
+def test_prepare_local_dir_links_only_verified_files(tmp_path, launch):
+    root = K.weights_root(launch, str(tmp_path / "dl"))
+    for f in launch["models"][launch["model"]]["files"]:
+        (root / f).parent.mkdir(parents=True, exist_ok=True)
+        (root / f).write_bytes(b"x")
+    (root / "modular_model_index.json").write_text((Path(K.__file__).parent / "modular_model_index.sample.json").read_text())
+    launch["models"][launch["model"]]["files"]["modular_model_index.json"] = "00" * 20
+    local = K.prepare_local_dir(launch, str(tmp_path / "dl"), tmp_path / "scratch")
+    assert (local / "transformer/model.safetensors").is_symlink() and not (local / "modular_model_index.json").is_symlink()
+    assert "prompt_upsampler" not in json.loads((local / "modular_model_index.json").read_text())
 
 
 def test_a_fully_pinned_batch_passes_and_the_refusals_work(launch):
@@ -67,6 +100,9 @@ def test_a_fully_pinned_batch_passes_and_the_refusals_work(launch):
     assert any("settings are not written out" in x for x in p(_batch(jobs=[_job("A", settings={})])))
     assert any("start picture" in x for x in p(_batch(jobs=[_job("A", "edit", refs=[])])))
     assert any("sha256" in x for x in p(_batch(jobs=[_job("A", "edit", refs=[{"hf_path": "x"}])])))
+    badpin = copy.deepcopy(launch)
+    badpin["models"][badpin["model"]]["files"]["vae/config.json"] = "nothex"
+    assert any("has no sha256" in x for x in K.open_pins(badpin))
     assert any("its own model" in x for x in p(_batch(jobs=[_job("A", model="other")])))
     assert any("own id" in x for x in p(_batch(jobs=[_job("A"), _job("A")])))
     assert any("max_pictures" in x for x in p(_batch(jobs=[_job(f"P{i}") for i in range(30)])))
@@ -134,6 +170,7 @@ def sha_ok(monkeypatch, launch):
                 return h
         return hashlib.sha256(Path(p).read_bytes()).hexdigest()
     monkeypatch.setattr(M, "_sha", fake)
+    monkeypatch.setattr(M, "git_blob_id", lambda p: want["vae/config.json"])
 
 
 def test_l2_fails_before_any_load(tmp_path, launch, monkeypatch):
@@ -209,17 +246,17 @@ def test_the_real_launch_pod_refuses_to_run_with_open_pins(tmp_path):
 def test_the_pod_script_passes_lint_and_is_unbuilt_until_the_pins_are_filled():
     from explainer_engine.cloud import dryrun, runpod
     text = K.LAUNCHER.read_text(encoding="utf-8")
-    assert runpod.lint_pod_script(text) == [] and runpod.is_wrapper_script(text) and dryrun.static_problems(text.replace("@@DIFFUSERS_VERSION@@", "0.0.0").replace("@@EE_SRC_SHA256@@", SHA)) == []
-    assert "klein_jobs run" in text and "/workspace/dl" in text
+    assert runpod.lint_pod_script(text) == [] and runpod.is_wrapper_script(text) and dryrun.static_problems(text.replace("@@TRANSFORMERS_VERSION@@", "0.0.0").replace("@@EE_SRC_SHA256@@", SHA)) == []
+    assert "klein_jobs run" in text and "/workspace/dl" in text and "diffusers==0.43.0" in text
     assert K.script_problems(text)
-    assert K.script_problems(text.replace("@@DIFFUSERS_VERSION@@", "0.0.0").replace("@@EE_SRC_SHA256@@", SHA)) == []
+    assert K.script_problems(text.replace("@@TRANSFORMERS_VERSION@@", "0.0.0").replace("@@EE_SRC_SHA256@@", SHA)) == []
 
 
 def test_plan_reads_the_batch_file_only(tmp_path):
     bp = tmp_path / "b.json"
     bp.write_text(json.dumps(_batch()))
     out = K.plan(str(bp))
-    assert out["ok"] is False and out["problems"] and out["estimate"]["expected"]["usd"] > 0 and out["card"].startswith("NVIDIA RTX PRO 4500")
+    assert out["ok"] is False and out["problems"] and out["estimate"]["expected"]["usd"] > 0 and out["card"] == "NVIDIA L40S"
 
 
 def test_the_retired_guard_lets_only_the_two_ab_launchers_through(tmp_path):
@@ -238,3 +275,10 @@ def test_the_retired_guard_lets_only_the_two_ab_launchers_through(tmp_path):
     assert "cmsg_01Hnu5zB86sjUj5GtTgaUkPWSuqhe7svtHM5ptNMiw84V4" in retired.load()["tools"]["runpod"]["exception"]["decided"]
     assert retired.excepted("ltx", klein) is False              # the ltx entry keeps only its own launcher
     assert retired.excepted("qwen_image", klein) is False
+
+
+def test_a_wrong_git_blob_id_of_a_small_file_ends_l2_too(tmp_path, launch, sha_ok, monkeypatch):
+    monkeypatch.setattr(M, "git_blob_id", lambda p: "ff" * 20)
+    gen = Gen()
+    res = K.run(_batch(), tmp_path / "out", api=Api(), generate=gen, **_kw(tmp_path, launch))
+    assert res["end"] == "L2_FAILED" and gen.calls == [] and any("git blob id mismatch" in p for p in res["steps"]["L2"]["problems"])

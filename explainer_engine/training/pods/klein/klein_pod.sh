@@ -7,12 +7,12 @@
 # heartbeat: datasets/vano1919/tmr-artifacts:klein_out/beat.txt
 # stall-minutes: 20
 # needs: /workspace/job/ee_src.tar.gz 1000000
-# (why: the code bundle and the batch file are sha256-pinned below)
+# (why: the code bundle and the batch file are sha256-pinned below; diffusers 0.43.0 is the pinned release)
 mkdir -p "$EE_OUT"
 export HF_HOME=/workspace/dl/hf PYTHONUNBUFFERED=1 PIP_BREAK_SYSTEM_PACKAGES=1 EE_KLEIN_VOL_ROOT=/workspace/dl
 trap 'exit 143' TERM
 printf '%s start\n' "$(date -u +%T)" > "$EE_OUT/progress.txt"
-pip install -q "huggingface_hub==1.33.0" "diffusers==@@DIFFUSERS_VERSION@@" || exit 1
+pip install -q "huggingface_hub==1.33.0" "diffusers==0.43.0" "transformers==@@TRANSFORMERS_VERSION@@" || exit 1
 JOB=/workspace/job
 mkdir -p "$JOB" /workspace/ee
 python3 -c "
