@@ -23,6 +23,8 @@ from pathlib import Path
 
 import jsonschema
 
+from explainer_engine.audio.sources import YOUTUBE_CLAIM_RISK
+
 SCHEMA = Path(__file__).resolve().parents[1] / "schemas" / "publish.schema.json"
 TITLE_MAX, DESCRIPTION_MAX = 100, 5000  # Studio's field limits (characters)
 MIN_CHAPTER_S, MIN_CHAPTERS = 10, 3
@@ -145,7 +147,7 @@ def gate_findings(episode: Path) -> list[dict]:
 def third_party_findings(episode: Path, description: str = "", manifest: Path | None = None) -> list[dict]:
     """PC-10 (D-139, MA-17): every sound the master played, read from ``audio/stems_report.json`` (what the runner's G8 logged), against
     the library manifest's licences, and the media classes that have no provenance record yet. FAIL: the report is missing (not run
-    never passes), a played item that is not licensed for a monetised channel (``commercial_use`` false, e.g. BBC RemArc), a
+    never passes), a played item whose licence is in ``sources.YOUTUBE_CLAIM_RISK`` (a source YouTube could block or claim: BBC RemArc), a
     ``DO_NOT_MONETISE`` marker in the episode folder. REVIEW: unverified generated audio, an item the manifest does not know, a
     CC BY credit missing from the description, a class without a provenance record. Writes ``qa/third_party_media.json``."""
     out: list[dict] = []
@@ -180,9 +182,9 @@ def third_party_findings(episode: Path, description: str = "", manifest: Path | 
             if it is None:
                 row["status"] = "REVIEW"
                 add(iid, "played but not in the library manifest: no licence record", "REVIEW")
-            elif lic.get("commercial_use") is False:
+            elif lic.get("type") in YOUTUBE_CLAIM_RISK:
                 row["status"] = "FAIL"
-                add(iid, f"licence {lic.get('type')} does not allow a monetised channel (commercial_use false)")
+                add(iid, f"licence {lic.get('type')}: {YOUTUBE_CLAIM_RISK[lic['type']]}")
             elif lic.get("status") == "generated_terms_unverified" or lic.get("commercial_use") is None:
                 row["status"] = "REVIEW"
                 add(iid, "generated audio whose terms are not verified", "REVIEW")

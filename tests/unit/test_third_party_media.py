@@ -36,6 +36,15 @@ def test_a_bbc_sound_in_the_log_fails_and_mixkit_or_cc0_passes(tmp_path):
     assert not _by(PC.third_party_findings(ep2, "", mp2), "FAIL")
 
 
+def test_a_non_commercial_item_outside_the_claim_risk_set_is_not_failed_by_pc10(tmp_path):
+    ep, mp = _ep(tmp_path, ["nc"])
+    lib = json.loads(mp.read_text())
+    lib["items"].append({"id": "nc", "source": {"kind": "third_party"}, "licence": {"type": "some_nc", "commercial_use": False,
+                                                                                  "status": "licensed"}})
+    mp.write_text(json.dumps(lib))
+    assert not _by(PC.third_party_findings(ep, "", mp), "FAIL")
+
+
 def test_a_missing_sound_log_fails(tmp_path):
     ep, mp = _ep(tmp_path, [], report=False)
     assert _by(PC.third_party_findings(ep, "", mp), "FAIL") == {"audio/stems_report.json"}

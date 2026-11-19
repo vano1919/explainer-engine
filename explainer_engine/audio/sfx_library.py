@@ -115,17 +115,13 @@ def find(root: Path, *, tags: list[str] | None = None, category: str | None = No
     return out
 
 
-def _licence_forbids_commercial(lic_type: str | None) -> bool:
-    from explainer_engine.audio import sources
-    return bool(lic_type) and sources.LICENCES.get(lic_type, {}).get("commercial") is False
-
-
 def production_status(item: dict) -> str:
     """``verified`` | ``quarantine`` | ``rejected`` (LIB-05): the licence's production field when the item has one, else from
     its status (an unverified generated take is quarantine; everything older was checked when it was registered)."""
     lic = item.get("licence") or {}
-    if lic.get("commercial_use") is False or _licence_forbids_commercial(lic.get("type")):
-        return "rejected"   # D-139 (MA-17): never on a monetised master, whatever the stored production field says
+    from explainer_engine.audio import sources
+    if lic.get("type") in sources.YOUTUBE_CLAIM_RISK:
+        return "rejected"   # D-139 (MA-17): a source YouTube could block or claim; whatever the stored production field says
     if lic.get("production"):
         return lic["production"]
     return "quarantine" if lic.get("status") == "generated_terms_unverified" else "verified"

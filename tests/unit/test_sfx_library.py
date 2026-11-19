@@ -118,15 +118,20 @@ def _item(iid, lic):
     return {"id": iid, "category": "foley", "tags": ["x"], "review": {"human": "not_listened"}, "licence": lic}
 
 
-def test_a_licence_without_commercial_use_is_rejected_whatever_its_stored_production_says():
+def test_a_licence_in_the_youtube_claim_risk_set_is_rejected_and_every_other_item_keeps_its_stored_status():
     """D-139 (MA-17): the 34 BBC items were stored as ``production: verified`` by the 2026-11-13 exception."""
+    from explainer_engine.audio import sources
+    assert set(sources.YOUTUBE_CLAIM_RISK) == {"bbc_remarc"}
     bbc = _item("b", {"type": "bbc_remarc", "commercial_use": False, "production": "verified", "status": "licensed"})
     assert sfx_library.production_status(bbc) == "rejected"
-    by_type_only = _item("t", {"type": "bbc_remarc", "production": "verified"})
-    assert sfx_library.production_status(by_type_only) == "rejected"
+    assert sfx_library.production_status(_item("t", {"type": "bbc_remarc", "production": "verified"})) == "rejected"
     cc0 = _item("c", {"type": "cc0", "commercial_use": True, "production": "verified", "status": "cc0"})
     assert sfx_library.production_status(cc0) == "verified"
     assert sfx_library.production_status(_item("o", {"status": "own_procedural"})) == "verified"
+    # a non-commercial item OUTSIDE the set keeps whatever it was stored as (not a general licence rule)
+    other = _item("n", {"type": "some_nc_licence", "commercial_use": False, "production": "verified"})
+    assert sfx_library.production_status(other) == "verified"
+    assert sfx_library.production_status(_item("q", {"status": "generated_terms_unverified"})) == "quarantine"
 
 
 def test_find_returns_no_bbc_id_from_the_real_library_and_the_1914_plan_resolves_without_one():
