@@ -503,11 +503,12 @@ def test_lightning_timesteps_are_the_authors():
     assert B.linear_sigmas(4) == [1.0, 0.75, 0.5, 0.25]
 
 
-def test_the_creators_bakeoff_line_is_its_own_and_leaves_the_wan_route_at_zero():
+def test_the_creators_bakeoff_line_is_its_own_and_not_the_modal_line():
     from explainer_engine.core import spend_caps
     line = spend_caps.modal_bakeoff()
     assert line["per_run_usd"] == 2.5 and line["tests_total_usd"] == 6.5 and "cmsg_" in line["decided"]
     assert max(v["cap_usd"] for v in PLAN["variants"]) <= line["per_run_usd"] and PLAN["total_cap_usd"] <= line["tests_total_usd"]
-    with pytest.raises(spend_caps.OverCeiling, match="zero approved budget"):
-        spend_caps.modal()
+    # the `modal` line is a different line, set by the creator on 2026-11-19 20:18 UTC (cmsg_01Hnu5zB86sjUj5GtTgaUkPWS3PzAxqNtHbt57o5A2pUPb):
+    # $3.50 a run for the W5 A/B; the bake-off line above is not reused for it and does not change
+    assert spend_caps.modal()["per_run_usd"] == 3.5 and spend_caps.modal() is not line
     B.preflight(PLAN)
