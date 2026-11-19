@@ -35,7 +35,10 @@ HF_REPO = "vano1919/tmr-artifacts"
 KLEIN_DIR = Path(__file__).resolve().parent
 LAUNCH_PATH = KLEIN_DIR / "launch.json"
 LAUNCHER = KLEIN_DIR / "klein_pod.sh"                      # its two printf pins are the one record of the code bundle and batch sha256
-LADDER_PATH = Path(os.environ.get("EE_KLEIN_LADDER") or KLEIN_DIR / "ladder_modal.json")
+SHARED_GATES = Path("/mnt/project-files/explainer-engine/final_plan_2026-11-19/ab_gates")   # the project's shared folder: any thread sees the rungs
+# The ladder record lives OUTSIDE the code bundle (a record written after the pin must never change the bundle it pins).
+LADDER_PATH = Path(os.environ.get("EE_KLEIN_LADDER") or (SHARED_GATES if SHARED_GATES.is_dir() else KLEIN_DIR.parents[3] / "jobs" / "klein_modal")
+                   / "ladder_modal_klein.json")
 SECRET_NAME = "huggingface-secret"
 GO = re.compile(r"^(cmsg_\w+):([0-9a-f]{12})$")
 HEX64 = re.compile(r"^[0-9a-f]{64}$")
