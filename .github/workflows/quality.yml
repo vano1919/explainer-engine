@@ -18,6 +18,13 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: V4.1 slice scope (D-139)
+        if: github.event_name == 'pull_request'
+        run: |
+          git fetch origin "${{ github.base_ref }}"
+          python -m explainer_engine.scope_check --base "origin/${{ github.base_ref }}" --head HEAD --head-ref "${{ github.head_ref }}"
       - name: Set up Python
         uses: actions/setup-python@v7
         with:
