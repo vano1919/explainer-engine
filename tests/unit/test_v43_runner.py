@@ -87,10 +87,13 @@ def test_a_passing_chain_is_not_a_rehearsal_even_with_the_flag(tmp_path, monkeyp
     assert recs[-1]["verdict"]["status"] == G.PASS and not recs[-1]["rehearsal"]
 
 
-def test_a_review_lets_the_next_stage_start(tmp_path, monkeypatch):
+def test_a_review_stops_the_chain_until_the_creator_approves_it(tmp_path, monkeypatch):
+    # final plan P-7 (W2): GO_ON = (PASS,); the old "REVIEW lets the next stage start" is replaced by REVIEW -> CREATOR_APPROVAL,
+    # tested in full in test_qa_status.py
     monkeypatch.setattr(RUN, "STAGE_FUNCS", _fake({"sound_plan": G.REVIEW}))
     recs = RUN.run_to(RUN.Episode(_episode(tmp_path)), "qa")
-    assert recs[1]["verdict"]["status"] == G.REVIEW and recs[-1]["verdict"]["status"] == G.PASS
+    assert [r["stage"] for r in recs] == ["script", "sound_plan"]
+    assert recs[1]["verdict"]["status"] == G.REVIEW and recs[1]["awaiting"] == "CREATOR_APPROVAL"
 
 
 def test_a_changed_input_makes_the_record_stale_and_the_next_stage_refuses(tmp_path, monkeypatch):
