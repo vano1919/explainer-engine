@@ -44,26 +44,26 @@ LAYOUTS: dict[str, dict] = {
         "camera": {"pos": [0.0, 0.0, 1.6], "heading": 0, "pitch": 0, "lens": 50},
         "people": {"private": {"side": "british"}, "german": {"side": "german"}},
         "frames": {
-            "start": {"private": {"pos": [0.0, 30.0], "heading": 0, "pose": "stand"},
-                      "german": {"pos": [0.0, 98.5], "heading": 180, "pose": "stand"}, "props": {}},
-            "end": {"private": {"pos": [0.0, 96.3], "heading": 0, "pose": "stand"},
-                    "german": {"pos": [0.0, 98.5], "heading": 180, "pose": "hands_open"}, "props": {}},
+            "start": {"private": {"pos": [0.0, 6.0], "heading": 0, "pose": "stand"},
+                      "german": {"pos": [0.0, 40.0], "heading": 180, "pose": "stand"}, "props": {}},
+            "end": {"private": {"pos": [0.0, 16.0], "heading": 0, "pose": "stand"},
+                    "german": {"pos": [0.0, 18.5], "heading": 180, "pose": "hands_open"}, "props": {}},
         },
     },
     "S07_SH006": {
         "place": "german_trench",
-        "camera": {"pos": [0.1, 0.0, 0.55], "heading": 14, "pitch": 12, "lens": 28},
+        "camera": {"pos": [-2.2, 0.0, 1.2], "heading": 25, "pitch": 10, "lens": 28},
         "people": {"officer": {"side": "german"}, "soldier_1": {"side": "german"},
                    "soldier_2": {"side": "german"}, "soldier_3": {"side": "german"}},
         "frames": {
-            "start": {"officer": {"pos": [0.55, 4.6], "z": 0.4, "heading": 90, "pose": "stand"},
-                      "soldier_1": {"pos": [-0.6, 3.4], "heading": 70, "pose": "stand"},
-                      "soldier_2": {"pos": [-0.62, 4.6], "heading": 88, "pose": "stand"},
-                      "soldier_3": {"pos": [-0.6, 5.8], "heading": 100, "pose": "stand"}, "props": {}},
-            "end": {"officer": {"pos": [0.55, 4.6], "z": 0.4, "heading": 90, "pose": "arm_up"},
-                    "soldier_1": {"pos": [-0.6, 3.4], "heading": 70, "pose": "stand"},
-                    "soldier_2": {"pos": [-0.62, 4.6], "heading": 88, "pose": "stand"},
-                    "soldier_3": {"pos": [-0.6, 5.8], "heading": 100, "pose": "stand"}, "props": {}},
+            "start": {"officer": {"pos": [0.55, 4.0], "z": 0.4, "heading": 90, "pose": "stand"},
+                      "soldier_1": {"pos": [-2.17, 2.0], "heading": 54, "pose": "stand"},
+                      "soldier_2": {"pos": [-1.73, 2.96], "heading": 66, "pose": "stand"},
+                      "soldier_3": {"pos": [-0.88, 4.3], "heading": 102, "pose": "stand"}, "props": {}},
+            "end": {"officer": {"pos": [0.55, 4.0], "z": 0.4, "heading": 90, "pose": "arm_up"},
+                    "soldier_1": {"pos": [-2.17, 2.0], "heading": 54, "pose": "stand"},
+                    "soldier_2": {"pos": [-1.73, 2.96], "heading": 66, "pose": "stand"},
+                    "soldier_3": {"pos": [-0.88, 4.3], "heading": 102, "pose": "stand"}, "props": {}},
         },
     },
 }
@@ -317,13 +317,13 @@ def _build_no_mans_land(mats):
 def _build_german_trench(mats):
     """Trench runs along +y. Front wall (enemy side) is on the RIGHT at x=+0.8, 1.5 m above the floor."""
     clay, ground = mats["clay"], mats["ground"]
-    _box("floor", (-0.1, 5, -0.05), (1.8, 14, 0.1), ground)
-    _box("back_wall", (-1.5, 5, 0.9), (1.0, 14, 1.8), clay)
+    _box("floor", (-0.8, 5, -0.05), (3.2, 14, 0.1), ground)
+    _box("back_wall", (-2.8, 5, 0.9), (1.0, 14, 1.8), clay)
     _box("fire_step", (0.55, 5, 0.2), (0.5, 14, 0.4), clay)
     _box("front_wall", (1.8, 5, 0.75), (2.0, 14, 1.5), clay)
     _box("front_sandbags", (1.3, 5, 1.62), (1.0, 14, 0.25), clay)
     _box("outside_ground", (12, 5, 1.45), (20, 40, 0.1), ground)
-    _cyl("brazier", (-0.15, 4.5, 0.35), 0.17, 0.5, mats["marker"])
+    _cyl("brazier", (-0.9, 3.0, 0.35), 0.17, 0.5, mats["marker"])
     _cone("fir", (1.6, 5.5, 1.75 + 1.1), 0.7, 2.2, mats["clay"])
     _box("fir_trunk", (1.6, 5.5, 1.85), (0.1, 0.1, 0.3), mats["prop"])
     _fill_light((0, 3, 4.0), 120)
