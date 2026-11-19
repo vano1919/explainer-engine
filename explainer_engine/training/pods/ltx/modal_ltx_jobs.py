@@ -48,6 +48,8 @@ except ImportError:
 HF_REPO = "vano1919/tmr-artifacts"
 LAUNCH_PATH = Path(__file__).with_name("launch.json")
 LADDER_PATH = Path(os.environ.get("EE_LTX_LADDER") or Path(__file__).with_name("ladder.json"))
+NIGHT_LEDGER = Path(os.environ.get("EE_NIGHT_LEDGER") or
+                    "/mnt/project-files/explainer-engine/final_plan_2026-11-19/modal_stage/NIGHT_LEDGER_2026-11-19.json")
 SECRET_NAME = "custom-secret"   # the owner's second Modal account holds his HF token under this name (his message 2026-11-19 20:41 UTC, plan thread 21:36 UTC); the key inside is HF_TOKEN
 PINS = ("model_repo", "model_revision", "model_files", "ltx_code", "module", "uses", "hf_out", "scaledown_window_s",
         "base_image")
@@ -428,9 +430,10 @@ def preflight(launch: dict, job: dict | None = None):
                 bad.append(f"{job.get('shot_id')}: a chained shot lacks its shot_id, prompt, seconds or seed")
             elif float(c["seconds"]) > max_seconds(launch):
                 bad.append(f"{c['shot_id']}: {c['seconds']} s is longer than the model's {max_seconds(launch):g} s")
-        if job.get("end_picture") and kind_of(job) != "keyframes":
-            bad.append(f"{job.get('shot_id')}: an end picture, but only the keyframes kind takes one (the distilled CLI takes "
-                       "the frame-0 picture)")
+        for j in all_jobs(job):                       # the chained shots too (N2 of the audit of 2026-11-19)
+            if j.get("end_picture") and kind_of(j) != "keyframes":
+                bad.append(f"{j.get('shot_id')}: an end picture, but only the keyframes kind takes one (the distilled CLI takes "
+                           "the frame-0 picture)")
         if any(kind_of(j) != "clip" for j in all_jobs(job)):
             pins = None
             try:
@@ -456,6 +459,37 @@ def _ledger(spec: dict):
     if not (led.get("path") and led.get("service") and led.get("item")):
         raise SystemExit(f"{spec.get('shot_id')}: the spec names no ledger (path, service, item); nothing was started (D-56)")
     return Run.open(led["path"]), led
+
+
+def hard_bill_usd(launch: dict, timeout_s: float) -> float:
+    """The most one launch can bill: the function's hard timeout plus the cold start, at the card's rate."""
+    return round((float(timeout_s) + float(launch["caps"]["cold_start_s"])) * usd_per_h(launch) / 3600.0, 4)
+
+
+def night_reserve(item: str, usd: float, why: str = "", path=None) -> None:
+    """The creator's night total (``config/spend_caps.json`` modal.night_total_usd, 2026-11-19 22:25 UTC): while that line exists, a
+    paid launch reserves its hard bill in the night ledger BEFORE the GPU function is called and is refused past the total or with
+    no ledger (``cloud/night_budget``). Without the line the night rule does not apply and nothing is done."""
+    from explainer_engine.core import spend_caps
+    from explainer_engine.cloud import night_budget as NB
+    if not isinstance((spend_caps.modal() or {}).get("night_total_usd"), (int, float)):
+        return
+    try:
+        NB.reserve(path or NIGHT_LEDGER, item, usd, why)
+    except NB.NightCapExceeded as exc:
+        raise SystemExit(f"night total: {exc}; nothing was started") from None
+
+
+def night_settle(item: str, usd: float, path=None) -> None:
+    """After the launch: the wall clock at the rate replaces the reservation (a failure to settle is printed, never hides the run)."""
+    from explainer_engine.core import spend_caps
+    from explainer_engine.cloud import night_budget as NB
+    if not isinstance((spend_caps.modal() or {}).get("night_total_usd"), (int, float)):
+        return
+    try:
+        NB.settle(path or NIGHT_LEDGER, item, usd)
+    except NB.NightCapExceeded as exc:
+        print("NIGHT LEDGER SETTLE FAILED:", exc, flush=True)
 
 
 def claim_launch(spec: dict, now=time.time) -> None:
@@ -1568,12 +1602,18 @@ if modal is not None:
         plan_sha = _sha(plan)
         print("GO card", go_gate(plan_sha=plan_sha), "smoke timeout", TIMEOUTS[0], "s", flush=True)
         ladder_gate("L3")
+        smoke_item = f"ltx_smoke_{run_id(plan_sha, LAUNCH)}"
+        night_reserve(smoke_item, hard_bill_usd(LAUNCH, TIMEOUTS[0]), "L3 smoke")
         pic = Path(picture).read_bytes()
         nat = native_spec(LAUNCH, SMOKE_JOB["seconds"])
         job = dict(SMOKE_JOB, fps=nat["fps"], width=nat["width"], height=nat["height"], start_bytes=pic,
                    start_sha256=hashlib.sha256(pic).hexdigest(), run_id=run_id(plan_sha, LAUNCH), launch_sha=launch_sha(LAUNCH),
                    worker_sha=worker_sha(), nonce=uuid.uuid4().hex[:12], cheapest_waive=waivers())
-        res = ltx_smoke.remote(job, LAUNCH)
+        t_smoke = time.time()
+        try:
+            res = ltx_smoke.remote(job, LAUNCH)
+        finally:
+            night_settle(smoke_item, round((time.time() - t_smoke) * usd_per_h(LAUNCH) / 3600.0, 4))
         print("result", json.dumps(res))
         ok = res.get("state") == "DONE"
         record("L3", ok, measured={"gpu": res.get("gpu"), "s_per_clip_s": res.get("s_per_clip_s"),
@@ -1596,6 +1636,8 @@ if modal is not None:
             raise SystemExit("\n".join(why))
         print("GO card", go_gate(plan_sha=spec["plan_sha256"]), "timeout", TIMEOUTS[1], "s", flush=True)
         ladder_gate("L4")
+        night_item = f"ltx_main_{spec['run_id']}"
+        night_reserve(night_item, hard_bill_usd(LAUNCH, TIMEOUTS[1]), f"L4 {spec.get('shot_id')} and {len(spec.get('chain') or [])} chained")
         claim_launch(spec)
         t0, res = time.time(), None
         try:
@@ -1604,6 +1646,7 @@ if modal is not None:
         finally:
             wall = time.time() - t0
             print("settled", settle_launch(spec, wall), "USD for", round(wall, 1), "s", flush=True)
+            night_settle(night_item, round(wall * usd_per_h(LAUNCH) / 3600.0, 4))
             if res is not None:
                 Path(job).with_suffix(".result.json").write_text(json.dumps(res))
         print("result", json.dumps(res))
