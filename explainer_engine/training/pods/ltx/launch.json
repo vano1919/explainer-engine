@@ -66,5 +66,23 @@
     "at": "2026-11-12T19:10:06Z",
     "money": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWWqRxqiE28kSDxnNPn41fng ($1 per test run, 19:20 UTC)"
   },
-  "caps_why": "run_usd 0.97 for the battle scene (the creator 2026-11-12 20:44 UTC: $1 in total; card cmsg_01Hnu5zB86sjUj5GtTgaUkPWFqZzbAMMDCTETvK3bpDNzd, 20:59 UTC: '4 clips, $1.1'): the run timeout 509 s less the 75 s end path leaves 434 s for four cuts (~380 s at the love run's speed, a cold clip at the bake-off's 147 s still fits); the hard bill (run timeout + cold start) is $0.890 and the scene's budget adds the pictures and the CPU rungs (scene_run.budget_problems). Was 1.2 for the love scene"
+  "caps_why": "run_usd 0.97 for the battle scene (the creator 2026-11-12 20:44 UTC: $1 in total; card cmsg_01Hnu5zB86sjUj5GtTgaUkPWFqZzbAMMDCTETvK3bpDNzd, 20:59 UTC: '4 clips, $1.1'): the run timeout 509 s less the 75 s end path leaves 434 s for four cuts (~380 s at the love run's speed, a cold clip at the bake-off's 147 s still fits); the hard bill (run timeout + cold start) is $0.890 and the scene's budget adds the pictures and the CPU rungs (scene_run.budget_problems). Was 1.2 for the love scene",
+  "kind_model_files": {
+    "diffusion_models/ltx-2.5-22b-dev-transformer-bf16.safetensors": "792a2bad501ca03262c0bc2ce7a2949e85b142ce18e30894aad5bc849c8e7584",
+    "loras/ltx-2.5-22b-distilled-lora-450-bf16.safetensors": "86370bbf79a9eb4edaa158907e2b48a5188fe4c5dc8ce30c7eb8f2f131a9bbf5"
+  },
+  "kind_uses": {
+    "dev_transformer": "diffusion_models/ltx-2.5-22b-dev-transformer-bf16.safetensors",
+    "distilled_lora": "loras/ltx-2.5-22b-distilled-lora-450-bf16.safetensors"
+  },
+  "kind_defaults": {
+    "num_inference_steps": 40,
+    "video_cfg_guidance_scale": 3.0,
+    "video_stg_guidance_scale": 1.0,
+    "distilled_lora_strength_stage_1": 0.25,
+    "distilled_lora_strength_stage_2": 0.5,
+    "image_strength": 1.0,
+    "source": "ltx_pipelines.utils.constants and utils.args at LTX-2 e98f6d9 (the CLI's own defaults, written out so the run record holds every setting)"
+  },
+  "kind_why": "W5 (final plan 2026-11-19, P-6/CT-2): job kinds keyframes / upscale_x2 / retake / a2v. The guided two-stage pipelines (keyframes, upscale_x2, a2v) need the DEV transformer and the distilled LoRA of the same pinned revision (README at e98f6d9: 'the full model; used by the guided two-stage pipelines'); both are pinned by sha256 here and equal config/cloud_pins.json models.video_ltx.sha256_files (a test keeps them together). They are NOT on the Volume yet: staging them is a paid CPU step of the A/B plan."
 }

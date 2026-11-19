@@ -98,6 +98,17 @@ def launch_problems(launch: dict) -> list[str]:
     if runner_of(launch) not in RUNNERS:
         out.append(f"launch runner must be one of {RUNNERS}")
     out += native_problems(launch)
+    out += kind_launch_problems(launch)
+    return out
+
+
+def kind_launch_problems(launch: dict) -> list[str]:
+    """W5: when the launch pins extra files for the job kinds, each has a 64-hex sha256 and ``kind_uses`` names only those."""
+    kf, ku = launch.get("kind_model_files"), launch.get("kind_uses")
+    if kf is None and ku is None:
+        return []
+    out = [f"launch kind_model_files {f} has no sha256" for f, h in (kf or {}).items() if not HEX64.match(str(h))]
+    out += [f"launch kind_uses.{r} is not one of kind_model_files" for r, f in (ku or {}).items() if f not in (kf or {})]
     return out
 
 
@@ -325,7 +336,14 @@ def read_job(path: str, launch: dict | None = None) -> dict:
         chain.append(c)
     if job.get("chain"):
         job["chain"] = chain
-    return dict(job, start_sha256=sha, start_bytes=pic)
+    out = dict(job, start_sha256=sha, start_bytes=pic)
+    if job.get("end_picture"):                        # W5 keyframes: the end keyframe, pinned like the start
+        end = Path(job["end_picture"]).read_bytes()
+        if (job.get("extra") or {}).get("end_sha256") != hashlib.sha256(end).hexdigest():
+            raise SystemExit(f"{job['shot_id']}: the end picture's sha256 is not the one the pictures stage pinned; "
+                             "nothing was started")
+        out["end_bytes"] = end
+    return out
 
 
 BAKED_LAUNCH = Path("/root/launch.json")   # the launch file the image was built with (``add_local_file`` below)
@@ -390,8 +408,17 @@ def preflight(launch: dict, job: dict | None = None):
                 bad.append(f"{job.get('shot_id')}: a chained shot lacks its shot_id, prompt, seconds or seed")
             elif float(c["seconds"]) > max_seconds(launch):
                 bad.append(f"{c['shot_id']}: {c['seconds']} s is longer than the model's {max_seconds(launch):g} s")
-        if job.get("end_picture"):
-            bad.append(f"{job.get('shot_id')}: an end picture, but the LTX distilled CLI takes only the frame-0 picture")
+        if job.get("end_picture") and kind_of(job) != "keyframes":
+            bad.append(f"{job.get('shot_id')}: an end picture, but only the keyframes kind takes one (the distilled CLI takes "
+                       "the frame-0 picture)")
+        if kind_of(job) != "clip":
+            pins = None
+            try:
+                pins = json.loads((Path(__file__).resolve().parents[4] / "config" / "cloud_pins.json").read_text(
+                    encoding="utf-8"))["models"]["video_ltx"]
+            except (OSError, KeyError, ValueError):
+                bad.append("config/cloud_pins.json (models.video_ltx) cannot be read: the kind's extra files are not proved")
+            bad += kind_problems(launch, job, pins)
     from explainer_engine.cloud import cheapest        # D-133: the cheapest known combination (CH-01, CH-02, CH-04)
     why = cheapest.problems_text(cheapest.launch_problems(launch))
     if why:
@@ -561,6 +588,208 @@ def ltx_argv(launch, job, picture, mp4) -> list[str]:
     """The CLI's own arguments of one clip (``ltx_cmd`` without the interpreter): the in-process runner parses exactly these
     with the CLI's own parser, so both runners read the same settings."""
     return ltx_cmd(launch, job, picture, mp4)[3:]
+
+
+# --- W5 job kinds (final plan 2026-11-19, P-6, CT-2): the other official Lightricks pipelines ------------------------------
+# Verified at the pinned LTX-2 commit (launch ``ltx_code``, docs/LTX_PIPELINES.md quotes file and line): each module below exists
+# and has a CLI ``main``. Anything not in this table is not built (never an invented API). The default kind ``clip`` is the
+# distilled CLI above and is untouched.
+KIND_PIPELINES = {
+    "keyframes": {"module": "ltx_pipelines.ti2vid_two_stages", "cls": "TI2VidTwoStagesPipeline",
+                  "src": "packages/ltx-pipelines/src/ltx_pipelines/ti2vid_two_stages.py:108",
+                  "needs": ("dev_transformer", "distilled_lora"), "images": 2},
+    "upscale_x2": {"module": "ltx_pipelines.ti2vid_two_stages", "cls": "TI2VidTwoStagesPipeline",
+                   "src": "packages/ltx-pipelines/src/ltx_pipelines/ti2vid_two_stages.py:108",
+                   "needs": ("dev_transformer", "distilled_lora"), "images": 1},
+    "retake": {"module": "ltx_pipelines.retake", "cls": "RetakePipeline",
+               "src": "packages/ltx-pipelines/src/ltx_pipelines/retake.py:56", "needs": (), "images": 0},
+    "a2v": {"module": "ltx_pipelines.a2vid_two_stage", "cls": "A2VidPipelineTwoStage",
+            "src": "packages/ltx-pipelines/src/ltx_pipelines/a2vid_two_stage.py:113",
+            "needs": ("dev_transformer", "distilled_lora"), "images": 1},
+}
+KIND_SETTINGS = ("num_inference_steps", "video_cfg_guidance_scale", "video_stg_guidance_scale",
+                 "distilled_lora_strength_stage_1", "distilled_lora_strength_stage_2")
+HEX64 = re.compile(r"^[0-9a-f]{64}$")
+
+
+def kind_of(job: dict) -> str:
+    return str(job.get("kind") or "clip")
+
+
+def distilled_engine(job: dict) -> bool:
+    """``keyframes`` with ``engine: distilled``: the launch's own distilled pipeline (the one a clip uses, its stage 2 already
+    runs the pinned x2 upsampler: ltx_pipelines/distilled.py:164-214, 484) with the end picture bound as a ``guide`` at its
+    pixel-frame index. No dev transformer, no CFG: isolates the end keyframe from the guided pipeline. Default engine: guided."""
+    return kind_of(job) == "keyframes" and job.get("engine") == "distilled"
+
+
+def kind_needs(job: dict) -> tuple:
+    return () if distilled_engine(job) else KIND_PIPELINES[kind_of(job)]["needs"]
+
+
+def kind_problems(launch: dict, job: dict, pins: dict | None = None) -> list[str]:
+    """Free check of a non-``clip`` job: the kind is built, every extra file is pinned by sha256 (and equals ``pins`` =
+    config/cloud_pins.json ``models.video_ltx`` when given), the upsampler is the pinned one, the settings are written out
+    (never the CLI's silent defaults), frames and size are native, and the conditioning pictures are pinned."""
+    kind = kind_of(job)
+    if kind == "clip":
+        return []
+    if kind not in KIND_PIPELINES:
+        return [f"job kind {kind!r} is not built (built: clip, {', '.join(KIND_PIPELINES)})"]
+    spec, bad = KIND_PIPELINES[kind], []
+    files, uses, kfiles = launch.get("model_files") or {}, launch.get("uses") or {}, launch.get("kind_model_files") or {}
+    kuses = launch.get("kind_uses") or {}
+    if kind == "keyframes" and job.get("engine") not in (None, "guided", "distilled"):
+        bad.append(f"keyframes: engine {job.get('engine')!r} is not built (guided or distilled)")
+    for role in kind_needs(job):
+        f = kuses.get(role)
+        if not f or f not in kfiles or not HEX64.match(str(kfiles[f])):
+            bad.append(f"{kind}: launch kind_uses.{role} is not a pinned file (needs a name and its sha256 in kind_model_files)")
+    if not (uses.get("spatial_upsampler") in files and HEX64.match(str(files.get(uses.get("spatial_upsampler"), "")))):
+        bad.append(f"{kind}: the pinned spatial upsampler (uses.spatial_upsampler) is not in model_files with a sha256")
+    if pins is not None:
+        want = pins.get("sha256_files") or {}
+        for f, h in {**files, **kfiles}.items():
+            if f in kfiles or f == uses.get("spatial_upsampler"):
+                if want.get(f) != h:
+                    bad.append(f"{kind}: {f} sha256 is not the one in config/cloud_pins.json models.video_ltx")
+        if pins.get("revision") != launch.get("model_revision"):
+            bad.append(f"{kind}: launch model_revision is not config/cloud_pins.json's models.video_ltx.revision")
+    for forbidden in ("checkpoint_path", "transformer_path", "lora", "loras", "distilled_lora", "spatial_upsampler_path"):
+        if job.get(forbidden):
+            bad.append(f"{kind}: the job names its own {forbidden}: files come only from the launch pins")
+    st = job.get("settings") or {}
+    bad += [f"{kind}: settings.{k} is not written out (the run record holds every setting)" for k in KIND_SETTINGS
+            if kind != "retake" and not distilled_engine(job) and not _num(st.get(k))]
+    if kind == "retake":
+        if not _num(st.get("num_inference_steps")):
+            bad.append("retake: settings.num_inference_steps is not written out")
+        src = job.get("source") or {}
+        if not (src.get("hf_path") and HEX64.match(str(src.get("sha256") or ""))):
+            bad.append("retake: source needs hf_path and the sha256 of the clip to regenerate")
+        t0, t1 = job.get("start_time"), job.get("end_time")
+        if not (isinstance(t0, (int, float)) and isinstance(t1, (int, float)) and 0 <= t0 < t1):
+            bad.append("retake: start_time < end_time (seconds) are required")
+    if kind == "a2v":
+        au = job.get("audio") or {}
+        if not (au.get("hf_path") and HEX64.match(str(au.get("sha256") or ""))):
+            bad.append("a2v: audio needs hf_path and its sha256")
+    if kind != "retake":
+        frames = ltx_frames(float(job.get("seconds") or 0), int(job.get("fps") or 0) or 24)
+        nat = launch.get("native") or {}
+        if frames > int(nat.get("max_frames") or 0):
+            bad.append(f"{kind}: {frames} frames are longer than the model's {nat.get('max_frames')}")
+        if [job.get("width"), job.get("height")] != nat.get("use"):
+            bad.append(f"{kind}: size {job.get('width')}x{job.get('height')} is not native {nat.get('use')}")
+        if kind == "keyframes":
+            e = job.get("end_frame")
+            if not job.get("end_picture") or not HEX64.match(str((job.get("extra") or {}).get("end_sha256") or "")):
+                bad.append("keyframes: needs end_picture pinned by extra.end_sha256 (start+end keyframes)")
+            if not (isinstance(e, int) and 1 <= e <= frames - 1):
+                bad.append(f"keyframes: end_frame must be a pixel-frame index in 1..{frames - 1}")
+        elif job.get("end_picture"):
+            bad.append(f"{kind}: takes no end picture")
+    return bad
+
+
+def kind_conditioning(job: dict, frames: int) -> list[dict]:
+    """The conditioning stills of a kind job, written as the pipeline takes them (``--image PATH FRAME_IDX STRENGTH BINDING``,
+    args.py ImageAction): the start replaces frame 0, the end is a ``guide`` at its pixel-frame index."""
+    st = job.get("settings") or {}
+    out = [{"role": "start", "frame": 0, "strength": float(st.get("image_strength", 1.0)), "binding": "replace",
+            "sha256": job.get("start_sha256")}]
+    if kind_of(job) == "keyframes":
+        out.append({"role": "end", "frame": int(job["end_frame"]), "strength": float(st.get("end_image_strength", 1.0)),
+                    "binding": "guide", "sha256": (job.get("extra") or {}).get("end_sha256")})
+    return out
+
+
+def kind_cmd(launch, job, start_png, mp4, end_png=None, source=None, audio=None, python=None) -> list[str]:
+    """The official CLI of one kind job, every file from the launch pins, every setting from the job (written out)."""
+    kind = kind_of(job)
+    spec, root, u, ku = KIND_PIPELINES[kind], weights_root(launch), launch["uses"], launch.get("kind_uses") or {}
+    st = job.get("settings") or {}
+    neg = resolve_negative_prompt(launch, job)
+    if distilled_engine(job):
+        frames = ltx_frames(job["seconds"], job["fps"])
+        cmd = [python or sys.executable, "-m", launch["module"], "--transformer-path", str(root / u["transformer"]),
+               "--text-encoder-path", str(root / u["text_encoder"]), "--video-vae-path", str(root / u["video_vae"]),
+               "--audio-vae-path", str(root / u["audio_vae"]), "--spatial-upsampler-path", str(root / u["spatial_upsampler"])]
+        paths = {"start": start_png, "end": end_png}
+        for c in kind_conditioning(job, frames):
+            cmd += ["--image", str(paths[c["role"]]), str(c["frame"]), str(c["strength"]), c["binding"]]
+        return cmd + ["--prompt", job["motion_prompt"], "--negative-prompt", neg, "--width", str(job["width"]),
+                      "--height", str(job["height"]), "--num-frames", str(frames), "--frame-rate", str(job["fps"]),
+                      "--seed", str(job["seed"]), "--output-path", str(mp4)]
+    cmd = [python or sys.executable, "-m", spec["module"], "--text-encoder-path", str(root / u["text_encoder"]),
+           "--video-vae-path", str(root / u["video_vae"]), "--audio-vae-path", str(root / u["audio_vae"])]
+    if kind == "retake":
+        cmd += ["--transformer-path", str(root / u["transformer"]),
+                "--video-path", str(source), "--start-time", str(job["start_time"]), "--end-time", str(job["end_time"]),
+                "--prompt", job["motion_prompt"], "--seed", str(job["seed"]), "--output-path", str(mp4)]
+        return cmd
+    cmd += ["--transformer-path", str(root / ku["dev_transformer"]),
+            "--spatial-upsampler-path", str(root / u["spatial_upsampler"]),
+            "--distilled-lora", str(root / ku["distilled_lora"]),
+            "--distilled-lora-strength-stage-1", str(st["distilled_lora_strength_stage_1"]),
+            "--distilled-lora-strength-stage-2", str(st["distilled_lora_strength_stage_2"]),
+            "--num-inference-steps", str(int(st["num_inference_steps"])),
+            "--video-cfg-guidance-scale", str(st["video_cfg_guidance_scale"]),
+            "--video-stg-guidance-scale", str(st["video_stg_guidance_scale"])]
+    frames = ltx_frames(job["seconds"], job["fps"])
+    cond = kind_conditioning(job, frames)
+    paths = {"start": start_png, "end": end_png}
+    for c in cond:
+        cmd += ["--image", str(paths[c["role"]]), str(c["frame"]), str(c["strength"]), c["binding"]]
+    cmd += ["--prompt", job["motion_prompt"], "--negative-prompt", neg, "--width", str(job["width"]),
+            "--height", str(job["height"]), "--num-frames", str(frames), "--frame-rate", str(job["fps"]),
+            "--seed", str(job["seed"]), "--output-path", str(mp4)]
+    if kind == "keyframes":                       # args.py: keyframe interpolation also refines audio in stage 2
+        cmd += ["--refine-audio"]
+    if kind == "a2v":
+        cmd += ["--audio-path", str(audio)]
+    return cmd
+
+
+def kind_record(launch: dict, job: dict, cmd: list[str]) -> dict:
+    """Every setting of the run, written into the run record (seed, steps, guidance, conditioning frames and strengths, the
+    upscaler file's sha256): what the A/B metrics and a later audit read; never reconstructed from the command line."""
+    kind = kind_of(job)
+    files, uses, kuses = launch["model_files"], launch["uses"], launch.get("kind_uses") or {}
+    frames = ltx_frames(job["seconds"], job["fps"]) if kind != "retake" else None
+    dist = distilled_engine(job)
+    rec = {"kind": kind, "engine": "distilled" if dist else "guided" if kind == "keyframes" else None,
+           "module": launch["module"] if dist else KIND_PIPELINES[kind]["module"],
+           "pipeline": "DistilledPipeline" if dist else KIND_PIPELINES[kind]["cls"],
+           "ltx_commit": (launch.get("ltx_code") or {}).get("commit"), "model_revision": launch["model_revision"],
+           "seed": job["seed"], "frames": frames, "fps": job.get("fps"), "size": [job.get("width"), job.get("height")],
+           "settings": dict(job.get("settings") or {}), "prompt": job["motion_prompt"],
+           "negative_prompt": resolve_negative_prompt(launch, job),
+           "conditioning": kind_conditioning(job, frames) if frames else [],
+           "spatial_upsampler": {"file": uses["spatial_upsampler"], "sha256": files[uses["spatial_upsampler"]]},
+           "argv_sha256": hashlib.sha256("\0".join(cmd).encode()).hexdigest()}
+    for role in kind_needs(job):
+        rec[role] = {"file": kuses[role], "sha256": launch["kind_model_files"][kuses[role]]}
+    if kind == "retake":
+        rec.update(start_time=job["start_time"], end_time=job["end_time"], source=job["source"])
+    if kind == "a2v":
+        rec["audio"] = job["audio"]
+    return rec
+
+
+def stage_input(spec: dict, dest: Path, api=None, repo=HF_REPO, download=None) -> Path:
+    """A retake's source clip or an a2v's audio: fetched from HF by its path and refused unless its sha256 is the pinned one."""
+    dest = Path(dest)
+    if not dest.is_file():
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        if download is not None:
+            download(repo, spec["hf_path"], dest)
+        else:
+            from huggingface_hub import hf_hub_download
+            shutil.copyfile(hf_hub_download(repo_id=repo, repo_type="dataset", filename=spec["hf_path"], token=_tok()), dest)
+    if _sha(dest) != spec["sha256"]:
+        raise RuntimeError(f"{spec['hf_path']}: sha256 is not the pinned one; nothing was run")
+    return dest
 
 
 class _Argv:
@@ -836,8 +1065,26 @@ def generate(job, launch, out: Path, deadline: Deadline, sh=subprocess.run, tmp=
     final = Path(out) / clip_name(job["shot_id"], job["seed"])
     mp4 = tmp_name(final)
     beat(out, job, "generate")
-    row = {"frames": ltx_frames(job["seconds"], job["fps"]), "fps": job["fps"]}
-    if session is not None:
+    row = {"frames": ltx_frames(job["seconds"], job["fps"]) if kind_of(job) != "retake" else None, "fps": job["fps"]}
+    if kind_of(job) != "clip":                   # W5: another official pipeline, always its own CLI process
+        end_png = None
+        if job.get("end_bytes"):
+            end_png = Path(tmp) / f"{job['shot_id']}_end_{job['width']}x{job['height']}.png"
+            fit_picture(Image.open(io.BytesIO(job["end_bytes"])), job["width"], job["height"]).save(end_png)
+        source = audio = None
+        if kind_of(job) == "retake":
+            source = stage_input(job["source"], Path(tmp) / f"{job['shot_id']}_source.mp4")
+        if kind_of(job) == "a2v":
+            audio = stage_input(job["audio"], Path(tmp) / f"{job['shot_id']}_audio" / Path(job["audio"]["hf_path"]).name)
+        cmd = kind_cmd(launch, job, pic, mp4, end_png=end_png, source=source, audio=audio)
+        row["record"] = kind_record(launch, job, cmd)
+        with open(Path(out) / f"{job['shot_id']}.log", "w") as log:
+            try:
+                row["rc"] = sh(cmd, stdout=log, stderr=subprocess.STDOUT, cwd=launch.get("code_dir") or "/workspace/LTX-2",
+                               timeout=max(1.0, deadline.left())).returncode
+            except subprocess.TimeoutExpired:
+                row["rc"], row["why"] = None, "the in-container deadline came during the clip"
+    elif session is not None:
         row.update(in_process_clip(session, ltx_argv(launch, job, pic, mp4), Path(out) / f"{job['shot_id']}.log"))
     else:
         with open(Path(out) / f"{job['shot_id']}.log", "w") as log:
@@ -1097,7 +1344,7 @@ def body(job: dict, launch: dict, timeout_s: int, *, vol_root="/w", commit=lambd
         if bad:
             raise RuntimeError("weights not on the Volume: " + "; ".join(bad[:5]))
         rows, prev, prev_s, prev_sub = [], None, None, None
-        if runner_of(launch) == "inproc":
+        if runner_of(launch) == "inproc" and kind_of(job) == "clip":   # W5 kinds run as their own CLI process
             session = (session_factory or LtxSession)([s["motion_prompt"] for s in chain_jobs(job)], deadline=deadline,
                                                       now=now)
             m["runner"] = "inproc"
