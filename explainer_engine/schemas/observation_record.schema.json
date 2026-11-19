@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "observation_record.schema.json",
+  "title": "One observation of one generated asset, bound to its sha256 (final plan 5.4, OB-1; qa/observe.py); one JSON line of episodes/<ep>/qa/observations.jsonl",
+  "type": "object",
+  "required": ["schema", "record_id", "episode_id", "asset_sha256", "asset_id", "shot_id", "kind", "observer", "questions", "answers",
+               "defects", "verdict", "action", "observed_at", "evidence"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {"const": "observation_record/1"},
+    "record_id": {"type": "string", "minLength": 3},
+    "episode_id": {"type": "string", "minLength": 1},
+    "asset_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "asset_id": {"type": ["string", "null"], "description": "the vault asset_id (imagegen/vault.py) when the asset has a record, else null"},
+    "asset_path": {"type": ["string", "null"], "description": "path (relative to the episode folder, or absolute) the sha256 was taken from"},
+    "shot_id": {"type": "string", "minLength": 1},
+    "kind": {"enum": ["image", "clip", "voice"]},
+    "observer": {"enum": ["claude", "gemini_chat", "gemini_api", "ffmpeg", "transcript"]},
+    "questions": {"type": "array", "items": {"type": "string"}, "description": "from the shot card's acceptance_questions, plus the observer's own"},
+    "answers": {"type": "object", "description": "question text or id -> the answer (bool, number or short text); an observer that measures writes its numbers here"},
+    "defects": {"type": "array", "items": {
+      "type": "object", "required": ["code", "where", "severity"], "additionalProperties": false,
+      "properties": {
+        "code": {"type": "string", "pattern": "^(F([1-9]|1[0-9])|TECH-[A-Z0-9]+|TXT-[A-Z0-9]+)$"},
+        "where": {"type": "string", "description": "frame, time range or word the defect is at, e.g. 't=2.60-4.00s' or 'word 3'"},
+        "severity": {"enum": ["major", "minor", "info"]},
+        "note": {"type": "string"}}}},
+    "verdict": {"enum": ["PASS", "REVIEW", "RETRY", "BLOCK", "NOT_RUN"], "description": "qa/status.py spelling; FAIL is read as BLOCK"},
+    "action": {"enum": ["none", "R1", "R2", "R3", "R4"], "description": "R1 fix in place (trim, mute, reseed, inpaint), R2 prompt patch, R3 new keyframe or reference, R4 fallback 2.5D; from qa/retry_router.py"},
+    "observed_at": {"type": "string"},
+    "evidence": {"type": "array", "items": {"type": "string"}, "description": "paths of the contact sheet, frame strip, transcript diff, task file"},
+    "reviewed": {"type": ["object", "null"], "description": "{by: session|owner, at, note}: a person or the session looked at the evidence; an automatic observer's PASS counts only with this or an accepted calibration",
+                 "properties": {"by": {"enum": ["session", "owner"]}, "at": {"type": "string"}, "note": {"type": "string"}, "message_id": {"type": ["string", "null"]}}},
+    "note": {"type": "string"}
+  }
+}

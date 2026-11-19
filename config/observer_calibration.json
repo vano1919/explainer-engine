@@ -1,0 +1,1 @@
+{"schema": "observer_calibration/1", "accepted": {}, "note": "An observer is entered here only on the creator's word (message id) after he accepts its calibration report (docs/OBSERVATION_CALIBRATION_2026-11-20.md). Until then its PASS counts only with a recorded look."}

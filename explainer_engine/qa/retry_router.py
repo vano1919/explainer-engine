@@ -129,3 +129,83 @@ def write_report(job_dir: Path | str, report: dict) -> Path:
     path.parent.mkdir(parents=True, exist_ok=True)
     write_json_atomic(path, report)
     return path
+
+
+# --- OB-2: a defect decides the action (final plan P-5, W4; table and reasons in docs/OBSERVATION.md) ------------------------
+# code -> (action, generative, why). R1 fix in place (trim, mute, reseed, inpaint), R2 prompt patch, R3 new keyframe or
+# reference, R4 fallback 2.5D from the approved keyframe. ``generative`` = it spends a generation, so it counts against the two
+# retries of shot_state.RETRY_CAP; a trim, a mute and the 2.5D fallback spend none.
+R_ACTIONS: dict[str, tuple[str, bool, str]] = {
+    "F1": ("R3", True, "identity is restored from the untouched master, not by wording"),
+    "F2": ("R2", True, "motion is written as a body mechanic (failure-modes F2)"),
+    "F3": ("R2", True, "one motion source, a tighter shot size"),
+    "F4": ("R2", True, "the action is rewritten as a body mechanic"),
+    "F5": ("R3", True, "an end keyframe gives the clip an end state"),
+    "F6": ("R2", True, "exactly one named camera move with a magnitude"),
+    "F7": ("R3", True, "the end state of shot N becomes the start of N+1 through a new keyframe"),
+    "F8": ("R2", True, "the era's forbidden-object list goes into the prompt"),
+    "F9": ("R2", True, "the head count is declared in the prompt"),
+    "F10": ("R1", True, "reseed or inpaint the hands; an insert only if two seeds fail"),
+    "F11": ("R1", True, "reseed or inpaint the text or mark"),
+    "F12": ("R2", True, "the named key source and side go into the prompt"),
+    "F13": ("R2", True, "duration and pace are budgeted from the action"),
+    "F14": ("R2", True, "contact moments are scheduled on cuts"),
+    "F15": ("R1", False, "trim or mute the take; a clip that cannot be trimmed goes to R4"),
+    "F16": ("R3", True, "style is restored from the approved reference"),
+    "F17": ("R2", True, "the delivery aspect is fixed in the prompt"),
+    "F18": ("R1", False, "cut the seam out; long beats are planned as cut sequences"),
+    "F19": ("R3", True, "the prop is held in frame or handed to a cut by a new keyframe"),
+    "TECH-DECODE": ("R1", True, "the file does not decode: generate it again with a new seed"),
+    "TECH-BLACK": ("R1", False, "trim the black stretch"),
+    "TECH-FREEZE": ("R2", True, "a frozen picture is F2: write the motion"),
+    "TECH-SILENCE": ("R1", False, "mute or trim; a silent beat may be intended"),
+    "TECH-OFFSET": ("R1", False, "re-align the audio start in the edit"),
+    "TECH-FPS": ("R1", False, "re-time the clip in the edit"),
+    "TECH-FRAMES": ("R1", False, "re-time or trim the clip in the edit"),
+    "TECH-CUT": ("R1", False, "trim at the unexpected cut (F18)"),
+    "TXT-DUP": ("R1", False, "trim the repeated word out of the take"),
+    "TXT-FALSE": ("R1", False, "mute the clip audio: words on a silent beat"),
+    "TXT-EXTRA": ("R1", False, "trim the extra words"),
+    "TXT-MISSING": ("R2", True, "a word is missing: the line is read again (ElevenLabs credits: the creator is asked first)"),
+    "TXT-CUT": ("R1", False, "play the take to its end"),
+}
+_RANK = {"R3": 3, "R2": 2, "R1": 1, "R4": 0}
+
+
+def action_for_defect(code: str) -> dict:
+    """``{"code", "action", "generative", "why"}`` of one defect code; an unknown code is refused (no guessed action)."""
+    if code not in R_ACTIONS:
+        raise ContractError(f"OB-2: defect code {code!r} has no R1..R4 action in qa/retry_router.R_ACTIONS")
+    a, g, why = R_ACTIONS[code]
+    return {"code": code, "action": a, "generative": g, "why": why}
+
+
+def worst(codes: list[str]) -> dict:
+    """The action of the most expensive defect (R3 over R2 over R1; a generative one over a free one)."""
+    if not codes:
+        return {"code": None, "action": "none", "generative": False, "why": "no defect"}
+    return max((action_for_defect(c) for c in codes), key=lambda d: (d["generative"], _RANK[d["action"]]))
+
+
+def consume_retry(states, shot: str, kind: str) -> str:
+    """Spend one generative retry of ``shot`` (``kind`` "image" or "clip"): moves IMAGE_OBSERVED -> IMAGE_RETRY or
+    VIDEO_OBSERVED -> VIDEO_RETRY. The third raises ``ShotStateError`` (shot_state.RETRY_CAP = 2): take the 2.5D fallback or stop."""
+    state = "IMAGE_RETRY" if kind == "image" else "VIDEO_RETRY"
+    states.advance(shot, state)
+    return state
+
+
+def decide(states, shot: str, kind: str, codes: list[str]) -> dict:
+    """What happens next for a shot with these defects: the worst defect's action; a generative action with no retry left
+    becomes R4 (FALLBACK_25D) for a clip and a stop (``ESCALATE``) for a picture. Nothing is advanced here."""
+    w = worst(codes)
+    left = RETRY_LEFT(states, shot, kind)
+    if w["generative"] and left <= 0:
+        return {**w, "action": "R4" if kind == "clip" else "ESCALATE", "retries_left": 0,
+                "why": f"{w['why']}; the two retries are spent (OB-2)"}
+    return {**w, "retries_left": left}
+
+
+def RETRY_LEFT(states, shot: str, kind: str) -> int:
+    from explainer_engine.episode.shot_state import RETRY_CAP
+    return RETRY_CAP - states.shot(shot)["retries"]["image" if kind == "image" else "video"]

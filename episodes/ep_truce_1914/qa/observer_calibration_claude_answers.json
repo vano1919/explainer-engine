@@ -1,0 +1,10 @@
+{
+ "_note": "The session's look (a blind round: the 12 clips were shown as sheets A..L in a shuffled order, 2 fps contact sheet, picture only, no sound; the shot names were revealed after the answers). Keyed by shot.",
+ "S03_SH007": {"defects": [{"code": "F12", "where": "t=0.5-4.4s", "severity": "major", "note": "a white fog bloom grows from the left over the candles and the soldier's hands"}]},
+ "S04_SH014": {"defects": [{"code": "F5", "where": "t=4.0-4.4s", "severity": "major", "note": "the last sheet frame: the handshake is gone, both men stand apart and the German officer looks different"}]},
+ "S04_SH004": {"defects": [{"code": "F18", "where": "t=0.5-1.5s", "severity": "major", "note": "the officer climbs over the parapet, then stands with arms wide at another spot with another parapet shape: a jump inside the clip"}]},
+ "S03_SH008": {"defects": [{"code": "F9", "where": "t=1.5-4.0s", "severity": "minor", "note": "two soldiers appear in the trench behind from the middle of the clip"}]},
+ "S02_SH006": {"defects": [{"code": "F19", "where": "t=3.0-3.5s", "severity": "minor", "note": "the letter changes from an open sheet to a small folded card between two sheet frames"}]},
+ "S06_SH008": {"defects": []}, "S02_SH007": {"defects": []}, "S03_SH004": {"defects": []}, "S03_SH005": {"defects": []},
+ "S03_SH006": {"defects": []}, "S04_SH003": {"defects": []}
+}

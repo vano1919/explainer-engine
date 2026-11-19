@@ -1,0 +1,15 @@
+{
+ "schema": "observer_calibration_labels/1",
+ "source": "planning/full_film_2026-11-15/CORRECTIONS_LOG.md part A (the creator's and Whisper's findings of 2026-11-15) and ltx_whisper_small_en_2026-11-15.json",
+ "clips": {
+  "S06_SH008": {"label": "defect", "defects": [{"id": "dup_maybe", "kind": "transcript", "what": "'Maybe' said twice (Whisper 0.0-0.6 s and 1.72-1.92 s)"}]},
+  "S03_SH007": {"label": "defect", "defects": [
+    {"id": "false_words", "kind": "transcript", "what": "silent beat, the clip noise transcribes as 'Oh my God'"},
+    {"id": "white_bloom", "kind": "visual", "what": "a white fog bloom grows over the candles from about 2 s"}]},
+  "S04_SH014": {"label": "defect", "defects": [{"id": "handshake_break", "kind": "visual", "what": "at the end of the clip they let go and step apart (the creator's eye check)"}]},
+  "S03_SH003": {"label": "not_evaluable", "why": "the defect (a cut last word 'Nacht') was made by the old assembly, journal 183; the raw clip is complete (4.71 s), so the file itself has no known defect and no label is claimed"},
+  "S02_SH006": {"label": "good"}, "S02_SH007": {"label": "good"}, "S03_SH004": {"label": "good"}, "S03_SH005": {"label": "good"},
+  "S03_SH006": {"label": "good"}, "S03_SH008": {"label": "good"}, "S04_SH003": {"label": "good"}, "S04_SH004": {"label": "good"}
+ },
+ "note": "'good' means: no defect is recorded in the corrections log for this raw clip. It is NOT a verified-good label (the 1914 film was rejected as a whole); a defect found by an observer in a 'good' clip counts as a false positive here and is listed for the creator to decide."
+}
