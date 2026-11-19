@@ -21,6 +21,11 @@ def main(argv=None) -> int:
     o.add_argument("target", help="the model or the one file the word covers (* only for model_switch and effort_override)")
     o.add_argument("message_id")
     o.add_argument("quote")
+    o.add_argument("--by", choices=("creator", records.PLAN_THREAD), default="creator",
+                   help="plan_thread: the plan thread's approval of an approvable file (needs --reason and --delegation-ref)")
+    o.add_argument("--reason", default="")
+    o.add_argument("--delegation-ref", default="")
+    sub.add_parser("audit", help="print every plan-thread approval (path, reason, approver) for the PR body")
     s = sub.add_parser("start", help="name the active phase (the Stop hook checks it when it is review/done)")
     s.add_argument("phase")
     a = sub.add_parser("attempt", help="count an attempt at a phase (OR-04: 2 at the assigned level, the 3rd escalated, then stop)")
@@ -42,7 +47,18 @@ def main(argv=None) -> int:
     args = p.parse_args(argv)
     root = root_dir()
     if args.cmd == "ok":
-        print(json.dumps(records.add(args.action, args.target, args.message_id, args.quote), ensure_ascii=False))
+        try:
+            print(json.dumps(records.add(args.action, args.target, args.message_id, args.quote, by=args.by, reason=args.reason,
+                                         delegation_ref=args.delegation_ref), ensure_ascii=False))
+        except ValueError as e:
+            print(e, file=sys.stderr)
+            return 2
+    elif args.cmd == "audit":
+        rows = records.plan_thread_audit()
+        for r in rows:
+            print(f"- plan-thread approval: {r['target']} | reason: {r.get('reason')} | approver message: {r['message_id']} | "
+                  f"delegation: {r.get('delegation_ref')} | at {time.strftime('%Y-%m-%d %H:%M UTC', time.gmtime(float(r['at'])))}")
+        print(f"{len(rows)} plan-thread approval(s)")
     elif args.cmd == "start":
         write_json_atomic(root / "jobs" / "active_phase.json", {"phase": args.phase, "at": time.time()})
     elif args.cmd == "attempt":

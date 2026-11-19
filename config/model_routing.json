@@ -427,6 +427,18 @@
   "model_switch": {
     "window_minutes": 15
   },
+  "plan_thread_delegation": {
+    "message_id": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWFy2n2nMmAE5Zde3XqbeYnJ",
+    "quote": "ფაილების სიას და დაცულ ფაილებს და ყველა ტექნიკურ საკიტხს აწი ამტკიცებს მხოლოდ და მხოლოდ მთავარი სრედი გეგმის სრედი",
+    "at": "2026-11-19T10:32:44Z",
+    "recorded_by_word": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWQpbVcQvfsDtADSnt5amj19"
+  },
+  "plan_thread_approvable": [
+    "docs/architecture/v4_1_allowlists.json",
+    "config/picture_route.json",
+    "config/retired_era.json",
+    ".github/workflows/quality.yml"
+  ],
   "protected_files": {
     "config/spend_caps.json": 60,
     "config/model_routing.json": 60,

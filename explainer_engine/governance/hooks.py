@@ -178,8 +178,10 @@ def check_protected_shell(cmd: str, cfg: dict, root: Path) -> str | None:
                  or re.search(rf"open\([^)]*{esc}[^)]*['\"][wax+]", text)
                  or (re.search(r"\bpython3?\b|\bnode\b", text) and re.search(rf"{esc}[^\n]*write_(text|bytes|json)|write_(text|bytes|json)[^\n]*{esc}", text))
                  or re.search(rf"\bgit\s+(checkout|restore|apply){one}", text))
-        if write and not records.valid("protected_config", name, minutes, root=root, wildcard=False):
-            return f"refused (Lock 2): {name} changes only on the creator's recorded word (`python -m explainer_engine.governance ok protected_config {name} <message id> \"<his words>\"`)"
+        if write:
+            why = records.protected_refusal(name, minutes, root=root, via_shell=True)
+            if why:
+                return f"refused (Lock 2): {why} (`python -m explainer_engine.governance ok protected_config {name} <message id> \"<his words>\"`)"
     return None
 
 
@@ -209,8 +211,20 @@ def pre_write(event: dict, root=None) -> int:
         return 0
     if rel.split("/")[0] == "engine":
         return _deny("refused (Lock 2): no top-level engine/ folder (Blueprint Phase 1 item 14); the code lives in explainer_engine/")
-    if rel in cfg["protected_files"] and not records.valid("protected_config", rel, cfg["protected_files"][rel], root=root, wildcard=False):
-        return _deny(f"refused (Lock 2): {rel} changes only on the creator's recorded word (jobs/creator_ok.jsonl, action protected_config)")
+    if rel in cfg["protected_files"]:
+        old = new = None
+        try:
+            cur = (root / rel).read_text(encoding="utf-8") if (root / rel).is_file() else ""
+            if "content" in ti:
+                old, new = cur, str(ti["content"])
+            elif "old_string" in ti and "new_string" in ti and ti["old_string"] in cur:
+                old = cur
+                new = cur.replace(ti["old_string"], ti["new_string"]) if ti.get("replace_all") else cur.replace(ti["old_string"], ti["new_string"], 1)
+        except OSError:
+            pass
+        why = records.protected_refusal(rel, cfg["protected_files"][rel], root=root, old=old, new=new)
+        if why:
+            return _deny(f"refused (Lock 2): {why} (jobs/creator_ok.jsonl, action protected_config)")
     if rel.endswith(".py"):
         level = _effort(event)
         efforts = cfg["efforts"]
