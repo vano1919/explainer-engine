@@ -620,3 +620,23 @@ def test_continuity_cards_from_the_v4_script():
             if not s.get("is_master"):
                 assert s["refs"][0] == {"path": card["location"]["master_frame"], "role": "place"}
     assert n == 24
+
+
+def test_the_storyboard_reviews_a_video_shot_that_is_not_natural_for_ltx_and_changes_no_route(tmp_path):
+    """Step 1.3 (D-139): C2 (BP-205) is a REVIEW finding of the sheet; the script's route is the creator's to change."""
+    from explainer_engine.videolane import storyboard as SB
+    doc = _scene()
+    root, pics = _board_episode(tmp_path, doc)
+    ids = [s["shot_id"] for s in doc["shots"]]
+    rows = {r["gate"]: r for r in SB.build(root, doc, ids, "s1", pictures=pics)["rows"]}
+    assert "storyboard_ltx_natural_fit" in rows
+    bad = json.loads(json.dumps(doc))
+    for s in bad["shots"]:
+        if s.get("route") == "video" or P.is_video(s):
+            s["camera_spec"] = dict(s.get("camera_spec") or {}, shot_size="close_up")
+            s["character_ids"] = ["x", "y"]
+            s["action_start_state"] = "a boy kicks a ball"
+    before = json.dumps(bad, sort_keys=True)
+    row = {r["gate"]: r for r in SB.build(root, bad, ids, "s1", pictures=pics)["rows"]}["storyboard_ltx_natural_fit"]
+    assert json.dumps(bad, sort_keys=True) == before
+    assert row["status"] == G.REVIEW and row["measured"]

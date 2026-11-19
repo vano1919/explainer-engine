@@ -133,6 +133,18 @@ def build(root: Path, script: dict, scene_shots: list[str], scene_id: str, *, pi
     rows.append(G.row("storyboard_no_repeated_composition", not dups, f"{len(dups)} repeated composition(s)", dups[:20]))
     rows.append(G.row("storyboard_same_place_as_master", not env, f"{len(env)} picture(s) leave the master's place or "
                       "light (BP-166 palette, brightness gap)", env[:20], level=G.REVIEW))
+    # Step 1.3 (D-139): C2 natural fit of each video shot as a REVIEW finding; the route itself is never changed here
+    unnatural = []
+    for sid in scene_shots:
+        if not P.is_video(by[sid]):
+            continue
+        ev = P.classify_ltx_natural_fit(by[sid], script, start_frame=next((c["path"] for c in cells if c["shot_id"] == sid
+                                                                          and c.get("path")), None))
+        if not ev["natural_for_ltx"]:
+            unnatural.append(f"{sid}: {'; '.join(ev.get('reasons') or [])[:240]} (proposal: {ev['recommended_route']})")
+    rows.append(G.row("storyboard_ltx_natural_fit", not unnatural, f"{len(unnatural)} video shot(s) are not natural for LTX "
+                      "(C2/BP-205); a route change is the creator's, see production/route_proposals.json", unnatural[:20],
+                      level=G.REVIEW))
     # FA-14: the heroes before money (costume colours per hero box, SFace faces; level by switch Q3)
     from explainer_engine.videolane import identity as ID
     frames = {c["shot_id"]: (arrays[c["shot_id"]], arrays[c["shot_id"]]) for c in cells if c["shot_id"] in arrays}

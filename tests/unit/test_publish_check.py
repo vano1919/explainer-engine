@@ -56,3 +56,16 @@ def test_a_bad_shape_is_a_schema_fail():
     p = copy.deepcopy(GOOD)
     p["chapters"][0]["t"] = "zero"
     assert rules(p) == {"PC-01"}
+
+
+def test_unresolved_reviews_count_clips_and_third_party_under_their_own_headings(tmp_path):
+    import json
+    v = tmp_path / "production" / "video"
+    v.mkdir(parents=True)
+    (v / "S01_SH001.json").write_text(json.dumps({"shot_id": "S01_SH001", "status": "REVIEW",
+                                                  "start_frame_check": {"status": "NEEDS_EVIDENCE"}}), encoding="utf-8")
+    found = [{"rule": "PC-10", "severity": "REVIEW", "where": "pictures", "detail": "no provenance record"},
+             {"rule": "PC-02", "severity": "REVIEW", "where": "title", "detail": "other rule"}]
+    r = PC.unresolved_reviews(found, tmp_path)
+    assert r["count"] == 2 and len(r["clips"]) == 1 and r["third_party_media"] == ["pictures: no provenance record"]
+    assert PC.unresolved_reviews(found, None)["count"] == 1

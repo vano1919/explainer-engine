@@ -458,7 +458,13 @@ def ingest_scene(root: Path, script: dict, clips: list[dict], fps: int, *, backe
     by = {s["shot_id"]: s for s in script.get("shots", [])}
     spoken = P.clip_spoken(script)
     vdir = root / "production" / "video"
+    pics_p = root / "production" / "pictures.json"
+    try:
+        pictures = json.loads(pics_p.read_text(encoding="utf-8")).get("pictures") if pics_p.is_file() else None
+    except (OSError, ValueError):
+        pictures = None
     out = []
+    comparisons: dict[str, dict] = {}
     for k, c in enumerate(clips):
         sid = c["shot_id"]
         if sid not in by:
@@ -513,6 +519,9 @@ def ingest_scene(root: Path, script: dict, clips: list[dict], fps: int, *, backe
                "chain_from_frame": c.get("chain_from_frame"), "ends_on_handover": handover_s is not None,
                "findings": finds, "attempts": c.get("attempts") or []}
         rec["trim_contract"] = build_trim_contract(rec, sid)
+        rec["start_frame_check"] = start_frame_check(root, shot, raw, pictures, is_continuation=is_cont)
+        if (rec["start_frame_check"].get("frame0_vs_source") or {}).get("status") in ("PASS", "FAIL"):
+            comparisons[sid] = rec["start_frame_check"]["frame0_vs_source"]
         if sid in spoken and pr["has_audio"]:
             rec["speech_words"] = words_source
             rec["speech_detector"] = speech_detector     # which voicing check decided the words (silero_vad | harmonicity | none)
@@ -522,7 +531,113 @@ def ingest_scene(root: Path, script: dict, clips: list[dict], fps: int, *, backe
             rec.update({"level_trim_db": trim_db, "true_peak_before": peak_before})
         write_json_atomic(vdir / f"{sid}.json", rec)
         out.append(rec)
+    route_proposals(root, script, comparisons)       # Step 1.3: proposals only, the script's routes stay as they are
     return out
+
+
+# ---- Step 1.3 (D-139): the start-frame record and the route proposals (records only, nothing is re-routed here) ------------------
+
+START_FRAME_STATES = ("PASS", "REVIEW", "NEEDS_EVIDENCE")
+
+
+def frame0_of(clip: Path):
+    """Frame 0 of a clip as a BGR array, or None when it cannot be decoded."""
+    try:
+        import cv2
+        cap = cv2.VideoCapture(str(clip))
+        ok, img = cap.read()
+        cap.release()
+        return img if ok else None
+    except Exception:
+        return None
+
+
+def start_frame_check(root: Path, shot: dict, raw: Path, pictures: dict | None, *, is_continuation: bool = False) -> dict:
+    """Raw frame 0 against the pinned start picture ``{shot_id}_start`` (production/pictures.json). Status is PASS only when
+    the comparison ran AND the start-frame inspection has evidence and no issue; a missing picture, a continuation (its start
+    is the previous clip, not a picture) or an undecodable frame is NEEDS_EVIDENCE; a divergence or an inspection issue is REVIEW."""
+    from explainer_engine.videolane import plan as P
+    sid = shot["shot_id"]
+    key = f"{sid}_start"
+    rec = {"picture_key": key, "frame0_vs_source": None, "inspection": None, "status": "NEEDS_EVIDENCE", "reasons": []}
+    entry = (pictures or {}).get(key)
+    pic = (Path(root) / entry["file"]) if entry and entry.get("file") else None
+    if is_continuation:
+        rec["reasons"].append("continuation: its start is the previous clip's frame, no pinned start picture to compare")
+        rec["continuation"] = True                   # its own uncounted state in unresolved_reviews: nothing to compare, nothing missing
+        return rec
+    if pic is None or not pic.is_file():
+        rec["reasons"].append(f"no pinned start picture {key} in production/pictures.json")
+        return rec
+    rec["picture_sha256"] = _sha(pic)
+    f0 = frame0_of(raw)
+    if f0 is None:
+        rec["reasons"].append("frame 0 of the raw clip could not be decoded")
+        return rec
+    cmp_ = P.compare_ltx_first_frame_to_source(pic, f0)
+    insp = P.inspect_ltx_start_frame(shot, start_frame=pic)
+    rec["frame0_vs_source"] = {k: cmp_.get(k) for k in ("status", "matched", "mean_abs_diff", "luma_corr", "reason")}
+    rec["inspection"] = {k: insp.get(k) for k in ("status", "confidence", "has_evidence", "issues")}
+    if cmp_.get("status") not in ("PASS", "FAIL"):
+        rec["reasons"].append(str(cmp_.get("reason")))
+        return rec                                   # the comparison did not run: no data, no PASS
+    if cmp_.get("status") == "FAIL":
+        rec["reasons"].append(str(cmp_.get("reason")))
+    rec["reasons"] += list(insp.get("issues") or [])
+    if not insp.get("has_evidence"):
+        rec["reasons"].append("start-frame inspection has no evidence")
+    rec["status"] = "REVIEW" if rec["reasons"] else "PASS"
+    return rec
+
+
+def route_proposals(root: Path, script: dict, comparisons: dict[str, dict] | None = None) -> list[dict]:
+    """Proposals only (``apply_routes=False``): ``production/route_proposals.json`` lists the video shots C2 says are not natural
+    for LTX. The script is never changed here; a route change is the creator's (D-139)."""
+    from explainer_engine.videolane import plan as P
+    res = P.reroute_unnatural_ltx_shots(script, apply_routes=False, first_frame_comparisons=comparisons or {})
+    by = {s["shot_id"]: s for s in script.get("shots", [])}
+    props = []
+    scope = set(comparisons) if comparisons else set(res.get("evaluations") or {})
+    for sid in res["rerouted_to_25d"]:
+        if sid not in scope:
+            continue
+        ev = res["evaluations"][sid]
+        props.append({"shot_id": sid, "from_route": by.get(sid, {}).get("route", "video"),
+                      "to_route": ev["recommended_route"], "reason": "; ".join(ev.get("reasons") or [])[:400]})
+    path = Path(root) / "production" / "route_proposals.json"
+    kept: list[dict] = []
+    if path.is_file():                               # R3: merge by shot id, the other scenes' proposals survive this call
+        try:
+            kept = [q for q in (json.loads(path.read_text(encoding="utf-8")).get("proposals") or [])
+                    if isinstance(q, dict) and q.get("shot_id") not in scope]
+        except (OSError, ValueError):
+            kept = []
+    merged = sorted(kept + props, key=lambda q: q["shot_id"])
+    write_json_atomic(path, {"schema": "route_proposals/1", "proposals": merged})
+    return merged
+
+
+def unresolved_reviews(root: Path) -> dict:
+    """The open REVIEW items of the clip records: ``{count, items}`` (printed by publish_check, non-blocking until Step 5)."""
+    items = []
+    for p in sorted((Path(root) / "production" / "video").glob("*.json")):
+        try:
+            r = json.loads(p.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            continue
+        if not isinstance(r, dict) or "shot_id" not in r:
+            continue
+        why = []
+        sf = (r.get("start_frame_check") or {}).get("status")
+        if sf == "REVIEW" or (sf == "NEEDS_EVIDENCE" and not (r.get("start_frame_check") or {}).get("continuation")):
+            why.append(f"start_frame_check {sf}")
+        if r.get("status") == G.REVIEW:
+            why.append("clip findings REVIEW")
+        why += [f"{n.get('kind')} ({n.get('text')})" for n in (r.get("trim_notes") or []) if isinstance(n, dict) and n.get("review")]
+        if why:                                      # one item per clip, both reasons named
+            items.append(f"{r['shot_id']}: " + " + ".join(why))
+    return {"count": len(items), "items": items}
+
 
 
 def recut(root: Path, rec: dict, frames: int, fps: int) -> dict:

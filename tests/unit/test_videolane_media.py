@@ -520,3 +520,27 @@ def test_ltx_clips_go_through_the_runner_timed_voiced_assembled_and_measured(tmp
     assert rows["dialogue_heard_in_its_shot"] == G.PASS and rows["dialogue_laid_once"] == G.PASS, vm["metrics"].get("dialogue")
     qa = out["qa"]
     assert qa["verdict"]["status"] == G.FAIL and {r["gate"]: r["status"] for r in qa["rows"]}["not_a_rehearsal"] == G.FAIL
+
+
+# --- Step 1.3 (D-139): frame 0 against the pinned start picture, recorded on the clip --------------------------------------
+
+def test_ingest_records_frame0_against_the_pinned_picture_and_needs_evidence_without_one(tmp_path):
+    import cv2
+    from explainer_engine.videolane import ingest as IN
+    raw = _ltx_clip(tmp_path, "C_raw", 24, line=(0.8, 2.9))
+    r = IN.ingest_scene(tmp_path / "ep", scene_script(), [{"shot_id": "C", "path": str(raw)}], FPS)[0]
+    assert r["start_frame_check"]["status"] == "NEEDS_EVIDENCE" and r["start_frame_check"]["frame0_vs_source"] is None
+    assert (tmp_path / "ep" / "production" / "route_proposals.json").is_file()
+
+    cap = cv2.VideoCapture(str(raw))
+    ok, f0 = cap.read()
+    cap.release()
+    assert ok
+    pic = tmp_path / "ep2" / "production" / "pictures" / "C_start.png"
+    pic.parent.mkdir(parents=True)
+    cv2.imwrite(str(pic), f0)
+    (tmp_path / "ep2" / "production" / "pictures.json").write_text(
+        json.dumps({"pictures": {"C_start": {"file": "production/pictures/C_start.png"}}}), encoding="utf-8")
+    r2 = IN.ingest_scene(tmp_path / "ep2", scene_script(), [{"shot_id": "C", "path": str(raw)}], FPS)[0]
+    assert r2["start_frame_check"]["frame0_vs_source"]["status"] == "PASS"
+    assert r2["start_frame_check"]["status"] in ("PASS", "REVIEW")   # PASS needs inspection evidence too, never from the compare alone
