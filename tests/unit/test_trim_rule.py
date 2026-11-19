@@ -1,7 +1,7 @@
 """V4.1 Step 1.2 (D-139, MA-06): one trim rule from the clip's own sound. A word counts only where a voice is heard (voicing
 classifier, not band energy), its times are clamped to the voiced span, and the ingest cut and ``whisper_edit_points`` use the
-same filters. Synthetic adversarial cases only: the verdicts on the six real 1914 clips wait for the blind listen (amendments
-v1.1). ``speech_spans`` (band energy) is NOT a voice detector and is not what decides here."""
+same filters. Synthetic adversarial cases, plus the six real 1914 clips (bottom of the file) whose expectations are BINDING since
+2026-11-19 (basis per clip there). ``speech_spans`` (band energy) is NOT a voice detector and is not what decides here."""
 import sys
 import types
 
@@ -169,3 +169,73 @@ def test_the_clip_record_names_the_detector_and_the_muted_tail(tmp_path):
     rec = I.ingest_scene(tmp_path / "ep", doc, [{"shot_id": "C", "path": str(raw)}], M.FPS, words_fn=lambda p: words)[0]
     assert rec["speech_detector"] == "harmonicity" and rec["mute_tail_from_s"] == round(2.0 + I.MUTE_TAIL_AFTER_S, 3)
     assert rec["speech_words"] == "local whisper"
+
+
+# --- the six real 1914 clips (Step 1.2, binding 2026-11-19) ---------------------------------------------------------------
+# Expectation and its basis, per clip. Contested clips are creator-confirmed; the other four rest on Gemini's G1 round 2
+# (gemini_G1_2026-11-19/g1_observation_gemini_round2.json, an observer that opened the clip) AND this detector's measurement.
+#   S06_SH008  three lines (voiced spans 0.00-0.63, 1.64-2.15, 2.99-3.66): creator-confirmed yes/no, 2026-11-19 (plan thread)
+#   S03_SH007  only breathing, no speech: creator-confirmed on the plan thread's card, 2026-11-19 16:11 Georgia time
+#   S03_SH003  sung German speech ("Stille Nacht, heilige Nacht"): Gemini G1 round 2 + measured voiced spans
+#   S04_SH014, S07_SH005, S07_SH006  no speech: Gemini G1 round 2 + measured (empty) voiced spans
+# MEASURED = Silero VAD on the raw clip audio (16 kHz mono), files with the sha256 of G1_SHA256.txt. Picture defects are out of scope.
+SIX = {
+    "S03_SH003": {"sha256": "850062323a0e4e5832186630bd8cd46e9aeb1b4183565ec27d7123032ee5ca7c", "dur": 4.693, "speech": [(0.0, 4.5)],
+                  "measured": [(0.0, 0.528), (1.2, 2.704), (2.704, 4.592)], "path": "ltx_route/out/dd951163fc4b_fc6ae61bf410/S03_SH003/S03_SH003_seed7200.mp4"},
+    "S03_SH007": {"sha256": "9f33ff58ee4b322e331039f2e4a97e29881d3da007dd23d81d2b1155beb9ff36", "dur": 4.331, "speech": [],
+                  "measured": [], "path": "ltx_route/out/049b3979fea2_fc6ae61bf410/S03_SH001/S03_SH007_seed7105.mp4"},
+    "S04_SH014": {"sha256": "e09817eeaaf8a071b82cde7cfaa5af1399d036528d547a7fd914f28c27395798", "dur": 4.331, "speech": [],
+                  "measured": [], "path": "ltx_route/out/e9359d80a54a_fc6ae61bf410/S04_SH008/S04_SH014_seed7105.mp4"},
+    "S06_SH008": {"sha256": "f4dd7a0b865563373cc6452ca654a8a1285eb1c2348d12dc8e0ec731db26fc4b", "dur": 4.011,
+                  "speech": [(0.00, 0.63), (1.64, 2.15), (2.99, 3.66)],
+                  "measured": [(0.0, 1.104), (1.232, 2.592), (2.592, 4.011)], "path": "ltx_route/out/c441511c56ed_fc6ae61bf410/S05_SH008/S06_SH008_seed7303.mp4"},
+    "S07_SH005": {"sha256": "4235b95eef7c7775381029083931140b29493d0be8b11af425ac3f634117b70e", "dur": 8.021, "speech": [],
+                  "measured": [], "path": "demo_truce_1914/ltx_R3_2026-11-14/clips/S07_SH005_seed7111.mp4"},
+    "S07_SH006": {"sha256": "7e8382bb3126a9a31b92285b0f49efd1037be6ecdecdaa68407f0fa52fc5f41c", "dur": 8.704, "speech": [],
+                  "measured": [], "path": "ltx_route/out/e19396806270_fc6ae61bf410/S07_SH002/S07_SH006_seed7104.mp4"},
+}
+
+
+def _covered(speech, spans, frac=0.7):
+    """Each expected speech interval is at least ``frac`` voiced (a sung phrase has breaths inside it; S06_SH008's short lines
+    are fully inside one span), so a cut edge comes from a measured voiced span, never from words alone."""
+    return all(sum(max(0.0, min(b, vb) - max(a, va)) for va, vb in spans) >= frac * (b - a) for a, b in speech)
+
+
+def _no_stray(speech, spans, tol=0.05):
+    """No voiced span lies where nothing is said (a span with no expected speech overlapping it)."""
+    return all(any(min(b, vb) > max(a, va) - tol for a, b in speech) for va, vb in spans)
+
+
+def test_six_clips_recorded_measurement_meets_the_binding_expectations():
+    for sid, c in SIX.items():
+        assert _covered(c["speech"], c["measured"]), sid
+        assert _no_stray(c["speech"], c["measured"]), sid
+        assert bool(c["speech"]) == bool(c["measured"]), sid
+    assert [len(SIX[k]["speech"]) for k in ("S03_SH007", "S04_SH014", "S07_SH005", "S07_SH006")] == [0, 0, 0, 0]
+    assert len(SIX["S06_SH008"]["speech"]) == 3 and len(SIX["S06_SH008"]["measured"]) == 3
+
+
+def test_six_clips_live_measurement(tmp_path):
+    """Re-measures the raw clips when ``EE_G1_CLIPS`` points at a folder holding them by their HF path and Silero VAD is
+    installed; otherwise skipped, and the recorded measurement above carries the expectation."""
+    import hashlib
+    import os
+    import subprocess
+
+    import pytest
+
+    root = os.environ.get("EE_G1_CLIPS")
+    if not root or I._silero_voiced_spans(np.zeros(16000, np.float32), 16000) is None:
+        pytest.skip("EE_G1_CLIPS not set or Silero VAD not installed")
+    for sid, c in SIX.items():
+        f = os.path.join(root, "explainer-engine", c["path"])
+        if not os.path.exists(f):
+            pytest.skip(f"{sid} clip not present")
+        if hashlib.sha256(open(f, "rb").read()).hexdigest() != c["sha256"]:
+            raise AssertionError(f"{sid}: clip is not the one G1 judged")
+        raw = subprocess.run(["ffmpeg", "-v", "error", "-i", f, "-vn", "-ac", "1", "-ar", "16000", "-f", "f32le", "-"],
+                             capture_output=True, check=True).stdout
+        spans, det = I.voiced_spans(np.frombuffer(raw, np.float32), R)
+        assert det == "silero_vad"
+        assert _covered(c["speech"], spans) and _no_stray(c["speech"], spans), (sid, spans)
