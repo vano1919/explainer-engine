@@ -561,6 +561,7 @@ def start_frame_check(root: Path, shot: dict, raw: Path, pictures: dict | None, 
     pic = (Path(root) / entry["file"]) if entry and entry.get("file") else None
     if is_continuation:
         rec["reasons"].append("continuation: its start is the previous clip's frame, no pinned start picture to compare")
+        rec["continuation"] = True                   # its own uncounted state in unresolved_reviews: nothing to compare, nothing missing
         return rec
     if pic is None or not pic.is_file():
         rec["reasons"].append(f"no pinned start picture {key} in production/pictures.json")
@@ -593,12 +594,24 @@ def route_proposals(root: Path, script: dict, comparisons: dict[str, dict] | Non
     res = P.reroute_unnatural_ltx_shots(script, apply_routes=False, first_frame_comparisons=comparisons or {})
     by = {s["shot_id"]: s for s in script.get("shots", [])}
     props = []
+    scope = set(comparisons) if comparisons else set(res.get("evaluations") or {})
     for sid in res["rerouted_to_25d"]:
+        if sid not in scope:
+            continue
         ev = res["evaluations"][sid]
         props.append({"shot_id": sid, "from_route": by.get(sid, {}).get("route", "video"),
                       "to_route": ev["recommended_route"], "reason": "; ".join(ev.get("reasons") or [])[:400]})
-    write_json_atomic(Path(root) / "production" / "route_proposals.json", {"schema": "route_proposals/1", "proposals": props})
-    return props
+    path = Path(root) / "production" / "route_proposals.json"
+    kept: list[dict] = []
+    if path.is_file():                               # R3: merge by shot id, the other scenes' proposals survive this call
+        try:
+            kept = [q for q in (json.loads(path.read_text(encoding="utf-8")).get("proposals") or [])
+                    if isinstance(q, dict) and q.get("shot_id") not in scope]
+        except (OSError, ValueError):
+            kept = []
+    merged = sorted(kept + props, key=lambda q: q["shot_id"])
+    write_json_atomic(path, {"schema": "route_proposals/1", "proposals": merged})
+    return merged
 
 
 def unresolved_reviews(root: Path) -> dict:
@@ -613,10 +626,11 @@ def unresolved_reviews(root: Path) -> dict:
             continue
         why = []
         sf = (r.get("start_frame_check") or {}).get("status")
-        if sf in ("REVIEW", "NEEDS_EVIDENCE"):
+        if sf == "REVIEW" or (sf == "NEEDS_EVIDENCE" and not (r.get("start_frame_check") or {}).get("continuation")):
             why.append(f"start_frame_check {sf}")
         if r.get("status") == G.REVIEW:
             why.append("clip findings REVIEW")
+        why += [f"{n.get('kind')} ({n.get('text')})" for n in (r.get("trim_notes") or []) if isinstance(n, dict)]
         if why:                                      # one item per clip, both reasons named
             items.append(f"{r['shot_id']}: " + " + ".join(why))
     return {"count": len(items), "items": items}
