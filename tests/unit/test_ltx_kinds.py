@@ -272,6 +272,21 @@ def test_guided_kind_files_are_checked_only_for_a_job_that_needs_them(tmp_path):
     assert not set(kf) & set(got)
 
 
+def test_a_guided_job_needs_an_l2_record_made_with_kind_files_on_this_launch():
+    """Review W5 re-check 2: main refuses a guided job locally unless L2 was proved with --with-kind on this launch file."""
+    lsha = L.launch_sha(LAUNCH)
+    green = lambda **kw: {"done": ["L0", "L1", "L2"], "rungs": {"L2": dict({"ok": True, "launch_sha": lsha}, **kw)}}
+    guided = _job("keyframes")
+    assert L.kind_l2_problems(guided, LAUNCH, green()) and L.kind_l2_problems(guided, LAUNCH, green(with_kind=False))
+    assert L.kind_l2_problems(guided, LAUNCH, {}) != []
+    assert L.kind_l2_problems(guided, LAUNCH, green(with_kind=True, launch_sha="0" * 64)) != []
+    assert L.kind_l2_problems(guided, LAUNCH, green(with_kind=True)) == []
+    for j in ({}, _job("retake"), _job("keyframes", engine="distilled")):
+        assert L.kind_l2_problems(j, LAUNCH, green()) == [], j
+    for j in (_job("upscale_x2"), _job("a2v")):
+        assert L.kind_l2_problems(j, LAUNCH, green()) != [], j
+
+
 def test_retake_records_only_what_the_cli_is_given():
     """Review W5 fix 2: retake passes no steps and no negative prompt, so the record shows none."""
     assert any("takes no settings" in p for p in L.kind_problems(LAUNCH, _job("retake", settings={"num_inference_steps": 8}), PINS))

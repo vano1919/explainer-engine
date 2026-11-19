@@ -300,6 +300,20 @@ def record(rung: str, ok: bool, path=None, launch=None, **info):
         raise SystemExit(f"rung {rung} is red: {json.dumps(info, default=str)[:600]}")
 
 
+def kind_l2_problems(job: dict, launch: dict, ladder: dict) -> list[str]:
+    """A guided kind job (kind_needs) runs only when L2 was proved WITH the guided files (``::weights --with-kind``) on this very
+    launch file: otherwise its dev transformer and LoRA would meet only the size check inside the billed GPU function."""
+    need = kind_needs(job)
+    if not need:
+        return []
+    l2 = (ladder.get("rungs") or {}).get("L2") or {}
+    if "L2" in (ladder.get("done") or []) and l2.get("ok") and l2.get("with_kind") is True \
+            and l2.get("launch_sha") == launch_sha(launch):
+        return []
+    return [f"{kind_of(job)}: needs {list(need)} proved by an L2 record made with --with-kind on this launch file "
+            "(run `::stage --with-kind` then `::weights --with-kind`); nothing was started"]
+
+
 def read_job(path: str, launch: dict | None = None) -> dict:
     """The shot spec the adapter wrote, with the start picture's bytes. The pictures stage's pin (``extra.start_sha256``), the
     plan's sha256, the run id and the launch file's sha256 must all be there and agree, or nothing starts."""
@@ -1515,22 +1529,22 @@ if modal is not None:
         record("L1", not missing, missing=missing)
 
     @app.local_entrypoint()
-    def stage(plan: str = ""):
+    def stage(plan: str = "", with_kind: bool = False):
         preflight(LAUNCH)
         print("GO card", go_gate(plan_sha=_sha(plan)), "stage timeout", STAGE_TIMEOUT_S, "s", flush=True)
         ladder_gate("L2")
-        bad = weights_stage.remote(LAUNCH)
+        bad = weights_stage.remote(LAUNCH, with_kind)
         print("stage", bad or "all files on the Volume, sha256 match")
         if bad:
             raise SystemExit("the weights stage-in is not complete:\n" + "\n".join(bad))
 
     @app.local_entrypoint()
-    def weights():
+    def weights(with_kind: bool = False):
         ladder_gate("L2")
         preflight(LAUNCH)
-        bad = weights_check.remote(LAUNCH)
+        bad = weights_check.remote(LAUNCH, with_kind)
         print("weights", bad or "all files present, sha256 match")
-        record("L2", not bad, problems=bad)
+        record("L2", not bad, problems=bad, with_kind=bool(with_kind))
 
     @app.local_entrypoint()
     def smoke(picture: str = "", plan: str = ""):
@@ -1560,6 +1574,10 @@ if modal is not None:
         why = cheapest.problems_text(cheapest.spec_problems(LAUNCH, json.loads(Path(job).read_text(encoding="utf-8"))))
         if why:
             raise SystemExit("paid preflight FAILED, nothing was started:\n" + why)
+        from explainer_engine.cloud import modal_run as MR
+        why = kind_l2_problems(spec, LAUNCH, MR.load_ladder(LADDER_PATH))
+        if why:
+            raise SystemExit("\n".join(why))
         print("GO card", go_gate(plan_sha=spec["plan_sha256"]), "timeout", TIMEOUTS[1], "s", flush=True)
         ladder_gate("L4")
         claim_launch(spec)
