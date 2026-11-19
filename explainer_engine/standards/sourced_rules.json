@@ -8318,7 +8318,8 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/validators/mix.py"
+    "explainer_engine/validators/mix.py",
+    "explainer_engine/audio/mix_chain.py"
    ],
    "supersedes": []
   },

@@ -16,6 +16,8 @@ One canonical home per specification and per ID (D-23). Link to a document or an
 | [V4_1_PLAN_AMENDMENTS_V1_1_2026-11-19](architecture/V4_1_PLAN_AMENDMENTS_V1_1_2026-11-19.md) | the plan owner's amendments v1.1 to the V4.1 plan (they win where the two differ) | |
 | [V43_BRANCH_INVENTORY_2026-11-12](architecture/V43_BRANCH_INVENTORY_2026-11-12.md) | v4.3 rebuild P0: every branch line of the repo, what each added, the verdict (merge / keep / drop) and how the merges were resolved | |
 | [EPISODE_FIRST](EPISODE_FIRST.md) | v4.3 episode-first contract (D-131): one folder, one id, one look (EP-01, EP-02); one route per shot with its reason and the mix by duration (RT-01..RT-05) | |
+| [MIX_CHAIN](MIX_CHAIN.md) | the one mix chain of G8 (`audio/mix_chain`): sidechain duck, 1-4 kHz carve, music >= BP-208 under the voice, master at BP-50 with a true-peak limiter; parity run on the old minute | |
+| [E1_PLAN_2026-11-20](E1_PLAN_2026-11-20.md) | E1 voice-first test (ElevenLabs voice + LTX A2Vid vs native speech), two dialogue shots, priced, prepared and not run (D-132) | |
 | [GEMINI_CONSISTENCY_RULES](GEMINI_CONSISTENCY_RULES.md) | v4.3 pictures from the Gemini chat (D-131): turn packs out, intake gates in, free 2x masters, the paid 2K re-make list of failing close-ups only; the Gemini Task route, its rules pack and its message texts (GC-01..GC-27) | |
 | [HYPERSTACK_README](providers/HYPERSTACK_README.md) | Hyperstack GPU VM, AI Studio token/image API, Dedicated Inference, storage, lifecycle, agent MCP and migration fit | |
 | [MODAL_README](providers/MODAL_README.md) | Modal Functions, serverless GPU, credits, volumes, secrets, agent skills and migration fit | |
