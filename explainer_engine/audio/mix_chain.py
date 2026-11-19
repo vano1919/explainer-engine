@@ -45,6 +45,8 @@ RELEASE_MS = float(C.T("BP-214", "release_ms"))
 CARVE_DB = float(C.T("BP-214", "carve_db"))
 CARVE_BAND_HZ = tuple(float(v) for v in C.T("BP-214", "carve_band_hz"))
 TP_MARGIN_DB = float(C.T("BP-214", "tp_margin_db"))      # the limiter's ceiling sits this far under BP-50's true_peak_max (AAC overshoot)
+MASTER_GAIN_MAX_DB = float(C.T("BP-214", "master_gain_max_db"))   # the master gain never moves the mix by more than this
+AAC_KBPS = int(C.T("BP-63", "aac_kbps"))                 # the delivery bitrate, as production/assemble reads it
 GAP_MARGIN_LU = float(C.T("BP-214", "gap_margin_lu"))    # the music is trimmed to the gap plus this, so the measured gap is not on the edge
 SPEECH_THRESHOLD = 0.02       # the voice's control level where a window counts as speech (stems / mix_check)
 
@@ -191,14 +193,21 @@ def mix_stems(nar: np.ndarray, amb: np.ndarray, sfx: np.ndarray, mus: np.ndarray
             cur = integrated_lufs(total * np.float32(10 ** (gain_db / 20)) * env[:, None])
             if cur == float("-inf") or abs(cur - lufs_target) < 0.05:
                 break
-            gain_db += lufs_target - cur
+            gain_db = float(np.clip(gain_db + lufs_target - cur, -MASTER_GAIN_MAX_DB, MASTER_GAIN_MAX_DB))
             env = tp_limit_env(total * np.float32(10 ** (gain_db / 20)), ceiling)
         g = np.float32(10 ** (gain_db / 20))
         stems = {k: (v * g * env[:, None]).astype(np.float32) for k, v in stems.items()}
-        rec["master"] = {"gain_db": round(gain_db, 2), "limiter_ceiling_dbtp": ceiling,
+        final = integrated_lufs(total * g * env[:, None])
+        capped = abs(gain_db) >= MASTER_GAIN_MAX_DB - 1e-6 and not abs(final - lufs_target) <= TIGHT_BAND
+        rec["rows"] = [G.row("master_gain_cap", False,
+                             f"the master gain reached its cap of {MASTER_GAIN_MAX_DB:g} dB (BP-214) and the mix is at {final:.1f} LUFS, "
+                             f"off BP-50's target: the input is too quiet or too loud to fix by gain", round(gain_db, 2),
+                             level=G.REVIEW)] if capped else []
+        rec["master"] = {"gain_db": round(gain_db, 2), "gain_capped": bool(capped), "limiter_ceiling_dbtp": ceiling,
                          "max_gain_reduction_db": round(float(-20 * np.log10(max(1e-9, float(env.min())))), 2)}
     else:
         rec["master"] = {"gain_db": 0.0, "skipped": "master off or silent mix"}
+        rec["rows"] = []
     stems["mix"] = stems["narration"] + stems["ambience"] + stems["sfx"] + stems["music"]
     rec["measured"] = measure(stems, voice_mask=mask)
     return stems, rec
@@ -267,11 +276,12 @@ def scene_rows(plan: dict, placed: list[dict], sheet_rows: list[dict]) -> list[d
 
 
 # ---------------------------------------------------------------- verification after the codec
-def aac_roundtrip(wav: Path, bitrate: str = "192k") -> dict:
+def aac_roundtrip(wav: Path, bitrate: str | None = None) -> dict:
     """Encode the mix to AAC (the delivery codec) and measure the decoded result with ffmpeg's ebur128: the true peak after the
     codec is what BP-50 means by 'codec-safe'. ``{}`` and a reason when ffmpeg is absent."""
     if shutil.which("ffmpeg") is None:
         return {"not_run": "ffmpeg is not installed"}
+    bitrate = bitrate or f"{AAC_KBPS}k"
     with tempfile.TemporaryDirectory() as d:
         m4a = Path(d) / "x.m4a"
         subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(wav), "-c:a", "aac", "-b:a", bitrate, str(m4a)], check=True)

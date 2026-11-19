@@ -3002,7 +3002,8 @@
    "enforced_by": [
     "explainer_engine/production/assemble.py:BP-63",
     "explainer_engine/production/shorts.py:BP-63",
-    "explainer_engine/finish/speed.py:AUDIO_CODEC"
+    "explainer_engine/finish/speed.py:AUDIO_CODEC",
+    "explainer_engine/audio/mix_chain.py"
    ],
    "supersedes": [
     "P-15 (confirmed)",
@@ -8467,7 +8468,7 @@
    "area": "audio",
    "status": "hypothesis",
    "severity": "REVIEW",
-   "statement": "The mix chain's engineering settings (W6, audio/mix_chain.py; REVIEW only, nothing binding): the sidechain's attack_ms and release_ms, the carve of carve_band_hz by carve_db while the voice speaks, tp_margin_db (how far under BP-50's true_peak_max the limiter's ceiling sits, so the AAC encode stays under it) and gap_margin_lu (the music is trimmed to BP-208's gap plus this, so a measured gap is not on the edge). The first four follow the vendored v-design-sound references/mix.md (its sidechain detector is a 10 ms level with release 250 ms, read here as attack 10 ms; its carve band is 1-4 kHz at a default of 3 dB; its master ceiling is 1.5 dBTP against BP-50's 1.0); gap_margin_lu is this repository's own engineering default and has no source.",
+   "statement": "The mix chain's engineering settings (W6, audio/mix_chain.py; REVIEW only, nothing binding): the sidechain's attack_ms and release_ms, the carve of carve_band_hz by carve_db while the voice speaks, tp_margin_db (how far under BP-50's true_peak_max the limiter's ceiling sits, so the AAC encode stays under it) master_gain_max_db (the most the master's make-up gain may move the mix toward BP-50's target; a mix that needs more is a quiet or broken input and is a REVIEW row, never silently lifted by tens of dB) and gap_margin_lu (the music is trimmed to BP-208's gap plus this, so a measured gap is not on the edge). The first four follow the vendored v-design-sound references/mix.md (its sidechain detector is a 10 ms level with release 250 ms, read here as attack 10 ms; its carve band is 1-4 kHz at a default of 3 dB; its master ceiling is 1.5 dBTP against BP-50's 1.0); gap_margin_lu and master_gain_max_db are this repository's own engineering defaults and have no source.",
    "thresholds": {
     "attack_ms": 10.0,
     "release_ms": 250.0,
@@ -8477,7 +8478,8 @@
     ],
     "carve_db": 3.0,
     "tp_margin_db": 0.5,
-    "gap_margin_lu": 0.5
+    "gap_margin_lu": 0.5,
+    "master_gain_max_db": 12.0
    },
    "sources": [
     {

@@ -188,3 +188,21 @@ def test_ev_ambience_rows_are_events_not_the_bed():
     rows = [{"layer": "ambience", "cue_id": "EV_x", "start_s": 0.0, "end_s": 1.0}]
     scenes, bed_sets, _ = MC.scenes_of(plan, [], rows)
     assert all(not iv for _, iv, _, _ in bed_sets)
+
+
+def test_the_delivery_bitrate_is_bp_63s_and_the_roundtrip_uses_it():
+    from explainer_engine.production import assemble
+    assert MC.AAC_KBPS == int(assemble._DELIVERY["aac_kbps"]) == 384
+
+
+def test_a_very_quiet_input_is_not_lifted_by_tens_of_db_and_says_so():
+    voice, nar, amb, sfx, mus = _scene()
+    k = np.float32(10 ** (-40 / 20))
+    stems, rec = MC.mix_stems(nar * k, amb * k, sfx * k, mus * k, voice, bed_duck_db=6.0, music_duck_db=duck.DEPTH_DB)
+    assert rec["master"]["gain_db"] <= MC.MASTER_GAIN_MAX_DB + 1e-6 and rec["master"]["gain_capped"] is True
+    assert rec["measured"]["lufs"] < MC.LUFS_TARGET - MC.TIGHT_BAND
+    row = rec["rows"][0]
+    assert row["gate"] == "master_gain_cap" and row["status"] == "REVIEW"
+    # a normal input is not capped and has no such row
+    _, ok = _chain()[1]
+    assert ok["master"]["gain_capped"] is False and ok["rows"] == []
