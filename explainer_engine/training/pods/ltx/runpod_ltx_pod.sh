@@ -22,7 +22,7 @@ git clone -q https://github.com/Lightricks/LTX-2.git /workspace/LTX-2 && git -C 
 JOB=/workspace/job
 mkdir -p "$JOB" /workspace/ee /workspace/batch
 # the pins first: the files are fetched by a name that carries their own sha256 (never a name on main that a later upload can replace), and checked below
-printf '%s  %s\n' f61b21f6f00bbc72508bd72d9edd24ea5e48a17777fefc9af13e7f333ce12010 "$JOB/ee_src.tar.gz" > "$JOB/sha.txt"
+printf '%s  %s\n' 85d78b8ede29d270f94cc33550b0914701fc56663de1c9ea3c4964a46b7b7aae "$JOB/ee_src.tar.gz" > "$JOB/sha.txt"
 printf '%s  %s\n' @@BATCH_SHA256@@ "$JOB/batch.tar.gz" >> "$JOB/sha.txt"
 python3 -c "
 import shutil
