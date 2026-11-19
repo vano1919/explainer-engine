@@ -15,8 +15,8 @@ Archived (not loaded): `_archive/` holds `video-editing-architect`, `shot-visual
 | S6 storyboards, consistency | `v-scenario-storyboards`, `v-scenario-consistency` | `film-direction` |
 | S7 pictures | none (Gemini chat turn packs) | `film-direction` |
 | S8 character acting | `v-animate-characters` | `film-direction` |
-| S9 video clips | `v-ltxv2-video` | `film-direction` |
-| S10 2.5D and maps | none | `cartography` |
+| S9 video clips (D-132) | `v-ltxv2-video` | `film-direction` |
+| S10 2.5D and maps (D-131) | none | `cartography` |
 | S11 voice | `v-elevenlabs-text-to-speech`, `v-elevenlabs-speech-to-text`, `v-elevenlabs-sound-effects`, `v-elevenlabs-music` | `elevenlabs-voice`, `voice-search` |
 | S12 word timing | `v-transcription-skill`, `v-elevenlabs-speech-to-text` | `elevenlabs-voice` |
 | S13 sound design and mix | `v-design-sound`, `v-audio-production-skill` | `film-direction` |

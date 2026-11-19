@@ -42,7 +42,7 @@ Vendored 39 (below), skipped 15 (with reason, next section), archived 6. The S1-
 | `v-fact-check-workflow` | S1 | jamditis/claude-skills-journalism | `journalism-core/skills/fact-check-workflow` | `a6383bd0c4` | 2026-11-11 | MIT | 3 |
 | `v-ffmpeg-skill` | S14 | kajisho5/ffmpeg-skill | `.` | `5055a42e1c` | 2026-11-19 | MIT | 115 |
 | `v-hook-writing` | S3 | TheCraigHewitt/skills | `youtube/hook-writing` | `fdbf39b61f` | 2026-05-21 | MIT | 2 |
-| `v-ltxv2-video` | S9 | artokun/comfyui-mcp | `plugin/skills/ltxv2-video` | `090f9e8fcd` | 2026-11-18 | MIT | 3 |
+| `v-ltxv2-video` (D-132) | S9 | artokun/comfyui-mcp | `plugin/skills/ltxv2-video` | `090f9e8fcd` | 2026-11-18 | MIT | 3 |
 | `v-media-analysis-skill` | S16 | kajisho5/media-analysis-skill | `.` | `af49b926ff` | 2026-11-19 | MIT | 55 |
 | `v-newsjack-fact-check` | S1 | elvisun/newsjack | `skills/fact-check` | `be1368c38e` | 2026-11-16 | MIT | 2 |
 | `v-qc-skill` | S16 | kajisho5/qc-skill | `.` | `6fba4efc7c` | 2026-11-19 | MIT | 52 |

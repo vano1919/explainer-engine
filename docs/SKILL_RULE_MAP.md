@@ -22,7 +22,7 @@ Counts: validator 11, existing 39, judgement 47, hypothesis 5 (total 102).
 | `CRAFT-ANI-01` | ANI-01 | animation-principles | eye | judgement | `v-animate-characters` | squash and stretch keep the volume |
 | `CRAFT-ANI-02` | ANI-02 | animation-principles | eye | judgement | `v-animate-characters` | anticipation before every big action |
 | `CRAFT-ANI-03` | ANI-03 | animation-principles | eye | judgement | `v-animate-characters` | staging: one idea read at a glance |
-| `CRAFT-ANI-04` | ANI-04 | animation-principles | eye | judgement | `v-animate-characters` | pose to pose: keyframe and next pose carry the action, the model fills between |
+| `CRAFT-ANI-04` | ANI-04 | animation-principles | eye | judgement | `v-animate-characters` | pose to pose: keyframe and next pose carry the action, the model fills between (D-131 lanes) |
 | `CRAFT-ANI-05` | ANI-05 | animation-principles | eye | judgement | `v-animate-characters` | follow-through and overlapping action |
 | `CRAFT-ANI-06` | ANI-06 | animation-principles | eye | judgement | `v-animate-characters` | slow in and slow out on limbs, not only on the camera |
 | `CRAFT-ANI-07` | ANI-07 | animation-principles | eye | judgement | `v-animate-characters` | actions move on arcs |
