@@ -49,6 +49,8 @@ GO_ON = (G.PASS,)   # final plan P-7: REVIEW is never a pass; it goes on only wi
 APPROVALS_REL = "qa/approvals.json"
 APPROVALS_SCHEMA = "stage_approvals/1"
 AWAITING_APPROVAL = "CREATOR_APPROVAL"
+GOVERNANCE_ROOT = None   # where jobs/creator_ok.jsonl lives (None: the repo); tests point it at a temp folder
+STAGE_APPROVAL = "stage_approval"   # the governance record action behind an approvals.json entry
 DEFAULT_SIZE = (1920, 1080)
 
 
@@ -180,12 +182,49 @@ def load_approvals(root: Path) -> list[dict]:
     return doc["approvals"]
 
 
+def approval_target(rec: dict) -> str:
+    """The governance record's target for one stage record: the episode, the stage and the input hash it was made from."""
+    return f"{rec.get('episode_id')}:{rec['stage']}:{rec.get('fingerprint')}"
+
+
 def review_approved(root: Path, rec: dict | None) -> bool:
-    """True when the record's verdict is REVIEW and ``qa/approvals.json`` holds an approval for that stage bound to the
-    record's own input hash (its fingerprint). An approval of another hash (the inputs changed since) does not count."""
+    """True when the record's verdict is REVIEW and ``qa/approvals.json`` holds an approval for that stage bound to the record's own
+    input hash (its fingerprint) that carries the creator's chat message id and words, AND the creator's recorded word of the same
+    message id exists in ``jobs/creator_ok.jsonl`` (``governance ok``, action ``stage_approval``). A hand-written entry, an approval
+    of another hash (the inputs changed since) or one without the recorded word does not count."""
     if not rec or rec["verdict"]["status"] != G.REVIEW:
         return False
-    return any(a["stage"] == rec["stage"] and a["input_hash"] == rec.get("fingerprint") for a in load_approvals(root))
+    from explainer_engine.governance import records
+    for a in load_approvals(root):
+        if a["stage"] == rec["stage"] and a["input_hash"] == rec.get("fingerprint") and \
+                records.find(STAGE_APPROVAL, approval_target(rec), a["message_id"], root=GOVERNANCE_ROOT):
+            return True
+    return False
+
+
+def approve(ep: "Episode", stage: str, message_id: str, words: str) -> dict:
+    """Record the creator's approval of a REVIEW stage record: refused unless the record is REVIEW and fresh and the creator's
+    message id and words are given. Writes the governance record and the ``qa/approvals.json`` entry bound to the fingerprint."""
+    import re
+    from explainer_engine.governance import records
+    stage = ALIASES.get(stage, stage)
+    rec = read_record(ep.root, stage)
+    if rec is None:
+        raise ConfigError(f"{stage} has no record: nothing to approve")
+    if rec["verdict"]["status"] != G.REVIEW:
+        raise ConfigError(f"{stage} ended {rec['verdict']['status']}, not REVIEW: only a REVIEW is approved")
+    if rec.get("fingerprint") != fingerprint(ep, stage):
+        raise ConfigError(f"the record of {stage} is stale (its inputs changed): run it again, look at the new result, then approve")
+    if not re.fullmatch(r"cmsg_[A-Za-z0-9]+", message_id or ""):
+        raise ConfigError("an approval needs the creator's own chat message id (cmsg_...)")
+    if not (words or "").strip():
+        raise ConfigError("an approval needs the creator's quoted words or the card option he chose")
+    records.add(STAGE_APPROVAL, approval_target(rec), message_id, words, root=GOVERNANCE_ROOT)
+    entry = {"stage": stage, "input_hash": rec["fingerprint"], "approved_by": "creator", "approved_at":
+             time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "message_id": message_id, "words": words[:300]}
+    doc = {"schema": APPROVALS_SCHEMA, "approvals": load_approvals(ep.root) + [entry]}
+    write_json_atomic(approvals_path(ep.root), doc)
+    return entry
 
 
 def may_go_on(root: Path, rec: dict | None) -> bool:
@@ -1832,12 +1871,25 @@ def main(argv=None) -> int:
     r.add_argument("--chunk-seconds", type=float)
     r.add_argument("--sound-library", type=Path, help="HF-7: the sound library folder (a manifest.json and its categories); "
                    "default assets/audio/library. Its manifest is in the fingerprint of G4 and G8, so give it to every call")
+    ap_ = sub.add_parser("approve", help="record the creator's approval of a stage that ended REVIEW (his chat message id and words)")
+    ap_.add_argument("episode", type=Path)
+    ap_.add_argument("stage")
+    ap_.add_argument("--message-id", required=True)
+    ap_.add_argument("--words", required=True, help="his quoted words, or the card option he chose")
     s = sub.add_parser("status", help="the stages and their records")
     s.add_argument("episode", type=Path)
     s.add_argument("--sound-library", type=Path, help="the same folder the runs used (HF-7)")
     a = ap.parse_args(argv)
     if a.cmd == "status":
         _print_state(Episode(a.episode, sound_library=a.sound_library))
+        return 0
+    if a.cmd == "approve":
+        try:
+            entry = approve(Episode(a.episode), a.stage, a.message_id, a.words)
+        except ConfigError as exc:
+            print(f"refused: {exc}", file=sys.stderr)
+            return 2
+        print(f"approved {entry['stage']} at {entry['input_hash'][:12]} ({entry['message_id']})")
         return 0
     ep = Episode(a.episode, size=a.size, fps=a.fps, rehearsal=a.rehearsal, force=a.force, chunks=a.chunks,
                  chunk_seconds=a.chunk_seconds, sound_library=a.sound_library)

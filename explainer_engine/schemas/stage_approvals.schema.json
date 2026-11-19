@@ -3,22 +3,58 @@
   "$id": "stage_approvals.schema.json",
   "title": "Creator approvals of stage verdicts that ended REVIEW (final plan P-7, W2; read by episode/run.py, file episodes/<ep>/qa/approvals.json)",
   "type": "object",
-  "required": ["schema", "approvals"],
+  "required": [
+    "schema",
+    "approvals"
+  ],
   "additionalProperties": false,
   "properties": {
-    "schema": {"const": "stage_approvals/1"},
+    "schema": {
+      "const": "stage_approvals/1"
+    },
     "approvals": {
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["stage", "input_hash", "approved_by", "approved_at"],
+        "required": [
+          "stage",
+          "input_hash",
+          "approved_by",
+          "approved_at",
+          "message_id",
+          "words"
+        ],
         "additionalProperties": false,
         "properties": {
-          "stage": {"type": "string", "minLength": 1},
-          "input_hash": {"type": "string", "minLength": 8, "description": "the fingerprint of the stage record the creator looked at; an approval of another hash never counts"},
-          "approved_by": {"type": "string", "minLength": 1},
-          "approved_at": {"type": "string", "minLength": 1},
-          "note": {"type": "string"}
+          "stage": {
+            "type": "string",
+            "minLength": 1
+          },
+          "input_hash": {
+            "type": "string",
+            "minLength": 8,
+            "description": "the fingerprint of the stage record the creator looked at; an approval of another hash never counts"
+          },
+          "approved_by": {
+            "const": "creator"
+          },
+          "approved_at": {
+            "type": "string",
+            "minLength": 1
+          },
+          "note": {
+            "type": "string"
+          },
+          "message_id": {
+            "type": "string",
+            "pattern": "^cmsg_[A-Za-z0-9]+$",
+            "description": "the creator's own chat message or card tap"
+          },
+          "words": {
+            "type": "string",
+            "minLength": 1,
+            "description": "his quoted words or the chosen card option"
+          }
         }
       }
     }

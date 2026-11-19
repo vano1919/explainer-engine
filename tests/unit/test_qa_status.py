@@ -86,13 +86,25 @@ def _fake(status_by_stage: dict, not_run_in: str | None = None):
     return {s: make(s) for s in RUN.STAGES}
 
 
-def _approve(root: Path, stage: str, input_hash: str):
+@pytest.fixture(autouse=True)
+def _governance_root(tmp_path, monkeypatch):
+    monkeypatch.setattr(RUN, "GOVERNANCE_ROOT", tmp_path / "gov")
+
+
+MSG = "cmsg_01TestCreatorMessage"
+
+
+def _approve(root: Path, stage: str, input_hash: str, *, record: bool = True, message_id: str = MSG):
+    """A valid approval: the entry in approvals.json and, with ``record``, the creator's word in jobs/creator_ok.jsonl."""
+    from explainer_engine.governance import records
     p = root / "qa" / "approvals.json"
     p.parent.mkdir(parents=True, exist_ok=True)
     doc = json.loads(p.read_text()) if p.is_file() else {"schema": "stage_approvals/1", "approvals": []}
-    doc["approvals"].append({"stage": stage, "input_hash": input_hash, "approved_by": "creator",
-                             "approved_at": "2026-11-19T00:00:00Z"})
+    doc["approvals"].append({"stage": stage, "input_hash": input_hash, "approved_by": "creator", "approved_at": "2026-11-19T00:00:00Z",
+                             "message_id": message_id, "words": "ok, go on"})
     p.write_text(json.dumps(doc), encoding="utf-8")
+    if record:
+        records.add("stage_approval", f"ep_toba:{stage}:{input_hash}", message_id, "ok, go on", root=RUN.GOVERNANCE_ROOT)
 
 
 def test_go_on_is_pass_only():
@@ -129,6 +141,53 @@ def test_review_with_the_matching_hash_continues_and_a_changed_input_withdraws_i
     (root / "episode.json").write_text(json.dumps(dict(json.loads((root / "episode.json").read_text()), note="changed")))
     recs = RUN.run_to(RUN.Episode(root), "qa")
     assert recs[1]["awaiting"] == "CREATOR_APPROVAL" and recs[-1]["stage"] == "sound_plan"
+
+
+def test_an_entry_without_the_creators_recorded_word_does_not_count(tmp_path, monkeypatch):
+    monkeypatch.setattr(RUN, "STAGE_FUNCS", _fake({"sound_plan": G.REVIEW}))
+    root = _episode(tmp_path)
+    recs = RUN.run_to(RUN.Episode(root), "qa")
+    _approve(root, "sound_plan", recs[1]["fingerprint"], record=False)      # a session wrote the file by hand
+    with pytest.raises(RUN.StageRefused, match="CREATOR_APPROVAL"):
+        RUN.run_stage(RUN.Episode(root), "pictures")
+
+
+def test_an_entry_without_message_id_or_words_or_with_another_approver_is_refused(tmp_path, monkeypatch):
+    monkeypatch.setattr(RUN, "STAGE_FUNCS", _fake({"sound_plan": G.REVIEW}))
+    root = _episode(tmp_path)
+    recs = RUN.run_to(RUN.Episode(root), "qa")
+    base = {"stage": "sound_plan", "input_hash": recs[1]["fingerprint"], "approved_by": "creator", "approved_at": "t",
+            "message_id": MSG, "words": "ok"}
+    for bad in ({k: v for k, v in base.items() if k != "message_id"}, {**base, "message_id": "not-a-chat-id"},
+                {**base, "approved_by": "claude"}, {**base, "words": ""}):
+        (root / "qa").mkdir(exist_ok=True)
+        (root / "qa" / "approvals.json").write_text(json.dumps({"schema": "stage_approvals/1", "approvals": [bad]}))
+        with pytest.raises(ContractError):
+            RUN.run_stage(RUN.Episode(root), "pictures")
+
+
+def test_the_approve_command_is_refused_unless_review_fresh_and_has_the_word(tmp_path, monkeypatch, capsys):
+    monkeypatch.setattr(RUN, "STAGE_FUNCS", _fake({"sound_plan": G.REVIEW}))
+    root = _episode(tmp_path)
+    RUN.run_to(RUN.Episode(root), "qa")
+    ok = ["approve", str(root), "sound_plan", "--message-id", MSG, "--words", "yes, continue"]
+    assert RUN.main(["approve", str(root), "script", "--message-id", MSG, "--words", "x"]) == 2      # PASS, not REVIEW
+    assert RUN.main(["approve", str(root), "sound_plan", "--message-id", "oops", "--words", "x"]) == 2
+    assert RUN.main(["approve", str(root), "sound_plan", "--message-id", MSG, "--words", "  "]) == 2
+    assert not (root / "qa" / "approvals.json").exists()
+    assert RUN.main(ok) == 0
+    recs = RUN.run_to(RUN.Episode(root), "qa")
+    assert recs[-1]["stage"] == "qa" and recs[-1]["verdict"]["status"] == G.PASS
+    entry = json.loads((root / "qa" / "approvals.json").read_text())["approvals"][0]
+    assert entry["input_hash"] == recs[1]["fingerprint"] and entry["message_id"] == MSG and entry["approved_by"] == "creator"
+
+
+def test_the_approve_command_refuses_a_stale_record(tmp_path, monkeypatch):
+    monkeypatch.setattr(RUN, "STAGE_FUNCS", _fake({"sound_plan": G.REVIEW}))
+    root = _episode(tmp_path)
+    RUN.run_to(RUN.Episode(root), "qa")
+    (root / "episode.json").write_text(json.dumps(dict(json.loads((root / "episode.json").read_text()), note="changed")))
+    assert RUN.main(["approve", str(root), "sound_plan", "--message-id", MSG, "--words", "yes"]) == 2
 
 
 def test_a_rehearsal_still_goes_past_an_unapproved_review_and_never_passes(tmp_path, monkeypatch):

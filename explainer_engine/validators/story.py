@@ -78,12 +78,12 @@ def turn_length(script: dict) -> list[dict]:
     return rows or [G.row("SC-09", None, "NOT_RUN: no character line")]
 
 
-def value_charge_cadence(shots: list[dict]) -> dict:
-    """VAL-STO-01: the value charge (``charge`` or ``value_charge``: -1, 0, +1 on a shot card) flips at least once every
-    ``story_lint.proportional_turn_gap_s`` seconds (BP-76's cadence, hypothesis: REVIEW). Shots with no charge are NOT_RUN."""
-    charged = [(float(s.get("target_duration_seconds") or s.get("duration_s") or 0.0), s.get("charge", s.get("value_charge"))) for s in shots]
+def value_charge_cadence(segments: list[dict]) -> dict:
+    """VAL-STO-01: the value charge (``charge`` or ``value_charge``: -1, 0, +1 on a segment of the script's skeleton; not on shot cards) flips at least once every
+    ``story_lint.proportional_turn_gap_s`` seconds (BP-76's cadence, hypothesis: REVIEW). A segment without a charge makes the row NOT_RUN, never PASS."""
+    charged = [(float(s.get("target_duration_seconds") or s.get("duration_s") or 0.0), s.get("charge", s.get("value_charge"))) for s in segments]
     if not charged or any(c is None for _, c in charged):
-        return G.row("VAL-STO-01", None, "NOT_RUN: the shots carry no value charge (the shot card's charge field)")
+        return G.row("VAL-STO-01", None, "NOT_RUN: the script's segment skeleton carries no value charge (shot cards do not and should not)")
     total = sum(d for d, _ in charged)
     gap = story_lint.proportional_turn_gap_s(total)
     t, last_flip, prev, worst = 0.0, 0.0, None, 0.0
@@ -141,7 +141,7 @@ def numeric_claim_sources(claim_map: dict[str, dict]) -> list[dict]:
 
 
 def validate(script: dict, *, claim_map: dict[str, dict] | None = None, scenes: list[dict] | None = None) -> list[dict]:
-    rows = [press_release(script), *turn_length(script), *immersion_and_showing(script), value_charge_cadence(script.get("shots") or [])]
+    rows = [press_release(script), *turn_length(script), *immersion_and_showing(script), value_charge_cadence(script.get("segments") or [])]
     rows += scene_headers(scenes) if scenes is not None else [G.row("VAL-STO-02", None, "NOT_RUN: no scene headers given")]
     if claim_map is None:
         rows += [G.row("VAL-STO-03", None, "NOT_RUN: no claim map"), G.row("VAL-STO-04", None, "NOT_RUN: no claim map")]
