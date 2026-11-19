@@ -125,13 +125,58 @@ def upscale_picture(src: Path | str, dst: Path | str, tile: int = 256, net=None)
     return dst
 
 
+FACE_GROW = 0.35      # house default: the face box grows by this share each side, so hair line, ears and chin stay Lanczos
+FACE_FEATHER = 0.25   # share of the grown box's short side used as the blend edge
+UNSHARP = (1.2, 60, 2)   # radius px (at 2x), percent, threshold: a mild lift for the Lanczos faces
+
+
+def face_aware_mix(rgb, esr, faces):
+    """``esr``: the ESRGAN 2x of ``rgb``. Inside each (grown, feathered) face box the pixels come from Lanczos 2x of the original
+    plus a mild unsharp (ESRGAN turns skin waxy and loses the grain, lanes test 2026-11-19); everywhere else from ESRGAN."""
+    import numpy as np
+    from PIL import Image, ImageFilter
+    h, w = esr.shape[:2]
+    lan = Image.fromarray(rgb).resize((w, h), Image.LANCZOS).filter(ImageFilter.UnsharpMask(*UNSHARP))
+    mask = np.zeros((h, w), np.float32)
+    for f in faces:
+        x0, y0, x1, y1 = (v * 2 for v in f["box"])
+        gx, gy = (x1 - x0) * FACE_GROW, (y1 - y0) * FACE_GROW
+        x0, y0, x1, y1 = x0 - gx, y0 - gy, x1 + gx, y1 + gy
+        fe = max(2.0, min(x1 - x0, y1 - y0) * FACE_FEATHER)
+        xs, ys = np.arange(w, dtype=np.float32)[None, :], np.arange(h, dtype=np.float32)[:, None]
+        m = np.clip(np.minimum(xs - x0, x1 - xs) / fe, 0, 1) * np.clip(np.minimum(ys - y0, y1 - ys) / fe, 0, 1)
+        mask = np.maximum(mask, m)
+    out = esr.astype(np.float32) * (1 - mask[..., None]) + np.asarray(lan, np.float32) * mask[..., None]
+    return (out + 0.5).astype(np.uint8), int(len(faces))
+
+
+def upscale_picture_face_aware(src: Path | str, dst: Path | str, tile: int = 256, net=None, faces=None) -> tuple[Path, int]:
+    """ESRGAN 2x outside the faces, Lanczos 2x plus unsharp inside them (YuNet boxes from ``layers25d.picture_faces``)."""
+    import numpy as np
+    from PIL import Image
+    arr = np.asarray(Image.open(src).convert("RGB"))
+    if faces is None:
+        from explainer_engine.production.layers25d import picture_faces
+        faces = picture_faces(arr)
+        if faces is None:
+            raise ConfigError("no YuNet model (tools/yunet): the face-aware mix needs the face boxes")
+    out, n = face_aware_mix(arr, upscale_array(arr, net or load(), tile), faces)
+    dst = Path(dst)
+    dst.parent.mkdir(parents=True, exist_ok=True)
+    part = dst.with_name(dst.stem + ".part" + dst.suffix)
+    Image.fromarray(out).save(part)
+    os.replace(part, dst)
+    return dst, n
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("src", type=Path)
     ap.add_argument("dst", type=Path)
     ap.add_argument("--tile", type=int, default=256)
+    ap.add_argument("--face-aware", action="store_true", help="Lanczos 2x plus unsharp inside face boxes")
     a = ap.parse_args(argv)
-    print(upscale_picture(a.src, a.dst, a.tile))
+    print(upscale_picture_face_aware(a.src, a.dst, a.tile)[0] if a.face_aware else upscale_picture(a.src, a.dst, a.tile))
     return 0
 
 

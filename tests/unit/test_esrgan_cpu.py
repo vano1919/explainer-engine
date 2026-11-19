@@ -46,3 +46,16 @@ def test_weights_load_as_a_state_dict_and_never_run_code(tmp_path):
     evil.write_bytes(pickle.dumps(Boom()))
     with pytest.raises(Exception):    # weights_only refuses anything but tensors and plain containers
         E.load(evil)
+
+
+def test_the_face_aware_mix_takes_faces_from_lanczos_and_the_rest_from_esrgan():
+    from PIL import Image
+    rgb = (np.random.default_rng(2).random((60, 80, 3)) * 255).astype(np.uint8)
+    esr = np.full((120, 160, 3), 200, np.uint8)
+    out, n = E.face_aware_mix(rgb, esr, [{"box": (30.0, 20.0, 50.0, 40.0)}])
+    assert n == 1 and out.shape == esr.shape
+    assert (out[0:8, 0:8] == 200).all() and (out[112:, 152:] == 200).all()          # far from the face: ESRGAN untouched
+    assert abs(int(out[60, 80, 0]) - 200) > 20 or abs(int(out[60, 81, 1]) - 200) > 20   # inside it: Lanczos pixels
+    assert len(set(out[60, 40:120, 0].tolist())) > 5                                    # a feathered edge, not a hard box
+    none, k = E.face_aware_mix(rgb, esr, [])
+    assert k == 0 and (none == 200).all()

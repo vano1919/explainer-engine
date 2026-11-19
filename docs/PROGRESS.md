@@ -6318,4 +6318,7 @@ the edit (capped by `-frames:v`, the sound by `atrim`) and refuses a cut whose f
   (REVIEW on this clip); the front-line courses are illustrative (no source in the repo), the check record says so.
 - Limits: the Esrgan weights' licence is unverified (PROVENANCE); the downloaded `realesrgan-ncnn-vulkan` binary was not run (the session's
   safety check refused an unreviewed third-party binary).
+- Follow-up (plan thread, 23:00 UTC): relief exaggeration of the Flanders hillshade lowered 3.0 to 1.0 (it read as hills); `esrgan_cpu --face-aware`
+  (ESRGAN 2x outside YuNet face boxes, Lanczos 2x + mild unsharp inside, feathered; test added). No open source for the December 1914 front
+  line was found or verified: the courses stay illustrative and the check JSON says so.
 

@@ -25,7 +25,7 @@ import numpy as np
 from explainer_engine.maps import relief
 
 COP = "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_{lat}_00_{lon}_00_DEM/Copernicus_DSM_COG_10_{lat}_00_{lon}_00_DEM.tif"
-REGIONS = {"flanders": {"tiles": [("N50", "E002"), ("N50", "E003")], "z": 3.0,   # a row of tiles, west to east
+REGIONS = {"flanders": {"tiles": [("N50", "E002"), ("N50", "E003")], "z": 1.0,   # a row of tiles, west to east
                         "note": "Flanders and the Ypres salient (lon 2-4, lat 50-51)"}}
 AZIMUTH, ALTITUDE = 315.0, 45.0
 SMOOTH_PX = 1.5           # Gaussian sigma in DEM pixels (about 45 m) before shading; recorded in the json
