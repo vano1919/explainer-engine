@@ -48,7 +48,7 @@ except ImportError:
 HF_REPO = "vano1919/tmr-artifacts"
 LAUNCH_PATH = Path(__file__).with_name("launch.json")
 LADDER_PATH = Path(os.environ.get("EE_LTX_LADDER") or Path(__file__).with_name("ladder.json"))
-SECRET_NAME = "huggingface-secret"
+SECRET_NAME = "custom-secret"   # the owner's second Modal account holds his HF token under this name (his message 2026-11-19 20:41 UTC, plan thread 21:36 UTC); the key inside is HF_TOKEN
 PINS = ("model_repo", "model_revision", "model_files", "ltx_code", "module", "uses", "hf_out", "scaledown_window_s",
         "base_image")
 USES = ("transformer", "text_encoder", "video_vae", "audio_vae", "spatial_upsampler")

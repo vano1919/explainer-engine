@@ -535,3 +535,8 @@ def test_a_stage_whose_answer_was_lost_is_never_sent_again_and_its_state_is_back
         P.submit(sp, "heroes", env=go, gc=FakeGemini(run, tmp_path), fetch=lambda p: style)
     with pytest.raises(SystemExit, match="answer was lost"):
         P.collect(sp, "heroes", gc=FakeGemini(run, tmp_path))
+
+
+def test_the_ltx_worker_reads_the_hf_token_from_the_owners_secret_in_the_second_account():
+    from explainer_engine.training.pods.ltx import modal_ltx_jobs as M
+    assert M.SECRET_NAME == "custom-secret"          # the owner's second account (his message 2026-11-19 20:41 UTC); the key inside is HF_TOKEN
