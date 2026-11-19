@@ -1,0 +1,8 @@
+# full suite on fc35615: python -m pytest -q -m 'not system and not media' (CLAUDE_EFFORT unset, Python 3.13.18)
+exit=0
+4467 passed, 20 skipped, 3 deselected, 1 xfailed, 1403 warnings in 778.53s (0:12:58)
+
+# delta-related tests on eb80e443 (60 files)
+FAILED tests/unit/test_p14_lean.py::test_the_bundle_is_byte_stable_and_leaves_the_script_out
+1 failed, 1303 passed, 1 skipped in 263.89s (0:04:23)
+exit=1

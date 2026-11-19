@@ -1,0 +1,14 @@
+# G1 input files, copied unchanged from HF dataset vano1919/tmr-artifacts on 2026-11-19
+# sha256  bytes  file  <- HF path
+850062323a0e4e5832186630bd8cd46e9aeb1b4183565ec27d7123032ee5ca7c  919541  S03_SH003_clip.mp4  <- explainer-engine/ltx_route/out/dd951163fc4b_fc6ae61bf410/S03_SH003/S03_SH003_seed7200.mp4
+9048f8bbb22540021ab48f533036a9a200f0e643da73c3ac96d70227953cbda0  5579376  S03_SH003_start.png  <- explainer-engine/demo_truce_1914/pictures/clips_lane_newangles/fixed2/S03_SH003_start_fix2.png
+9f33ff58ee4b322e331039f2e4a97e29881d3da007dd23d81d2b1155beb9ff36  1023690  S03_SH007_clip.mp4  <- explainer-engine/ltx_route/out/049b3979fea2_fc6ae61bf410/S03_SH001/S03_SH007_seed7105.mp4
+054545fc36c9501dcb92a27e7467cff25840842256f6b5d359eb0da058a90461  2802878  S03_SH007_start.png  <- explainer-engine/demo_truce_1914/pictures/S3_scenes_w2/cache/e9df2d1b39748533c7a03595.png
+e09817eeaaf8a071b82cde7cfaa5af1399d036528d547a7fd914f28c27395798  1415077  S04_SH014_clip.mp4  <- explainer-engine/ltx_route/out/e9359d80a54a_fc6ae61bf410/S04_SH008/S04_SH014_seed7105.mp4
+486e14ab30af42221251ef05b23bb9fd68eef81fc82ec6fba25c7c37231713e0  3017063  S04_SH014_start.png  <- explainer-engine/demo_truce_1914/pictures/clips_lane_newangles/S04_SH014_start_n1.png
+f4dd7a0b865563373cc6452ca654a8a1285eb1c2348d12dc8e0ec731db26fc4b  758018  S06_SH008_clip.mp4  <- explainer-engine/ltx_route/out/c441511c56ed_fc6ae61bf410/S05_SH008/S06_SH008_seed7303.mp4
+f4849798352203b02bada672fc2d020b3c9bc8dbf9aed8dbc12f134457c04ad5  6322249  S06_SH008_start.png  <- explainer-engine/demo_truce_1914/pictures/clips_lane_newangles/fixed2/S06_SH008_start_fix2.png
+4235b95eef7c7775381029083931140b29493d0be8b11af425ac3f634117b70e  2430663  S07_SH005_clip.mp4  <- explainer-engine/demo_truce_1914/ltx_R3_2026-11-14/clips/S07_SH005_seed7111.mp4
+da5cd5a17c5d239e9c4dbcffece5fbddaa39e3ad4a5fdbc1a4a9935cd4ffb8d3  3121355  S07_SH005_start.png  <- explainer-engine/demo_truce_1914/pictures/S3_scenes_w2/cache/064e7631e9b16acc8c24f40f.png
+7e8382bb3126a9a31b92285b0f49efd1037be6ecdecdaa68407f0fa52fc5f41c  1859651  S07_SH006_clip.mp4  <- explainer-engine/ltx_route/out/e19396806270_fc6ae61bf410/S07_SH002/S07_SH006_seed7104.mp4
+fe18ad2e4dfe70c4de82b0fe77ff97cbdff071e1cd7eb478dd2f2fd5adcb9859  2708358  S07_SH006_start.png  <- explainer-engine/demo_truce_1914/pictures/S3_scenes_w1/cache/ab948b9d23ecd7a1affa1b5c.png
