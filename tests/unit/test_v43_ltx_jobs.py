@@ -69,8 +69,10 @@ def test_preflight_needs_the_creators_modal_ltx_line_and_a_whole_chain(monkeypat
 
 def test_the_creators_line_is_in_the_one_budget_file():
     from explainer_engine.core import spend_caps
-    assert float(spend_caps.modal_ltx()["per_run_usd"]) == 1.5
-    assert L.LAUNCH["caps"]["run_usd"] <= 0.8 * 1.5 + 1e-9
+    line = float(spend_caps.modal_ltx()["per_run_usd"])
+    assert line == 4.5                                                                          # 1.5 until 2026-11-19 22:25 UTC: the night's $10 (cmsg_...WV6nm3Y6UKXYD2j2e8WKeiw)
+    assert L.LAUNCH["caps"]["run_usd"] <= 0.8 * line + 1e-9
+    assert float(spend_caps.modal()["night_total_usd"]) == 10 and line < 10
 
 
 def test_the_ltx_command_names_the_pinned_files_the_start_picture_and_the_frames():
