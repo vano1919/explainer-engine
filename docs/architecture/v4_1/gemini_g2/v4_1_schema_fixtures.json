@@ -1,0 +1,650 @@
+{
+  "valid": [
+    {
+      "id": "V01_shot_intent_empty_deferred",
+      "schema_ref": "shot_intent_v1",
+      "payload": {
+        "schema": "shot_intent/1",
+        "shot_id": "S01_SH001",
+        "intent_version": "v1.0",
+        "source_view": "production_script_readonly",
+        "visual_goal": "Frozen trench horizon at dawn",
+        "deferred_until_observed": []
+      }
+    },
+    {
+      "id": "V02_observed_image_accept",
+      "schema_ref": "observed_image_v1",
+      "payload": {
+        "schema": "observed_image/1",
+        "shot_id": "S01_SH001",
+        "intent_version": "v1.0",
+        "image_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "generator_vendor": "google_imagen",
+        "evaluator_vendor": "anthropic_claude",
+        "advisory_only": true,
+        "intent_mismatches": [],
+        "verdict": "ACCEPT"
+      }
+    },
+    {
+      "id": "V03_i2v_prompt_binding",
+      "schema_ref": "i2v_prompt_binding_v1",
+      "payload": {
+        "schema": "i2v_prompt_binding/1",
+        "shot_id": "S01_SH001",
+        "observation_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "observation_verdict": "ACCEPT",
+        "model_route": "ltx-2-modal-v1",
+        "prompt_text": "Slow push across frost-covered parapet"
+      }
+    },
+    {
+      "id": "V04_inspection_plan_t0",
+      "schema_ref": "inspection_plan_v1",
+      "payload": {
+        "schema": "inspection_plan/1",
+        "shot_id": "S01_SH001",
+        "clip_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "deterministic_first": true,
+        "deterministic_block_can_halt": true,
+        "tier": "T0_DETERMINISTIC_ONLY",
+        "estimated_cost_usd": 0.0,
+        "triggers": [
+          "baseline_ingest"
+        ]
+      }
+    },
+    {
+      "id": "V05_observed_video_pass",
+      "schema_ref": "observed_video_v1",
+      "payload": {
+        "schema": "observed_video/1",
+        "shot_id": "S01_SH001",
+        "clip_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "fps_num": 24,
+        "fps_den": 1,
+        "timebase_num": 1,
+        "timebase_den": 12288,
+        "overall_verdict": "PASS",
+        "generator_vendor": "ltx_video",
+        "evaluator_vendor": "anthropic_claude",
+        "advisory_only": true,
+        "findings": []
+      }
+    },
+    {
+      "id": "V06_media_clocks_probe",
+      "schema_ref": "media_clocks_v1",
+      "payload": {
+        "schema": "media_clocks/1",
+        "clip_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "probe_tool": "ffprobe",
+        "video_stream": {
+          "timebase_num": 1,
+          "timebase_den": 12288,
+          "start_pts": 0,
+          "frame_count": 96,
+          "fps_num": 24,
+          "fps_den": 1,
+          "is_vfr": false
+        },
+        "audio_stream": {
+          "timebase_num": 1,
+          "timebase_den": 48000,
+          "start_pts": 0,
+          "sample_rate_hz": 48000,
+          "sample_count": 192000,
+          "initial_padding_samples": 1024
+        },
+        "edit_list_offset_s": 0.0
+      }
+    },
+    {
+      "id": "V07_audio_evidence_silent_fail",
+      "schema_ref": "audio_evidence_v1",
+      "payload": {
+        "schema": "audio_evidence/1",
+        "shot_id": "S01_SH002",
+        "clip_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "script_expects_speech": false,
+        "unintended_speech_detected": true,
+        "voicing_backend": "silero_vad",
+        "signals": [
+          {
+            "signal_name": "voicing_classifier",
+            "start_s": 1.2,
+            "end_s": 2.05,
+            "confidence": 0.91,
+            "label": "voiced_speech_like"
+          }
+        ],
+        "verdict": "FAIL"
+      }
+    },
+    {
+      "id": "V08_cut_decision_intentional",
+      "schema_ref": "cut_decision_v1",
+      "payload": {
+        "schema": "cut_decision/1",
+        "shot_id": "S01_SH001",
+        "clip_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "in_frame": 4,
+        "out_frame": 88,
+        "reason_code": "INTENTIONAL_CUT_ON_ACTION",
+        "allowed": true
+      }
+    },
+    {
+      "id": "V09_av_event_timeline_non_colliding",
+      "schema_ref": "av_event_timeline_v1",
+      "payload": {
+        "schema": "av_event_timeline/1",
+        "episode_id": "ep_truce_1914",
+        "fps_num": 24,
+        "fps_den": 1,
+        "extends_av_events_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "events": [
+          {
+            "event_id": "S01_SH001.M1",
+            "shot_id": "S01_SH001",
+            "start_frame": 0,
+            "end_frame": 48,
+            "kind": "front_line",
+            "audio_decision": "sfx",
+            "sync_mode": "onset"
+          }
+        ]
+      }
+    },
+    {
+      "id": "V10_continuity_memory_per_shot",
+      "schema_ref": "continuity_memory_v1",
+      "payload": {
+        "schema": "continuity_memory/1",
+        "shot_id": "S01_SH001",
+        "written_at_stage": "pictures",
+        "extends_continuity_card": {
+          "card_schema": "continuity_card/1",
+          "card_path": "planning/continuity/S01.json",
+          "card_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "observed_accepted_state": {
+          "entities": [
+            {
+              "entity_id": "british_corporal",
+              "facing": "right",
+              "wardrobe_state": "muddy_greatcoat"
+            }
+          ],
+          "lighting": "cold_overcast_dawn",
+          "camera_side": "north_trench_wall"
+        }
+      }
+    },
+    {
+      "id": "V11_qa_result_blocker_halts",
+      "schema_ref": "qa_result_v2",
+      "payload": {
+        "schema": "qa_result/2",
+        "episode_id": "ep_truce_1914",
+        "stage": "clips",
+        "overall_status": "FAIL",
+        "blocks_progression": true,
+        "findings": [
+          {
+            "finding_id": "F-001",
+            "rule": "AV-SYNC-01",
+            "severity": "BLOCKER",
+            "where": "S01_SH002",
+            "detail": "Ghost speech on silent beat",
+            "status": "FAIL"
+          }
+        ]
+      }
+    },
+    {
+      "id": "V12_step1_picture_check_pass",
+      "schema_ref": "step1_picture_check",
+      "payload": {
+        "shot_id": "S01_SH002",
+        "state": "PASS",
+        "regeneration_required": false,
+        "picture_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "is_continuation": true,
+        "prior_shot_passed": true,
+        "blocks_downstream": false
+      }
+    },
+    {
+      "id": "V13_step1_mute_tail_record",
+      "schema_ref": "step1_mute_tail_record",
+      "payload": {
+        "shot_id": "S01_SH003",
+        "mute_tail_from_s": 2.45,
+        "voicing_backend": "silero_vad",
+        "word_boundaries_clamped_to_voiced_span": true
+      }
+    },
+    {
+      "id": "V14_step1_start_frame_missing_review",
+      "schema_ref": "step1_start_frame_check",
+      "payload": {
+        "shot_id": "S01_SH003",
+        "inspection_data_present": false,
+        "source_frame_compared": false,
+        "status": "REVIEW",
+        "ssim": null,
+        "detail": "No source reference frame available; requires review"
+      }
+    },
+    {
+      "id": "V15_step1_route_proposals",
+      "schema_ref": "step1_route_proposals",
+      "payload": {
+        "schema": "route_proposals/1",
+        "episode_id": "ep_truce_1914",
+        "apply_routes": false,
+        "proposals": [
+          {
+            "shot_id": "S01_SH004",
+            "current_route": "ltx-2-modal-v1",
+            "proposed_route": "directed25d-still",
+            "reason": "Unnatural limb warp on two consecutive attempts"
+          }
+        ]
+      }
+    },
+    {
+      "id": "V16_step1_third_party_media_safe",
+      "schema_ref": "step1_third_party_media",
+      "payload": {
+        "schema": "third_party_media/1",
+        "episode_id": "ep_truce_1914",
+        "do_not_monetise_marker": false,
+        "overall_status": "PASS",
+        "missing_provenance_classes": [],
+        "media_classes": {
+          "sounds_sfx": {
+            "provenance_status": "VERIFIED_SAFE",
+            "item_count": 2,
+            "non_commercial_hits": []
+          },
+          "sounds_beds": {
+            "provenance_status": "VERIFIED_SAFE",
+            "item_count": 2,
+            "non_commercial_hits": []
+          },
+          "sounds_music": {
+            "provenance_status": "VERIFIED_SAFE",
+            "item_count": 2,
+            "non_commercial_hits": []
+          },
+          "narration_read": {
+            "provenance_status": "VERIFIED_SAFE",
+            "item_count": 2,
+            "non_commercial_hits": []
+          },
+          "ltx_clip_audio": {
+            "provenance_status": "VERIFIED_SAFE",
+            "item_count": 2,
+            "non_commercial_hits": []
+          },
+          "pictures": {
+            "provenance_status": "VERIFIED_SAFE",
+            "item_count": 2,
+            "non_commercial_hits": []
+          },
+          "archival_documents": {
+            "provenance_status": "VERIFIED_SAFE",
+            "item_count": 2,
+            "non_commercial_hits": []
+          }
+        }
+      }
+    },
+    {
+      "id": "V17_step1_unresolved_reviews",
+      "schema_ref": "step1_unresolved_reviews",
+      "payload": {
+        "count": 1,
+        "blocking": false,
+        "items": [
+          {
+            "rule": "PC-10",
+            "where": "archival_documents",
+            "detail": "Provenance pending creator confirmation"
+          }
+        ]
+      }
+    }
+  ],
+  "invalid": [
+    {
+      "id": "I01_bad_shot_id_pattern",
+      "schema_ref": "shot_intent_v1",
+      "expected_failure": "schema",
+      "payload": {
+        "schema": "shot_intent/1",
+        "shot_id": "shot-1",
+        "intent_version": "v1.0",
+        "source_view": "production_script_readonly",
+        "visual_goal": "Invalid shot id",
+        "deferred_until_observed": []
+      }
+    },
+    {
+      "id": "I02_observed_image_accept_with_blocking_mismatch",
+      "schema_ref": "observed_image_v1",
+      "expected_failure": "schema",
+      "payload": {
+        "schema": "observed_image/1",
+        "shot_id": "S01_SH001",
+        "intent_version": "v1.0",
+        "image_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "generator_vendor": "google_imagen",
+        "evaluator_vendor": "anthropic_claude",
+        "intent_mismatches": [
+          {
+            "field": "uniform",
+            "severity": "BLOCKING",
+            "detail": "Wrong era helmet"
+          }
+        ],
+        "verdict": "ACCEPT"
+      }
+    },
+    {
+      "id": "I03_i2v_binding_non_accept_verdict",
+      "schema_ref": "i2v_prompt_binding_v1",
+      "expected_failure": "schema",
+      "payload": {
+        "schema": "i2v_prompt_binding/1",
+        "shot_id": "S01_SH001",
+        "observation_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "observation_verdict": "REPAIR",
+        "model_route": "ltx-2-modal-v1",
+        "prompt_text": "Should fail because observation is not ACCEPT"
+      }
+    },
+    {
+      "id": "I04_inspection_plan_deterministic_false",
+      "schema_ref": "inspection_plan_v1",
+      "expected_failure": "schema",
+      "payload": {
+        "schema": "inspection_plan/1",
+        "shot_id": "S01_SH001",
+        "clip_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "deterministic_first": false,
+        "deterministic_block_can_halt": true,
+        "tier": "T1_KEYFRAME_VLM",
+        "estimated_cost_usd": 0.003,
+        "triggers": [
+          "bypass_attempt"
+        ]
+      }
+    },
+    {
+      "id": "I05_observed_video_extra_nested_key",
+      "schema_ref": "observed_video_v1",
+      "expected_failure": "schema",
+      "payload": {
+        "schema": "observed_video/1",
+        "shot_id": "S01_SH001",
+        "clip_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "fps_num": 24,
+        "fps_den": 1,
+        "timebase_num": 1,
+        "timebase_den": 12288,
+        "overall_verdict": "REVIEW",
+        "generator_vendor": "ltx_video",
+        "evaluator_vendor": "anthropic_claude",
+        "findings": [
+          {
+            "code": "FLICKER",
+            "severity": "MINOR",
+            "start_frame": 1,
+            "end_frame": 5,
+            "detail": "Slight flicker",
+            "unexpected_key": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "I06_media_clocks_non_ffprobe",
+      "schema_ref": "media_clocks_v1",
+      "expected_failure": "schema",
+      "payload": {
+        "schema": "media_clocks/1",
+        "clip_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "probe_tool": "guessed",
+        "video_stream": {
+          "timebase_num": 1,
+          "timebase_den": 24,
+          "start_pts": 0,
+          "frame_count": 24,
+          "fps_num": 24,
+          "fps_den": 1,
+          "is_vfr": false
+        },
+        "audio_stream": null,
+        "edit_list_offset_s": 0.0
+      }
+    },
+    {
+      "id": "I07_audio_evidence_silent_beat_pass_forbidden",
+      "schema_ref": "audio_evidence_v1",
+      "expected_failure": "schema",
+      "payload": {
+        "schema": "audio_evidence/1",
+        "shot_id": "S01_SH002",
+        "clip_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "script_expects_speech": false,
+        "unintended_speech_detected": true,
+        "voicing_backend": "silero_vad",
+        "signals": [],
+        "verdict": "PASS"
+      }
+    },
+    {
+      "id": "I08_cut_decision_mid_word_allowed_forbidden",
+      "schema_ref": "cut_decision_v1",
+      "expected_failure": "schema",
+      "payload": {
+        "schema": "cut_decision/1",
+        "shot_id": "S01_SH001",
+        "clip_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "in_frame": 0,
+        "out_frame": 48,
+        "reason_code": "MID_WORD_PHONETIC_CUT",
+        "allowed": true
+      }
+    },
+    {
+      "id": "I09_cut_decision_out_le_in_semantic",
+      "schema_ref": "cut_decision_v1",
+      "expected_failure": "semantic",
+      "payload": {
+        "schema": "cut_decision/1",
+        "shot_id": "S01_SH001",
+        "clip_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "in_frame": 50,
+        "out_frame": 40,
+        "reason_code": "CLEAN_BEAT_BOUNDARY",
+        "allowed": true
+      }
+    },
+    {
+      "id": "I10_av_event_timeline_legacy_schema_rejected",
+      "schema_ref": "av_event_timeline_v1",
+      "expected_failure": "schema",
+      "payload": {
+        "schema": "av_events/1",
+        "episode_id": "ep_truce_1914",
+        "fps_num": 24,
+        "fps_den": 1,
+        "extends_av_events_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "events": []
+      }
+    },
+    {
+      "id": "I11_continuity_memory_written_at_qa_forbidden",
+      "schema_ref": "continuity_memory_v1",
+      "expected_failure": "schema",
+      "payload": {
+        "schema": "continuity_memory/1",
+        "shot_id": "S01_SH001",
+        "written_at_stage": "qa",
+        "extends_continuity_card": {
+          "card_schema": "continuity_card/1",
+          "card_path": "planning/continuity/S01.json",
+          "card_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "observed_accepted_state": {
+          "entities": [],
+          "lighting": "dawn",
+          "camera_side": "north"
+        }
+      }
+    },
+    {
+      "id": "I12_qa_result_pass_with_blocker_forbidden",
+      "schema_ref": "qa_result_v2",
+      "expected_failure": "schema",
+      "payload": {
+        "schema": "qa_result/2",
+        "episode_id": "ep_truce_1914",
+        "stage": "clips",
+        "overall_status": "PASS",
+        "blocks_progression": false,
+        "findings": [
+          {
+            "finding_id": "F-002",
+            "rule": "AV-SYNC-01",
+            "severity": "BLOCKER",
+            "where": "S01_SH002",
+            "detail": "Blocker must forbid PASS",
+            "status": "FAIL"
+          }
+        ]
+      }
+    },
+    {
+      "id": "I13_step1_picture_check_no_perception_unblocked",
+      "schema_ref": "step1_picture_check",
+      "expected_failure": "schema",
+      "payload": {
+        "shot_id": "S01_SH001",
+        "state": "NO_PERCEPTION_INPUT",
+        "regeneration_required": false,
+        "picture_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "is_continuation": false,
+        "prior_shot_passed": null,
+        "blocks_downstream": false
+      }
+    },
+    {
+      "id": "I14_step1_mute_tail_negative_forbidden",
+      "schema_ref": "step1_mute_tail_record",
+      "expected_failure": "schema",
+      "payload": {
+        "shot_id": "S01_SH003",
+        "mute_tail_from_s": -0.5,
+        "voicing_backend": "silero_vad",
+        "word_boundaries_clamped_to_voiced_span": true
+      }
+    },
+    {
+      "id": "I15_step1_start_frame_missing_pass_forbidden",
+      "schema_ref": "step1_start_frame_check",
+      "expected_failure": "schema",
+      "payload": {
+        "shot_id": "S01_SH003",
+        "inspection_data_present": false,
+        "source_frame_compared": false,
+        "status": "PASS",
+        "ssim": null,
+        "detail": "Missing data must never PASS"
+      }
+    },
+    {
+      "id": "I16_step1_route_proposals_auto_apply_forbidden",
+      "schema_ref": "step1_route_proposals",
+      "expected_failure": "schema",
+      "payload": {
+        "schema": "route_proposals/1",
+        "episode_id": "ep_truce_1914",
+        "apply_routes": true,
+        "proposals": []
+      }
+    },
+    {
+      "id": "I17_step1_third_party_media_missing_prov_pass_forbidden",
+      "schema_ref": "step1_third_party_media",
+      "expected_failure": "schema",
+      "payload": {
+        "schema": "third_party_media/1",
+        "episode_id": "ep_truce_1914",
+        "do_not_monetise_marker": false,
+        "overall_status": "PASS",
+        "missing_provenance_classes": [
+          "archival_documents"
+        ],
+        "media_classes": {
+          "sounds_sfx": {
+            "provenance_status": "VERIFIED_SAFE",
+            "item_count": 2,
+            "non_commercial_hits": []
+          },
+          "sounds_beds": {
+            "provenance_status": "VERIFIED_SAFE",
+            "item_count": 2,
+            "non_commercial_hits": []
+          },
+          "sounds_music": {
+            "provenance_status": "VERIFIED_SAFE",
+            "item_count": 2,
+            "non_commercial_hits": []
+          },
+          "narration_read": {
+            "provenance_status": "VERIFIED_SAFE",
+            "item_count": 2,
+            "non_commercial_hits": []
+          },
+          "ltx_clip_audio": {
+            "provenance_status": "VERIFIED_SAFE",
+            "item_count": 2,
+            "non_commercial_hits": []
+          },
+          "pictures": {
+            "provenance_status": "VERIFIED_SAFE",
+            "item_count": 2,
+            "non_commercial_hits": []
+          },
+          "archival_documents": {
+            "provenance_status": "REVIEW_MISSING_PROVENANCE",
+            "item_count": 2,
+            "non_commercial_hits": []
+          }
+        }
+      }
+    },
+    {
+      "id": "I18_step1_unresolved_reviews_count_mismatch_semantic",
+      "schema_ref": "step1_unresolved_reviews",
+      "expected_failure": "semantic",
+      "payload": {
+        "count": 2,
+        "blocking": false,
+        "items": [
+          {
+            "rule": "PC-10",
+            "where": "pictures",
+            "detail": "One item only"
+          }
+        ]
+      }
+    }
+  ]
+}

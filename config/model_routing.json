@@ -446,7 +446,11 @@
     "assets/audio/generator_admission.json": 60,
     "explainer_engine/cloud/cheapest.py": 60,
     "explainer_engine/cloud/cheapest.json": 60,
-    "explainer_engine/training/pods/ltx/launch.json": 60
+    "explainer_engine/training/pods/ltx/launch.json": 60,
+    "config/picture_route.json": 60,
+    "config/retired_era.json": 60,
+    "docs/architecture/v4_1_allowlists.json": 60,
+    ".github/workflows/quality.yml": 60
   },
   "usage": {
     "backup_at_percent": 95,
