@@ -21,7 +21,7 @@ pip install -q "huggingface_hub==1.33.0" "diffusers==0.43.0" "transformers==5.22
 JOB=/workspace/job
 mkdir -p "$JOB" /workspace/ee /workspace/batch
 # the pins first: the files are fetched by a name that carries their own sha256 (never a name on main that a later upload can replace), and checked below
-printf '%s  %s\n' e301b1fc3632c7d5d1554e876149db6e0240b7474e48b140b125936e3ce7f7c8 "$JOB/ee_src.tar.gz" > "$JOB/sha.txt"
+printf '%s  %s\n' f47584d0f035eb41b2e5806babcc751926fead03fa072e42512f59d829b82d51 "$JOB/ee_src.tar.gz" > "$JOB/sha.txt"
 printf '%s  %s\n' e177fcd1407c9ea24a9b21733f2cf00a41db9fa3b3ff051550f24c2470ab090b "$JOB/batch.tar.gz" >> "$JOB/sha.txt"
 python3 -c "
 import shutil
