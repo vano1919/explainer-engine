@@ -1,0 +1,133 @@
+{
+  "schema": "shot_direction/1-draft",
+  "shot_id": "S02_SH008",
+  "kind": "photo",
+  "picture": "S02_SH008_start.png",
+  "picture_sha256": "ea636c84db530f1c582646e908ff008867005bec3aeab9e95471f37b5b96904c",
+  "author": "seen: the thread's Claude looking at the picture; choice: production/living_director",
+  "written": "2026-11-14",
+  "purpose": "The line 'Nobody asked the men in the trenches.'",
+  "emotion": "dry bitterness turning personal",
+  "focus": {
+    "target": {"mask": "thomas", "point": [0.355, 0.33]},
+    "why": "the push ends on Thomas's face"
+  },
+  "composition": "two men either side of the fire; at the end Thomas's face nearer the centre, Harris still in frame",
+  "route": {
+    "renderer": "directed25d",
+    "why": "camera, light and atmosphere only: level 0-2 of B.4"
+  },
+  "transition_out": {
+    "type": "cut",
+    "why": "unchanged from the script (P6 decides transitions from the rendered motion)"
+  },
+  "stage_b_v1": {
+    "intent": "intended",
+    "motion_imitation": [
+      {"effect": "push", "strength": 1.0, "easing": "ease_in_out", "at_word": "nobody", "event_id": "S02_SH008.M4", "audio": {"decision": "silent_by_design", "why": "the push lands on the line; no cue"}},
+      {"effect": "cloud_drift", "strength": 0.5, "region": [0.0, 0.0, 1.0, 0.3], "event_id": "S02_SH008.M2", "audio": {"decision": "silent_by_design", "why": "the place's bed carries it"}},
+      {"effect": "fire_flicker", "strength": 1.0, "event_id": "S02_SH008.M3", "audio": {"decision": "ambience_only", "why": "the brazier's crackle sits in the trench bed"}}
+    ],
+    "why": "Two halves: the official story (the Pope asked, the appeal failed, no truce was agreed) and the turn 'Nobody asked the men in the trenches.' During the official part the camera holds and watches the two men by the fire (only the fire and the sky live); on 'Nobody' it pushes in, so the only camera move lands on the line that matters. The next shot S02_SH009 is a push too, so this one must not crawl from frame 0."
+  },
+  "seen": {
+    "what": "Dusk in a front-line trench: young Thomas (left) holds a mug, Sergeant Harris (right) leans on his knees; a brazier burns between them in front, a candle in a dugout niche on the left, coiled wire against a violet sky with the first stars.",
+    "objects": [
+      {"id": "thomas", "what": "Thomas seated with mug", "points": [[0.33, 0.45], [0.355, 0.31], [0.3, 0.65], [0.37, 0.82]], "neg": [[0.22, 0.75]], "names": ["nobody"]},
+      {"id": "harris", "what": "Sergeant Harris seated", "points": [[0.69, 0.45], [0.68, 0.3], [0.64, 0.7], [0.66, 0.88]], "neg": [[0.8, 0.85]]},
+      {"id": "brazier", "what": "iron brazier", "points": [[0.52, 0.79], [0.48, 0.8], [0.56, 0.8]], "fine_edges": true}
+    ],
+    "lights": [
+      {"id": "brazier_flame", "kind": "fire", "point": [0.52, 0.69], "radius": 0.04},
+      {"id": "niche_candle", "kind": "candle", "point": [0.176, 0.615], "radius": 0.012}
+    ],
+    "depth_checks": [
+      {"near": [0.52, 0.8], "far": [0.47, 0.4], "why": "brazier before the trench end"},
+      {"near": [0.33, 0.5], "far": [0.45, 0.35], "why": "Thomas before the far trench"},
+      {"near": [0.68, 0.5], "far": [0.58, 0.35], "why": "Harris before the far trench"},
+      {"near": [0.95, 0.88], "far": [0.85, 0.55], "why": "sandbags right before the wall"}
+    ],
+    "living": [
+      {"id": "brazier", "kind": "fire", "where": [0.52, 0.69], "area_pct": 3.0, "text": 0, "focus": 1, "quality": 2, "cost": 2, "decision": "animate", "effects": ["fx_brazier"], "why": "always on (LP-06): text 0: the words do not touch it; area 3 %; focus 1: 0.22 from the focus (the part the words name (thomas)); quality 2: moves cleanly; cost 2"},
+      {"id": "brazier_embers", "kind": "fire", "where": [0.52, 0.69], "area_pct": 3.0, "text": 0, "focus": 1, "quality": 2, "cost": 2, "decision": "animate", "effects": ["fx_brazier_embers"], "why": "P2: text 0: the words do not touch it; area 3 %; focus 1: 0.22 from the focus (the part the words name (thomas)); quality 2: moves cleanly; cost 2"},
+      {"id": "niche_candle", "kind": "candle", "where": [0.176, 0.615], "area_pct": 0.3, "text": 1, "focus": 2, "quality": 2, "cost": 2, "decision": "animate", "effects": ["fx_niche_candle"], "why": "always on (LP-06): text 1: the words evoke it ('christmas'); area 0.3 %; focus 2: 0.17 from the focus (the part the words name (thomas)); quality 2: moves cleanly; cost 2"},
+      {"id": "brazier_smoke", "kind": "smoke", "where": [0.52, 0.6], "area_pct": 3.0, "text": 0, "focus": 2, "quality": 2, "cost": 2, "decision": "animate", "effects": ["fx_brazier_smoke"], "why": "P2: text 0: the words do not touch it; area 3 %; focus 2: 0.19 from the focus (the part the words name (thomas)); quality 2: moves cleanly; cost 2"},
+      {"id": "mug_steam", "kind": "steam", "where": [0.42, 0.57], "area_pct": 0.4, "text": 0, "focus": 2, "quality": 2, "cost": 2, "decision": "animate", "effects": ["fx_mug_steam"], "why": "P2: text 0: the words do not touch it; area 0.4 %; focus 2: 0.08 from the focus (the part the words name (thomas)); quality 2: moves cleanly; cost 2"},
+      {"id": "dusk_sky", "kind": "sky", "where": [0.5, 0.08], "area_pct": 15.0, "text": 1, "focus": 1, "quality": 2, "cost": 2, "decision": "animate", "effects": ["fx_dusk_sky"], "why": "P1: text 1: the scene's surroundings name it; area 15 %; focus 1: it covers the whole frame; quality 2: moves cleanly; cost 2"},
+      {"id": "first_stars", "kind": "stars", "where": [0.3, 0.05], "area_pct": 0.05, "text": 1, "focus": 0, "quality": 2, "cost": 2, "decision": "animate", "effects": ["fx_first_stars"], "why": "P2: text 1: the scene's surroundings name it; area 0.05 %; focus 0: 0.51 from the focus (the part the words name (thomas)); quality 2: moves cleanly; cost 2"},
+      {"id": "coiled_wire", "kind": "wire", "where": [0.8, 0.12], "area_pct": 5.0, "text": 0, "focus": 0, "quality": 0, "cost": 1, "decision": "skip", "why": "LP-05: it cannot move cleanly (score 3; text 0: the words do not touch it; area 5 %; focus 0: 0.64 from the focus (the part the words name (thomas)); quality 0: thin strokes cannot be cut out cleanly; cost 1)"},
+      {"id": "breath_of_the_faces", "kind": "breath", "where": [0.517, 0.364], "area_pct": 0.98, "text": 1, "focus": 2, "quality": 2, "cost": 2, "decision": "animate", "effects": ["fx_breath_of_the_faces"], "why": "P1: 2 live face(s) found in a cold scene: their breath shows"}
+    ]
+  },
+  "scene": {
+    "weather": [],
+    "wind": [0.025, 0.0],
+    "surroundings": "dusk in the trench, clear violet sky, first stars"
+  },
+  "people_mid_or_close": true,
+  "intent": "intended",
+  "tracks": [
+    {"track": "camera", "op": "push", "renderer": "directed25d", "params": {"strength": 2.625, "ease": "linear"}, "timing": {"end": {"word": "nobody"}}, "validate": {"measure": "scale"}, "target": {"point": [0.517, 0.364]}},
+    {"track": "camera", "op": "push", "renderer": "directed25d", "params": {"strength": 1.0, "ease": "ease_out"}, "timing": {"start": {"word": "nobody"}, "end": {"word": "nobody", "offset": 30}}, "validate": {"measure": "scale"}, "target": {"mask": "thomas", "point": [0.339, 0.557]}},
+    {"track": "camera", "op": "handheld", "renderer": "directed25d", "params": {"strength": 0.3}, "timing": {}, "validate": {}},
+    {"id": "fx_brazier", "track": "lighting", "op": "fire", "renderer": "directed25d", "target": {"lights": ["brazier_flame"]}, "params": {"strength": 1.0, "spill_radius": 0.104}, "validate": {"measure": "change_inside_target"}},
+    {"id": "fx_brazier_embers", "track": "atmosphere", "op": "embers", "renderer": "directed25d", "target": {"light": "brazier_flame"}, "params": {"strength": 1.0, "height": 0.3}, "validate": {"measure": "change_inside_target"}},
+    {"id": "fx_niche_candle", "track": "lighting", "op": "candle", "renderer": "directed25d", "target": {"lights": ["niche_candle"]}, "params": {"strength": 1.0, "spill_radius": 0.03}, "validate": {"measure": "change_inside_target"}},
+    {"id": "fx_brazier_smoke", "track": "atmosphere", "op": "smoke", "renderer": "directed25d", "target": {"point": [0.52, 0.6]}, "params": {"strength": 1.0, "height": 0.3, "width": 0.01, "opacity": 0.45}, "validate": {"measure": "change_inside_target"}},
+    {"id": "fx_mug_steam", "track": "atmosphere", "op": "steam", "renderer": "directed25d", "target": {"point": [0.42, 0.57]}, "params": {"strength": 1.0}, "validate": {"measure": "change_inside_target"}},
+    {"id": "fx_dusk_sky", "track": "atmosphere", "op": "cloud_drift", "renderer": "directed25d", "target": {}, "params": {"strength": 1.0}, "validate": {"measure": "change_inside_target"}},
+    {"id": "fx_first_stars", "track": "lighting", "op": "stars", "renderer": "directed25d", "target": {"box": [0.27, 0.02, 0.33, 0.08]}, "params": {"strength": 1.0}, "validate": {"measure": "change_inside_target"}},
+    {"id": "fx_breath_of_the_faces", "track": "atmosphere", "op": "breath", "renderer": "directed25d", "target": {}, "params": {"strength": 1.0, "period_s": 3.6, "points": [[0.3577, 0.3689], [0.6755, 0.3586]]}, "validate": {"measure": "change_inside_target"}},
+    {"track": "audio", "decision": "ambience_only", "why": "fire (medium): fire (fx_brazier): the fire's crackle is the bed's; wind (medium): smoke (fx_brazier_smoke): drifting smoke is heard in the bed", "events": ["fire", "wind"]}
+  ],
+  "round": "C5: C4A + the eye-review fixes (safe zone, seams, effects, camera plan)",
+  "rules": ["BP-185", "BP-194", "BP-195", "BP-196", "BP-197", "BP-200", "owner 2026-11-14 12:37 cards", "owner 2026-11-14 12:38 weather ceiling", "owner 2026-11-14 12:40 the director decides"],
+  "overrides": [
+    {"field": "tracks", "from": "C4 effects typed per shot by hand", "to": "C4 effects chosen by living_director from the words, the photo and the catalogue", "why": "the owner, 2026-11-14 12:40 UTC: the director decides the living frame itself"}
+  ],
+  "rounds": [],
+  "weather": [],
+  "keep_in_frame": [
+    {"face": [0.3315, 0.2992, 0.37, 0.3932], "why": "live face: the person stays whole in the frame"},
+    {"face": [0.6547, 0.2699, 0.7061, 0.3894], "why": "live face: the person stays whole in the frame"},
+    {"light": "brazier_flame", "soft": true, "why": "the fire effect lives on it"},
+    {"light": "niche_candle", "soft": true, "why": "the candle effect lives on it"}
+  ],
+  "sound": {
+    "events": [
+      {"kind": "ambience", "what": "fire", "class": "fire", "at_s": 0.0, "distance": "medium", "decision": "ambience_only", "sync": "span", "why": "fire (fx_brazier): the fire's crackle is the bed's", "library": {"status": "library", "ids": ["fire_campfire_01", "fire_01", "fire_garage_02"], "why": "legacy_tags; best take fire_campfire_01 (fits: campfire, crackle)"}},
+      {"kind": "ambience", "what": "wind", "class": "wind", "at_s": 0.0, "distance": "medium", "decision": "ambience_only", "sync": "span", "why": "smoke (fx_brazier_smoke): drifting smoke is heard in the bed", "library": {"status": "library", "ids": ["wind_01"], "why": "legacy_tags; best take wind_01 (fits: cold, open, winter)"}}
+    ],
+    "silent": [
+      {"id": "push", "op": "push", "decision": "silent_by_design", "why": "a camera move is silent by default"},
+      {"id": "push", "op": "push", "decision": "silent_by_design", "why": "a camera move is silent by default"},
+      {"id": "handheld", "op": "handheld", "decision": "silent_by_design", "why": "a camera move is silent by default"},
+      {"id": "fx_niche_candle", "op": "candle", "decision": "silent_by_design", "why": "a candle flame makes no sound"},
+      {"id": "fx_mug_steam", "op": "steam", "decision": "silent_by_design", "why": "steam from a mug is too quiet to hear"},
+      {"id": "fx_first_stars", "op": "stars", "decision": "silent_by_design", "why": "stars make no sound"},
+      {"id": "fx_breath_of_the_faces", "op": "breath", "decision": "silent_by_design", "why": "a breath is too quiet to hear over the bed"}
+    ],
+    "needs": [],
+    "beds": ["fire", "wind"],
+    "coverage": "AMBIENCE_ONLY"
+  },
+  "choice": {
+    "by": "production/living_director (the director's choice from the words, the photo and the catalogue)",
+    "faces": [
+      {"box": [0.3315, 0.2992, 0.37, 0.3932], "mouth": [0.3577, 0.3689], "share": 0.0036281268378634806, "score": 0.921},
+      {"box": [0.6547, 0.2699, 0.7061, 0.3894], "mouth": [0.6755, 0.3586], "share": 0.006141420145358877, "score": 0.879}
+    ],
+    "cap": 6,
+    "weather": [],
+    "camera": [
+      "people in the frame: the camera leans in (1.8 %/s over 8.8 s, BP-21; the slowest rate, so the accent on the word stands out)",
+      "'nobody' names thomas: a snap push to it on the word (accent, rise inside 1 s)",
+      "a breathing hand so the camera never fully stops after the accent (the owner's 12:37 card 3)"
+    ],
+    "chosen": ["brazier", "brazier_embers", "niche_candle", "brazier_smoke", "mug_steam", "dusk_sky", "first_stars", "breath_of_the_faces"],
+    "skipped": {"coiled_wire": "LP-05: it cannot move cleanly (score 3; text 0: the words do not touch it; area 5 %; focus 0: 0.64 from the focus (the part the words name (thomas)); quality 0: thin strokes cannot be cut out cleanly; cost 1)"},
+    "notes": ["ROUTE LP-10: people in a medium or close view for 10.9583 s: LTX or split"],
+    "sound": {"beds": ["fire", "wind"], "coverage": "AMBIENCE_ONLY", "silent": [{"id": "push", "op": "push", "decision": "silent_by_design", "why": "a camera move is silent by default"}, {"id": "push", "op": "push", "decision": "silent_by_design", "why": "a camera move is silent by default"}, {"id": "handheld", "op": "handheld", "decision": "silent_by_design", "why": "a camera move is silent by default"}, {"id": "fx_niche_candle", "op": "candle", "decision": "silent_by_design", "why": "a candle flame makes no sound"}, {"id": "fx_mug_steam", "op": "steam", "decision": "silent_by_design", "why": "steam from a mug is too quiet to hear"}, {"id": "fx_first_stars", "op": "stars", "decision": "silent_by_design", "why": "stars make no sound"}, {"id": "fx_breath_of_the_faces", "op": "breath", "decision": "silent_by_design", "why": "a breath is too quiet to hear over the bed"}], "needs": []},
+    "audit": {"idiom": {"id": "IDM_TWO_GROUP_PIVOT", "name": "two_person_or_group_to_group_exchange", "why": "two-person or group-to-group exchange (1 named targets, 2 people)"}, "chosen": {"primary_op": "push", "ops": ["push", "push", "handheld"], "why": ["people in the frame: the camera leans in (1.8 %/s over 8.8 s, BP-21; the slowest rate, so the accent on the word stands out)", "'nobody' names thomas: a snap push to it on the word (accent, rise inside 1 s)", "a breathing hand so the camera never fully stops after the accent (the owner's 12:37 card 3)"]}, "rejected": {"orbit_small": "FORBIDDEN (creator's veto: 2 kept person(s) in frame; orbit changes lateral angle -> downgrade to pan_crop_2d or push_in + rack_focus)", "truck_25d": "REJECTED (creator's veto: lateral angle change on shot with kept people -> downgrade to pan_crop_2d or push_in + rack_focus)", "crane_25d": "REJECTED (edge_margin_y=0.080 < 0.12 risks vertical crop on crane)"}, "measurements": {"person_boxes": [[0.275, 0.27, 0.395, 0.86], [0.615, 0.26, 0.715, 0.92]], "edge_margin_x": 0.275, "edge_margin_y": 0.08, "sky_area_pct": 15.0, "fg_bg_depth_delta": 0.3411, "unlayered_people": false, "hole_share": 0.2468, "people_count": 2}}
+  }
+}

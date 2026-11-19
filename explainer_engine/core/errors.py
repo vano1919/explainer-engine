@@ -1,3 +1,4 @@
+
 """Deterministic error types. The pipeline fails loudly and specifically, and says which kind of failure it is:
 retryable (transient), permanent (configuration/contract) or a human-review stop."""
 

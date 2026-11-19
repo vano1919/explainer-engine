@@ -1,3 +1,4 @@
+
 """The free-generator gate (P4, D8, BP-162, BP-163, SD-13): a take from a free (open-model) sound generator enters the library
 or a mix only when that generator is admitted for that kind (music, sfx, room_tone), and it is admitted only with the creator's
 recorded word after a measured test. Free, numpy only, deterministic; nothing here calls a generator or the network.

@@ -54,3 +54,12 @@ def test_items_cover_people_places_and_objects():
     it = sheet.items()
     kinds = [v["kind"] for v in it.values()]
     assert kinds.count("person") == 100 and kinds.count("place") == len(sheet.PLACES) and kinds.count("object") == len(sheet.OBJECTS)
+
+
+def test_cast_check_clip_style_text_contract():
+    """Regression test (D-130 Item 7): ensure training/cast/check.py preserves exact negative CLIP style prompts."""
+    from explainer_engine.training.cast import check as cast_check
+    assert cast_check.STYLE_TEXT == (
+        ["a flat 2D cartoon drawing with bold black ink outlines"],
+        ["a photograph", "a 3D render", "a watercolour painting", "an oil painting"],
+    )

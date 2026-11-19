@@ -1,3 +1,4 @@
+
 """Visual QA judge (D-41, UR-24/UR-26): fixed questions, a strict JSON answer, a verdict. stdlib only.
 
 ``build_prompt`` writes the question list for a vision model; ``verdict`` turns its JSON into PASS / FAIL / REVIEW with the

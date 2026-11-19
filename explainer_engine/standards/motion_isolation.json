@@ -1,0 +1,89 @@
+{
+  "schema": "motion_isolation/1.0",
+  "version": "1.0.0",
+  "calibrated_leak_thresholds": {
+    "status": "calibrated_on_truce_vertical_slice",
+    "max_holder_to_mover_ratio": 0.08,
+    "max_holder_leak_p95_luma": 1.25,
+    "max_forbidden_sky_leak_share": 0.005,
+    "max_forbidden_glint_on_fg_share": 0.005,
+    "min_planned_mover_p95_luma": 1.5,
+    "known_bad_references": [
+      "S02_SH008_task1_auto (stars on barbed wire/sandbags, brazier basket warp)",
+      "S05_SH020_task1_auto (fx_seen_ice glint on wooden grave crosses and coats)"
+    ],
+    "known_good_references": [
+      "S08_SH002_step2b_slice",
+      "S02_SH008_step2b_slice",
+      "S05_SH020_step2b_slice"
+    ]
+  },
+  "relationships": {
+    "MI-01_flame_in_open_grate": {
+      "moving_elements": ["fire", "brazier_flame"],
+      "rigid_holders": ["brazier_iron_basket", "brazier_bars", "brazier_legs"],
+      "method": "bar_preserving_luminance_warmth_gate",
+      "parameters": {
+        "min_luma_for_warp": 95.0,
+        "min_warmth_r_minus_b": 25.0,
+        "bar_gradient_shield_gain": 1.0,
+        "max_dilate_iters": 1
+      },
+      "rule": "Glowing coals and upper flame plume deform; dark iron grating bars crossing the fire and the lower basket legs are clamped to 0.0 geometric displacement."
+    },
+    "MI-02_flame_on_candle_wick": {
+      "moving_elements": ["candle", "candle_flame", "lantern_core"],
+      "rigid_holders": ["tin_candle_holder", "candle_wax_stub", "wooden_crate", "lantern_frame"],
+      "method": "wick_apex_plume_split",
+      "parameters": {
+        "max_plume_y_fraction_of_light_box": 0.65,
+        "min_luma_for_warp": 110.0,
+        "min_warmth_r_minus_b": 20.0
+      },
+      "rule": "Only the luminous teardrop plume above the wick deforms geometrically; the wax body, tin holder rim, and crate below the wick apex receive 0.0 geometric warp and soft radial light spill only."
+    },
+    "MI-03_steam_over_held_vessel": {
+      "moving_elements": ["steam", "mug_steam"],
+      "rigid_holders": ["metal_mug", "tin_cup", "gloved_hands", "fingers"],
+      "method": "additive_advected_plume_above_rim",
+      "parameters": {
+        "rim_offset_y": -0.02,
+        "plume_height": 0.09,
+        "plume_width": 0.005,
+        "opacity": 0.42
+      },
+      "rule": "Steam is rendered as a pure translucent screen-blended alpha wisp originating above the vessel's top rim and masked off the vessel body and fingers (zero pixel remap on the mug or hand)."
+    },
+    "MI-04_breath_from_mouth": {
+      "moving_elements": ["breath"],
+      "rigid_holders": ["face", "jaw", "moustache", "collar", "cap"],
+      "method": "directional_cone_alpha_screen",
+      "parameters": {
+        "period_s": 3.5,
+        "height": 0.055,
+        "width": 0.0055,
+        "opacity": 0.48
+      },
+      "rule": "Cold breath puffs originate at the mouth anchor and drift outward as an alpha screen layer occluded by the face mask, never warping facial features."
+    },
+    "MI-05_sky_and_ground_weather": {
+      "moving_elements": ["stars", "cloud_drift", "sun_glint", "glint"],
+      "rigid_holders": ["barbed_wire", "sandbags", "trench_parapet", "wooden_crosses", "soldiers", "trees"],
+      "method": "strict_layer_matte_multiplication",
+      "parameters": {
+        "fg_dilation_px_at_1080p": 6,
+        "forbid_glint_on_solemn_burial": true
+      },
+      "rule": "Sky effects (stars, cloud_drift, sun_glint) are multiplied by verified sky_mask * (1 - dilated_fg_mask), even when a target box is supplied. Ground frost glints are multiplied by snow_ground_mask * (1 - dilated_fg_mask) and suppressed completely on solemn burial/memorial shots."
+    },
+    "MI-06_cloth_on_rigid_support": {
+      "moving_elements": ["cloth_flap", "flag", "coat_hem"],
+      "rigid_holders": ["flagpole", "wooden_post", "grave_cross", "soldier_torso"],
+      "method": "geodesic_attachment_ramp",
+      "parameters": {
+        "pinned_proximal_fraction": 0.20
+      },
+      "rule": "The proximal 20% attachment band adjacent to the rigid pole or torso is pinned at 0.0 displacement with a smooth cubic ramp toward the free fabric edge."
+    }
+  }
+}

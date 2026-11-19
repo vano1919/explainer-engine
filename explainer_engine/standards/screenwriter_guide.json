@@ -1,0 +1,43 @@
+{
+  "schema": "screenwriter_guide/1.0",
+  "version": "1.0.0",
+  "owner_stage": "editor",
+  "owner_agent": "edit-planner",
+  "core_principles": {
+    "SW-01_story_and_suffering_truth": "Every historical war shot honours the physical reality of the men in the line: freezing cold, mud, exhaustion, and the gulf between distant rulers or commanders and the soldiers bearing the cost.",
+    "SW-02_free_descriptive_brief": "Write each shot's director_brief in natural, expressive prose—never closed enum codes or numeric effect budgets—stating mood, viewer_feeling, physical_truth, focal_priority, sound_perspective, and restraint_note.",
+    "SW-03_brief_serves_actual_narration": "Anchor every brief to the shot's actual spoken audio_lines text and delivery_direction.",
+    "SW-04_authored_vs_approved_staging": "Preserve original authored staging in authored_intent_archive whenever approved visual staging in start_01.png adapts a non-spoken prop or background detail; if a painting contradicts a noun or action spoken in audio_lines, flag it to regeneration_queue.json.",
+    "SW-05_sequential_emotional_continuity": "Review briefs as a continuous sequence so consecutive shots build emotional momentum without jarring tonal resets."
+  },
+  "brief_contract_fields": {
+    "mood": "Free-form description of the emotional and atmospheric register of the shot.",
+    "viewer_feeling": "What the audience must experience emotionally during this spoken line.",
+    "physical_truth": "Concrete weather, light, temperature, enclosure, and material reality of the place.",
+    "focal_priority": "Ordered list of visual focal targets tied to spoken clauses in audio_lines.",
+    "sound_perspective": "Free-form acoustic point-of-view describing foreground foley, environmental bed (if any), J/L bridges, or intentional silence.",
+    "restraint_note": "Explicit boundaries on what must NOT be over-animated, cropped, or cluttered."
+  },
+  "situation_methods": {
+    "opening_hook": {
+      "dramatic_goal": "Arrest the viewer inside a concrete physical anomaly or human action in the first 15-25 seconds before opening the historical context.",
+      "visual_guidance": "Start close on a human detail in cold fog or frost, then widen to reveal scale; split any still_25d over 5.0 s on spoken clause turns.",
+      "sound_guidance": "Immediate physical foley (boots in frozen mud, breath, wind) under a restrained voiceover."
+    },
+    "political_decision_vs_men_in_line": {
+      "dramatic_goal": "Expose the contrast between institutional decrees (Pope's failed appeal, commanders' orders) and the forgotten men shivering in the trenches (S02_SH008, S08_SH002).",
+      "visual_guidance": "Keep the full huddled posture, boots, and heat source (brazier/candle) intact during the institutional setup, then push toward the soldier's face or hands on the human turn of the line.",
+      "sound_guidance": "Raw freezing parapet wind and close fire crackle/breath dominate so the institutional words land against physical suffering."
+    },
+    "tactical_map_and_sector_transition": {
+      "dramatic_goal": "Translate continental scale into human proximity (S02_SH001 -> S02_SH002 -> S02_SH003 -> S02_SH004).",
+      "visual_guidance": "Lock route arrows and frontline traces to exact spoken words; connect consecutive maps of the same theater and bridge the final sector zoom into the trench scene.",
+      "sound_guidance": "Every map action carries an explicit tactile sound decision; camera moves stay silent by design; add a J-cut human sound (such as a faint cough in freezing wind at the end of S02_SH003) when diving into the trench line."
+    },
+    "sacred_or_tragic_tableau": {
+      "dramatic_goal": "Honour shared grief and solemnity without decorative clutter (S05_SH020 joint burial psalm).",
+      "visual_guidance": "Move the camera calmly from the first spoken group (Scottish chaplain) to the second spoken group (German student) across the central crosses; forbid decorative glints or sparkles on crosses and coats.",
+      "sound_guidance": "Hushed open snow air and absence of gunfire; let the spoken psalm and silence carry the emotional weight."
+    }
+  }
+}

@@ -1,0 +1,1900 @@
+{
+ "schema": "free_sound_picks/2",
+ "read": "2026-11-13",
+ "about": "BBC Sound Effects archive picks (2026-11-13): professional recordings for the library's gaps (wooden carts as chariot wheels, period battle crowds and melee, cavalry, marching, archery, ships, bells, storms, woods, villages, fire). Licence RemArc (non-commercial): used for sound effects by the creator's word (07:24 UTC: licence matters only for the background music; 07:49 UTC card: yes, BBC too), a temporary exception to invariant 5; never for music. Picked by the archive's own descriptions (recording, perspective, period); nobody has listened (review.human not_listened). Long recordings are fetched as their head only (the samples a loop uses).",
+ "picks": [
+  {
+   "name": "cart_wooden_travel",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "bbc",
+   "page": "https://sound-effects.bbcrewind.co.uk/search?q=07050159",
+   "item": "07050159",
+   "tags": [
+    "horse",
+    "cart",
+    "wheels",
+    "wooden",
+    "chariot"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "vehicles",
+    "subcategory": "cart",
+    "genres": [
+     "ancient_warfare",
+     "village",
+     "historical_documentary"
+    ],
+    "scene_types": [
+     "ancient_warfare",
+     "village",
+     "historical_documentary"
+    ],
+    "historical_era": [
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "plain",
+     "village"
+    ],
+    "materials": [
+     "wood",
+     "earth"
+    ],
+    "action_tags": [
+     "wheels_roll"
+    ],
+    "mood": [
+     "neutral"
+    ],
+    "intensity": 2,
+    "distance": "close",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "synced_foley",
+     "background_layer"
+    ]
+   },
+   "seconds": 40,
+   "start_s": 20
+  },
+  {
+   "name": "cart_two_horse_walk",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "bbc",
+   "page": "https://sound-effects.bbcrewind.co.uk/search?q=07000001",
+   "item": "07000001",
+   "tags": [
+    "horse",
+    "cart",
+    "wheels",
+    "walk"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "vehicles",
+    "subcategory": "cart",
+    "genres": [
+     "village",
+     "historical_documentary"
+    ],
+    "scene_types": [
+     "village",
+     "historical_documentary"
+    ],
+    "historical_era": [
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "plain",
+     "village"
+    ],
+    "materials": [
+     "wood",
+     "earth"
+    ],
+    "action_tags": [
+     "wheels_roll",
+     "hooves_walk"
+    ],
+    "mood": [
+     "neutral"
+    ],
+    "intensity": 2,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "narrow",
+    "usage": [
+     "background_layer"
+    ]
+   },
+   "seconds": 40,
+   "start_s": 30
+  },
+  {
+   "name": "cart_two_horse_trot",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "bbc",
+   "page": "https://sound-effects.bbcrewind.co.uk/search?q=07000003",
+   "item": "07000003",
+   "tags": [
+    "horse",
+    "cart",
+    "wheels",
+    "trot",
+    "chariot"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "vehicles",
+    "subcategory": "cart",
+    "genres": [
+     "ancient_warfare",
+     "historical_documentary"
+    ],
+    "scene_types": [
+     "ancient_warfare",
+     "historical_documentary"
+    ],
+    "historical_era": [
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "plain"
+    ],
+    "materials": [
+     "wood",
+     "earth"
+    ],
+    "action_tags": [
+     "wheels_roll",
+     "hooves_trot"
+    ],
+    "mood": [
+     "tense"
+    ],
+    "intensity": 3,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "narrow",
+    "usage": [
+     "synced_foley"
+    ]
+   },
+   "seconds": 40,
+   "start_s": 40
+  },
+  {
+   "name": "wheels_wooden_squeak",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "bbc",
+   "page": "https://sound-effects.bbcrewind.co.uk/search?q=07037362",
+   "item": "07037362",
+   "tags": [
+    "wheels",
+    "squeak",
+    "wooden",
+    "cart"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "vehicles",
+    "subcategory": "wheels",
+    "genres": [
+     "village",
+     "historical_documentary"
+    ],
+    "scene_types": [
+     "village",
+     "historical_documentary"
+    ],
+    "historical_era": [
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "village",
+     "plain"
+    ],
+    "materials": [
+     "wood"
+    ],
+    "action_tags": [],
+    "mood": [
+     "neutral"
+    ],
+    "intensity": 2,
+    "distance": "close",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "synced_foley"
+    ]
+   },
+   "seconds": 30,
+   "start_s": 5
+  },
+  {
+   "name": "battle_11c_atmos",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "bbc",
+   "page": "https://sound-effects.bbcrewind.co.uk/search?q=07019152",
+   "item": "07019152",
+   "tags": [
+    "battle",
+    "crowd",
+    "sword",
+    "war",
+    "distant"
+   ],
+   "catalog": {
+    "bst": "soundscapes",
+    "sound_category": "ambience",
+    "subcategory": "battle",
+    "genres": [
+     "medieval_warfare",
+     "ancient_warfare",
+     "battlefield"
+    ],
+    "scene_types": [
+     "medieval_warfare",
+     "ancient_warfare",
+     "battlefield"
+    ],
+    "historical_era": [
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "battlefield"
+    ],
+    "materials": [
+     "metal",
+     "flesh"
+    ],
+    "action_tags": [],
+    "mood": [
+     "aggressive",
+     "dark"
+    ],
+    "intensity": 4,
+    "distance": "distant",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "background_layer"
+    ]
+   },
+   "seconds": 60,
+   "start_s": 30
+  },
+  {
+   "name": "battle_swords_axes",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "bbc",
+   "page": "https://sound-effects.bbcrewind.co.uk/search?q=07019151",
+   "item": "07019151",
+   "tags": [
+    "battle",
+    "sword",
+    "metal",
+    "clash",
+    "war",
+    "crowd"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "weapons",
+    "subcategory": "melee",
+    "genres": [
+     "medieval_warfare",
+     "ancient_warfare",
+     "battlefield"
+    ],
+    "scene_types": [
+     "medieval_warfare",
+     "ancient_warfare",
+     "battlefield"
+    ],
+    "historical_era": [
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "battlefield"
+    ],
+    "materials": [
+     "metal",
+     "wood"
+    ],
+    "action_tags": [
+     "sword_clash"
+    ],
+    "mood": [
+     "aggressive"
+    ],
+    "intensity": 5,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "background_layer",
+     "foreground_action"
+    ]
+   },
+   "seconds": 60,
+   "start_s": 60
+  },
+  {
+   "name": "battle_crowd_taunting",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "bbc",
+   "page": "https://sound-effects.bbcrewind.co.uk/search?q=07019150",
+   "item": "07019150",
+   "tags": [
+    "crowd",
+    "battle",
+    "shout",
+    "jeer",
+    "war"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "human",
+    "subcategory": "crowd",
+    "genres": [
+     "battlefield",
+     "ancient_warfare",
+     "medieval_warfare"
+    ],
+    "scene_types": [
+     "battlefield",
+     "ancient_warfare",
+     "medieval_warfare"
+    ],
+    "historical_era": [
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "battlefield",
+     "camp"
+    ],
+    "materials": [
+     "flesh"
+    ],
+    "action_tags": [],
+    "mood": [
+     "tense",
+     "aggressive"
+    ],
+    "intensity": 3,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "background_layer"
+    ]
+   },
+   "seconds": 60,
+   "start_s": 30
+  },
+  {
+   "name": "battle_crowd_angry",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "bbc",
+   "page": "https://sound-effects.bbcrewind.co.uk/search?q=07019157",
+   "item": "07019157",
+   "tags": [
+    "crowd",
+    "shout",
+    "battle",
+    "angry"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "human",
+    "subcategory": "crowd",
+    "genres": [
+     "battlefield",
+     "political_drama"
+    ],
+    "scene_types": [
+     "battlefield",
+     "political_drama"
+    ],
+    "historical_era": [
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "battlefield",
+     "town"
+    ],
+    "materials": [
+     "flesh"
+    ],
+    "action_tags": [],
+    "mood": [
+     "aggressive"
+    ],
+    "intensity": 4,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "background_layer"
+    ]
+   },
+   "seconds": 60,
+   "start_s": 30
+  },
+  {
+   "name": "army_waiting_murmur",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "bbc",
+   "page": "https://sound-effects.bbcrewind.co.uk/search?q=07019154",
+   "item": "07019154",
+   "tags": [
+    "crowd",
+    "murmur",
+    "army",
+    "camp",
+    "sword"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "human",
+    "subcategory": "army",
+    "genres": [
+     "military_camp",
+     "battlefield"
+    ],
+    "scene_types": [
+     "military_camp",
+     "battlefield"
+    ],
+    "historical_era": [
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "camp",
+     "battlefield"
+    ],
+    "materials": [
+     "flesh",
+     "metal"
+    ],
+    "action_tags": [],
+    "mood": [
+     "tense"
+    ],
+    "intensity": 2,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "background_layer"
+    ]
+   },
+   "seconds": 60,
+   "start_s": 30
+  },
+  {
+   "name": "battle_crowd_crescendo",
+   "take": 1,
+   "category": "foley",
+   "kind": "one_shot",
+   "source": "bbc",
+   "page": "https://sound-effects.bbcrewind.co.uk/search?q=07019156",
+   "item": "07019156",
+   "tags": [
+    "crowd",
+    "shout",
+    "battle",
+    "charge",
+    "swell"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "human",
+    "subcategory": "crowd",
+    "genres": [
+     "battlefield"
+    ],
+    "scene_types": [
+     "battlefield"
+    ],
+    "historical_era": [
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "battlefield"
+    ],
+    "materials": [
+     "flesh"
+    ],
+    "action_tags": [
+     "charge"
+    ],
+    "mood": [
+     "aggressive",
+     "epic"
+    ],
+    "intensity": 5,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "emotional_accent",
+     "foreground_action"
+    ]
+   }
+  },
+  {
+   "name": "melee_twelve_men",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "bbc",
+   "page": "https://sound-effects.bbcrewind.co.uk/search?q=07019153",
+   "item": "07019153",
+   "tags": [
+    "sword",
+    "metal",
+    "clash",
+    "fight",
+    "melee"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "weapons",
+    "subcategory": "melee",
+    "genres": [
+     "medieval_warfare",
+     "ancient_warfare",
+     "battlefield"
+    ],
+    "scene_types": [
+     "medieval_warfare",
+     "ancient_warfare",
+     "battlefield"
+    ],
+    "historical_era": [
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "battlefield"
+    ],
+    "materials": [
+     "metal",
+     "wood"
+    ],
+    "action_tags": [
+     "sword_clash"
+    ],
+    "mood": [
+     "aggressive"
+    ],
+    "intensity": 5,
+    "distance": "close",
+    "space": "exterior",
+    "width": "narrow",
+    "usage": [
+     "foreground_action"
+    ]
+   },
+   "seconds": 40,
+   "start_s": 20
+  },
+  {
+   "name": "battle_horses_shouts",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "bbc",
+   "page": "https://sound-effects.bbcrewind.co.uk/search?q=07019148",
+   "item": "07019148",
+   "tags": [
+    "battle",
+    "horse",
+    "hooves",
+    "gallop",
+    "cavalry",
+    "shout"
+   ],
+   "catalog": {
+    "bst": "soundscapes",
+    "sound_category": "ambience",
+    "subcategory": "battle",
+    "genres": [
+     "battlefield",
+     "medieval_warfare",
+     "ancient_warfare"
+    ],
+    "scene_types": [
+     "battlefield",
+     "medieval_warfare",
+     "ancient_warfare"
+    ],
+    "historical_era": [
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "battlefield",
+     "plain"
+    ],
+    "materials": [
+     "earth",
+     "flesh"
+    ],
+    "action_tags": [
+     "gallop"
+    ],
+    "mood": [
+     "aggressive"
+    ],
+    "intensity": 5,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "background_layer"
+    ]
+   },
+   "seconds": 60,
+   "start_s": 60
+  },
+  {
+   "name": "horses_troop_gallop",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "bbc",
+   "page": "https://sound-effects.bbcrewind.co.uk/search?q=07039304",
+   "item": "07039304",
+   "tags": [
+    "horse",
+    "hooves",
+    "gallop",
+    "cavalry",
+    "troop"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "animals",
+    "subcategory": "horse",
+    "genres": [
+     "battlefield",
+     "exploration"
+    ],
+    "scene_types": [
+     "battlefield",
+     "exploration"
+    ],
+    "historical_era": [
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "plain"
+    ],
+    "materials": [
+     "earth"
+    ],
+    "action_tags": [
+     "gallop"
+    ],
+    "mood": [
+     "tense",
+     "epic"
+    ],
+    "intensity": 4,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "synced_foley"
+    ]
+   },
+   "seconds": 40,
+   "start_s": 20
+  },
+  {
+   "name": "horses_two_gallop_past",
+   "take": 1,
+   "category": "foley",
+   "kind": "one_shot",
+   "source": "bbc",
+   "page": "https://sound-effects.bbcrewind.co.uk/search?q=07050105",
+   "item": "07050105",
+   "tags": [
+    "horse",
+    "hooves",
+    "gallop",
+    "pass"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "animals",
+    "subcategory": "horse",
+    "genres": [
+     "battlefield",
+     "exploration"
+    ],
+    "scene_types": [
+     "battlefield",
+     "exploration"
+    ],
+    "historical_era": [
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "plain"
+    ],
+    "materials": [
+     "earth",
+     "stone"
+    ],
+    "action_tags": [
+     "gallop_past"
+    ],
+    "mood": [
+     "tense"
+    ],
+    "intensity": 3,
+    "distance": "close",
+    "space": "exterior",
+    "width": "narrow",
+    "usage": [
+     "synced_foley"
+    ]
+   }
+  },
+  {
+   "name": "charge_reenactment",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "bbc",
+   "page": "https://sound-effects.bbcrewind.co.uk/search?q=07019012",
+   "item": "07019012",
+   "tags": [
+    "battle",
+    "charge",
+    "crowd",
+    "shout",
+    "war"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "human",
+    "subcategory": "charge",
+    "genres": [
+     "battlefield",
+     "medieval_warfare"
+    ],
+    "scene_types": [
+     "battlefield",
+     "medieval_warfare"
+    ],
+    "historical_era": [
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "battlefield"
+    ],
+    "materials": [
+     "flesh",
+     "metal"
+    ],
+    "action_tags": [
+     "charge"
+    ],
+    "mood": [
+     "aggressive",
+     "epic"
+    ],
+    "intensity": 5,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "foreground_action"
+    ]
+   },
+   "seconds": 40,
+   "start_s": 10
+  },
+  {
+   "name": "soldiers_march_soft",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "bbc",
+   "page": "https://sound-effects.bbcrewind.co.uk/search?q=07018163",
+   "item": "07018163",
+   "tags": [
+    "army",
+    "march",
+    "soldiers",
+    "footstep"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "human",
+    "subcategory": "march",
+    "genres": [
+     "military_camp",
+     "battlefield"
+    ],
+    "scene_types": [
+     "military_camp",
+     "battlefield"
+    ],
+    "historical_era": [
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "plain"
+    ],
+    "materials": [
+     "earth",
+     "leather"
+    ],
+    "action_tags": [
+     "march"
+    ],
+    "mood": [
+     "tense"
+    ],
+    "intensity": 3,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "synced_foley",
+     "background_layer"
+    ]
+   },
+   "seconds": 40,
+   "start_s": 10
+  },
+  {
+   "name": "soldiers_march_gravel",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "bbc",
+   "page": "https://sound-effects.bbcrewind.co.uk/search?q=07018160",
+   "item": "07018160",
+   "tags": [
+    "army",
+    "march",
+    "soldiers",
+    "gravel"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "human",
+    "subcategory": "march",
+    "genres": [
+     "military_camp"
+    ],
+    "scene_types": [
+     "military_camp"
+    ],
+    "historical_era": [
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "plain",
+     "town"
+    ],
+    "materials": [
+     "stone",
+     "leather"
+    ],
+    "action_tags": [
+     "march"
+    ],
+    "mood": [
+     "tense"
+    ],
+    "intensity": 3,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "synced_foley"
+    ]
+   },
+   "seconds": 40,
+   "start_s": 20
+  },
+  {
+   "name": "bow_twang_hits",
+   "take": 1,
+   "category": "foley",
+   "kind": "one_shot",
+   "source": "bbc",
+   "page": "https://sound-effects.bbcrewind.co.uk/search?q=07037401",
+   "item": "07037401",
+   "tags": [
+    "bow",
+    "arrow",
+    "twang",
+    "impact"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "weapons",
+    "subcategory": "bow",
+    "genres": [
+     "ancient_warfare",
+     "medieval_warfare"
+    ],
+    "scene_types": [
+     "ancient_warfare",
+     "medieval_warfare"
+    ],
+    "historical_era": [
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "battlefield",
+     "forest"
+    ],
+    "materials": [
+     "wood"
+    ],
+    "action_tags": [
+     "bow_release"
+    ],
+    "mood": [
+     "tense"
+    ],
+    "intensity": 3,
+    "distance": "close",
+    "space": "exterior",
+    "width": "narrow",
+    "usage": [
+     "synced_foley"
+    ]
+   }
+  },
+  {
+   "name": "arrows_passing",
+   "take": 1,
+   "category": "foley",
+   "kind": "one_shot",
+   "source": "bbc",
+   "page": "https://sound-effects.bbcrewind.co.uk/search?q=07037402",
+   "item": "07037402",
+   "tags": [
+    "arrow",
+    "flyby",
+    "whoosh"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "weapons",
+    "subcategory": "arrow",
+    "genres": [
+     "ancient_warfare",
+     "medieval_warfare",
+     "battlefield"
+    ],
+    "scene_types": [
+     "ancient_warfare",
+     "medieval_warfare",
+     "battlefield"
+    ],
+    "historical_era": [
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "battlefield"
+    ],
+    "materials": [
+     "wood",
+     "air"
+    ],
+    "action_tags": [
+     "arrow_flyby"
+    ],
+    "mood": [
+     "tense"
+    ],
+    "intensity": 3,
+    "distance": "close",
+    "space": "exterior",
+    "width": "narrow",
+    "usage": [
+     "synced_foley"
+    ]
+   },
+   "seconds": 6
+  },
+  {
+   "name": "drums_tattoo",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "bbc",
+   "page": "https://sound-effects.bbcrewind.co.uk/search?q=07011247",
+   "item": "07011247",
+   "tags": [
+    "drum",
+    "march",
+    "tattoo",
+    "military"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "instrument_samples",
+    "subcategory": "drum",
+    "genres": [
+     "military_camp"
+    ],
+    "scene_types": [
+     "military_camp"
+    ],
+    "historical_era": [
+     "early_modern",
+     "modern"
+    ],
+    "environment": [
+     "camp",
+     "town"
+    ],
+    "materials": [
+     "wood",
+     "leather"
+    ],
+    "action_tags": [],
+    "mood": [
+     "tense"
+    ],
+    "intensity": 3,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "musical_bed"
+    ]
+   },
+   "seconds": 30,
+   "start_s": 10
+  },
+  {
+   "name": "harbour_wall_gulls",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "bbc",
+   "page": "https://sound-effects.bbcrewind.co.uk/search?q=0009052",
+   "item": "0009052",
+   "tags": [
+    "harbor",
+    "waves",
+    "seabirds",
+    "gulls"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "natural_elements",
+    "subcategory": "harbor",
+    "genres": [
+     "harbor",
+     "sea_voyage"
+    ],
+    "scene_types": [
+     "harbor",
+     "sea_voyage"
+    ],
+    "historical_era": [
+     "any"
+    ],
+    "environment": [
+     "harbor",
+     "coast"
+    ],
+    "materials": [
+     "water",
+     "air"
+    ],
+    "action_tags": [],
+    "mood": [
+     "peaceful"
+    ],
+    "intensity": 2,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "background_layer"
+    ]
+   },
+   "seconds": 28
+  },
+  {
+   "name": "ship_deck_sails",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "bbc",
+   "page": "https://sound-effects.bbcrewind.co.uk/search?q=07034053",
+   "item": "07034053",
+   "tags": [
+    "ship",
+    "wooden",
+    "sails",
+    "ropes",
+    "creak",
+    "sea"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "vehicles",
+    "subcategory": "ship",
+    "genres": [
+     "sea_voyage"
+    ],
+    "scene_types": [
+     "sea_voyage"
+    ],
+    "historical_era": [
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "sea"
+    ],
+    "materials": [
+     "wood",
+     "cloth",
+     "water"
+    ],
+    "action_tags": [],
+    "mood": [
+     "neutral"
+    ],
+    "intensity": 3,
+    "distance": "close",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "background_layer"
+    ]
+   },
+   "seconds": 60,
+   "start_s": 30
+  },
+  {
+   "name": "ship_cabin_creak",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "bbc",
+   "page": "https://sound-effects.bbcrewind.co.uk/search?q=07034051",
+   "item": "07034051",
+   "tags": [
+    "ship",
+    "wooden",
+    "creak",
+    "interior"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "vehicles",
+    "subcategory": "ship",
+    "genres": [
+     "sea_voyage"
+    ],
+    "scene_types": [
+     "sea_voyage"
+    ],
+    "historical_era": [
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "sea",
+     "interior"
+    ],
+    "materials": [
+     "wood"
+    ],
+    "action_tags": [],
+    "mood": [
+     "tense",
+     "mysterious"
+    ],
+    "intensity": 2,
+    "distance": "close",
+    "space": "interior",
+    "width": "wide",
+    "usage": [
+     "background_layer"
+    ]
+   },
+   "seconds": 60,
+   "start_s": 30
+  },
+  {
+   "name": "bonfire_close",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "bbc",
+   "page": "https://sound-effects.bbcrewind.co.uk/search?q=07025149",
+   "item": "07025149",
+   "tags": [
+    "fire",
+    "bonfire",
+    "crackle",
+    "big"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "natural_elements",
+    "subcategory": "fire",
+    "genres": [
+     "military_camp",
+     "ritual",
+     "prehistoric"
+    ],
+    "scene_types": [
+     "military_camp",
+     "ritual",
+     "prehistoric"
+    ],
+    "historical_era": [
+     "any"
+    ],
+    "environment": [
+     "camp",
+     "plain"
+    ],
+    "materials": [
+     "fire",
+     "wood"
+    ],
+    "action_tags": [],
+    "mood": [
+     "neutral"
+    ],
+    "intensity": 3,
+    "distance": "close",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "background_layer"
+    ]
+   },
+   "seconds": 60,
+   "start_s": 30
+  },
+  {
+   "name": "fire_small_cracks",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "bbc",
+   "page": "https://sound-effects.bbcrewind.co.uk/search?q=NHU05008080",
+   "item": "NHU05008080",
+   "tags": [
+    "fire",
+    "campfire",
+    "crackle",
+    "small"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "natural_elements",
+    "subcategory": "fire",
+    "genres": [
+     "military_camp",
+     "prehistoric",
+     "ritual"
+    ],
+    "scene_types": [
+     "military_camp",
+     "prehistoric",
+     "ritual"
+    ],
+    "historical_era": [
+     "any"
+    ],
+    "environment": [
+     "camp",
+     "cave",
+     "forest"
+    ],
+    "materials": [
+     "fire",
+     "wood"
+    ],
+    "action_tags": [],
+    "mood": [
+     "peaceful"
+    ],
+    "intensity": 2,
+    "distance": "close",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "background_layer"
+    ]
+   },
+   "seconds": 40,
+   "start_s": 10
+  },
+  {
+   "name": "church_bells_village",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "bbc",
+   "page": "https://sound-effects.bbcrewind.co.uk/search?q=07040004",
+   "item": "07040004",
+   "tags": [
+    "bell",
+    "church",
+    "peal",
+    "village"
+   ],
+   "catalog": {
+    "bst": "soundscapes",
+    "sound_category": "ambience",
+    "subcategory": "bells",
+    "genres": [
+     "village",
+     "historical_city"
+    ],
+    "scene_types": [
+     "village",
+     "historical_city"
+    ],
+    "historical_era": [
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "church",
+     "village"
+    ],
+    "materials": [
+     "metal"
+    ],
+    "action_tags": [],
+    "mood": [
+     "joyful",
+     "peaceful"
+    ],
+    "intensity": 3,
+    "distance": "distant",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "background_layer"
+    ]
+   },
+   "seconds": 60,
+   "start_s": 30
+  },
+  {
+   "name": "church_bells_ten",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "bbc",
+   "page": "https://sound-effects.bbcrewind.co.uk/search?q=07040035",
+   "item": "07040035",
+   "tags": [
+    "bell",
+    "church",
+    "peal"
+   ],
+   "catalog": {
+    "bst": "soundscapes",
+    "sound_category": "ambience",
+    "subcategory": "bells",
+    "genres": [
+     "historical_city"
+    ],
+    "scene_types": [
+     "historical_city"
+    ],
+    "historical_era": [
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "church",
+     "town"
+    ],
+    "materials": [
+     "metal"
+    ],
+    "action_tags": [],
+    "mood": [
+     "epic"
+    ],
+    "intensity": 4,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "background_layer"
+    ]
+   },
+   "seconds": 60,
+   "start_s": 20
+  },
+  {
+   "name": "thunderstorm_heavy",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "bbc",
+   "page": "https://sound-effects.bbcrewind.co.uk/search?q=07038333",
+   "item": "07038333",
+   "tags": [
+    "storm",
+    "thunder",
+    "rain"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "natural_elements",
+    "subcategory": "storm",
+    "genres": [
+     "storm",
+     "wilderness"
+    ],
+    "scene_types": [
+     "storm",
+     "wilderness"
+    ],
+    "historical_era": [
+     "any"
+    ],
+    "environment": [
+     "plain",
+     "forest"
+    ],
+    "materials": [
+     "water",
+     "air"
+    ],
+    "action_tags": [],
+    "mood": [
+     "dark",
+     "tense"
+    ],
+    "intensity": 4,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "background_layer"
+    ]
+   },
+   "seconds": 60,
+   "start_s": 30
+  },
+  {
+   "name": "woodland_wind_birds",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "bbc",
+   "page": "https://sound-effects.bbcrewind.co.uk/search?q=07062112",
+   "item": "07062112",
+   "tags": [
+    "forest",
+    "wind",
+    "birds",
+    "trees",
+    "creak"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "natural_elements",
+    "subcategory": "forest",
+    "genres": [
+     "wilderness",
+     "exploration",
+     "peaceful_environment"
+    ],
+    "scene_types": [
+     "wilderness",
+     "exploration",
+     "peaceful_environment"
+    ],
+    "historical_era": [
+     "any"
+    ],
+    "environment": [
+     "forest"
+    ],
+    "materials": [
+     "plant",
+     "air"
+    ],
+    "action_tags": [],
+    "mood": [
+     "peaceful"
+    ],
+    "intensity": 2,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "background_layer"
+    ]
+   },
+   "seconds": 60,
+   "start_s": 30
+  },
+  {
+   "name": "village_farm_edge",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "bbc",
+   "page": "https://sound-effects.bbcrewind.co.uk/search?q=NHU05041010",
+   "item": "NHU05041010",
+   "tags": [
+    "farm",
+    "village",
+    "birds",
+    "sparrows"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "natural_elements",
+    "subcategory": "village",
+    "genres": [
+     "village",
+     "peaceful_environment"
+    ],
+    "scene_types": [
+     "village",
+     "peaceful_environment"
+    ],
+    "historical_era": [
+     "any"
+    ],
+    "environment": [
+     "village"
+    ],
+    "materials": [
+     "plant",
+     "air"
+    ],
+    "action_tags": [],
+    "mood": [
+     "peaceful"
+    ],
+    "intensity": 1,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "background_layer"
+    ]
+   },
+   "seconds": 60,
+   "start_s": 30
+  },
+  {
+   "name": "blacksmith_anvil",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "bbc",
+   "page": "https://sound-effects.bbcrewind.co.uk/search?q=07024228",
+   "item": "07024228",
+   "tags": [
+    "anvil",
+    "blacksmith",
+    "metal",
+    "forge"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "mechanical",
+    "subcategory": "forge",
+    "genres": [
+     "village",
+     "military_camp",
+     "historical_city"
+    ],
+    "scene_types": [
+     "village",
+     "military_camp",
+     "historical_city"
+    ],
+    "historical_era": [
+     "ancient",
+     "bronze_age",
+     "classical",
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "village",
+     "camp",
+     "town"
+    ],
+    "materials": [
+     "metal"
+    ],
+    "action_tags": [
+     "hammer"
+    ],
+    "mood": [
+     "neutral"
+    ],
+    "intensity": 3,
+    "distance": "close",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "synced_foley"
+    ]
+   },
+   "seconds": 30,
+   "start_s": 2
+  },
+  {
+   "name": "drawbridge_lowered",
+   "take": 1,
+   "category": "foley",
+   "kind": "one_shot",
+   "source": "bbc",
+   "page": "https://sound-effects.bbcrewind.co.uk/search?q=07038283",
+   "item": "07038283",
+   "tags": [
+    "drawbridge",
+    "castle",
+    "chain",
+    "wood"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "mechanical",
+    "subcategory": "castle",
+    "genres": [
+     "castle"
+    ],
+    "scene_types": [
+     "castle"
+    ],
+    "historical_era": [
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "castle"
+    ],
+    "materials": [
+     "wood",
+     "metal"
+    ],
+    "action_tags": [
+     "drawbridge"
+    ],
+    "mood": [
+     "tense"
+    ],
+    "intensity": 4,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "foreground_action"
+    ]
+   }
+  },
+  {
+   "name": "horn_call_signal",
+   "take": 1,
+   "category": "foley",
+   "kind": "one_shot",
+   "source": "bbc",
+   "page": "https://sound-effects.bbcrewind.co.uk/search?q=07005021",
+   "item": "07005021",
+   "tags": [
+    "horn",
+    "signal",
+    "call",
+    "brass"
+   ],
+   "catalog": {
+    "bst": "sound_effects",
+    "sound_category": "spot_sfx",
+    "subcategory": "horn",
+    "genres": [
+     "medieval_warfare",
+     "castle"
+    ],
+    "scene_types": [
+     "medieval_warfare",
+     "castle"
+    ],
+    "historical_era": [
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "plain",
+     "forest"
+    ],
+    "materials": [
+     "metal",
+     "air"
+    ],
+    "action_tags": [
+     "horn_call"
+    ],
+    "mood": [
+     "tense"
+    ],
+    "intensity": 3,
+    "distance": "distant",
+    "space": "exterior",
+    "width": "narrow",
+    "usage": [
+     "emotional_accent"
+    ]
+   }
+  },
+  {
+   "name": "army_camp_16c",
+   "take": 1,
+   "category": "foley",
+   "kind": "loop",
+   "source": "bbc",
+   "page": "https://sound-effects.bbcrewind.co.uk/search?q=07019011",
+   "item": "07019011",
+   "tags": [
+    "camp",
+    "army",
+    "crowd",
+    "murmur"
+   ],
+   "catalog": {
+    "bst": "soundscapes",
+    "sound_category": "ambience",
+    "subcategory": "camp",
+    "genres": [
+     "military_camp"
+    ],
+    "scene_types": [
+     "military_camp"
+    ],
+    "historical_era": [
+     "medieval",
+     "early_modern"
+    ],
+    "environment": [
+     "camp"
+    ],
+    "materials": [
+     "flesh",
+     "metal",
+     "fire"
+    ],
+    "action_tags": [],
+    "mood": [
+     "tense"
+    ],
+    "intensity": 2,
+    "distance": "medium",
+    "space": "exterior",
+    "width": "wide",
+    "usage": [
+     "background_layer"
+    ]
+   },
+   "seconds": 60,
+   "start_s": 20
+  }
+ ]
+}

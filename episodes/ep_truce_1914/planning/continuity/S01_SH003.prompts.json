@@ -1,0 +1,27 @@
+[
+ {
+  "shot_id": "S01_SH003",
+  "prompt": "Flanders, Christmas 1914, a frozen winter world. Image 1 is the place, No man's land between the lines / Christmas morning 1914: keep its landmarks, light and colours, but show it from a new camera position. Image 2 is the young British private: copy the face, body and costume only, not the pose. Wide shot, eye-level camera. Exactly 1 person. The young British private, Private Thomas Hale, a lean 20-year-old English infantryman with a pale freckled face, short sandy-brown hair, light grey eyes, a khaki 1914 soft service cap with ear flaps, khaki 1902 service-dress tunic with brass buttons, 1908 webbing, muddy puttees, a long khaki greatcoat, wearing khaki soft cap, long khaki greatcoat open over the tunic, every brass tunic button in place, in the centre, in the middle distance, seen from behind, Thomas walks away from camera between the wire. Visible: rows of barbed wire on wooden stakes in the centre. Dawn, fog; key light from the right (the low winter sun).",
+  "refs": [
+   "S01_SH004_start",
+   "planning/gemini_task/refs/ref_char_thomas_hale_portrait.jpg"
+  ],
+  "questions": [
+   "How many people are in the picture? (expected 1)",
+   "Is the young British private in the centre of the frame?",
+   "Does the young British private match the model sheet (face, colours, costume)?",
+   "Is rows of barbed wire on wooden stakes visible in the centre?",
+   "Does the main light come from the right?",
+   "Is the framing clearly different from the previous shot (new size or angle)?"
+  ]
+ },
+ {
+  "shot_id": "S01_SH004",
+  "prompt": "Flanders, Christmas 1914, a frozen winter world. Extreme wide shot, high angle. Exactly 20 people. 20 unnamed background figures. Dawn; key light from the right (the low winter sun). Change from the previous shot: scene weather now clear (the light of this shot: low golden Christmas-morning sun, frost haze). Keep everything else the same.",
+  "refs": [],
+  "questions": [
+   "How many people are in the picture? (expected 20)",
+   "Does the main light come from the right?"
+  ]
+ }
+]

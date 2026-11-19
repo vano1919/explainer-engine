@@ -1,0 +1,1464 @@
+{
+ "source": "/mnt/project-files/explainer-engine/demo_truce_1914/audio/reads/durations.json",
+ "lines_read": 72,
+ "lines_in_script_not_read": [
+  "S03_L007",
+  "S04_L005",
+  "S04_L011",
+  "S04_L014",
+  "S05_L010",
+  "S05_L016",
+  "S05_L021",
+  "S06_L005",
+  "S06_L009",
+  "S07_L006",
+  "S07_L007",
+  "S08_L004"
+ ],
+ "total_measured_s": 336.46,
+ "total_planned_s": 367.0,
+ "outside_10pct": [
+  "S01_SH001",
+  "S01_SH003",
+  "S01_SH005",
+  "S02_SH001",
+  "S02_SH004",
+  "S02_SH005",
+  "S02_SH006",
+  "S02_SH007",
+  "S02_SH009",
+  "S03_SH001",
+  "S03_SH002",
+  "S03_SH003",
+  "S03_SH004",
+  "S03_SH005",
+  "S03_SH006",
+  "S03_SH008",
+  "S03_SH010",
+  "S04_SH003",
+  "S04_SH007",
+  "S04_SH009",
+  "S04_SH010",
+  "S04_SH013",
+  "S04_SH015",
+  "S05_SH003",
+  "S05_SH004",
+  "S05_SH005",
+  "S05_SH006",
+  "S05_SH007",
+  "S05_SH008",
+  "S05_SH009",
+  "S05_SH011",
+  "S05_SH012",
+  "S05_SH013",
+  "S05_SH014",
+  "S05_SH015",
+  "S05_SH017",
+  "S05_SH018",
+  "S05_SH019",
+  "S06_SH001",
+  "S06_SH002",
+  "S06_SH003",
+  "S06_SH004",
+  "S06_SH006",
+  "S06_SH010",
+  "S06_SH011",
+  "S07_SH001",
+  "S07_SH002",
+  "S07_SH003",
+  "S07_SH004",
+  "S08_SH001"
+ ],
+ "clip_over_ltx_limit": [
+  "S02_SH009",
+  "S04_SH008"
+ ],
+ "shots": {
+  "S01_SH001": {
+   "seconds": 3.08,
+   "planned_seconds": 2.0,
+   "source": "reads",
+   "lines": [
+    "S01_L001"
+   ],
+   "in_frame": false,
+   "mode": "STILL_25D"
+  },
+  "S01_SH002": {
+   "seconds": 4.44,
+   "planned_seconds": 4.5,
+   "source": "reads",
+   "lines": [
+    "S01_L002"
+   ],
+   "in_frame": true,
+   "mode": "WAN_I2V",
+   "clip": {
+    "status": "PASS",
+    "model": "LTX",
+    "fps": 24,
+    "max_frames": 241,
+    "clip_seconds": 5.0,
+    "needed_s": 4.94,
+    "basis": "measured_length",
+    "detail": "one clip holds the shot"
+   }
+  },
+  "S01_SH003": {
+   "seconds": 6.19,
+   "planned_seconds": 5.5,
+   "source": "reads",
+   "lines": [
+    "S01_L003"
+   ],
+   "in_frame": false,
+   "mode": "WAN_I2V",
+   "clip": {
+    "status": "PASS",
+    "model": "LTX",
+    "fps": 24,
+    "max_frames": 241,
+    "clip_seconds": 6.75,
+    "needed_s": 6.69,
+    "basis": "measured_length",
+    "detail": "one clip holds the shot"
+   }
+  },
+  "S01_SH004": {
+   "seconds": 4.68,
+   "planned_seconds": 5.0,
+   "source": "reads",
+   "lines": [
+    "S01_L004"
+   ],
+   "in_frame": true,
+   "mode": "STILL_25D"
+  },
+  "S01_SH005": {
+   "seconds": 8.99,
+   "planned_seconds": 8.0,
+   "source": "reads",
+   "lines": [
+    "S01_L005"
+   ],
+   "in_frame": false,
+   "mode": "STILL_25D"
+  },
+  "S02_SH001": {
+   "seconds": 5.25,
+   "planned_seconds": 6.0,
+   "source": "reads",
+   "lines": [
+    "S02_L001"
+   ],
+   "in_frame": false,
+   "mode": "TACTILE_MAP"
+  },
+  "S02_SH002": {
+   "seconds": 7.55,
+   "planned_seconds": 7.75,
+   "source": "reads",
+   "lines": [
+    "S02_L002"
+   ],
+   "in_frame": true,
+   "mode": "TACTILE_MAP"
+  },
+  "S02_SH003": {
+   "seconds": 5.49,
+   "planned_seconds": 6.0,
+   "source": "reads",
+   "lines": [
+    "S02_L003"
+   ],
+   "in_frame": true,
+   "mode": "TACTILE_MAP"
+  },
+  "S02_SH004": {
+   "seconds": 6.92,
+   "planned_seconds": 6.25,
+   "source": "reads",
+   "lines": [
+    "S02_L004"
+   ],
+   "in_frame": false,
+   "mode": "STILL_25D"
+  },
+  "S02_SH005": {
+   "seconds": 4.83,
+   "planned_seconds": 5.5,
+   "source": "reads",
+   "lines": [
+    "S02_L005"
+   ],
+   "in_frame": false,
+   "mode": "STILL_25D"
+  },
+  "S02_SH006": {
+   "seconds": 3.47,
+   "planned_seconds": 4.25,
+   "source": "reads",
+   "lines": [
+    "S02_L006"
+   ],
+   "in_frame": false,
+   "mode": "WAN_I2V",
+   "clip": {
+    "status": "PASS",
+    "model": "LTX",
+    "fps": 24,
+    "max_frames": 241,
+    "clip_seconds": 5.5,
+    "needed_s": 5.35,
+    "basis": "line",
+    "detail": "one clip holds the shot"
+   }
+  },
+  "S02_SH007": {
+   "seconds": 2.43,
+   "planned_seconds": 4.25,
+   "source": "reads",
+   "lines": [
+    "S02_L007"
+   ],
+   "in_frame": false,
+   "mode": "WAN_I2V",
+   "clip": {
+    "status": "PASS",
+    "model": "LTX",
+    "fps": 24,
+    "max_frames": 241,
+    "clip_seconds": 5.5,
+    "needed_s": 5.35,
+    "basis": "line",
+    "detail": "one clip holds the shot"
+   }
+  },
+  "S02_SH008": {
+   "seconds": 10.68,
+   "planned_seconds": 10.0,
+   "source": "reads",
+   "lines": [
+    "S02_L008"
+   ],
+   "in_frame": true,
+   "mode": "STILL_25D"
+  },
+  "S02_SH009": {
+   "seconds": 9.95,
+   "planned_seconds": 8.25,
+   "source": "reads",
+   "lines": [
+    "S02_L009"
+   ],
+   "in_frame": false,
+   "mode": "WAN_I2V",
+   "clip": {
+    "status": "REVIEW",
+    "model": "LTX",
+    "fps": 24,
+    "max_frames": 241,
+    "clip_seconds": 10.062083333333334,
+    "needed_s": 10.45,
+    "basis": "measured_length",
+    "detail": "needs 10.45 s of clip, past LTX's 10.06 s: split the line or the shot in the script (G1 FAILs it, VL-06)"
+   }
+  },
+  "S03_SH001": {
+   "seconds": 8.44,
+   "planned_seconds": 9.5,
+   "source": "reads",
+   "lines": [
+    "S03_L001"
+   ],
+   "in_frame": false,
+   "mode": "WAN_I2V",
+   "clip": {
+    "status": "PASS",
+    "model": "LTX",
+    "fps": 24,
+    "max_frames": 241,
+    "clip_seconds": 9.0,
+    "needed_s": 8.94,
+    "basis": "measured_length",
+    "detail": "one clip holds the shot"
+   }
+  },
+  "S03_SH002": {
+   "seconds": 4.44,
+   "planned_seconds": 4.0,
+   "source": "reads",
+   "lines": [
+    "S03_L002"
+   ],
+   "in_frame": false,
+   "mode": "STILL_25D"
+  },
+  "S03_SH003": {
+   "seconds": 2.69,
+   "planned_seconds": 4.75,
+   "source": "reads",
+   "lines": [
+    "S03_L003"
+   ],
+   "in_frame": false,
+   "mode": "WAN_I2V",
+   "clip": {
+    "status": "PASS",
+    "model": "LTX",
+    "fps": 24,
+    "max_frames": 241,
+    "clip_seconds": 5.75,
+    "needed_s": 5.75,
+    "basis": "line",
+    "detail": "one clip holds the shot"
+   }
+  },
+  "S03_SH004": {
+   "seconds": 1.57,
+   "planned_seconds": 2.25,
+   "source": "reads",
+   "lines": [
+    "S03_L004"
+   ],
+   "in_frame": false,
+   "mode": "WAN_I2V",
+   "clip": {
+    "status": "PASS",
+    "model": "LTX",
+    "fps": 24,
+    "max_frames": 241,
+    "clip_seconds": 3.5,
+    "needed_s": 3.35,
+    "basis": "line",
+    "detail": "one clip holds the shot"
+   }
+  },
+  "S03_SH005": {
+   "seconds": 2.77,
+   "planned_seconds": 3.25,
+   "source": "reads",
+   "lines": [
+    "S03_L005"
+   ],
+   "in_frame": false,
+   "mode": "WAN_I2V",
+   "clip": {
+    "status": "PASS",
+    "model": "LTX",
+    "fps": 24,
+    "max_frames": 241,
+    "clip_seconds": 4.25,
+    "needed_s": 4.15,
+    "basis": "line",
+    "detail": "one clip holds the shot"
+   }
+  },
+  "S03_SH006": {
+   "seconds": 2.27,
+   "planned_seconds": 2.75,
+   "source": "reads",
+   "lines": [
+    "S03_L006"
+   ],
+   "in_frame": false,
+   "mode": "WAN_I2V",
+   "clip": {
+    "status": "PASS",
+    "model": "LTX",
+    "fps": 24,
+    "max_frames": 241,
+    "clip_seconds": 3.75,
+    "needed_s": 3.75,
+    "basis": "line",
+    "detail": "one clip holds the shot"
+   }
+  },
+  "S03_SH007": {
+   "seconds": 3.0,
+   "planned_seconds": 3.0,
+   "source": "planned (no spoken line)",
+   "lines": [],
+   "in_frame": true,
+   "mode": "WAN_I2V",
+   "clip": {
+    "status": "PASS",
+    "model": "LTX",
+    "fps": 24,
+    "max_frames": 241,
+    "clip_seconds": 3.5,
+    "needed_s": 3.5,
+    "basis": "planned_length",
+    "detail": "one clip holds the shot"
+   }
+  },
+  "S03_SH008": {
+   "seconds": 3.08,
+   "planned_seconds": 4.75,
+   "source": "reads",
+   "lines": [
+    "S03_L008"
+   ],
+   "in_frame": false,
+   "mode": "WAN_I2V",
+   "clip": {
+    "status": "PASS",
+    "model": "LTX",
+    "fps": 24,
+    "max_frames": 241,
+    "clip_seconds": 5.75,
+    "needed_s": 5.75,
+    "basis": "line",
+    "detail": "one clip holds the shot"
+   }
+  },
+  "S03_SH009": {
+   "seconds": 2.19,
+   "planned_seconds": 2.0,
+   "source": "reads",
+   "lines": [
+    "S03_L009"
+   ],
+   "in_frame": true,
+   "mode": "WAN_I2V",
+   "clip": {
+    "status": "PASS",
+    "model": "LTX",
+    "fps": 24,
+    "max_frames": 241,
+    "clip_seconds": 3.0,
+    "needed_s": 2.95,
+    "basis": "line",
+    "detail": "one clip holds the shot"
+   }
+  },
+  "S03_SH010": {
+   "seconds": 5.72,
+   "planned_seconds": 6.75,
+   "source": "reads",
+   "lines": [
+    "S03_L010"
+   ],
+   "in_frame": false,
+   "mode": "STILL_25D"
+  },
+  "S04_SH001": {
+   "seconds": 3.08,
+   "planned_seconds": 3.0,
+   "source": "reads",
+   "lines": [
+    "S04_L001"
+   ],
+   "in_frame": true,
+   "mode": "STILL_25D"
+  },
+  "S04_SH002": {
+   "seconds": 2.12,
+   "planned_seconds": 2.0,
+   "source": "reads",
+   "lines": [
+    "S04_L002"
+   ],
+   "in_frame": true,
+   "mode": "WAN_I2V",
+   "clip": {
+    "status": "PASS",
+    "model": "LTX",
+    "fps": 24,
+    "max_frames": 241,
+    "clip_seconds": 3.0,
+    "needed_s": 2.95,
+    "basis": "line",
+    "detail": "one clip holds the shot"
+   }
+  },
+  "S04_SH003": {
+   "seconds": 2.27,
+   "planned_seconds": 2.75,
+   "source": "reads",
+   "lines": [
+    "S04_L003"
+   ],
+   "in_frame": false,
+   "mode": "WAN_I2V",
+   "clip": {
+    "status": "PASS",
+    "model": "LTX",
+    "fps": 24,
+    "max_frames": 241,
+    "clip_seconds": 3.75,
+    "needed_s": 3.75,
+    "basis": "line",
+    "detail": "one clip holds the shot"
+   }
+  },
+  "S04_SH004": {
+   "seconds": 2.43,
+   "planned_seconds": 2.25,
+   "source": "reads",
+   "lines": [
+    "S04_L004"
+   ],
+   "in_frame": true,
+   "mode": "WAN_I2V",
+   "clip": {
+    "status": "PASS",
+    "model": "LTX",
+    "fps": 24,
+    "max_frames": 241,
+    "clip_seconds": 3.5,
+    "needed_s": 3.35,
+    "basis": "line",
+    "detail": "one clip holds the shot"
+   }
+  },
+  "S04_SH005": {
+   "seconds": 5.5,
+   "planned_seconds": 5.5,
+   "source": "planned (no spoken line)",
+   "lines": [],
+   "in_frame": true,
+   "mode": "WAN_I2V",
+   "clip": {
+    "status": "PASS",
+    "model": "LTX",
+    "fps": 24,
+    "max_frames": 241,
+    "clip_seconds": 6.0,
+    "needed_s": 6.0,
+    "basis": "planned_length",
+    "detail": "one clip holds the shot"
+   }
+  },
+  "S04_SH006": {
+   "seconds": 2.19,
+   "planned_seconds": 2.25,
+   "source": "reads",
+   "lines": [
+    "S04_L006"
+   ],
+   "in_frame": true,
+   "mode": "WAN_I2V",
+   "clip": {
+    "status": "PASS",
+    "model": "LTX",
+    "fps": 24,
+    "max_frames": 241,
+    "clip_seconds": 3.5,
+    "needed_s": 3.35,
+    "basis": "line",
+    "detail": "one clip holds the shot"
+   }
+  },
+  "S04_SH007": {
+   "seconds": 2.59,
+   "planned_seconds": 4.0,
+   "source": "reads",
+   "lines": [
+    "S04_L007"
+   ],
+   "in_frame": false,
+   "mode": "WAN_I2V",
+   "clip": {
+    "status": "PASS",
+    "model": "LTX",
+    "fps": 24,
+    "max_frames": 241,
+    "clip_seconds": 5.0,
+    "needed_s": 4.95,
+    "basis": "line",
+    "detail": "one clip holds the shot"
+   }
+  },
+  "S04_SH008": {
+   "seconds": 9.64,
+   "planned_seconds": 9.0,
+   "source": "reads",
+   "lines": [
+    "S04_L008"
+   ],
+   "in_frame": true,
+   "mode": "WAN_I2V",
+   "clip": {
+    "status": "REVIEW",
+    "model": "LTX",
+    "fps": 24,
+    "max_frames": 241,
+    "clip_seconds": 10.062083333333334,
+    "needed_s": 10.14,
+    "basis": "measured_length",
+    "detail": "needs 10.14 s of clip, past LTX's 10.06 s: split the line or the shot in the script (G1 FAILs it, VL-06)"
+   }
+  },
+  "S04_SH009": {
+   "seconds": 1.41,
+   "planned_seconds": 2.0,
+   "source": "reads",
+   "lines": [
+    "S04_L009"
+   ],
+   "in_frame": false,
+   "mode": "WAN_I2V",
+   "clip": {
+    "status": "PASS",
+    "model": "LTX",
+    "fps": 24,
+    "max_frames": 241,
+    "clip_seconds": 3.0,
+    "needed_s": 2.95,
+    "basis": "line",
+    "detail": "one clip holds the shot"
+   }
+  },
+  "S04_SH010": {
+   "seconds": 1.57,
+   "planned_seconds": 2.0,
+   "source": "reads",
+   "lines": [
+    "S04_L010"
+   ],
+   "in_frame": false,
+   "mode": "WAN_I2V",
+   "clip": {
+    "status": "PASS",
+    "model": "LTX",
+    "fps": 24,
+    "max_frames": 241,
+    "clip_seconds": 3.0,
+    "needed_s": 2.95,
+    "basis": "line",
+    "detail": "one clip holds the shot"
+   }
+  },
+  "S04_SH011": {
+   "seconds": 2.5,
+   "planned_seconds": 2.5,
+   "source": "planned (no spoken line)",
+   "lines": [],
+   "in_frame": true,
+   "mode": "STILL_25D"
+  },
+  "S04_SH012": {
+   "seconds": 4.28,
+   "planned_seconds": 4.0,
+   "source": "reads",
+   "lines": [
+    "S04_L012"
+   ],
+   "in_frame": true,
+   "mode": "WAN_I2V",
+   "clip": {
+    "status": "PASS",
+    "model": "LTX",
+    "fps": 24,
+    "max_frames": 241,
+    "clip_seconds": 5.0,
+    "needed_s": 4.95,
+    "basis": "line",
+    "detail": "one clip holds the shot"
+   }
+  },
+  "S04_SH013": {
+   "seconds": 3.08,
+   "planned_seconds": 4.25,
+   "source": "reads",
+   "lines": [
+    "S04_L013"
+   ],
+   "in_frame": false,
+   "mode": "WAN_I2V",
+   "clip": {
+    "status": "PASS",
+    "model": "LTX",
+    "fps": 24,
+    "max_frames": 241,
+    "clip_seconds": 5.5,
+    "needed_s": 5.35,
+    "basis": "line",
+    "detail": "one clip holds the shot"
+   }
+  },
+  "S04_SH014": {
+   "seconds": 4.0,
+   "planned_seconds": 4.0,
+   "source": "planned (no spoken line)",
+   "lines": [],
+   "in_frame": true,
+   "mode": "WAN_I2V",
+   "clip": {
+    "status": "PASS",
+    "model": "LTX",
+    "fps": 24,
+    "max_frames": 241,
+    "clip_seconds": 4.5,
+    "needed_s": 4.5,
+    "basis": "planned_length",
+    "detail": "one clip holds the shot"
+   }
+  },
+  "S04_SH015": {
+   "seconds": 5.88,
+   "planned_seconds": 7.0,
+   "source": "reads",
+   "lines": [
+    "S04_L015"
+   ],
+   "in_frame": false,
+   "mode": "WAN_I2V",
+   "clip": {
+    "status": "PASS",
+    "model": "LTX",
+    "fps": 24,
+    "max_frames": 241,
+    "clip_seconds": 6.5,
+    "needed_s": 6.38,
+    "basis": "measured_length",
+    "detail": "one clip holds the shot"
+   }
+  },
+  "S05_SH001": {
+   "seconds": 5.8,
+   "planned_seconds": 6.0,
+   "source": "reads",
+   "lines": [
+    "S05_L001"
+   ],
+   "in_frame": true,
+   "mode": "TACTILE_MAP"
+  },
+  "S05_SH002": {
+   "seconds": 6.27,
+   "planned_seconds": 6.25,
+   "source": "reads",
+   "lines": [
+    "S05_L002"
+   ],
+   "in_frame": true,
+   "mode": "TACTILE_MAP"
+  },
+  "S05_SH003": {
+   "seconds": 7.63,
+   "planned_seconds": 6.75,
+   "source": "reads",
+   "lines": [
+    "S05_L003"
+   ],
+   "in_frame": false,
+   "mode": "STILL_25D"
+  },
+  "S05_SH004": {
+   "seconds": 1.41,
+   "planned_seconds": 2.25,
+   "source": "reads",
+   "lines": [
+    "S05_L004"
+   ],
+   "in_frame": false,
+   "mode": "WAN_I2V",
+   "clip": {
+    "status": "PASS",
+    "model": "LTX",
+    "fps": 24,
+    "max_frames": 241,
+    "clip_seconds": 3.5,
+    "needed_s": 3.35,
+    "basis": "line",
+    "detail": "one clip holds the shot"
+   }
+  },
+  "S05_SH005": {
+   "seconds": 2.93,
+   "planned_seconds": 3.5,
+   "source": "reads",
+   "lines": [
+    "S05_L005"
+   ],
+   "in_frame": false,
+   "mode": "WAN_I2V",
+   "clip": {
+    "status": "PASS",
+    "model": "LTX",
+    "fps": 24,
+    "max_frames": 241,
+    "clip_seconds": 4.75,
+    "needed_s": 4.55,
+    "basis": "line",
+    "detail": "one clip holds the shot"
+   }
+  },
+  "S05_SH006": {
+   "seconds": 7.89,
+   "planned_seconds": 9.25,
+   "source": "reads",
+   "lines": [
+    "S05_L006"
+   ],
+   "in_frame": false,
+   "mode": "WAN_I2V",
+   "clip": {
+    "status": "PASS",
+    "model": "LTX",
+    "fps": 24,
+    "max_frames": 241,
+    "clip_seconds": 8.5,
+    "needed_s": 8.39,
+    "basis": "measured_length",
+    "detail": "one clip holds the shot"
+   }
+  },
+  "S05_SH007": {
+   "seconds": 1.07,
+   "planned_seconds": 2.25,
+   "source": "reads",
+   "lines": [
+    "S05_L007"
+   ],
+   "in_frame": false,
+   "mode": "WAN_I2V",
+   "clip": {
+    "status": "PASS",
+    "model": "LTX",
+    "fps": 24,
+    "max_frames": 241,
+    "clip_seconds": 3.5,
+    "needed_s": 3.35,
+    "basis": "line",
+    "detail": "one clip holds the shot"
+   }
+  },
+  "S05_SH008": {
+   "seconds": 2.43,
+   "planned_seconds": 3.25,
+   "source": "reads",
+   "lines": [
+    "S05_L008"
+   ],
+   "in_frame": false,
+   "mode": "WAN_I2V",
+   "clip": {
+    "status": "PASS",
+    "model": "LTX",
+    "fps": 24,
+    "max_frames": 241,
+    "clip_seconds": 4.25,
+    "needed_s": 4.15,
+    "basis": "line",
+    "detail": "one clip holds the shot"
+   }
+  },
+  "S05_SH009": {
+   "seconds": 3.08,
+   "planned_seconds": 3.5,
+   "source": "reads",
+   "lines": [
+    "S05_L009"
+   ],
+   "in_frame": false,
+   "mode": "WAN_I2V",
+   "clip": {
+    "status": "PASS",
+    "model": "LTX",
+    "fps": 24,
+    "max_frames": 241,
+    "clip_seconds": 4.75,
+    "needed_s": 4.55,
+    "basis": "line",
+    "detail": "one clip holds the shot"
+   }
+  },
+  "S05_SH010": {
+   "seconds": 3.0,
+   "planned_seconds": 3.0,
+   "source": "planned (no spoken line)",
+   "lines": [],
+   "in_frame": true,
+   "mode": "STILL_25D"
+  },
+  "S05_SH011": {
+   "seconds": 1.23,
+   "planned_seconds": 2.0,
+   "source": "reads",
+   "lines": [
+    "S05_L011"
+   ],
+   "in_frame": false,
+   "mode": "WAN_I2V",
+   "clip": {
+    "status": "PASS",
+    "model": "LTX",
+    "fps": 24,
+    "max_frames": 241,
+    "clip_seconds": 3.0,
+    "needed_s": 2.95,
+    "basis": "line",
+    "detail": "one clip holds the shot"
+   }
+  },
+  "S05_SH012": {
+   "seconds": 2.04,
+   "planned_seconds": 3.5,
+   "source": "reads",
+   "lines": [
+    "S05_L012"
+   ],
+   "in_frame": false,
+   "mode": "WAN_I2V",
+   "clip": {
+    "status": "PASS",
+    "model": "LTX",
+    "fps": 24,
+    "max_frames": 241,
+    "clip_seconds": 4.75,
+    "needed_s": 4.55,
+    "basis": "line",
+    "detail": "one clip holds the shot"
+   }
+  },
+  "S05_SH013": {
+   "seconds": 1.15,
+   "planned_seconds": 2.0,
+   "source": "reads",
+   "lines": [
+    "S05_L013"
+   ],
+   "in_frame": false,
+   "mode": "WAN_I2V",
+   "clip": {
+    "status": "PASS",
+    "model": "LTX",
+    "fps": 24,
+    "max_frames": 241,
+    "clip_seconds": 3.0,
+    "needed_s": 2.95,
+    "basis": "line",
+    "detail": "one clip holds the shot"
+   }
+  },
+  "S05_SH014": {
+   "seconds": 5.64,
+   "planned_seconds": 7.0,
+   "source": "reads",
+   "lines": [
+    "S05_L014"
+   ],
+   "in_frame": false,
+   "mode": "WAN_I2V",
+   "clip": {
+    "status": "PASS",
+    "model": "LTX",
+    "fps": 24,
+    "max_frames": 241,
+    "clip_seconds": 6.25,
+    "needed_s": 6.14,
+    "basis": "measured_length",
+    "detail": "one clip holds the shot"
+   }
+  },
+  "S05_SH015": {
+   "seconds": 2.59,
+   "planned_seconds": 3.25,
+   "source": "reads",
+   "lines": [
+    "S05_L015"
+   ],
+   "in_frame": false,
+   "mode": "WAN_I2V",
+   "clip": {
+    "status": "PASS",
+    "model": "LTX",
+    "fps": 24,
+    "max_frames": 241,
+    "clip_seconds": 3.25,
+    "needed_s": 3.09,
+    "basis": "measured_length",
+    "detail": "one clip holds the shot"
+   }
+  },
+  "S05_SH016": {
+   "seconds": 3.0,
+   "planned_seconds": 3.0,
+   "source": "planned (no spoken line)",
+   "lines": [],
+   "in_frame": true,
+   "mode": "STILL_25D"
+  },
+  "S05_SH017": {
+   "seconds": 1.23,
+   "planned_seconds": 2.25,
+   "source": "reads",
+   "lines": [
+    "S05_L017"
+   ],
+   "in_frame": false,
+   "mode": "WAN_I2V",
+   "clip": {
+    "status": "PASS",
+    "model": "LTX",
+    "fps": 24,
+    "max_frames": 241,
+    "clip_seconds": 3.5,
+    "needed_s": 3.35,
+    "basis": "line",
+    "detail": "one clip holds the shot"
+   }
+  },
+  "S05_SH018": {
+   "seconds": 2.43,
+   "planned_seconds": 2.75,
+   "source": "reads",
+   "lines": [
+    "S05_L018"
+   ],
+   "in_frame": false,
+   "mode": "WAN_I2V",
+   "clip": {
+    "status": "PASS",
+    "model": "LTX",
+    "fps": 24,
+    "max_frames": 241,
+    "clip_seconds": 3.75,
+    "needed_s": 3.75,
+    "basis": "line",
+    "detail": "one clip holds the shot"
+   }
+  },
+  "S05_SH019": {
+   "seconds": 1.15,
+   "planned_seconds": 2.0,
+   "source": "reads",
+   "lines": [
+    "S05_L019"
+   ],
+   "in_frame": false,
+   "mode": "WAN_I2V",
+   "clip": {
+    "status": "PASS",
+    "model": "LTX",
+    "fps": 24,
+    "max_frames": 241,
+    "clip_seconds": 2.75,
+    "needed_s": 2.55,
+    "basis": "line",
+    "detail": "one clip holds the shot"
+   }
+  },
+  "S05_SH020": {
+   "seconds": 7.81,
+   "planned_seconds": 7.75,
+   "source": "reads",
+   "lines": [
+    "S05_L020"
+   ],
+   "in_frame": true,
+   "mode": "STILL_25D"
+  },
+  "S05_SH021": {
+   "seconds": 4.0,
+   "planned_seconds": 4.0,
+   "source": "planned (no spoken line)",
+   "lines": [],
+   "in_frame": true,
+   "mode": "WAN_I2V",
+   "clip": {
+    "status": "PASS",
+    "model": "LTX",
+    "fps": 24,
+    "max_frames": 241,
+    "clip_seconds": 4.5,
+    "needed_s": 4.5,
+    "basis": "planned_length",
+    "detail": "one clip holds the shot"
+   }
+  },
+  "S06_SH001": {
+   "seconds": 2.85,
+   "planned_seconds": 3.25,
+   "source": "reads",
+   "lines": [
+    "S06_L001"
+   ],
+   "in_frame": false,
+   "mode": "STILL_25D"
+  },
+  "S06_SH002": {
+   "seconds": 2.43,
+   "planned_seconds": 2.75,
+   "source": "reads",
+   "lines": [
+    "S06_L002"
+   ],
+   "in_frame": false,
+   "mode": "WAN_I2V",
+   "clip": {
+    "status": "PASS",
+    "model": "LTX",
+    "fps": 24,
+    "max_frames": 241,
+    "clip_seconds": 3.75,
+    "needed_s": 3.75,
+    "basis": "line",
+    "detail": "one clip holds the shot"
+   }
+  },
+  "S06_SH003": {
+   "seconds": 1.41,
+   "planned_seconds": 2.0,
+   "source": "reads",
+   "lines": [
+    "S06_L003"
+   ],
+   "in_frame": false,
+   "mode": "WAN_I2V",
+   "clip": {
+    "status": "PASS",
+    "model": "LTX",
+    "fps": 24,
+    "max_frames": 241,
+    "clip_seconds": 3.0,
+    "needed_s": 2.95,
+    "basis": "line",
+    "detail": "one clip holds the shot"
+   }
+  },
+  "S06_SH004": {
+   "seconds": 2.12,
+   "planned_seconds": 3.5,
+   "source": "reads",
+   "lines": [
+    "S06_L004"
+   ],
+   "in_frame": false,
+   "mode": "WAN_I2V",
+   "clip": {
+    "status": "PASS",
+    "model": "LTX",
+    "fps": 24,
+    "max_frames": 241,
+    "clip_seconds": 4.75,
+    "needed_s": 4.55,
+    "basis": "line",
+    "detail": "one clip holds the shot"
+   }
+  },
+  "S06_SH005": {
+   "seconds": 3.0,
+   "planned_seconds": 3.0,
+   "source": "planned (no spoken line)",
+   "lines": [],
+   "in_frame": true,
+   "mode": "STILL_25D"
+  },
+  "S06_SH006": {
+   "seconds": 2.12,
+   "planned_seconds": 3.5,
+   "source": "reads",
+   "lines": [
+    "S06_L006"
+   ],
+   "in_frame": false,
+   "mode": "WAN_I2V",
+   "clip": {
+    "status": "PASS",
+    "model": "LTX",
+    "fps": 24,
+    "max_frames": 241,
+    "clip_seconds": 4.75,
+    "needed_s": 4.55,
+    "basis": "line",
+    "detail": "one clip holds the shot"
+   }
+  },
+  "S06_SH007": {
+   "seconds": 3.0,
+   "planned_seconds": 3.25,
+   "source": "reads",
+   "lines": [
+    "S06_L007"
+   ],
+   "in_frame": true,
+   "mode": "WAN_I2V",
+   "clip": {
+    "status": "PASS",
+    "model": "LTX",
+    "fps": 24,
+    "max_frames": 241,
+    "clip_seconds": 4.25,
+    "needed_s": 4.15,
+    "basis": "line",
+    "detail": "one clip holds the shot"
+   }
+  },
+  "S06_SH008": {
+   "seconds": 2.35,
+   "planned_seconds": 2.25,
+   "source": "reads",
+   "lines": [
+    "S06_L008"
+   ],
+   "in_frame": true,
+   "mode": "WAN_I2V",
+   "clip": {
+    "status": "PASS",
+    "model": "LTX",
+    "fps": 24,
+    "max_frames": 241,
+    "clip_seconds": 3.5,
+    "needed_s": 3.35,
+    "basis": "line",
+    "detail": "one clip holds the shot"
+   }
+  },
+  "S06_SH009": {
+   "seconds": 4.0,
+   "planned_seconds": 4.0,
+   "source": "planned (no spoken line)",
+   "lines": [],
+   "in_frame": true,
+   "mode": "WAN_I2V",
+   "clip": {
+    "status": "PASS",
+    "model": "LTX",
+    "fps": 24,
+    "max_frames": 241,
+    "clip_seconds": 4.5,
+    "needed_s": 4.5,
+    "basis": "planned_length",
+    "detail": "one clip holds the shot"
+   }
+  },
+  "S06_SH010": {
+   "seconds": 1.88,
+   "planned_seconds": 2.75,
+   "source": "reads",
+   "lines": [
+    "S06_L010"
+   ],
+   "in_frame": false,
+   "mode": "WAN_I2V",
+   "clip": {
+    "status": "PASS",
+    "model": "LTX",
+    "fps": 24,
+    "max_frames": 241,
+    "clip_seconds": 3.75,
+    "needed_s": 3.75,
+    "basis": "line",
+    "detail": "one clip holds the shot"
+   }
+  },
+  "S06_SH011": {
+   "seconds": 1.57,
+   "planned_seconds": 2.75,
+   "source": "reads",
+   "lines": [
+    "S06_L011"
+   ],
+   "in_frame": false,
+   "mode": "WAN_I2V",
+   "clip": {
+    "status": "PASS",
+    "model": "LTX",
+    "fps": 24,
+    "max_frames": 241,
+    "clip_seconds": 3.75,
+    "needed_s": 3.75,
+    "basis": "line",
+    "detail": "one clip holds the shot"
+   }
+  },
+  "S06_SH012": {
+   "seconds": 4.99,
+   "planned_seconds": 5.5,
+   "source": "reads",
+   "lines": [
+    "S06_L012"
+   ],
+   "in_frame": true,
+   "mode": "STILL_25D"
+  },
+  "S07_SH001": {
+   "seconds": 3.87,
+   "planned_seconds": 4.75,
+   "source": "reads",
+   "lines": [
+    "S07_L001"
+   ],
+   "in_frame": false,
+   "mode": "STILL_25D"
+  },
+  "S07_SH002": {
+   "seconds": 1.23,
+   "planned_seconds": 2.0,
+   "source": "reads",
+   "lines": [
+    "S07_L002"
+   ],
+   "in_frame": false,
+   "mode": "WAN_I2V",
+   "clip": {
+    "status": "PASS",
+    "model": "LTX",
+    "fps": 24,
+    "max_frames": 241,
+    "clip_seconds": 3.0,
+    "needed_s": 2.95,
+    "basis": "line",
+    "detail": "one clip holds the shot"
+   }
+  },
+  "S07_SH003": {
+   "seconds": 1.41,
+   "planned_seconds": 2.0,
+   "source": "reads",
+   "lines": [
+    "S07_L003"
+   ],
+   "in_frame": false,
+   "mode": "WAN_I2V",
+   "clip": {
+    "status": "PASS",
+    "model": "LTX",
+    "fps": 24,
+    "max_frames": 241,
+    "clip_seconds": 3.0,
+    "needed_s": 2.95,
+    "basis": "line",
+    "detail": "one clip holds the shot"
+   }
+  },
+  "S07_SH004": {
+   "seconds": 1.23,
+   "planned_seconds": 2.0,
+   "source": "reads",
+   "lines": [
+    "S07_L004"
+   ],
+   "in_frame": false,
+   "mode": "WAN_I2V",
+   "clip": {
+    "status": "PASS",
+    "model": "LTX",
+    "fps": 24,
+    "max_frames": 241,
+    "clip_seconds": 2.75,
+    "needed_s": 2.55,
+    "basis": "line",
+    "detail": "one clip holds the shot"
+   }
+  },
+  "S07_SH005": {
+   "seconds": 7.0,
+   "planned_seconds": 6.75,
+   "source": "reads",
+   "lines": [
+    "S07_L005"
+   ],
+   "in_frame": true,
+   "mode": "WAN_I2V",
+   "clip": {
+    "status": "PASS",
+    "model": "LTX",
+    "fps": 24,
+    "max_frames": 241,
+    "clip_seconds": 7.5,
+    "needed_s": 7.5,
+    "basis": "measured_length",
+    "detail": "one clip holds the shot"
+   }
+  },
+  "S07_SH006": {
+   "seconds": 6.0,
+   "planned_seconds": 6.0,
+   "source": "planned (no spoken line)",
+   "lines": [],
+   "in_frame": true,
+   "mode": "WAN_I2V",
+   "clip": {
+    "status": "PASS",
+    "model": "LTX",
+    "fps": 24,
+    "max_frames": 241,
+    "clip_seconds": 6.5,
+    "needed_s": 6.5,
+    "basis": "planned_length",
+    "detail": "one clip holds the shot"
+   }
+  },
+  "S07_SH007": {
+   "seconds": 4.0,
+   "planned_seconds": 4.0,
+   "source": "planned (no spoken line)",
+   "lines": [],
+   "in_frame": true,
+   "mode": "WAN_I2V",
+   "clip": {
+    "status": "PASS",
+    "model": "LTX",
+    "fps": 24,
+    "max_frames": 241,
+    "clip_seconds": 4.5,
+    "needed_s": 4.5,
+    "basis": "planned_length",
+    "detail": "one clip holds the shot"
+   }
+  },
+  "S07_SH008": {
+   "seconds": 7.97,
+   "planned_seconds": 8.25,
+   "source": "reads",
+   "lines": [
+    "S07_L008"
+   ],
+   "in_frame": true,
+   "mode": "WAN_I2V",
+   "clip": {
+    "status": "PASS",
+    "model": "LTX",
+    "fps": 24,
+    "max_frames": 241,
+    "clip_seconds": 8.5,
+    "needed_s": 8.47,
+    "basis": "measured_length",
+    "detail": "one clip holds the shot"
+   }
+  },
+  "S08_SH001": {
+   "seconds": 7.55,
+   "planned_seconds": 6.75,
+   "source": "reads",
+   "lines": [
+    "S08_L001"
+   ],
+   "in_frame": false,
+   "mode": "STILL_25D"
+  },
+  "S08_SH002": {
+   "seconds": 9.33,
+   "planned_seconds": 8.75,
+   "source": "reads",
+   "lines": [
+    "S08_L002"
+   ],
+   "in_frame": true,
+   "mode": "STILL_25D"
+  },
+  "S08_SH003": {
+   "seconds": 3.71,
+   "planned_seconds": 4.0,
+   "source": "reads",
+   "lines": [
+    "S08_L003"
+   ],
+   "in_frame": true,
+   "mode": "STILL_25D"
+  },
+  "S08_SH004": {
+   "seconds": 5.0,
+   "planned_seconds": 5.0,
+   "source": "planned (no spoken line)",
+   "lines": [],
+   "in_frame": true,
+   "mode": "STILL_25D"
+  }
+ }
+}

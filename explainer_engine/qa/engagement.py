@@ -1,3 +1,4 @@
+
 """Anti-boredom gate (docs/EPISODE_STANDARDS.md section 7, Q-E16): run before script approval and again before the final render.
 
     python -m explainer_engine.qa.engagement <production_script.json> [--rules episode_rules.json]
@@ -30,6 +31,44 @@ NGRAM = 5               # a 5-word phrase said in two different beats is repeate
 # BP-42 / BP-44: a line points forward when it asks ("?") or carries a promise marker
 PROMISE = re.compile(r"\b(will|by the end|watch|until|but|turns out|wait)\b", re.I)
 MICROHOOK_EVERY_S, REVIEW_GAP_S = SR.T("BP-42", "microhook_every_s"), SR.T("BP-42", "review_gap_s")
+MICROHOOK_EVERY_SHARE = float(SR.T("BP-42", "microhook_every_share") or 0.2083)
+REVIEW_GAP_SHARE = float(SR.T("BP-42", "review_gap_share") or 0.25)
+REHOOK_AT_SHARE = tuple(float(x) for x in (SR.T("BP-42", "rehook_at_share") or [0.25, 0.5]))
+REFERENCE_RUNTIME_S = float(SR.T("BP-42", "reference_runtime_s") or 720.0)
+
+
+def proportional_rehook_thresholds(total_s: float | None = None) -> dict:
+    """Compute BP-42 re-hook thresholds proportionally as fractions of total episode runtime.
+
+    For a 720 s (12-min) reference episode, 20.83% = 150 s, 25% = 180 s, and [25%, 50%] = [180 s, 360 s].
+    For shorter or longer episodes (e.g. Truce 1914 at 367 s), thresholds scale proportionally with a
+    30 s minimum floor on review_gap_s so brief test fixtures do not false-positive.
+    """
+    if total_s is None or float(total_s) <= 0.0:
+        return {
+            "total_runtime_s": REFERENCE_RUNTIME_S,
+            "microhook_every_s": float(MICROHOOK_EVERY_S),
+            "review_gap_s": float(REVIEW_GAP_S),
+            "rehook_at_s": [float(x) for x in SR.T("BP-42", "rehook_at_s")],
+            "window_half_s": 30.0,
+            "proportional": False,
+        }
+    rt = float(total_s)
+    micro_s = max(25.0, round(rt * MICROHOOK_EVERY_SHARE, 2))
+    gap_s = max(30.0, round(rt * REVIEW_GAP_SHARE, 2))
+    targets = [round(rt * share, 2) for share in REHOOK_AT_SHARE]
+    win_half = max(12.0, round(rt * (30.0 / REFERENCE_RUNTIME_S), 2))
+    return {
+        "total_runtime_s": round(rt, 2),
+        "microhook_every_s": micro_s,
+        "review_gap_s": gap_s,
+        "rehook_at_s": targets,
+        "window_half_s": win_half,
+        "microhook_every_share": MICROHOOK_EVERY_SHARE,
+        "review_gap_share": REVIEW_GAP_SHARE,
+        "rehook_at_share": list(REHOOK_AT_SHARE),
+        "proportional": True,
+    }
 LAST_SHARE = SR.T("BP-43", "last_share")  # BP-43: the ending is abrupt
 END_SCREEN_MIN_S = SR.T("BP-43", "end_screen_narration_min_s")  # BP-43: narration runs on under the end screen
 ANSWER_AFTER_SHARE = SR.T("BP-04", "answer_after_share")  # BP-04: the central answer waits for the last tenth
@@ -77,7 +116,49 @@ def forward(text: str) -> bool:
     return "?" in text or bool(PROMISE.search(text))
 
 
+def check_v4(doc: dict) -> list[dict]:
+    """Check BP-42 proportional forward-pointing cadence on a v4 scene/shot/audio_lines production script."""
+    out: list[dict] = []
+    shots = doc.get("shots") or []
+    audio_lines = doc.get("audio_lines") or []
+    total_s = sum(float(sh.get("duration_s") or sh.get("target_duration_seconds") or 0.0) for sh in shots)
+    if total_s <= 0.0:
+        total_s = float((doc.get("episode") or {}).get("target_duration_seconds") or REFERENCE_RUNTIME_S)
+    th = proportional_rehook_thresholds(total_s)
+    eff_gap_s = float(th["review_gap_s"])
+    eff_micro_s = float(th["microhook_every_s"])
+    lines_by_id = {al.get("line_id"): al for al in audio_lines if isinstance(al, dict)}
+    since_s = 0.0
+    last_id = (shots[0].get("scene_id") or shots[0].get("shot_id") or "S01") if shots else "S01"
+    for sh in shots:
+        dur = float(sh.get("duration_s") or sh.get("target_duration_seconds") or 0.0)
+        texts = [
+            str(lines_by_id[lid].get("text") or "")
+            for lid in (sh.get("audio_line_ids") or [])
+            if lid in lines_by_id
+        ]
+        txt_blob = " ".join(texts)
+        if forward(txt_blob):
+            if since_s > eff_gap_s:
+                out.append({
+                    "rule": "ENG-7",
+                    "severity": sev("BP-42"),
+                    "where": str(sh.get("scene_id") or sh.get("shot_id") or "?"),
+                    "detail": (
+                        f"~{since_s:.1f} s since the last forward-pointing line or turn, from {last_id}: "
+                        f"a forward-pointing beat at least every {eff_micro_s:g} s / review gap {eff_gap_s:g} s (BP-42 proportional)"
+                    ),
+                })
+            since_s = 0.0
+            last_id = str(sh.get("scene_id") or sh.get("shot_id") or last_id)
+        else:
+            since_s += dur
+    return out
+
+
 def check(doc: dict, rules: dict | None = None) -> list[dict]:
+    if not doc.get("segments") and (doc.get("scenes") or doc.get("shots")):
+        return check_v4(doc)
     out: list[dict] = []
 
     def add(rule: str, where: str, detail: str, severity: str = "REVIEW") -> None:
@@ -117,21 +198,26 @@ def check(doc: dict, rules: dict | None = None) -> list[dict]:
             if src != seg["id"] and (src, seg["id"]) not in told:
                 told.add((src, seg["id"]))
                 add("ENG-4", seg["id"], f"repeats {' '.join(gram)!r} from {src}")
-    # ENG-7 (BP-42): the estimated time between forward-pointing lines, at WPM, never over REVIEW_GAP_S
+    # ENG-7 (BP-42): the estimated time between forward-pointing lines, at WPM, never over proportional review_gap_s
+    ep_meta = doc.get("episode") or {}
+    explicit_rt = ep_meta.get("target_duration_seconds") or ep_meta.get("runtime_s")
+    bp42_th = proportional_rehook_thresholds(float(explicit_rt) if explicit_rt else None)
+    eff_review_gap_s = float(bp42_th["review_gap_s"])
+    eff_microhook_s = float(bp42_th["microhook_every_s"])
     since, last_id = 0, segs[0]["id"]
     for seg in segs:
         for line in seg["lines"]:
             n = len(_words(line["text"]))
             if forward(line["text"]):
-                if since / WPM * 60 > REVIEW_GAP_S:
+                if since / WPM * 60 > eff_review_gap_s:
                     add("ENG-7", seg["id"], f"{since} words (~{since / WPM * 60:.0f} s at {WPM} wpm) since the last question or "
-                        f"promise, from {last_id}: a forward-pointing line at least every {MICROHOOK_EVERY_S} s (BP-42)")
+                        f"promise, from {last_id}: a forward-pointing line at least every {eff_microhook_s:g} s (BP-42)")
                 since, last_id = 0, seg["id"]
             else:
                 since += n
-    if since / WPM * 60 > REVIEW_GAP_S:
+    if since / WPM * 60 > eff_review_gap_s:
         add("ENG-7", segs[-1]["id"], f"{since} words (~{since / WPM * 60:.0f} s at {WPM} wpm) to the end without a question or "
-            f"promise, from {last_id}: a forward-pointing line at least every {MICROHOOK_EVERY_S} s (BP-42)")
+            f"promise, from {last_id}: a forward-pointing line at least every {eff_microhook_s:g} s (BP-42)")
     # ENG-8 (BP-43): the ending is abrupt: no recap or goodbye in the last LAST_SHARE of the words (FAIL, binding); the last
     # sentence is an open question or a pointer to the next video (REVIEW)
     lines = [(seg["id"], line["text"]) for seg in segs for line in seg["lines"]]

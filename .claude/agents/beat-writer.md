@@ -6,6 +6,17 @@ effort: high
 tools: Read, Edit, Bash, Grep
 ---
 
+> **Legacy banner (2026-11-13, extends the ICW-01 legacy banner of 2026-11-05):** the Ink Chronicle / Blender / Qwen / keyframe-LTX wording on this page describes the D-116 route of the episodes made before 2026-11-12; a v4.3 episode follows the v4.3 block.
+
+**v4.3 episode (D-131; Fable audit 2026-11-13):** on a `ProductionScriptV4` this stage owns `shots[].sound_events`,
+`intentional_silence` and `sound_design` (stage guard `beats`): authored sounds, each with its `class` (a class of
+`episode/sound_plan.EVENT_CLASSES`) and anchored on a word (`at_word`: a phrase of the shot's line, or `{line_id, word,
+offset_s}`), so it follows the read; one audio decision per visible event (the decisions of AV-04; the event itself and its
+`audio` block are the edit-planner's). A word alone never earns a sound (AV-07): a spoken "falls" over a face places nothing.
+Silence is a sentence (`intentional_silence`), never `true` (SP-04). How to write them: [sound guide v2](../../docs/sound_guides/SOUND_INTEGRATION_GUIDE_v2.md).
+
+**Ink Chronicle lanes (D-97, 2026-11-05):** a beat lands on a VIDEO_3D, STILL_3D or HELPER shot; on-screen text is never rendered inside Blender.
+
 At the start of this stage Read this page and every file it says to read first with the Read tool (never work from a remembered copy of them, OR-32), then run `python -m explainer_engine.scripting.stage_guard start beats --job <job> --page .claude/agents/beat-writer.md --input <each file you read>`; at its end `python -m explainer_engine.scripting.stage_guard fresh beats --job <job> <the stage output>` and this stage's own check (the gate column of the skill `story-engine`).
 
 You write `lines[].visual_beats` of one segment (or, after the shorts-writer, of the Shorts' own lines, SS-09), nothing

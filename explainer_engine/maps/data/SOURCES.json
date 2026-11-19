@@ -1,5 +1,26 @@
 {
  "about": "Natural Earth 1:50m vector layers (public domain; made with Natural Earth, naturalearthdata.com). The extract keeps no names and rounds to 2 decimals.",
+ "borders_1914": {
+  "about": "1914 Western/Central Europe sovereign land borders (Germany incl. Alsace-Lorraine & Eupen-Malmedy, France, Belgium, Netherlands, Luxembourg, Switzerland, UK, Austria-Hungary, Italy, Denmark; pre-1919 Treaty of Frankfurt / Vienna / Congress of Vienna lines).",
+  "bytes": 5223,
+  "citation": "Schvitz, Guy, Seraina Rueegger, Luc Girardin, Lars-Erik Cederman, Nils Weidmann, and Kristian Skrede Gleditsch (2022). Mapping The International System, 1886-2017: The CShapes 2.0 Dataset. Journal of Conflict Resolution 66(1): 144-161; Ourednik, A. (2021). historical-basemaps world_1914.geojson.",
+  "countries": [
+   "Germany",
+   "France",
+   "Belgium",
+   "Netherlands",
+   "Luxembourg",
+   "Switzerland",
+   "United Kingdom",
+   "Austria-Hungary",
+   "Italy",
+   "Denmark"
+  ],
+  "file": "borders_1914.json.gz",
+  "licence": "CC BY-NC-SA 4.0 (CShapes 2.0, ETH Zurich ICR, https://icr.ethz.ch/data/cshapes/) / GPL-3.0 (aourednik/historical-basemaps, https://github.com/aourednik/historical-basemaps)",
+  "sha256": "9c7e6589e7ec4c3218584833f47a89d8612470cfa8b3305bb3e35ba8a03e0618",
+  "source_url": "https://raw.githubusercontent.com/aourednik/historical-basemaps/master/geojson/world_1914.geojson"
+ },
  "files": {
   "ne_50m_admin_0_boundary_lines_land": {
    "bytes": 760189,

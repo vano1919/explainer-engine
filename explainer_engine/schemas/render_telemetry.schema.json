@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://explainer-engine.local/schemas/render_telemetry.schema.json",
+  "title": "LocalRenderTelemetryRecord",
+  "type": "object",
+  "required": [
+    "timestamp_utc",
+    "episode_id",
+    "shot_id",
+    "stage",
+    "generation_mode",
+    "model_id",
+    "attempt_number",
+    "wall_clock_seconds",
+    "status",
+    "qa_metrics"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "timestamp_utc": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "episode_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "shot_id": {
+      "type": "string",
+      "pattern": "^S(0[1-9]|1[0-6])_SH[0-9]{3}$"
+    },
+    "stage": {
+      "enum": [
+        "keyframe_gen",
+        "keyframe_edit",
+        "video_gen",
+        "parallax_25d"
+      ]
+    },
+    "generation_mode": {
+      "enum": [
+        "WAN_I2V",
+        "WAN_FLF2V",
+        "WAN_CONTROL",
+        "STILL_25D",
+        "MAP_25D",
+        "WAN_FALLBACK_LTX",
+        "COLLAGE_STILL",
+        "TACTILE_MAP"
+      ]
+    },
+    "model_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "use_lightx2v_4step": {
+      "type": "boolean"
+    },
+    "attempt_number": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "wall_clock_seconds": {
+      "type": "number",
+      "minimum": 0
+    },
+    "peak_vram_mb": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "status": {
+      "enum": [
+        "ACCEPTED",
+        "REJECTED_AUTO_QA",
+        "REJECTED_HUMAN",
+        "ESCALATED_TO_CONTROL",
+        "ERROR_RUNTIME"
+      ]
+    },
+    "failure_reason": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "qa_metrics": {
+      "type": "object",
+      "required": [
+        "duration_match",
+        "frozen_frame_ratio",
+        "boundary_jump_score"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "duration_match": {
+          "type": "boolean"
+        },
+        "frozen_frame_ratio": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0
+        },
+        "boundary_jump_score": {
+          "type": "number",
+          "minimum": 0.0
+        }
+      }
+    }
+  }
+}

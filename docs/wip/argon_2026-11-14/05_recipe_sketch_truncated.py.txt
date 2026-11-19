@@ -1,0 +1,43 @@
+"""Reference Python implementation sketches for the Explainer Engine 2.5D recipe,
+map collision/camera handoff, scene-key LAB color matching in assembly, and the 8
+human-eye QA checks.
+
+Designed to drop into:
+- explainer_engine/production/directed25d.py
+- explainer_engine/maps/actions.py
+- explainer_engine/production/assemble.py
+- explainer_engine/qa/motion_intent.py
+- explainer_engine/videolane/master_qa.py
+"""
+from __future__ import annotations
+
+import math
+from typing import Any
+
+import cv2
+import numpy as np
+
+
+# =============================================================================
+# 1. 2.5D RECIPE FIXES (for explainer_engine/production/directed25d.py)
+# =============================================================================
+
+def prepare_clean_layers_and_bg_depth(
+    src_rgb: np.ndarray,
+    plate_rgb: np.ndarray,
+    depth_01: np.ndarray,
+    object_masks: dict[str, np.ndarray],
+    person_boxes_norm: list[list[float]],
+    thin_stroke_px: float = 16.0,
+    thin_share_max: float = 0.35,
+    feather_px: float = 3.0,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, list[dict[str, Any]]]:
+    """Fix for directed25d.py:_rest_background (lines 174-227) and bg_maps (lines 590-604).
+
+    1. NEVER bite morphological disc holes out of a kept foreground mask (which caused
+       the C4A scalloped outlines at frame 0). Either keep the object mask whole with a
+       soft inward-safe feather, or if it is mostly thin strokes (barbed wire, twigs),
+       leave the entire object on the background sheet (layer=False).
+    2. Flatten the background depth gradient inside every detected person/face box that
+       remains on the background sheet (e.g. crowds in S05_SH020), so per-pixel background
+       remap never rubber-stretches faces or heads.

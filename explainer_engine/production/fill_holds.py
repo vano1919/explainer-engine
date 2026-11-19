@@ -1,3 +1,4 @@
+
 """Fill dead holds (RHYTHM-3) with re-framed shots of the picture already on screen.
 
 The creator's rule (2026-10-16): something must change on screen often enough, and the fix for a long hold is never a faster

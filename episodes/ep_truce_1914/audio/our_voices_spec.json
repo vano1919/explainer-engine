@@ -1,0 +1,1128 @@
+{
+  "schema": "our_voices_spec/1",
+  "episode_id": "ep_truce_1914",
+  "owner_decision": "2026-11-16 (final): All 39 character dialogue lines use OUR voices (ElevenLabs), replacing LTX clip-generated voices. Python pipeline changes (mix.py / voice pipeline) are in Python Approval List Item 6 and are NOT executed until owner approval.",
+  "audio_format_contract": {
+    "container": "WAV",
+    "codec": "pcm_s16le",
+    "sample_rate_hz": 48000,
+    "raw_channels": 1,
+    "stem_channels": 2,
+    "true_peak_max_dbtp": -1.5,
+    "dialogue_integrated_target_lufs": -16.0,
+    "episode_master_target_lufs": -14.0,
+    "inter_character_loudness_spread_max_db": 1.5
+  },
+  "word_clock_alignment_contract": {
+    "clock_authority": "production/video/<shot_id>.json trim_contract [in_s, out_s] + audio/timing.json (24 fps)",
+    "scribe_whisper_word_timestamps": true,
+    "default_speech_onset_s": 0.75,
+    "reaction_tail_s_band": [
+      0.5,
+      0.55
+    ],
+    "max_tempo_stretch_band": [
+      0.92,
+      1.08
+    ],
+    "ltx_clip_audio_policy": "Mute LTX vocal track on all 39 clip-spoken shots; eliminate LTX word garbling (S03_SH003, S05_SH004, S07_SH004) and hallucinated tail words (S01_SH002, S01_SH003)."
+  },
+  "cache_contract": {
+    "key_formula": "sha256(canonical_json({text, voice_id, model_id, language_code, settings, sample_rate_hz: 48000}))",
+    "cache_dir": "episodes/ep_truce_1914/audio/cache/dialogue/",
+    "ledger_file": "episodes/ep_truce_1914/audio/cache/dialogue_ledger.json",
+    "idempotent_resume": "Skip API call whenever <line_id>_<cache_key[:16]>.wav exists with valid SHA-256 and size >= 10240 bytes."
+  },
+  "cost_and_cap_contract": {
+    "total_dialogue_lines": 39,
+    "total_words": 193,
+    "total_characters": 1038,
+    "credits_per_character": 1,
+    "single_pass_credits": 1038,
+    "audition_pass_credits": 180,
+    "estimated_cost_per_line_usd": 0.0059,
+    "estimated_single_pass_cost_usd": 0.23,
+    "hard_cap_credits": 1500,
+    "hard_cap_usd": 1.0,
+    "stop_fraction": 0.8,
+    "stop_at_credits": 1200,
+    "spend_caps_key": "config/spend_caps.json :: casting.casting_credits_max (1500) & allowances.qa_loop (2000)",
+    "requires_explicit_owner_approval": true
+  },
+  "section_sound_bed_interaction": {
+    "continuous_section_beds": [
+      "BED_SEC_INTRO",
+      "BED_SEC_VERSE_1",
+      "BED_SEC_CHORUS_1",
+      "BED_SEC_VERSE_2_BRIDGE",
+      "BED_SEC_CHORUS_2",
+      "BED_SEC_OUTRO"
+    ],
+    "base_bed_level_db_range": [
+      -26.0,
+      -24.0
+    ],
+    "presence_band_ducking_hz": [
+      1000,
+      3500
+    ],
+    "presence_band_cut_db": -4.5,
+    "broadband_bed_duck_under_speech_db": -3.5,
+    "music_duck_under_speech_db": -9.0,
+    "duck_attack_ms": 150,
+    "duck_release_ms": 350,
+    "high_freq_wind_preservation_above_hz": 3600,
+    "carol_peak_policy": "During S03_SH003 (Friedrich singing Stille Nacht) and S03_SH008 (Thomas visibly singing Silent Night), non-diegetic score is muted (music.active=False) and BED_SEC_CHORUS_1 continues uninterrupted underneath.",
+    "audibility_verification": "NOT_VERIFIED"
+  },
+  "voice_profiles": {
+    "narrator": {
+      "speaker_id": "narrator",
+      "role": "Channel Narrator",
+      "voice_name": "Odom - Deep, Resonant, Dramatic",
+      "elevenlabs_voice_id": "CcSJ2r3qw0XU9gJpEPyk",
+      "fallback_voice_id": "JBFqnCBsd6RMkjVDRZzb",
+      "model_id": "eleven_v4",
+      "language_code": "en",
+      "required_voice_card": "Deep, resonant, dramatic documentary narrator; neutral authoritative English",
+      "target_f0_hz_band": [
+        95,
+        135
+      ],
+      "settings": {
+        "stability": 0.62,
+        "similarity_boost": 0.82,
+        "style": 0.15,
+        "use_speaker_boost": true
+      },
+      "pan": 0.0,
+      "status": "cached_verified_2026_11_13",
+      "lines_count": 33,
+      "notes": "33 lines already recorded and timed in demo_truce_1914/clock; 0 new credits required unless S02_L005 is re-read."
+    },
+    "char_thomas_hale": {
+      "speaker_id": "char_thomas_hale",
+      "character_name": "Private Thomas Hale (20, Nottingham — invented composite hero)",
+      "voice_name": "Toby - British Male (or owner-approved East Midlands tenor candidate)",
+      "elevenlabs_voice_id": "pYDLV125o4CgqP8i49Lg",
+      "audition_required": true,
+      "audition_reason": "Verify working-class East Midlands cadence vs generic RP; keep light husky tenor timbre distinct from Brandt and Harris.",
+      "model_id": "eleven_multilingual_v2",
+      "language_code": "en",
+      "required_voice_card": "a working-class East Midlands English accent; light, slightly husky tenor, early twenties",
+      "target_f0_hz_band": [
+        145,
+        185
+      ],
+      "measured_clip_f0_median_hz": 163.0,
+      "measured_old_read_f0_median_hz": 156.0,
+      "settings": {
+        "stability": 0.5,
+        "similarity_boost": 0.78,
+        "style": 0.22,
+        "use_speaker_boost": true
+      },
+      "pan_by_screen_side": {
+        "left": -0.25,
+        "center": 0.0,
+        "right": 0.25
+      },
+      "lines_count": 17,
+      "words_count": 83,
+      "chars_count": 432,
+      "special_lines": {
+        "S03_L008": {
+          "shot_id": "S03_SH008",
+          "text": "Silent night... holy night...",
+          "delivery_mode": "visible_singing_route_c_plus_e",
+          "note": "Drives 2.5D viseme mouth shapes (M0-M5) + breath vapor on S03_SH008; requires sustained vowel phrasing or dedicated sung vocal take."
+        },
+        "S05_L004": {
+          "shot_id": "S05_SH004",
+          "text": "Where'd you learn English?",
+          "note": "Replaces LTX clip voice that altered contraction to 'Where do you learn English?'."
+        }
+      }
+    },
+    "char_friedrich_brandt": {
+      "speaker_id": "char_friedrich_brandt",
+      "character_name": "Gefreiter Friedrich Brandt (32, Saxon regiment, former London waiter — invented composite hero)",
+      "voice_name": "RECAST_REQUIRED_GERMAN_BARITONE (replaces Paul G4t3322LqgEAU2HEgGCv)",
+      "previous_cast_voice_id": "G4t3322LqgEAU2HEgGCv",
+      "previous_cast_defect": "Paul ('English Barritone Narration') had an English accent and 157 Hz median F0 (nearly identical to Thomas's 156 Hz).",
+      "audition_required": true,
+      "audition_reason": "Select warm soft German-accented baritone (F0 95-125 Hz) speaking English learned in London, with native German pronunciation on S03_L003.",
+      "model_id": "eleven_multilingual_v2",
+      "language_code_default": "en",
+      "language_code_overrides": {
+        "S03_L003": "de"
+      },
+      "required_voice_card": "a German accent with English learned in London; warm soft baritone, early thirties",
+      "target_f0_hz_band": [
+        95,
+        125
+      ],
+      "measured_clip_f0_median_hz": 103.0,
+      "measured_old_read_f0_median_hz": 157.0,
+      "settings": {
+        "stability": 0.58,
+        "similarity_boost": 0.8,
+        "style": 0.18,
+        "use_speaker_boost": true
+      },
+      "pan_by_screen_side": {
+        "left": -0.25,
+        "center": 0.0,
+        "right": 0.25
+      },
+      "lines_count": 16,
+      "words_count": 81,
+      "chars_count": 459,
+      "special_lines": {
+        "S03_L003": {
+          "shot_id": "S03_SH003",
+          "text": "Stille Nacht, heilige Nacht...",
+          "language_code": "de",
+          "note": "Fixes High Audit #07/#08 where LTX clip garbled German words as 'Stilenacht, Heiligenacht' (Whisper match 0.00)."
+        }
+      }
+    },
+    "char_sgt_harris": {
+      "speaker_id": "char_sgt_harris",
+      "character_name": "Sergeant Albert Harris (42, regular platoon sergeant — invented composite hero)",
+      "voice_name": "Gideon - Rugged, Gravelly and Northern",
+      "elevenlabs_voice_id": "q1h5HGdnfVxp4TXTJRNN",
+      "audition_required": false,
+      "audition_reason": "Gideon matches Lancashire/Northern gravelly card; lock lower pitch register (85-115 Hz) to prevent high F0 spikes on short commands.",
+      "model_id": "eleven_multilingual_v2",
+      "language_code": "en",
+      "required_voice_card": "a Lancashire English accent; low gravelly voice, early forties",
+      "target_f0_hz_band": [
+        85,
+        115
+      ],
+      "measured_clip_f0_median_hz": 92.0,
+      "measured_old_read_f0_median_hz": 146.0,
+      "settings": {
+        "stability": 0.65,
+        "similarity_boost": 0.84,
+        "style": 0.12,
+        "use_speaker_boost": true
+      },
+      "pan_by_screen_side": {
+        "left": -0.25,
+        "center": 0.0,
+        "right": 0.25
+      },
+      "lines_count": 6,
+      "words_count": 29,
+      "chars_count": 147,
+      "special_lines": {
+        "S07_L004": {
+          "shot_id": "S07_SH004",
+          "text": "Stand to.",
+          "note": "Fixes High Audit #08/#09 where LTX clip garbled 'Stand to.' as 'stan 2' (Whisper match 0.00)."
+        }
+      }
+    }
+  },
+  "dialogue_lines": [
+    {
+      "line_id": "S02_L006",
+      "shot_id": "S02_SH006",
+      "speaker_id": "char_thomas_hale",
+      "text": "Home by Christmas, she says. Didn't say which one.",
+      "char_count": 50,
+      "word_count": 9,
+      "language_code": "en",
+      "voice_id": "pYDLV125o4CgqP8i49Lg",
+      "model_id": "eleven_multilingual_v2",
+      "target_f0_hz_band": [
+        145,
+        185
+      ],
+      "measured_ltx_f0_hz": 249.9,
+      "measured_old_read_f0_hz": 184.5,
+      "ltx_clip_voice_action": "mute_and_replace_with_elevenlabs_read",
+      "cache_key_sha256": "ae237660fdbf4d85ecf0c5bf2f975fde77a1923fcb07ade3f9b11b837d3592cd",
+      "cache_path": "episodes/ep_truce_1914/audio/cache/dialogue/S02_L006_ae237660fdbf4d85.wav",
+      "estimated_credits": 50,
+      "estimated_cost_usd": 0.011,
+      "verification_status": "NOT_VERIFIED"
+    },
+    {
+      "line_id": "S02_L007",
+      "shot_id": "S02_SH007",
+      "speaker_id": "char_sgt_harris",
+      "text": "Keep your head down, and you might see one.",
+      "char_count": 43,
+      "word_count": 9,
+      "language_code": "en",
+      "voice_id": "q1h5HGdnfVxp4TXTJRNN",
+      "model_id": "eleven_multilingual_v2",
+      "target_f0_hz_band": [
+        85,
+        115
+      ],
+      "measured_ltx_f0_hz": 90.4,
+      "measured_old_read_f0_hz": 108.8,
+      "ltx_clip_voice_action": "mute_and_replace_with_elevenlabs_read",
+      "cache_key_sha256": "88172e7f143371176ecb6e5628d4ae2ef258d1694a0d6d8244063c4ee16d26fb",
+      "cache_path": "episodes/ep_truce_1914/audio/cache/dialogue/S02_L007_88172e7f14337117.wav",
+      "estimated_credits": 43,
+      "estimated_cost_usd": 0.0095,
+      "verification_status": "NOT_VERIFIED"
+    },
+    {
+      "line_id": "S03_L003",
+      "shot_id": "S03_SH003",
+      "speaker_id": "char_friedrich_brandt",
+      "text": "Stille Nacht, heilige Nacht...",
+      "char_count": 30,
+      "word_count": 4,
+      "language_code": "de",
+      "voice_id": "PENDING_GERMAN_BARITONE_CAST",
+      "model_id": "eleven_multilingual_v2",
+      "target_f0_hz_band": [
+        95,
+        125
+      ],
+      "measured_ltx_f0_hz": 74.9,
+      "measured_old_read_f0_hz": 119.3,
+      "ltx_clip_voice_action": "mute_and_replace_with_elevenlabs_read",
+      "cache_key_sha256": "01c4368e60d7963cefcd759897c5cd69bcf066a2eef2d5e0826cceade439b082",
+      "cache_path": "episodes/ep_truce_1914/audio/cache/dialogue/S03_L003_01c4368e60d7963c.wav",
+      "estimated_credits": 30,
+      "estimated_cost_usd": 0.0066,
+      "verification_status": "NOT_VERIFIED"
+    },
+    {
+      "line_id": "S03_L004",
+      "shot_id": "S03_SH004",
+      "speaker_id": "char_sgt_harris",
+      "text": "What are they singing?",
+      "char_count": 22,
+      "word_count": 4,
+      "language_code": "en",
+      "voice_id": "q1h5HGdnfVxp4TXTJRNN",
+      "model_id": "eleven_multilingual_v2",
+      "target_f0_hz_band": [
+        85,
+        115
+      ],
+      "measured_ltx_f0_hz": 93.9,
+      "measured_old_read_f0_hz": 229.8,
+      "ltx_clip_voice_action": "mute_and_replace_with_elevenlabs_read",
+      "cache_key_sha256": "589ac6d80d1290cb951f8def4f98b3e78d2523fef2cf3fe2de71efc827df06dc",
+      "cache_path": "episodes/ep_truce_1914/audio/cache/dialogue/S03_L004_589ac6d80d1290cb.wav",
+      "estimated_credits": 22,
+      "estimated_cost_usd": 0.0048,
+      "verification_status": "NOT_VERIFIED"
+    },
+    {
+      "line_id": "S03_L005",
+      "shot_id": "S03_SH005",
+      "speaker_id": "char_thomas_hale",
+      "text": "Silent Night. Same tune as ours.",
+      "char_count": 32,
+      "word_count": 6,
+      "language_code": "en",
+      "voice_id": "pYDLV125o4CgqP8i49Lg",
+      "model_id": "eleven_multilingual_v2",
+      "target_f0_hz_band": [
+        145,
+        185
+      ],
+      "measured_ltx_f0_hz": 127.1,
+      "measured_old_read_f0_hz": 194.4,
+      "ltx_clip_voice_action": "mute_and_replace_with_elevenlabs_read",
+      "cache_key_sha256": "09e509461660b8c5d790f0b8512d1fed4eebe20c8f82213192f5e3283f654c6c",
+      "cache_path": "episodes/ep_truce_1914/audio/cache/dialogue/S03_L005_09e509461660b8c5.wav",
+      "estimated_credits": 32,
+      "estimated_cost_usd": 0.007,
+      "verification_status": "NOT_VERIFIED"
+    },
+    {
+      "line_id": "S03_L006",
+      "shot_id": "S03_SH006",
+      "speaker_id": "char_sgt_harris",
+      "text": "Let 'em sing. Heads down.",
+      "char_count": 25,
+      "word_count": 5,
+      "language_code": "en",
+      "voice_id": "q1h5HGdnfVxp4TXTJRNN",
+      "model_id": "eleven_multilingual_v2",
+      "target_f0_hz_band": [
+        85,
+        115
+      ],
+      "measured_ltx_f0_hz": 83.5,
+      "measured_old_read_f0_hz": 118.6,
+      "ltx_clip_voice_action": "mute_and_replace_with_elevenlabs_read",
+      "cache_key_sha256": "ccb550ce1555feecb20a70ceb37668e3a2df9772c24ed72025935ca05cebe287",
+      "cache_path": "episodes/ep_truce_1914/audio/cache/dialogue/S03_L006_ccb550ce1555feec.wav",
+      "estimated_credits": 25,
+      "estimated_cost_usd": 0.0055,
+      "verification_status": "NOT_VERIFIED"
+    },
+    {
+      "line_id": "S03_L008",
+      "shot_id": "S03_SH008",
+      "speaker_id": "char_thomas_hale",
+      "text": "Silent night... holy night...",
+      "char_count": 29,
+      "word_count": 4,
+      "language_code": "en",
+      "voice_id": "pYDLV125o4CgqP8i49Lg",
+      "model_id": "eleven_multilingual_v2",
+      "target_f0_hz_band": [
+        145,
+        185
+      ],
+      "measured_ltx_f0_hz": 198.3,
+      "measured_old_read_f0_hz": 120.0,
+      "ltx_clip_voice_action": "mute_and_replace_with_elevenlabs_read",
+      "cache_key_sha256": "7e2acb1b26b99974b950c684c96a9e11cf881e918814675cd704e49856e53824",
+      "cache_path": "episodes/ep_truce_1914/audio/cache/dialogue/S03_L008_7e2acb1b26b99974.wav",
+      "estimated_credits": 29,
+      "estimated_cost_usd": 0.0064,
+      "verification_status": "NOT_VERIFIED"
+    },
+    {
+      "line_id": "S03_L009",
+      "shot_id": "S03_SH009",
+      "speaker_id": "char_friedrich_brandt",
+      "text": "Good, English! More!",
+      "char_count": 20,
+      "word_count": 3,
+      "language_code": "en",
+      "voice_id": "PENDING_GERMAN_BARITONE_CAST",
+      "model_id": "eleven_multilingual_v2",
+      "target_f0_hz_band": [
+        95,
+        125
+      ],
+      "measured_ltx_f0_hz": 269.4,
+      "measured_old_read_f0_hz": 258.0,
+      "ltx_clip_voice_action": "mute_and_replace_with_elevenlabs_read",
+      "cache_key_sha256": "6235c4100cba9b071031116fd23816d66997bc1216754f9dd2e0bd4d1eb4ac59",
+      "cache_path": "episodes/ep_truce_1914/audio/cache/dialogue/S03_L009_6235c4100cba9b07.wav",
+      "estimated_credits": 20,
+      "estimated_cost_usd": 0.0044,
+      "verification_status": "NOT_VERIFIED"
+    },
+    {
+      "line_id": "S04_L002",
+      "shot_id": "S04_SH002",
+      "speaker_id": "char_friedrich_brandt",
+      "text": "English! Merry Christmas!",
+      "char_count": 25,
+      "word_count": 3,
+      "language_code": "en",
+      "voice_id": "PENDING_GERMAN_BARITONE_CAST",
+      "model_id": "eleven_multilingual_v2",
+      "target_f0_hz_band": [
+        95,
+        125
+      ],
+      "measured_ltx_f0_hz": 318.5,
+      "measured_old_read_f0_hz": 255.7,
+      "ltx_clip_voice_action": "mute_and_replace_with_elevenlabs_read",
+      "cache_key_sha256": "fd39f1ac59f03cf75cf0a7c15953116d1b47cfa6a1c0914cf78992dca77e935a",
+      "cache_path": "episodes/ep_truce_1914/audio/cache/dialogue/S04_L002_fd39f1ac59f03cf7.wav",
+      "estimated_credits": 25,
+      "estimated_cost_usd": 0.0055,
+      "verification_status": "NOT_VERIFIED"
+    },
+    {
+      "line_id": "S04_L003",
+      "shot_id": "S04_SH003",
+      "speaker_id": "char_sgt_harris",
+      "text": "It's a trick. Nobody move.",
+      "char_count": 26,
+      "word_count": 5,
+      "language_code": "en",
+      "voice_id": "q1h5HGdnfVxp4TXTJRNN",
+      "model_id": "eleven_multilingual_v2",
+      "target_f0_hz_band": [
+        85,
+        115
+      ],
+      "measured_ltx_f0_hz": 103.6,
+      "measured_old_read_f0_hz": 141.9,
+      "ltx_clip_voice_action": "mute_and_replace_with_elevenlabs_read",
+      "cache_key_sha256": "94ad5cf7885a02d0521b4c98d81d958755ca114fd7376931ed5859a7e2715be5",
+      "cache_path": "episodes/ep_truce_1914/audio/cache/dialogue/S04_L003_94ad5cf7885a02d0.wav",
+      "estimated_credits": 26,
+      "estimated_cost_usd": 0.0057,
+      "verification_status": "NOT_VERIFIED"
+    },
+    {
+      "line_id": "S04_L004",
+      "shot_id": "S04_SH004",
+      "speaker_id": "char_friedrich_brandt",
+      "text": "No shooting! Merry Christmas!",
+      "char_count": 29,
+      "word_count": 4,
+      "language_code": "en",
+      "voice_id": "PENDING_GERMAN_BARITONE_CAST",
+      "model_id": "eleven_multilingual_v2",
+      "target_f0_hz_band": [
+        95,
+        125
+      ],
+      "measured_ltx_f0_hz": 297.2,
+      "measured_old_read_f0_hz": 263.2,
+      "ltx_clip_voice_action": "mute_and_replace_with_elevenlabs_read",
+      "cache_key_sha256": "751087b6690c78c3b048da5297336515b566ad2b69327ab85b88f0f78579366c",
+      "cache_path": "episodes/ep_truce_1914/audio/cache/dialogue/S04_L004_751087b6690c78c3.wav",
+      "estimated_credits": 29,
+      "estimated_cost_usd": 0.0064,
+      "verification_status": "NOT_VERIFIED"
+    },
+    {
+      "line_id": "S04_L006",
+      "shot_id": "S04_SH006",
+      "speaker_id": "char_sgt_harris",
+      "text": "Thomas! Get back down!",
+      "char_count": 22,
+      "word_count": 4,
+      "language_code": "en",
+      "voice_id": "q1h5HGdnfVxp4TXTJRNN",
+      "model_id": "eleven_multilingual_v2",
+      "target_f0_hz_band": [
+        85,
+        115
+      ],
+      "measured_ltx_f0_hz": 329.7,
+      "measured_old_read_f0_hz": 255.7,
+      "ltx_clip_voice_action": "mute_and_replace_with_elevenlabs_read",
+      "cache_key_sha256": "4c1d2f5292aaca5431f9a79dfa1b15acadd1fbe84cbe8ec15b484e729b76b58c",
+      "cache_path": "episodes/ep_truce_1914/audio/cache/dialogue/S04_L006_4c1d2f5292aaca54.wav",
+      "estimated_credits": 22,
+      "estimated_cost_usd": 0.0048,
+      "verification_status": "NOT_VERIFIED"
+    },
+    {
+      "line_id": "S04_L007",
+      "shot_id": "S04_SH007",
+      "speaker_id": "char_thomas_hale",
+      "text": "If they wanted us dead, we'd be dead.",
+      "char_count": 37,
+      "word_count": 8,
+      "language_code": "en",
+      "voice_id": "pYDLV125o4CgqP8i49Lg",
+      "model_id": "eleven_multilingual_v2",
+      "target_f0_hz_band": [
+        145,
+        185
+      ],
+      "measured_ltx_f0_hz": 186.1,
+      "measured_old_read_f0_hz": 152.1,
+      "ltx_clip_voice_action": "mute_and_replace_with_elevenlabs_read",
+      "cache_key_sha256": "bad2cb8ec20f801aa93a11553d52b00787b40e01df382f492f52ff62bc6c9fca",
+      "cache_path": "episodes/ep_truce_1914/audio/cache/dialogue/S04_L007_bad2cb8ec20f801a.wav",
+      "estimated_credits": 37,
+      "estimated_cost_usd": 0.0081,
+      "verification_status": "NOT_VERIFIED"
+    },
+    {
+      "line_id": "S04_L009",
+      "shot_id": "S04_SH009",
+      "speaker_id": "char_friedrich_brandt",
+      "text": "You are English?",
+      "char_count": 16,
+      "word_count": 3,
+      "language_code": "en",
+      "voice_id": "PENDING_GERMAN_BARITONE_CAST",
+      "model_id": "eleven_multilingual_v2",
+      "target_f0_hz_band": [
+        95,
+        125
+      ],
+      "measured_ltx_f0_hz": 108.5,
+      "measured_old_read_f0_hz": 116.6,
+      "ltx_clip_voice_action": "mute_and_replace_with_elevenlabs_read",
+      "cache_key_sha256": "273472eafe77871d3c6aa9dd3c6880eb4f8a9a52d4ff3ce92eab76fab8ce2566",
+      "cache_path": "episodes/ep_truce_1914/audio/cache/dialogue/S04_L009_273472eafe77871d.wav",
+      "estimated_credits": 16,
+      "estimated_cost_usd": 0.0035,
+      "verification_status": "NOT_VERIFIED"
+    },
+    {
+      "line_id": "S04_L010",
+      "shot_id": "S04_SH010",
+      "speaker_id": "char_thomas_hale",
+      "text": "And you're German?",
+      "char_count": 18,
+      "word_count": 3,
+      "language_code": "en",
+      "voice_id": "pYDLV125o4CgqP8i49Lg",
+      "model_id": "eleven_multilingual_v2",
+      "target_f0_hz_band": [
+        145,
+        185
+      ],
+      "measured_ltx_f0_hz": 142.7,
+      "measured_old_read_f0_hz": 122.8,
+      "ltx_clip_voice_action": "mute_and_replace_with_elevenlabs_read",
+      "cache_key_sha256": "9db122b28acf7bd476e17578c33bc1ca26e3c92a21b4386b3fea0162c511f8d7",
+      "cache_path": "episodes/ep_truce_1914/audio/cache/dialogue/S04_L010_9db122b28acf7bd4.wav",
+      "estimated_credits": 18,
+      "estimated_cost_usd": 0.004,
+      "verification_status": "NOT_VERIFIED"
+    },
+    {
+      "line_id": "S04_L012",
+      "shot_id": "S04_SH012",
+      "speaker_id": "char_friedrich_brandt",
+      "text": "Saxon. Fritz, to my friends. Merry Christmas, Tommy.",
+      "char_count": 52,
+      "word_count": 8,
+      "language_code": "en",
+      "voice_id": "PENDING_GERMAN_BARITONE_CAST",
+      "model_id": "eleven_multilingual_v2",
+      "target_f0_hz_band": [
+        95,
+        125
+      ],
+      "measured_ltx_f0_hz": 91.5,
+      "measured_old_read_f0_hz": 174.7,
+      "ltx_clip_voice_action": "mute_and_replace_with_elevenlabs_read",
+      "cache_key_sha256": "0a049f2e46a723dbd50f6eac89ee28f59418e8d473d23a1317e3bfbdcaa77ced",
+      "cache_path": "episodes/ep_truce_1914/audio/cache/dialogue/S04_L012_0a049f2e46a723db.wav",
+      "estimated_credits": 52,
+      "estimated_cost_usd": 0.0114,
+      "verification_status": "NOT_VERIFIED"
+    },
+    {
+      "line_id": "S04_L013",
+      "shot_id": "S04_SH013",
+      "speaker_id": "char_thomas_hale",
+      "text": "We're all Tommies to you. It's really my name.",
+      "char_count": 46,
+      "word_count": 9,
+      "language_code": "en",
+      "voice_id": "pYDLV125o4CgqP8i49Lg",
+      "model_id": "eleven_multilingual_v2",
+      "target_f0_hz_band": [
+        145,
+        185
+      ],
+      "measured_ltx_f0_hz": 232.5,
+      "measured_old_read_f0_hz": 144.4,
+      "ltx_clip_voice_action": "mute_and_replace_with_elevenlabs_read",
+      "cache_key_sha256": "42d8161a2ba4dae865dd55fb715d13392a81b40471b1c84a972188322f8e9b26",
+      "cache_path": "episodes/ep_truce_1914/audio/cache/dialogue/S04_L013_42d8161a2ba4dae8.wav",
+      "estimated_credits": 46,
+      "estimated_cost_usd": 0.0101,
+      "verification_status": "NOT_VERIFIED"
+    },
+    {
+      "line_id": "S05_L004",
+      "shot_id": "S05_SH004",
+      "speaker_id": "char_thomas_hale",
+      "text": "Where'd you learn English?",
+      "char_count": 26,
+      "word_count": 4,
+      "language_code": "en",
+      "voice_id": "pYDLV125o4CgqP8i49Lg",
+      "model_id": "eleven_multilingual_v2",
+      "target_f0_hz_band": [
+        145,
+        185
+      ],
+      "measured_ltx_f0_hz": 249.9,
+      "measured_old_read_f0_hz": 220.1,
+      "ltx_clip_voice_action": "mute_and_replace_with_elevenlabs_read",
+      "cache_key_sha256": "1516cf2d02ab169fac51a50b0b4f68a1547217fa345030f6d01ab3fef80e6b84",
+      "cache_path": "episodes/ep_truce_1914/audio/cache/dialogue/S05_L004_1516cf2d02ab169f.wav",
+      "estimated_credits": 26,
+      "estimated_cost_usd": 0.0057,
+      "verification_status": "NOT_VERIFIED"
+    },
+    {
+      "line_id": "S05_L005",
+      "shot_id": "S05_SH005",
+      "speaker_id": "char_friedrich_brandt",
+      "text": "London. I was a waiter. Four years.",
+      "char_count": 35,
+      "word_count": 7,
+      "language_code": "en",
+      "voice_id": "PENDING_GERMAN_BARITONE_CAST",
+      "model_id": "eleven_multilingual_v2",
+      "target_f0_hz_band": [
+        95,
+        125
+      ],
+      "measured_ltx_f0_hz": 96.6,
+      "measured_old_read_f0_hz": 134.3,
+      "ltx_clip_voice_action": "mute_and_replace_with_elevenlabs_read",
+      "cache_key_sha256": "bf563d762711b64b68f70fe36aac383024f335ceec00741282ff43ddaec99553",
+      "cache_path": "episodes/ep_truce_1914/audio/cache/dialogue/S05_L005_bf563d762711b64b.wav",
+      "estimated_credits": 35,
+      "estimated_cost_usd": 0.0077,
+      "verification_status": "NOT_VERIFIED"
+    },
+    {
+      "line_id": "S05_L007",
+      "shot_id": "S05_SH007",
+      "speaker_id": "char_friedrich_brandt",
+      "text": "You have a family?",
+      "char_count": 18,
+      "word_count": 4,
+      "language_code": "en",
+      "voice_id": "PENDING_GERMAN_BARITONE_CAST",
+      "model_id": "eleven_multilingual_v2",
+      "target_f0_hz_band": [
+        95,
+        125
+      ],
+      "measured_ltx_f0_hz": 103.3,
+      "measured_old_read_f0_hz": null,
+      "ltx_clip_voice_action": "mute_and_replace_with_elevenlabs_read",
+      "cache_key_sha256": "d756cbe1961a7de24006ace96a6b60609a4b6004ed889baa8d94f8d1f00a8056",
+      "cache_path": "episodes/ep_truce_1914/audio/cache/dialogue/S05_L007_d756cbe1961a7de2.wav",
+      "estimated_credits": 18,
+      "estimated_cost_usd": 0.004,
+      "verification_status": "NOT_VERIFIED"
+    },
+    {
+      "line_id": "S05_L008",
+      "shot_id": "S05_SH008",
+      "speaker_id": "char_thomas_hale",
+      "text": "My mum. And a little sister.",
+      "char_count": 28,
+      "word_count": 6,
+      "language_code": "en",
+      "voice_id": "pYDLV125o4CgqP8i49Lg",
+      "model_id": "eleven_multilingual_v2",
+      "target_f0_hz_band": [
+        145,
+        185
+      ],
+      "measured_ltx_f0_hz": 165.4,
+      "measured_old_read_f0_hz": 153.8,
+      "ltx_clip_voice_action": "mute_and_replace_with_elevenlabs_read",
+      "cache_key_sha256": "8c4b43c74241db8c56f3c4a42ef58fbcb6b1c541ae6850cbe406fd4de68318fe",
+      "cache_path": "episodes/ep_truce_1914/audio/cache/dialogue/S05_L008_8c4b43c74241db8c.wav",
+      "estimated_credits": 28,
+      "estimated_cost_usd": 0.0062,
+      "verification_status": "NOT_VERIFIED"
+    },
+    {
+      "line_id": "S05_L009",
+      "shot_id": "S05_SH009",
+      "speaker_id": "char_friedrich_brandt",
+      "text": "My wife. My daughter. She is three.",
+      "char_count": 35,
+      "word_count": 7,
+      "language_code": "en",
+      "voice_id": "PENDING_GERMAN_BARITONE_CAST",
+      "model_id": "eleven_multilingual_v2",
+      "target_f0_hz_band": [
+        95,
+        125
+      ],
+      "measured_ltx_f0_hz": 105.1,
+      "measured_old_read_f0_hz": 124.2,
+      "ltx_clip_voice_action": "mute_and_replace_with_elevenlabs_read",
+      "cache_key_sha256": "442ce10c2a8a3dcfda6a752d488f3d0a8097a35fd5418afedab085797390a464",
+      "cache_path": "episodes/ep_truce_1914/audio/cache/dialogue/S05_L009_442ce10c2a8a3dcf.wav",
+      "estimated_credits": 35,
+      "estimated_cost_usd": 0.0077,
+      "verification_status": "NOT_VERIFIED"
+    },
+    {
+      "line_id": "S05_L011",
+      "shot_id": "S05_SH011",
+      "speaker_id": "char_thomas_hale",
+      "text": "She looks happy.",
+      "char_count": 16,
+      "word_count": 3,
+      "language_code": "en",
+      "voice_id": "pYDLV125o4CgqP8i49Lg",
+      "model_id": "eleven_multilingual_v2",
+      "target_f0_hz_band": [
+        145,
+        185
+      ],
+      "measured_ltx_f0_hz": 181.4,
+      "measured_old_read_f0_hz": 218.8,
+      "ltx_clip_voice_action": "mute_and_replace_with_elevenlabs_read",
+      "cache_key_sha256": "ed0cadc9fdc28b5b05496950357911fa3f7f2e2b533d50d38acc57e0d5cb316b",
+      "cache_path": "episodes/ep_truce_1914/audio/cache/dialogue/S05_L011_ed0cadc9fdc28b5b.wav",
+      "estimated_credits": 16,
+      "estimated_cost_usd": 0.0035,
+      "verification_status": "NOT_VERIFIED"
+    },
+    {
+      "line_id": "S05_L012",
+      "shot_id": "S05_SH012",
+      "speaker_id": "char_friedrich_brandt",
+      "text": "She thinks I am home for Christmas.",
+      "char_count": 35,
+      "word_count": 7,
+      "language_code": "en",
+      "voice_id": "PENDING_GERMAN_BARITONE_CAST",
+      "model_id": "eleven_multilingual_v2",
+      "target_f0_hz_band": [
+        95,
+        125
+      ],
+      "measured_ltx_f0_hz": 95.8,
+      "measured_old_read_f0_hz": 125.0,
+      "ltx_clip_voice_action": "mute_and_replace_with_elevenlabs_read",
+      "cache_key_sha256": "21112358ae4154e7268987908ac22f8b62befb50eccb327e8cbf1523768273c1",
+      "cache_path": "episodes/ep_truce_1914/audio/cache/dialogue/S05_L012_21112358ae4154e7.wav",
+      "estimated_credits": 35,
+      "estimated_cost_usd": 0.0077,
+      "verification_status": "NOT_VERIFIED"
+    },
+    {
+      "line_id": "S05_L013",
+      "shot_id": "S05_SH013",
+      "speaker_id": "char_thomas_hale",
+      "text": "So does mine.",
+      "char_count": 13,
+      "word_count": 3,
+      "language_code": "en",
+      "voice_id": "pYDLV125o4CgqP8i49Lg",
+      "model_id": "eleven_multilingual_v2",
+      "target_f0_hz_band": [
+        145,
+        185
+      ],
+      "measured_ltx_f0_hz": 137.0,
+      "measured_old_read_f0_hz": 158.8,
+      "ltx_clip_voice_action": "mute_and_replace_with_elevenlabs_read",
+      "cache_key_sha256": "9007f35918a722034a109252f74247e326bd5d92c1cb5f81577b630bef5136d7",
+      "cache_path": "episodes/ep_truce_1914/audio/cache/dialogue/S05_L013_9007f35918a72203.wav",
+      "estimated_credits": 13,
+      "estimated_cost_usd": 0.0029,
+      "verification_status": "NOT_VERIFIED"
+    },
+    {
+      "line_id": "S05_L017",
+      "shot_id": "S05_SH017",
+      "speaker_id": "char_thomas_hale",
+      "text": "What was his name?",
+      "char_count": 18,
+      "word_count": 4,
+      "language_code": "en",
+      "voice_id": "pYDLV125o4CgqP8i49Lg",
+      "model_id": "eleven_multilingual_v2",
+      "target_f0_hz_band": [
+        145,
+        185
+      ],
+      "measured_ltx_f0_hz": 146.9,
+      "measured_old_read_f0_hz": 235.9,
+      "ltx_clip_voice_action": "mute_and_replace_with_elevenlabs_read",
+      "cache_key_sha256": "cfd19e731b4a626dff46be5d3fffd32037ba0ea85a7e5e0908f3d67f285cba93",
+      "cache_path": "episodes/ep_truce_1914/audio/cache/dialogue/S05_L017_cfd19e731b4a626d.wav",
+      "estimated_credits": 18,
+      "estimated_cost_usd": 0.004,
+      "verification_status": "NOT_VERIFIED"
+    },
+    {
+      "line_id": "S05_L018",
+      "shot_id": "S05_SH018",
+      "speaker_id": "char_friedrich_brandt",
+      "text": "Karl. He sang the loudest.",
+      "char_count": 26,
+      "word_count": 5,
+      "language_code": "en",
+      "voice_id": "PENDING_GERMAN_BARITONE_CAST",
+      "model_id": "eleven_multilingual_v2",
+      "target_f0_hz_band": [
+        95,
+        125
+      ],
+      "measured_ltx_f0_hz": 126.4,
+      "measured_old_read_f0_hz": null,
+      "ltx_clip_voice_action": "mute_and_replace_with_elevenlabs_read",
+      "cache_key_sha256": "4d3f5b7d9c57141201acd192e3492cff4b9f66cc961be9b786bd0c58b3ecd9b5",
+      "cache_path": "episodes/ep_truce_1914/audio/cache/dialogue/S05_L018_4d3f5b7d9c571412.wav",
+      "estimated_credits": 26,
+      "estimated_cost_usd": 0.0057,
+      "verification_status": "NOT_VERIFIED"
+    },
+    {
+      "line_id": "S05_L019",
+      "shot_id": "S05_SH019",
+      "speaker_id": "char_thomas_hale",
+      "text": "I'm sorry.",
+      "char_count": 10,
+      "word_count": 2,
+      "language_code": "en",
+      "voice_id": "pYDLV125o4CgqP8i49Lg",
+      "model_id": "eleven_multilingual_v2",
+      "target_f0_hz_band": [
+        145,
+        185
+      ],
+      "measured_ltx_f0_hz": 146.9,
+      "measured_old_read_f0_hz": null,
+      "ltx_clip_voice_action": "mute_and_replace_with_elevenlabs_read",
+      "cache_key_sha256": "e0868b0e2a141fd90de595820f56177e37990a2fa0d932690e83e6089e253228",
+      "cache_path": "episodes/ep_truce_1914/audio/cache/dialogue/S05_L019_e0868b0e2a141fd9.wav",
+      "estimated_credits": 10,
+      "estimated_cost_usd": 0.0022,
+      "verification_status": "NOT_VERIFIED"
+    },
+    {
+      "line_id": "S06_L002",
+      "shot_id": "S06_SH002",
+      "speaker_id": "char_friedrich_brandt",
+      "text": "Tommy... why are we fighting?",
+      "char_count": 29,
+      "word_count": 5,
+      "language_code": "en",
+      "voice_id": "PENDING_GERMAN_BARITONE_CAST",
+      "model_id": "eleven_multilingual_v2",
+      "target_f0_hz_band": [
+        95,
+        125
+      ],
+      "measured_ltx_f0_hz": 69.9,
+      "measured_old_read_f0_hz": 172.7,
+      "ltx_clip_voice_action": "mute_and_replace_with_elevenlabs_read",
+      "cache_key_sha256": "243211907ce2a494acf8a78fd79e837a76cadd3ea98bcedb1f3bdf1dae1886da",
+      "cache_path": "episodes/ep_truce_1914/audio/cache/dialogue/S06_L002_243211907ce2a494.wav",
+      "estimated_credits": 29,
+      "estimated_cost_usd": 0.0064,
+      "verification_status": "NOT_VERIFIED"
+    },
+    {
+      "line_id": "S06_L003",
+      "shot_id": "S06_SH003",
+      "speaker_id": "char_thomas_hale",
+      "text": "I don't know.",
+      "char_count": 13,
+      "word_count": 3,
+      "language_code": "en",
+      "voice_id": "pYDLV125o4CgqP8i49Lg",
+      "model_id": "eleven_multilingual_v2",
+      "target_f0_hz_band": [
+        145,
+        185
+      ],
+      "measured_ltx_f0_hz": 156.5,
+      "measured_old_read_f0_hz": 145.2,
+      "ltx_clip_voice_action": "mute_and_replace_with_elevenlabs_read",
+      "cache_key_sha256": "af75ff570df44ef2b2f3e319e95a2754d0671d036251c7f1a0ef7bd572091a57",
+      "cache_path": "episodes/ep_truce_1914/audio/cache/dialogue/S06_L003_af75ff570df44ef2.wav",
+      "estimated_credits": 13,
+      "estimated_cost_usd": 0.0029,
+      "verification_status": "NOT_VERIFIED"
+    },
+    {
+      "line_id": "S06_L004",
+      "shot_id": "S06_SH004",
+      "speaker_id": "char_friedrich_brandt",
+      "text": "They told us you were the enemy.",
+      "char_count": 32,
+      "word_count": 7,
+      "language_code": "en",
+      "voice_id": "PENDING_GERMAN_BARITONE_CAST",
+      "model_id": "eleven_multilingual_v2",
+      "target_f0_hz_band": [
+        95,
+        125
+      ],
+      "measured_ltx_f0_hz": 100.6,
+      "measured_old_read_f0_hz": 156.5,
+      "ltx_clip_voice_action": "mute_and_replace_with_elevenlabs_read",
+      "cache_key_sha256": "4e7ce86a69c97d15a41ca4925bc79109a4217664c4a6db4e641a4b731cd4a5f2",
+      "cache_path": "episodes/ep_truce_1914/audio/cache/dialogue/S06_L004_4e7ce86a69c97d15.wav",
+      "estimated_credits": 32,
+      "estimated_cost_usd": 0.007,
+      "verification_status": "NOT_VERIFIED"
+    },
+    {
+      "line_id": "S06_L006",
+      "shot_id": "S06_SH006",
+      "speaker_id": "char_thomas_hale",
+      "text": "They told us the same about you.",
+      "char_count": 32,
+      "word_count": 7,
+      "language_code": "en",
+      "voice_id": "pYDLV125o4CgqP8i49Lg",
+      "model_id": "eleven_multilingual_v2",
+      "target_f0_hz_band": [
+        145,
+        185
+      ],
+      "measured_ltx_f0_hz": 152.9,
+      "measured_old_read_f0_hz": 223.9,
+      "ltx_clip_voice_action": "mute_and_replace_with_elevenlabs_read",
+      "cache_key_sha256": "94db73a62ac3bcd173f4dde1e1dc74e70d2a441f41d5b5044ff826a341fa8f46",
+      "cache_path": "episodes/ep_truce_1914/audio/cache/dialogue/S06_L006_94db73a62ac3bcd1.wav",
+      "estimated_credits": 32,
+      "estimated_cost_usd": 0.007,
+      "verification_status": "NOT_VERIFIED"
+    },
+    {
+      "line_id": "S06_L007",
+      "shot_id": "S06_SH007",
+      "speaker_id": "char_friedrich_brandt",
+      "text": "Tomorrow, maybe, we are enemies again.",
+      "char_count": 38,
+      "word_count": 6,
+      "language_code": "en",
+      "voice_id": "PENDING_GERMAN_BARITONE_CAST",
+      "model_id": "eleven_multilingual_v2",
+      "target_f0_hz_band": [
+        95,
+        125
+      ],
+      "measured_ltx_f0_hz": 108.8,
+      "measured_old_read_f0_hz": 117.9,
+      "ltx_clip_voice_action": "mute_and_replace_with_elevenlabs_read",
+      "cache_key_sha256": "5eb08563d07e4d81dd142885c07af52adcf198fd8e06abd6a541a170c64c111d",
+      "cache_path": "episodes/ep_truce_1914/audio/cache/dialogue/S06_L007_5eb08563d07e4d81.wav",
+      "estimated_credits": 38,
+      "estimated_cost_usd": 0.0084,
+      "verification_status": "NOT_VERIFIED"
+    },
+    {
+      "line_id": "S06_L008",
+      "shot_id": "S06_SH008",
+      "speaker_id": "char_thomas_hale",
+      "text": "Maybe. But not today.",
+      "char_count": 21,
+      "word_count": 4,
+      "language_code": "en",
+      "voice_id": "pYDLV125o4CgqP8i49Lg",
+      "model_id": "eleven_multilingual_v2",
+      "target_f0_hz_band": [
+        145,
+        185
+      ],
+      "measured_ltx_f0_hz": 116.2,
+      "measured_old_read_f0_hz": 129.4,
+      "ltx_clip_voice_action": "mute_and_replace_with_elevenlabs_read",
+      "cache_key_sha256": "a2b812c32569143b47e70d09b27d323f929e86a8bd094ec20b09c39bea1a4ddc",
+      "cache_path": "episodes/ep_truce_1914/audio/cache/dialogue/S06_L008_a2b812c32569143b.wav",
+      "estimated_credits": 21,
+      "estimated_cost_usd": 0.0046,
+      "verification_status": "NOT_VERIFIED"
+    },
+    {
+      "line_id": "S06_L010",
+      "shot_id": "S06_SH010",
+      "speaker_id": "char_thomas_hale",
+      "text": "Something to remember me by.",
+      "char_count": 28,
+      "word_count": 5,
+      "language_code": "en",
+      "voice_id": "pYDLV125o4CgqP8i49Lg",
+      "model_id": "eleven_multilingual_v2",
+      "target_f0_hz_band": [
+        145,
+        185
+      ],
+      "measured_ltx_f0_hz": 163.0,
+      "measured_old_read_f0_hz": 137.9,
+      "ltx_clip_voice_action": "mute_and_replace_with_elevenlabs_read",
+      "cache_key_sha256": "78bf68b03b80c79a385dea4f69da4334914d7e82e7a07120f4169e26196e2ae1",
+      "cache_path": "episodes/ep_truce_1914/audio/cache/dialogue/S06_L010_78bf68b03b80c79a.wav",
+      "estimated_credits": 28,
+      "estimated_cost_usd": 0.0062,
+      "verification_status": "NOT_VERIFIED"
+    },
+    {
+      "line_id": "S06_L011",
+      "shot_id": "S06_SH011",
+      "speaker_id": "char_friedrich_brandt",
+      "text": "Then take one of mine.",
+      "char_count": 22,
+      "word_count": 5,
+      "language_code": "en",
+      "voice_id": "PENDING_GERMAN_BARITONE_CAST",
+      "model_id": "eleven_multilingual_v2",
+      "target_f0_hz_band": [
+        95,
+        125
+      ],
+      "measured_ltx_f0_hz": 102.4,
+      "measured_old_read_f0_hz": 198.4,
+      "ltx_clip_voice_action": "mute_and_replace_with_elevenlabs_read",
+      "cache_key_sha256": "c87cc4c1cfa16bbf29b4c97c4d070733e51ef75edc05acac403a38df2fe73a2b",
+      "cache_path": "episodes/ep_truce_1914/audio/cache/dialogue/S06_L011_c87cc4c1cfa16bbf.wav",
+      "estimated_credits": 22,
+      "estimated_cost_usd": 0.0048,
+      "verification_status": "NOT_VERIFIED"
+    },
+    {
+      "line_id": "S07_L002",
+      "shot_id": "S07_SH002",
+      "speaker_id": "char_friedrich_brandt",
+      "text": "Good luck, Tommy.",
+      "char_count": 17,
+      "word_count": 3,
+      "language_code": "en",
+      "voice_id": "PENDING_GERMAN_BARITONE_CAST",
+      "model_id": "eleven_multilingual_v2",
+      "target_f0_hz_band": [
+        95,
+        125
+      ],
+      "measured_ltx_f0_hz": null,
+      "measured_old_read_f0_hz": null,
+      "ltx_clip_voice_action": "mute_and_replace_with_elevenlabs_read",
+      "cache_key_sha256": "59317a8113b7e48d10f6de750075566e4b47dd98fa7b97ab6b10da8f1518eafd",
+      "cache_path": "episodes/ep_truce_1914/audio/cache/dialogue/S07_L002_59317a8113b7e48d.wav",
+      "estimated_credits": 17,
+      "estimated_cost_usd": 0.0037,
+      "verification_status": "NOT_VERIFIED"
+    },
+    {
+      "line_id": "S07_L003",
+      "shot_id": "S07_SH003",
+      "speaker_id": "char_thomas_hale",
+      "text": "You too, Fritz.",
+      "char_count": 15,
+      "word_count": 3,
+      "language_code": "en",
+      "voice_id": "pYDLV125o4CgqP8i49Lg",
+      "model_id": "eleven_multilingual_v2",
+      "target_f0_hz_band": [
+        145,
+        185
+      ],
+      "measured_ltx_f0_hz": 194.9,
+      "measured_old_read_f0_hz": 185.1,
+      "ltx_clip_voice_action": "mute_and_replace_with_elevenlabs_read",
+      "cache_key_sha256": "3939b8a7b0f0425967e73f5aaddd4050608ff3e1d7be25d2e9589e1298ded8b8",
+      "cache_path": "episodes/ep_truce_1914/audio/cache/dialogue/S07_L003_3939b8a7b0f04259.wav",
+      "estimated_credits": 15,
+      "estimated_cost_usd": 0.0033,
+      "verification_status": "NOT_VERIFIED"
+    },
+    {
+      "line_id": "S07_L004",
+      "shot_id": "S07_SH004",
+      "speaker_id": "char_sgt_harris",
+      "text": "Stand to.",
+      "char_count": 9,
+      "word_count": 2,
+      "language_code": "en",
+      "voice_id": "q1h5HGdnfVxp4TXTJRNN",
+      "model_id": "eleven_multilingual_v2",
+      "target_f0_hz_band": [
+        85,
+        115
+      ],
+      "measured_ltx_f0_hz": 90.5,
+      "measured_old_read_f0_hz": 150.3,
+      "ltx_clip_voice_action": "mute_and_replace_with_elevenlabs_read",
+      "cache_key_sha256": "434d5554707a88da421355315949dbfd5a3385f4fb01a0dc6b9284d66a2f027c",
+      "cache_path": "episodes/ep_truce_1914/audio/cache/dialogue/S07_L004_434d5554707a88da.wav",
+      "estimated_credits": 9,
+      "estimated_cost_usd": 0.002,
+      "verification_status": "NOT_VERIFIED"
+    }
+  ]
+}

@@ -1,0 +1,100 @@
+[
+ {
+  "shot": "S06_SH011",
+  "what": "Thomas top tunic button",
+  "centre": [
+   1837,
+   872
+  ],
+  "mask": "circle at centre+0.3r down, radius 1.55r+2 (button and its shadow)",
+  "method": "cv2.inpaint TELEA r5",
+  "source": "api_S3_scenes_w2/S06_SH011_start.png",
+  "source_sha256": "6e5dab075f3daac747754436e60096049d4187ab7826a7d04867c301675b1df2",
+  "out": "button_fix/S06_SH011_start.png",
+  "out_sha256": "18cf4eccb24aed4b4ed2bf3dbce807c0c79ce2555d0901677738776f866678c3"
+ },
+ {
+  "shot": "S07_SH002",
+  "what": "Thomas top tunic button",
+  "centre": [
+   1929,
+   487
+  ],
+  "mask": "circle at centre+0.3r down, radius 1.55r+2 (button and its shadow)",
+  "method": "cv2.inpaint TELEA r5",
+  "source": "api_S3_scenes_w1/S07_SH002_start.png",
+  "source_sha256": "fa50f209906c2a126cb27d31135abbad86e4934fe1c732fd57b664e22f5ab49e",
+  "out": "button_fix/S07_SH002_start.png",
+  "out_sha256": "fa589dc726807dff49f4abe8bb5867b2bd43cba3b33f034226d86c4769a6f57e"
+ },
+ {
+  "shot": "S07_SH002",
+  "what": "Friedrich greatcoat button",
+  "centre": [
+   926,
+   599
+  ],
+  "mask": "circle at centre+0.3r down, radius 1.55r+2 (button and its shadow)",
+  "method": "cv2.inpaint TELEA r5",
+  "source": "api_S3_scenes_w1/S07_SH002_start.png",
+  "source_sha256": "fa50f209906c2a126cb27d31135abbad86e4934fe1c732fd57b664e22f5ab49e",
+  "out": "button_fix/S07_SH002_start.png",
+  "out_sha256": "fa589dc726807dff49f4abe8bb5867b2bd43cba3b33f034226d86c4769a6f57e"
+ },
+ {
+  "shot": "S07_SH003",
+  "what": "Thomas top tunic button",
+  "centre": [
+   1863,
+   651
+  ],
+  "mask": "circle at centre+0.3r down, radius 1.55r+2 (button and its shadow)",
+  "method": "cv2.inpaint TELEA r5",
+  "source": "api_S3_scenes_w2/S07_SH003_start.png",
+  "source_sha256": "8c300ea1d673fc225570b0deab123084f4b21f84e6a3fa55ccb12953355a3bd1",
+  "out": "button_fix/S07_SH003_start.png",
+  "out_sha256": "77a6cd2e3e73188a525cf4b7fa173107f4afd3750757d443d5c683b9085b3895"
+ },
+ {
+  "shot": "S07_SH003",
+  "what": "Friedrich greatcoat button",
+  "centre": [
+   907,
+   827
+  ],
+  "mask": "circle at centre+0.3r down, radius 1.55r+2 (button and its shadow)",
+  "method": "cv2.inpaint TELEA r5",
+  "source": "api_S3_scenes_w2/S07_SH003_start.png",
+  "source_sha256": "8c300ea1d673fc225570b0deab123084f4b21f84e6a3fa55ccb12953355a3bd1",
+  "out": "button_fix/S07_SH003_start.png",
+  "out_sha256": "77a6cd2e3e73188a525cf4b7fa173107f4afd3750757d443d5c683b9085b3895"
+ },
+ {
+  "shot": "S07_SH007",
+  "what": "Thomas top tunic button",
+  "centre": [
+   1089,
+   434
+  ],
+  "mask": "circle at centre+0.3r down, radius 1.55r+2 (button and its shadow)",
+  "method": "cv2.inpaint TELEA r5",
+  "source": "api_S3_scenes_w2/S07_SH007_start.png",
+  "source_sha256": "536f0fb5b73efb3190f7cdc01aa2c67c00fe0e52c9ae25829c9b7b850c9ce91b",
+  "out": "button_fix/S07_SH007_start.png",
+  "out_sha256": "26dcd1fcc4b81855e998bbd0517fa295993bc6918d65d6824ad44fb05c17d80b"
+ },
+ {
+  "shot": "S07_SH008",
+  "what": "Thomas top tunic button",
+  "centre": [
+   1224,
+   596
+  ],
+  "mask": "circle at centre+0.3r down, radius 1.55r+2 (button and its shadow)",
+  "method": "cv2.inpaint TELEA r5",
+  "source": "api_S3_scenes_w2/S07_SH008_start.png",
+  "source_sha256": "55ab60e41fbd05339a22b081464442cd5ee5458ebcabc06adb8b3dd4b99690bc",
+  "out": "button_fix/S07_SH008_start.png",
+  "out_sha256": "3cf57f4d69c67faefe20dc0b2008d9d64cd666246452f9926547b37cac6c773e"
+ }
+]

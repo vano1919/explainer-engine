@@ -1,0 +1,846 @@
+{
+  "schema": "shot_direction/1-draft",
+  "shot_id": "S08_SH002",
+  "kind": "photo",
+  "picture": "S08_SH002_start.png",
+  "picture_sha256": "2aa79cda8d12bf783d39c053f5ff3b3c54a3593d7318e4d5d167b0fabf653648",
+  "author": "seen: the thread's Claude looking at the picture; choice: production/living_director",
+  "written": "2026-11-14",
+  "purpose": "The most intimate moment: a man holds his wife's photograph and a button.",
+  "emotion": "quiet grief",
+  "focus": {
+    "target": {
+      "mask": "photo"
+    },
+    "why": "the portrait carries the beat"
+  },
+  "composition": "keep the photo where it is; nothing pulls the eye from her face",
+  "route": {
+    "renderer": "directed25d",
+    "why": "camera, light and atmosphere only: level 0-2 of B.4"
+  },
+  "transition_out": {
+    "type": "cut",
+    "why": "unchanged from the script (P6 decides transitions from the rendered motion)"
+  },
+  "stage_b_v1": {
+    "intent": "still_by_design",
+    "motion_imitation": [
+      {
+        "effect": "fire_flicker",
+        "strength": 1,
+        "region": [
+          0.79,
+          0.25,
+          0.91,
+          0.6
+        ],
+        "event_id": "S08_SH002.M2",
+        "audio": {
+          "decision": "silent_by_design",
+          "why": "a candle makes no sound"
+        }
+      }
+    ],
+    "why": "An intimate, sad beat (the commanders forbid it from happening again). The frame holds still like a man holding a photograph; only the candle lives, and its light breathes on the table and the candle holder. The previous shot S08_SH001 is already a push with candle flicker, so a second push in a row would repeat it."
+  },
+  "seen": {
+    "what": "POV: gloved hands hold a sepia portrait and a brass button; a candle in a tin holder burns on a plank on the right; the trench runs back to a far brazier and lantern under a violet dusk sky.",
+    "objects": [
+      {
+        "id": "photo",
+        "what": "sepia portrait card",
+        "points": [
+          [
+            0.46,
+            0.33
+          ],
+          [
+            0.47,
+            0.55
+          ],
+          [
+            0.43,
+            0.45
+          ]
+        ],
+        "neg": [
+          [
+            0.44,
+            0.62
+          ],
+          [
+            0.53,
+            0.45
+          ]
+        ],
+        "names": [
+          "truces"
+        ]
+      },
+      {
+        "id": "button",
+        "what": "brass button",
+        "points": [
+          [
+            0.525,
+            0.45
+          ]
+        ]
+      },
+      {
+        "id": "hands",
+        "what": "both gloved hands and sleeves",
+        "points": [
+          [
+            0.35,
+            0.64
+          ],
+          [
+            0.21,
+            0.91
+          ],
+          [
+            0.64,
+            0.55
+          ],
+          [
+            0.78,
+            0.82
+          ]
+        ],
+        "each": true,
+        "neg": [
+          [
+            0.47,
+            0.4
+          ]
+        ]
+      },
+      {
+        "id": "candle",
+        "what": "candle and tin holder",
+        "points": [
+          [
+            0.85,
+            0.48
+          ],
+          [
+            0.85,
+            0.6
+          ],
+          [
+            0.9,
+            0.57
+          ]
+        ]
+      }
+    ],
+    "lights": [
+      {
+        "id": "candle_flame",
+        "kind": "candle",
+        "point": [
+          0.848,
+          0.375
+        ],
+        "radius": 0.022
+      },
+      {
+        "id": "far_brazier",
+        "kind": "glow",
+        "point": [
+          0.72,
+          0.39
+        ],
+        "radius": 0.02
+      },
+      {
+        "id": "far_lantern",
+        "kind": "glow",
+        "point": [
+          0.655,
+          0.335
+        ],
+        "radius": 0.012
+      }
+    ],
+    "depth_checks": [
+      {
+        "near": [
+          0.33,
+          0.85
+        ],
+        "far": [
+          0.47,
+          0.45
+        ],
+        "why": "left sleeve before the photo"
+      },
+      {
+        "near": [
+          0.47,
+          0.45
+        ],
+        "far": [
+          0.66,
+          0.3
+        ],
+        "why": "photo before the far trench"
+      },
+      {
+        "near": [
+          0.85,
+          0.55
+        ],
+        "far": [
+          0.7,
+          0.25
+        ],
+        "why": "candle before the trench behind"
+      },
+      {
+        "near": [
+          0.75,
+          0.85
+        ],
+        "far": [
+          0.85,
+          0.55
+        ],
+        "why": "right sleeve before the candle"
+      }
+    ],
+    "living": [
+      {
+        "id": "candle",
+        "kind": "candle",
+        "where": [
+          0.848,
+          0.375
+        ],
+        "area_pct": 1,
+        "text": 0,
+        "focus": 0,
+        "quality": 2,
+        "cost": 2,
+        "decision": "animate",
+        "effects": [
+          "fx_candle"
+        ],
+        "why": "always on (LP-06): text 0: the words do not touch it; area 1 %; focus 0: 0.40 from the focus (the part the words name (photo)); quality 2: moves cleanly; cost 2"
+      },
+      {
+        "id": "far_brazier_and_lantern",
+        "kind": "fire",
+        "where": [
+          0.69,
+          0.36
+        ],
+        "area_pct": 0.15,
+        "text": 0,
+        "focus": 1,
+        "quality": 2,
+        "cost": 2,
+        "decision": "animate",
+        "effects": [
+          "fx_far_brazier_and_lantern"
+        ],
+        "why": "always on (LP-06): text 0: the words do not touch it; area 0.15 %; focus 1: 0.25 from the focus (the part the words name (photo)); quality 2: moves cleanly; cost 2"
+      },
+      {
+        "id": "far_brazier_and_lantern_embers",
+        "kind": "fire",
+        "where": [
+          0.69,
+          0.36
+        ],
+        "area_pct": 0.15,
+        "text": 0,
+        "focus": 1,
+        "quality": 2,
+        "cost": 2,
+        "decision": "skip",
+        "why": "the fire is too small to throw sparks that read"
+      },
+      {
+        "id": "far_brazier_and_lantern_smoke",
+        "kind": "fire",
+        "where": [
+          0.69,
+          0.36
+        ],
+        "area_pct": 0.15,
+        "text": 0,
+        "focus": 1,
+        "quality": 2,
+        "cost": 2,
+        "decision": "skip",
+        "why": "LP-03: a dot in the frame (score 5; text 0: the words do not touch it; area 0.15 %; focus 1: 0.25 from the focus (the part the words name (photo)); quality 2: moves cleanly; cost 2)"
+      },
+      {
+        "id": "own_breath",
+        "kind": "breath",
+        "where": [
+          0.45,
+          0.98
+        ],
+        "area_pct": 3,
+        "text": 0,
+        "focus": 0,
+        "quality": 2,
+        "cost": 2,
+        "decision": "animate",
+        "effects": [
+          "fx_own_breath"
+        ],
+        "why": "P3: text 0: the words do not touch it; area 3 %; focus 0: 0.54 from the focus (the part the words name (photo)); quality 2: moves cleanly; cost 2"
+      },
+      {
+        "id": "motes_in_candle_light",
+        "kind": "dust",
+        "where": [
+          0.775,
+          0.45
+        ],
+        "area_pct": 10,
+        "text": 0,
+        "focus": 1,
+        "quality": 2,
+        "cost": 2,
+        "decision": "animate",
+        "effects": [
+          "fx_motes_in_candle_light"
+        ],
+        "why": "P2: text 0: the words do not touch it; area 10 %; focus 1: 0.32 from the focus (the part the words name (photo)); quality 2: moves cleanly; cost 2"
+      },
+      {
+        "id": "dusk_sky",
+        "kind": "sky",
+        "where": [
+          0.5,
+          0.05
+        ],
+        "area_pct": 5,
+        "text": 0,
+        "focus": 1,
+        "quality": 2,
+        "cost": 2,
+        "decision": "animate",
+        "effects": [
+          "fx_dusk_sky"
+        ],
+        "why": "P2: text 0: the words do not touch it; area 5 %; focus 1: it covers the whole frame; quality 2: moves cleanly; cost 2"
+      },
+      {
+        "id": "pine_branch",
+        "kind": "plants",
+        "where": [
+          0.57,
+          0.065
+        ],
+        "area_pct": 2,
+        "text": 0,
+        "focus": 1,
+        "quality": 1,
+        "cost": 1,
+        "decision": "animate",
+        "effects": [
+          "fx_pine_branch"
+        ],
+        "why": "P3: text 0: the words do not touch it; area 2 %; focus 1: 0.40 from the focus (the part the words name (photo)); quality 1: no clean mask, a soft box only; cost 1"
+      },
+      {
+        "id": "icicle",
+        "kind": "ice",
+        "where": [
+          0.98,
+          0.15
+        ],
+        "area_pct": 0.1,
+        "text": 0,
+        "focus": 0,
+        "quality": 2,
+        "cost": 2,
+        "decision": "skip",
+        "why": "LP-04: score too low (score 4; text 0: the words do not touch it; area 0.1 %; focus 0: 0.60 from the focus (the part the words name (photo)); quality 2: moves cleanly; cost 2)"
+      },
+      {
+        "id": "thumb_over_photo",
+        "kind": "body",
+        "where": [
+          0.5,
+          0.3
+        ],
+        "area_pct": 2,
+        "text": 0,
+        "focus": 2,
+        "quality": 1,
+        "cost": 0,
+        "body_motion": true,
+        "decision": "skip",
+        "why": "LP-02: body motion, LTX's work (score 5; text 0: the words do not touch it; area 2 %; focus 2: 0.15 from the focus (the part the words name (photo)); quality 1: no clean mask, a soft box only; cost 0)"
+      },
+      {
+        "id": "weather_snow_light",
+        "kind": "snow",
+        "where": [
+          0.5,
+          0.5
+        ],
+        "area_pct": 100,
+        "text": 1,
+        "focus": 1,
+        "quality": 2,
+        "cost": 2,
+        "decision": "add",
+        "effects": [
+          "fx_weather_snow_light"
+        ],
+        "why": "P1: the scene's snow_light, let in: open sky, the snow reads on this picture, the scene's weather has it"
+      }
+    ],
+    "depicted": [
+      [
+        0.385,
+        0.257,
+        0.578,
+        0.677
+      ]
+    ]
+  },
+  "scene": {
+    "weather": [
+      "snow_light"
+    ],
+    "wind": [
+      0.012,
+      0
+    ],
+    "surroundings": "dusk, light snow"
+  },
+  "people_mid_or_close": true,
+  "intent": "intended",
+  "tracks": [
+    {
+      "track": "camera",
+      "op": "push",
+      "renderer": "directed25d",
+      "params": {
+        "strength": 1.5,
+        "ease": "linear"
+      },
+      "timing": {
+        "end": {
+          "word": "truces"
+        }
+      },
+      "validate": {
+        "measure": "scale"
+      },
+      "target": {
+        "point": [
+          0.5,
+          0.45
+        ]
+      }
+    },
+    {
+      "track": "camera",
+      "op": "push",
+      "renderer": "directed25d",
+      "params": {
+        "strength": 1,
+        "ease": "ease_out"
+      },
+      "timing": {
+        "start": {
+          "word": "truces"
+        },
+        "end": {
+          "word": "truces",
+          "offset": 30
+        }
+      },
+      "validate": {
+        "measure": "scale"
+      },
+      "target": {
+        "mask": "photo",
+        "point": [
+          0.453,
+          0.443
+        ]
+      }
+    },
+    {
+      "track": "camera",
+      "op": "handheld",
+      "renderer": "directed25d",
+      "params": {
+        "strength": 0.3
+      },
+      "timing": {},
+      "validate": {}
+    },
+    {
+      "id": "fx_candle",
+      "track": "lighting",
+      "op": "candle",
+      "renderer": "directed25d",
+      "target": {
+        "lights": [
+          "candle_flame"
+        ]
+      },
+      "params": {
+        "strength": 1,
+        "spill_radius": 0.03
+      },
+      "validate": {
+        "measure": "change_inside_target"
+      }
+    },
+    {
+      "id": "fx_far_brazier_and_lantern",
+      "track": "lighting",
+      "op": "fire",
+      "renderer": "directed25d",
+      "target": {
+        "lights": [
+          "far_brazier",
+          "far_lantern"
+        ]
+      },
+      "params": {
+        "strength": 1,
+        "spill_radius": 0.03
+      },
+      "validate": {
+        "measure": "change_inside_target"
+      }
+    },
+    {
+      "id": "fx_own_breath",
+      "track": "atmosphere",
+      "op": "breath",
+      "renderer": "directed25d",
+      "target": {},
+      "params": {
+        "strength": 1,
+        "period_s": 3.6,
+        "points": [
+          [
+            0.45,
+            0.98
+          ]
+        ]
+      },
+      "validate": {
+        "measure": "change_inside_target"
+      }
+    },
+    {
+      "id": "fx_motes_in_candle_light",
+      "track": "atmosphere",
+      "op": "dust",
+      "renderer": "directed25d",
+      "target": {
+        "box": [
+          0.55,
+          0.15,
+          1,
+          0.75
+        ]
+      },
+      "params": {
+        "strength": 1
+      },
+      "validate": {
+        "measure": "change_inside_target"
+      }
+    },
+    {
+      "id": "fx_dusk_sky",
+      "track": "atmosphere",
+      "op": "cloud_drift",
+      "renderer": "directed25d",
+      "target": {},
+      "params": {
+        "strength": 1
+      },
+      "validate": {
+        "measure": "change_inside_target"
+      }
+    },
+    {
+      "id": "fx_pine_branch",
+      "track": "environment",
+      "op": "foliage_sway",
+      "renderer": "directed25d",
+      "target": {
+        "box": [
+          0.48,
+          0,
+          0.66,
+          0.13
+        ]
+      },
+      "params": {
+        "strength": 1
+      },
+      "validate": {
+        "measure": "change_inside_target"
+      }
+    },
+    {
+      "id": "fx_weather_snow_light",
+      "track": "atmosphere",
+      "op": "snow",
+      "renderer": "directed25d",
+      "target": {},
+      "params": {
+        "strength": 1,
+        "density": 1
+      },
+      "validate": {
+        "measure": "change_inside_target"
+      }
+    },
+    {
+      "track": "audio",
+      "decision": "ambience_only",
+      "why": "wind (medium): dust (fx_motes_in_candle_light): dust is heard in the bed",
+      "events": [
+        "wind"
+      ]
+    }
+  ],
+  "round": "C5: C4A + the eye-review fixes (safe zone, seams, effects, camera plan)",
+  "rules": [
+    "BP-185",
+    "BP-194",
+    "BP-195",
+    "BP-196",
+    "BP-197",
+    "BP-200",
+    "owner 2026-11-14 12:37 cards",
+    "owner 2026-11-14 12:38 weather ceiling",
+    "owner 2026-11-14 12:40 the director decides"
+  ],
+  "overrides": [
+    {
+      "field": "tracks",
+      "from": "C4 effects typed per shot by hand",
+      "to": "C4 effects chosen by living_director from the words, the photo and the catalogue",
+      "why": "the owner, 2026-11-14 12:40 UTC: the director decides the living frame itself"
+    }
+  ],
+  "rounds": [],
+  "weather": [
+    {
+      "weather": "snow_light",
+      "in": true,
+      "dark_share": 0.983,
+      "decided_by": "scene",
+      "why": "open sky, the snow reads on this picture, the scene's weather has it"
+    }
+  ],
+  "keep_in_frame": [
+    {
+      "light": "candle_flame",
+      "soft": true,
+      "why": "the candle effect lives on it"
+    },
+    {
+      "light": "far_brazier",
+      "soft": true,
+      "why": "the fire effect lives on it"
+    },
+    {
+      "light": "far_lantern",
+      "soft": true,
+      "why": "the fire effect lives on it"
+    }
+  ],
+  "sound": {
+    "events": [
+      {
+        "kind": "ambience",
+        "what": "wind",
+        "class": "wind",
+        "at_s": 0,
+        "distance": "medium",
+        "decision": "ambience_only",
+        "sync": "span",
+        "why": "dust (fx_motes_in_candle_light): dust is heard in the bed",
+        "library": {
+          "status": "library",
+          "ids": [
+            "wind_01"
+          ],
+          "why": "legacy_tags; best take wind_01 (fits: cold, open, winter)"
+        }
+      }
+    ],
+    "silent": [
+      {
+        "id": "push",
+        "op": "push",
+        "decision": "silent_by_design",
+        "why": "a camera move is silent by default"
+      },
+      {
+        "id": "push",
+        "op": "push",
+        "decision": "silent_by_design",
+        "why": "a camera move is silent by default"
+      },
+      {
+        "id": "handheld",
+        "op": "handheld",
+        "decision": "silent_by_design",
+        "why": "a camera move is silent by default"
+      },
+      {
+        "id": "fx_candle",
+        "op": "candle",
+        "decision": "silent_by_design",
+        "why": "a candle flame makes no sound"
+      },
+      {
+        "id": "fx_far_brazier_and_lantern",
+        "op": "fire",
+        "decision": "silent_by_design",
+        "why": "criterion 3: 0.15 % of the frame, too small and far to hear over the bed"
+      },
+      {
+        "id": "fx_own_breath",
+        "op": "breath",
+        "decision": "silent_by_design",
+        "why": "a breath is too quiet to hear over the bed"
+      }
+    ],
+    "needs": [],
+    "beds": [
+      "wind"
+    ],
+    "coverage": "AMBIENCE_ONLY"
+  },
+  "choice": {
+    "by": "production/living_director (the director's choice from the words, the photo and the catalogue)",
+    "faces": [],
+    "cap": 6,
+    "weather": [
+      {
+        "weather": "snow_light",
+        "in": true,
+        "dark_share": 0.983,
+        "decided_by": "scene",
+        "why": "open sky, the snow reads on this picture, the scene's weather has it"
+      }
+    ],
+    "camera": [
+      "no named part and no people: a slow push into the picture (1.8 %/s over 5.0 s, BP-21; the slowest rate, so the accent on the word stands out)",
+      "'truces' names photo: a snap push to it on the word (accent, rise inside 1 s)",
+      "a breathing hand so the camera never fully stops after the accent (the owner's 12:37 card 3)"
+    ],
+    "chosen": [
+      "candle",
+      "far_brazier_and_lantern",
+      "own_breath",
+      "motes_in_candle_light",
+      "dusk_sky",
+      "pine_branch",
+      "weather_snow_light"
+    ],
+    "skipped": {
+      "far_brazier_and_lantern_embers": "the fire is too small to throw sparks that read",
+      "far_brazier_and_lantern_smoke": "LP-03: a dot in the frame (score 5; text 0: the words do not touch it; area 0.15 %; focus 1: 0.25 from the focus (the part the words name (photo)); quality 2: moves cleanly; cost 2)",
+      "icicle": "LP-04: score too low (score 4; text 0: the words do not touch it; area 0.1 %; focus 0: 0.60 from the focus (the part the words name (photo)); quality 2: moves cleanly; cost 2)",
+      "thumb_over_photo": "LP-02: body motion, LTX's work (score 5; text 0: the words do not touch it; area 2 %; focus 2: 0.15 from the focus (the part the words name (photo)); quality 1: no clean mask, a soft box only; cost 0)"
+    },
+    "notes": [
+      "ROUTE LP-10: people in a medium or close view for 9.75 s: LTX or split"
+    ],
+    "sound": {
+      "beds": [
+        "wind"
+      ],
+      "coverage": "AMBIENCE_ONLY",
+      "silent": [
+        {
+          "id": "push",
+          "op": "push",
+          "decision": "silent_by_design",
+          "why": "a camera move is silent by default"
+        },
+        {
+          "id": "push",
+          "op": "push",
+          "decision": "silent_by_design",
+          "why": "a camera move is silent by default"
+        },
+        {
+          "id": "handheld",
+          "op": "handheld",
+          "decision": "silent_by_design",
+          "why": "a camera move is silent by default"
+        },
+        {
+          "id": "fx_candle",
+          "op": "candle",
+          "decision": "silent_by_design",
+          "why": "a candle flame makes no sound"
+        },
+        {
+          "id": "fx_far_brazier_and_lantern",
+          "op": "fire",
+          "decision": "silent_by_design",
+          "why": "criterion 3: 0.15 % of the frame, too small and far to hear over the bed"
+        },
+        {
+          "id": "fx_own_breath",
+          "op": "breath",
+          "decision": "silent_by_design",
+          "why": "a breath is too quiet to hear over the bed"
+        }
+      ],
+      "needs": []
+    },
+    "audit": {
+      "idiom": {
+        "id": "IDM_OBJECT_INSERT",
+        "name": "object_insert_symbol",
+        "why": "symbolic object/detail insert named by the narration"
+      },
+      "chosen": {
+        "primary_op": "push",
+        "ops": [
+          "push",
+          "push",
+          "handheld"
+        ],
+        "why": [
+          "no named part and no people: a slow push into the picture (1.8 %/s over 5.0 s, BP-21; the slowest rate, so the accent on the word stands out)",
+          "'truces' names photo: a snap push to it on the word (accent, rise inside 1 s)",
+          "a breathing hand so the camera never fully stops after the accent (the owner's 12:37 card 3)"
+        ]
+      },
+      "rejected": {
+        "orbit_small": "FORBIDDEN (creator's veto: 1 kept person(s) in frame; orbit changes lateral angle -> downgrade to pan_crop_2d or push_in + rack_focus)",
+        "truck_25d": "REJECTED (creator's veto: lateral angle change on shot with kept people -> downgrade to pan_crop_2d or push_in + rack_focus)"
+      },
+      "measurements": {
+        "person_boxes": [],
+        "edge_margin_x": 1,
+        "edge_margin_y": 1,
+        "sky_area_pct": 5,
+        "fg_bg_depth_delta": 0.505,
+        "unlayered_people": false,
+        "hole_share": 0.2523,
+        "people_count": 0
+      }
+    }
+  }
+}

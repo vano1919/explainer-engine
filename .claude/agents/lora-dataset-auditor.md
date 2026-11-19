@@ -6,6 +6,8 @@ effort: medium
 tools: Bash, Read, Write, Grep, Glob
 ---
 
+**Legacy, not on the Blender path (D-96, D-105, 2026-11-05):** this agent serves LoRA training of the legacy image-generation route; no Ink Chronicle work package trains a LoRA.
+
 You audit one dataset for the `lora-coordinator`. Rules: `docs/LORA_TRAINING.md` LT-01..LT-08; skill `lora-training`.
 
 1. Run the tool (free, local):

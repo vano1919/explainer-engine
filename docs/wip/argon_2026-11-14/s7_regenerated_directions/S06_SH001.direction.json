@@ -1,0 +1,136 @@
+{
+  "schema": "shot_direction/1-draft",
+  "shot_id": "S06_SH001",
+  "kind": "photo",
+  "picture": "S06_SH001_start.png",
+  "picture_sha256": "20c7240a415d7b215bd501cab11060fb093cb855e74b7fe352f8e63e66b919bd",
+  "author": "seen: the thread's Claude looking at the picture; choice: production/living_director",
+  "written": "2026-11-14",
+  "purpose": "Two enemies in one frame, as two men; the light is going.",
+  "emotion": "warmth at the end of the day",
+  "focus": {
+    "target": {"point": [0.478, 0.296]},
+    "why": "the sun between them"
+  },
+  "composition": "keep both men whole; the wire posts may leave the frame edges",
+  "route": {
+    "renderer": "directed25d",
+    "why": "camera, light and atmosphere only: level 0-2 of B.4"
+  },
+  "transition_out": {
+    "type": "cut",
+    "why": "unchanged from the script (P6 decides transitions from the rendered motion)"
+  },
+  "stage_b_v1": {
+    "intent": "intended",
+    "motion_imitation": [
+      {"effect": "pull", "strength": 1.0, "easing": "ease_out", "event_id": "S06_SH001.M1", "audio": {"decision": "silent_by_design", "why": "a slow camera move under the voice; its sound is the place's bed (BP-81 budget)"}},
+      {"effect": "sun_shaft_drift", "strength": 0.8, "origin": [0.478, 0.296], "event_id": "S06_SH001.M2", "audio": {"decision": "silent_by_design", "why": "light only"}},
+      {"effect": "fire_flicker", "strength": 1.0, "region": [0.87, 0.62, 0.97, 0.84], "event_id": "S06_SH001.M3", "audio": {"decision": "ambience_only", "why": "the brazier is small and far; the place's bed carries it"}},
+      {"effect": "mist", "strength": 0.6, "event_id": "S06_SH001.M4", "audio": {"decision": "ambience_only", "why": "the field's evening haze; the wind bed carries it"}}
+    ],
+    "why": "'By late afternoon, the light was going': the camera steps back from the two men so the empty frozen field and the low sun grow around them; the day closes in on a moment that cannot last. The pull stays, but at the strength that actually reads (the script's 0.5 is about 3 % in three seconds)."
+  },
+  "seen": {
+    "what": "Medium-wide: a young British soldier (left) and a moustached German (right, mug in hand) sit on crates in snowy no man's land at sunset; the sun between them on the horizon, ruined cottage and willows right, wire and sandbags both sides, a small brazier bottom right.",
+    "objects": [
+      {"id": "british", "what": "British soldier seated", "points": [[0.37, 0.5], [0.385, 0.32], [0.36, 0.8], [0.42, 0.67], [0.468, 0.895]], "neg": [[0.3, 0.82]]},
+      {"id": "german", "what": "German soldier seated with mug", "points": [[0.68, 0.48], [0.685, 0.33], [0.66, 0.8], [0.62, 0.75], [0.587, 0.875]], "neg": [[0.8, 0.8]]},
+      {"id": "crate_left", "what": "crate under the British soldier", "points": [[0.22, 0.8], [0.25, 0.88]]},
+      {"id": "crate_right", "what": "crate under the German", "points": [[0.82, 0.78], [0.8, 0.86]]},
+      {"id": "brazier", "what": "small brazier", "points": [[0.91, 0.81], [0.915, 0.86]], "fine_edges": true},
+      {"id": "post_left", "what": "near-left post", "points": [[0.035, 0.82]], "fine_edges": true},
+      {"id": "post_right", "what": "near-right post", "points": [[0.985, 0.82]], "fine_edges": true}
+    ],
+    "lights": [
+      {"id": "sun", "kind": "sun", "point": [0.478, 0.296]},
+      {"id": "brazier_flame", "kind": "fire", "point": [0.915, 0.745], "radius": 0.03}
+    ],
+    "depth_checks": [
+      {"near": [0.37, 0.55], "far": [0.5, 0.4], "why": "British soldier before the field"},
+      {"near": [0.68, 0.55], "far": [0.78, 0.3], "why": "German before the trees"},
+      {"near": [0.4, 0.92], "far": [0.5, 0.48], "why": "near snow before the far field"},
+      {"near": [0.985, 0.85], "far": [0.92, 0.55], "why": "right post before the sandbags"}
+    ],
+    "living": [
+      {"id": "low_sun", "kind": "sun", "where": [0.478, 0.296], "area_pct": 25.0, "text": 1, "focus": 2, "quality": 2, "cost": 2, "decision": "skip", "why": "LP-07: the cap of 4 is taken by higher scores (P1) (score 12; text 1: the words evoke it ('afternoon'); area 25 %; focus 2: 0.08 from the focus (the people's faces); quality 2: moves cleanly; cost 2)"},
+      {"id": "low_sun_rays", "kind": "sun", "where": [0.478, 0.296], "area_pct": 20.0, "text": 1, "focus": 2, "quality": 2, "cost": 2, "decision": "animate", "effects": ["fx_low_sun_rays"], "why": "P1: text 1: the words evoke it ('afternoon'); area 20 %; focus 2: 0.08 from the focus (the people's faces); quality 2: moves cleanly; cost 2"},
+      {"id": "low_sun_fade", "kind": "sun", "where": [0.478, 0.296], "area_pct": 100.0, "text": 2, "focus": 1, "quality": 2, "cost": 2, "decision": "animate", "effects": ["fx_low_sun_fade"], "why": "P1: text 2: the words name its fade; area 100 %; focus 1: it covers the whole frame; quality 2: moves cleanly; cost 2"},
+      {"id": "sun_path_on_ice", "kind": "ice", "where": [0.525, 0.53], "area_pct": 6.0, "text": 1, "focus": 2, "quality": 2, "cost": 2, "decision": "animate", "effects": ["fx_sun_path_on_ice"], "why": "P1: text 1: the scene's surroundings name it; area 6 %; focus 2: 0.18 from the focus (the people's faces); quality 2: moves cleanly; cost 2"},
+      {"id": "clouds", "kind": "sky", "where": [0.5, 0.1], "area_pct": 30.0, "text": 1, "focus": 1, "quality": 2, "cost": 2, "decision": "animate", "effects": ["fx_clouds"], "why": "P1: text 1: the scene's surroundings name it; area 30 %; focus 1: it covers the whole frame; quality 2: moves cleanly; cost 2"},
+      {"id": "brazier", "kind": "fire", "where": [0.915, 0.745], "area_pct": 2.0, "text": 0, "focus": 0, "quality": 2, "cost": 2, "decision": "animate", "effects": ["fx_brazier"], "why": "always on (LP-06): text 0: the words do not touch it; area 2 %; focus 0: 0.55 from the focus (the people's faces); quality 2: moves cleanly; cost 2"},
+      {"id": "brazier_embers", "kind": "fire", "where": [0.915, 0.745], "area_pct": 2.0, "text": 0, "focus": 0, "quality": 2, "cost": 2, "decision": "skip", "why": "LP-07: the cap of 4 is taken by higher scores (P3) (score 6; text 0: the words do not touch it; area 2 %; focus 0: 0.55 from the focus (the people's faces); quality 2: moves cleanly; cost 2)"},
+      {"id": "brazier_smoke", "kind": "smoke", "where": [0.9, 0.62], "area_pct": 2.0, "text": 0, "focus": 0, "quality": 2, "cost": 2, "decision": "skip", "why": "LP-07: the cap of 4 is taken by higher scores (P3) (score 6; text 0: the words do not touch it; area 2 %; focus 0: 0.45 from the focus (the people's faces); quality 2: moves cleanly; cost 2)"},
+      {"id": "mug_steam", "kind": "steam", "where": [0.615, 0.565], "area_pct": 0.4, "text": 0, "focus": 1, "quality": 2, "cost": 2, "decision": "skip", "why": "LP-07: the cap of 4 is taken by higher scores (P3) (score 6; text 0: the words do not touch it; area 0.4 %; focus 1: 0.23 from the focus (the people's faces); quality 2: moves cleanly; cost 2)"},
+      {"id": "willows", "kind": "plants", "where": [0.8, 0.2], "area_pct": 6.0, "text": 0, "focus": 1, "quality": 1, "cost": 1, "decision": "skip", "why": "LP-07: the cap of 4 is taken by higher scores (P3) (score 5; text 0: the words do not touch it; area 6 %; focus 1: 0.30 from the focus (the people's faces); quality 1: no clean mask, a soft box only; cost 1)"},
+      {"id": "lying_snow", "kind": "snow", "where": [0.5, 0.8], "area_pct": 1.0, "text": 0, "focus": 0, "quality": 2, "cost": 2, "decision": "skip", "why": "LP-07: the cap of 4 is taken by higher scores (P3) (score 5; text 0: the words do not touch it; area 1 %; focus 0: 0.45 from the focus (the people's faces); quality 2: moves cleanly; cost 2)"},
+      {"id": "coat_hems", "kind": "cloth", "where": [0.7, 0.7], "area_pct": 8.0, "text": 0, "focus": 1, "quality": 0, "cost": 1, "decision": "skip", "why": "LP-05: it cannot move cleanly (score 4; text 0: the words do not touch it; area 8 %; focus 1: 0.38 from the focus (the people's faces); quality 0: it lies on a body: moving it reads as the body moving; cost 1)"},
+      {"id": "wire", "kind": "wire", "where": [0.1, 0.4], "area_pct": 3.0, "text": 0, "focus": 0, "quality": 0, "cost": 1, "decision": "skip", "why": "LP-05: it cannot move cleanly (score 3; text 0: the words do not touch it; area 3 %; focus 0: 0.44 from the focus (the people's faces); quality 0: thin strokes cannot be cut out cleanly; cost 1)"},
+      {"id": "breath_of_the_faces", "kind": "breath", "where": [0.536, 0.352], "area_pct": 0.84, "text": 0, "focus": 2, "quality": 2, "cost": 2, "decision": "skip", "why": "LP-07: the cap of 4 is taken by higher scores (P2) (score 7; 2 live face(s) found in a cold scene: their breath shows)"}
+    ]
+  },
+  "scene": {
+    "weather": [],
+    "wind": [0.025, 0.0],
+    "surroundings": "sunset, clear sky, ice, frost"
+  },
+  "people_mid_or_close": true,
+  "intent": "intended",
+  "tracks": [
+    {"track": "camera", "op": "pull", "renderer": "directed25d", "params": {"strength": 0.75, "ease": "linear"}, "timing": {"end": {"frac": 1.0}}, "validate": {"measure": "scale"}},
+    {"track": "camera", "op": "handheld", "renderer": "directed25d", "params": {"strength": 0.3}, "timing": {}, "validate": {}},
+    {"id": "fx_low_sun_rays", "track": "lighting", "op": "sun_shaft", "renderer": "directed25d", "target": {"light": "sun"}, "params": {"strength": 0.9}, "validate": {"measure": "change_inside_target"}},
+    {"id": "fx_low_sun_fade", "track": "lighting", "op": "light_fade", "renderer": "directed25d", "target": {}, "params": {"strength": 1.0}, "validate": {"measure": "change_inside_target"}},
+    {"id": "fx_sun_path_on_ice", "track": "lighting", "op": "glint", "renderer": "directed25d", "target": {"box": [0.25, 0.4, 0.8, 0.66]}, "params": {"strength": 1.0}, "validate": {"measure": "change_inside_target"}},
+    {"id": "fx_clouds", "track": "atmosphere", "op": "cloud_drift", "renderer": "directed25d", "target": {}, "params": {"strength": 1.0}, "validate": {"measure": "change_inside_target"}},
+    {"id": "fx_brazier", "track": "lighting", "op": "fire", "renderer": "directed25d", "target": {"lights": ["brazier_flame"]}, "params": {"strength": 1.0, "spill_radius": 0.085}, "validate": {"measure": "change_inside_target"}},
+    {"track": "audio", "decision": "ambience_only", "why": "wind (medium): cloud_drift (fx_clouds): clouds are heard as the wind bed; fire (medium): fire (fx_brazier): the fire's crackle is the bed's", "events": ["wind", "fire"]}
+  ],
+  "round": "C5: C4A + the eye-review fixes (safe zone, seams, effects, camera plan)",
+  "rules": ["BP-185", "BP-194", "BP-195", "BP-196", "BP-197", "BP-200", "owner 2026-11-14 12:37 cards", "owner 2026-11-14 12:38 weather ceiling", "owner 2026-11-14 12:40 the director decides"],
+  "overrides": [
+    {"field": "tracks", "from": "C4 effects typed per shot by hand", "to": "C4 effects chosen by living_director from the words, the photo and the catalogue", "why": "the owner, 2026-11-14 12:40 UTC: the director decides the living frame itself"}
+  ],
+  "rounds": [],
+  "weather": [],
+  "keep_in_frame": [
+    {"face": [0.6625, 0.2712, 0.706, 0.3701], "why": "live face: the person stays whole in the frame"},
+    {"face": [0.3671, 0.29, 0.4095, 0.3857], "why": "live face: the person stays whole in the frame"},
+    {"light": "sun", "soft": true, "why": "the sun_shaft effect lives on it"},
+    {"light": "brazier_flame", "soft": true, "why": "the fire effect lives on it"}
+  ],
+  "sound": {
+    "events": [
+      {"kind": "ambience", "what": "wind", "class": "wind", "at_s": 0.0, "distance": "medium", "decision": "ambience_only", "sync": "span", "why": "cloud_drift (fx_clouds): clouds are heard as the wind bed", "library": {"status": "library", "ids": ["wind_01"], "why": "legacy_tags; best take wind_01 (fits: cold, open, winter)"}},
+      {"kind": "ambience", "what": "fire", "class": "fire", "at_s": 0.0, "distance": "medium", "decision": "ambience_only", "sync": "span", "why": "fire (fx_brazier): the fire's crackle is the bed's", "library": {"status": "library", "ids": ["fire_campfire_01", "fire_01", "fire_garage_02"], "why": "legacy_tags; best take fire_campfire_01 (fits: campfire, crackle)"}}
+    ],
+    "silent": [
+      {"id": "pull", "op": "pull", "decision": "silent_by_design", "why": "a camera move is silent by default"},
+      {"id": "handheld", "op": "handheld", "decision": "silent_by_design", "why": "a camera move is silent by default"},
+      {"id": "fx_low_sun_rays", "op": "sun_shaft", "decision": "silent_by_design", "why": "light makes no sound"},
+      {"id": "fx_low_sun_fade", "op": "light_fade", "decision": "silent_by_design", "why": "light going makes no sound"},
+      {"id": "fx_sun_path_on_ice", "op": "glint", "decision": "silent_by_design", "why": "a glint is light: no sound"}
+    ],
+    "needs": [],
+    "beds": ["fire", "wind"],
+    "coverage": "AMBIENCE_ONLY"
+  },
+  "choice": {
+    "by": "production/living_director (the director's choice from the words, the photo and the catalogue)",
+    "faces": [
+      {"box": [0.6625, 0.2712, 0.706, 0.3701], "mouth": [0.6772, 0.3434], "share": 0.004306162652324005, "score": 0.94},
+      {"box": [0.3671, 0.29, 0.4095, 0.3857], "mouth": [0.3949, 0.3603], "share": 0.004059075412209966, "score": 0.934}
+    ],
+    "cap": 4,
+    "weather": [],
+    "camera": [
+      "the words say the light is going: the camera pulls back as it fades (1.5 %/s over 3.0 s, BP-21)",
+      "a breathing hand so the camera never fully stops after the accent (the owner's 12:37 card 3)"
+    ],
+    "chosen": ["low_sun_rays", "low_sun_fade", "sun_path_on_ice", "clouds", "brazier"],
+    "skipped": {"low_sun": "LP-07: the cap of 4 is taken by higher scores (P1) (score 12; text 1: the words evoke it ('afternoon'); area 25 %; focus 2: 0.08 from the focus (the people's faces); quality 2: moves cleanly; cost 2)", "brazier_embers": "LP-07: the cap of 4 is taken by higher scores (P3) (score 6; text 0: the words do not touch it; area 2 %; focus 0: 0.55 from the focus (the people's faces); quality 2: moves cleanly; cost 2)", "brazier_smoke": "LP-07: the cap of 4 is taken by higher scores (P3) (score 6; text 0: the words do not touch it; area 2 %; focus 0: 0.45 from the focus (the people's faces); quality 2: moves cleanly; cost 2)", "mug_steam": "LP-07: the cap of 4 is taken by higher scores (P3) (score 6; text 0: the words do not touch it; area 0.4 %; focus 1: 0.23 from the focus (the people's faces); quality 2: moves cleanly; cost 2)", "willows": "LP-07: the cap of 4 is taken by higher scores (P3) (score 5; text 0: the words do not touch it; area 6 %; focus 1: 0.30 from the focus (the people's faces); quality 1: no clean mask, a soft box only; cost 1)", "lying_snow": "LP-07: the cap of 4 is taken by higher scores (P3) (score 5; text 0: the words do not touch it; area 1 %; focus 0: 0.45 from the focus (the people's faces); quality 2: moves cleanly; cost 2)", "coat_hems": "LP-05: it cannot move cleanly (score 4; text 0: the words do not touch it; area 8 %; focus 1: 0.38 from the focus (the people's faces); quality 0: it lies on a body: moving it reads as the body moving; cost 1)", "wire": "LP-05: it cannot move cleanly (score 3; text 0: the words do not touch it; area 3 %; focus 0: 0.44 from the focus (the people's faces); quality 0: thin strokes cannot be cut out cleanly; cost 1)", "breath_of_the_faces": "LP-07: the cap of 4 is taken by higher scores (P2) (score 7; 2 live face(s) found in a cold scene: their breath shows)"},
+    "notes": ["REVIEW LP-07: 5 P1 elements over the cap of 4 for 3 s"],
+    "sound": {"beds": ["fire", "wind"], "coverage": "AMBIENCE_ONLY", "silent": [{"id": "pull", "op": "pull", "decision": "silent_by_design", "why": "a camera move is silent by default"}, {"id": "handheld", "op": "handheld", "decision": "silent_by_design", "why": "a camera move is silent by default"}, {"id": "fx_low_sun_rays", "op": "sun_shaft", "decision": "silent_by_design", "why": "light makes no sound"}, {"id": "fx_low_sun_fade", "op": "light_fade", "decision": "silent_by_design", "why": "light going makes no sound"}, {"id": "fx_sun_path_on_ice", "op": "glint", "decision": "silent_by_design", "why": "a glint is light: no sound"}], "needs": []},
+    "audit": {"idiom": {"id": "IDM_EPILOGUE_STATEMENT", "name": "epilogue_fade_statement", "why": "closing/fading light cue in narration or chosen effects"}, "chosen": {"primary_op": "pull", "ops": ["pull", "handheld"], "why": ["the words say the light is going: the camera pulls back as it fades (1.5 %/s over 3.0 s, BP-21)", "a breathing hand so the camera never fully stops after the accent (the owner's 12:37 card 3)"]}, "rejected": {"orbit_small": "FORBIDDEN (creator's veto: 2 kept person(s) in frame; orbit changes lateral angle -> downgrade to pan_crop_2d or push_in + rack_focus)", "truck_25d": "REJECTED (creator's veto: lateral angle change on shot with kept people -> downgrade to pan_crop_2d or push_in + rack_focus)", "crane_25d": "REJECTED (edge_margin_y=0.065 < 0.12 risks vertical crop on crane)"}, "measurements": {"person_boxes": [[0.335, 0.28, 0.493, 0.935], [0.562, 0.29, 0.71, 0.915]], "edge_margin_x": 0.29, "edge_margin_y": 0.065, "sky_area_pct": 30.0, "fg_bg_depth_delta": 0.82, "unlayered_people": false, "hole_share": 0.2963, "people_count": 2}}
+  }
+}

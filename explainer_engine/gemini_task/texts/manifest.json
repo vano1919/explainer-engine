@@ -1,0 +1,353 @@
+{
+ "schema": "gemini_task_texts_manifest/1",
+ "about": "Declares every file of the Gemini Task texts and every {{placeholder}} in them with its source (spec acceptance 2). tests/unit/test_gemini_task_texts.py checks it against the files. An export with an unfilled placeholder fails. Text between <!-- and --> in a pack file is an operator note: the exporter strips it before the file goes to Drive.",
+ "placeholder_syntax": "{{name}}; {{bp:<rule>.<threshold>}} for a registry number, with an optional |percent after it",
+ "never_words_note": "The preset's never_words are checked in every MESSAGE and CLAUSE block outside a never phrase (acceptance 1).",
+ "files": [
+  {
+   "path": "drive_pack/00_START_HERE.md",
+   "kind": "drive_pack",
+   "drive_path": "{{drive_root}}/rules/00_START_HERE.md"
+  },
+  {
+   "path": "drive_pack/01_CHANNEL.md",
+   "kind": "drive_pack",
+   "drive_path": "{{drive_root}}/rules/01_CHANNEL.md"
+  },
+  {
+   "path": "drive_pack/02_SHORT_STORY_RULES.md",
+   "kind": "drive_pack",
+   "drive_path": "{{drive_root}}/rules/02_SHORT_STORY_RULES.md"
+  },
+  {
+   "path": "drive_pack/03_SCRIPT_RULES.md",
+   "kind": "drive_pack",
+   "drive_path": "{{drive_root}}/rules/03_SCRIPT_RULES.md"
+  },
+  {
+   "path": "drive_pack/04_VIDEO_SCRIPT_RULES.md",
+   "kind": "drive_pack",
+   "drive_path": "{{drive_root}}/rules/04_VIDEO_SCRIPT_RULES.md"
+  },
+  {
+   "path": "drive_pack/05_STYLE.md",
+   "kind": "drive_pack",
+   "drive_path": "{{drive_root}}/rules/05_STYLE.md"
+  },
+  {
+   "path": "drive_pack/06_PICTURE_RULES.md",
+   "kind": "drive_pack",
+   "drive_path": "{{drive_root}}/rules/06_PICTURE_RULES.md"
+  },
+  {
+   "path": "drive_pack/07_REVIEW_PROTOCOL.md",
+   "kind": "drive_pack",
+   "drive_path": "{{drive_root}}/rules/07_REVIEW_PROTOCOL.md"
+  },
+  {
+   "path": "drive_pack/08_FILES_AND_STATE.md",
+   "kind": "drive_pack",
+   "drive_path": "{{drive_root}}/rules/08_FILES_AND_STATE.md"
+  },
+  {
+   "path": "messages/P0_OPEN_EPISODE_CHAT.md",
+   "kind": "message",
+   "message": "P0",
+   "task": "CHECK"
+  },
+  {
+   "path": "messages/P10_REDO_BATCH.md",
+   "kind": "message",
+   "message": "P10",
+   "task": "PICTURES"
+  },
+  {
+   "path": "messages/P1_CHECK_SHORT_STORY.md",
+   "kind": "message",
+   "message": "P1",
+   "task": "CHECK"
+  },
+  {
+   "path": "messages/P2_CHECK_SCRIPT.md",
+   "kind": "message",
+   "message": "P2",
+   "task": "CHECK"
+  },
+  {
+   "path": "messages/P3_CHECK_VIDEO_SCRIPT.md",
+   "kind": "message",
+   "message": "P3",
+   "task": "CHECK"
+  },
+  {
+   "path": "messages/P4_REPLY_TO_FINDINGS.md",
+   "kind": "message",
+   "message": "P4",
+   "task": "CHECK"
+  },
+  {
+   "path": "messages/P5_SAVE_SHOT_QUEUE.md",
+   "kind": "message",
+   "message": "P5",
+   "task": "CHECK"
+  },
+  {
+   "path": "messages/P6_REFERENCE_BATCH.md",
+   "kind": "message",
+   "message": "P6",
+   "task": "PICTURES"
+  },
+  {
+   "path": "messages/P7_SCENE_BATCH.md",
+   "kind": "message",
+   "message": "P7",
+   "task": "PICTURES"
+  },
+  {
+   "path": "messages/P8_NEXT_BATCH.md",
+   "kind": "message",
+   "message": "P8",
+   "task": "PICTURES"
+  },
+  {
+   "path": "messages/P9_RESUME_AFTER_LIMIT.md",
+   "kind": "message",
+   "message": "P9",
+   "task": "PICTURES"
+  },
+  {
+   "path": "messages/PROMPT_CLAUSES.md",
+   "kind": "clauses"
+  },
+  {
+   "path": "messages/T0_GATE_TEST.md",
+   "kind": "message",
+   "message": "T0",
+   "task": "PICTURES"
+  }
+ ],
+ "placeholders": {
+  "episode_id": {
+   "origin": "episode",
+   "source": "episode.json of the episode folder (`episodes/<id>/`), key id"
+  },
+  "episode_title": {
+   "origin": "episode",
+   "source": "episode.json of the episode folder (`episodes/<id>/`), key title"
+  },
+  "era_line": {
+   "origin": "episode",
+   "source": "the episode's one era sentence in `episodes/<id>/episode.json` (key `era_line`), written to the preset's `era_line_shape`: \"The world is <era>: the only light sources are <list>, and everything is made of <materials>.\" One sentence, no never-word (GC-22)"
+  },
+  "sha8": {
+   "origin": "computed",
+   "source": "first 8 hex of the sha256 of the artefact the message is about (the text, the queue, the batch's blocks or the assembled prompts); computed by the exporter (A2) when it renders the message"
+  },
+  "review_sha8": {
+   "origin": "computed",
+   "source": "the sha8 in the REVIEW line being answered (P4)"
+  },
+  "round": {
+   "origin": "computed",
+   "source": "count of full checks of this stage (P1-P3), or R1/R2 for P6; computed by the exporter (A2) when it renders the message"
+  },
+  "reply_round": {
+   "origin": "computed",
+   "source": "1 or 2, the P4 reply round"
+  },
+  "stage": {
+   "origin": "computed",
+   "source": "short_story, script or video_script"
+  },
+  "batch_no": {
+   "origin": "computed",
+   "source": "number of the batch in the episode's batch plan (0 for T0)"
+  },
+  "batch_total": {
+   "origin": "computed",
+   "source": "number of batches in the plan"
+  },
+  "batch_size": {
+   "origin": "computed",
+   "source": "pictures per batch: six until the T0 record sets another number (spec section 6)"
+  },
+  "redo_no": {
+   "origin": "computed",
+   "source": "number of the redo batch"
+  },
+  "redo_total": {
+   "origin": "computed",
+   "source": "number of redo batches in the redo list"
+  },
+  "n": {
+   "origin": "computed",
+   "source": "number of pictures, blocks or queue entries in this message"
+  },
+  "round_note": {
+   "origin": "message",
+   "source": "the R1 or R2 sentence in the operator notes of P6, chosen by the exporter"
+  },
+  "drive_root": {
+   "origin": "config",
+   "source": "the Drive folder of the project, set once per project in the Gemini task settings (never a link with a key)"
+  },
+  "attached_list": {
+   "origin": "computed",
+   "source": "file names of the references to attach, in attach order, one list per message; computed by the exporter (A2) when it renders the message"
+  },
+  "picture_blocks": {
+   "origin": "computed",
+   "source": "one block per picture in the format of PROMPT_CLAUSES.md (id, target, references, verbatim prompt); computed by the exporter (A2) when it renders the message"
+  },
+  "picture_ids": {
+   "origin": "computed",
+   "source": "the batch's picture ids, comma separated, in queue order (P8)"
+  },
+  "first_missing_id": {
+   "origin": "computed",
+   "source": "the first id the last BATCH REPORT marks NOT MADE (P9)"
+  },
+  "short_story": {
+   "origin": "episode",
+   "source": "episodes/<id>/short_story.md, unchanged"
+  },
+  "script": {
+   "origin": "episode",
+   "source": "episodes/<id>/script.md, unchanged"
+  },
+  "shot_list_json": {
+   "origin": "episode",
+   "source": "the video script's shot list as JSON, from the episode's production script"
+  },
+  "shot_queue_json": {
+   "origin": "episode",
+   "source": "episodes/<id>/shot_queue.json, exact text (P5)"
+  },
+  "replies": {
+   "origin": "claude",
+   "source": "Claude's one-line answer per finding (P4 notes describe the form)"
+  },
+  "revised_text": {
+   "origin": "claude",
+   "source": "the revised artefact after the accepted changes, or the line NO CHANGE (P4)"
+  },
+  "hero_text": {
+   "origin": "episode",
+   "source": "the hero's verbatim registry text (age, build, skin, hair, face, garment, prop; HI-01, HI-02, HI-05)"
+  },
+  "place_text": {
+   "origin": "episode",
+   "source": "the place's verbatim registry text (LV-01..LV-05)"
+  },
+  "pack_version": {
+   "origin": "pack",
+   "source": "the pack version string written at export (pack date plus short commit)"
+  },
+  "pack_date": {
+   "origin": "pack",
+   "source": "the export date, UTC"
+  },
+  "repo_commit": {
+   "origin": "pack",
+   "source": "git commit the pack was exported from"
+  },
+  "style_preset_id": {
+   "origin": "preset",
+   "source": "the episode's look: episode.json look.id, default `default_style_profile` in config/visual_style_presets.json"
+  },
+  "style_sentence": {
+   "origin": "preset",
+   "source": "config/visual_style_presets.json, preset `style_preset_id`, key `style_sentence`"
+  },
+  "face_sentence": {
+   "origin": "preset",
+   "source": "config/visual_style_presets.json, preset `style_preset_id`, key `face_sentence`"
+  },
+  "style_reference_clause": {
+   "origin": "preset",
+   "source": "config/visual_style_presets.json, preset `style_preset_id`, key `style_reference_clause`"
+  },
+  "never_words": {
+   "origin": "preset",
+   "source": "config/visual_style_presets.json, preset `style_preset_id`, key `never_words` (rendered as a list)"
+  },
+  "always_list": {
+   "origin": "preset",
+   "source": "config/visual_style_presets.json, preset `style_preset_id`, key `always` (rendered as a list)"
+  },
+  "negative": {
+   "origin": "preset",
+   "source": "config/visual_style_presets.json, preset `style_preset_id`, key `negative`"
+  },
+  "identity_rule": {
+   "origin": "preset",
+   "source": "config/visual_style_presets.json, preset `style_preset_id`, key `identity_rule`"
+  },
+  "era_rule": {
+   "origin": "preset",
+   "source": "config/visual_style_presets.json, preset `style_preset_id`, key `era_rule`"
+  },
+  "pictures_per_day": {
+   "origin": "preset",
+   "source": "config/visual_style_presets.json, preset `style_preset_id`, key `pictures_per_day`, or `chat_pictures_per_day` in episode.json"
+  },
+  "style_pack_table": {
+   "origin": "episode",
+   "source": "the style pack table of the exporter: type, file, sha256, the shot sizes that use it"
+  }
+ },
+ "bp_placeholders": {
+  "BP-01.wpm_target": {
+   "rule": "BP-01",
+   "threshold": "wpm_target",
+   "source": "explainer_engine/standards/sourced_rules.json, rule BP-01, thresholds.wpm_target"
+  },
+  "BP-06.hard_max_words": {
+   "rule": "BP-06",
+   "threshold": "hard_max_words",
+   "source": "explainer_engine/standards/sourced_rules.json, rule BP-06, thresholds.hard_max_words"
+  },
+  "BP-70.min_exchange_lines": {
+   "rule": "BP-70",
+   "threshold": "min_exchange_lines",
+   "source": "explainer_engine/standards/sourced_rules.json, rule BP-70, thresholds.min_exchange_lines"
+  },
+  "BP-70.min_exchange_speakers": {
+   "rule": "BP-70",
+   "threshold": "min_exchange_speakers",
+   "source": "explainer_engine/standards/sourced_rules.json, rule BP-70, thresholds.min_exchange_speakers"
+  },
+  "BP-72.speeches_per_scene_max": {
+   "rule": "BP-72",
+   "threshold": "speeches_per_scene_max",
+   "source": "explainer_engine/standards/sourced_rules.json, rule BP-72, thresholds.speeches_per_scene_max"
+  },
+  "BP-72.turn_words_max": {
+   "rule": "BP-72",
+   "threshold": "turn_words_max",
+   "source": "explainer_engine/standards/sourced_rules.json, rule BP-72, thresholds.turn_words_max"
+  },
+  "BP-76.turn_gap_s": {
+   "rule": "BP-76",
+   "threshold": "turn_gap_s",
+   "source": "explainer_engine/standards/sourced_rules.json, rule BP-76, thresholds.turn_gap_s"
+  },
+  "BP-104.narration_block_max_s": {
+   "rule": "BP-104",
+   "threshold": "narration_block_max_s",
+   "source": "explainer_engine/standards/sourced_rules.json, rule BP-104, thresholds.narration_block_max_s"
+  },
+  "BP-105.nominal_narrator_share": {
+   "rule": "BP-105",
+   "threshold": "nominal_narrator_share",
+   "source": "explainer_engine/standards/sourced_rules.json, rule BP-105, thresholds.nominal_narrator_share",
+   "format": "percent (0.7 is written 70 %, with `|percent` after the key)"
+  },
+  "BP-185.families_min": {
+   "rule": "BP-185",
+   "threshold": "families_min",
+   "source": "explainer_engine/standards/sourced_rules.json, rule BP-185, thresholds.families_min"
+  }
+ },
+ "open_todos": []
+}

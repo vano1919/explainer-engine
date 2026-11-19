@@ -1,0 +1,111 @@
+name: Pilot stills
+
+# The pilot's Blender stills (the creator, 2026-11-06 15:25 UTC; blender/pilot_stills.py): the furnished pilot_room layout (Quaternius
+# MegaKit walls, Poly Haven CC0 furniture, the Quaternius cast) seen by its seven cameras at 2560x1440, one frame each, and the
+# battle's frames 0 and 200 at 5,000 soldiers (colour + depth, no Freestyle). Free: no pod, no paid call (D-114). The PNGs and
+# pilot_stills.json (cameras, sha256, s/frame) are the artifact; the HF upload is a separate, recorded step.
+
+on:
+  workflow_dispatch:
+    inputs:
+      count:
+        description: "soldiers in the battle stills"
+        default: "5000"
+  push:
+    branches:
+      - "icw/18-pilot-room"
+    paths:
+      - "explainer_engine/blender/pilot_stills.py"
+      - "explainer_engine/blender/world_layouts.json"
+      - "explainer_engine/blender/world_kits.json"
+      - ".github/workflows/pilot-stills.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pilot-stills-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  stills:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 300
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Install the validator, Pillow and Blender's runtime libraries (Mesa EGL, no GPU)
+        run: |
+          python -m pip install "jsonschema==4.26.0" "pillow==12.3.0" "numpy>=2.0"
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends libegl1 libegl-mesa0 libgl1 libgl1-mesa-dri libgbm1 libxi6 libxrender1 \
+            libxfixes3 libxkbcommon0 libsm6 libxext6 libx11-6 fonts-dejavu-core ffmpeg
+      - name: Read the Blender pin
+        id: pin
+        run: |
+          python - >> "$GITHUB_OUTPUT" <<'PY'
+          import json
+          b = json.load(open("config/cloud_pins.json"))["blender"]
+          a = b["archives"]["linux-x64"]
+          print(f"version={b['version']}")
+          print(f"url={a['url']}")
+          print(f"sha256={a['sha256']}")
+          print(f"name={a['url'].rsplit('/', 1)[-1]}")
+          PY
+      - name: Cache the pinned archive (keyed by its sha256)
+        uses: actions/cache@v4
+        with:
+          path: ~/blender-archive
+          key: blender-${{ steps.pin.outputs.sha256 }}
+      - name: Download the archive when it is not cached
+        run: |
+          mkdir -p ~/blender-archive
+          f=~/blender-archive/${{ steps.pin.outputs.name }}
+          [ -s "$f" ] || curl --fail --location --retry 3 --silent --show-error --output "$f" "${{ steps.pin.outputs.url }}"
+      - name: Install Blender (refused unless the archive's sha256 is the pin)
+        id: install
+        run: |
+          bin=$(python -m explainer_engine.blender.project install --dest "$RUNNER_TEMP/blender" \
+                --archive ~/blender-archive/${{ steps.pin.outputs.name }} | tail -n 1)
+          echo "bin=$bin" >> "$GITHUB_OUTPUT"
+          python -m explainer_engine.blender.project resolve --binary "$bin"
+      - name: Cache the CC0 assets (keyed by the registered hashes)
+        uses: actions/cache@v4
+        with:
+          path: tools/assets_cache
+          key: world-kit-assets-${{ hashFiles('explainer_engine/blender/world_kits.json', 'explainer_engine/blender/style_sheet_assets.json', 'explainer_engine/blender/character_assets.json') }}
+      - name: Fetch the look assets, the characters and the kit pieces (kept only at the registered sha256)
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}   # the vault is private; without it the pieces are rebuilt from the free packs (pillow is pinned for it)
+        run: |
+          python -m explainer_engine.blender.style_sheets fetch
+          python -m explainer_engine.blender.characters fetch
+          python -m explainer_engine.blender.world_kits fetch
+      - name: Render the seven room stills (2560x1440, one frame each)
+        run: |
+          python -m explainer_engine.blender.world_kits poc --layout pilot_room --frames 1 --out room --binary "${{ steps.install.outputs.bin }}" \
+            --scale 1.0 --variants "v01_reference_soft3d" --device cpu
+      - name: Render the battle stills (frames 0 and 200, colour + depth)
+        continue-on-error: true
+        run: |
+          python -m explainer_engine.blender.layout_passes render --scene battle --out battle --binary "${{ steps.install.outputs.bin }}" \
+            --passes colour,depth --only-frames 0,200 --count "${{ github.event.inputs.count || '5000' }}" --scale 1.0
+      - name: Write the manifest
+        if: always()
+        run: |
+          b=""; [ -f battle/battle/layout_manifest.json ] && b="--battle battle"
+          python -m explainer_engine.blender.pilot_stills manifest --room room $b --out pilot_stills --battle-count "${{ github.event.inputs.count || '5000' }}"
+          for d in room/work/*/; do [ -f "$d/blender.log" ] && cp "$d/blender.log" "pilot_stills/$(basename "$d").blender.log"; done || true
+          ls -la pilot_stills
+      - name: Upload the stills
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pilot-stills-${{ github.sha }}
+          path: pilot_stills/
+          if-no-files-found: error
+          retention-days: 30

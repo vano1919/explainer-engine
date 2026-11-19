@@ -1,0 +1,51 @@
+[
+ {
+  "shot_id": "S03_SH001",
+  "prompt": "Flanders, Christmas 1914, a frozen winter world. Image 1 is the Saxon corporal: copy the face, body and costume only, not the pose. Medium wide shot, eye-level camera. Exactly 1 person. The Saxon corporal, Gefreiter Friedrich Brandt, a broad-shouldered 32-year-old Saxon soldier with a calm square face, close-cropped dark-blond hair, a full fair moustache, kind tired eyes, a field-grey round Feldmuetze cap with red band and cockade, field-grey 1907 tunic, grey greatcoat, black leather belt and boots, wearing field-grey round cap with red band, grey greatcoat buttoned, the portrait card in the left breast pocket, in the centre, in the middle distance, facing left, looking off to the left, holding prop candle tree (candles lit) in both hands, Friedrich stands on the fire step holding a small fir tree. Visible: small fir trees set on the parapet in the centre; timber-revetted earth walls in the centre; a parapet of sandbags in the centre. Night; key light from the front (the candles on the parapet).",
+  "refs": [
+   "planning/gemini_task/refs/ref_char_friedrich_brandt_portrait.jpg"
+  ],
+  "questions": [
+   "How many people are in the picture? (expected 1)",
+   "Is the Saxon corporal in the centre of the frame?",
+   "Does the Saxon corporal face left?",
+   "Does the Saxon corporal hold prop candle tree in the both hand?",
+   "Does the Saxon corporal match the model sheet (face, colours, costume)?",
+   "Is small fir trees set on the parapet visible in the centre?",
+   "Is timber-revetted earth walls visible in the centre?",
+   "Is a parapet of sandbags visible in the centre?",
+   "Does the main light come from the front?"
+  ]
+ },
+ {
+  "shot_id": "S03_SH002",
+  "prompt": "Flanders, Christmas 1914, a frozen winter world. Image 1 is the place, Saxon front-line trench opposite the British line / Christmas Eve 1914, night: keep its landmarks, light and colours, but show it from a new camera position. Medium close-up, high angle. No people. The hands is Friedrich's gloved hand in a field-grey sleeve holding the portrait card. Night; key light from the front (the candles on the parapet).",
+  "refs": [
+   "S03_SH001_start"
+  ],
+  "questions": [
+   "How many people are in the picture? (expected 0)",
+   "Does the main light come from the front?",
+   "Is the framing clearly different from the previous shot (new size or angle)?"
+  ]
+ },
+ {
+  "shot_id": "S03_SH003",
+  "prompt": "Flanders, Christmas 1914, a frozen winter world. Image 1 is the place, Saxon front-line trench opposite the British line / Christmas Eve 1914, night: keep its landmarks, light and colours, but show it from a new camera position. Image 2 is the Saxon corporal: copy the face, body and costume only, not the pose. Medium wide shot, eye-level camera. Exactly 6 people. The Saxon corporal, Gefreiter Friedrich Brandt, a broad-shouldered 32-year-old Saxon soldier with a calm square face, close-cropped dark-blond hair, a full fair moustache, kind tired eyes, a field-grey round Feldmuetze cap with red band and cockade, field-grey 1907 tunic, grey greatcoat, black leather belt and boots, wearing field-grey round cap with red band, grey greatcoat buttoned, the portrait card in the left breast pocket, in the centre, in the middle distance, facing left, looking off to the left, Friedrich and five Saxon soldiers stand in the trench by the candle tree. 5 unnamed background figures. Visible: small fir trees set on the parapet in the centre; a dugout entrance with a hanging oil lamp in the centre; a parapet of sandbags in the centre. The candle tree is on the parapet, candles lit. Night; key light from the front (the candles on the parapet).",
+  "refs": [
+   "S03_SH001_start",
+   "planning/gemini_task/refs/ref_char_friedrich_brandt_portrait.jpg"
+  ],
+  "questions": [
+   "How many people are in the picture? (expected 6)",
+   "Is the Saxon corporal in the centre of the frame?",
+   "Does the Saxon corporal face left?",
+   "Does the Saxon corporal match the model sheet (face, colours, costume)?",
+   "Is small fir trees set on the parapet visible in the centre?",
+   "Is a dugout entrance with a hanging oil lamp visible in the centre?",
+   "Is a parapet of sandbags visible in the centre?",
+   "Does the main light come from the front?",
+   "Is the framing clearly different from the previous shot (new size or angle)?"
+  ]
+ }
+]

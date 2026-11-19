@@ -1,5 +1,7 @@
 # Architecture plan (the 2026-10-22 master brief, stages A-H)
 
+> **Legacy (image-generation era) banner, 2026-11-05 (ICW-01, D-96).** Since D-96 the VIDEO/STILL pixels come from Blender ([roadmap](architecture/INK_CHRONICLE_OPUS_IMPLEMENTATION_ROADMAP_2026-11-04.md) section 7, D-97); the HELPER rules here stay in force; prompt rules apply to reference art only; the Qwen keyframe, LTX clip, sprite and 2.5D-still procedures below describe the legacy route (D-43, D-80, D-105) and stay readable for the episodes already made. Nothing on this page was deleted.
+
 The creator's master brief of 2026-10-22 asks for a production system that keeps one visual world across episodes, uses the
 best current models through replaceable adapters, never loses a result or leaves a pod billing, and shows the creator from a
 phone what happened since the last look. This plan is stage A's output: it is built on what the code really does today

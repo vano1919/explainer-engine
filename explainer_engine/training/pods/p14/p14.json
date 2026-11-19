@@ -1,0 +1,76 @@
+{
+  "schema": "p14_config/1",
+  "code": {
+    "url": "https://github.com/Lightricks/LTX-2",
+    "sha": "e98f6d927d83c92ef2be6aec76c8440b19306e39"
+  },
+  "jobs_file": "ltx_jobs.json",
+  "hf": {
+    "repo": "vano1919/tmr-artifacts",
+    "repo_type": "dataset"
+  },
+  "weights": {
+    "ltx25": {
+      "repo": "Lightricks/LTX-2.5",
+      "revision": "49b093a39c19169a8a81721dcc541e07e945232f",
+      "files": {
+        "diffusion_models/ltx-2.5-22b-distilled-transformer-bf16.safetensors": "31eb3cad89b9e54e99dd3baf286f70825ac4f6c660a70d9184d895be76d7bff4",
+        "text_encoders/gemma4-12b-with-proj-ltx-2.5-bf16.safetensors": "ef7243612fdae7a75cb4d5cee9433e81380675fb6c213bd98ae74a9cd16561d1",
+        "vae/ltx-2.5-video-vae-bf16.safetensors": "847e14ca7f3355debca0cea4eaa24ac0fbcdf0061da054ac89ca638a869ddba3",
+        "vae/ltx-2.5-audio-vae-bf16.safetensors": "c52733d37f6a7fb7949c3dc0fb468c6cb2169e4d836983a73babb9f0d54837a5"
+      },
+      "upsampler": {
+        "file": "latent_upscale_models/ltx-2.5-latent-spatial-upscaler-x2-bf16-1.0.safetensors",
+        "sha256": "eb5a71fe4068ee87ccdb1c3aa635e547ca76bd2d30ae20ae889f2c325c0677e8"
+      },
+      "lora": {
+        "repo": "Lightricks/LTX-2.5-22b-IC-LoRA-Layout-To-Render",
+        "revision": "bd765d5592f0ae78457162852a353b6a375cb00f",
+        "file": "ltx-2.5-22b-ic-lora-layout-to-render-1.0.safetensors",
+        "sha256": "77567d81d71b4df558d622dffc0ec218ba1e22c69b2932f6fa12f34772697eae"
+      }
+    },
+    "ltx23": {
+      "repo": "Lightricks/LTX-2.3",
+      "revision": "c1521179de480464f366a98a9d9b2acc4cc097b9",
+      "checkpoint": {
+        "file": "ltx-2.3-22b-distilled-1.1.safetensors",
+        "sha256": "b33b7fe4bbfe084f484be4aaf90b0f1d95dca20d403ac4c0e037eb8c4f0af7cc"
+      },
+      "upsampler": {
+        "file": "ltx-2.3-spatial-upscaler-x2-1.1.safetensors",
+        "sha256": "5f416311fa8172b65af67530758964708d29a317b830d689a51143b7f91913ed"
+      },
+      "lora": {
+        "repo": "Lightricks/LTX-2.3-22b-IC-LoRA-Union-Control",
+        "revision": "20a580c8606c06a0988d40375a61309e0fe5893d",
+        "file": "ltx-2.3-22b-ic-lora-union-control-ref0.5.safetensors",
+        "sha256": "a1b888a87f661d27f08b394ae559e8e1050be33900bcc36a5cdf659e48f88d18"
+      },
+      "text_encoder": {
+        "repo": "google/gemma-3-12b-it-qat-q4_0-unquantized",
+        "revision": "68f7ee4fbd59087436ada77ed2d62f373fdd4482",
+        "files": {
+          "model-00001-of-00005.safetensors": "e6fb899db428481aafb45a20130457df6e247e7cb03b7d9f01ee4bc2a9a08138",
+          "model-00002-of-00005.safetensors": "d251e7fe9799d529405ddb61705a44cd700bd30a8b66a8d44ae26ddf8365dbc6",
+          "model-00003-of-00005.safetensors": "0684ef801385f0669a0b3e4ab160c50877efdbfa40eb97788595985de2743e78",
+          "model-00004-of-00005.safetensors": "b4b964e6526f81ccfa625c900b72ce92d5e0fd2debb75998763038ad06b9c541",
+          "model-00005-of-00005.safetensors": "4ef2de8f93e165b4e02425769fc566000b0674256ef0c3a27b23a0d45eb12088",
+          "tokenizer.json": "7d4046bf0505a327dd5a0abbb427ecd4fc82f99c2ceaa170bc61ecde12809b0c",
+          "tokenizer.model": "1299c11d7cf632ef3b4e11937501358ada021bbdf7c47638d13c0ee982f2e79c"
+        }
+      }
+    }
+  },
+  "controls": {
+    "canny_vf": "edgedetect=low=0.1:high=0.3:mode=wires,format=gray",
+    "scale_2k_vf": "scale=2598:1472:flags=lanczos,crop=2560:1472"
+  },
+  "upscale": {
+    "enabled": false,
+    "vf": "crop=1920:1080:(in_w-out_w)/2:(in_h-out_h)/2,scale=2560:1440:flags=lanczos,cas=0.4,noise=alls=6:allf=t,fps=24"
+  },
+  "clip_timeout_s": 600,
+  "end_reserve_min": 10,
+  "extra_jobs_file": "ltx_extra.json"
+}

@@ -1,3 +1,4 @@
+
 # from vano1919/tmr-video-script-engine@d88ba8f:tmr_engine/render/imagegen.py (GeminiImages, PRICES), reshaped
 """Gemini picture client (D-41): references, a price table, a budget guard, a cache and a spend log. stdlib only.
 
@@ -19,6 +20,10 @@ import urllib.request
 from pathlib import Path
 
 API_URL = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
+# v4.3 (plan 0.6, 0.7; GC-14): pictures come free from the Gemini chat (imagegen/turn_pack.py); this paid API route is OFF
+# unless the switch is set for one batch the creator approved (the 2K re-make of failing close-ups). A real call also needs a
+# freshly checked model (config/model_lifecycle.json, core/model_lifecycle_guard.assert_fresh_for_paid_run).
+API_SWITCH = "EXPLAINER_GEMINI_API"
 PRICES_CHECKED = "2026-10-16"
 # USD per output picture (Google's standard-tier list prices, ai.google.dev/gemini-api/docs/pricing, 2026-10-16)
 PRICES = {
@@ -59,6 +64,12 @@ def _write_atomic(path: Path, data: bytes) -> None:
     tmp = path.with_name(path.name + ".tmp")
     tmp.write_bytes(data)
     os.replace(tmp, path)
+
+
+def require_api_on() -> None:
+    if os.environ.get(API_SWITCH) != "on":
+        raise GeminiError(f"the paid Gemini API route is off (v4.3, GC-14): pictures come from the Gemini chat; set "
+                          f"{API_SWITCH}=on only for a batch the creator approved with its price")
 
 
 class GeminiError(RuntimeError):
@@ -123,6 +134,9 @@ class GeminiClient:
         self.root.mkdir(parents=True, exist_ok=True)
 
     def _http(self, model: str, body: dict) -> dict:
+        from explainer_engine.core.model_lifecycle_guard import assert_fresh_for_paid_run
+        require_api_on()
+        assert_fresh_for_paid_run(model)
         if not self.key:
             raise GeminiError("GEMINI_API_KEY is not set")
         request = urllib.request.Request(API_URL.format(model=model), data=json.dumps(body).encode(),
@@ -198,6 +212,7 @@ class GeminiClient:
 
     # --- batch tier (half price, asynchronous) ----------------------------------------------------------------------
     def _batch_http(self, method: str, url: str, body: dict | None = None) -> dict:
+        require_api_on()
         if not self.key:
             raise GeminiError("GEMINI_API_KEY is not set")
         data = json.dumps(body).encode() if body is not None else None
@@ -221,6 +236,9 @@ class GeminiClient:
         """items: [{name, prompt, refs: [bytes]}]. Reserves the batch price, sends ONE batch, records it on disk at once
         (so a stop loses nothing: ``collect_batch`` can be called later, even from another run). Returns the batch name."""
         http = getattr(self, "batch_post", None) or self._batch_http
+        if http == self._batch_http:                      # the real network: the model must be freshly checked
+            from explainer_engine.core.model_lifecycle_guard import assert_fresh_for_paid_run
+            assert_fresh_for_paid_run(model)
         reqs, total = [], 0
         for it in items:
             refs = it.get("refs") or []

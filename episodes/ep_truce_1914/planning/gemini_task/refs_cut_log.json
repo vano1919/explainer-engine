@@ -1,0 +1,102 @@
+{
+ "why": "FL-021: lanterns out of the hero references before they are attached to scenes; creator card cmsg_01Hnu5zB86sjUj5GtTgaUkPWWvxZgJnDTHiigQm6f3JM6X answer A (17:16 UTC)",
+ "items": {
+  "ref_char_thomas_hale_portrait": {
+   "source": "api_S3_R1/ref_char_thomas_hale_portrait.png",
+   "source_sha256": "0fa660be5e586f2a14637b433a57b61558fbe4c518474cb26bf812919d4f8a9a",
+   "crop_x": [
+    0.18,
+    0.86
+   ],
+   "inpaint_boxes_px": [],
+   "size": [
+    1871,
+    1536
+   ],
+   "sha256": "37e16c56902be89c3cb44ed71caf714ff8135c7dccfcbbd2bc4740e64d1731ed"
+  },
+  "ref_char_sgt_harris_portrait": {
+   "source": "api_S3_R1/ref_char_sgt_harris_portrait.png",
+   "source_sha256": "1a22bd1307691e1cefcf101689576748114def96e9568870aab34ecc86e6b928",
+   "crop_x": [
+    0.22,
+    0.86
+   ],
+   "inpaint_boxes_px": [],
+   "size": [
+    1761,
+    1536
+   ],
+   "sha256": "e17130fba21bc0d4d906533ecbb0f6bfec4c5963e9fe3e2507167636b1e18374"
+  },
+  "ref_char_friedrich_brandt_portrait": {
+   "source": "api_S3_R1/ref_char_friedrich_brandt_portrait.png",
+   "source_sha256": "d895f3d4316ac87ce3548903f463090471feb6d55c491d86089148369fdf5c45",
+   "crop_x": [
+    0.0,
+    1.0
+   ],
+   "inpaint_boxes_px": [
+    [
+     1835,
+     615,
+     1925,
+     860
+    ],
+    [
+     635,
+     630,
+     725,
+     830
+    ]
+   ],
+   "size": [
+    2752,
+    1536
+   ],
+   "sha256": "0d55dc2f285b7e2e25969b4e429da27b480b378fdba3cce5e33531e102b377f6"
+  },
+  "ref_char_thomas_hale_full_body": {
+   "source": "api_S3_R2/ref_char_thomas_hale_full_body.png",
+   "source_sha256": "3b1b5553fc5a86d4e9cf7934930a1d97d9454042c98d68e8e0e710c98d74bbe6",
+   "crop_x": [
+    0.35,
+    0.65
+   ],
+   "inpaint_boxes_px": [],
+   "size": [
+    825,
+    1536
+   ],
+   "sha256": "ffbc0378e2bf9b707b66d06a0e3b716a2c8caf563e3dbf4807edc6a371a55c1b"
+  },
+  "ref_char_sgt_harris_full_body": {
+   "source": "api_S3_R2/ref_char_sgt_harris_full_body.png",
+   "source_sha256": "ba6e2c8bbc9eefc1a94b8fda3b8248b6ecad0c1b7d3af5c46d4f5a95c18894df",
+   "crop_x": [
+    0.3,
+    0.72
+   ],
+   "inpaint_boxes_px": [],
+   "size": [
+    1156,
+    1536
+   ],
+   "sha256": "a04afc43c315d45a9517afa88bf5b7f9170be1b64879335fd81d5e1b31ef10bf"
+  },
+  "ref_char_friedrich_brandt_full_body": {
+   "source": "api_S3_R2/ref_char_friedrich_brandt_full_body.png",
+   "source_sha256": "5b0eca86733e7baf380646ae58f86b585b9402014ab4b2d9555af75581aa37aa",
+   "crop_x": [
+    0.385,
+    0.62
+   ],
+   "inpaint_boxes_px": [],
+   "size": [
+    647,
+    1536
+   ],
+   "sha256": "03f1d038158d6a4ebb37dc3425edbb5db7be00bcb1138a5403d05ca6a55de151"
+  }
+ }
+}

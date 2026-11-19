@@ -1,0 +1,108 @@
+[
+ {
+  "shot_id": "S02_SH004",
+  "prompt": "Flanders, Christmas 1914, a frozen winter world. Image 1 is the place, British front-line breastwork trench opposite Frelinghien / Christmas Eve 1914, afternoon to dusk: keep its landmarks, light and colours, but show it from a new camera position. Medium wide shot, eye-level camera. Exactly 6 people. 6 unnamed background figures. Visible: waist-high sandbag breastworks with frost in the centre; duckboards over brown floodwater in the centre; the fire step in the centre. Day; key light from the top (the low winter sun).",
+  "refs": [
+   "S02_SH008_start"
+  ],
+  "questions": [
+   "How many people are in the picture? (expected 6)",
+   "Is waist-high sandbag breastworks with frost visible in the centre?",
+   "Is duckboards over brown floodwater visible in the centre?",
+   "Is the fire step visible in the centre?",
+   "Does the main light come from the top?",
+   "Is the framing clearly different from the previous shot (new size or angle)?"
+  ]
+ },
+ {
+  "shot_id": "S02_SH005",
+  "prompt": "Flanders, Christmas 1914, a frozen winter world. Image 1 is the place, British front-line breastwork trench opposite Frelinghien / Christmas Eve 1914, afternoon to dusk: keep its landmarks, light and colours, but show it from a new camera position. Medium close-up, high angle. No people. Visible: a small coke brazier in the centre. The hands is Thomas's cold hands in khaki greatcoat sleeves holding the letter open. Dusk; key light from the front (the low winter sun). Change from the previous shot: scene key_light_dir now front (the light of this shot: warm brazier light at dusk); scene time_of_day now dusk (the light of this shot: warm brazier light at dusk). Keep everything else the same.",
+  "refs": [
+   "S02_SH008_start"
+  ],
+  "questions": [
+   "How many people are in the picture? (expected 0)",
+   "Is a small coke brazier visible in the centre?",
+   "Does the main light come from the front?",
+   "Is the framing clearly different from the previous shot (new size or angle)?"
+  ]
+ },
+ {
+  "shot_id": "S02_SH006",
+  "prompt": "Flanders, Christmas 1914, a frozen winter world. Image 1 is the place, British front-line breastwork trench opposite Frelinghien / Christmas Eve 1914, afternoon to dusk: keep its landmarks, light and colours, but show it from a new camera position. Image 2 is the young British private: copy the face, body and costume only, not the pose. Medium shot, eye-level camera. Exactly 1 person. The young British private, Private Thomas Hale, a lean 20-year-old English infantryman with a pale freckled face, short sandy-brown hair, light grey eyes, a khaki 1914 soft service cap with ear flaps, khaki 1902 service-dress tunic with brass buttons, 1908 webbing, muddy puttees, a long khaki greatcoat, wearing khaki soft cap, long khaki greatcoat open over the tunic, every brass tunic button in place, on the left, in the middle distance, facing right, looking off to the right, holding prop mothers letter (open) in both hands, Thomas sits on the fire step by the brazier holding the letter. Visible: waist-high sandbag breastworks with frost in the centre; the fire step in the centre; a small coke brazier in the centre. Dusk; key light from the front (the low winter sun).",
+  "refs": [
+   "S02_SH008_start",
+   "planning/gemini_task/refs/ref_char_thomas_hale_portrait.jpg"
+  ],
+  "questions": [
+   "How many people are in the picture? (expected 1)",
+   "Is the young British private on the left of the frame?",
+   "Does the young British private face right?",
+   "Does the young British private hold prop mothers letter in the both hand?",
+   "Does the young British private match the model sheet (face, colours, costume)?",
+   "Is waist-high sandbag breastworks with frost visible in the centre?",
+   "Is the fire step visible in the centre?",
+   "Is a small coke brazier visible in the centre?",
+   "Does the main light come from the front?",
+   "Is the framing clearly different from the previous shot (new size or angle)?"
+  ]
+ },
+ {
+  "shot_id": "S02_SH007",
+  "prompt": "Flanders, Christmas 1914, a frozen winter world. Image 1 is the place, British front-line breastwork trench opposite Frelinghien / Christmas Eve 1914, afternoon to dusk: keep its landmarks, light and colours, but show it from a new camera position. Image 2 is the British sergeant: copy the face, body and costume only, not the pose. Image 3 is the young British private: copy the face, body and costume only, not the pose. Medium wide shot, eye-level camera. Exactly 2 people. The British sergeant, Sergeant Albert Harris, a hard 42-year-old British regular soldier with a weathered lined face, grey stubble, a thick dark moustache, deep-set eyes, a khaki soft service cap, three sergeant's chevrons on the sleeve, a goatskin jerkin over the khaki tunic, wearing khaki soft cap, goatskin jerkin over the khaki tunic, three chevrons, on the right, in the middle distance, facing left, looking at the young British private, Harris sits further along the fire step cleaning his rifle. The young British private, Private Thomas Hale, a lean 20-year-old English infantryman with a pale freckled face, short sandy-brown hair, light grey eyes, a khaki 1914 soft service cap with ear flaps, khaki 1902 service-dress tunic with brass buttons, 1908 webbing, muddy puttees, a long khaki greatcoat, wearing khaki soft cap, long khaki greatcoat open over the tunic, every brass tunic button in place, on the left, in the middle distance, facing right, looking at the British sergeant. Visible: waist-high sandbag breastworks with frost in the centre; the fire step in the centre; a small coke brazier in the centre. The rifle is across Harris's knees, being cleaned. Dusk; key light from the front (the low winter sun). Change from the previous shot: char_thomas_hale props now None (end of S02_SH006: Thomas folds the letter into his breast pocket; this shot starts: Harris sits further along the fire step cleaning his rifle). Keep everything else the same.",
+  "refs": [
+   "S02_SH008_start",
+   "planning/gemini_task/refs/ref_char_sgt_harris_portrait.jpg",
+   "planning/gemini_task/refs/ref_char_thomas_hale_portrait.jpg"
+  ],
+  "questions": [
+   "How many people are in the picture? (expected 2)",
+   "Is the British sergeant on the right of the frame?",
+   "Does the British sergeant face left?",
+   "Does the British sergeant match the model sheet (face, colours, costume)?",
+   "Is the young British private on the left of the frame?",
+   "Does the young British private face right?",
+   "Does the young British private match the model sheet (face, colours, costume)?",
+   "Is waist-high sandbag breastworks with frost visible in the centre?",
+   "Is the fire step visible in the centre?",
+   "Is a small coke brazier visible in the centre?",
+   "Does the main light come from the front?",
+   "Is the framing clearly different from the previous shot (new size or angle)?"
+  ]
+ },
+ {
+  "shot_id": "S02_SH008",
+  "prompt": "Flanders, Christmas 1914, a frozen winter world. Image 1 is the young British private: copy the face, body and costume only, not the pose. Image 2 is the British sergeant: copy the face, body and costume only, not the pose. Wide shot, eye-level camera. Exactly 2 people. The young British private, Private Thomas Hale, a lean 20-year-old English infantryman with a pale freckled face, short sandy-brown hair, light grey eyes, a khaki 1914 soft service cap with ear flaps, khaki 1902 service-dress tunic with brass buttons, 1908 webbing, muddy puttees, a long khaki greatcoat, wearing khaki soft cap, long khaki greatcoat open over the tunic, every brass tunic button in place, on the left, in the middle distance, facing right, looking at the British sergeant, Thomas and Harris sit by the brazier at dusk. The British sergeant, Sergeant Albert Harris, a hard 42-year-old British regular soldier with a weathered lined face, grey stubble, a thick dark moustache, deep-set eyes, a khaki soft service cap, three sergeant's chevrons on the sleeve, a goatskin jerkin over the khaki tunic, wearing khaki soft cap, goatskin jerkin over the khaki tunic, three chevrons, on the right, in the middle distance, facing left, looking at the young British private. Visible: waist-high sandbag breastworks with frost in the centre; a small coke brazier in the centre. Dusk; key light from the left (the low winter sun). Change from the previous shot: scene key_light_dir now left (the light of this shot: cold blue dusk). Keep everything else the same.",
+  "refs": [
+   "planning/gemini_task/refs/ref_char_thomas_hale_portrait.jpg",
+   "planning/gemini_task/refs/ref_char_sgt_harris_portrait.jpg"
+  ],
+  "questions": [
+   "How many people are in the picture? (expected 2)",
+   "Is the young British private on the left of the frame?",
+   "Does the young British private face right?",
+   "Does the young British private match the model sheet (face, colours, costume)?",
+   "Is the British sergeant on the right of the frame?",
+   "Does the British sergeant face left?",
+   "Does the British sergeant match the model sheet (face, colours, costume)?",
+   "Is waist-high sandbag breastworks with frost visible in the centre?",
+   "Is a small coke brazier visible in the centre?",
+   "Does the main light come from the left?"
+  ]
+ },
+ {
+  "shot_id": "S02_SH009",
+  "prompt": "Flanders, Christmas 1914, a frozen winter world. Image 1 is the place, British front-line breastwork trench opposite Frelinghien / Christmas Eve 1914, afternoon to dusk: keep its landmarks, light and colours, but show it from a new camera position. Medium wide shot, eye-level camera. Exactly 4 people. 4 unnamed background figures. Visible: waist-high sandbag breastworks with frost in the centre; the fire step in the centre; a small coke brazier in the centre. Dusk; key light from the front (the low winter sun). Change from the previous shot: scene key_light_dir now front (the light of this shot: dusk, warm brazier light). Keep everything else the same.",
+  "refs": [
+   "S02_SH008_start"
+  ],
+  "questions": [
+   "How many people are in the picture? (expected 4)",
+   "Is waist-high sandbag breastworks with frost visible in the centre?",
+   "Is the fire step visible in the centre?",
+   "Is a small coke brazier visible in the centre?",
+   "Does the main light come from the front?",
+   "Is the framing clearly different from the previous shot (new size or angle)?"
+  ]
+ }
+]

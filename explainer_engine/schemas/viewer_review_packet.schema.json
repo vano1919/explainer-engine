@@ -1,0 +1,123 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://explainer-engine.local/schemas/viewer_review_packet.schema.json",
+  "title": "CleanRoomYouTubeViewerReviewPacketV1",
+  "description": "Sanitized viewer-perceptible review packet passed to youtube_viewer_critic (D-130). Strictly strips all internal rule IDs, world_bible internals, and model/engine routing tokens.",
+  "type": "object",
+  "required": [
+    "schema",
+    "episode_id",
+    "title",
+    "target_duration_seconds",
+    "packaging_candidates",
+    "viewer_beats"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "const": "viewer_review_packet/1"
+    },
+    "episode_id": {
+      "type": "string",
+      "minLength": 3
+    },
+    "title": {
+      "type": "string",
+      "minLength": 5
+    },
+    "what_if_premise": {
+      "type": "string"
+    },
+    "target_duration_seconds": {
+      "type": "number",
+      "minimum": 30
+    },
+    "packaging_candidates": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "title",
+          "thumbnail_concept"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 5
+          },
+          "thumbnail_concept": {
+            "type": "string",
+            "minLength": 5
+          },
+          "thumbnail_text_overlay": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "viewer_beats": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "beat_index",
+          "start_sec",
+          "end_sec",
+          "duration_sec",
+          "spoken_narration",
+          "on_screen_visual_experience",
+          "visual_format"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "beat_index": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "start_sec": {
+            "type": "number",
+            "minimum": 0
+          },
+          "end_sec": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "duration_sec": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "speaker_role": {
+            "enum": [
+              "narrator",
+              "historical_character",
+              "silent_visual_beat"
+            ]
+          },
+          "spoken_narration": {
+            "type": "string"
+          },
+          "on_screen_visual_experience": {
+            "type": "string",
+            "minLength": 5
+          },
+          "visual_format": {
+            "enum": [
+              "cinematic_moving_scene",
+              "animated_archival_still",
+              "youtube_data_map_or_chart"
+            ]
+          },
+          "camera_feel": {
+            "type": "string"
+          },
+          "heard_atmosphere": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

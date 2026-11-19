@@ -1,0 +1,122 @@
+{
+ "schema": "continuity_card/1",
+ "scene_id": "S01@loc_no_mans_land:S01_SH003",
+ "model": "gemini_3_1_flash_image",
+ "style_line": "Flanders, Christmas 1914, a frozen winter world.",
+ "location": {
+  "id": "loc_no_mans_land",
+  "where_when": "No man's land between the lines / Christmas morning 1914",
+  "int_ext": "EXT",
+  "time_of_day": "dawn",
+  "weather": "fog",
+  "master_frame": "S01_SH004_start",
+  "landmarks": [
+   {
+    "id": "wire",
+    "text": "rows of barbed wire on wooden stakes"
+   },
+   {
+    "id": "shell_holes",
+    "text": "shell holes skinned with ice"
+   },
+   {
+    "id": "ruined_farm",
+    "text": "a ruined brick farm in the distance"
+   },
+   {
+    "id": "willows",
+    "text": "pollarded willows"
+   },
+   {
+    "id": "ammo_box",
+    "text": "an ammunition box"
+   },
+   {
+    "id": "graves",
+    "text": "fresh graves with small wooden crosses"
+   }
+  ]
+ },
+ "light": {
+  "key_light_dir": "right",
+  "light_source": "the low winter sun",
+  "colour_key": "pale white winter dawn, flat grey midday, low amber sunset"
+ },
+ "cast": {
+  "char_thomas_hale": {
+   "name": "the young British private",
+   "description": "Private Thomas Hale, a lean 20-year-old English infantryman with a pale freckled face, short sandy-brown hair, light grey eyes, a khaki 1914 soft service cap with ear flaps, khaki 1902 service-dress tunic with brass buttons, 1908 webbing, muddy puttees, a long khaki greatcoat",
+   "sheet": "planning/gemini_task/refs/ref_char_thomas_hale_portrait.jpg",
+   "costumes": {
+    "service": "khaki soft cap, long khaki greatcoat open over the tunic, every brass tunic button in place",
+    "button_cut": "khaki soft cap, long khaki greatcoat open over the tunic, the top right brass tunic button cut off"
+   }
+  }
+ },
+ "shots": [
+  {
+   "shot_id": "S01_SH003",
+   "shot_size": "WS",
+   "angle": "eye",
+   "camera_side": "A",
+   "head_count": 1,
+   "characters": [
+    {
+     "id": "char_thomas_hale",
+     "screen_pos": "centre",
+     "depth": "mid",
+     "facing": "away",
+     "costume": "service",
+     "action": "Thomas walks away from camera between the wire"
+    }
+   ],
+   "camera_move": "tracking_shot",
+   "refs": [
+    {
+     "path": "S01_SH004_start",
+     "role": "place"
+    },
+    {
+     "path": "planning/gemini_task/refs/ref_char_thomas_hale_portrait.jpg",
+     "role": "character",
+     "of": "char_thomas_hale"
+    }
+   ],
+   "hook_up": "first",
+   "landmarks": [
+    {
+     "id": "wire",
+     "side": "centre"
+    }
+   ],
+   "derive_from": "original",
+   "chain_depth": 0
+  },
+  {
+   "shot_id": "S01_SH004",
+   "shot_size": "EWS",
+   "angle": "high",
+   "camera_side": "A",
+   "head_count": 20,
+   "characters": [],
+   "camera_move": "slow_pull_back",
+   "refs": [],
+   "is_master": true,
+   "hook_up": "cutaway",
+   "angle_change_deg": 90.0,
+   "changes": [
+    {
+     "entity": "scene",
+     "field": "weather",
+     "from": null,
+     "to": "clear",
+     "cause": "the light of this shot: low golden Christmas-morning sun, frost haze"
+    }
+   ],
+   "weather": "clear",
+   "extras": 20,
+   "derive_from": "original",
+   "chain_depth": 0
+  }
+ ]
+}

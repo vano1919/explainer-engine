@@ -1,3 +1,4 @@
+
 """AC-16..AC-19: the episode look. A safety layer ON TOP of the style LoRA that keeps colour and light consistent between
 the pictures of one episode, while places, eras and countries change scene to scene. It never replaces the style: the
 LT-66 absolutes (qa/style_prompt.ABSOLUTES) stay as they are, and the look only adds a few colour and light words and a
@@ -5,7 +6,7 @@ gentle, bounded colour match. ვანო, 2026-10-25 03:04 Tbilisi.
 
 Two parts:
 1. Words (AC-17): the episode's colour/light phrase (at most 10 words, colour and light vocabulary only) is added to every
-   style-LoRA prompt of the episode; the whole prompt must still pass `style_prompt.check` (40 words), so scene words
+   style-LoRA prompt of the episode; the whole prompt must still pass `style_prompt.check` (at most `MAX_WORDS`), so scene words
    shrink, never the absolutes. A scene may use one of the episode's named light variants (night, interior ...).
 2. Pixels (AC-18, AC-19): the look is MEASURED from the episode's approved key frame (Lab mean and spread, hue
    histogram, 6 palette colours; no hex is stored in code). Every new picture's colour distance to it is reported

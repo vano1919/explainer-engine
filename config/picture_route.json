@@ -1,0 +1,14 @@
+{
+  "schema": "picture_route/1",
+  "decided": "2026-11-13T07:28Z",
+  "decided_by": "creator (project chat, cmsg_01Hnu5zB86sjUj5GtTgaUkPW7XLMto2qf2FBPYsqzyqvaU)",
+  "order": [
+    {"level": 1, "route": "gemini_chat_task", "model": "Flash (listed as 4 Hydrogen)", "price_usd_per_photo": 0.0},
+    {"level": 2, "route": "gemini_api_batch", "model": "gemini-3.1-flash-image (nano-banana-2.1)",
+     "price_usd_per_photo": {"1k": 0.017, "2k": 0.025}, "note": "1K for LTX start frames, 2K for the rest"},
+    {"level": 3, "route": "bfl_api", "model": "flux-3-image-klein", "price_usd_per_photo": {"1k": 0.009},
+     "note": "only when levels 1 and 2 fail; price and cap first"}
+  ],
+  "not_used": ["fal (balance exhausted)", "huggingface_inference_providers (402)", "flux-3-image (0.048, no better)"],
+  "evidence": "HF vano1919/tmr-artifacts explainer-engine/photo_cost_2026-11-12/sheet_gemini_vs_flux3.jpg"
+}

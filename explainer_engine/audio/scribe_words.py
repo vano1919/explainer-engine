@@ -1,3 +1,4 @@
+
 """Word timings for a narration that is not Kokoro's (ElevenLabs, D-39): a speech-to-text word list with times
 (ElevenLabs Scribe: ``{"text", "start", "end"[, "type"]}``) aligned to the script text -> ``words.json``.
 
@@ -19,9 +20,12 @@ import json
 import re
 from pathlib import Path
 
+import numpy as np
+
 from explainer_engine.scripting import entity_align
 
 MIN_COVERAGE = 0.97
+SILENT_TAIL_RMS = 0.02   # FL-112 (Audit #6): Whisper/Scribe words in silent clip tails (RMS < 0.02) are hallucinations
 _ONES = "zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen " \
         "seventeen eighteen nineteen".split()
 _TENS = "_ _ twenty thirty forty fifty sixty seventy eighty ninety".split()
@@ -106,6 +110,25 @@ def transcript_words(data) -> list[dict]:
         if text:
             out.append({"text": text, "start": float(w["start"]), "end": float(w["end"])})
     return out
+
+
+def filter_silent_tail_words(words: list[dict], samples: np.ndarray, sr: int, rms_floor: float = SILENT_TAIL_RMS) -> list[dict]:
+    """FL-112 (Audit #6): drop Whisper/Scribe hallucinated words (such as 'You', 'Thanks for watching') whose audio window
+    has linear RMS below ``rms_floor`` (default 0.02)."""
+    if samples is None or len(samples) == 0 or sr <= 0:
+        return list(words)
+    mono = samples.mean(axis=1) if getattr(samples, "ndim", 1) == 2 else np.asarray(samples, dtype=np.float64)
+    kept: list[dict] = []
+    for w in words:
+        s0 = float(w.get("start", w.get("s", 0.0)))
+        s1 = float(w.get("end", w.get("e", s0 + 0.1)))
+        i0 = max(0, int(round(s0 * sr)))
+        i1 = min(len(mono), max(i0 + 1, int(round(s1 * sr))))
+        seg = mono[i0:i1]
+        rms = float(np.sqrt(np.mean(np.square(seg, dtype=np.float64)))) if len(seg) else 0.0
+        if rms >= rms_floor:
+            kept.append(w)
+    return kept
 
 
 def align(text: str, heard: list[dict], duration: float | None = None, entities: set[str] | None = None) -> dict:

@@ -1,0 +1,448 @@
+{
+ "schema": "continuity_card/1",
+ "scene_id": "S04@loc_no_mans_land:S04_SH008",
+ "model": "gemini_3_1_flash_image",
+ "style_line": "Flanders, Christmas 1914, a frozen winter world.",
+ "location": {
+  "id": "loc_no_mans_land",
+  "where_when": "No man's land between the lines / Christmas morning 1914, dawn",
+  "int_ext": "EXT",
+  "time_of_day": "dawn",
+  "weather": "fog",
+  "master_frame": "S04_SH015_start",
+  "landmarks": [
+   {
+    "id": "wire",
+    "text": "rows of barbed wire on wooden stakes"
+   },
+   {
+    "id": "shell_holes",
+    "text": "shell holes skinned with ice"
+   },
+   {
+    "id": "ruined_farm",
+    "text": "a ruined brick farm in the distance"
+   },
+   {
+    "id": "willows",
+    "text": "pollarded willows"
+   },
+   {
+    "id": "ammo_box",
+    "text": "an ammunition box"
+   },
+   {
+    "id": "graves",
+    "text": "fresh graves with small wooden crosses"
+   }
+  ]
+ },
+ "light": {
+  "key_light_dir": "right",
+  "light_source": "the low winter sun",
+  "colour_key": "pale white winter dawn, flat grey midday, low amber sunset"
+ },
+ "cast": {
+  "char_friedrich_brandt": {
+   "name": "the Saxon corporal",
+   "description": "Gefreiter Friedrich Brandt, a broad-shouldered 32-year-old Saxon soldier with a calm square face, close-cropped dark-blond hair, a full fair moustache, kind tired eyes, a field-grey round Feldmuetze cap with red band and cockade, field-grey 1907 tunic, grey greatcoat, black leather belt and boots",
+   "sheet": "planning/gemini_task/refs/ref_char_friedrich_brandt_portrait.jpg",
+   "costumes": {
+    "field": "field-grey round cap with red band, grey greatcoat buttoned, the portrait card in the left breast pocket",
+    "button_given": "field-grey round cap with red band, grey greatcoat buttoned with one button missing, the portrait card in the left breast pocket"
+   }
+  },
+  "char_thomas_hale": {
+   "name": "the young British private",
+   "description": "Private Thomas Hale, a lean 20-year-old English infantryman with a pale freckled face, short sandy-brown hair, light grey eyes, a khaki 1914 soft service cap with ear flaps, khaki 1902 service-dress tunic with brass buttons, 1908 webbing, muddy puttees, a long khaki greatcoat",
+   "sheet": "planning/gemini_task/refs/ref_char_thomas_hale_portrait.jpg",
+   "costumes": {
+    "service": "khaki soft cap, long khaki greatcoat open over the tunic, every brass tunic button in place",
+    "button_cut": "khaki soft cap, long khaki greatcoat open over the tunic, the top right brass tunic button cut off"
+   }
+  }
+ },
+ "shots": [
+  {
+   "shot_id": "S04_SH008",
+   "shot_size": "WS",
+   "angle": "eye",
+   "camera_side": "A",
+   "head_count": 1,
+   "characters": [
+    {
+     "id": "char_thomas_hale",
+     "screen_pos": "centre",
+     "depth": "mid",
+     "facing": "away",
+     "costume": "service",
+     "action": "Thomas walks away from camera between the wire"
+    }
+   ],
+   "camera_move": "tracking_shot",
+   "refs": [
+    {
+     "path": "S04_SH015_start",
+     "role": "place"
+    },
+    {
+     "path": "planning/gemini_task/refs/ref_char_thomas_hale_portrait.jpg",
+     "role": "character",
+     "of": "char_thomas_hale"
+    }
+   ],
+   "hook_up": "first",
+   "landmarks": [
+    {
+     "id": "wire",
+     "side": "centre"
+    }
+   ],
+   "derive_from": "original",
+   "chain_depth": 0
+  },
+  {
+   "shot_id": "S04_SH009",
+   "shot_size": "MWS",
+   "angle": "eye",
+   "camera_side": "A",
+   "head_count": 2,
+   "characters": [
+    {
+     "id": "char_friedrich_brandt",
+     "screen_pos": "right",
+     "depth": "mid",
+     "facing": "left",
+     "costume": "field",
+     "eyeline": "char_thomas_hale"
+    },
+    {
+     "id": "char_thomas_hale",
+     "screen_pos": "left",
+     "depth": "mid",
+     "facing": "right",
+     "costume": "service",
+     "eyeline": "char_friedrich_brandt",
+     "action": "Thomas and Friedrich stop two paces apart"
+    }
+   ],
+   "camera_move": "static",
+   "refs": [
+    {
+     "path": "S04_SH015_start",
+     "role": "place"
+    },
+    {
+     "path": "planning/gemini_task/refs/ref_char_friedrich_brandt_portrait.jpg",
+     "role": "character",
+     "of": "char_friedrich_brandt"
+    },
+    {
+     "path": "planning/gemini_task/refs/ref_char_thomas_hale_portrait.jpg",
+     "role": "character",
+     "of": "char_thomas_hale"
+    }
+   ],
+   "axis": [
+    "char_friedrich_brandt",
+    "char_thomas_hale"
+   ],
+   "hook_up": "eyeline",
+   "angle_change_deg": 90.0,
+   "changes": [
+    {
+     "entity": "scene",
+     "field": "weather",
+     "from": null,
+     "to": "clear",
+     "cause": "the light of this shot: low golden winter morning sun, frost haze"
+    }
+   ],
+   "weather": "clear",
+   "landmarks": [
+    {
+     "id": "wire",
+     "side": "centre"
+    }
+   ],
+   "derive_from": "original",
+   "chain_depth": 0
+  },
+  {
+   "shot_id": "S04_SH010",
+   "shot_size": "MS",
+   "angle": "eye",
+   "camera_side": "A",
+   "head_count": 2,
+   "characters": [
+    {
+     "id": "char_thomas_hale",
+     "screen_pos": "left",
+     "depth": "mid",
+     "facing": "right",
+     "costume": "service",
+     "eyeline": "char_friedrich_brandt",
+     "action": "Thomas stands facing Friedrich"
+    },
+    {
+     "id": "char_friedrich_brandt",
+     "screen_pos": "right",
+     "depth": "front",
+     "facing": "left",
+     "costume": "field",
+     "eyeline": "char_thomas_hale"
+    }
+   ],
+   "camera_move": "static",
+   "refs": [
+    {
+     "path": "S04_SH015_start",
+     "role": "place"
+    },
+    {
+     "path": "planning/gemini_task/refs/ref_char_thomas_hale_portrait.jpg",
+     "role": "character",
+     "of": "char_thomas_hale"
+    },
+    {
+     "path": "planning/gemini_task/refs/ref_char_friedrich_brandt_portrait.jpg",
+     "role": "character",
+     "of": "char_friedrich_brandt"
+    }
+   ],
+   "axis": [
+    "char_thomas_hale",
+    "char_friedrich_brandt"
+   ],
+   "hook_up": "eyeline",
+   "angle_change_deg": 45.0,
+   "weather": "clear",
+   "derive_from": "original",
+   "chain_depth": 0
+  },
+  {
+   "shot_id": "S04_SH011",
+   "shot_size": "MCU",
+   "angle": "eye",
+   "camera_side": "A",
+   "head_count": 0,
+   "characters": [],
+   "camera_move": "static",
+   "refs": [
+    {
+     "path": "S04_SH015_start",
+     "role": "place"
+    }
+   ],
+   "hook_up": "cutaway",
+   "angle_change_deg": 45.0,
+   "weather": "clear",
+   "set_state": {
+    "hands": "two pairs of empty hands: khaki sleeves on the left, field-grey sleeves on the right"
+   },
+   "derive_from": "original",
+   "chain_depth": 0
+  },
+  {
+   "shot_id": "S04_SH012",
+   "shot_size": "MS",
+   "angle": "eye",
+   "camera_side": "A",
+   "head_count": 2,
+   "characters": [
+    {
+     "id": "char_friedrich_brandt",
+     "screen_pos": "right",
+     "depth": "mid",
+     "facing": "left",
+     "costume": "field",
+     "eyeline": "char_thomas_hale",
+     "action": "Friedrich faces Thomas"
+    },
+    {
+     "id": "char_thomas_hale",
+     "screen_pos": "left",
+     "depth": "front",
+     "facing": "right",
+     "costume": "service",
+     "eyeline": "char_friedrich_brandt"
+    }
+   ],
+   "camera_move": "static",
+   "refs": [
+    {
+     "path": "S04_SH015_start",
+     "role": "place"
+    },
+    {
+     "path": "planning/gemini_task/refs/ref_char_friedrich_brandt_portrait.jpg",
+     "role": "character",
+     "of": "char_friedrich_brandt"
+    },
+    {
+     "path": "planning/gemini_task/refs/ref_char_thomas_hale_portrait.jpg",
+     "role": "character",
+     "of": "char_thomas_hale"
+    }
+   ],
+   "axis": [
+    "char_friedrich_brandt",
+    "char_thomas_hale"
+   ],
+   "hook_up": "eyeline",
+   "angle_change_deg": 45.0,
+   "weather": "clear",
+   "landmarks": [
+    {
+     "id": "wire",
+     "side": "centre"
+    }
+   ],
+   "derive_from": "original",
+   "chain_depth": 0
+  },
+  {
+   "shot_id": "S04_SH013",
+   "shot_size": "MS",
+   "angle": "eye",
+   "camera_side": "A",
+   "head_count": 2,
+   "characters": [
+    {
+     "id": "char_thomas_hale",
+     "screen_pos": "left",
+     "depth": "mid",
+     "facing": "right",
+     "costume": "service",
+     "eyeline": "char_friedrich_brandt",
+     "action": "Thomas looks at the offered hand"
+    },
+    {
+     "id": "char_friedrich_brandt",
+     "screen_pos": "right",
+     "depth": "front",
+     "facing": "left",
+     "costume": "field",
+     "eyeline": "char_thomas_hale"
+    }
+   ],
+   "camera_move": "static",
+   "refs": [
+    {
+     "path": "S04_SH015_start",
+     "role": "place"
+    },
+    {
+     "path": "planning/gemini_task/refs/ref_char_thomas_hale_portrait.jpg",
+     "role": "character",
+     "of": "char_thomas_hale"
+    },
+    {
+     "path": "planning/gemini_task/refs/ref_char_friedrich_brandt_portrait.jpg",
+     "role": "character",
+     "of": "char_friedrich_brandt"
+    }
+   ],
+   "axis": [
+    "char_thomas_hale",
+    "char_friedrich_brandt"
+   ],
+   "hook_up": "eyeline",
+   "angle_change_deg": 90.0,
+   "changes": [
+    {
+     "entity": "char_friedrich_brandt",
+     "field": "depth",
+     "from": "mid",
+     "to": "front",
+     "cause": "a new set-up (MS, eyeline): Thomas looks at the offered hand"
+    },
+    {
+     "entity": "char_thomas_hale",
+     "field": "depth",
+     "from": "front",
+     "to": "mid",
+     "cause": "a new set-up (MS, eyeline): Thomas looks at the offered hand"
+    }
+   ],
+   "weather": "clear",
+   "derive_from": "original",
+   "chain_depth": 0
+  },
+  {
+   "shot_id": "S04_SH014",
+   "shot_size": "MWS",
+   "angle": "eye",
+   "camera_side": "A",
+   "head_count": 2,
+   "characters": [
+    {
+     "id": "char_thomas_hale",
+     "screen_pos": "left",
+     "depth": "mid",
+     "facing": "right",
+     "costume": "service",
+     "eyeline": "char_friedrich_brandt",
+     "action": "Thomas and Friedrich face each other two paces apart"
+    },
+    {
+     "id": "char_friedrich_brandt",
+     "screen_pos": "right",
+     "depth": "mid",
+     "facing": "left",
+     "costume": "field",
+     "eyeline": "char_thomas_hale"
+    }
+   ],
+   "camera_move": "static",
+   "refs": [
+    {
+     "path": "S04_SH015_start",
+     "role": "place"
+    },
+    {
+     "path": "planning/gemini_task/refs/ref_char_thomas_hale_portrait.jpg",
+     "role": "character",
+     "of": "char_thomas_hale"
+    },
+    {
+     "path": "planning/gemini_task/refs/ref_char_friedrich_brandt_portrait.jpg",
+     "role": "character",
+     "of": "char_friedrich_brandt"
+    }
+   ],
+   "axis": [
+    "char_thomas_hale",
+    "char_friedrich_brandt"
+   ],
+   "hook_up": "match_on_action",
+   "angle_change_deg": 45.0,
+   "weather": "clear",
+   "landmarks": [
+    {
+     "id": "wire",
+     "side": "centre"
+    }
+   ],
+   "derive_from": "original",
+   "chain_depth": 0
+  },
+  {
+   "shot_id": "S04_SH015",
+   "shot_size": "EWS",
+   "angle": "eye",
+   "camera_side": "A",
+   "head_count": 16,
+   "characters": [],
+   "camera_move": "pan_right",
+   "refs": [],
+   "is_master": true,
+   "hook_up": "cutaway",
+   "angle_change_deg": 0.0,
+   "weather": "clear",
+   "extras": 16,
+   "derive_from": "original",
+   "chain_depth": 0
+  }
+ ]
+}

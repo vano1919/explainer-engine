@@ -1,0 +1,849 @@
+{
+ "source": "docs/wip/argon_2026-11-14/18_director_knowledge_base.json (Argon director design, 2026-11-15)",
+ "truce_1914_examples": [
+  {
+   "shot_id": "S01_SH001",
+   "narration": "Christmas morning, 1914.",
+   "duration_s": 2.0,
+   "idiom_id": "IDM_ESTAB_HORIZON",
+   "route": "still_25d",
+   "shot_size": "wide",
+   "picture_facts": {
+    "people": 0,
+    "sky_open": true,
+    "sky_area_pct": 28.0,
+    "thin_wire_fg": true,
+    "edge_align": 2.6
+   },
+   "camera": {
+    "op": "crane_up",
+    "rate_per_s": 0.02,
+    "target_xy": [
+     0.5,
+     0.32
+    ],
+    "handheld": 0.2
+   },
+   "rejected_moves": {
+    "orbit_small": "thin barbed wire in FG (thin_share=0.41) would tear",
+    "push_in": "reserved so S01_SH001 rises to dawn sky before S01_SH002 tilt_up"
+   },
+   "living_fx": [
+    "mist",
+    "sun_shaft",
+    "sun_glint"
+   ],
+   "transition_out": {
+    "type": "hard_cut_with_jl_bridge",
+    "j_cut_prelap_s": 0.25
+   },
+   "sound": {
+    "beds": [
+     "wind"
+    ],
+    "spots": [],
+    "prelap_next": "footsteps_dirt (-0.25s from S01_SH002)"
+   },
+   "why": "Open sky (28%) + dawn cue triggers crane_up toward rising sun; wire stays in BG plate (layer=False); J-cut prelaps climbing boots of S01_SH002."
+  },
+  {
+   "shot_id": "S01_SH002",
+   "narration": "In a few seconds, this man will walk toward the German guns.",
+   "duration_s": 4.5,
+   "idiom_id": "IDM_HOOK_ACTION",
+   "route": "video",
+   "shot_size": "medium_wide",
+   "picture_facts": {
+    "people": 1,
+    "body_action": "climbs trench ladder",
+    "focal_xy": [
+     0.48,
+     0.52
+    ]
+   },
+   "camera": {
+    "op": "tilt_up",
+    "rate_per_s": 0.022,
+    "target_xy": [
+     0.48,
+     0.4
+    ]
+   },
+   "rejected_moves": {
+    "still_25d": "whole-body ladder climb cannot be faked by 2.5D (Q4 / LP-02)"
+   },
+   "living_fx": [
+    "ltx_native_motion"
+   ],
+   "transition_out": {
+    "type": "hard_cut_with_jl_bridge",
+    "j_cut_prelap_s": 0.2
+   },
+   "sound": {
+    "beds": [
+     "wind"
+    ],
+    "foley": [
+     "footsteps_dirt@0.1s (close, pan=-0.04)",
+     "cloth_flap@1.2s (close)"
+    ]
+   },
+   "why": "Cold-open kinetic hook requires LTX video; tilt_up continues vertical vector of S01_SH001 crane_up; close boot/coat foley grounds the climb."
+  },
+  {
+   "shot_id": "S01_SH004",
+   "narration": "That Christmas, thousands of soldiers on both sides did the same.",
+   "duration_s": 5.0,
+   "idiom_id": "IDM_SCALE_REVEAL",
+   "route": "still_25d",
+   "shot_size": "extreme_wide",
+   "picture_facts": {
+    "people": 18,
+    "unlayered_crowd": true,
+    "edge_margin_x": 0.06,
+    "sky_open": true
+   },
+   "camera": {
+    "op": "pull_back",
+    "start_overscan": 1.15,
+    "end_overscan": 1.0,
+    "rate_per_s": 0.02,
+    "target_xy": [
+     0.5,
+     0.48
+    ]
+   },
+   "rejected_moves": {
+    "orbit_small": "FORBIDDEN (18 crowd figures across full width, edge_margin_x=0.06)",
+    "truck_25d": "REJECTED (soldiers at x=0.06 and x=0.94 would clip off screen)",
+    "push_in": "contradicts scale reveal ('thousands')"
+   },
+   "living_fx": [
+    "mist",
+    "cloud_drift",
+    "breath"
+   ],
+   "transition_out": {
+    "type": "hard_cut_with_jl_bridge",
+    "l_cut_postlap_s": 0.3
+   },
+   "sound": {
+    "beds": [
+     "wind",
+     "crowd_murmur (distant, word 'thousands' steps to medium)"
+    ]
+   },
+   "why": "Reverses S01_SH003's forward tracking shot with a 2D overscan pull_back (1.15x -> 1.0x) that reveals the full trench line without cutting edge figures."
+  },
+  {
+   "shot_id": "S01_SH005",
+   "narration": "This is the day the war stopped, along parts of the Western Front. How it began, with a song. And how it ended.",
+   "duration_s": 8.0,
+   "idiom_id": "IDM_ESTAB_HORIZON",
+   "route": "still_25d",
+   "split_into": [
+    {
+     "shot_id": "S01_SH005a",
+     "duration_s": 4.2,
+     "cut_after_word": "Front.",
+     "camera_op": "pan_crop_2d",
+     "direction": "right",
+     "overscan": 1.1
+    },
+    {
+     "shot_id": "S01_SH005b",
+     "duration_s": 3.8,
+     "cut_after_word": "ended.",
+     "camera_op": "push_in",
+     "crop": 1.35,
+     "target_xy": [
+      0.58,
+      0.46
+     ]
+    }
+   ],
+   "picture_facts": {
+    "people": 4,
+    "candles": 6,
+    "sky_open": true,
+    "duration_exceeds_5s": true
+   },
+   "rejected_moves": {
+    "single_8s_still": "REJECTED (BP-109: 8.0s > 5.0s max still hold)",
+    "pull_back": "CAM-VAR-01: S01_SH004 just used pull_back"
+   },
+   "living_fx": [
+    "candle",
+    "fire",
+    "mist",
+    "snow (layers=[0,1])"
+   ],
+   "transition_out": {
+    "type": "fade_to_black",
+    "frames": 24
+   },
+   "sound": {
+    "beds": [
+     "wind",
+     "fire (distant)"
+    ],
+    "transition": "ov_map_open (-0.45s prelap into S02_SH001)"
+   },
+   "why": "Splits 8.0s shot at sentence boundary 'Front.' into a rightward 2D pan across parapet Tannenbaum candles (5a) and a 1.35x cut-in push on 'with a song' (5b), ending on a 24f fade_to_black into S02."
+  },
+  {
+   "shot_id": "S02_SH001",
+   "narration": "The war had begun in August. Everyone said it would be over by Christmas.",
+   "duration_s": 6.0,
+   "idiom_id": "IDM_MAP_THEATER",
+   "route": "map_action",
+   "helper_style": "tactical_relief_map",
+   "shot_size": "top_down_map",
+   "picture_facts": {
+    "span_km": 650.0,
+    "borders": false,
+    "actions": [
+     "label(August 1914)",
+     "route_arrow(belgium->marne)",
+     "progress_bar(Aug->Dec 1914)"
+    ]
+   },
+   "camera": {
+    "op": "route_pan",
+    "view0": {
+     "lon": 3.8,
+     "lat": 49.8,
+     "span_km": 650.0
+    },
+    "drift": 0.04
+   },
+   "rejected_moves": {
+    "hold": "route_arrow spans 320km; route_pan tracks arrowhead smoothly"
+   },
+   "living_fx": [
+    "route_arrow",
+    "progress_bar",
+    "label_8pos_solver"
+   ],
+   "transition_out": {
+    "type": "cross_dissolve_8f",
+    "frames": 8,
+    "hand_off_view_end": true
+   },
+   "sound": {
+    "beds": [
+     "wind (distant)"
+    ],
+    "foley": [
+     "ov_slide@0.2s (date chip)",
+     "map_route_draw@1.1s (span)",
+     "army_march@1.1s (distant span)"
+    ]
+   },
+   "why": "1914 relief plate (borders=False) traces the August invasion spline while a top-left progress bar ticks toward 'Christmas'; hands off exact ending view0 to S02_SH002 via cross_dissolve_8f."
+  },
+  {
+   "shot_id": "S02_SH002",
+   "narration": "By December it had dug itself into the ground: one line of trenches, from the North Sea to Switzerland.",
+   "duration_s": 7.75,
+   "idiom_id": "IDM_MAP_THEATER",
+   "route": "map_action",
+   "helper_style": "tactical_relief_map",
+   "shot_size": "top_down_map",
+   "picture_facts": {
+    "span_km": 680.0,
+    "inherits_view0_from": "S02_SH001",
+    "actions": [
+     "label(December 1914)",
+     "front_line(ostend->basel)"
+    ]
+   },
+   "camera": {
+    "op": "scale",
+    "view0": "inherited_from_S02_SH001_end",
+    "target_span_km": 680.0
+   },
+   "rejected_moves": {
+    "hard_cut_reset": "REJECTED (map_to_map_same_theater_inherit_camera: resetting view0 causes a jump cut on the same map)"
+   },
+   "living_fx": [
+    "front_line (march ease)",
+    "label_8pos_solver"
+   ],
+   "transition_out": {
+    "type": "cross_dissolve_8f",
+    "frames": 8,
+    "hand_off_view_end": true
+   },
+   "sound": {
+    "beds": [
+     "wind (distant)"
+    ],
+    "foley": [
+     "ov_slide@0.2s",
+     "map_route_draw@1.4s (span)",
+     "map_arrive_click@7.1s (onset)"
+    ]
+   },
+   "why": "Inherits S02_SH001's exact camera state and scales along the 400-mile front_line spline from Ostend to Switzerland; dissolves into S02_SH003."
+  },
+  {
+   "shot_id": "S02_SH003",
+   "narration": "Here, in Flanders, the two sides sat close enough to hear each other cough.",
+   "duration_s": 6.0,
+   "idiom_id": "IDM_MAP_SECTOR_FLYIN",
+   "route": "map_action",
+   "helper_style": "sector_radar_zoom",
+   "shot_size": "top_down_map",
+   "picture_facts": {
+    "span_km_start": 680.0,
+    "span_km_end": 250.0,
+    "inherits_view0_from": "S02_SH002",
+    "actions": [
+     "front_line(cues=none, stands=true)",
+     "zoom(flanders, 250km)",
+     "highlight(flanders)"
+    ]
+   },
+   "camera": {
+    "op": "fly_to",
+    "view0": "inherited_from_S02_SH002_end",
+    "view_end": {
+     "lon": 2.85,
+     "lat": 50.72,
+     "span_km": 250.0
+    }
+   },
+   "rejected_moves": {
+    "redraw_front_line": "REJECTED (criterion 1: line already drawn in S02_SH002; stands at frame 0 with cues='none')"
+   },
+   "living_fx": [
+    "standing_front_line",
+    "highlight_pulse"
+   ],
+   "transition_out": {
+    "type": "map_to_location_zoom_through",
+    "frames": 14,
+    "zoom_target_xy": [
+     0.48,
+     0.46
+    ]
+   },
+   "sound": {
+    "beds": [
+     "crowd_murmur (distant, span<=400km)"
+    ],
+    "foley": [
+     "ov_air@0.4s (fly_to span)",
+     "map_arrive_click@2.2s"
+    ],
+    "prelap_next": "water_waves/mud slosh (-0.45s into S02_SH004)"
+   },
+   "why": "Keeps the front line standing silently at frame 0, executes a logarithmic fly_to into Flanders (capped at MIN_SPAN_KM=250km), and zooms through the Flanders ring into trench shot S02_SH004."
+  },
+  {
+   "shot_id": "S02_SH004",
+   "narration": "Mud to the knee. Water in every boot. A sniper waiting for one careless head.",
+   "duration_s": 6.25,
+   "idiom_id": "IDM_ESTAB_HORIZON",
+   "route": "still_25d",
+   "split_into": [
+    {
+     "shot_id": "S02_SH004a",
+     "duration_s": 3.1,
+     "cut_after_word": "boot.",
+     "camera_op": "tilt_down",
+     "target_xy": [
+      0.5,
+      0.78
+     ]
+    },
+    {
+     "shot_id": "S02_SH004b",
+     "duration_s": 3.15,
+     "cut_after_word": "head.",
+     "camera_op": "push_in",
+     "crop": 1.35,
+     "target_xy": [
+      0.52,
+      0.28
+     ]
+    }
+   ],
+   "picture_facts": {
+    "people": 2,
+    "water_floor": true,
+    "parapet_top": true,
+    "edge_margin_x": 0.18,
+    "duration_exceeds_5s": true
+   },
+   "rejected_moves": {
+    "single_6.25s_truck": "REJECTED (BP-109 > 5.0s; narration shifts vertically from 'Mud/boot' at y=0.78 to 'sniper/head' at parapet y=0.28)"
+   },
+   "living_fx": [
+    "water_shimmer",
+    "fire",
+    "mist",
+    "breath"
+   ],
+   "transition_out": {
+    "type": "hard_cut_with_jl_bridge",
+    "j_cut_prelap_s": 0.25
+   },
+   "sound": {
+    "beds": [
+     "wind",
+     "fire (distant)"
+    ],
+    "foley": [
+     "footsteps_dirt@1.1s (water/mud boot slosh)"
+    ]
+   },
+   "why": "Splits at 'boot.' so 4a tilts down to the flooded duckboards on 'Water in every boot' and 4b cuts in 1.35x to the sandbag parapet on 'sniper waiting for one careless head'."
+  },
+  {
+   "shot_id": "S02_SH005",
+   "narration": "Private Thomas Hale had read the same line every night for a week.",
+   "duration_s": 5.0,
+   "idiom_id": "IDM_INTIMATE_PORTRAIT",
+   "route": "still_25d",
+   "shot_size": "medium_close_up",
+   "picture_facts": {
+    "people": 1,
+    "face_share": 0.042,
+    "fg_bg_depth_delta": 0.44,
+    "lights": [
+     "brazier_flame"
+    ]
+   },
+   "camera": {
+    "op": "rack_focus",
+    "companion_op": "push_in",
+    "rate_per_s": 0.015,
+    "target_xy": [
+     0.46,
+     0.38
+    ],
+    "sigma_px": 5.5,
+    "handheld": 0.25
+   },
+   "rejected_moves": {
+    "pure_push_in": "CAM-VAR-01: S02_SH004b just used push_in; pairing rack_focus (BG trench blur -> Thomas's face & letter) adds depth contrast"
+   },
+   "living_fx": [
+    "fire",
+    "embers",
+    "breath",
+    "subject_sway"
+   ],
+   "transition_out": {
+    "type": "hard_cut_with_jl_bridge",
+    "j_cut_prelap_s": 0.2
+   },
+   "sound": {
+    "beds": [
+     "fire (close)"
+    ],
+    "foley": [
+     "ov_slide@1.8s (letter paper rustle, close)"
+    ]
+   },
+   "why": "Single hero close to lens (face_share=4.2%, depth delta=0.44) supports rack_focus + subtle push_in while keeping snow/embers in far layer [0] only."
+  },
+  {
+   "shot_id": "S02_SH008",
+   "narration": "In early December, the Pope asked for a Christmas truce. The appeal failed. No official truce was agreed. Nobody asked the men in the trenches.",
+   "duration_s": 10.0,
+   "idiom_id": "IDM_HELPER_DOCUMENT -> IDM_TWO_GROUP_PIVOT",
+   "route": "still_25d (with 4.8s archival_document_card cut-in on part A, or 5.0s + 5.0s split)",
+   "split_into": [
+    {
+     "shot_id": "S02_SH008a",
+     "duration_s": 4.8,
+     "cut_after_word": "agreed.",
+     "helper_style": "archival_document_card",
+     "camera_op": "pan_crop_2d",
+     "why": "Illustrates Pope Benedict XV's December 1914 appeal & official rejection"
+    },
+    {
+     "shot_id": "S02_SH008b",
+     "duration_s": 5.2,
+     "cut_after_word": "trenches.",
+     "route": "still_25d",
+     "camera_op": "push_in",
+     "target_mask": "thomas",
+     "target_xy": [
+      0.355,
+      0.33
+     ],
+     "at_word": "nobody"
+    }
+   ],
+   "picture_facts": {
+    "people": 2,
+    "faces": [
+     [
+      0.33,
+      0.3,
+      0.37,
+      0.39
+     ],
+     [
+      0.65,
+      0.27,
+      0.71,
+      0.39
+     ]
+    ],
+    "lights": [
+     "brazier_flame",
+     "niche_candle"
+    ]
+   },
+   "rejected_moves": {
+    "unsplit_10s_still": "FAILS LP-10 / BP-109 (10.0s medium two-shot freezes for 6s before 'Nobody')",
+    "orbit_small": "FORBIDDEN (2 people at x=0.35 and x=0.68; Harris would clip at right edge)"
+   },
+   "living_fx": [
+    "fire",
+    "embers",
+    "candle",
+    "smoke",
+    "steam",
+    "cloud_drift",
+    "stars",
+    "breath"
+   ],
+   "transition_out": {
+    "type": "hard_cut_with_jl_bridge",
+    "j_cut_prelap_s": 0.25
+   },
+   "sound": {
+    "beds": [
+     "fire (medium)",
+     "wind (medium)"
+    ],
+    "foley": [
+     "ov_slide@0.3s (Papal dispatch paper on 8a)"
+    ]
+   },
+   "why": "Solves the 10.0s LP-10 violation in S02_SH008.direction.json: Part 8a shows the Papal truce dispatch (varying helper style), and on 'Nobody asked the men in the trenches' Part 8b cuts to the trench fire and snaps a push_in onto Thomas while keeping Harris inside keep_in_frame."
+  },
+  {
+   "shot_id": "S04_SH011",
+   "narration": "(their empty hands)",
+   "duration_s": 2.5,
+   "idiom_id": "IDM_OBJECT_INSERT",
+   "route": "still_25d",
+   "shot_size": "close_up",
+   "picture_facts": {
+    "people": 2,
+    "hands_only": true,
+    "fg_bg_depth_delta": 0.51,
+    "focal_xy": [
+     0.5,
+     0.54
+    ]
+   },
+   "camera": {
+    "op": "rack_focus",
+    "companion_op": "handheld",
+    "strength": 0.3,
+    "target_xy": [
+     0.5,
+     0.54
+    ],
+    "sigma_px": 6.0
+   },
+   "rejected_moves": {
+    "truck_25d": "2.5s insert between two medium dialogue videos (S04_SH010, S04_SH012); lateral move would break eye-trace on centred hands"
+   },
+   "living_fx": [
+    "mist",
+    "sun_shaft",
+    "breath (bottom edge)"
+   ],
+   "transition_out": {
+    "type": "hard_cut_with_jl_bridge",
+    "j_cut_prelap_s": 0.15
+   },
+   "sound": {
+    "beds": [
+     "wind (distant)"
+    ],
+    "coverage": "AMBIENCE_ONLY (intentional quiet beat on unvoiced visual pause)"
+   },
+   "why": "2.5s unvoiced emotional insert between Fritz and Tommy's lines; rack_focus blurs the barbed wire background so the eye locks onto the open, weaponless hands."
+  },
+  {
+   "shot_id": "S05_SH001",
+   "narration": "Along the British line in Flanders, it spread from trench to trench, in patches.",
+   "duration_s": 6.0,
+   "idiom_id": "IDM_MAP_SECTOR_FLYIN",
+   "route": "map_action",
+   "helper_style": "sector_radar_zoom",
+   "shot_size": "top_down_map",
+   "picture_facts": {
+    "span_km": 260.0,
+    "actions": [
+     "front_line(cues=none)",
+     "pulse(st_yvon)",
+     "pulse(houplines)",
+     "pulse(bois_grenier)",
+     "pulse(neuve_chapelle)"
+    ]
+   },
+   "camera": {
+    "op": "push",
+    "view0": {
+     "lon": 2.88,
+     "lat": 50.68,
+     "span_km": 260.0
+    },
+    "cam_push": 0.78
+   },
+   "rejected_moves": {
+    "4_loud_thuds": "REJECTED (BP-81: max 1 emphasis thud per line; pulses 2..4 downgraded to wood tick map_arrive_click)"
+   },
+   "living_fx": [
+    "standing_front_line",
+    "staggered_pulse_rings"
+   ],
+   "transition_out": {
+    "type": "cross_dissolve_8f",
+    "frames": 8,
+    "hand_off_view_end": true
+   },
+   "sound": {
+    "beds": [
+     "crowd_murmur (distant)"
+    ],
+    "foley": [
+     "map_pin_set@1.4s (pulse 1)",
+     "map_arrive_click@2.3s",
+     "map_arrive_click@3.1s",
+     "map_arrive_click@4.0s"
+    ]
+   },
+   "why": "Shows truce patches lighting up along the Flanders line; obeys BP-81 by spending the single emphasis thud on pulse 1 and using soft wood ticks on pulses 2–4; hands off camera to S05_SH002."
+  },
+  {
+   "shot_id": "S05_SH002",
+   "narration": "Nobody counted them. The usual estimate is that about a hundred thousand men took part.",
+   "duration_s": 6.25,
+   "idiom_id": "IDM_MAP_PATCH_COUNT",
+   "route": "map_action",
+   "helper_style": "data_counter_overlay",
+   "shot_size": "top_down_map",
+   "picture_facts": {
+    "inherits_view0_from": "S05_SH001",
+    "actions": [
+     "front_line(cues=none)",
+     "highlight x4",
+     "counter(100000, unit='men', claim='C-09')"
+    ]
+   },
+   "camera": {
+    "op": "hold",
+    "view0": "inherited_from_S05_SH001_end",
+    "drift": 0.03
+   },
+   "rejected_moves": {
+    "route_pan": "DENSE_ACTIONS=5; camera holds steady so the 100,000 counter in bottom-left box reads cleanly"
+   },
+   "living_fx": [
+    "highlight_glows",
+    "counter_roll_100k"
+   ],
+   "transition_out": {
+    "type": "infographic_number_to_scene_morph",
+    "frames": 12
+   },
+   "sound": {
+    "beds": [
+     "crowd_murmur (distant)"
+    ],
+    "foley": [
+     "9x ov_tick (cosine-eased 2.1s..5.4s)",
+     "ov_thud@5.53s (final knock on 100,000, BP-192)"
+    ]
+   },
+   "why": "Inherits S05_SH001 camera, rolls the 100,000 counter synced to 'hundred thousand men' with 9 decelerating ticks and 1 final knock (never a modern synth riser), then morphs into the crowd of S05_SH003."
+  },
+  {
+   "shot_id": "S05_SH020",
+   "narration": "At one burial, a Scottish chaplain read the Twenty-Third Psalm. A German student read it after him, in German.",
+   "duration_s": 7.75,
+   "idiom_id": "IDM_TWO_GROUP_PIVOT",
+   "route": "still_25d",
+   "split_into": [
+    {
+     "shot_id": "S05_SH020a",
+     "duration_s": 3.9,
+     "cut_after_word": "Psalm.",
+     "camera_op": "push_in",
+     "rate_per_s": 0.015,
+     "target_mask": "left_group",
+     "target_xy": [
+      0.32,
+      0.48
+     ]
+    },
+    {
+     "shot_id": "S05_SH020b",
+     "duration_s": 3.85,
+     "cut_after_word": "German.",
+     "camera_op": "pan_crop_2d",
+     "direction": "right",
+     "overscan": 1.1,
+     "from_xy": [
+      0.38,
+      0.48
+     ],
+     "to_xy": [
+      0.68,
+      0.48
+     ],
+     "at_word": "student"
+    }
+   ],
+   "picture_facts": {
+    "people": 11,
+    "unlayered_crowd": true,
+    "face_x_range": [
+     0.196,
+     0.816
+    ],
+    "symmetry": "British left, 3 graves centre, Germans right"
+   },
+   "rejected_moves": {
+    "orbit_small": "FORBIDDEN (11 unlayered soldiers spanning x=0.196..0.816)",
+    "truck_25d_strength_2": "REJECTED (3D parallax truck shears unlayered crowd faces and clips outer soldiers at x=0.196/0.816; pure 2D pan_crop_2d glides cleanly from Scots to Germans)"
+   },
+   "living_fx": [
+    "candle (6 grave candles)",
+    "fire (2 braziers)",
+    "mist",
+    "sun_glint",
+    "sun_shaft",
+    "cloud_drift",
+    "glint (frost)",
+    "breath (11 mouths)"
+   ],
+   "transition_out": {
+    "type": "hard_cut_with_jl_bridge",
+    "j_cut_prelap_s": 0.25
+   },
+   "sound": {
+    "beds": [
+     "fire (medium)",
+     "wind (medium)"
+    ],
+    "coverage": "AMBIENCE_ONLY"
+   },
+   "why": "Replaces the 7.83s unsplit 3D truck in S05_SH020.direction.json with a 2-part sequence: 20a gently leans into the Scottish side during the first sentence, and 20b executes a safe 2D horizontal crop-pan across the graves to the German side on 'German student', keeping all faces intact."
+  },
+  {
+   "shot_id": "S08_SH001",
+   "narration": "Thomas wrote home that night. So did many others. In January, British newspapers printed their letters.",
+   "duration_s": 6.75,
+   "idiom_id": "IDM_INTIMATE_PORTRAIT -> IDM_HELPER_DOCUMENT",
+   "route": "still_25d + archival_document_card",
+   "split_into": [
+    {
+     "shot_id": "S08_SH001a",
+     "duration_s": 3.4,
+     "cut_after_word": "others.",
+     "route": "still_25d",
+     "camera_op": "push_in",
+     "target_xy": [
+      0.46,
+      0.42
+     ]
+    },
+    {
+     "shot_id": "S08_SH001b",
+     "duration_s": 3.35,
+     "cut_after_word": "letters.",
+     "route": "map_action",
+     "helper_style": "archival_document_card",
+     "camera_op": "pan_crop_2d",
+     "label": "THE DAILY MIRROR / MANCHESTER GUARDIAN — JAN 1915"
+    }
+   ],
+   "picture_facts": {
+    "people": 1,
+    "candle_lit_dugout": true,
+    "duration_exceeds_5s": true
+   },
+   "rejected_moves": {
+    "four_pushes_in_a_row_S08_SH001_to_004": "REJECTED (CAM-VAR-01/02: S08 in production_script.json had push -> push -> crane -> push; splitting 001b into a period newspaper card breaks the push chain and visualizes 'newspapers printed their letters')"
+   },
+   "living_fx": [
+    "candle",
+    "dust",
+    "breath"
+   ],
+   "transition_out": {
+    "type": "cross_dissolve_8f",
+    "frames": 8
+   },
+   "sound": {
+    "beds": [
+     "fire (close)"
+    ],
+    "foley": [
+     "ov_draw@0.4s (pen on paper in 1a)",
+     "ov_slide@3.5s (newspaper page turn in 1b)"
+    ]
+   },
+   "why": "Breaks S08's 4-shot push monotony and fulfills 'British newspapers printed their letters' with a real archival newspaper helper card in part 1b."
+  },
+  {
+   "shot_id": "S08_SH003",
+   "narration": "The war went on for almost four more years.",
+   "duration_s": 4.0,
+   "idiom_id": "IDM_EPILOGUE_STATEMENT",
+   "route": "still_25d",
+   "shot_size": "extreme_wide",
+   "picture_facts": {
+    "people": 0,
+    "sky_open": true,
+    "sky_area_pct": 35.0,
+    "focal_xy": [
+     0.5,
+     0.35
+    ]
+   },
+   "camera": {
+    "op": "crane_up",
+    "companion_op": "pull_back",
+    "rate_per_s": 0.016,
+    "target_xy": [
+     0.5,
+     0.25
+    ]
+   },
+   "rejected_moves": {
+    "push_in": "CAM-VAR-01: S08_SH002 ended on a push; crane_up + light_fade expresses the 4-year scale and dying light"
+   },
+   "living_fx": [
+    "smoke",
+    "sun_shaft",
+    "light_fade",
+    "mist"
+   ],
+   "transition_out": {
+    "type": "fade_to_black",
+    "frames": 24
+   },
+   "sound": {
+    "beds": [
+     "wind (medium)"
+    ],
+    "music": "reflective cadence swelling before 24f fade_to_black into S08_SH004 title card"
+   },
+   "why": "Cranes upward into the darkening smoke-filled sky with light_fade, then dips through a 24-frame fade_to_black into the final still_by_design epilogue card S08_SH004."
+  }
+ ]
+}

@@ -1,3 +1,4 @@
+
 """Draw a short story with xworld_v1 from frame 0 (D-80; ვანო 2026-10-26 10:32 Tbilisi); run by xworld_v1_story.sh (OR-21).
 
 A story file (stories/<name>.json) lists shots: a shot with "master": null is drawn from its description alone (frame 0 of a

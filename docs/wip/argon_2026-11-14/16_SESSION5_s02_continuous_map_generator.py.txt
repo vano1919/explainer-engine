@@ -1,0 +1,1072 @@
+#!/usr/bin/env python3
+"""Standalone Documentary Map Engine: Continuous S02 Sequence (S02_SH001 -> S02_SH002 -> S02_SH003).
+
+Re-creates the three disconnected S02 map clips of "Truce 1914" as ONE continuous 18.875-second
+(453 frames @ 24 fps, 1920x1080) documentary camera move in the Kings and Generals / Johnny Harris
+cartographic style:
+  1. Historically accurate August-December 1914 borders (German Empire including Alsace-Lorraine /
+     Elsass-Lothringen & Eupen-Malmedy, Belgium, Luxembourg, France, Netherlands, Switzerland, UK)
+     with zero post-1918 or modern borders, rendered as scale-invariant screen-space vectors.
+  2. Multi-scale Natural Earth SR_HR shaded relief + parchment grain + bathymetric sea shelf +
+     micro-relief detail enhancement so the 8x zoom into Flanders never blurs.
+  3. Three historical German Schlieffen right-wing invasion axes (1st, 2nd, 3rd/4th Armies) timed
+     to the spoken words "Everyone said it would be over by Christmas" (frames 76..118).
+  4. Seamless camera pull-out and pan (no cut at frame 133) as the August advance ghosts to 22%
+     opacity and the 760 km (475 mi) Western Front trench line draws from Nieuwpoort (North Sea)
+     to Pfetterhouse (Swiss border) on "one line of trenches, from the North Sea to Switzerland"
+     (frames 231..308), accompanied by a non-jittering live kilometer/mile counter.
+  5. Seamless logarithmic zoom (span_km 960 -> 105 km, no cut at frame 321) into the Flanders
+     sector on "Here, in Flanders" (frames 334..395), keeping the trench line standing at frame 321
+     and lighting the Frelinghien-Ploegsteert sector highlight on "close enough to hear each other
+     cough" (frames 409..452) with a 0.50 s trench-wind/cough J-cut prelap into S02_SH004.
+  6. 8-position greedy bounding-box label solver with safe-frame clamping and altitude-tier fading
+     so labels never collide with each other, the trench line, HUD cards, or frame edges.
+"""
+from __future__ import annotations
+
+import math
+import os
+import subprocess
+import wave
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Sequence
+
+import cv2
+import numpy as np
+from PIL import Image, ImageDraw, ImageFilter, ImageFont
+
+# =============================================================================
+# 1. CONSTANTS, GEOMETRY & 1914 HISTORICAL GIS DATA
+# =============================================================================
+
+WIDTH = 1920
+HEIGHT = 1080
+FPS = 24
+TOTAL_FRAMES = 453  # 133 (S02_SH001) + 188 (S02_SH002) + 132 (S02_SH003) = 18.875 s
+R_KM = 6371.0088
+KM_PER_DEG = R_KM * math.pi / 180.0
+
+PALETTE = {
+    "paper": (244, 236, 220),         # Warm archival parchment
+    "ink": (31, 36, 48),              # Deep charcoal cartographic ink (#1F2430)
+    "sea_deep": (34, 52, 68),         # Deep North Sea / Channel slate blue
+    "sea_shelf": (64, 92, 112),       # Coastal bathymetric shelf
+    "river": (74, 118, 148),          # Hydrological line tint
+    "german_1914": (217, 78, 52),     # Imperial German crimson-vermilion (#D94E34)
+    "allied_1914": (42, 111, 158),    # Entente / British-French steel blue (#2A6F9E)
+    "amber_glow": (255, 193, 69),     # Sector highlight amber (#FFC145)
+    "card_bg": (250, 244, 232),       # Archival callout card fill
+    "card_gold": (212, 162, 89),      # Counter / badge warm accent
+    "hud_dark": (22, 26, 35),         # Bottom word-timing bar background
+}
+
+# Measured word-onset spine (global frame at 24 fps across the 18.875 s sequence)
+WORD_SPINE = [
+    # S02_SH001 (frames 0..132, 0.00s - 5.54s)
+    {"shot": "S02_SH001", "word": "The", "start": 13, "end": 15},
+    {"shot": "S02_SH001", "word": "war", "start": 15, "end": 19},
+    {"shot": "S02_SH001", "word": "had", "start": 19, "end": 21},
+    {"shot": "S02_SH001", "word": "begun", "start": 21, "end": 31},
+    {"shot": "S02_SH001", "word": "in", "start": 31, "end": 36},
+    {"shot": "S02_SH001", "word": "August.", "start": 36, "end": 54, "mark": "AUG 1914"},
+    {"shot": "S02_SH001", "word": "Everyone", "start": 76, "end": 83, "mark": "ADVANCE"},
+    {"shot": "S02_SH001", "word": "said", "start": 83, "end": 90},
+    {"shot": "S02_SH001", "word": "it", "start": 90, "end": 94},
+    {"shot": "S02_SH001", "word": "would", "start": 94, "end": 98},
+    {"shot": "S02_SH001", "word": "be", "start": 98, "end": 101},
+    {"shot": "S02_SH001", "word": "over", "start": 101, "end": 105},
+    {"shot": "S02_SH001", "word": "by", "start": 105, "end": 109},
+    {"shot": "S02_SH001", "word": "Christmas.", "start": 109, "end": 126, "mark": "MARNE"},
+    # S02_SH002 (frames 133..320, 5.54s - 13.38s)
+    {"shot": "S02_SH002", "word": "By", "start": 145, "end": 149},
+    {"shot": "S02_SH002", "word": "December", "start": 149, "end": 166, "mark": "DEC 1914"},
+    {"shot": "S02_SH002", "word": "it", "start": 171, "end": 175},
+    {"shot": "S02_SH002", "word": "had", "start": 175, "end": 180},
+    {"shot": "S02_SH002", "word": "dug", "start": 180, "end": 187},
+    {"shot": "S02_SH002", "word": "itself", "start": 187, "end": 195},
+    {"shot": "S02_SH002", "word": "into", "start": 195, "end": 202},
+    {"shot": "S02_SH002", "word": "the", "start": 202, "end": 206},
+    {"shot": "S02_SH002", "word": "ground:", "start": 206, "end": 218},
+    {"shot": "S02_SH002", "word": "one", "start": 231, "end": 234, "mark": "TRENCHES"},
+    {"shot": "S02_SH002", "word": "line", "start": 234, "end": 238},
+    {"shot": "S02_SH002", "word": "of", "start": 238, "end": 241},
+    {"shot": "S02_SH002", "word": "trenches,", "start": 241, "end": 263},
+    {"shot": "S02_SH002", "word": "from", "start": 272, "end": 274},
+    {"shot": "S02_SH002", "word": "the", "start": 274, "end": 276},
+    {"shot": "S02_SH002", "word": "North", "start": 276, "end": 281, "mark": "NORTH SEA"},
+    {"shot": "S02_SH002", "word": "Sea", "start": 281, "end": 289},
+    {"shot": "S02_SH002", "word": "to", "start": 289, "end": 293},
+    {"shot": "S02_SH002", "word": "Switzerland.", "start": 293, "end": 313, "mark": "SWISS"},
+    # S02_SH003 (frames 321..452, 13.38s - 18.88s)
+    {"shot": "S02_SH003", "word": "Here,", "start": 334, "end": 344, "mark": "FLY-TO"},
+    {"shot": "S02_SH003", "word": "in", "start": 348, "end": 355},
+    {"shot": "S02_SH003", "word": "Flanders,", "start": 355, "end": 367, "mark": "FLANDERS"},
+    {"shot": "S02_SH003", "word": "the", "start": 376, "end": 380},
+    {"shot": "S02_SH003", "word": "two", "start": 380, "end": 388},
+    {"shot": "S02_SH003", "word": "sides", "start": 388, "end": 399},
+    {"shot": "S02_SH003", "word": "sat", "start": 399, "end": 409},
+    {"shot": "S02_SH003", "word": "close", "start": 409, "end": 415, "mark": "GLOW"},
+    {"shot": "S02_SH003", "word": "enough", "start": 415, "end": 424},
+    {"shot": "S02_SH003", "word": "to", "start": 424, "end": 431},
+    {"shot": "S02_SH003", "word": "hear", "start": 431, "end": 437},
+    {"shot": "S02_SH003", "word": "each", "start": 437, "end": 440},
+    {"shot": "S02_SH003", "word": "other", "start": 440, "end": 446},
+    {"shot": "S02_SH003", "word": "cough.", "start": 446, "end": 452, "mark": "J-CUT"},
+]
+
+# 1914 Historical International Boundaries (CShapes 2.0 / 1914 Treaty of Frankfurt geometry)
+# Crucially: Alsace-Lorraine (Reichsland Elsass-Lothringen) is inside the German Empire:
+# border runs along the Vosges crest (west of Strasbourg & Colmar) and west of Metz/Thionville.
+BORDERS_1914 = {
+    "franco_belgian_1914": [
+        (2.54, 51.09), (2.68, 50.85), (2.82, 50.72), (3.18, 50.77), (3.28, 50.51),
+        (3.62, 50.36), (3.98, 50.32), (4.18, 50.25), (4.24, 50.00), (4.55, 50.00),
+        (4.78, 50.16), (4.86, 49.98), (4.96, 49.80), (5.26, 49.62), (5.48, 49.55),
+        (5.81, 49.55),
+    ],
+    "franco_luxembourg_1914": [
+        (5.81, 49.55), (5.95, 49.50), (6.04, 49.47),
+    ],
+    "franco_german_1914_alsace_lorraine": [
+        # 1871-1918 Treaty of Frankfurt border: west of Thionville, west of Metz,
+        # east of Nancy/Luneville, then southward along the Vosges crest to Swiss border at Pfetterhouse
+        (6.04, 49.47), (5.92, 49.33), (5.89, 49.18), (5.97, 49.04), (6.16, 48.91),
+        (6.42, 48.78), (6.68, 48.65), (6.95, 48.54), (7.12, 48.36), (7.08, 48.14),
+        (7.02, 47.96), (6.99, 47.82), (7.03, 47.66), (7.13, 47.50),
+    ],
+    "belgo_luxembourg_1914": [
+        (5.81, 49.55), (5.74, 49.72), (5.77, 49.90), (5.90, 50.05), (6.02, 50.18),
+    ],
+    "luxembourg_german_1914": [
+        (6.02, 50.18), (6.15, 50.13), (6.24, 49.90), (6.48, 49.81), (6.38, 49.70),
+        (6.37, 49.55), (6.36, 49.47), (6.04, 49.47),
+    ],
+    "belgo_german_1914_prussia": [
+        # 1914 border west of Eupen and Malmedy (which belonged to Prussia in 1914)
+        (6.02, 50.18), (5.96, 50.35), (5.95, 50.52), (6.01, 50.65), (6.02, 50.76),
+    ],
+    "belgo_dutch_1914": [
+        (3.36, 51.37), (3.85, 51.24), (4.25, 51.36), (4.48, 51.45), (4.78, 51.48),
+        (5.05, 51.42), (5.48, 51.28), (5.79, 51.15), (5.69, 50.85), (6.02, 50.76),
+    ],
+    "german_dutch_1914": [
+        (6.02, 50.76), (5.98, 51.03), (6.18, 51.35), (6.12, 51.75), (6.72, 51.90),
+        (7.08, 52.25), (7.05, 52.65), (7.22, 53.20),
+    ],
+    "swiss_northern_1914": [
+        (6.05, 46.25), (6.15, 46.55), (6.45, 46.85), (6.85, 47.15), (6.95, 47.35),
+        (7.13, 47.50), (7.40, 47.48), (7.59, 47.56), (8.20, 47.60), (8.60, 47.70),
+        (9.25, 47.66), (9.65, 47.52),
+    ],
+}
+
+FLANDERS_RIVERS = [
+    [(2.25, 50.60), (2.52, 50.64), (2.75, 50.66), (2.881, 50.688), (2.935, 50.711), (3.08, 50.78), (3.26, 50.83), (3.72, 51.05)],  # River Lys
+    [(2.48, 50.88), (2.68, 50.95), (2.79, 51.01), (2.75, 51.13)],  # River Yser
+    [(2.45, 50.30), (2.78, 50.29), (3.10, 50.38), (3.45, 50.45)],  # River Scarpe
+]
+
+# German August 1914 Schlieffen Advance Axes (3 main right-wing armies)
+AUGUST_ADVANCE_ROUTES = [
+    {
+        "id": "1st_army_kluck",
+        "label": "1st Army (Kluck)",
+        "waypoints": [
+            (6.08, 50.78),  # Aachen
+            (5.57, 50.63),  # Liege
+            (4.35, 50.85),  # Brussels
+            (3.95, 50.45),  # Mons
+            (3.15, 49.95),  # Peronne
+            (2.85, 49.42),  # Compiegne
+            (3.30, 49.00),  # Marne (Meaux/Chateau-Thierry)
+        ],
+        "width_scale": 1.15,
+    },
+    {
+        "id": "2nd_army_bulow",
+        "label": "2nd Army (Bülow)",
+        "waypoints": [
+            (6.03, 50.43),  # Malmedy
+            (5.30, 50.52),  # Huy
+            (4.87, 50.47),  # Namur
+            (4.44, 50.41),  # Charleroi
+            (3.60, 49.85),  # Guise
+            (3.75, 49.30),  # Fismes
+            (3.85, 48.92),  # Marne (Montmirail)
+        ],
+        "width_scale": 1.00,
+    },
+    {
+        "id": "3rd_4th_armies",
+        "label": "3rd & 4th Armies",
+        "waypoints": [
+            (6.18, 50.05),  # Eifel / Luxembourg border
+            (5.40, 49.95),  # Ardennes (Bastogne/Neufchateau)
+            (4.91, 49.78),  # Sedan / Meuse
+            (4.55, 49.40),  # Rethel
+            (4.36, 48.96),  # Chalons / Vitry
+        ],
+        "width_scale": 0.90,
+    },
+]
+
+# Western Front December 1914 Trench Line (Nieuwpoort to Swiss border at Pfetterhouse)
+WESTERN_FRONT_1914_WAYPOINTS = [
+    (2.750, 51.130),  # Nieuwpoort (North Sea coast)
+    (2.790, 51.010),  # Diksmuide (Yser front)
+    (2.885, 50.851),  # Ypres Salient
+    (2.845, 50.765),  # Wulverghem / Messines
+    (2.880, 50.725),  # Ploegsteert Wood
+    (2.935, 50.711),  # Frelinghien-Houplines (Lys sector)
+    (2.881, 50.688),  # Armentieres
+    (2.833, 50.651),  # Fleurbaix
+    (2.807, 50.534),  # La Bassee / Givenchy
+    (2.780, 50.290),  # Arras / Vimy
+    (2.690, 50.000),  # Albert / Somme
+    (2.800, 49.780),  # Roye
+    (3.000, 49.580),  # Noyon
+    (3.320, 49.380),  # Soissons / Aisne
+    (4.030, 49.260),  # Reims
+    (4.650, 49.200),  # Champagne / Perthes
+    (4.980, 49.180),  # Argonne
+    (5.380, 49.160),  # Verdun Salient
+    (5.540, 48.890),  # St-Mihiel Salient
+    (6.050, 48.900),  # Pont-a-Mousson
+    (6.650, 48.620),  # Lorraine / Badonviller
+    (7.050, 48.150),  # Vosges (Col du Bonhomme)
+    (7.120, 47.850),  # Hartmannswillerkopf
+    (7.150, 47.500),  # Swiss Border (Pfetterhouse / Basel)
+]
+
+
+# =============================================================================
+# 2. CAMERA & PROJECTION MATHS (LOG-SCALE ZOOM + CUBIC EASING)
+# =============================================================================
+
+@dataclass(frozen=True)
+class View:
+    lon: float
+    lat: float
+    span_km: float
+    width: int = WIDTH
+    height: int = HEIGHT
+    pitch_deg: float = 0.0
+
+    @property
+    def km_per_px(self) -> float:
+        return self.span_km / self.width
+
+    @property
+    def height_km(self) -> float:
+        return self.span_km * self.height / self.width
+
+    def to_px(self, lon, lat):
+        lon_a = np.asarray(lon, dtype=np.float64)
+        lat_a = np.asarray(lat, dtype=np.float64)
+        kx = KM_PER_DEG * math.cos(math.radians(self.lat))
+        x = ((lon_a - self.lon) * kx / self.span_km + 0.5) * self.width
+        y = (0.5 - (lat_a - self.lat) * KM_PER_DEG / self.height_km) * self.height
+        return x, y
+
+    def to_lonlat(self, x, y):
+        x_a = np.asarray(x, dtype=np.float64)
+        y_a = np.asarray(y, dtype=np.float64)
+        kx = KM_PER_DEG * math.cos(math.radians(self.lat))
+        lon = self.lon + (x_a / self.width - 0.5) * self.span_km / kx
+        lat = self.lat + (0.5 - y_a / self.height) * self.height_km / KM_PER_DEG
+        return lon, lat
+
+
+def ease_in_out(u: float) -> float:
+    u = min(max(float(u), 0.0), 1.0)
+    return 4.0 * u ** 3 if u < 0.5 else 1.0 - (-2.0 * u + 2.0) ** 3 / 2.0
+
+
+def march_ease(u: float, lead: float = 0.14, tail: float = 0.14) -> float:
+    u = min(max(float(u), 0.0), 1.0)
+    v = 1.0 / (1.0 - (lead + tail) / 2.0)
+    if u < lead:
+        return v * u * u / (2.0 * lead)
+    if u > 1.0 - tail:
+        r = 1.0 - u
+        return 1.0 - v * r * r / (2.0 * tail)
+    return v * lead / 2.0 + v * (u - lead)
+
+
+def lerp_view(v0: View, v1: View, u: float) -> View:
+    """Interpolate camera with position compensated for log-scale span_km (Law 5)."""
+    e = ease_in_out(u)
+    log_s0, log_s1 = math.log(v0.span_km), math.log(v1.span_km)
+    span = math.exp(log_s0 + (log_s1 - log_s0) * e)
+    if abs(v1.span_km - v0.span_km) > 25.0:
+        pan_u = (span - v0.span_km) / (v1.span_km - v0.span_km)
+        pan_u = 0.65 * pan_u + 0.35 * e
+    else:
+        pan_u = e
+    lon = v0.lon + (v1.lon - v0.lon) * pan_u
+    lat = v0.lat + (v1.lat - v0.lat) * pan_u
+    pitch = v0.pitch_deg + (v1.pitch_deg - v0.pitch_deg) * e
+    return View(lon, lat, span, v0.width, v0.height, pitch)
+
+
+def camera_at_frame(f: int) -> View:
+    """Continuous 453-frame camera trajectory across S02_SH001 -> S02_SH002 -> S02_SH003."""
+    kf_start = View(4.80, 50.08, 620.0, pitch_deg=5.0)       # f=0: Belgium & N. France
+    kf_aug = View(4.35, 49.85, 660.0, pitch_deg=6.0)         # f=125: Aachen -> Brussels -> Marne in frame
+    kf_dec_wide = View(4.92, 49.38, 950.0, pitch_deg=6.0)    # f=215: Full North Sea to Swiss border theater
+    kf_dec_end = View(4.95, 49.34, 940.0, pitch_deg=7.0)     # f=325: End of trench draw
+    kf_flanders = View(2.89, 50.70, 125.0, pitch_deg=11.0)   # f=398: Flanders sector (Ypres -> La Bassee)
+    kf_close = View(2.895, 50.705, 102.0, pitch_deg=12.0)    # f=452: Frelinghien-Ploegsteert push
+
+    if f <= 125:
+        return lerp_view(kf_start, kf_aug, f / 125.0)
+    if f <= 215:
+        return lerp_view(kf_aug, kf_dec_wide, (f - 125) / 90.0)
+    if f <= 325:
+        return lerp_view(kf_dec_wide, kf_dec_end, (f - 215) / 110.0)
+    if f <= 398:
+        return lerp_view(kf_dec_end, kf_flanders, (f - 325) / 73.0)
+    return lerp_view(kf_flanders, kf_close, (f - 398) / max(1, (TOTAL_FRAMES - 1 - 398)))
+
+
+# =============================================================================
+# 3. SPLINES, POLYLINES & 8-POSITION COLLISION-FREE LABEL SOLVER
+# =============================================================================
+
+def catmull_rom_spline(waypoints: Sequence[tuple[float, float]], per_seg: int = 28) -> list[tuple[float, float]]:
+    pts = [tuple(p) for p in waypoints]
+    if len(pts) < 3:
+        return [
+            (pts[0][0] + (pts[-1][0] - pts[0][0]) * k / per_seg,
+             pts[0][1] + (pts[-1][1] - pts[0][1]) * k / per_seg)
+            for k in range(per_seg + 1)
+        ]
+    ext = [pts[0]] + pts + [pts[-1]]
+    out: list[tuple[float, float]] = []
+    for i in range(1, len(ext) - 2):
+        p0, p1, p2, p3 = ext[i - 1], ext[i], ext[i + 1], ext[i + 2]
+        for k in range(per_seg):
+            t = k / per_seg
+            t2, t3 = t * t, t * t * t
+            x = 0.5 * ((2 * p1[0]) + (-p0[0] + p2[0]) * t + (2 * p0[0] - 5 * p1[0] + 4 * p2[0] - p3[0]) * t2 + (-p0[0] + 3 * p1[0] - 3 * p2[0] + p3[0]) * t3)
+            y = 0.5 * ((2 * p1[1]) + (-p0[1] + p2[1]) * t + (2 * p0[1] - 5 * p1[1] + 4 * p2[1] - p3[1]) * t2 + (-p0[1] + 3 * p1[1] - 3 * p2[1] + p3[1]) * t3)
+            out.append((x, y))
+    out.append(pts[-1])
+    return out
+
+
+def polyline_prefix(pts: list[tuple[float, float]], share: float) -> list[tuple[float, float]]:
+    if share <= 0.0 or len(pts) < 2:
+        return []
+    if share >= 1.0:
+        return list(pts)
+    lens = [math.hypot(b[0] - a[0], b[1] - a[1]) for a, b in zip(pts, pts[1:])]
+    goal = sum(lens) * share
+    out = [pts[0]]
+    run = 0.0
+    for (a, b), seg_len in zip(zip(pts, pts[1:]), lens):
+        if run + seg_len >= goal and seg_len > 1e-6:
+            t = (goal - run) / seg_len
+            out.append((a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t))
+            return out
+        out.append(b)
+        run += seg_len
+    return out
+
+
+def place_label_8pos(
+    cx: float,
+    cy: float,
+    tw: float,
+    th: float,
+    occupied: list[tuple[float, float, float, float]],
+    prefer: str = "NE",
+) -> tuple[float, float, tuple[float, float, float, float], bool]:
+    """8-position greedy label solver with safe-frame clamping and obstacle avoidance."""
+    pad = max(8.0, th * 0.38)
+    order_map = {
+        "NE": [
+            (+pad, -pad - th, False),
+            (-pad - tw, -pad - th, False),
+            (+pad, +pad, False),
+            (-pad - tw, +pad, False),
+            (+pad * 1.4, -th * 0.5, False),
+            (-pad * 1.4 - tw, -th * 0.5, False),
+            (+pad * 2.4, -pad * 2.0 - th, True),
+            (-pad * 2.4 - tw, -pad * 2.0 - th, True),
+        ],
+        "NW": [
+            (-pad - tw, -pad - th, False),
+            (+pad, -pad - th, False),
+            (-pad - tw, +pad, False),
+            (+pad, +pad, False),
+            (-pad * 1.4 - tw, -th * 0.5, False),
+            (+pad * 1.4, -th * 0.5, False),
+            (-pad * 2.4 - tw, -pad * 2.0 - th, True),
+            (+pad * 2.4, -pad * 2.0 - th, True),
+        ],
+        "E": [
+            (+pad * 1.35, -th * 0.5, False),
+            (+pad, -pad - th, False),
+            (+pad, +pad, False),
+            (-pad * 1.35 - tw, -th * 0.5, False),
+            (-pad - tw, -pad - th, False),
+            (-pad - tw, +pad, False),
+            (+pad * 2.5, -th * 0.5, True),
+            (-pad * 2.5 - tw, -th * 0.5, True),
+        ],
+        "W": [
+            (-pad * 1.35 - tw, -th * 0.5, False),
+            (-pad - tw, -pad - th, False),
+            (-pad - tw, +pad, False),
+            (+pad * 1.35, -th * 0.5, False),
+            (+pad, -pad - th, False),
+            (+pad, +pad, False),
+            (-pad * 2.5 - tw, -th * 0.5, True),
+            (+pad * 2.5, -th * 0.5, True),
+        ],
+        "SE": [
+            (+pad, +pad, False),
+            (+pad, -pad - th, False),
+            (-pad - tw, +pad, False),
+            (-pad - tw, -pad - th, False),
+            (+pad * 1.35, -th * 0.5, False),
+            (-pad * 1.35 - tw, -th * 0.5, False),
+            (+pad * 2.4, +pad * 2.0, True),
+            (-pad * 2.4 - tw, +pad * 2.0, True),
+        ],
+    }
+    candidates = order_map.get(prefer, order_map["NE"])
+    xmin, xmax = 54.0, WIDTH - 54.0
+    ymin, ymax = 40.0, HEIGHT - 66.0
+
+    best = None
+    best_cost = float("inf")
+    for idx, (dx, dy, leader) in enumerate(candidates):
+        x0 = float(np.clip(cx + dx, xmin, xmax - tw))
+        y0 = float(np.clip(cy + dy, ymin, ymax - th))
+        x1, y1 = x0 + tw, y0 + th
+
+        overlap = 0.0
+        for ox0, oy0, ox1, oy1 in occupied:
+            iw = max(0.0, min(x1, ox1) - max(x0, ox0))
+            ih = max(0.0, min(y1, oy1) - max(y0, oy0))
+            overlap += iw * ih
+
+        cost = overlap * 1000.0 + idx * 8.0 + (30.0 if leader else 0.0)
+        if cost < best_cost:
+            best_cost = cost
+            best = (x0, y0, (x0 - 6.0, y0 - 4.0, x1 + 6.0, y1 + 4.0), leader)
+            if overlap == 0.0 and not leader:
+                break
+
+    assert best is not None
+    occupied.append(best[2])
+    return best
+
+
+# =============================================================================
+# 4. MULTI-SCALE MASTER PLATE (RELIEF + PARCHMENT + BATHYMETRY)
+# =============================================================================
+
+class MasterCartographicPlate:
+    """Builds a 3840x2160 georeferenced 1914 Western Europe master relief plate by fusing
+    the two clean Natural Earth SR_HR frame-0 plates (1000 km & 530 km), multi-octave
+    micro-relief, aged parchment grain, and bathymetric sea shading."""
+
+    def __init__(self, clip_sh001_mp4: str, clip_sh002_mp4: str):
+        self.master_view = View(4.95, 49.31, 1000.0, 3840, 2160)
+        self.image = self._build_plate(clip_sh001_mp4, clip_sh002_mp4)
+
+    def _read_f0_rgb(self, mp4_path: str) -> np.ndarray:
+        cap = cv2.VideoCapture(mp4_path)
+        ok, frame = cap.read()
+        cap.release()
+        if not ok:
+            raise RuntimeError(f"Cannot read frame 0 from {mp4_path}")
+        return cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+    def _build_plate(self, clip_sh001_mp4: str, clip_sh002_mp4: str) -> Image.Image:
+        pw, ph = self.master_view.width, self.master_view.height
+        f0_1000 = self._read_f0_rgb(clip_sh002_mp4)
+        f0_530 = self._read_f0_rgb(clip_sh001_mp4)
+
+        base_rgb = cv2.resize(f0_1000, (pw, ph), interpolation=cv2.INTER_CUBIC).astype(np.float32)
+
+        # Project 530 km plate into master_view coordinates and cosine-feather blend (zero NaN edge)
+        v1 = View(4.84, 49.90, 530.0, 1920, 1080)
+        x0, y0 = self.master_view.to_px(*v1.to_lonlat(0, 0))
+        x1, y1 = self.master_view.to_px(*v1.to_lonlat(1920, 1080))
+        ix0, iy0, ix1, iy1 = int(round(x0)), int(round(y0)), int(round(x1)), int(round(y1))
+        patch_530 = cv2.resize(f0_530, (ix1 - ix0, iy1 - iy0), interpolation=cv2.INTER_CUBIC).astype(np.float32)
+
+        wx = np.clip(np.sin(np.linspace(0.0, math.pi, ix1 - ix0, dtype=np.float64)), 0.0, 1.0) ** 0.45
+        wy = np.clip(np.sin(np.linspace(0.0, math.pi, iy1 - iy0, dtype=np.float64)), 0.0, 1.0) ** 0.45
+        w2d = np.clip((wy[:, None] * wx[None, :]) * 1.35, 0.0, 1.0).astype(np.float32)[..., None]
+        base_rgb[iy0:iy1, ix0:ix1] = base_rgb[iy0:iy1, ix0:ix1] * (1.0 - w2d) + patch_530 * w2d
+
+        # Segment sea vs land from blue-red channel difference on the clean plate
+        sea_score = (base_rgb[:, :, 2] - base_rgb[:, :, 0])
+        is_sea = (sea_score > 6.0).astype(np.float32)
+        sea_soft = cv2.GaussianBlur(is_sea, (0, 0), 3.0)
+
+        # Extract relief luminance and synthesize fine micro-topography so Flanders zoom is crisp
+        luma = (0.299 * base_rgb[:, :, 0] + 0.587 * base_rgb[:, :, 1] + 0.114 * base_rgb[:, :, 2]) / 255.0
+        rng = np.random.default_rng(19141225)
+        n_fine = cv2.GaussianBlur(rng.standard_normal((ph, pw)).astype(np.float32), (0, 0), 1.5)
+        n_med = cv2.GaussianBlur(rng.standard_normal((ph, pw)).astype(np.float32), (0, 0), 4.8)
+        gx = cv2.Sobel(n_fine + 0.65 * n_med, cv2.CV_32F, 1, 0, ksize=3)
+        gy = cv2.Sobel(n_fine + 0.65 * n_med, cv2.CV_32F, 0, 1, ksize=3)
+        micro_hillshade = np.clip((gx * 0.7 - gy * 0.7) * 0.020, -0.05, 0.05)
+        relief_gain = np.clip(1.0 + 1.35 * (luma - 0.86) + micro_hillshade * (1.0 - sea_soft), 0.58, 1.16)
+
+        paper_grain = rng.standard_normal((ph, pw)).astype(np.float32) * 0.014
+        land_col = np.array(PALETTE["paper"], dtype=np.float32)[None, None, :] * (relief_gain + paper_grain)[..., None]
+
+        dist_from_land = cv2.distanceTransform((is_sea > 0.5).astype(np.uint8), cv2.DIST_L2, 5)
+        shelf_t = np.exp(-dist_from_land / 85.0)[..., None]
+        sea_deep = np.array(PALETTE["sea_deep"], dtype=np.float32)[None, None, :]
+        sea_shelf = np.array(PALETTE["sea_shelf"], dtype=np.float32)[None, None, :]
+        sea_col = (sea_deep * (1.0 - shelf_t) + sea_shelf * shelf_t) * (1.0 + paper_grain * 0.6)[..., None]
+
+        river_mask = np.clip((sea_score + 4.0) / 22.0, 0.0, 1.0) * (1.0 - is_sea)
+        river_col = np.array(PALETTE["river"], dtype=np.float32)[None, None, :]
+        land_with_rivers = land_col * (1.0 - river_mask[..., None] * 0.75) + river_col * (river_mask[..., None] * 0.75)
+
+        plate_arr = land_with_rivers * (1.0 - sea_soft[..., None]) + sea_col * sea_soft[..., None]
+        return Image.fromarray(np.clip(plate_arr, 0, 255).astype(np.uint8), mode="RGB")
+
+    def crop_for_view(self, v: View) -> Image.Image:
+        x0, y0 = self.master_view.to_px(*v.to_lonlat(0, 0))
+        x1, y1 = self.master_view.to_px(*v.to_lonlat(v.width, v.height))
+        return self.image.transform(
+            (v.width, v.height),
+            Image.EXTENT,
+            (float(x0), float(y0), float(x1), float(y1)),
+            Image.BICUBIC,
+        )
+
+
+# =============================================================================
+# 5. FONT LOADER, VECTOR BORDERS & FRAME COMPOSITOR
+# =============================================================================
+
+_FONT_CACHE: dict[tuple[str, int], ImageFont.FreeTypeFont] = {}
+
+
+def get_font(weight: str = "SemiBold", size: int = 24) -> ImageFont.FreeTypeFont:
+    key = (weight, int(size))
+    if key not in _FONT_CACHE:
+        candidates = [
+            f"/usr/share/fonts/opentype/inter/Inter-{weight}.otf",
+            f"/usr/share/fonts/opentype/inter/InterDisplay-{weight}.otf",
+            "/usr/share/fonts/opentype/inter/Inter-Regular.otf",
+        ]
+        for path in candidates:
+            if os.path.exists(path):
+                _FONT_CACHE[key] = ImageFont.truetype(path, max(10, int(size)))
+                break
+        else:
+            _FONT_CACHE[key] = ImageFont.load_default(size=max(10, int(size)))
+    return _FONT_CACHE[key]
+
+
+def draw_dashed_screen_line(draw: ImageDraw.ImageDraw, pts: list[tuple[float, float]], fill, width: int, on: float, off: float):
+    period = on + off
+    phase = 0.0
+    for a, b in zip(pts, pts[1:]):
+        seg_len = math.hypot(b[0] - a[0], b[1] - a[1])
+        if seg_len <= 1e-4:
+            continue
+        pos = 0.0
+        while pos < seg_len:
+            step = (on - phase) if phase < on else (period - phase)
+            end = min(seg_len, pos + max(step, 0.5))
+            if phase < on:
+                p0 = (a[0] + (b[0] - a[0]) * (pos / seg_len), a[1] + (b[1] - a[1]) * (pos / seg_len))
+                p1 = (a[0] + (b[0] - a[0]) * (end / seg_len), a[1] + (b[1] - a[1]) * (end / seg_len))
+                draw.line([p0, p1], fill=fill, width=width)
+            phase = (phase + (end - pos)) % period
+            pos = end
+
+
+def draw_arrowhead(draw: ImageDraw.ImageDraw, tip: tuple[float, float], back: tuple[float, float], size: float, fill, outline):
+    dx, dy = tip[0] - back[0], tip[1] - back[1]
+    norm = math.hypot(dx, dy) or 1.0
+    ux, uy = dx / norm, dy / norm
+    left = (tip[0] - ux * size - uy * size * 0.58, tip[1] - uy * size + ux * size * 0.58)
+    right = (tip[0] - ux * size + uy * size * 0.58, tip[1] - uy * size - ux * size * 0.58)
+    wing_in = (tip[0] - ux * size * 0.72, tip[1] - uy * size * 0.72)
+    poly = [tip, left, wing_in, right]
+    draw.polygon(poly, fill=fill)
+    draw.line(poly + [tip], fill=outline, width=max(2, int(size * 0.12)), joint="curve")
+
+
+def apply_clean_pitch_warp(im: Image.Image, pitch_deg: float) -> Image.Image:
+    """Applies perspective pitch and crops to the inscribed rectangle so zero black corner wedges appear."""
+    if pitch_deg <= 0.5:
+        return im
+    w, h = im.size
+    squeeze = 0.24 * math.sin(math.radians(pitch_deg))
+    inset = squeeze * w * 0.5
+    # Overscale horizontally by (1 + squeeze) before QUAD warp so top corners remain 100% filled with map pixels
+    pad_x = int(math.ceil(inset)) + 4
+    expanded = im.resize((w + 2 * pad_x, h), Image.BICUBIC)
+    quad = (0.0, 0.0, float(pad_x), float(h), float(w + pad_x), float(h), float(w + 2 * pad_x), 0.0)
+    return expanded.transform((w, h), Image.QUAD, quad, Image.BICUBIC)
+
+
+def render_single_frame(plate_engine: MasterCartographicPlate, f: int) -> Image.Image:
+    view = camera_at_frame(f)
+    base_im = plate_engine.crop_for_view(view).convert("RGBA")
+    w, h = WIDTH, HEIGHT
+
+    # Subtle radial theater vignette (Johnny Harris / Kings & Generals spotlight)
+    yy, xx = np.mgrid[0:h, 0:w].astype(np.float32)
+    rx = (xx - w * 0.5) / (w * 0.55)
+    ry = (yy - h * 0.48) / (h * 0.55)
+    vig = np.clip((rx * rx + ry * ry - 0.35) * 0.28, 0.0, 0.28)[..., None]
+    arr = np.asarray(base_im, dtype=np.float32)
+    arr[:, :, :3] = arr[:, :, :3] * (1.0 - vig) + np.array([22.0, 26.0, 35.0])[None, None, :] * vig
+    canvas = Image.fromarray(np.clip(arr, 0, 255).astype(np.uint8), mode="RGBA")
+    overlay = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(overlay, "RGBA")
+
+    px = lambda lon, lat: tuple(map(float, view.to_px(lon, lat)))  # noqa: E731
+
+    # 0. Draw Scale-Invariant Screen-Space Rivers & 1914 Borders (never pixelate even at 100 km Flanders zoom!)
+    for r_wp in FLANDERS_RIVERS:
+        curve = catmull_rom_spline(r_wp, 24)
+        pts = [px(lon, lat) for lon, lat in curve]
+        draw.line(pts, fill=(*PALETTE["river"], 200), width=3, joint="curve")
+
+    for b_name, b_wp in BORDERS_1914.items():
+        curve = catmull_rom_spline(b_wp, 20)
+        pts = [px(lon, lat) for lon, lat in curve]
+        is_alsace = "alsace" in b_name
+        draw.line(pts, fill=(31, 36, 48, 85 if not is_alsace else 115), width=7, joint="curve")
+        draw_dashed_screen_line(draw, pts, (31, 36, 48, 220), width=2, on=12.0, off=7.0)
+
+    occupied_boxes: list[tuple[float, float, float, float]] = [
+        (36.0, 28.0, 560.0, 128.0),             # Top-left HUD date card reserve
+        (36.0, h - 140.0, 340.0, h - 60.0),     # Bottom-left scale bar reserve
+        (0.0, h - 58.0, float(w), float(h)),    # Bottom narration timing bar reserve
+    ]
+    if 225 <= f <= 345 or f >= 405:
+        occupied_boxes.append((w - 495.0, 28.0, w - 36.0, 128.0))  # Top-right counter reserve
+
+    # 1. Country / Sovereignty Watermarks (fade out smoothly when zooming below 320 km)
+    macro_alpha = int(np.clip((view.span_km - 220.0) / 260.0, 0.0, 1.0) * 145)
+    if macro_alpha > 12:
+        f_country = get_font("Bold", 23)
+        f_sub = get_font("SemiBold", 14)
+        watermarks = [
+            (7.15, 50.25, "GERMAN EMPIRE", "(1914 BORDER)"),
+            (2.15, 48.25, "FRANCE", ""),
+            (4.55, 50.92, "BELGIUM", ""),
+            (6.15, 49.78, "LUX.", ""),
+            (7.72, 48.42, "ALSACE-LORRAINE", "(GERMAN EMPIRE, 1871–1918)"),
+            (8.05, 47.22, "SWITZERLAND (NEUTRAL)", ""),
+        ]
+        for lon, lat, title, sub in watermarks:
+            cx, cy = px(lon, lat)
+            if 90 < cx < w - 90 and 90 < cy < h - 95:
+                draw.text((cx, cy), title, font=f_country, fill=(31, 36, 48, macro_alpha), anchor="mm",
+                          stroke_width=2, stroke_fill=(244, 236, 220, int(macro_alpha * 0.75)))
+                if sub:
+                    draw.text((cx, cy + 21), sub, font=f_sub, fill=(105, 42, 35, int(macro_alpha * 0.95)), anchor="mm",
+                              stroke_width=1, stroke_fill=(244, 236, 220, int(macro_alpha * 0.75)))
+
+    # 2. Phase 1: German August 1914 Schlieffen Advance Arrows (starts f=76 "Everyone", completes f=118 "Christmas")
+    if f >= 74:
+        raw_u = min(1.0, max(0.0, (f - 76) / 42.0))
+        adv_u = march_ease(raw_u)
+        if f <= 145:
+            arrow_alpha = 245
+        elif f <= 215:
+            arrow_alpha = int(245 - (245 - 65) * ease_in_out((f - 145) / 70.0))
+        elif f <= 330:
+            arrow_alpha = 65
+        else:
+            arrow_alpha = int(65 * (1.0 - ease_in_out(min(1.0, (f - 330) / 45.0))))
+
+        if arrow_alpha > 5 and adv_u > 0.01:
+            for idx, route in enumerate(AUGUST_ADVANCE_ROUTES):
+                stagger_u = min(1.0, max(0.0, (adv_u - idx * 0.06) / (1.0 - idx * 0.06)))
+                if stagger_u <= 0.02:
+                    continue
+                curve_ll = catmull_rom_spline(route["waypoints"], 28)
+                pts_px = [px(lon, lat) for lon, lat in curve_ll]
+                seg = polyline_prefix(pts_px, stagger_u)
+                if len(seg) >= 2:
+                    base_w = max(5.0, 14.0 * route["width_scale"])
+                    draw.line(seg, fill=(31, 36, 48, arrow_alpha), width=int(base_w * 1.65), joint="curve")
+                    draw.line(seg, fill=(*PALETTE["german_1914"], arrow_alpha), width=int(base_w), joint="curve")
+                    tip = seg[-1]
+                    back = seg[-3] if len(seg) >= 3 else seg[0]
+                    draw_arrowhead(
+                        draw,
+                        tip,
+                        back,
+                        base_w * 2.4,
+                        fill=(*PALETTE["german_1914"], arrow_alpha),
+                        outline=(31, 36, 48, arrow_alpha),
+                    )
+                    for qx, qy in seg[::8] + [tip]:
+                        occupied_boxes.append((qx - 18, qy - 18, qx + 18, qy + 18))
+
+    # 3. Phase 2 & 3: Western Front Trench Line (Nieuwpoort -> Swiss Border, starts f=231 "one line", completes f=308 "Switzerland")
+    trench_u = 0.0
+    if f >= 231:
+        trench_u = ease_in_out(min(1.0, (f - 231) / 77.0))
+    if trench_u > 0.005:
+        trench_curve_ll = catmull_rom_spline(WESTERN_FRONT_1914_WAYPOINTS, 24)
+        trench_px = [px(lon, lat) for lon, lat in trench_curve_ll]
+        drawn_trench = polyline_prefix(trench_px, trench_u)
+        if len(drawn_trench) >= 2:
+            glow_layer = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+            g_draw = ImageDraw.Draw(glow_layer, "RGBA")
+            g_draw.line(drawn_trench, fill=(255, 140, 75, 110), width=26, joint="curve")
+            overlay = Image.alpha_composite(overlay, glow_layer.filter(ImageFilter.GaussianBlur(radius=6.0)))
+            draw = ImageDraw.Draw(overlay, "RGBA")
+
+            offset_px = 5.5 if view.span_km > 250 else 8.0
+            west_line, east_line = [], []
+            for i, (tx, ty) in enumerate(drawn_trench):
+                p_prev = drawn_trench[max(0, i - 1)]
+                p_next = drawn_trench[min(len(drawn_trench) - 1, i + 1)]
+                dx, dy = p_next[0] - p_prev[0], p_next[1] - p_prev[1]
+                ln = math.hypot(dx, dy) or 1.0
+                nx, ny = -dy / ln, dx / ln
+                west_line.append((tx - nx * offset_px, ty - ny * offset_px))
+                east_line.append((tx + nx * offset_px, ty + ny * offset_px))
+                occupied_boxes.append((tx - 18, ty - 18, tx + 18, ty + 18))
+
+            draw.line(west_line, fill=(31, 36, 48, 235), width=9, joint="curve")
+            draw.line(west_line, fill=(*PALETTE["allied_1914"], 245), width=5, joint="curve")
+            draw.line(east_line, fill=(31, 36, 48, 235), width=9, joint="curve")
+            draw.line(east_line, fill=(*PALETTE["german_1914"], 245), width=5, joint="curve")
+            draw.line(drawn_trench, fill=(31, 36, 48, 255), width=3, joint="curve")
+
+            acc_d = 0.0
+            for a_pt, b_pt in zip(drawn_trench, drawn_trench[1:]):
+                seg_d = math.hypot(b_pt[0] - a_pt[0], b_pt[1] - a_pt[1])
+                if acc_d + seg_d >= 26.0 and seg_d > 1.0:
+                    ux, uy = (b_pt[0] - a_pt[0]) / seg_d, (b_pt[1] - a_pt[1]) / seg_d
+                    nx, ny = -uy, ux
+                    mx, my = (a_pt[0] + b_pt[0]) * 0.5, (a_pt[1] + b_pt[1]) * 0.5
+                    draw.line([(mx - nx * 8, my - ny * 8), (mx + nx * 8, my + ny * 8)], fill=(31, 36, 48, 220), width=2)
+                    acc_d = 0.0
+                else:
+                    acc_d += seg_d
+
+            if trench_u < 1.0:
+                hx, hy = drawn_trench[-1]
+                draw.ellipse([hx - 14, hy - 14, hx + 14, hy + 14], fill=(255, 193, 69, 130), outline=(31, 36, 48, 255), width=2)
+                draw.ellipse([hx - 5, hy - 5, hx + 5, hy + 5], fill=(255, 255, 255, 255))
+
+    # 4. Phase 3: Flanders Sector Highlight & Pulse Rings (starts f=409 on "close")
+    if f >= 395:
+        fl_u = ease_in_out(min(1.0, max(0.0, (f - 405) / 20.0)))
+        sector_pts = [
+            (2.845, 50.765, "Wulverghem"),
+            (2.880, 50.725, "Ploegsteert Wood"),
+            (2.935, 50.711, "Frelinghien-Houplines"),
+            (2.881, 50.688, "Armentières"),
+            (2.833, 50.651, "Fleurbaix"),
+        ]
+        if fl_u > 0.01:
+            glow_sec = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+            gs_draw = ImageDraw.Draw(glow_sec, "RGBA")
+            corridor_px = [px(lon, lat) for lon, lat, _ in sector_pts]
+            gs_draw.line(corridor_px, fill=(255, 193, 69, int(155 * fl_u)), width=54, joint="curve")
+            overlay = Image.alpha_composite(overlay, glow_sec.filter(ImageFilter.GaussianBlur(radius=14.0)))
+            draw = ImageDraw.Draw(overlay, "RGBA")
+
+            fx, fy = px(2.935, 50.711)
+            for r_idx in range(3):
+                phase = ((f - 405) / 28.0 + r_idx / 3.0) % 1.0
+                rad = 14.0 + 78.0 * phase
+                r_alpha = int(235 * (1.0 - phase) * fl_u)
+                draw.ellipse([fx - rad, fy - rad, fx + rad, fy + rad], outline=(255, 193, 69, r_alpha), width=3)
+
+    # Apply subtle perspective pitch to the map + geographic paths BEFORE drawing crisp screen-space labels & HUD
+    pitched_map = apply_clean_pitch_warp(Image.alpha_composite(canvas, overlay).convert("RGB"), view.pitch_deg).convert("RGBA")
+    hud_overlay = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(hud_overlay, "RGBA")
+
+    # 5. Geographic & Tactical Labels (Altitude-Tier Filtered + 8-Position Collision Solver)
+    labels_spec = [
+        {"lon": 6.08, "lat": 50.78, "text": "Aachen", "start": 18, "end": 340, "prefer": "E", "tier": "macro"},
+        {"lon": 5.57, "lat": 50.63, "text": "Liège", "start": 78, "end": 340, "prefer": "SE", "tier": "macro"},
+        {"lon": 4.35, "lat": 50.85, "text": "Brussels", "start": 88, "end": 350, "prefer": "NW", "tier": "macro"},
+        {"lon": 2.35, "lat": 48.86, "text": "Paris", "start": 25, "end": 340, "prefer": "W", "tier": "macro"},
+        {"lon": 3.60, "lat": 48.95, "text": "River Marne", "start": 106, "end": 335, "prefer": "SE", "tier": "macro"},
+        {"lon": 2.75, "lat": 51.13, "text": "North Sea (Nieuwpoort)", "start": 276, "end": 370, "prefer": "E", "tier": "macro", "accent": True},
+        {"lon": 5.38, "lat": 49.16, "text": "Verdun", "start": 265, "end": 345, "prefer": "E", "tier": "macro"},
+        {"lon": 7.15, "lat": 47.50, "text": "Switzerland (Basel)", "start": 293, "end": 345, "prefer": "E", "tier": "macro", "accent": True},
+        # Flanders Meso/Micro Sector labels (appear as camera zooms into Flanders, f >= 348)
+        {"lon": 2.885, "lat": 50.851, "text": "Ypres", "start": 348, "end": 453, "prefer": "E", "tier": "micro"},
+        {"lon": 2.845, "lat": 50.765, "text": "Wulverghem", "start": 362, "end": 453, "prefer": "W", "tier": "micro"},
+        {"lon": 2.880, "lat": 50.725, "text": "Ploegsteert Wood", "start": 368, "end": 453, "prefer": "W", "tier": "micro"},
+        {"lon": 2.935, "lat": 50.711, "text": "Frelinghien–Houplines (Truce Sector)", "start": 376, "end": 453, "prefer": "E", "tier": "micro", "accent": True},
+        {"lon": 2.881, "lat": 50.688, "text": "Armentières", "start": 382, "end": 453, "prefer": "SE", "tier": "micro"},
+        {"lon": 2.833, "lat": 50.651, "text": "Fleurbaix", "start": 388, "end": 453, "prefer": "W", "tier": "micro"},
+        {"lon": 2.807, "lat": 50.534, "text": "La Bassée", "start": 392, "end": 453, "prefer": "E", "tier": "micro"},
+    ]
+
+    for lb in labels_spec:
+        if not (lb["start"] <= f <= lb["end"]):
+            continue
+        cx, cy = px(lb["lon"], lb["lat"])
+        if not (45.0 <= cx <= w - 45.0 and 45.0 <= cy <= h - 75.0):
+            continue
+        fade_in = min(1.0, (f - lb["start"] + 1) / 8.0)
+        fade_out = min(1.0, (lb["end"] - f + 1) / 10.0) if lb["end"] < 450 else 1.0
+        alpha = int(255 * fade_in * fade_out)
+        if alpha <= 10:
+            continue
+
+        is_accent = lb.get("accent", False)
+        f_lbl = get_font("Bold" if is_accent else "SemiBold", 24 if is_accent else 21)
+        bbox = draw.textbbox((0, 0), lb["text"], font=f_lbl)
+        tw, th = float(bbox[2] - bbox[0]) + 22.0, float(bbox[3] - bbox[1]) + 14.0
+
+        lx, ly, _, needs_leader = place_label_8pos(cx, cy, tw, th, occupied_boxes, prefer=lb["prefer"])
+        pin_col = PALETTE["amber_glow"] if is_accent else PALETTE["paper"]
+        if needs_leader or is_accent:
+            draw.line([(cx, cy), (lx + tw * 0.5, ly + th * 0.5)], fill=(31, 36, 48, int(alpha * 0.85)), width=2)
+        draw.ellipse([cx - 5, cy - 5, cx + 5, cy + 5], fill=(*pin_col, alpha), outline=(31, 36, 48, alpha), width=2)
+
+        pill_fill = (31, 36, 48, int(alpha * 0.92)) if is_accent else (250, 244, 232, int(alpha * 0.92))
+        pill_out = (*PALETTE["amber_glow"], alpha) if is_accent else (31, 36, 48, int(alpha * 0.85))
+        txt_col = (255, 248, 236, alpha) if is_accent else (31, 36, 48, alpha)
+        draw.rounded_rectangle([lx, ly, lx + tw, ly + th], radius=7, fill=pill_fill, outline=pill_out, width=2)
+        draw.text((lx + 11, ly + th * 0.5), lb["text"], font=f_lbl, fill=txt_col, anchor="lm")
+
+    # 6. Top-Left Archival Date & Theater Card (Screen-Space HUD, never drifts with lon/lat!)
+    if f >= 36:
+        if f < 149:
+            date_title = "AUGUST 1914"
+            date_sub = "GERMAN SCHLIEFFEN PLAN ADVANCE"
+            accent_bar = PALETTE["german_1914"]
+            card_u = min(1.0, (f - 36 + 1) / 8.0)
+        elif f < 355:
+            date_title = "DECEMBER 1914"
+            date_sub = "WESTERN FRONT TRENCH STALEMATE"
+            accent_bar = PALETTE["allied_1914"]
+            card_u = 1.0
+        else:
+            date_title = "24–25 DECEMBER 1914"
+            date_sub = "FLANDERS SECTOR · BRITISH & SAXON LINES"
+            accent_bar = PALETTE["amber_glow"]
+            card_u = 1.0
+
+        ca = int(245 * card_u)
+        draw.rounded_rectangle([40, 32, 545, 118], radius=10, fill=(250, 244, 232, ca), outline=(31, 36, 48, ca), width=3)
+        draw.rounded_rectangle([40, 32, 54, 118], radius=4, fill=(*accent_bar, ca))
+        draw.text((70, 58), date_title, font=get_font("Black", 30), fill=(31, 36, 48, ca), anchor="lm")
+        draw.text((70, 92), date_sub, font=get_font("SemiBold", 17), fill=(85, 92, 108, ca), anchor="lm")
+
+    # 7. Top-Right Fixed-Width Counter Card (Trench Length in S02_SH002; Sector Proximity in S02_SH003)
+    if 231 <= f <= 333:
+        cnt_km = int(round(760.0 * trench_u))
+        cnt_mi = int(round(475.0 * trench_u))
+        draw.rounded_rectangle([w - 465, 32, w - 40, 118], radius=10, fill=(31, 36, 48, 238), outline=(*PALETTE["amber_glow"], 240), width=2)
+        draw.text((w - 442, 58), f"{cnt_km:3d} km  ({cnt_mi:3d} miles)", font=get_font("Bold", 28), fill=(255, 193, 69, 255), anchor="lm")
+        draw.text((w - 442, 92), "CONTINUOUS FRONT: NORTH SEA TO SWITZERLAND", font=get_font("SemiBold", 15), fill=(244, 236, 220, 230), anchor="lm")
+    elif f >= 409:
+        prox_u = min(1.0, (f - 409 + 1) / 8.0)
+        pa = int(242 * prox_u)
+        draw.rounded_rectangle([w - 485, 32, w - 40, 118], radius=10, fill=(31, 36, 48, pa), outline=(*PALETTE["amber_glow"], pa), width=2)
+        draw.text((w - 462, 58), "30 – 50 YARDS APART", font=get_font("Bold", 28), fill=(255, 193, 69, pa), anchor="lm")
+        draw.text((w - 462, 92), "FRELINGHIEN–PLOEGSTEERT · WITHIN VOICE RANGE", font=get_font("SemiBold", 15), fill=(244, 236, 220, pa), anchor="lm")
+
+    # 8. Dynamic Scale Bar (Bottom-Left above Timing Strip)
+    target_km = view.span_km * 0.16
+    base10 = 10 ** math.floor(math.log10(max(1.0, target_km)))
+    nice_km = next((m * base10 for m in (1, 2, 5, 10) if m * base10 >= target_km), 10 * base10)
+    bar_px = nice_km / view.km_per_px
+    sx0, sy0 = 46.0, h - 84.0
+    draw.rounded_rectangle([sx0 - 12, sy0 - 34, sx0 + bar_px + 18, sy0 + 14], radius=7, fill=(250, 244, 232, 225), outline=(31, 36, 48, 210), width=2)
+    draw.line([(sx0, sy0), (sx0 + bar_px, sy0)], fill=(31, 36, 48, 255), width=4)
+    draw.line([(sx0, sy0 - 8), (sx0, sy0 + 8)], fill=(31, 36, 48, 255), width=4)
+    draw.line([(sx0 + bar_px, sy0 - 8), (sx0 + bar_px, sy0 + 8)], fill=(31, 36, 48, 255), width=4)
+    draw.text((sx0 + bar_px * 0.5, sy0 - 12), f"{int(nice_km)} km", font=get_font("Bold", 18), fill=(31, 36, 48, 255), anchor="mb")
+
+    # 9. Bottom Word-Sync Timing Marks Bar (56 px tall so cue markers sit cleanly inside the bar)
+    draw.rectangle([0, h - 56, w, h], fill=(22, 26, 35, 248))
+    draw.line([(0, h - 56), (w, h - 56)], fill=(*PALETTE["amber_glow"], 210), width=2)
+
+    cur_shot = "S02_SH001" if f < 133 else ("S02_SH002" if f < 321 else "S02_SH003")
+    tier_name = "MACRO" if view.span_km >= 550 else ("MESO" if view.span_km >= 180 else "MICRO")
+    meta_txt = f"{cur_shot} | F:{f:03d}/452 ({f / FPS:05.2f}s) | SPAN:{int(round(view.span_km)):3d}km [{tier_name}]"
+    draw.text((20, h - 22), meta_txt, font=get_font("Bold", 16), fill=(255, 193, 69, 255), anchor="lm")
+
+    shot_words = [w_item for w_item in WORD_SPINE if w_item["shot"] == cur_shot]
+    wx = 492.0
+    f_word = get_font("SemiBold", 17)
+    f_tag = get_font("Bold", 11)
+    for w_item in shot_words:
+        is_speaking = w_item["start"] <= f <= w_item["end"]
+        already_spoken = f > w_item["end"]
+        w_str = w_item["word"]
+        wb = draw.textbbox((0, 0), w_str, font=f_word)
+        ww = float(wb[2] - wb[0])
+        if is_speaking:
+            draw.rounded_rectangle([wx - 5, h - 36, wx + ww + 5, h - 7], radius=5, fill=(255, 193, 69, 255))
+            draw.text((wx, h - 21), w_str, font=get_font("Bold", 17), fill=(22, 26, 35, 255), anchor="lm")
+        else:
+            col = (244, 236, 220, 235) if already_spoken else (145, 155, 170, 185)
+            draw.text((wx, h - 21), w_str, font=f_word, fill=col, anchor="lm")
+        if w_item.get("mark"):
+            draw.text((wx + ww * 0.5, h - 39), f"▼f{w_item['start']}:{w_item['mark']}", font=f_tag, fill=(255, 120, 100, 245), anchor="mb")
+        wx += ww + 13.0
+
+    return Image.alpha_composite(pitched_map, hud_overlay).convert("RGB")
+
+
+# =============================================================================
+# 6. AUDIO CONCATENATION & FRAME-ACCURATE SOUND CUE MIXING
+# =============================================================================
+
+def build_continuous_audio(wav_paths: Sequence[str], out_wav_path: str) -> None:
+    """Concatenate the 3 real narrator audio tracks (S02_SH001..003) and layer subtle
+    cartographic foley cues + 0.50 s trench-wind/cough J-cut prelap at exact word frames."""
+    segments = []
+    sr = 24000
+    for idx, wp in enumerate(wav_paths):
+        with wave.open(wp, "rb") as wf:
+            sr = wf.getframerate()
+            raw = np.frombuffer(wf.readframes(wf.getnframes()), dtype=np.int16).astype(np.float32) / 32768.0
+        target_f = (133, 188, 132)[idx]
+        target_samples = int(round(target_f * sr / FPS))
+        if len(raw) >= target_samples:
+            seg = raw[:target_samples]
+        else:
+            seg = np.pad(raw, (0, target_samples - len(raw)))
+        segments.append(seg)
+
+    full_audio = np.concatenate(segments)
+    n_total = len(full_audio)
+    rng = np.random.default_rng(1914)
+
+    def add_wood_tick(frame_idx: int, gain: float = 0.09, freq: float = 180.0):
+        s0 = int(round(frame_idx * sr / FPS))
+        dur = int(0.045 * sr)
+        if 0 <= s0 < n_total - dur:
+            t = np.linspace(0.0, 0.045, dur, dtype=np.float32)
+            env = np.exp(-t * 95.0)
+            click = (np.sin(2.0 * math.pi * freq * t) + 0.5 * np.sin(2.0 * math.pi * (freq * 2.4) * t)) * env * gain
+            full_audio[s0:s0 + dur] += click
+
+    def add_charcoal_draw(f_start: int, f_end: int, gain: float = 0.024):
+        s0 = int(round(f_start * sr / FPS))
+        s1 = min(n_total, int(round(f_end * sr / FPS)))
+        if s1 > s0:
+            noise = rng.standard_normal(s1 - s0).astype(np.float32)
+            kernel = np.ones(18, dtype=np.float32) / 18.0
+            filtered = np.convolve(noise, kernel, mode="same")
+            env = np.clip(np.sin(np.linspace(0.0, math.pi, s1 - s0, dtype=np.float64)), 0.0, 1.0).astype(np.float32) ** 0.5
+            full_audio[s0:s1] += filtered * env * gain
+
+    add_wood_tick(36, gain=0.09, freq=195.0)       # "August" date card stamp (f36)
+    add_charcoal_draw(76, 118, gain=0.022)         # German August advance draw (f76..118)
+    add_wood_tick(118, gain=0.08, freq=165.0)      # Advance arrival at Marne (f118)
+    add_wood_tick(149, gain=0.09, freq=190.0)      # "December" date card flip (f149)
+    add_charcoal_draw(231, 308, gain=0.025)        # Western Front trench draw (f231..308)
+    add_wood_tick(276, gain=0.07, freq=220.0)      # "North Sea" pin (f276)
+    add_wood_tick(293, gain=0.08, freq=175.0)      # "Switzerland" pin (f293)
+    add_wood_tick(409, gain=0.09, freq=210.0)      # "close" Flanders sector glow (f409)
+
+    s_pre = int(round(440 * sr / FPS))
+    if s_pre < n_total:
+        wind = np.convolve(rng.standard_normal(n_total - s_pre).astype(np.float32), np.ones(45) / 45.0, mode="same")
+        ramp = np.linspace(0.0, 0.045, n_total - s_pre, dtype=np.float32)
+        full_audio[s_pre:] += wind * ramp
+
+    full_audio = np.nan_to_num(full_audio, nan=0.0, posinf=0.0, neginf=0.0)
+    stereo = np.stack([full_audio, full_audio], axis=1)
+    pcm16 = np.clip(stereo * 32767.0, -32768, 32767).astype(np.int16)
+    with wave.open(out_wav_path, "wb") as wf:
+        wf.setnchannels(2)
+        wf.setsampwidth(2)
+        wf.setframerate(sr)
+        wf.writeframes(pcm16.tobytes())
+
+
+# =============================================================================
+# 7. MAIN PIPELINE EXECUTION & KEYFRAME SHEET EXPORT
+# =============================================================================
+
+def main() -> None:
+    upload_dir = Path("/working_dir/c_2b0c4b1c99dfd919/user_uploaded_files/ttl=63d/user_uploaded")
+    out_dir = Path("/working_dir/c_2b0c4b1c99dfd919/artifacts/file_generation/ttl=63d/output")
+    inter_dir = Path("/working_dir/c_2b0c4b1c99dfd919/artifacts/file_generation/ttl=63d/intermediate")
+    out_dir.mkdir(parents=True, exist_ok=True)
+    inter_dir.mkdir(parents=True, exist_ok=True)
+
+    clip1 = str(upload_dir / "S02_SH001_map_v2.mp4")
+    clip2 = str(upload_dir / "S02_SH002_map_v2.mp4")
+    clip3 = str(upload_dir / "S02_SH003_map_v2.mp4")
+
+    print("[1/4] Building 3840x2160 1914 Western Europe Master Cartographic Plate...")
+    plate_engine = MasterCartographicPlate(clip1, clip2)
+
+    print("[2/4] Building continuous 18.875s word-locked stereo audio track...")
+    wavs = ["/tmp/S02_SH001_map_v2.mp4.wav", "/tmp/S02_SH002_map_v2.mp4.wav", "/tmp/S02_SH003_map_v2.mp4.wav"]
+    for src_mp4, dst_wav in zip((clip1, clip2, clip3), wavs):
+        if not os.path.exists(dst_wav):
+            subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", src_mp4, "-ac", "1", "-ar", "24000", dst_wav], check=True)
+    master_wav = str(inter_dir / "s02_continuous_audio.wav")
+    build_continuous_audio(wavs, master_wav)
+
+    out_mp4 = out_dir / "S02_continuous_map_sample.mp4"
+    print(f"[3/4] Rendering {TOTAL_FRAMES} frames (1920x1080 @ 24fps) to {out_mp4}...")
+    proc = subprocess.Popen(
+        [
+            "ffmpeg", "-y", "-loglevel", "error",
+            "-f", "rawvideo", "-vcodec", "rawvideo",
+            "-pix_fmt", "rgb24", "-s", f"{WIDTH}x{HEIGHT}", "-r", str(FPS),
+            "-i", "-",
+            "-i", master_wav,
+            "-c:v", "libx264", "-preset", "medium", "-crf", "17",
+            "-b:v", "5500k", "-maxrate", "7500k", "-bufsize", "11000k",
+            "-pix_fmt", "yuv420p",
+            "-c:a", "aac", "-b:a", "192k", "-ar", "48000", "-ac", "2",
+            "-shortest",
+            str(out_mp4),
+        ],
+        stdin=subprocess.PIPE,
+    )
+    assert proc.stdin is not None
+
+    keyframe_indices = [42, 118, 165, 298, 368, 435]
+    saved_keyframes: dict[int, Image.Image] = {}
+
+    for f in range(TOTAL_FRAMES):
+        im = render_single_frame(plate_engine, f)
+        if f in keyframe_indices:
+            saved_keyframes[f] = im.copy()
+            kf_path = inter_dir / f"keyframe_f{f:03d}.png"
+            im.save(kf_path)
+        proc.stdin.write(np.asarray(im, dtype=np.uint8).tobytes())
+
+    proc.stdin.close()
+    if proc.wait(timeout=300) != 0:
+        raise RuntimeError("FFmpeg encoding failed")
+
+    print("[4/4] Assembling 6-keyframe contact sheet...")
+    sheet_16_9 = Image.new("RGB", (3840, 1440), (22, 26, 35))
+    grid_pos = [(0, 0), (1280, 0), (2560, 0), (0, 720), (1280, 720), (2560, 720)]
+    for (gx, gy), f_idx in zip(grid_pos, keyframe_indices):
+        tile = saved_keyframes[f_idx].resize((1280, 720), Image.LANCZOS)
+        sheet_16_9.paste(tile, (gx, gy))
+    sheet_out = out_dir / "S02_continuous_keyframes_6up.png"
+    sheet_16_9.save(sheet_out)
+    print(f"Done! Video: {out_mp4} ({out_mp4.stat().st_size / 1e6:.2f} MB) | Keyframes: {sheet_out}")
+
+
+if __name__ == "__main__":
+    main()

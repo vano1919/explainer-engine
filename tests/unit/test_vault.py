@@ -145,3 +145,11 @@ def test_the_live_xworld_lora_and_datasets_are_critical():
     assert V.is_critical("lora_plan_2026-10-26/dataset_xworld_v1/manifest.json", cfg)
     assert V.is_critical("lora_plan_2026-10-26/dataset_xworld_v2/img_0001.png", cfg)
     assert V.is_critical("lora_plan_2026-10-26/caption_xworld_v1/captions_reviewed.jsonl", cfg)
+
+
+def test_blender_frames_and_3d_assets_are_critical():
+    """ICW-01 RW-11 (D-96): render frames, checkpoints, clips, .blend templates and the 3D assets need a second copy."""
+    cfg = V.config()
+    for path in ("blender/job-001/shot_key/frames/0001.png", "blender/job-001/shot_key/render_checkpoint.json",
+                 "blender/templates/hall.blend", "assets/3d/hero/hero.glb"):
+        assert V.is_critical(path, cfg), path

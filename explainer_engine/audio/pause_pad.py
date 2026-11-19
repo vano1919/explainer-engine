@@ -1,3 +1,4 @@
+
 """Pause padding for a narration read (D-39): a punctuated gap shorter than ``MIN_GAP`` gets silence inserted in its
 middle, so the edit has a real pause to cut in (UR-12) while no word is touched.
 

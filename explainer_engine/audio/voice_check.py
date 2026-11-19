@@ -1,3 +1,4 @@
+
 """Voice consistency check (creator 2026-10-16: "from 3:17 almost to the end another voice comes in").
 
 One ElevenLabs v4 generation of the whole Day 1 read (2,917 characters, 223 s) drifted: from about 190 s of the read the
@@ -92,6 +93,19 @@ def check_speakers(x: np.ndarray, sr: int, turns: list[tuple[str, float, float]]
 # -- the channel registry and EL-13 (P4b) -----------------------------------------------------------------------------
 
 REGISTRY = Path(__file__).resolve().parents[2] / "config" / "channel_voices.json"
+
+
+def check_character_accents(cast: dict) -> list[dict]:
+    """B-EXTRA (5): Ensure character records declare an accent; emit REVIEW when missing."""
+    out: list[dict] = []
+    for cid, rec in (cast or {}).items():
+        if not isinstance(rec, dict):
+            continue
+        accent = str(rec.get("accent") or (rec.get("voice") or {}).get("accent") or "").strip()
+        if not accent:
+            out.append({"level": "REVIEW", "character_id": cid, "rule": "voice_accent",
+                        "detail": f"character {cid!r} is missing declared voice accent"})
+    return out
 
 
 def registry_errors(doc: dict) -> list[dict]:

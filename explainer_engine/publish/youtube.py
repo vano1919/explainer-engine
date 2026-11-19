@@ -1,3 +1,4 @@
+
 """YouTube Data API v3 client for staging uploads (D-57): token refresh, resumable insert, thumbnails.set, read-only checks.
 stdlib only. Every request goes through ``transport`` so tests run against a fake API with no network.
 

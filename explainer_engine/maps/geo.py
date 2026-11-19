@@ -1,4 +1,4 @@
-"""Map geometry: the Natural Earth extract, one local projection per view, point-in-polygon and clipping. numpy only.
+"""Map geometry: the Natural Earth extract, 1914 historical borders, one local projection per view, point-in-polygon and clipping. numpy only.
 
 The projection is the local equirectangular one (x east = longitude * cos(latitude of the centre), y north = latitude), north up
 (CRAFT-CART-06). A view is a centre, a width in kilometres and a pixel size: every pixel is a pure function of those numbers,
@@ -17,6 +17,7 @@ from pathlib import Path
 import numpy as np
 
 DATA = Path(__file__).with_name("data") / "ne50m.json.gz"
+BORDERS_1914_DATA = Path(__file__).with_name("data") / "borders_1914.json.gz"
 R_KM = 6371.0088
 KM_PER_DEG = R_KM * math.pi / 180.0
 
@@ -31,6 +32,28 @@ def dataset() -> dict:
     for layer in ("rivers", "borders"):
         out[layer] = [_Line(np.asarray(line, dtype=np.float64)) for line in raw[layer]]
     return out
+
+
+@lru_cache(maxsize=1)
+def dataset_1914() -> dict:
+    """The 1914 Western/Central Europe historical borders layer (``borders_1914.json.gz``): lines, named segments, and country polygons."""
+    raw = json.loads(gzip.decompress(BORDERS_1914_DATA.read_bytes()).decode("utf-8"))
+    return {
+        "schema": raw.get("schema", "borders_1914/1"),
+        "year": int(raw.get("year", 1914)),
+        "borders": [_Line(np.asarray(line, dtype=np.float64)) for line in raw.get("borders", [])],
+        "segments": {k: _Line(np.asarray(v, dtype=np.float64)) for k, v in (raw.get("segments") or {}).items()},
+        "countries": {
+            k: [_Polygon([np.asarray(r, dtype=np.float64)]) for r in rings]
+            for k, rings in (raw.get("countries") or {}).items()
+        },
+    }
+
+
+@lru_cache(maxsize=1)
+def borders_1914() -> list["_Line"]:
+    """The 1914 historical land border lines from ``borders_1914.json.gz``."""
+    return dataset_1914()["borders"]
 
 
 class _Polygon:
