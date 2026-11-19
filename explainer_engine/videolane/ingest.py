@@ -171,23 +171,159 @@ def _trim_to_sound(span: tuple, audio, rate: int) -> tuple | None:
     return (round(span[0] + keep[0] * TRIM_WINDOW_S, 3), round(span[0] + (keep[-1] + 1) * TRIM_WINDOW_S, 3))
 
 
-def speech_with_words(spans: list, words: list[dict] | None, line_text: str | None, *, spoken: bool, dur: float,
-                      audio=None, rate: int = 16000) -> list:
-    """TD-327: the detector's spans plus the matched word spans (each cut back to where sound is, given ``audio``), for a
-    clip-spoken shot only (a silent clip is cut exactly as before), merged where they touch, never past the clip's own length."""
+# --- Step 1.2 (V4.1, D-139, MA-06): one trim rule from the clip's own sound -------------------------------------------------
+# `qa/sound_realism.speech_spans` is band energy against percentiles, not a voice detector, so it cannot tell a gunshot or loud
+# steady ambience from speech. A word counts only where a VOICING classifier hears a voice: Silero VAD through faster-whisper when
+# it is installed, else a harmonicity check (normalised autocorrelation peak in the pitch range). The record says which ran.
+# All numbers are engineering defaults (D-59), chosen on synthetic voices, gunshots and ambience in tests/unit/test_trim_rule.py.
+VOICE_FRAME_S = 0.03
+VOICE_HOP_S = 0.01
+VOICE_F0_HZ = (70.0, 400.0)
+VOICE_MIN_PERIODICITY = 0.5   # normalised autocorrelation peak of a voiced frame
+VOICE_GAP_S = 0.25            # voiced runs closer than this are one span (consonants, breaths)
+VOICE_MIN_RUN_S = 0.09
+VOICE_MIN_HIGH_SHARE = 0.015  # share of a frame's power above 1 kHz: a voice has formants there, a low boom or low wind has none
+VOICE_PURE_PERIODICITY = 0.78  # ...unless the frame is as periodic as a held note (a sung or held word has few upper partials)
+VOICE_FLOOR_DBFS = -62.0      # nothing quieter is a voice
+VOICE_BELOW_PEAK_DB = 45.0    # nor anything this far under the clip's loudest frames
+WORD_MIN_VOICED_S = 0.08      # a word needs this much voiced time inside its own span (or half its length when shorter)
+MUTE_TAIL_AFTER_S = 0.25
+HALLUCINATED_TAIL_TOKENS = {"you", "you.", "thank", "thanks", "bye"}
+
+
+def harmonic_voiced_spans(audio, rate: int) -> list[tuple[float, float]]:
+    """Voiced spans (seconds) by periodicity: frames whose normalised autocorrelation peaks at a pitch lag (70-400 Hz) above
+    ``VOICE_MIN_PERIODICITY`` and are loud enough, joined across ``VOICE_GAP_S``, runs under ``VOICE_MIN_RUN_S`` dropped."""
+    x = np.asarray(audio, np.float64)
+    n, hop = int(VOICE_FRAME_S * rate), int(VOICE_HOP_S * rate)
+    if len(x) < n or n < 8:
+        return []
+    starts = np.arange(0, len(x) - n + 1, hop)
+    frames = np.stack([x[i:i + n] for i in starts]) * np.hanning(n)
+    db = 20 * np.log10(np.sqrt(np.mean(frames ** 2, axis=1)) + 1e-9)
+    gate = max(VOICE_FLOOR_DBFS, float(np.percentile(db, 95)) - VOICE_BELOW_PEAK_DB)
+    spec = np.fft.rfft(frames, 2 * n, axis=1)
+    ac = np.fft.irfft(spec * np.conj(spec), axis=1)[:, :n]
+    lo, hi = int(rate / VOICE_F0_HZ[1]), min(int(rate / VOICE_F0_HZ[0]), n - 1)
+    r = ac[:, lo:hi + 1].max(axis=1) / (ac[:, 0] + 1e-12)
+    power = np.abs(spec) ** 2
+    high = power[:, np.fft.rfftfreq(2 * n, 1.0 / rate) >= 1000.0].sum(axis=1) / (power.sum(axis=1) + 1e-12)
+    voiced = (r >= VOICE_MIN_PERIODICITY) & (db >= gate) & ((high >= VOICE_MIN_HIGH_SHARE) | (r >= VOICE_PURE_PERIODICITY))
+    runs: list[list[float]] = []
+    for i in np.flatnonzero(voiced):
+        a, b = (starts[i] + (n - hop) / 2) / rate, (starts[i] + (n + hop) / 2) / rate   # the frame's centre hop: no smear of 30 ms
+        if runs and a - runs[-1][1] <= VOICE_GAP_S:
+            runs[-1][1] = b
+        else:
+            runs.append([a, b])
+    return [(round(a, 3), round(b, 3)) for a, b in runs if b - a >= VOICE_MIN_RUN_S]
+
+
+def _silero_voiced_spans(audio, rate: int) -> list[tuple[float, float]] | None:
+    """Silero VAD through faster-whisper (an optional dependency, like ``audio/local_words``); None when it is not there."""
+    try:
+        from faster_whisper.vad import VadOptions, get_speech_timestamps
+    except Exception:
+        return None
+    x = np.asarray(audio, np.float32)
+    if rate != 16000 and len(x):
+        x = np.interp(np.arange(0, len(x) * 16000 / rate), np.arange(len(x)) * 16000 / rate, x).astype(np.float32)
+    try:
+        ts = get_speech_timestamps(x, VadOptions(min_silence_duration_ms=int(VOICE_GAP_S * 1000)), sampling_rate=16000)
+    except Exception:
+        return None
+    return [(round(t["start"] / 16000, 3), round(t["end"] / 16000, 3)) for t in ts]
+
+
+def voiced_spans(audio, rate: int) -> tuple[list[tuple[float, float]], str]:
+    """``(spans, detector)``: Silero VAD when installed, else the harmonicity check; ``detector`` names the one that ran."""
+    sil = _silero_voiced_spans(audio, rate)
+    if sil is not None:
+        return sil, "silero_vad"
+    return harmonic_voiced_spans(audio, rate), "harmonicity"
+
+
+def _wtext(w: dict) -> str:
+    return str(w.get("text", w.get("word", "")))
+
+
+def drop_word_artifacts(words: list[dict]) -> tuple[list[dict], float | None]:
+    """The two word-only filters, in one place for the ingest cut and ``whisper_edit_points``: a duplicate opening word more than
+    0.8 s before its repeat (S06_SH008 "Maybe"), and a trailing hallucinated token after a 0.45 s gap ("You"). Returns the words
+    and the ``mute_tail_from_s`` of a dropped tail token (else None)."""
+    ws = list(words)
+    mute_at = None
+    if len(ws) >= 2:
+        w0, w1 = (re.sub(r"\W+", "", _wtext(w).lower()) for w in ws[:2])
+        if w0 and w0 == w1 and float(ws[1].get("start", 0.0)) - float(ws[0].get("end", 0.0)) > 0.8:
+            ws = ws[1:]
+    if len(ws) >= 2:
+        last = re.sub(r"\W+", "", _wtext(ws[-1]).lower())
+        if last in HALLUCINATED_TAIL_TOKENS and float(ws[-1].get("start", 0.0)) - float(ws[-2].get("end", 0.0)) >= 0.45:
+            mute_at = round(float(ws[-2].get("end", 0.0)) + MUTE_TAIL_AFTER_S, 3)
+            ws = ws[:-1]
+    return ws, mute_at
+
+
+def accept_voiced_words(words: list[dict], audio, rate: int) -> dict:
+    """Words kept only where a voice is heard, their times clamped to the voiced span they overlap (Whisper's raw start is never
+    kept: S03_SH007 "Oh, my God" dated 0.00 s over a floor whose only event is at 2.4 s). A word with less voiced time than
+    ``WORD_MIN_VOICED_S`` (or half its length) is rejected with its reason. ``{detector, voiced, kept, rejected}``."""
+    voiced, detector = voiced_spans(audio, rate) if audio is not None and len(audio) else ([], "none")
+    kept, rejected = [], []
+    for w in words:
+        a, b = float(w.get("start", 0.0)), float(w.get("end", 0.0))
+        hits = [(max(a, va), min(b, vb)) for va, vb in voiced if min(b, vb) > max(a, va)]
+        have = sum(y - x for x, y in hits)
+        if detector == "none" or have + 1e-9 < min(WORD_MIN_VOICED_S, 0.5 * max(b - a, 0.0)) or not hits:
+            rejected.append({"text": _wtext(w), "start": a, "end": b, "why": "no voice heard under the word" if detector != "none"
+                             else "no audio to check the word against"})
+            continue
+        kept.append(dict(w, start=round(hits[0][0], 3), end=round(hits[-1][1], 3), raw_start=a, raw_end=b))
+    return {"detector": detector, "voiced": voiced, "kept": kept, "rejected": rejected}
+
+
+def trim_decision(spans: list, words: list[dict] | None, line_text: str | None, *, spoken: bool, dur: float,
+                  audio=None, rate: int = 16000) -> dict:
+    """The one trim rule (Step 1.2): ``{spans, mute_tail_from_s, detector, rejected}``. The detector's spans plus the matched
+    words that a voice supports (clamped to the voiced span); the word-only artifact filters run first. Without audio the words
+    cannot be checked: ``detector`` is "none" and no word is added (it is never guessed from words alone)."""
+    base = [tuple(sp) for sp in spans]
     if not spoken or not words or not line_text:
-        return [tuple(sp) for sp in spans]
-    extra = [(a, min(dur, b)) for a, b in matched_word_spans(words, line_text)]
-    if audio is not None:
-        extra = [t for t in (_trim_to_sound(e, audio, rate) for e in extra) if t]
-    both = sorted([tuple(sp) for sp in spans] + extra)
+        return {"spans": base, "mute_tail_from_s": None, "detector": "n/a", "rejected": []}
+    clean, mute_at = drop_word_artifacts(words)
+    acc = accept_voiced_words(clean, audio, rate)
+    if acc["detector"] == "none":
+        return {"spans": base, "mute_tail_from_s": mute_at, "detector": "none", "rejected": acc["rejected"]}
+    extra = [(a, min(dur, b)) for a, b in matched_word_spans(acc["kept"], line_text)]
+    extra = [t for t in (_trim_to_sound(e, audio, rate) for e in extra) if t]
     out: list[tuple[float, float]] = []
-    for a, b in both:
+    for a, b in sorted(base + extra):
         if out and a <= out[-1][1] + 1e-9:
             out[-1] = (out[-1][0], max(out[-1][1], b))
         else:
             out.append((a, b))
-    return out
+    if mute_at is None and acc["kept"] and any(r["start"] >= float(acc["kept"][-1]["end"]) for r in acc["rejected"]):
+        mute_at = round(float(acc["kept"][-1]["end"]) + MUTE_TAIL_AFTER_S, 3)   # a word heard after the last voiced one is not speech
+    return {"spans": out, "mute_tail_from_s": mute_at, "detector": acc["detector"], "rejected": acc["rejected"]}
+
+
+def speech_with_words(spans: list, words: list[dict] | None, line_text: str | None, *, spoken: bool, dur: float,
+                      audio=None, rate: int = 16000) -> list:
+    """TD-327: the detector's spans plus the matched word spans that a voice supports (``trim_decision``), for a clip-spoken
+    shot only (a silent clip is cut exactly as before), merged where they touch, never past the clip's own length. Without
+    ``audio`` the words are used as the local Whisper dated them (the old behaviour; callers with a file always pass audio)."""
+    if audio is None and spoken and words and line_text:
+        extra = [(a, min(dur, b)) for a, b in matched_word_spans(words, line_text)]
+        both = sorted([tuple(sp) for sp in spans] + extra)
+        out: list[tuple[float, float]] = []
+        for a, b in both:
+            if out and a <= out[-1][1] + 1e-9:
+                out[-1] = (out[-1][0], max(out[-1][1], b))
+            else:
+                out.append((a, b))
+        return out
+    return trim_decision(spans, words, line_text, spoken=spoken, dur=dur, audio=audio, rate=rate)["spans"]
 
 
 def _rms_db(x) -> float:
@@ -321,6 +457,7 @@ def ingest_scene(root: Path, script: dict, clips: list[dict], fps: int, *, backe
         hand = (nxt or {}).get("chain_from_frame")
         handover_s = (int(hand["frame"]) / pr["fps"]) if hand and pr["fps"] else None
         is_cont = bool(c.get("chain_from_frame"))
+        mute_tail, speech_detector = None, None
         from explainer_engine.qa import sound_realism as R
         x = R.read_audio(raw) if pr["has_audio"] else np.zeros(0, np.float32)
         spans = [(float(a), float(b)) for a, b in R.speech_spans(x)] if len(x) else []
@@ -331,7 +468,8 @@ def ingest_scene(root: Path, script: dict, clips: list[dict], fps: int, *, backe
                             if lines.get(i, {}).get("speaker_type") == "character")
             heard = words_fn(raw)
             words_source = "local whisper" if heard is not None else "unavailable (detector spans only)"
-            spans = speech_with_words(spans, heard, text, spoken=True, dur=pr["duration"], audio=x, rate=R.SR)
+            decision = trim_decision(spans, heard, text, spoken=True, dur=pr["duration"], audio=x, rate=R.SR)   # Step 1.2: one rule
+            spans, mute_tail, speech_detector = decision["spans"], decision["mute_tail_from_s"], decision["detector"]
         planned = float(shot.get("target_duration_seconds") or 0.0)
         pts = edit_points(pr["duration"], spans, shot.get("edit_plan"), planned, fps, spoken=sid in spoken,
                           handover_s=handover_s, drop_first=is_cont, shot_id=sid,
@@ -357,6 +495,8 @@ def ingest_scene(root: Path, script: dict, clips: list[dict], fps: int, *, backe
         rec["trim_contract"] = build_trim_contract(rec, sid)
         if sid in spoken and pr["has_audio"]:
             rec["speech_words"] = words_source
+            rec["speech_detector"] = speech_detector     # which voicing check decided the words (silero_vad | harmonicity | none)
+            rec["mute_tail_from_s"] = mute_tail          # where a hallucinated tail word starts to be muted (None: no such word)
         if trim_db:
             rec.update({"level_trim_db": trim_db, "true_peak_before": peak_before})
         write_json_atomic(vdir / f"{sid}.json", rec)
@@ -404,7 +544,6 @@ def clip_timings(root: Path, script: dict) -> dict:
 
 
 REACTION_TAIL_MIN_S = BP201_TAIL_MIN_S
-HALLUCINATED_TAIL_TOKENS = {"you", "you.", "thank", "thanks", "bye"}
 
 
 def whisper_edit_points(
@@ -415,12 +554,15 @@ def whisper_edit_points(
     reaction_tail_s: float = BP201_TAIL_TARGET_S,
     min_dur_s: float = 1.50,
     raw_durations: dict[str, float] | None = None,
+    audio_by_shot: dict[str, tuple] | None = None,
 ) -> dict:
     """Step 1 (Trim/Clock Fix): compute frame-accurate edit_points from measured Whisper word timestamps.
 
     - For every clip-spoken shot, trims ``in`` to ``max(0.0, first_word_start - head_lead_s)`` and
       ``out`` to ``min(raw_dur, last_word_end + max(REACTION_TAIL_MIN_S, reaction_tail_s))`` so no spoken
       syllable is ever severed mid-word and at least 0.50 s of reaction tail is preserved when available.
+    - With ``audio_by_shot`` (``{shot_id: (samples, rate)}``) a word counts only where a voice is heard (``accept_voiced_words``,
+      Step 1.2) and its times are clamped to the voiced span; the entry names the ``detector`` that ran ("none" without audio).
     - For silent or narrator-voiced clips where Whisper detects hallucinated trailing speech tokens
       (e.g. ``"You"`` in the last 1.2 s), records ``mute_tail_from_s`` so the mixer fades out the tail.
     """
@@ -444,24 +586,18 @@ def whisper_edit_points(
             or max([float(w.get("end", 0.0)) for w in words] + [float(shot.get("target_duration_seconds") or 4.0)])
         )
         if sid in spoken and words:
-            # Filter out duplicate early false-starts if the same opening word repeats >1.0s later (e.g. S06_SH008 "Maybe")
-            clean_words = list(words)
-            if len(clean_words) >= 2:
-                w0 = re.sub(r"\W+", "", str(clean_words[0].get("word", "")).lower())
-                w1 = re.sub(r"\W+", "", str(clean_words[1].get("word", "")).lower())
-                if w0 and w0 == w1 and (float(clean_words[1].get("start", 0.0)) - float(clean_words[0].get("end", 0.0))) > 0.8:
-                    clean_words = clean_words[1:]
-            # Filter trailing single-word "You" hallucination after real speech
-            if len(clean_words) >= 2:
-                w_last = re.sub(r"\W+", "", str(clean_words[-1].get("word", "")).lower())
-                gap = float(clean_words[-1].get("start", 0.0)) - float(clean_words[-2].get("end", 0.0))
-                if w_last in HALLUCINATED_TAIL_TOKENS and gap >= 0.45:
-                    mute_at = round(float(clean_words[-2].get("end", 0.0)) + 0.25, 3)
-                    clean_words = clean_words[:-1]
-                else:
-                    mute_at = None
-            else:
-                mute_at = None
+            clean_words, mute_at = drop_word_artifacts(words)   # the same filters as the runner's cut (one trim rule)
+            detector = "none"
+            if audio_by_shot and sid in audio_by_shot:   # a voice must be heard under a word (Step 1.2); clamps its times
+                x, rate = audio_by_shot[sid]
+                acc = accept_voiced_words(clean_words, x, rate)
+                detector, clean_words = acc["detector"], acc["kept"]
+                if not clean_words:
+                    clips_out[sid] = {"in": 0.0, "out": round(raw_dur, 3), "detector": detector, "no_voice_heard": True,
+                                      "rejected_words": [r["text"] for r in acc["rejected"]]}
+                    continue
+                if mute_at is None and acc["rejected"] and any(r["start"] >= float(clean_words[-1]["end"]) for r in acc["rejected"]):
+                    mute_at = round(float(clean_words[-1]["end"]) + MUTE_TAIL_AFTER_S, 3)
 
             first_start = float(clean_words[0].get("start", 0.0))
             last_end = float(clean_words[-1].get("end", first_start + 1.0))
@@ -476,6 +612,7 @@ def whisper_edit_points(
                 "speech_end_s": round(last_end, 3),
                 "reaction_tail_s": avail_tail,
                 "truncated_in_raw": avail_tail < 0.20,
+                "detector": detector,
             }
             if mute_at is not None:
                 entry["mute_tail_from_s"] = mute_at
