@@ -6782,3 +6782,6 @@ Edit, colour, finish (final plan S14-S16, S18, P-8; 2026-11-19, base `claude/pro
 - Tests: `test_finish_*.py`, `test_assemble_typed_ffmpeg.py`; `test_sourced_audio` mux test follows the typed calls (same BP-63 asserts).
 - Parity run on the old 4 push clips (2560x1440): see `HANDOFF_W7.md`. SK-1 trials: `docs/VENDORED_SKILLS.md`.
 
+
+### W7 follow-up: finishing chain wired into G9 (2026-11-19)
+`episode/run.py::stage_assemble` runs `_finish_rows` (-> `finish/chain.finish_rows`) at its end, only when the master exists, it is not a rehearsal and every G9 row is PASS; rows are appended. Scene key = accepted keyframe of the scene's first shot (IMAGE_ACCEPTED, hash-checked); no keyframe -> `VAL-CLR-01:<scene>` NOT_RUN. A failing tool becomes a NOT_RUN row. Tests: `tests/unit/test_finish_run_wiring.py` (FAIL master and rehearsal do not run it; PASS master appends; no-key scene). Stale text: none found. Open: VAL-QA-08 is always REVIEW, so G9 reads REVIEW after the chain until the observer looks.
