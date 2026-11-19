@@ -29,7 +29,8 @@ def _by(rows):
 def test_a_clean_file_passes_every_row(tmp_path):
     f = _make(tmp_path / "ok.mp4", "testsrc", "sine=frequency=440")
     rows = T.check_file(f, {"fps": 24, "frames": 96})
-    assert _by(rows) == {g: G.PASS for g in T.RULE_IDS}, rows
+    # VAL-QA-07/08 (W7) need the vendored skill and an output png: separate functions, not rows of check_file
+    assert _by(rows) == {g: G.PASS for g in T.RULE_IDS if g not in ("VAL-QA-07", "VAL-QA-08")}, rows
 
 
 @needs_ffmpeg
