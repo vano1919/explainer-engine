@@ -23,6 +23,12 @@ def test_paths_inside_pass_and_other_branches_are_exempt():
     assert S.check(CFG, "some-hotfix", ["anything/at/all.py"]) == []
 
 
+def test_an_unknown_slice_id_under_the_prefix_fails_and_other_branches_stay_free():
+    cfg = dict(CFG, slice_branch_prefix="b-")
+    assert S.check(cfg, "b-99", ["x.py"]) and "names no slice" in S.check(cfg, "b-99", ["x.py"])[0]
+    assert S.check(cfg, "hotfix-1", ["x.py"]) == []
+
+
 def test_only_the_control_slice_may_list_a_control_file():
     bad = json.loads(json.dumps(CFG))
     bad["slices"]["1.1"]["paths"].append("docs/architecture/v4_1_allowlists.json")

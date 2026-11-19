@@ -2,6 +2,7 @@
   "schema": "v4_1_allowlists/1",
   "comment": "D-139 / plan Step 0.4b. One entry per V4.1 slice: its exact head branch and the paths (fnmatch globs) it may change. Read from the PR's base ref, so a PR cannot widen its own scope. Changing this file is slice 0.4b's job only; a later change to a list needs the creator's word and its own PR.",
   "control_slice": "0.4b",
+  "slice_branch_prefix": "claude/project-thread-f0oep6-s",
   "control_files": [
     "docs/architecture/v4_1_allowlists.json",
     "explainer_engine/scope_check.py",
