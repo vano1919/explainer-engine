@@ -336,3 +336,25 @@ def test_the_guided_files_are_needed_when_a_chained_shot_is_guided(tmp_path):
     green = {"done": ["L0", "L1", "L2"], "rungs": {"L2": {"ok": True, "launch_sha": lsha}}}
     assert L.kind_l2_problems(guided_chain, LAUNCH, green) != [] and L.kind_l2_problems(distilled_chain, LAUNCH, green) == []
     assert L.kind_l2_problems(guided_chain, LAUNCH, {"done": ["L2"], "rungs": {"L2": {"ok": True, "launch_sha": lsha, "with_kind": True}}}) == []
+
+
+def test_scene_ends_pins_the_end_picture_into_the_spec(tmp_path):
+    import hashlib, json
+    from explainer_engine.training.pods.ltx import scene_run as SR
+    png = tmp_path / "e.png"
+    png.write_bytes(b"end-bytes")
+    sha = hashlib.sha256(b"end-bytes").hexdigest()
+    man = tmp_path / "m.json"
+    man.write_text(json.dumps({"shots": {"x_end": {"path": str(png), "sha256": sha}}}))
+    scene = {"pictures": {"manifest": str(man)}, "shots": [{"shot_id": "s1", "end": "x_end"}, {"shot_id": "s2"}]}
+    ends = SR.scene_ends(scene)
+    assert list(ends) == ["s1"]
+    out = SR._with_ends(scene["shots"][0], ends)
+    assert out["end_picture"] == str(png) and out["extra"]["end_sha256"] == sha
+    assert SR._with_ends(scene["shots"][1], ends) == scene["shots"][1]
+    png.write_bytes(b"changed")
+    try:
+        SR._with_ends(scene["shots"][0], ends)
+        assert False
+    except SystemExit:
+        pass
