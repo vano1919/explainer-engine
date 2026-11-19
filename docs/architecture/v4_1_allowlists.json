@@ -41,7 +41,8 @@
       "branch": "claude/project-thread-f0oep6-s14",
       "paths": ["explainer_engine/audio/sources.py", "explainer_engine/qa/publish_check.py", "docs/QA_SPECIFICATION.md",
                 "tests/unit/test_sound_design_system.py", "tests/unit/test_publish_check.py", "tests/unit/test_third_party_media.py",
-                "docs/PROGRESS.md"]
+                "explainer_engine/audio/sfx_library.py", "docs/SOUND_LIBRARY.md", "tests/unit/test_sfx_library.py",
+                "tests/unit/test_youtube_publish.py", "tests/unit/test_sourced_audio.py", "docs/PROGRESS.md"]
     },
     "1.5": {
       "branch": "claude/project-thread-f0oep6-s15",
