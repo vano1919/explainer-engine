@@ -253,3 +253,7 @@ def test_the_caps_sum_to_the_creators_total_and_the_weights_check_on_the_gpu_is_
     p = K.weights_root(L, vol) / f
     p.write_bytes(p.read_bytes() + b"x")                                                        # a wrong size is caught without hashing
     assert any(f in b for b in W.check_weights(L, vol, hash_files=False))
+
+
+def test_the_worker_reads_the_hf_token_from_the_owners_secret_name():
+    assert W.SECRET_NAME == "custom-secret"                                                     # the second account's secret (the owner, 20:41 UTC)

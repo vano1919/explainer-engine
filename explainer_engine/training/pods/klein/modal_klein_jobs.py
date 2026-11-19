@@ -39,7 +39,7 @@ SHARED_GATES = Path("/mnt/project-files/explainer-engine/final_plan_2026-11-19/a
 # The ladder record lives OUTSIDE the code bundle (a record written after the pin must never change the bundle it pins).
 LADDER_PATH = Path(os.environ.get("EE_KLEIN_LADDER") or (SHARED_GATES if SHARED_GATES.is_dir() else KLEIN_DIR.parents[3] / "jobs" / "klein_modal")
                    / "ladder_modal_klein.json")
-SECRET_NAME = "huggingface-secret"
+SECRET_NAME = "custom-secret"   # the owner's second account holds his HF token under this name (his message 2026-11-19 20:41 UTC); the key inside is HF_TOKEN
 GO = re.compile(r"^(cmsg_\w+):([0-9a-f]{12})$")
 HEX64 = re.compile(r"^[0-9a-f]{64}$")
 MARGIN_S = 90                    # the end path after the last picture: Volume commit, the final upload and the HF check
