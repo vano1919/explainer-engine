@@ -675,3 +675,37 @@ def test_a_waiver_must_be_a_message_id_and_never_opens_a_block(root):
 def test_every_final_record_in_the_repo_is_not_a_block():
     """A committed record that claims to be final must keep MS-1 .. MS-5 (drafts are reported only)."""
     assert LG.problems(LG.check_all(root=ROOT)) == []
+
+
+# ---- mutmut survivors of the tester (2026-11-20 09:10): strict, the fixed complaint, the error text ----------------------------------
+
+def test_a_fixed_complaint_with_the_owners_message_id_lets_keep_ours_pass(root):
+    rec = keep_good()
+    rec["requirements"][0]["complaint"] = {"open": False, "fix_seen": "cmsg_01OwnerSawTheFix"}
+    res = check(rec, root)
+    assert "MS4-KEEP-REQ" not in codes(res) and res.status == S.PASS
+    rec["requirements"][0]["complaint"] = {"open": True, "fix_seen": "cmsg_01OwnerSawTheFix"}      # fixed only when open is exactly false
+    assert "MS4-KEEP-REQ" in codes(check(rec, root))
+    rec["requirements"][0]["complaint"] = {"open": False, "fix_seen": None}
+    assert "MS4-KEEP-REQ" in codes(check(rec, root))
+
+
+def test_a_keep_ours_error_names_its_sub_question_and_requirement(root):
+    rec = keep_good()
+    rec["requirements"][0].update(ours_meets=False)
+    errs = [e for e in check(rec, root).errors if e.startswith("MS4-KEEP-REQ")]
+    assert errs and "decision for SQ1" in errs[0] and rec["requirements"][0]["id"] in errs[0]
+
+
+def test_require_pass_and_check_all_take_strict_and_refuse_a_planned_validator(root):
+    rec = good()
+    rec["mapping"][0]["target"] = {"kind": "validator_planned", "ref": "VAL-PRO-01", "wave": 2}
+    sign(rec)
+    write(root, rec)
+    LG.require_pass("L9", root=root)                                       # not strict: a planned validator is allowed
+    LG.require_pass("L9", root=root, strict=False)
+    with pytest.raises(ContractError, match="MS5-MAP-TARGET"):
+        LG.require_pass("L9", root=root, strict=True)
+    assert {r.layer: r.status for r in LG.check_all(root=root)} == {"L9": S.PASS}
+    assert {r.layer: r.status for r in LG.check_all(root=root, strict=True)} == {"L9": S.BLOCK}
+    assert LG.check_layer("L9", root=root, strict=True).status == S.BLOCK

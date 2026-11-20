@@ -528,32 +528,22 @@ def waived(layer: str, *, root=None) -> dict | None:
         else None
 
 
-MODES = ("strict", "fail_only")
-MODE_MINUTES = 30 * 24 * 60   # the owner's word on the mode holds 30 days, then the gate is strict again
-
-
-def gate_mode(*, root=None) -> str:
-    """``strict`` (default): a stage needs every layer final and PASS. ``fail_only``: a stage stops only on a layer record that is final
-    and BLOCK, on an invalid or missing registry, or (send gate) on a FAIL; layers not final yet are listed as NOT_RUN in every report.
-    Set only by the owner's recorded word (``governance ok layer_gate_mode fail_only <cmsg id> "<his words>"``), never by a flag."""
-    root = root_dir(root)
-    rows = [r for r in (records.last("layer_gate_mode", m, root=root) for m in MODES) if r and r.get("target") in MODES]
-    rows = [r for r in rows if records.valid("layer_gate_mode", r["target"], MODE_MINUTES, root=root, wildcard=False)]
-    return max(rows, key=lambda r: float(r.get("at", 0)))["target"] if rows else "strict"
+MODE = "fail_only"   # the owner's word (2026-11-20 09:11 UTC, cmsg_01Hnu5zB86sjUj5GtTgaUkPWMd8fDv9ExMX3zJq6nwZXau, recorded in jobs/creator_ok.jsonl):
+# "turn on the soft mode: production stops only on a validator that failed". The one behaviour of the layer gate; no flag, no strict mode.
 
 
 def require_layers(layers, *, root=None) -> list[str]:
-    """Raise ContractError unless the layers pass the gate; returns the report notes (the mode first, then every waived or NOT_RUN layer).
-
-    strict: every layer is final and PASS (``require_pass``: the group order included) or carries the owner's recorded ``layer_waiver``
-    (``python -m explainer_engine.governance ok layer_waiver L9 <cmsg id> "<his words>"``). fail_only: a layer that is not final yet is a
-    NOT_RUN note, a final BLOCK still stops. In both modes the registry must exist and be valid even when every layer is waived
-    (REG-MISSING). There is no flag."""
+    """The soft layer gate. Raises ContractError ONLY when the owner's requirements registry is missing or invalid (REG-MISSING and the
+    REG-* codes: with no registry nothing is measured at all). A layer whose record is not final, not PASS or BLOCK does not stop
+    production: it is a ``NOT_RUN <layer>: why`` note in the returned list, which every runner record and send-gate report carries
+    (the layer records decide when a layer's skill work is final, not whether production runs). A layer waived by the owner's recorded
+    ``layer_waiver`` is a note too. What stops production is a validator that FAILED on a stage's output (``send_gate.stage_check``)."""
     root = root_dir(root)
-    mode = gate_mode(root=root)
     entries, errs = OR.load(root)
     problems_ = errs + OR.check_registry(entries, root) + OR.missing(entries)
-    notes = [f"layer gate mode: {mode}"]
+    if problems_:
+        raise ContractError("the layer gate refuses (the registry is missing or invalid, nothing could be measured): " + " | ".join(problems_))
+    notes = [f"layer gate: {MODE}"]
     for layer in layers:
         w = waived(layer, root=root)
         if w:
@@ -562,14 +552,7 @@ def require_layers(layers, *, root=None) -> list[str]:
         try:
             require_pass(layer, root=root)
         except (ContractError, NeedsReview) as e:
-            res = check_layer(layer, root=root)
-            if mode == "fail_only" and not (res.state == "final" and res.status == S.BLOCK):
-                notes.append(f"NOT_RUN {layer}: {e}")
-            else:
-                problems_.append(f"{layer}: {e}")
-    if problems_:
-        raise ContractError("the layer gate refuses: " + " | ".join(problems_) + " | only the owner's recorded word passes it: "
-                            "`python -m explainer_engine.governance ok layer_waiver <layer> <cmsg id> \"<his words>\"`")
+            notes.append(f"NOT_RUN {layer}: {e}")
     return notes
 
 

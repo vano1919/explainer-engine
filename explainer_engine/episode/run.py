@@ -32,6 +32,7 @@ from explainer_engine.core.store import write_json_atomic, write_text_atomic
 from explainer_engine.episode import shot_state as SS
 from explainer_engine.episode import timing as TM
 from explainer_engine.governance import layer_gate as LG
+from explainer_engine.governance import send_gate as SG
 from explainer_engine.qa import gates as G
 
 STAGES = ("script", "sound_plan", "pictures", "voice", "clips", "sound", "assemble", "qa")
@@ -290,6 +291,11 @@ def run_stage(ep: Episode, stage: str) -> dict:
         rows, outputs = [G.row(f"{stage}_ran", False, f"{type(exc).__name__}: {exc}")], {}
     except ConfigError as exc:     # a missing free tool or setting: nothing measured, recorded as NOT_RUN (final audit B3)
         rows, outputs = [G.row(f"{stage}_ran", None, f"{type(exc).__name__}: {exc}")], {}
+    checked = SG.stage_check(LG.STAGE_LAYERS[stage], _stage_files(ep, stage, outputs))   # the owner's validators on this stage's files
+    if checked["failed"] or checked["passed"]:
+        rows = rows + [G.row("owner_requirements", not checked["failed"],
+                             f"{len(checked['failed'])} owner-requirement validator(s) failed, {len(checked['passed'])} passed",
+                             checked["failed"][:20])]
     if stage == "qa":   # a rehearsal is never a pass: an earlier stage did not pass, so nothing from this run ships
         rows = rows + [G.row("not_a_rehearsal", not rehearsal, "the chain passed every stage" if not rehearsal else
                              "a rehearsal: an earlier stage did not pass, so nothing from this run ships")]
@@ -299,11 +305,42 @@ def run_stage(ep: Episode, stage: str) -> dict:
            "verdict": verdict, "rows": rows, "outputs": outputs, "rehearsal": rehearsal, "fingerprint": fp,
            "not_run": [r["gate"] for r in rows if r["status"] == G.NOT_RUN],   # P-7: an unmeasured row is stored, never dropped
            "awaiting": AWAITING_APPROVAL if verdict["status"] == G.REVIEW else None,
-           "layer_gate": {"mode": LG.gate_mode(), "notes": list(gate_notes or [])},   # the mode and every NOT_RUN or waived layer, in every record
+           "layer_gate": {"mode": LG.MODE, "notes": list(gate_notes or []),   # the soft gate (owner 2026-11-20 09:11): every NOT_RUN, waived,
+                          "validators": checked},                             # unmapped and passed owner requirement is listed in every record
            "elapsed_s": round(time.time() - t0, 2), "at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}
     SS.hook(ep.root, stage, rec, ss_resets, rehearsal)   # W3: reset notes + bind a passing stage's files (shot_state.py)
     write_json_atomic(record_path(ep.root, stage), rec)
     return rec
+
+
+def _stage_files(ep: Episode, stage: str, outputs: dict) -> list[Path]:
+    """The files a stage made, for the owner-requirement validators: every string of ``outputs`` that names a file (or a folder: its files,
+    at most 200) under the episode, and for the clips stage every ``clip_path`` of the shot records."""
+    found: list[Path] = []
+
+    def add(rel) -> None:
+        if not isinstance(rel, str) or not rel:
+            return
+        p = Path(rel) if Path(rel).is_absolute() else ep.root / rel
+        if p.is_file():
+            found.append(p)
+        elif p.is_dir():
+            found.extend(sorted(x for x in p.rglob("*") if x.is_file())[:200])
+
+    for v in (outputs or {}).values():
+        add(v)
+    if stage == "clips":
+        try:
+            for r in _records(ep):
+                add(r.get("clip_path"))
+        except ContractError:
+            pass
+    seen, out = set(), []
+    for f in found:
+        if f not in seen:
+            seen.add(f)
+            out.append(f)
+    return out
 
 
 def run_to(ep: Episode, last: str) -> list[dict]:
