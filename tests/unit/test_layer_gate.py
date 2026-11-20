@@ -123,14 +123,9 @@ NEGATIVE = [
     ("repo without stars", mutate(["candidates", 0, "stars"], None), "MS2-CAND-FIELD"),
     ("repo without commit", mutate(["candidates", 0, "commit"], delete=True), "MS2-CAND-FIELD"),
     ("commit not a hash", mutate(["candidates", 0, "commit"], "main"), "MS2-CAND-FIELD"),
-    ("candidate without licence", mutate(["candidates", 0, "licence"], ""), "MS2-CAND-FIELD"),
-    ("monetised flag missing", mutate(["candidates", 0, "monetised_ok"], delete=True), "MS2-CAND-FIELD"),
     ("monetised flag not a bool", mutate(["candidates", 0, "monetised_ok"], "yes"), "MS2-CAND-FIELD"),
     ("candidate fit out of range", mutate(["candidates", 0, "fit"], 9), "MS2-CAND-FIELD"),
     ("candidate for an unknown sub-question", mutate(["candidates", 0, "sub_question"], "SQ9"), "MS2-CAND-FIELD"),
-    ("repo without licence_source", mutate(["candidates", 0, "licence_source"], delete=True), "MS2-CAND-FIELD"),
-    ("licence_source not an https url", mutate(["candidates", 0, "licence_source"], "MIT"), "MS2-CAND-FIELD"),
-    ("licence_source none but monetised_ok true", mutate(["candidates", 0, "licence_source"], "none"), "MS2-CAND-FIELD"),
     ("duplicate candidate id", mutate(["candidates", 1, "id"], "C1"), "LG-DUP"),
     ("doc candidate without retrieved date", lambda r: r["candidates"][0].update(kind="doc", commit=None, stars=None) or r,
      "MS2-CAND-FIELD"),
@@ -151,9 +146,6 @@ NEGATIVE = [
     ("adopting a candidate that names nothing", mutate(["decisions", 0, "candidate_ids"], []), "MS4-DEC-FIELD"),
     ("adopting an unknown candidate", mutate(["decisions", 0, "candidate_ids"], ["C77"]), "MS4-DEC-FIELD"),
     ("evidence names no trial", mutate(["decisions", 0, "evidence"], ["TR9"]), "MS4-DEC-FIELD"),
-    ("adopting a candidate whose licence refuses a monetised channel",
-     lambda r: r["candidates"][1].update(monetised_ok=False, licence="CC-BY-NC") or r, "MS4-LICENCE"),
-    ("idea_only for a candidate that is allowed", mutate(["decisions", 0, "choice"], "idea_only"), "MS4-LICENCE"),
     ("keep_ours without evidence", lambda r: r["decisions"][0].update(choice="keep_ours", candidate_ids=[], evidence=[], beats=["C1", "C2", "C3"]) or r,
      "MS4-KEEP-EVIDENCE"),
     ("keep_ours that does not beat every candidate",
@@ -217,17 +209,40 @@ def test_keep_ours_cannot_rest_on_a_trial_that_was_not_run(root):
     assert "MS4-KEEP-EVIDENCE" in codes(check(rec, root))
 
 
-def test_keep_ours_passes_when_a_run_trial_beats_every_candidate(root):
+def test_the_old_keep_ours_record_is_now_refused(root):
+    """T1.0's keep_ours (one run trial, beats everyone) lacks (a), (b), (c), (d) and (e) of the owner's MS-4 rule."""
     rec = good()
     rec["decisions"][0].update(choice="keep_ours", candidate_ids=[], beats=["C1", "C2", "C3"], evidence=["TR1"])
-    assert check(rec, root).status == S.PASS
+    res = check(rec, root)
+    assert res.status == S.BLOCK
+    assert {"MS4-KEEP-REQ", "MS4-KEEP-RUN3", "MS4-KEEP-SOTA", "MS4-KEEP-JUDGE", "MS4-KEEP-OWNER"} <= codes(res)
 
 
-def test_idea_only_for_a_candidate_without_a_monetised_licence(root):
+# ---- licence is information only (the owner, 2026-11-20 08:10 UTC, cmsg_01Hnu5zB86sjUj5GtTgaUkPW4g2aaMZ4SAJQUbEgZGWoPM) ----------
+
+def test_a_candidate_may_leave_every_licence_field_out(root):
     rec = good()
-    rec["candidates"][1].update(monetised_ok=False, licence="none")
-    rec["decisions"][0].update(choice="idea_only", candidate_ids=["C2"])
+    for c in rec["candidates"]:
+        for k in ("licence", "licence_source", "monetised_ok"):
+            c.pop(k)
     assert check(rec, root).status == S.PASS
+
+
+def test_a_licence_never_excludes_a_candidate(root):
+    rec = good()
+    rec["candidates"][1].update(licence="CC-BY-NC-SA", licence_source="none", monetised_ok=False)
+    res = check(rec, root)                       # enrich of a non-commercial candidate: allowed
+    assert res.status == S.PASS and "MS4-LICENCE" not in codes(res)
+    rec["candidates"][0].update(licence_source="none", monetised_ok=True)
+    assert check(rec, root).status == S.PASS     # "none" no longer forces anything
+    rec["decisions"][0]["choice"] = "idea_only"  # idea_only stays a choice, for any candidate
+    assert check(rec, root).status == S.PASS
+
+
+def test_a_monetised_flag_that_is_present_must_still_be_a_bool(root):
+    rec = good()
+    rec["candidates"][0]["monetised_ok"] = "yes"
+    assert "MS2-CAND-FIELD" in codes(check(rec, root))
 
 
 # ---- mapping targets ----------------------------------------------------------------------------------------------------------
@@ -478,6 +493,176 @@ def test_group_report_says_per_group_whether_it_is_open(root, capsys, monkeypatc
 def test_the_layers_folder_has_its_readme():
     text = (ROOT / "docs" / "layers" / "README.md").read_text(encoding="utf-8")
     assert "LAYER_GATE.md" in text
+
+
+
+# ---- keep_ours: the owner's rule (a)..(e), 2026-11-20 08:07 UTC (REOPEN_S10_AND_MS4, section 6) ------------------------------
+
+def _file(ref="https://huggingface.co/datasets/x/y/blob/main/f.json"):
+    return {"ref": ref, "sha256": SHA}
+
+
+def keep_good() -> dict:
+    """A record whose sub-question may say keep_ours: all of (a)-(e) hold."""
+    rec = good()
+    for r in rec["requirements"]:
+        r["ours_meets"] = True
+    c = rec["candidates"]
+    c.append(_cand(4))
+    c[3]["stars"] = 50                                           # a fourth candidate that was not run
+    for row in c[:3]:
+        row.update(configured_per=f"https://docs.example.org/{row['id']}", config_log=_file())
+    c[2]["stars"] = 900                                          # the most-starred one, run
+    c[1]["state_of_the_art"] = True
+    rec["trials"][0].update(candidate_ids=["C1", "C2", "C3"], config_ok=True)
+    rec["decisions"][0] = {
+        "sub_question": "SQ1", "choice": "keep_ours", "candidate_ids": [], "reason": "ours scored highest, blind",
+        "evidence": ["TR1"], "beats": ["C1", "C2", "C3", "C4"], "ours_author": "developer thread",
+        "blind_judge": {"judge": "fresh reviewer", "wrote_our_code": False, "labels_sealed": _file(),
+                        "labels_sealed_before_scoring": True, "scores": _file(), "method": "rubric 1-5, sealed random labels"}}
+    rec["owner_seen"] = "cmsg_01OwnerSawIt"
+    return rec
+
+
+def _dec(r):
+    return r["decisions"][0]
+
+
+KEEP_NEGATIVE = [
+    # (a) ours meets every requirement, no open complaint
+    ("ours_meets false", lambda r: r["requirements"][0].update(ours_meets=False) or r, "MS4-KEEP-REQ"),
+    ("ours_meets missing", lambda r: r["requirements"][1].pop("ours_meets") and r, "MS4-KEEP-REQ"),
+    ("an open complaint", lambda r: r["requirements"][0].update(complaint={"open": True}) or r, "MS4-KEEP-REQ"),
+    ("a complaint without fix_seen", lambda r: r["requirements"][0].update(complaint={"open": False}) or r, "MS4-KEEP-REQ"),
+    ("a complaint whose fix_seen is not a message id",
+     lambda r: r["requirements"][0].update(complaint={"open": False, "fix_seen": "yes"}) or r, "MS4-KEEP-REQ"),
+    # (b) three strong candidates were run
+    ("two candidates run", lambda r: r["trials"][0].update(candidate_ids=["C2", "C3"]) or r, "MS4-KEEP-RUN3"),
+    ("the same candidate named three times", lambda r: r["trials"][0].update(candidate_ids=["C3", "C3", "C3"]) or r, "MS4-KEEP-RUN3"),
+    ("the trial names no candidates", lambda r: r["trials"][0].pop("candidate_ids") and r, "MS4-KEEP-RUN3"),
+    ("the trial was not run", lambda r: r["trials"][0].update(status="NOT_RUN", not_run_reason="no cpu", candidate_ids=[]) or r, "MS4-KEEP-RUN3"),
+    ("the trial config was bad", lambda r: r["trials"][0].update(config_ok=False) or r, "MS4-KEEP-RUN3"),
+    ("most-starred candidate was not run", lambda r: r["candidates"][3].update(stars=5000) or r, "MS4-KEEP-TOP"),
+    ("a doc candidate marked top was not run",
+     lambda r: r["candidates"][3].update(kind="doc", stars=None, commit=None, retrieved="2026-11-20", top=True) or r, "MS4-KEEP-TOP"),
+    ("no candidate is state of the art", lambda r: r["candidates"][1].pop("state_of_the_art") and r, "MS4-KEEP-SOTA"),
+    ("the state of the art candidate was not run",
+     lambda r: (r["candidates"][1].pop("state_of_the_art"), r["candidates"][3].update(state_of_the_art=True), r)[2], "MS4-KEEP-SOTA"),
+    # (c) each configured per its own docs, with a log
+    ("no configured_per", lambda r: r["candidates"][0].pop("configured_per") and r, "MS4-KEEP-CONFIG"),
+    ("configured_per not https", lambda r: r["candidates"][0].update(configured_per="the readme") or r, "MS4-KEEP-CONFIG"),
+    ("no config_log", lambda r: r["candidates"][1].pop("config_log") and r, "MS4-KEEP-CONFIG"),
+    ("config_log without sha256", lambda r: r["candidates"][2].update(config_log={"ref": "https://x.org/log"}) or r, "MS4-KEEP-CONFIG"),
+    # (d) a blind judge who did not write our code
+    ("no ours_author", lambda r: _dec(r).pop("ours_author") and r, "MS4-KEEP-JUDGE"),
+    ("no blind_judge", lambda r: _dec(r).pop("blind_judge") and r, "MS4-KEEP-JUDGE"),
+    ("the judge wrote our code", lambda r: _dec(r)["blind_judge"].update(wrote_our_code=True) or r, "MS4-KEEP-JUDGE"),
+    ("wrote_our_code missing", lambda r: (_dec(r)["blind_judge"].pop("wrote_our_code"), r)[1], "MS4-KEEP-JUDGE"),
+    ("the judge is the author", lambda r: _dec(r)["blind_judge"].update(judge=" Developer Thread ") or r, "MS4-KEEP-JUDGE"),
+    ("labels not sealed before scoring", lambda r: _dec(r)["blind_judge"].update(labels_sealed_before_scoring=False) or r, "MS4-KEEP-JUDGE"),
+    ("no sealed labels file", lambda r: _dec(r)["blind_judge"].pop("labels_sealed") and r, "MS4-KEEP-JUDGE"),
+    ("sealed labels without sha256", lambda r: _dec(r)["blind_judge"].update(labels_sealed={"ref": "https://x.org/k"}) or r, "MS4-KEEP-JUDGE"),
+    ("no scores file", lambda r: _dec(r)["blind_judge"].pop("scores") and r, "MS4-KEEP-JUDGE"),
+    ("scores sha256 not hex", lambda r: _dec(r)["blind_judge"].update(scores={"ref": "https://x.org/s", "sha256": "zz"}) or r, "MS4-KEEP-JUDGE"),
+    ("no method", lambda r: _dec(r)["blind_judge"].update(method=" ") or r, "MS4-KEEP-JUDGE"),
+    # (e) the owner saw the side-by-side
+    ("owner_seen pending", lambda r: r.update(owner_seen="pending") or r, "MS4-KEEP-OWNER"),
+    ("owner_seen missing", lambda r: r.pop("owner_seen") and r, "MS4-KEEP-OWNER"),
+    ("owner_seen not a message id", lambda r: r.update(owner_seen="he agreed") or r, "MS4-KEEP-OWNER"),
+]
+
+
+def test_a_keep_ours_record_that_meets_a_to_e_passes(root):
+    res = check(keep_good(), root)
+    assert res.errors == [] and res.status == S.PASS
+
+
+@pytest.mark.parametrize("name,fn,code", KEEP_NEGATIVE, ids=[n[0] for n in KEEP_NEGATIVE])
+def test_keep_ours_is_refused_unless_all_of_a_to_e_hold(root, name, fn, code):
+    res = check(fn(keep_good()), root)
+    assert code in codes(res), res.errors
+    assert res.status == S.BLOCK
+
+
+def test_every_keep_code_has_a_negative_test():
+    needed = {"MS4-KEEP-REQ", "MS4-KEEP-RUN3", "MS4-KEEP-TOP", "MS4-KEEP-SOTA", "MS4-KEEP-CONFIG", "MS4-KEEP-JUDGE", "MS4-KEEP-OWNER"}
+    assert needed == {c for _, _, c in KEEP_NEGATIVE}
+
+
+def test_the_keep_rules_do_not_touch_adopt_and_enrich(root):
+    rec = good()                                   # enrich, ours_meets absent, owner_seen absent, no judge: still PASS
+    assert check(rec, root).status == S.PASS
+    rec["owner_seen"] = "pending"
+    assert check(rec, root).status == S.PASS
+
+
+def test_a_bad_config_trial_counts_as_not_run_for_the_layer_status(root):
+    rec = good()
+    rec["trials"][0].update(candidate_ids=["C1"], config_ok=False)
+    rec["decisions"][0]["evidence"] = []
+    res = check(rec, root)
+    assert res.status == S.NOT_RUN and res.errors == []
+
+
+def test_trial_candidate_ids_must_name_candidates_of_the_sub_question(root):
+    rec = good()
+    rec["trials"][0]["candidate_ids"] = ["C77"]
+    assert "MS3-TRIAL-FIELD" in codes(check(rec, root))
+    rec["trials"][0].update(candidate_ids=["C1"], config_ok="yes")
+    assert "MS3-TRIAL-FIELD" in codes(check(rec, root))
+
+
+def test_the_doc_has_the_five_rules_and_an_example_that_matches_the_gate(root):
+    text = (ROOT / "docs" / "LAYER_GATE.md").read_text(encoding="utf-8")
+    for token in ("MS4-KEEP-REQ", "MS4-KEEP-RUN3", "MS4-KEEP-TOP", "MS4-KEEP-SOTA", "MS4-KEEP-CONFIG", "MS4-KEEP-JUDGE",
+                  "MS4-KEEP-OWNER", "not_run_waiver"):
+        assert token in text
+    block = text.split("```json", 1)[1].split("```", 1)[0]
+    example = json.loads(block)
+    assert example["choice"] == "keep_ours" and example["blind_judge"]["wrote_our_code"] is False
+    assert set(keep_good()["decisions"][0]) == set(example)
+
+
+# ---- group order: a final NOT_RUN opens the next group only with the owner's waiver --------------------------------------------
+
+def _not_run_final(layer="L16"):
+    rec = sign(good())
+    rec.update(layer=layer)
+    rec["trials"][0] = {"id": "TR1", "sub_question": "SQ1", "status": "NOT_RUN", "not_run_reason": "needs the owner's Chrome"}
+    rec["decisions"][0]["evidence"] = []
+    return rec
+
+
+def test_a_final_not_run_does_not_open_the_next_group_without_a_waiver(root):
+    _write_group1(root, final_layers={"L9", "L10", "L11"})
+    write(root, _not_run_final("L16"), "L16")
+    write(root, _other("L12", 2), "L12")
+    with pytest.raises(NeedsReview, match="L16"):
+        LG.require_pass("L12", root=root)
+    assert {r["group"]: r["ready"] for r in LG.group_report(root=root)}[1] is False
+
+
+def test_a_not_run_waiver_with_the_owners_message_id_opens_it(root):
+    _write_group1(root, final_layers={"L9", "L10", "L11"})
+    rec = _not_run_final("L16")
+    rec["not_run_waiver"] = "cmsg_01OwnerWord"
+    write(root, rec, "L16")
+    write(root, _other("L12", 2), "L12")
+    LG.require_pass("L12", root=root)
+    assert {r["group"]: r["ready"] for r in LG.group_report(root=root)}[1] is True
+
+
+def test_a_waiver_must_be_a_message_id_and_never_opens_a_block(root):
+    rec = _not_run_final("L16")
+    rec["not_run_waiver"] = "he said fine"
+    assert "LG-OWNER" in codes(check(rec, root))
+    _write_group1(root, final_layers={"L9", "L10", "L11"})
+    blocked = sign(good())
+    blocked.update(layer="L16", requirements=[], not_run_waiver="cmsg_01OwnerWord")
+    write(root, blocked, "L16")
+    write(root, _other("L12", 2), "L12")
+    with pytest.raises(NeedsReview, match="L16"):
+        LG.require_pass("L12", root=root)
 
 
 # ---- the committed records ---------------------------------------------------------------------------------------------------

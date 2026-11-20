@@ -2,7 +2,8 @@
 
 ``docs/layers/<layer>.json`` (schema ``layer_record/1``, home: docs/LAYER_GATE.md) holds, for one layer of the film pipeline:
 MS-1 the owner's requirements (each with its source) and the capabilities of every tool in the layer (each used or not, with why);
-MS-2 at least three public candidates per sub-question (url, author, stars, pinned commit, licence, monetised-channel flag);
+MS-2 at least three public candidates per sub-question (url, author, stars, pinned commit; licence, licence_source and
+monetised_ok are information only, never required and never a blocker: the owner, 2026-11-20 08:10 UTC);
 MS-3 the trials, each looked at, each output with a line on what was seen; MS-4 one decision per sub-question ("keep ours" only
 with a run trial that beats every candidate); MS-5 the mapping of every requirement and every used capability to a skill line or a
 rule. :func:`check_record` returns a :class:`GateResult`: BLOCK when a part is missing or wrong, NOT_RUN when the record is complete
@@ -54,12 +55,13 @@ class GateResult:
     not_run: list[str] = field(default_factory=list)     # sub-questions without a trial that ran
     planned: list[str] = field(default_factory=list)     # validators that are mapped but not built yet (wave 2)
     pending: list[str] = field(default_factory=list)     # open MS-7 items of a final record (owner_seen "pending")
+    waived: bool = False                                 # not_run_waiver: the owner's cmsg_ id that lets a NOT_RUN layer open the next group
     state: str = "draft"
     group: int | None = None
 
     def to_dict(self) -> dict:
         return {"layer": self.layer, "status": self.status, "state": self.state, "errors": self.errors,
-                "not_run": self.not_run, "planned": self.planned, "pending": self.pending, "group": self.group}
+                "not_run": self.not_run, "planned": self.planned, "pending": self.pending, "waived": self.waived, "group": self.group}
 
 
 def _text(v) -> bool:
@@ -139,10 +141,8 @@ def _check_candidates(rec, sqs: dict[str, dict], errs) -> dict[str, dict]:
             bad.append("an https url")
         if not _text(c.get("author")):
             bad.append("author")
-        if not _text(c.get("licence")):
-            bad.append("licence")
-        if not isinstance(c.get("monetised_ok"), bool):
-            bad.append("monetised_ok (true or false)")
+        if c.get("monetised_ok") is not None and not isinstance(c.get("monetised_ok"), bool):
+            bad.append("monetised_ok true or false (or left out)")   # licence, licence_source, monetised_ok: information only
         if not _text(c.get("teaches")):
             bad.append("teaches")
         if not (isinstance(c.get("fit"), int) and not isinstance(c.get("fit"), bool) and 1 <= c["fit"] <= 5):
@@ -153,11 +153,6 @@ def _check_candidates(rec, sqs: dict[str, dict], errs) -> dict[str, dict]:
                 bad.append("stars")
             if not (isinstance(c.get("commit"), str) and _COMMIT.fullmatch(c["commit"])):
                 bad.append("a pinned commit hash")
-            src = c.get("licence_source")
-            if not (src == "none" or (isinstance(src, str) and src.startswith("https://"))):
-                bad.append('licence_source (the https url of the LICENSE file at the commit, or "none")')
-            elif src == "none" and c.get("monetised_ok") is True:
-                bad.append('monetised_ok false (licence_source "none" means no licence was found: idea only)')
         elif kind == "doc":
             if not (isinstance(c.get("retrieved"), str) and _DATE.fullmatch(c["retrieved"])):
                 bad.append("retrieved date YYYY-MM-DD")
@@ -178,7 +173,12 @@ def _check_candidates(rec, sqs: dict[str, dict], errs) -> dict[str, dict]:
     return out
 
 
-def _check_trials(rec, sqs, errs, res: GateResult) -> dict[str, dict]:
+def _effective_run(t: dict) -> bool:
+    """A trial that ran and was configured well (``config_ok`` false makes it NOT_RUN for its candidates)."""
+    return t.get("status") == "RUN" and t.get("config_ok") is not False
+
+
+def _check_trials(rec, sqs, cands, errs, res: GateResult) -> dict[str, dict]:
     rows = _rows(rec, "trials")
     _ids(rows, errs, "trial")
     by_id: dict[str, dict] = {}
@@ -195,11 +195,17 @@ def _check_trials(rec, sqs, errs, res: GateResult) -> dict[str, dict]:
         if st not in TRIAL_STATUS or sq not in sqs:
             errs.append(f"MS3-TRIAL-FIELD: trial {who} needs status {'|'.join(TRIAL_STATUS)} and a sub_question of the layer")
             continue
+        ids = t.get("candidate_ids")
+        if ids is not None and (not isinstance(ids, list) or any(cands.get(i, {}).get("sub_question") != sq for i in ids)):
+            errs.append(f"MS3-TRIAL-FIELD: trial {who} candidate_ids must name candidates of {sq}")
+        if t.get("config_ok") is not None and not isinstance(t.get("config_ok"), bool):
+            errs.append(f"MS3-TRIAL-FIELD: trial {who} config_ok is true or false")
         if st == "NOT_RUN":
             if not _text(t.get("not_run_reason")):
                 errs.append(f"MS3-TRIAL-FIELD: trial {who} was not run and gives no not_run_reason")
             continue
-        ran[sq] = ran.get(sq, 0) + 1
+        if _effective_run(t):                       # a run with a bad configuration counts as NOT_RUN (owner's rule (c))
+            ran[sq] = ran.get(sq, 0) + 1
         if not _text(t.get("looked_at_by")) or not _text(t.get("observation")):
             errs.append(f"MS3-TRIAL-FIELD: trial {who} needs looked_at_by and an observation (every output is looked at)")
         links = t.get("links")
@@ -216,8 +222,71 @@ def _check_trials(rec, sqs, errs, res: GateResult) -> dict[str, dict]:
         if sid not in seen_sq:
             errs.append(f"MS3-TRIAL-NONE: sub-question {sid} has no trial record (a trial run, or one with its not_run_reason)")
         elif not ran.get(sid):
-            res.not_run.append(f"{sid}: no trial has run")
+            res.not_run.append(f"{sid}: no trial has run (or every run had a bad configuration)")
     return by_id
+
+
+def _file_ref(v) -> bool:
+    """A link with its sha256: ``{ref|link: https url or path, sha256}``."""
+    return isinstance(v, dict) and _text(v.get("ref") or v.get("link")) and isinstance(v.get("sha256"), str) \
+        and bool(_SHA256.fullmatch(v["sha256"]))
+
+
+def _check_keep_ours(rec, d, sid, cands, trials, errs) -> None:
+    """The owner's rule for "keep ours" (2026-11-20 08:07 UTC): (a) to (e), each its own error code."""
+    who = f"decision for {sid}"
+    # (a) ours meets every requirement of the layer, no complaint is open
+    for r in _rows(rec, "requirements"):
+        c = r.get("complaint")
+        fixed = isinstance(c, dict) and c.get("open") is False and _MSG.fullmatch(str(c.get("fix_seen") or ""))
+        if r.get("ours_meets") is not True or (c is not None and not fixed):
+            errs.append(f"MS4-KEEP-REQ: {who}: requirement {r.get('id', '?')} needs ours_meets true and no open complaint "
+                        f"(a complaint carries open false and the fix_seen message id of the owner)")
+    # (b) three strong candidates were run, among them the most-starred and a state-of-the-art one
+    run = {i for t in trials.values() if _effective_run(t) and t.get("sub_question") == sid for i in (t.get("candidate_ids") or [])
+           if cands.get(i, {}).get("sub_question") == sid}
+    if len(run) < 3:
+        errs.append(f"MS4-KEEP-RUN3: {who}: {len(run)} candidates were run, at least 3 are needed (trials with status RUN, "
+                    f"config_ok not false, naming them in candidate_ids)")
+    mine = {i: c for i, c in cands.items() if c.get("sub_question") == sid}
+    stars = {i: c["stars"] for i, c in mine.items() if c.get("kind") == "repo" and isinstance(c.get("stars"), int)}
+    top = {i for i, c in mine.items() if c.get("top") is True}
+    best = {i for i, n in stars.items() if n == max(stars.values())} if stars else set()
+    if not (top or best) or not top <= run or (best and not best & run):
+        errs.append(f"MS4-KEEP-TOP: {who}: the most-starred candidate ({', '.join(sorted(top | best)) or 'none defined'}) "
+                    f"must be among those run")
+    if not any(mine[i].get("state_of_the_art") is True for i in run):
+        errs.append(f"MS4-KEEP-SOTA: {who}: a candidate marked state_of_the_art true must be among those run")
+    # (c) each run candidate configured per its own docs, with a log
+    for i in sorted(run):
+        c = mine[i]
+        per = c.get("configured_per")
+        if not (isinstance(per, str) and per.startswith("https://")) or not _file_ref(c.get("config_log")):
+            errs.append(f"MS4-KEEP-CONFIG: {who}: candidate {i} needs configured_per (https docs url) and config_log (a link with sha256)")
+    # (d) a blind judge who did not write our code
+    j = d.get("blind_judge")
+    j = j if isinstance(j, dict) else {}
+    author = d.get("ours_author")
+    bad = []
+    if not _text(author):
+        bad.append("ours_author")
+    if not _text(j.get("judge")) or (_text(author) and str(j["judge"]).strip().lower() == str(author).strip().lower()):
+        bad.append("a judge other than ours_author")
+    if j.get("wrote_our_code") is not False:
+        bad.append("wrote_our_code false")
+    if j.get("labels_sealed_before_scoring") is not True:
+        bad.append("labels_sealed_before_scoring true")
+    if not _file_ref(j.get("labels_sealed")):
+        bad.append("labels_sealed (link with sha256)")
+    if not _file_ref(j.get("scores")):
+        bad.append("scores (link with sha256)")
+    if not _text(j.get("method")):
+        bad.append("method")
+    if bad:
+        errs.append(f"MS4-KEEP-JUDGE: {who} needs ours_author and a blind_judge with: {', '.join(bad)}")
+    # (e) the owner saw the side-by-side and agreed: his message id, never pending
+    if not (isinstance(rec.get("owner_seen"), str) and _MSG.fullmatch(rec["owner_seen"])):
+        errs.append(f"MS4-KEEP-OWNER: {who}: owner_seen must be the owner's cmsg_ id, not {rec.get('owner_seen')!r}")
 
 
 def _check_decisions(rec, sqs, cands, trials, errs) -> None:
@@ -248,14 +317,11 @@ def _check_decisions(rec, sqs, cands, trials, errs) -> None:
             if not ran or not mine <= set(d.get("beats") or []):
                 errs.append(f"MS4-KEEP-EVIDENCE: {who}: keeping ours needs a run trial of this sub-question as evidence and "
                             f"beats listing every candidate ({', '.join(sorted(mine))})")
+            _check_keep_ours(rec, d, sid, cands, trials, errs)
             continue
         picked = d.get("candidate_ids") or []
         if not picked or any(c not in cands or cands[c].get("sub_question") != sid for c in picked):
             errs.append(f"MS4-DEC-FIELD: {who}: {choice} names candidates of this sub-question that exist")
-            continue
-        want = choice == "idea_only"
-        if any(cands[c].get("monetised_ok") is want for c in picked):
-            errs.append(f"MS4-LICENCE: {who}: {choice} {'needs a candidate whose licence does not allow a monetised channel' if want else 'copies a candidate whose licence does not allow a monetised channel (idea_only is the choice for it)'}")
 
 
 def _check_owner(rec, errs, res: GateResult) -> None:
@@ -350,6 +416,10 @@ def check_record(rec, *, root=None, strict: bool = False, layer: str | None = No
     res.group = rec.get("group") if isinstance(rec.get("group"), int) else None
     if rec.get("layer") in GROUP_OF and rec.get("group") != GROUP_OF[rec["layer"]]:
         errs.append(f"LG-SCHEMA: layer {rec['layer']} belongs to group {GROUP_OF[rec['layer']]}, the record says {rec.get('group')!r}")
+    waiver = rec.get("not_run_waiver")
+    if waiver is not None and not (isinstance(waiver, str) and _MSG.fullmatch(waiver)):
+        errs.append("LG-OWNER: not_run_waiver is the cmsg_ id of the owner's own word")
+    res.waived = isinstance(waiver, str) and bool(_MSG.fullmatch(waiver))
     if rec.get("state") == "final":
         _check_owner(rec, errs, res)
     sq_rows = _rows(rec, "sub_questions")
@@ -360,7 +430,7 @@ def check_record(rec, *, root=None, strict: bool = False, layer: str | None = No
     req_ids = _check_requirements(rec, root, errs)
     _check_capabilities(rec, errs)
     cands = _check_candidates(rec, sqs, errs)
-    trials = _check_trials(rec, sqs, errs, res)
+    trials = _check_trials(rec, sqs, cands, errs, res)
     _check_decisions(rec, sqs, cands, trials, errs)
     _check_mapping(rec, req_ids, _rows(rec, "tool_capabilities"), root, errs, res, strict)
     res.errors = errs
@@ -390,8 +460,9 @@ def problems(results: list[GateResult]) -> list[str]:
 
 
 def _ready(res: GateResult) -> bool:
-    """A layer lets the next group start when its record is final and not a BLOCK."""
-    return res.state == "final" and res.status != S.BLOCK
+    """A layer lets the next group start when its record is final and PASS; a final NOT_RUN does so only with the owner's
+    own word on it (``not_run_waiver``, a cmsg_ id); a BLOCK never does."""
+    return res.state == "final" and (res.status == S.PASS or (res.status == S.NOT_RUN and res.waived))
 
 
 def _lower_open(layer: str, group: int, root) -> list[str]:
