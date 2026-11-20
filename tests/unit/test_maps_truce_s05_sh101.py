@@ -23,5 +23,6 @@ def test_counter_is_the_c03_estimate_and_visible_to_the_end():
 
 def test_no_unsourced_geometry():
     spec = json.loads((DIR / "spec.json").read_text(encoding="utf-8"))
-    assert spec["towns"] == []
+    # only the region name from C-07 ("Here, in Flanders"), no town or front place
+    assert [(x["name"], x["t"]) for x in spec["towns"]] == [("Flanders", 0.0)]
     assert json.loads((DIR / spec["line_geojson"]).read_text(encoding="utf-8"))["features"] == []

@@ -3917,3 +3917,7 @@ No number is written in any of them; tests `test_first_shot.py`, `test_opening_d
 - `auth` / `auth-finish` write `tools/youtube/token.b64.txt` only with `--export-env` (the printed text names it only then); `load_token` logs one line naming the source (session file or `YOUTUBE_TOKEN_B64`), never the token; the env variable and its code path stay (owner card 2026-11-20 21:01).
 - Tests: `tests/unit/test_youtube_auth_hygiene.py` (flag on/off, source logged, no tracked `tools/` token or `pending.json`, `.gitignore` covers `tools/youtube/`).
 - Not done: the registry exception row to OR-P03 (needs the creator's typed word); the real sign-in flow was not run.
+
+## 2026-11-20 — Map spec: `"counter": null`; Truce S05_SH101 with the "Flanders" label; S02_SH102 sourced part
+- `maplibre_spec`: `"counter": null` = no counter (key still required, a forgotten key is still reported); schedule returns None, page hides the box, OCR expects no counter text. `tests/unit/test_maps_counter_null.py` (5).
+- S05_SH101 now shows the region label "Flanders" (C-07). S02_SH102 rendered with only its sourced part (date chip "December 1914" C-06, a straight line between the two sourced end points, no intermediate places, no counter): the straight line is schematic and visibly NOT the real front, so it stays on HF only and is not in the repo.

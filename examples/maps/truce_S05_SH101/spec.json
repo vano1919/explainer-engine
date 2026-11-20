@@ -28,7 +28,16 @@
    "text": "Christmas 1914"
   }
  ],
- "towns": [],
+ "towns": [
+  {
+   "name": "Flanders",
+   "lonlat": [
+    2.9,
+    50.72
+   ],
+   "t": 0.0
+  }
+ ],
  "footnote": "Map data: OpenStreetMap contributors, OpenFreeMap",
  "camera": {
   "move": "zoom_in",
