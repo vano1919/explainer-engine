@@ -304,8 +304,9 @@ class Uploader:
     """Uploads the run's files under ``<hf_out>/<run_id>/<kind>/`` in ONE commit per flush (the Hub limits commits per hour) and
     reads every file's git blob id back; ``pending`` holds what changed since the last flush."""
 
-    def __init__(self, api, out: Path, prefix: str, repo=HF_REPO):
+    def __init__(self, api, out: Path, prefix: str, repo=HF_REPO, op_cls=None):
         self.api, self.out, self.prefix, self.repo = api, Path(out), prefix.rstrip("/"), repo
+        self.op_cls = op_cls               # the Hub's CommitOperationAdd in the container; a test passes its own (no huggingface_hub needed)
         self.sent: dict[str, str] = {}
         self.problems: list[str] = []
 
@@ -313,11 +314,13 @@ class Uploader:
         return {str(p.relative_to(self.out)): git_blob_id(p) for p in sorted(self.out.rglob("*.json")) if not p.name.startswith(".")}
 
     def flush(self, verify: bool = False) -> list[str]:
-        from huggingface_hub import CommitOperationAdd
         now = self.files()
         todo = [r for r, b in now.items() if self.sent.get(r) != b]
         if todo:
-            ops = [CommitOperationAdd(path_in_repo=f"{self.prefix}/{r}", path_or_fileobj=str(self.out / r)) for r in todo]
+            if self.op_cls is None:
+                from huggingface_hub import CommitOperationAdd
+                self.op_cls = CommitOperationAdd
+            ops = [self.op_cls(path_in_repo=f"{self.prefix}/{r}", path_or_fileobj=str(self.out / r)) for r in todo]
             self.api.create_commit(repo_id=self.repo, repo_type="dataset", operations=ops, commit_message=f"judge P2 {self.prefix.rsplit('/', 2)[-2]}: {len(todo)} files")
             self.sent.update({r: now[r] for r in todo})
         if verify:
@@ -382,7 +385,7 @@ def _core():
 
 
 def body(spec: dict, launch: dict, *, timeout_s: int, vol_root=VOL, work=WORK, commit=lambda: None, reload=lambda: None, api=None,
-             download=None, now=time.monotonic, load_judge=None, vram=vram_facts, free=None, baked=BAKED / "launch_a100.json") -> dict:
+             download=None, now=time.monotonic, load_judge=None, vram=vram_facts, free=None, baked=BAKED / "launch_a100.json", op_cls=None) -> dict:
     J = _core()
     t0, wall0 = now(), time.time()
     bad = container_gate(launch, baked)
@@ -403,7 +406,7 @@ def body(spec: dict, launch: dict, *, timeout_s: int, vol_root=VOL, work=WORK, c
     except SystemExit as exc:
         return {"state": "FAILED", "error": str(exc)}
     out = Path(work) / "out"
-    up = Uploader(api, out, f"{launch['hf_out']}/{spec['run_id']}/{kind}") if api is not None else None
+    up = Uploader(api, out, f"{launch['hf_out']}/{spec['run_id']}/{kind}", op_cls=op_cls) if api is not None else None
     up_errors: list[str] = []
 
     def on_step(path, info):
