@@ -76,7 +76,7 @@ October, so the remaining room is small.
 | Description states a number the script hedges | words outran the evidence | match the claim row's label |
 | vidIQ suggests trend words off topic | generic seed | drop them; our topic decides |
 
-## Sources (idea sources only, no text copied)
+## Sources (what each taught; licence noted in one line)
 
 - ericrisco/rsc-harness, page `youtube-packaging` (MIT, commit `28a51a9100`): read the channel and the video before
   writing; a small title set; an above-the-fold first line; the first tag as the exact phrase.

@@ -54,9 +54,8 @@ re-renders the map (the clip cache key holds the word spine, MA-08).
 - A `front_line` from place A to place B is a **schematic** of where two sides stood. It is shown as illustrative: the
   narration says "roughly", "along", "near", never an exact line, and the claim row says the line is drawn by us.
 - A front, border or territory is traced exactly **only when a verified open dataset** backs it: a named source with its
-  licence, URL and sha256 recorded in `explainer_engine/maps/data/SOURCES.json`, the licence checked against a monetised
-  channel (a non-commercial licence is a question for the owner, not a quiet default), and its date matching the date
-  chip. The bundled 1914 borders are borders on one date, not front lines.
+  licence (one informational line, never a blocker), URL and sha256 recorded in `explainer_engine/maps/data/SOURCES.json`,
+  and its date matching the date chip. The bundled 1914 borders are borders on one date, not front lines.
 - Never trace a line from a third-party map image, an atlas scan, a game map or a film still; our plates are our own
   drawing over open data (docs/RIGHTS_AND_FAIR_USE.md).
 
