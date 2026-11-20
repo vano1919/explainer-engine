@@ -1,0 +1,161 @@
+# Layer gate (MS-6, skills team plan 2026-11-20)
+
+A layer of the film pipeline (L1..L33 of `final_plan_2026-11-19/SKILLS_REWRITE_50_BRIEF.md`) is changed only after its record
+`docs/layers/<layer>.json` shows that the mandatory steps MS-1..MS-5 were done. The code is
+`explainer_engine/governance/layer_gate.py`; its tests are `tests/unit/test_layer_gate.py` (one negative test per missing part).
+Why: the owner found requirements ignored (2026-11-20, see [D-140](DECISIONS_AND_OPEN_QUESTIONS.md)); text rules alone did not stop it.
+
+```
+python -m explainer_engine.governance layers [--layer L9] [--strict]   # exit 0 PASS, 1 BLOCK, 2 NOT_RUN
+python -m explainer_engine.governance check                           # also fails for a BLOCK in a FINAL record
+```
+In code before a layer is vendored or run: `layer_gate.require_pass("L9")`. It raises `ContractError` for a BLOCK or a draft and
+`NeedsReview` for a NOT_RUN or a layer whose lower groups are not ready.
+
+**A licence is information only** (owner, 2026-11-20 08:10 UTC, [D-141](DECISIONS_AND_OPEN_QUESTIONS.md)): `licence`,
+`licence_source` and `monetised_ok` on a candidate are optional, are never required and never checked against a choice, and exclude
+no candidate. The RR rules about what the viewer sees and hears are a different thing and stay as they are.
+
+## Status
+- **BLOCK**: a part of MS-1..MS-5 is missing or wrong (the codes below).
+- **NOT_RUN**: the record is complete, but a sub-question has only trials that were not run, or run with a bad configuration
+  (`config_ok` false). Never a pass.
+- **PASS**: everything is present and every sub-question has a trial that ran and was looked at.
+- `state: "draft"` is reported only. `state: "final"` needs `signed_by` and `signed_at` (the team lead), the MS-7 owner check
+  (`owner_check`, `owner_seen`) and a BLOCK in it fails `governance check`. `require_pass` accepts only a final record.
+- **Group order** (team plan section 3): `GROUPS` lists the layers of the ten groups and a record must carry its layer's group.
+  `require_pass` for a layer of group N raises `NeedsReview` while any layer of a lower group is not ready. A layer is ready when
+  its record is final and PASS. A final NOT_RUN is ready only with `not_run_waiver`, the `cmsg_` id of the owner's own word on
+  it. A BLOCK is never ready. `layers` prints per group whether it is ready or what it waits on.
+
+## Record `layer_record/1`
+| Field | Content |
+|---|---|
+| `schema`, `layer`, `name`, `group` (1-10), `state` | identity; the file name is `<layer>.json`; the group is the layer's group in `layer_gate.GROUPS` |
+| `signed_by`, `signed_at`, `owner_check[]`, `owner_seen` (final only) | the team lead's signature; MS-7: links the owner can watch, each `{url (https) and/or sha256}`; `owner_seen` is the owner's `cmsg_` id or `"pending"` (allowed, but printed as pending; never allowed for `keep_ours`) |
+| `not_run_waiver` (optional) | the owner's `cmsg_` id that lets a final NOT_RUN layer open the next group |
+| `sub_questions[]` | `{id, text, few_candidates_reason?}` |
+| `requirements[]` (MS-1) | `{id, text, source: {kind: message / decision / memory / rule, ref}, ours_meets?, complaint?: {open, fix_seen}}`; a message ref is a `cmsg_` id, a decision ref a D- id that exists in the decision log; `ours_meets` and `complaint` matter only for `keep_ours` |
+| `tool_capabilities[]` (MS-1) | `{id, tool, capability, use: used / not_used, reason}` (a reason for both) |
+| `candidates[]` (MS-2) | `{id, sub_question, kind: repo / doc, url (https), author, stars + commit (repo) or retrieved date (doc), teaches, fit 1-5}`; optional information: `licence`, `licence_source`, `monetised_ok`; for `keep_ours`: `top` (a doc candidate that is the most-starred equivalent), `state_of_the_art`, `configured_per` (https docs url), `config_log` (`{ref, sha256}`); at least 3 in the layer and 3 per sub-question unless the sub-question gives a `few_candidates_reason` |
+| `trials[]` (MS-3) | `{id, sub_question, status: RUN / NOT_RUN}`; RUN: `looked_at_by`, `observation`, `links[] {ref, kind: file / page, sha256 (file), seen}`; NOT_RUN: `not_run_reason`; optional `candidate_ids` (the candidates of the sub-question this trial ran) and `config_ok` (false = badly configured, counts as NOT_RUN) |
+| `decisions[]` (MS-4) | one per sub-question: `{sub_question, choice: adopt / enrich / keep_ours / idea_only, candidate_ids, reason, evidence: [trial ids], beats, ours_author, blind_judge}`; `idea_only` means: use the idea, copy nothing; `keep_ours` is the strict case below |
+| `mapping[]` (MS-5) | `{requirement: <requirement or used capability id>, target: {kind: skill_line (path:line, the line exists) / validator (a RULE_ID of `validators/`) / sourced_rule (a BP id) / validator_planned (ref + wave, refused by `--strict`), ref}}`; every requirement and every used capability is mapped |
+
+## MS-4: "keep ours" needs all five (owner, 2026-11-20 08:07 UTC)
+The default is the public approach. `keep_ours` stands only when every rule holds, otherwise the gate is BLOCK and the
+sub-question adopts or enriches. The older rule stays: a run trial of the sub-question is the evidence and `beats` lists every
+candidate (`MS4-KEEP-EVIDENCE`).
+
+| Code | Rule |
+|---|---|
+| `MS4-KEEP-REQ` | (a) every requirement of the layer has `ours_meets: true`; a `complaint` needs `open: false` and the owner's `fix_seen` message id |
+| `MS4-KEEP-RUN3`, `MS4-KEEP-TOP`, `MS4-KEEP-SOTA` | (b) at least 3 distinct candidates were run (trials with status RUN, `config_ok` not false, naming them in `candidate_ids`); the most-starred repo candidate (or the doc candidate with `top: true`) and one marked `state_of_the_art: true` are among them |
+| `MS4-KEEP-CONFIG` | (c) every run candidate has `configured_per` (https docs url) and `config_log` (link and sha256); a badly configured trial counts as NOT_RUN |
+| `MS4-KEEP-JUDGE` | (d) the decision has `ours_author` and a `blind_judge` with `judge` other than the author, `wrote_our_code: false`, `labels_sealed` and `scores` (links with sha256), `labels_sealed_before_scoring: true` and a `method` |
+| `MS4-KEEP-OWNER` | (e) `owner_seen` is the owner's `cmsg_` id, never `"pending"` (pending stays allowed for adopt and enrich) |
+
+Example decision that passes (the record also needs its candidates, trials, requirements with `ours_meets: true` and `owner_seen`):
+```json
+{
+  "sub_question": "SQ1",
+  "choice": "keep_ours",
+  "candidate_ids": [],
+  "reason": "ours scored highest in the blind scoring",
+  "evidence": ["TR1"],
+  "beats": ["C1", "C2", "C3", "C4"],
+  "ours_author": "developer thread",
+  "blind_judge": {
+    "judge": "fresh reviewer",
+    "wrote_our_code": false,
+    "labels_sealed": {"ref": "https://huggingface.co/datasets/x/y/blob/main/labels_sealed.json", "sha256": "<64 hex>"},
+    "labels_sealed_before_scoring": true,
+    "scores": {"ref": "https://huggingface.co/datasets/x/y/blob/main/scores.json", "sha256": "<64 hex>"},
+    "method": "rubric 1-5, sealed random labels"
+  }
+}
+```
+
+## Error codes
+`LG-SCHEMA`, `LG-DUP`, `LG-SIGN`, `LG-OWNER`, `MS1-REQ-NONE`, `MS1-REQ-FIELD`, `MS1-REQ-SOURCE`, `MS1-CAP-NONE`, `MS1-CAP-FIELD`, `MS2-SUBQ`,
+`MS2-CAND-MIN`, `MS2-CAND-FIELD`, `MS3-TRIAL-NONE`, `MS3-TRIAL-FIELD`, `MS4-DEC-MISSING`, `MS4-DEC-FIELD`, `MS4-KEEP-EVIDENCE`,
+`MS4-KEEP-REQ`, `MS4-KEEP-RUN3`, `MS4-KEEP-TOP`, `MS4-KEEP-SOTA`, `MS4-KEEP-CONFIG`, `MS4-KEEP-JUDGE`, `MS4-KEEP-OWNER`,
+`MS5-MAP-MISSING`, `MS5-MAP-TARGET`; the owner's registry (below): `REQ-UNCOVERED`, `REQ-UNMAPPED`, `REQ-NOVALIDATOR`,
+`REQ-NOTEST`, `REQ-NONEGATIVE`, `REQ-NOJUDGE`, `REQ-CONFLICT-OPEN`, `REQ-SUPERSEDED-USED`, `REQ-UNKNOWN`, `REQ-COVER-FIELD`, and the registry's own schema
+codes `REG-SCHEMA`, `REG-DUP`, `REG-FIELDS`, `REG-LAYER`, `REG-SUPERSEDED`, `REG-CONFLICT`, `REG-MISSING` (registry absent or empty), and for the CI job
+`REG-REMOVED`, `REG-WORDS-CHANGED`.
+The gate checks that the parts exist and are well formed and that references resolve; whether a candidate is the right choice is
+the team lead's call and is not judged by code.
+
+## The owner's requirements registry (MS-8, owner 2026-11-20 08:34 UTC: "what is the point of rules if they are not followed?")
+Home of the decision: [D-143](DECISIONS_AND_OPEN_QUESTIONS.md). `explainer_engine/governance/owner_requirements.json`, code
+`governance/owner_requirements.py`, tests `tests/unit/test_owner_requirements.py`, CLI `python -m explainer_engine.governance requirements [--layer L14]`
+(count per layer, the unmapped entries; exit 1 when any entry is unmapped, a conflict is open or the registry is invalid; `governance check` prints the
+registry's schema errors too). A repo without the file binds nothing.
+
+```json
+{"schema": "owner_requirements/1",
+ "requirements": [{"id": "REQ-014", "words": "his words, verbatim", "gloss": "English, only if the words are not", "date": "2026-11-20T08:33:54Z",
+   "source": {"kind": "chat|memory|decision_log|doc", "ref": "cmsg_... | memory file | D-139 | path#line"},
+   "layers": ["L14"], "status": "active|superseded", "superseded_by": "REQ-0xx (only when superseded)",
+   "measures": "one line on what the check measures (optional)", "parent": "another entry id (optional)",
+   "check": {"kind": "validator", "ref": "module:function", "test": "tests/unit/test_x.py::test_name"}
+          | {"kind": "judge", "who": "blind judge | owner at MS-7 | Gemini eye", "rubric": "path#heading-anchor"}
+          | {"kind": "unmapped"}}]}
+```
+An open conflict is its own entry: `{"id", "kind": "conflict", "status": "open|resolved", "conflicts": [id, id, ...], "summary", "resolved_by": "cmsg_ (when resolved)", "layers", "date", "source"}`.
+
+- **Ids:** `REQ-nnn`, or `OR-<group letter><nn>` (OR-V visual, OR-S, OR-A, OR-E, OR-Q, OR-P, OR-I). Dates: ISO 8601 or `2026-11-19 22:08 UTC`. `words_verbatim` is accepted for `words`.
+- **A layer record BLOCKs** unless every `active` entry whose `layers` holds it is in the record's `requirements_covered: [{id, evidence}]` and its check is real:
+  `REQ-UNCOVERED` (active entry missing from the record, so a new entry reopens every layer it binds), `REQ-UNMAPPED` (check `unmapped` or none),
+  `REQ-NOVALIDATOR` (the `module:function` does not exist), `REQ-NOTEST` (the `path.py::test_name` of `check.test` does not exist), `REQ-NONEGATIVE` (the test of `check.negative_test`, which shows the validator FAILS a known violation fixture, does not exist), `REQ-NOJUDGE` (a judge without `who`
+  or without an existing rubric file and heading), `REQ-CONFLICT-OPEN` (an open conflict binds the layer; blocked until the owner answers),
+  `REQ-SUPERSEDED-USED` (the record cites a superseded entry), `REQ-UNKNOWN` (cites an id not in the registry), `REQ-COVER-FIELD` (a malformed row).
+- **The registry schema** (`REG-*`) is checked on every record: duplicate ids, a missing or empty quote, date or source (a chat source is a `cmsg_` id, a
+  `D-` source must be in the decision log), a layer outside L1..L33, `superseded` without an existing newer entry, a conflict naming fewer than two existing ids.
+  A broken registry BLOCKs every layer, not only the bound ones. `superseded` entries are never deleted.
+- **Honest `unmapped`:** an entry with no check yet is allowed in the registry and blocks the layers it binds until its validator (with its test, and a bad and a good
+  fixture) or its judge step exists. Design choices for the team lead to confirm: the conflict entry shape above; `REQ-NOVALIDATOR`, `REQ-UNKNOWN` and `REQ-COVER-FIELD` as
+  three codes beyond the spec's six; a `doc` source is not checked for existence (many sit outside the repo); the append-only id counter is not checked in code
+  (a snapshot cannot show it; git history does).
+- **Deleting or emptying the registry never opens a layer:** a `final` record, `require_layers`, the send gate and the CI job BLOCK with `REG-MISSING` when
+  `owner_requirements.json` is absent or holds no entry (a draft without one is only reported). **Append-only in code:** the CI job compares the registry with the base
+  branch (`owner_requirements.compare_with_base`): an id that disappeared is `REG-REMOVED`, a changed `words` / `words_verbatim` is `REG-WORDS-CHANGED`; retiring an
+  entry means `status: superseded`.
+
+## Stages and trial scripts call the gate: the soft mode (spec section 7.2; owner 2026-11-20 09:11 UTC, msg `cmsg_01Hnu5zB86sjUj5GtTgaUkPWMd8fDv9ExMX3zJq6nwZXau`, "turn on the soft mode: production stops only on a validator that failed")
+`layer_gate.require_layers(layers)` raises `ContractError` only when the registry is missing or invalid (`REG-MISSING`, `REG-*`; a waiver never opens that). A layer whose record is
+not final, not PASS or BLOCK is a `NOT_RUN <layer>: why` note, a waived layer a "waived by the owner" note; the layer records decide when a layer's skill work is final, not whether
+production runs. `episode/run.py: run_stage` calls `require_stage(stage)` (`STAGE_LAYERS`: script L1-L4, L7, L8, L29, L30; sound_plan and sound L18-L20; pictures L9-L11, L16;
+voice L5, L6, L17; clips L12-L15; assemble L21, L22, L25; qa L23, L24) before the stage and `send_gate.stage_check(layers, files)` after it, on the files the stage made (every file or
+folder named in its outputs, and every `clip_path` of the clips stage): each active requirement of those layers whose validator can measure them is run. **Only a validator that FAILED
+stops production** (a row `owner_requirements` FAIL in the stage record; a validator that raised or cannot be loaded counts as a failure). Unmapped entries, judge steps, open conflicts,
+validators without a send adapter and files of no validator's kind are listed, never a stop: the stage record carries `layer_gate: {mode: fail_only, notes, validators: {failed, passed,
+not_run, waived}}` and `training/pods/ltx/scene_run.py main` (the D-132 video route) prints the notes for L12 and L13 before it reserves or writes anything. **There is one behaviour and no
+flag**: the strict mode was removed; the owner's word is kept as an audit record (`governance ok layer_gate_mode fail_only <cmsg id> "<his words>"`, nothing reads it). The owner's recorded
+`layer_waiver` (`python -m explainer_engine.governance ok layer_waiver <layer> <cmsg id> "<his words>"`, one layer, a day, never a wildcard) is for a validator that FAILS for a reason he
+accepts: its failure then shows under `waived`. The send to the owner stays hard: `send_gate` still BLOCKs an unmapped entry (spec section 6); only the runner's check is soft.
+The unit tests get a gate that passes (`tests/unit/conftest.py`, the `real_layer_gate` opt-in as for the dry run); `tests/unit/test_layer_gate_enforcement.py` runs the real one.
+
+### The registry file as the analyst delivers it (v2, 123 entries)
+`requirements` (kind `requirement` or `conflict`) and `process_requirements` (kind `process`: the way we work, e.g. model routing; they bind no layer, `layers: []`) are one registry.
+Process entries are never read by the layer gate; the CI job and `governance requirements` do, and each still needs a validator or a judge step with its tests like any other.
+Booleans `words_verbatim` (his own words, quoted) and `words_partial`, the string `words_origin`, `repeats`, `note`, `title` of a conflict and extra keys inside `check` are accepted;
+a conflict has no `words` by design and may name rules outside the registry in `conflicts` (`GC-18`, `RR-03`); ids may carry a letter (`OR-V09a`); a `decision_log` source may list
+several ids (`D-61 / OR-17`). An entry with `words_verbatim: false` is our paraphrase: the team lead does not sign it until the owner has seen it.
+
+## The send gate, the hooks and the CI job (spec sections 4 and 7.1, 7.3)
+- **Send gate** `python -m explainer_engine.governance.send_gate <layer> <files...> [--owner-asked <cmsg id>]` (`governance/send_gate.py`): runs the validator of every active requirement
+  that binds the layer on every file and prints PASS / FAIL / NOT_RUN / BLOCK with the measured number. FAIL (a measured violation) and BLOCK (registry missing or invalid, an open conflict,
+  an `unmapped` entry, a validator that does not exist or raised, a file that is missing) exit 1: such a candidate is never sent. NOT_RUN (a judge step, a file of another kind, a camera
+  that moves where a still one is required) is shown. A failing candidate goes only as a labelled record when the owner asked to see failures (`--owner-asked`, his `cmsg_` id). Every run appends a
+  line with the sha256 of each file to `jobs/send_gate/records.jsonl`. A validator is `fn(path) -> {status, value, detail}` with `fn.kinds` (suffixes); the first is
+  `qa/send_validators.py: living_motion` (G-LIVE-1 on the delivered frames with a still camera, G-LIVE-3 per zone from `<clip>.zones.json`; BP-194 numbers).
+- **Hooks** (`governance/send_hook.py`, wired in `.claude/settings.json`, extending the D-84 hooks and FAILING CLOSED: an exception, a missing scope file or a command that cannot start exits 2):
+  `pre-bash` refuses an upload (`upload_file`, `hf upload`, ...) of a file under a trial or comparison path (`send_scope.json`) without a passing send record of that file's sha256 (or a record labelled with
+  the owner's word) and a trial command (`scene_run`, `episode run`) whose layers the gate does not let through; `stop` and `subagent-stop` refuse to end a turn that wrote such files (from the transcript, newer
+  than the last user message) without the record; after 3 refusals in a row the stop hook lets go and writes `jobs/send_gate/incidents.jsonl`, so a loop is visible and not endless. A log or a vault file passes.
+- **CI** (`.github/workflows/owner-requirements.yml`, job `owner-requirements`; code `governance/ci_check.py`): fails on a missing, empty or invalid registry, an active unmapped entry (process entries too),
+  a validator without its code, test or negative test, a judge without its rubric, an id removed or an owner's words changed against the base branch, or a failing named test; an open conflict is printed. The
+  owner makes it required: [OWNER_REQUIREMENTS_CI_STEPS.md](OWNER_REQUIREMENTS_CI_STEPS.md). Until the registry is mapped the job is red: that is the honest state.
+

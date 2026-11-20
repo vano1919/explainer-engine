@@ -1,0 +1,68 @@
+name: Owner requirements
+
+# Spec section 7.3 of OWNER_REQUIREMENTS_SPEC_2026-11-20 (owner, 2026-11-20 08:37 UTC: "words are not enough, Claude still skips").
+# The job `owner-requirements` fails when the owner's registry (explainer_engine/governance/owner_requirements.json) is missing, invalid,
+# has an unmapped entry, a validator without its test or negative test, lost an id or changed the owner's words against the base branch,
+# or when a test it names fails. The owner makes it a required status check (docs/OWNER_REQUIREMENTS_CI_STEPS.md).
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  owner-requirements:
+    name: owner-requirements
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Fetch the base branch
+        if: github.event_name == 'pull_request'
+        run: git fetch origin "${{ github.base_ref }}"
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install FFmpeg
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes ffmpeg
+      - name: Install project dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+      - name: Install OpenCV and the YuNet face model (faces-intact validator, BP-214)
+        # If the model cannot be fetched or its sha256 differs, the validator says NOT_RUN, never PASS (this step then only warns).
+        run: |
+          python -m pip install opencv-python-headless
+          mkdir -p tools/yunet
+          if curl --fail --silent --show-error --location --retry 3 -o tools/yunet/face_detection_yunet_2023mar.onnx \
+              https://huggingface.co/opencv/face_detection_yunet/resolve/main/face_detection_yunet_2023mar.onnx; then
+            echo "8f2383e4dd3cfbb4553ea8718107fc0423210dc964f9f4280604804ed2552fa4  tools/yunet/face_detection_yunet_2023mar.onnx" | sha256sum --check - \
+              || { echo "::warning::YuNet model sha256 differs: faces-intact is NOT_RUN"; rm -f tools/yunet/face_detection_yunet_2023mar.onnx; }
+          else
+            echo "::warning::YuNet model could not be fetched: faces-intact is NOT_RUN"
+          fi
+      - name: Registry checks against the base branch
+        if: github.event_name == 'pull_request'
+        run: python -m explainer_engine.governance.ci_check --base "origin/${{ github.base_ref }}"
+      - name: Registry checks
+        if: github.event_name != 'pull_request'
+        run: python -m explainer_engine.governance.ci_check
+      - name: Layer records and registry schema
+        run: python -m explainer_engine.governance check
+      - name: Tests of the gate, the send gate and the hooks
+        run: >
+          python -m pytest -q -p no:cacheprovider
+          tests/unit/test_owner_requirements.py tests/unit/test_layer_gate.py tests/unit/test_layer_gate_enforcement.py
+          tests/unit/test_send_gate.py tests/unit/test_send_hook.py tests/unit/test_ci_check.py tests/unit/test_send_validators.py

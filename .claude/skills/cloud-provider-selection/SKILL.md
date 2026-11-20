@@ -1,43 +1,58 @@
 ---
 name: cloud-provider-selection
-description: Deterministic, dry-run multi-provider GPU ranking across Hyperstack, Modal, and RunPod via explainer_engine/cloud/providers/selector.py. Enforces VRAM, RAM, disk, stock freshness, RP-09 setup-share, and proposed budget caps without creating live resources.
+description: Choose where a paid GPU job of this channel runs and on which card - by measured seconds and total job cost, not hourly price - with the dry-run selector's hard filters (VRAM, RAM, disk, stock freshness, setup share, proposed caps), the v4.3 default of Modal for LTX-2.5 distilled clips (D-132), and the evidence a provider change would need. Use when a new GPU job type appears, when a card or price changes, and before any proposal to move work to another provider.
 ---
 
-> **Route-scoped since D-116 (2026-11-06):** LTX and Qwen are named here only as GPU workloads of the J2/J4 routes and of the Qwen assets of J5 (D-116); provider runs stay dry-run until the creator approves caps in `config/spend_caps.json` (D-56).
+# Cloud provider selection (layer L31, planning before G7)
 
-# Cloud Provider Selection (`explainer_engine/cloud/providers/selector.py`)
+Rewritten 2026-11-20 under RW-50 ([docs/SKILL_LAYERS.md](../../../docs/SKILL_LAYERS.md)). Decision home:
+[PROVIDER_DECISION](../../../docs/providers/PROVIDER_DECISION.md); adapter design:
+[PROVIDER_ADAPTER_DESIGN](../../../docs/providers/PROVIDER_ADAPTER_DESIGN.md); policy: `.claude/rules/cloud-platforms.md`
+sections 5-7.
 
-Use this skill to rank GPU offers across Hyperstack, Modal, and RunPod for any Explainer Engine workload
-(`docs/providers/PROVIDER_DECISION.md` and `docs/providers/PROVIDER_ADAPTER_DESIGN.md`).
+## The default today
 
-## 1. Selection & hard-filter rules
+| Job | Where | Why |
+|---|---|---|
+| video clips, LTX-2.5 distilled (D-132) | Modal, one container per scene | scale to zero, per-second billing, the ladder and ledger exist, measured cost per generated second (`explainer_engine/cloud/cheapest.json`) |
+| pictures | the Gemini chat, free (D-131) | no GPU |
+| 2x upscale, still_25d, maps, assembly | local CPU, free (D-131) | no GPU needed |
+| anything on RunPod or Hyperstack | not used for v4.3 (D-131) | RunPod dropped by the owner; Hyperstack has no adapter that meets section 7 |
 
-`ProviderSelector.select` in `explainer_engine/cloud/providers/selector.py` evaluates every `GpuCapacityOffer` through five
-mandatory gates before ranking:
+A provider is never changed because its list price is lower. A change needs: a measured job on both (seconds and total
+cost), an adapter that meets cloud-platforms section 7 (idempotent create, reconciliation, ledger, watchdog, verified
+upload, recovery tests), the OR-34 audit, and the owner's word.
 
-1. **Availability & stock freshness (`<= 120s`)**: offers with `available=False` or `offer.is_stale(now, max_age_s=120.0)` are
-   rejected (`StaleStockError`).
-2. **VRAM, system RAM, and disk floor**: LTX-2.5 (`workload_b_ltx_30s`, `workload_c_j5_minimised_p12_p14`,
-   `workload_c_combined_p12_p14`) requires `>= 80 GB` VRAM; 48 GB GPUs (`L40`, `L40S`, `RTX-A6000`) are rejected
-   (`InsufficientVramError`).
-3. **Allowed regions**: offers outside the workload's or provider's allowed regions are rejected (`RegionMismatchError`).
-4. **Full total-cost cap (`BudgetExceededError`)**: total cost (including cold/warm setup, GPU + CPU/RAM + active disk/IP,
-   scaledown, and egress) must fit inside both `workload.max_budget_usd` and `PROPOSED_PROVIDER_CAPS` in
-   `explainer_engine/cloud/providers/base.py`.
-5. **Setup-share ceiling (RP-09)**: unless `workload.measure_only=True`, offers where `setup_share > 0.40` (boot/setup time exceeds
-   40% of total runtime) are rejected so fast, expensive GPUs are not wasted on slow cold-image pulls.
+## How to rank a job
 
-## 2. Recommended routing policy
+1. **Describe the job by its units**: clips and their seconds at the native size, model loads, containers, the VRAM need
+   measured or known with its reference (never guessed; Rule one, OR-22).
+2. **Run the dry-run selector** (`explainer_engine/cloud/providers/selector.py`):
+   `python -m explainer_engine.cloud.providers --workload <preset>` with a preset from
+   `explainer_engine/cloud/providers/base.py` (for a short Modal test, `workload_d_short_calibration`). It creates nothing.
+3. **Read the five filters it applies** before any ranking:
+   - offer available and its stock fresh (stale stock is rejected);
+   - VRAM, system RAM and disk at or above the job's floor (a 22B video transformer does not fit a 48 GB card without an
+     offload plan that was measured; D-132);
+   - the region allowed;
+   - the total cost, including start, load, scaledown and egress, inside the job's cap and the proposed provider cap;
+   - the setup share under RP-09's ceiling unless the job is a measurement (a fast card wasted on a slow start is refused).
+4. **Rank survivors by total job cost**, then by risk (stock, recovery path). Hourly price is a tiebreak at most.
+5. **Write the offer** for the chosen combination and one alternative (CH-07, skill `modal-operations`).
 
-- **Primary full-episode batch VM (`workload_c_j5_minimised_p12_p14`, `workload_c_combined_p12_p14`)**: Hyperstack `n3-A100x1`
-  (`$1.35/hr`, `~$1.71` for J5-minimised episode) or `n3-H100x1` (`$1.90/hr` on-demand, `~$2.22` for J5-minimised episode) via
-  skill `hyperstack-operations`.
-- **Primary short calibration (`workload_d_short_calibration`) & burst single-clip retries**: Modal `H100` (`$0.36` gross,
-  `$0.00` net under Starter `$30/mo` credit) or `A100-80GB` (`$0.45` gross, `$0.00` net) via skill `modal-operations`.
-- **Legacy baseline & warm network volume**: RunPod via `explainer_engine/cloud/runpod.py` and
-  `explainer_engine/cloud/providers/runpod_adapter.py`.
+## What the selector cannot tell you
 
-## 3. Read-only CLI
+- whether a model, adapter or setting actually runs on that card: only a tiny approved pilot proves it;
+- today's price: re-check the provider's page and write the check time;
+- throughput on our pipeline: older clip timings of retired routes are not evidence for LTX-2.5 distilled (D-132).
 
-- Run dry-run ranking:
-  `python -m explainer_engine.cloud.providers --workload workload_c_j5_minimised_p12_p14`
+## Traps
+
+- **Per-hour thinking**: an H100 can be cheaper per job than an A100 or dearer; measure seconds.
+- **Model reloads**: a runner that reloads per clip multiplies cost whatever the card (CH-01).
+- **API generators** look cheap per second until sound, licence region and quality are counted; CH-06 records the
+  comparison that kept the self-hosted generator.
+- **Conflating products**: a token-priced endpoint, a dedicated inference endpoint and a GPU VM are different products
+  with different bills (cloud-platforms section 5).
+
+Companions: skill `cloud-cost-audit` (before and after the money), skill `hyperstack-operations` (legacy reading only).

@@ -48,6 +48,8 @@ SCHEMA = "sound_realism_report/1"
 SR = 16000
 FRAME_S = 0.02            # the detector's frame
 SPEECH_BAND_HZ = (250.0, 3800.0)
+STATIONARY_DB = 2.5        # a span whose speech-band level has a spread under this (dB over the span) is a steady noise, not speech
+STATIONARY_MIN_S = 1.0     # ... when it lasts this long (seconds)
 # what the audit measured (REALISM_AUDIT_2026-11-12_ka.md, sections 1-2): printed beside every row, never a threshold
 REFERENCE = {
     "no_dropout": {"film_dialogue_scene": "room tone or bed always under dialogue (BP-116)", "battle_2026_11_12": -62.0},
@@ -370,6 +372,11 @@ def bed_spectra(x: np.ndarray, spans, events: list[dict], places: list[dict] | N
     if k == 0:
         return []
     dur = len(x) / SR
+    # tester Z12: a stationary hiss is not a voice. A span of a second or more whose speech-band level hardly moves (a generated bed, which the
+    # loudest place of a render otherwise looks like) stays in the bed; speech moves several dB from syllable to syllable. Only the bed analysis
+    # reads it this way: the pause and dialogue rows keep the spans as the detector gives them.
+    e = _band_db(x, SR, *SPEECH_BAND_HZ)
+    spans = [(a, b) for a, b in spans if not (b - a >= STATIONARY_MIN_S and len(e) > int(b / FRAME_S) and float(np.std(e[int(a / FRAME_S):int(b / FRAME_S)])) < STATIONARY_DB)]
     fr = np.asarray(x[: k * w], np.float64).reshape(k, w)
     lv = 10 * np.log10((fr ** 2).mean(axis=1) + 1e-18)
     c = (np.arange(k) + 0.5) * 0.05

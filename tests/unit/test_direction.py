@@ -231,3 +231,14 @@ def test_an_animated_element_the_balance_did_not_choose_is_shown():
                                 **LP(0.1, 0, 0, 1, 1)})
     d["tracks"].append({"track": "atmosphere", "op": "foliage_sway", "renderer": "directed25d", "params": {}, "id": "fx_pine"})
     assert "far_pine is animated but LP-04..07 did not choose it (SKIP_DOT" in _whats(D.check(d, frames=263), "REVIEW")
+
+
+def test_a_body_is_never_moved_by_a_2_5d_effect_lp02():
+    d = copy.deepcopy(BASE)
+    d["seen"]["living"].append({"id": "lips", "kind": "body", "where": [0.4, 0.3], "decision": "animate", "effects": ["fx_sway"], **LP(1, 2, 2, 2, 0)})
+    d["tracks"].append({"track": "subject", "op": "subject_sway", "renderer": "directed25d", "params": {}, "id": "fx_sway"})
+    assert any("does not move a body" in p["what"] for p in D.check(d, frames=263) if p["level"] == "FAIL")
+    left = copy.deepcopy(BASE)                                  # the same body left to LTX with a reason passes the inventory
+    left["seen"]["living"].append({"id": "lips", "kind": "body", "where": [0.4, 0.3], "decision": "skip", "why": "LP-02: the words need the lips to move: LTX",
+                                   **LP(1, 2, 2, 2, 0)})
+    assert not any("lips" in p["what"] for p in D.check(left, frames=263) if p["level"] == "FAIL")

@@ -16,7 +16,13 @@ FILE = Path("jobs") / "creator_ok.jsonl"
 ACTIONS = ("model_switch", "effort_override", "protected_config", "channel_voice",
            "generator_admit",   # target = "<generator>:<kind>": the word behind an entry of assets/audio/generator_admission.json (BP-162)
            "stage_approval",   # target = "<episode>:<stage>:<input hash>": the word behind a REVIEW stage going on (episode/run.py approve)
-           "cheapest_waive")    # target = one rule "CH-xx": his word breaks that cheapest-run rule for one run (D-133)
+           "cheapest_waive",    # target = one rule "CH-xx": his word breaks that cheapest-run rule for one run (D-133)
+           "layer_waiver",      # target = one layer "L9": his word lets a stage's output go on although a validator of that layer FAILED on it (24 h)
+           "merge_approval",    # target = one pull request number: his word behind a GitHub merge (the owner keeps merges, T2.7)
+           "layer_gate_mode")   # target = "fail_only" only: the audit trail of his word (2026-11-20 09:11) behind the soft layer gate; nothing reads it
+
+
+_MSG_ID = re.compile(r"cmsg_[A-Za-z0-9]+")   # the form of a creator's message id (W1: \"x\" is no message id)
 
 
 def _now() -> float:
@@ -26,12 +32,18 @@ def _now() -> float:
 def add(action: str, target: str, message_id: str, quote: str, *, by: str = "creator", root=None, now: float | None = None) -> dict:
     if action not in ACTIONS:
         raise ValueError(action)
-    if not message_id or not quote.strip():
-        raise ValueError("a recorded word needs the creator's message id and a quote")
+    if not (isinstance(message_id, str) and _MSG_ID.fullmatch(message_id)) or not quote.strip():
+        raise ValueError("a recorded word needs the creator's message id (cmsg_...) and a quote")
     if action == "protected_config" and target == "*":
         raise ValueError("protected_config names one file; a wildcard would unlock the money caps too")
     if action == "cheapest_waive" and not re.fullmatch(r"CH-\d\d", target):
         raise ValueError("cheapest_waive names one rule CH-xx; a wildcard would waive every cheapest-run rule")
+    if action == "layer_waiver" and not re.fullmatch(r"L\d{1,2}", target):
+        raise ValueError("layer_waiver names one layer L1..L33; a wildcard would open every layer")
+    if action == "merge_approval" and not re.fullmatch(r"\d{1,6}", target):
+        raise ValueError("merge_approval names one pull request number; a wildcard would approve every merge")
+    if action == "layer_gate_mode" and target != "fail_only":
+        raise ValueError("layer_gate_mode is fail_only: the strict layer gate no longer exists")
     if action == "stage_approval" and (target.count(":") < 2 or "*" in target):
         raise ValueError("stage_approval names one <episode>:<stage>:<input hash>; a wildcard would approve every stage")
     if action == "generator_admit" and "*" in target:
@@ -56,7 +68,8 @@ def valid(action: str, target: str, minutes: float, *, root=None, now: float | N
             row = json.loads(line)
         except ValueError:
             continue
-        if row.get("action") == action and row.get("target") in ((target, "*") if wildcard else (target,)) and row.get("message_id") \
+        if row.get("action") == action and row.get("target") in ((target, "*") if wildcard else (target,)) \
+                and isinstance(row.get("message_id"), str) and _MSG_ID.fullmatch(row["message_id"]) \
                 and 0 <= now - float(row.get("at", 0)) <= minutes * 60:
             return True
     return False

@@ -1,63 +1,105 @@
 ---
 name: shorts-for-video
-description: Write and cut the YouTube Shorts that advertise a Crossworld Theories video - a 3-second question hook, the most surprising scene, a line pointing to the video - using the video's own pictures cropped to 9:16 around the named heroes. Use after the full script exists, for every episode.
+description: Write and cut the YouTube Shorts that advertise a finished docudrama episode - one question hook spoken from the first second, the episode's most surprising true moment, a pointer or loop back to the long video - cut from our own master and clips in 9:16 around the named heroes, reusing the main read so no second narration is bought. Use after G10 passes for every episode, when planning a set of Shorts, and when a Short is rendered, checked or staged.
 ---
 
-# Shorts that sell the video
+# Shorts cut from our own episode (layer L28, stage S19, after G10)
 
-**Episode rulebook first (D-51, OR-11):** read `python -m explainer_engine.standards brief <episode>/episode_rules.json --role edit` and follow it; legal, licence, likeness and art-direction questions are decided there (docs/EPISODE_STANDARDS.md), never invented in this skill. A conflict goes back to the orchestrator.
+Rewritten 2026-11-20 under RW-50 ([docs/SKILL_LAYERS.md](../../../docs/SKILL_LAYERS.md)) for the v4.3 episode-first channel
+(D-131): a Short is made from what the episode already made, its pictures, clips and voice, never from new material.
+Feed reasoning (why the first frame matters, reading the curve) is in skill `v-viral-youtube-shorts`; the cutting engine
+is skill `v-video-editing-skill`; measurements are skill `v-qc-skill`.
 
-Rules: `docs/ORCHESTRATION.md` SH-01..SH-04. A Short is a trailer with its own hook, order and ending; its body lines may be
-the video's own lines and audio (SS-09, EL-09), never a cut-down of the long video's read in its order.
+**The rulebook speaks first (D-51, OR-11):** run `python -m explainer_engine.standards brief <episode>/episode_rules.json
+--role edit` and obey it; licence, likeness and legal questions are settled there (docs/EPISODE_STANDARDS.md), not here.
+A clash goes back to the orchestrator.
 
-1. Pick the scene by surprise and clarity without context (a question the viewer wants answered, a visible reversal).
-2. **Hook** (BP-11: spoken from the first second, complete inside the hook window, inside the word cap): one question, or one
-   statement that raises several, true and mapped to a claim ("Did you know the 100 smartest people alive could not light a
-   fire for a day?"). It rises like a question (N-01).
-3. **Body** (the word budget of the Short's length band, BP-12): short sentences, one action each, a reaction line, the stakes
-   in plain words, every line short and simple (BP-46); lines 2-3 foreshadow the payoff and the sentence that answers the
-   hook waits for the last stretch (BP-44); same N-rules.
-4. **Last line**: points to the full video without begging ("Day one is only the beginning. Full story on the channel.") or
-   loops into the hook; never a sign-off (BP-44).
-5. In the production script's `shorts` block: id, hook, `lines`, and `shots` that reuse the video's pictures
-   (`picture` = existing id) with `crop_x` (0..1, the horizontal centre of the 9:16 window on the 16:9 picture, set on the
-   named hero's face, never cutting a face) and `zoom`.
-6. Voice: the same ElevenLabs voice; if the pace is raised (at most 8 %), run `audio/voice_check` and keep the original on any
-   timbre drift.
-7. Captions: English, large, inside the safe area; no text over faces.
-8. A set (up to 10 for one video): each Short its own scene and question, no body line or most pictures shared with
-   another Short (SH-05, PV-28). A voiced dialogue line keeps its `speaker` (D-45).
-9. Styles (D-48, `docs/STORY_ENGINE.md` SS-01..SS-04, PV-34): each Short has a `style` from the catalog (cold_open_cliffhanger,
-   anti_intuition, countdown_hud, dialogue_clash, fact_bomb, pov_you, myth_buster, ranked_three, loop, would_you) and an
-   `ending` (cliffhanger, loop, question, pointer); 10 Shorts use at least 6 styles, never the same style twice in a row.
-   Tricks: on-screen text with the hook from frame 0, the on-screen change cadence of BP-45, word-highlight captions, a HUD
-   counter for steps, a sound on a pop only when it has a purpose (BP-55: at most one beat in two carries an effect), the
-   long video's exact title said aloud; related-video link and pinned comment
-   are set at upload by hand. The agent `shorts-writer` writes the set. `anti_intuition` and `pov_you` may open with one
-   statement inside the BP-11 word cap instead of a question (SS-05). D-49 (`docs/research/PARAMETER_AUDIT_2026-10-19.md`,
-   section 6 has the recipe per style): the hook's words on frame 0 and the first cut inside the hook line (SS-07), the
-   visual-event floor of BP-45 (SS-08), the set in the two length bands of BP-12 (SS-06), posted on the BP-47 schedule
-   (SS-03: the first within days of the video, the rest spread).
-   Every Short carries the video's visual-beat layer (SS-09): the beat-writer gives the Short's own lines beats, on new
-   information and at BP-45's pace, never a 1.5 s metronome; cues stay opt-in and event-bound as on /3 (VB-08).
+## What a Short is for this channel
 
-## Packaging and platform (P3b 2026-10-29)
+A trailer with its own hook, order and ending (SH-01): it sells the long video. Its body lines are the episode's own lines
+and audio (SS-09, EL-09), re-cut around one moment (SS-03), never the long read shortened in its own order. Every opener is
+true and maps to a claim row (SH-04). A set of up to ten per episode tells ten different scenes (SH-05, PV-28).
 
-- **Promise before story.** Before the scenario the packaging stage writes three title-and-thumbnail promises of different
-  mechanism (a conflict of scale, a paradox or gap, a Day 1 to Day N progression) for YouTube's Test & Compare, which takes up
-  to three (BP-135); the script's first seconds pay the chosen one. The thumbnail stays honest (TN-02).
-- **Read the curve, then edit.** After publishing, Studio's intro, top moments, spikes and dips are mapped onto segment ids
-  (P10); BP-48 keeps the intro gate, BP-136 adds the midpoint.
-- **A Short is a Short.** At most YouTube's limit (BP-137) and inside BP-12's bands; captions and the face inside the safe
-  zone of BP-29 (the Blueprint's other margins are conflict 13, settled by a screenshot on the creator's phone); TikTok and
-  Instagram limits are not researched yet.
-- **Nothing goes public** without the creator's recorded approval (CLAUDE.md invariant 4).
+## Material: only what the episode made
+
+- **Pictures and motion:** the master (`renders/final/<id>_master.mp4`), the shot clips of route `video` (D-132, LTX-2.5),
+  the `still_25d` living photographs (D-131), and the `map_action` clips. No stock, no third-party footage, no
+  film clips of the era film we name in prompts (docs/RIGHTS_AND_FAIR_USE.md).
+- **Voice:** the main read and the clips' own hero lines, with their Scribe word timings from G6. The pace may rise by at
+  most 8 % only when `explainer_engine/audio/voice_check.py` finds no timbre drift; otherwise it stays (SH-02). The only new
+  voice is one shared pointer or hook line when the Short is cut from the master, read by the same narrator voice and
+  bought under the usual ElevenLabs rules (skill `elevenlabs-voice`; estimate, ledger, the owner's word).
+- **Music and effects:** the episode's own stems or the library, library first (OR-18); no licensed tracks.
+
+## The 9:16 window around the heroes
+
+The Short frame is `explainer_engine/core/delivery.py` `shorts_frame()` (BP-167). The 16:9 source is cropped so that the
+named hero who speaks or acts sits inside the window and no face is ever cut (SH-03); captions and faces stay inside the
+safe zone of BP-29.
+- On a still or a living photograph: `crop_x` (0..1, the window's horizontal centre on the source) and `zoom` per shot in
+  the `shorts` block; `explainer_engine/production/shorts.py` draws it with a slow push.
+- On a moving reenactment clip: the hero moves, so the window follows a box measured on the clip (motion centre in skill
+  `v-ffmpeg-skill`, `FILL` with an anchor or `PUNCH_IN` in skill `v-video-editing-skill`). A tracked crop is not yet
+  automatic in our code; record the boxes you chose in the Short's work folder.
+- Two speakers at opposite edges do not fit one window: cut between them on their lines, or choose another moment.
+- Fallback layout: `explainer_engine/production/clip_shorts.py` puts the full 16:9 frame over a blurred copy with a title
+  band; use it only when the crop would cut the story, and say so in the Short's note.
+
+## Procedure
+
+1. **Pick the moments** after G10, from the contact sheet and the claim map: a visible reversal, a decision under
+   pressure, a fact that sounds wrong but is sourced. Each must be clear with no context.
+2. **Write the hook** (BP-11: spoken from the first second, complete inside the hook window, inside the word cap): one
+   question, rising like one (N-01), or for the `anti_intuition` and `pov_you` styles one statement that raises questions
+   (SS-05). Its key words are on screen from frame 0 and the first cut lands inside it (SS-07).
+3. **Shape the body** inside BP-12's word budget for its length band: short lines with one action each (BP-46), a reaction,
+   the stakes in plain words; lines 2-3 promise the payoff and the answer waits for the last stretch (BP-44).
+4. **End** on a pointer to the full video or a loop into the hook, never a sign-off (BP-44, SS-04). The long video's exact
+   title is said or shown (SS-03).
+5. **Fill the `shorts` block**: `id`, `style`, `ending`, `hook`, `lines` (a voiced dialogue line keeps its `speaker`, D-45),
+   `shots` reusing existing picture or clip ids with their crop. Every line carries visual beats at BP-45's pace, not the
+   long video's metronome; cues stay opt-in and tied to visible events (SS-09, VB-08). Validate with
+   `python -m explainer_engine.production validate <script.json>` (PV-28, PV-34, PV-44).
+6. **Render**: from the shorts block with
+   `python -m explainer_engine.production.shorts <script.json> --id SH01 --audio <read> --out <dir>`, or from the master
+   with `python -m explainer_engine.production.clip_shorts <plan.json>`. Both are free (local ffmpeg); both write a captioned
+   file and a clean master beside it.
+7. **Check**: `python -m explainer_engine.qa.short_format <SH01.mp4>` (9:16, length under BP-137), the hook timing and caption
+   report of the renderer, loudness against BP-61 (`explainer_engine/qa/targets.py`), and your own eyes on three frames.
+8. **Stage** one at a time after its own checks, unlisted, through `python -m explainer_engine.publish stage <episode>
+   --only SH01` after the owner's word; the first within days of the video, the rest spread (BP-47, SS-03). Related-video
+   link and pinned comment are set by hand. Nothing goes public (invariant 4).
+
+## A set of Shorts
+
+Styles (D-48, `docs/STORY_ENGINE.md` SS-01..SS-04, PV-34): `cold_open_cliffhanger`, `anti_intuition`, `countdown_hud`,
+`dialogue_clash`, `fact_bomb`, `pov_you`, `myth_buster`, `ranked_three`, `loop`, `would_you`. A set of ten uses at least six
+(SS-01), never one style twice in a row in posting order (SS-02), and spans both length bands of BP-12 (SS-06, D-49). At
+least three visual events every ten seconds (SS-08, BP-45); at most one beat in two carries an effect (BP-55). No two Shorts
+share a body line or most of their pictures (SH-05).
+
+## Packaging that the Shorts share with the long video
+
+Before the scenario, three title-and-thumbnail promises of different mechanism go on the variant card for YouTube's Test
+and Compare (BP-135); the script's first seconds pay the chosen one, and the thumbnail stays honest (TN-02, skill
+`v-thumbnail-skill`). After posting, Studio's intro, top moments, spikes and dips are mapped onto segment ids (P10) with
+BP-48's intro gate and BP-136's midpoint gate. TikTok and Instagram limits are not researched yet.
+
+## Failure modes and fixes
+
+| Symptom | Cause | Fix |
+|---|---|---|
+| A face cut at the window edge | crop from the centre on a moving clip | measure the hero's box; cut between speakers |
+| Hook ends late on the real read | leading silence or a long first word | trim the lead (the renderer does), shorten the hook |
+| The middle loses people | a held still, too few events | an insert, a reaction, a reframe on new information |
+| PV-28 flags a shared line | two Shorts tell one scene | give one of them another moment |
+| Uploaded as a normal video | horizontal or bars | re-render in the Short frame; `short_format` before staging |
 
 ### CHECKLIST (packaging)
 
-Rendered from `explainer_engine/standards/craft_checklists/packaging.json` (the one home of these ids; 
-`python -m explainer_engine.standards.craft write` regenerates it, `tests/unit/test_craft_checklists.py` fails when they
-differ). Every row is a hypothesis until a second source type is verified ([CRAFT_CURRICULUM](../../../docs/CRAFT_CURRICULUM.md)).
+The table below is generated from `explainer_engine/standards/craft_checklists/packaging.json`, its only home; rerun
+`python -m explainer_engine.standards.craft write` after a change there (`tests/unit/test_craft_checklists.py` compares the
+two). Each row stays a hypothesis until a second source type backs it ([CRAFT_CURRICULUM](../../../docs/CRAFT_CURRICULUM.md)).
 
 <!-- craft-checklist:packaging:begin -->
 | ID | check | rule | artefact field | sourced rules | enforced by |
@@ -74,32 +116,22 @@ differ). Every row is a hypothesis until a second source type is verified ([CRAF
 | CRAFT-PKG-10 | manual | nothing goes public without the creator's recorded approval | approval record | - | manual |
 <!-- craft-checklist:packaging:end -->
 
-## Sourced rules (docs/SOURCED_RULES.md)
+## Sourced rules (the BP numbers this page leans on)
 
-The numbers that bind a Short live only in the registry (`explainer_engine/standards/sourced_rules.json`); `production validate`
-(PV-28, PV-34) and `production/shorts.py` read them from there. A number changes there, with its sources, never here.
+Every binding number lives in `explainer_engine/standards/sourced_rules.json` (docs/SOURCED_RULES.md, D-59); the validator
+(PV-28, PV-34) and the renderer read it from there, so a number changes in the registry with its sources, never on this page.
 
-- BP-11: the hook is spoken from the first second (the first word within 1.0 s of frame 0) and complete by 3.0 s, at most 14
-  words; one question, or one statement that raises several. At 170 wpm about 8 words fit in 3 s, so the time is the tighter
-  bound: PV-28 checks the words (FAIL) and the hook's end on the estimated read (REVIEW); `shorts.py` refuses a real read
-  whose first word starts late or whose hook ends after 3.0 s.
-- BP-12: the word budget follows the length band at BP-01's heard pace with 10 % slack: 15-30 s is about 38-93 words, 45-75 s
-  about 115-234 words; a set spans both bands (PV-28, PV-34). A Short's estimated length is its words at that pace
-  (`validate.short_seconds`), the one duration every Short check uses.
-- BP-44: the premise stays open until the last 15 %: the sentence that answers the hook starts at or after 85 % of the read;
-  lines 2-3 foreshadow with a promise marker inside 3 s of the hook; the ending is a loop or a pointer, never a sign-off
-  ("thanks for watching", "subscribe", "see you", "goodbye", "like and") (PV-28).
-- BP-45: something changes on screen at least every 5 s, at least 3 events per 10 s, each on new information; the 1.5 s
-  beat metronome of the long video is not a Shorts rule (PV-34).
-- BP-46: every line at most 14 words and the whole Short at Flesch-Kincaid grade 6 or under (PV-28).
-- BP-47: the first Short goes up within 3 days of the video, then at most one a day, the ten spread over at least 14 days.
-- BP-135, BP-136, BP-137: three promises before the scenario, the midpoint retention gate, the Shorts length limit (all
-  hypothesis, REVIEW; checklist above).
+- BP-11 the hook's start, end and word cap; PV-28 checks words (FAIL) and the estimated end (REVIEW), the renderer the real read.
+- BP-12 the word budget per length band at BP-01's heard pace; `validate.short_seconds` is the one Short duration.
+- BP-44 the answer in the last stretch, the early promise, the loop-or-pointer ending with no sign-off phrases.
+- BP-45 the on-screen change floor and events per ten seconds; not the long video's beat metronome.
+- BP-46 line length and reading grade. BP-47 the posting schedule. BP-55 the effect share of beats.
+- BP-29 the Shorts safe zone; BP-61 Shorts loudness; BP-167 the Short frame.
+- BP-135, BP-136, BP-137: the three promises, the midpoint gate, YouTube's length limit (hypotheses, REVIEW).
 
-## Vendored skills (W1, P-1/P-2): when to load them
+## Vendored pages and planned code
 
-Upstream text lives in the `v-*` folders (pinned in `docs/VENDORED_SKILLS.md`); nothing from it is copied here.
-
-- Load `v-viral-youtube-shorts` for Shorts hooks, retention and the link back to the long video.
-- The 9:16 crop around named heroes, one Short per upload and "never public" stay in this skill.
-- Validator: `explainer_engine/validators/shorts.py` (planned, W2) and `explainer_engine/shorts/planner.py` (planned, P9).
+Upstream text sits in the `v-*` folders pinned in `docs/VENDORED_SKILLS.md` (W1, P-1/P-2); nothing is copied here. The
+validator `explainer_engine/validators/shorts.py` (planned, W2) and the planner `explainer_engine/shorts/planner.py`
+(planned, P9) will take over checks done by hand today; the editorial critic `explainer_engine/qa/editorial_review.py`
+(planned, P8) is named in the checklist.

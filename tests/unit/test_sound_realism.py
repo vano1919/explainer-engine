@@ -164,3 +164,18 @@ def test_the_audited_files_fail(video, timeline, failing):
     rep = R.measure(v, json.loads(t.read_text(encoding="utf-8")))
     got = {r["gate"] for r in rep["rows"] if r["status"] == "FAIL"}
     assert failing <= got, got
+
+
+def test_distinct_beds_under_every_place_pass_the_one_noise_row():
+    x, tl = three_places(same=False)
+    assert rows(R.measure(Path("synthetic"), tl, x=x))["not_one_noise_everywhere"] == "PASS"
+
+
+def test_the_same_hiss_at_three_levels_under_three_places_fails_the_one_noise_row():       # the negative test of OR-V27b
+    parts, places, t = [], [], 0.0
+    for k, lvl in enumerate((-30.0, -38.0, -45.0)):
+        parts.append(at_db(bed(4.0, 7, 80, 2000), lvl))                                   # one and the same stand-in noise, three levels
+        places.append({"start_s": t, "end_s": t + 4.0, "place": f"p{k}"})
+        t += 4.0
+    x, tl = np.concatenate(parts), {"cuts": [4.0, 8.0], "events": [], "places": places}
+    assert rows(R.measure(Path("synthetic"), tl, x=x))["not_one_noise_everywhere"] == "FAIL"

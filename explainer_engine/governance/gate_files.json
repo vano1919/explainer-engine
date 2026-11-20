@@ -1,0 +1,11 @@
+{
+  "schema": "gate_files/1",
+  "enabled": false,
+  "note": "SWITCHED OFF (lead 2026-11-20 09:23 UTC). The mechanism is built and tested (path_guard.py, hooks.pre_write, hooks.pre_bash); until the owner sets enabled to true, an edit of these files is NOT ENFORCED by any hook. Switched on, a file below changes only on the owner's recorded protected_config word, like config/spend_caps.json. The owner also clicks the matching GitHub ruleset or CODEOWNERS step (docs/OWNER_REQUIREMENTS_CI_STEPS.md), because a local hook is not a server-side rule.",
+  "paths": [
+    ".claude/settings.json",
+    "explainer_engine/governance/**",
+    "docs/layers/**",
+    ".github/workflows/owner-requirements.yml"
+  ]
+}

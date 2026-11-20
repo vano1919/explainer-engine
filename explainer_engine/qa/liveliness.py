@@ -74,8 +74,12 @@ def change_per_s(frames: list[np.ndarray], fps: float) -> dict:
 
 def frozen_windows(frames: list[np.ndarray], fps: float) -> dict:
     """One-second windows (every half second) and the share of the frame that changes visibly between their ends."""
+    return frozen_windows_grey([_grey(f, FROZEN_SIZE) for f in frames], fps)
+
+
+def frozen_windows_grey(g: list[np.ndarray], fps: float) -> dict:
+    """``frozen_windows`` on frames already grey and at ``FROZEN_SIZE`` (pure numpy: the send gate decodes them with ffmpeg)."""
     step, half = max(1, int(round(fps * FROZEN_WINDOW_S))), max(1, int(round(fps / 2)))
-    g = [_grey(f, FROZEN_SIZE) for f in frames]
     rows = []
     for i in range(0, len(g) - step, half):
         share = float((np.abs(g[i + step] - g[i]) > FROZEN_PIXEL).mean() * 100)
@@ -135,6 +139,12 @@ def local_change_per_s(frames: list[np.ndarray], fps: float) -> dict:
         aw = cv2.resize(np.where(keep, w, 0), REF_SIZE, interpolation=cv2.INTER_AREA)
         bb = cv2.resize(np.where(keep, b.astype(np.float32), 0), REF_SIZE, interpolation=cv2.INTER_AREA)
         kk = cv2.resize(keep.astype(np.float32), REF_SIZE, interpolation=cv2.INTER_AREA) > 0.99
+        # tester Z9/Z10: a brightness fade is not a camera and per-frame grain is not a world that moves: bring the two frames to one mean and
+        # spread, and smooth the grain away, before the difference
+        if kk.any():
+            ma, mb, sa, sb = aw[kk].mean(), bb[kk].mean(), max(float(aw[kk].std()), 1e-6), max(float(bb[kk].std()), 1e-6)
+            aw = (aw - ma) * (sb / sa) + mb
+        aw, bb = cv2.GaussianBlur(aw, (0, 0), 1.2), cv2.GaussianBlur(bb, (0, 0), 1.2)
         d.append(float(np.mean(np.abs(aw - bb)[kk]) / 255 * 100))
     return {"pct_per_s": round(float(np.mean(d)), 2) if d else None, "series": [round(x, 2) for x in d]}
 

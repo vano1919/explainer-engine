@@ -55,7 +55,7 @@ LIVING_KINDS = {
     "plants": ("foliage_sway",), "cloth": ("cloth_flap",), "wire": ("wire_sway",), "water": ("water_shimmer", "glint"),
     "ice": ("glint", "sun_glint"), "fire": ("fire", "fire_box", "embers", "smoke", "glow"), "candle": ("candle", "glow"),
     "smoke": ("smoke",), "steam": ("steam", "smoke"), "breath": ("breath", "steam"), "stars": ("stars",), "glint": ("glint", "sun_glint"),
-    "dust": ("dust",), "heat": ("heat_haze",), "body": ("subject_sway",),
+    "dust": ("dust",), "heat": ("heat_haze",), "body": (),     # LP-02 (lead 2026-11-20): bodies move through the video route (LTX); no 2.5D effect moves one, a body is left to LTX with a reason
 }
 # words that name a living kind (in seen.what, the scene's weather and surroundings, and the shot's spoken words)
 LIVING_WORDS = {

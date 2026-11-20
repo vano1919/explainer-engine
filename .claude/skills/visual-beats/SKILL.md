@@ -1,113 +1,91 @@
 ---
 name: visual-beats
-description: Write the visual beats of a Crossworld Theories script - something new on screen wherever new information lands (a word, label, object, chart, ring, sign or camera accent), reaction-driven expression changes in dialogue, and a sound cue only where a named story event earns one. Use for every line of a production_script/3 (a /2 keeps its old metronome contract), segment by segment right after the lines are written, and whenever a cut feels like a slideshow or the sound like a machine gun.
+description: Write the visual beats of a docudrama script on the frozen words - what new thing appears on screen where new information lands (a date and place chip, a name label, a sourced document or object insert, a reaction, an evocative detail, a camera accent), the listener's face on the line that lands, and a sound only where a visible story event earns one. Use segment by segment right after the lines are written, and whenever a cut feels like a slideshow or the sound like a machine gun.
 ---
 
-# Visual beats and their cues
+# Visual beats in a docudrama (layer L7 with L4, stage 2b)
 
-**v4.3 episode (D-131; Fable audit 2026-11-13), read first:** on a `ProductionScriptV4` the beat stage writes
-`shots[].sound_events` (each with its `class` and a word anchor `at_word`, so it follows the read), `intentional_silence`
-(a sentence) and `sound_design`; one audio decision per visible event (AV-01..AV-08, `episode/events.py`); a word alone never
-earns a sound (AV-07). How: [sound guide v2](../../../docs/sound_guides/SOUND_INTEGRATION_GUIDE_v2.md). The Ink Chronicle lane
-text below is legacy (dated banner 2026-11-13) for the episodes made before 2026-11-12.
+Rewritten 2026-11-20 under RW-50 ([docs/SKILL_LAYERS.md](../../../docs/SKILL_LAYERS.md)). Rules: VB-00..VB-12 and PV-44 in
+[STORY_ENGINE](../../../docs/STORY_ENGINE.md) ("Visual beats"); field `lines[].visual_beats`
+([PRODUCTION_SCRIPT](../../../docs/PRODUCTION_SCRIPT.md)); render `production/beats.py`; cues `audio/cues.py`; stage page
+`beat-writer`. Evidence for every number: `docs/research/STORYTELLING_EDITING_2026-10-19.md`.
 
-**Ink Chronicle lanes (D-97, 2026-11-05):** beats land on VIDEO_3D, STILL_3D or HELPER shots; text and labels are never rendered inside Blender, they stay HELPER or overlay graphics (roadmap section 13).
+## On a v4.3 script (D-131), read first
 
-Rules: `docs/STORY_ENGINE.md`, section "Visual beats" (VB-00..VB-11, PV-44). Field: `lines[].visual_beats` in the
-production script (`docs/PRODUCTION_SCRIPT.md`). Render: `production/beats.py` (free, deterministic); cues:
-`audio/cues.py`. Agent: `.claude/agents/beat-writer.md` (stage 2b, right after the scene-writer, same segment).
-Evidence for every number: `docs/research/STORYTELLING_EDITING_2026-10-19.md`.
+The beat stage writes, per shot, `sound_events` (each with its `class` and a word anchor `at_word`, so it follows the read),
+`intentional_silence` (a sentence) and `sound_design`; every visible event gets one audio decision (AV-01..AV-08,
+`episode/events.py`), and a word alone never earns a sound (AV-07). How: the
+[sound guide v2](../../../docs/sound_guides/SOUND_INTEGRATION_GUIDE_v2.md). Older lane names from before 2026-11-12 are
+legacy for the episodes already made.
 
-**The /3 inversion:** nothing is included by default. A beat marks NEW information, a cue marks a STORY EVENT, and a
-silent beat is the normal case, never a finding. A `production_script/2` keeps the old contract (the /2 metronomes of BP-36 and BP-37
-and the mandatory cue per beat) unchanged; everything below the table is /3.
+## The rule of the layer: nothing by default
 
-The picture changes within BP-40's still limits; a visual beat counts as a change only when it is tied to a narration word
-(BP-93, VB-12, D-64, the creator 2026-10-20 21:14: on a narrator line, on a content word). Never add a beat because a clock or a rule asks for
-one (the creator: "props appear only because a rule demands them"); a long still is fixed by a cut or a move the story
-asks for, or accepted as a REVIEW. Beats fill the time between cuts. A shot start, a bubble, an accent or a data visual is already an event, so a line that opens a shot needs one beat
-fewer.
+A beat marks **new information** tied to a word of the line (VB-12, BP-93); a cue marks a **visible story event**; a silent
+beat is normal and never a finding. Never add a beat because a clock asks for one; a long hold is fixed by a cut or a camera
+move the story asks for, or accepted as a REVIEW. A shot start, a reaction cut or an insert is already an event, so a line
+that opens a shot needs one beat fewer. Rhythm is variance, not a rate (MO-07).
 
-Shorts carry the same layer (SS-09): a Short line that is a line of the video takes that line's beats; a Short's own
-lines (hook, pointer, a bridging line) get beats of their own, and a `label` or `highlight` points at a spot inside the
-Short's 9:16 crop (`crop_x`, `zoom` of its shot). PV-44 checks each Short on its own read at 170 wpm, except VB-01's cadence: a Short's pace is BP-45's (PV-34),
-where its beats count as events.
+## What a docudrama beat looks like
 
-## Choosing the beat from the words
+Our pictures are realistic frames in the series film's look, so the beat vocabulary is the documentary's, not the cartoon's:
 
-| The narrator says | Beat |
-|---|---|
-| a concrete thing (matches, skis, a lens) | `prop` (`thing`, a cut-out `asset` when one exists) or `label` on it |
-| a person's name | `label` on them, or `highlight` (ring) round them |
-| a number (with its claim) | `chart`: `counter` (0 -> n) or `bars` (2-3) |
-| a key word that is the point | `text` (BP-38's word cap, capitals) |
-| no / not / without / fails | `symbol` `cross` |
-| more, grows, rises / less, falls | `symbol` `arrow_up` / `arrow_down` |
-| time: night, an hour, years | `symbol` `clock` |
-| a question | `symbol` `question` |
-| yes, true, it works | `symbol` `check` |
-| same / plus, together | `symbol` `equals` / `plus` |
-| an impact, "fast", a twist word | `accent` `punch` or `shake` |
-| "this one", a detail in the picture | `highlight` at `pos` |
+| The line brings | Beat | Notes |
+|---|---|---|
+| a new time or place | **date and place chip** (`text`, small, period type) | once per jump, never over a face |
+| a person first named | **name label** (`label`) on him, a lower third | first appearance only; the record's rank and name |
+| a number with its claim | **number on screen** (`chart` counter, or `text`) | the number is shown when it matters (ED-10, BP-38's word cap) |
+| a real document, letter, order | **document insert** of the sourced original, or a hero's hands holding a prop clearly in the scene | never an invented paper shown as genuine (invariant 5) |
+| an object that matters | **object insert** (`prop` or a cut to an evocative insert) | the planted prop of ST-06 gets its insert both times |
+| a reveal, an insult, bad news | **the listener's face** (`expression`, `who` != speaker) | Kuleshov: the listener's reaction is the line's meaning |
+| an impact, a shot fired | **camera accent** (`accent` punch or shake) | sparingly; tied to the visible event |
+| "here", a detail in the frame | **highlight** at a position | rare in realism; prefer a push-in cut |
+| geography, distance, a front | **map insert** (route `map_action`, made last) | only when the place is the point |
 
-The table says what a beat LOOKS like, never whether it sounds: on /3 no beat carries a cue by default. Abstract lines:
-show the operative word as a sign or ring the thing it is about; never decorate. A beat that does none of clarify,
-emphasise, reorient, compress or contrast is cut (MO jobs). At most half a segment's beats are words; no more than
-three of one kind in a row; at most two overlays on screen at once.
+Abstract lines get no decoration: show the operative thing or let the shot hold. A beat that does none of clarify,
+emphasise, reorient, compress or contrast is cut (MO jobs). At most half a segment's beats are words, no more than three of
+one kind in a row (VB-05), at most BP-82's overlays at once (VB-07).
 
-## Pacing on /3 (VB-01)
+## Pacing (VB-01 on /3)
 
-Place beats where new information lands, not on a clock. The hook's change interval and the body's still limits are
-BP-40's (one pattern interrupt late in the hook); RHYTHM-3 gates them and MO-01 is their REVIEW band. VB-01 nests a
-stricter narration-only dead-air rule inside them: BP-36's REVIEW and FAIL gaps of nothing-new while the narrator
-speaks (in the hook BP-40 is the stricter one, in the body VB-01). A held picture counts as long as its beats
-(an expression, a label, an accent) keep landing (BP-41). Rhythm is variance, not a rate
-(MO-07): runs of near-equal holds read as a metronome even when each hold is "correct".
+Beats land where new information lands. The hook's change interval and the body's still limits are BP-40's, with BP-36's
+narration-only dead-air gaps nested inside (in the hook BP-40 is stricter, in the body VB-01). A held picture keeps
+counting while its beats (a reaction, a label, an accent) keep landing (BP-41). Living photographs (`still_25d`, D-131) carry
+slow motion of their own, which is not a beat; their sub-shots follow BP-109.
 
 ## Faces in dialogue (VB-02 on /3)
 
-The 1 s metronome is retired, and so is the per-line quota (BP-37, D-64, the creator 2026-10-20 21:14: a face swap on every line made every
-line a cut). A reaction is a choice: place an `expression` change only where a line lands — the reveal, the risk, the
-refusal, the punchline. A reaction on a hero's line is not "new information" for VB-01 (BP-93). A stretch without a
-change past BP-37's gaps is a REVIEW; two changes of one face closer than BP-33's floor are a
-flicker (REVIEW). Kuleshov note: on the line that lands (intent `reveal`, an insult, bad news), show the LISTENER's face
-(`who` != the speaker) — the same neutral close-up reads as the needed emotion because of what it is cut against, and
-the listener's reaction is the line's meaning.
+No quota per line. Place an expression change only where a line lands: the reveal, the risk, the refusal, the joke. A
+stretch with no change past BP-37's gaps is a REVIEW; two changes of one face closer than BP-33's floor are a flicker. On
+the line that lands, cut to the listener. In a reenactment the "expression" is a reaction shot of the listener (a new clip
+or a held frame), drawn from the hero's sheet and the scene master; a hero who changes expression needs his sheet
+(VB-09, VB-06); never ask for a new full picture per face.
 
-Expressions: neutral, curious, surprised, joyful, amused, smug, confused, doubtful, worried, scared, angry, sad,
-determined, deadpan. Use only the expressions of the hero's `cast.<id>.face_sheet` (VB-09: 8-12 close-ups on chroma
-green, about 10, always neutral, joyful, sad, scared, angry, surprised; painted once from the hero's reference with
-`paint plan --faces` and reused in every episode). A hero who speaks without a sheet is a FAIL: give the hero a sheet
-(`ref` = the hero's reference picture, `set` = the ten expressions the story needs) before writing faces; never ask for
-a new full picture per face. In the render the scene's picture is zoomed in on the face and blurred, and the keyed
-close-up of the current expression stands over it; before the sheet is painted the face push and emotion mark stand in.
-No face point and no sheet entry = FAIL (VB-06).
+## Cues (VB-08 inverted, VB-10, VB-11)
 
-## Cues on /3 (VB-08 inverted, VB-10, VB-11)
+A cue is opt-in and names its event; a cue without one is a FAIL.
 
-A cue is opt-in: the default is silence, and a cue without an `event` is a FAIL. The event grammar — what each event
-type is FOR:
+- `diegetic`: the sound of a visible action (a rifle bolt, boots on frozen mud, a mess tin, a match); the docudrama's main
+  cue, and the way to reach the creator's floor of at least three effects per scene.
+- `place`: an ambience change on a change of place; one continuous bed per place, reused on returns.
+- `reveal`: a sting on the emotional turn, rare in a docudrama.
+- `impact`: the blow, the shot, the number that hurts.
+- `transition`: on a scene change or a fast move, never on a plain cut inside a scene.
+- `build`: a riser that ends exactly on the reveal frame.
+- `take`: one big expression take per line at most.
 
-- `reveal` — a sting on the emotional turn: new information that changes what the viewer thought.
-- `impact` — a hit on the beat the edit declares important: the punchline, the blow, the number that hurts.
-- `transition` — a whoosh on a fast camera move or a scene change, never on a plain cut inside a scene.
-- `build` — a riser under anticipation, ENDING exactly on the reveal frame it was building to.
-- `diegetic` — a sound of a visible on-screen action (a door, glass, rain starting); never for an unseen object.
-- `take` — the one big expression take a line (surprised, scared, angry, joyful); at most one cued take per line.
-- `place` — an ambience change on a location change; one bed per place, reused on returns.
+The subtractive test decides: is the moment more connected with the sound than without it? If not, delete it. Density and
+repetition: BP-81 (cues a minute, the burst cap, emphasis sounds per line) and BP-80 (no same sound on consecutive cues);
+cues count toward AL-02's events a minute (BP-49); duration and level within BP-64, never within BP-39's cover time of an
+effect, inside BP-56's layer cap (AL-01). The mixer renders three pitch variants per sound and round-robins them so two
+plays are never identical; variation is no licence for density.
 
-The subtractive test decides every cue: does the moment feel more connected with the sound than without it? No ->
-delete it. Density and repetition (VB-10, VB-11): cues a minute over the video and the burst cap are BP-81's,
-never the same cue sound on two consecutive cues (REVIEW; the repeat window and count are BP-80's), and emphasis sounds
-(thud, chime, rise, fall) at most BP-81's count per line. Cues count toward AL-02's sound events a minute (BP-49). Duration and level rules stay: BP-64's 20-250 ms, -36..-20 dB, never within BP-39's cover time of an effect
-(the effect is the beat's sound), two cues at least BP-39's gap apart, within BP-56's layer cap (AL-01).
+## Shorts
 
-The mixer auto-varies playback: `audio/cues.py` renders 3 deterministic pitch variants per sound (1.0 / 0.94 / 1.06)
-and the cue bus round-robins them, so two consecutive plays of one sound are never the identical sample (the "machine
-gun" bug). Variation is no licence for density: the writer still spaces the cues; the mixer only de-mechanises them.
+A Short line taken from the video keeps that line's beats; a Short's own lines get beats of their own, placed inside its
+9:16 crop (SS-09). PV-44 checks each Short on its own read, with BP-45's pace (PV-34).
 
 ## Check
 
-`python -m explainer_engine.production validate <script>`: 0 PV-44 FAIL on the estimated read, under the /3 semantics
-(silent default, event-bound cues, VB-10/VB-11 density and repetition). A /2 script is checked under its own old
-contract; the fixture `tests/fixtures/ep1_beats/beats_S01-S03.json` is a /2 worked example and stays one.
+`python -m explainer_engine.production validate <script>`: 0 PV-44 FAIL on the estimated read under the /3 semantics. A /2
+script keeps its old contract (the metronome of BP-36 and BP-37 and a cue per beat); the fixture
+`tests/fixtures/ep1_beats/beats_S01-S03.json` is a /2 worked example and stays one.

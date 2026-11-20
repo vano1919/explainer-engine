@@ -3,6 +3,7 @@ only the two main agents may spawn; every script, module, skill and hook an agen
 from __future__ import annotations
 
 import json
+from pathlib import Path
 import re
 
 import pytest
@@ -91,7 +92,8 @@ def test_every_hook_command_names_an_existing_module_and_hook():
         assert path.exists(), m.group(1)
         if m.group(1) == "explainer_engine.governance.hooks":
             assert m.group(2) in hooks.HOOKS, m.group(2)
-    names = {re.search(r"hooks (\S+)$", c).group(1) for c in commands if c.endswith(tuple(hooks.HOOKS))}
+    # a command may end in `|| { ...; exit 2; }` (the closed pre-* hooks, T2.7): the hook name is the word after `governance.hooks`
+    names = {m.group(1) for c in commands for m in [re.search(r"governance\.hooks ([\w-]+)", c)] if m}
     assert names == set(hooks.HOOKS)  # every hook is wired
 
 
@@ -110,10 +112,24 @@ def _module_exists(mod: str) -> bool:
     return p.with_suffix(".py").exists() or (p / "__init__.py").exists() or (p / "__main__.py").exists()
 
 
+def _upstream_text(f) -> bool:
+    parts = f.relative_to(ROOT / ".claude").parts
+    vdir = next((i for i, part in enumerate(parts) if part.startswith("v-")), None)
+    if vdir is None:
+        return False
+    folder = ROOT / ".claude" / Path(*parts[:vdir + 1])
+    rel = Path(*parts[vdir + 1:]).as_posix()
+    if rel == "OVERLAY.md":  # our rules on top of a vendored skill (team plan rule 4): scanned like any skill of ours
+        return False
+    src = folder / "SOURCE.md"
+    return rel == "SOURCE.md" or (src.is_file() and f"  {rel}\n" in src.read_text(encoding="utf-8"))
+
+
 def test_everything_an_agent_or_a_skill_names_exists():
     missing = []
-    # vendored upstream skills (`v-*`) are byte-pinned third-party text: tests/unit/test_vendored_skills.py guards them, not this scan
-    files = [f for f in (ROOT / ".claude").rglob("*.md") if not any(part.startswith("v-") for part in f.relative_to(ROOT / ".claude").parts)]
+    # vendored upstream text (`v-*` files pinned in SOURCE.md; our OVERLAY.md is scanned) is byte-pinned third-party text guarded by
+    # tests/unit/test_vendored_skills.py, not this scan; our RW-50 rewrite of a v-* SKILL.md is ours and is scanned (2026-11-20)
+    files = [f for f in (ROOT / ".claude").rglob("*.md") if not _upstream_text(f)]
     for f in files:
         # only a reference directly followed by the marker "(planned, P8)" may name a module a later phase builds; the marker is the
         # contract and exempts nothing else on the line

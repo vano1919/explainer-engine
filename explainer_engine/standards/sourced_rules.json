@@ -4592,7 +4592,8 @@
     "explainer_engine/scripting/variant_plan.py:checks",
     "explainer_engine/edit/dramatic_still.py",
     "explainer_engine/blender/j5_montage.py:lint_montage",
-    "explainer_engine/episode/router.py:mix_gate_rows"
+    "explainer_engine/episode/router.py:mix_gate_rows",
+    "explainer_engine/qa/send_validators.py:still_shot_drift"
    ],
    "supersedes": [
     "the critic's plan review 2026-10-23: 40 % still + camera",
@@ -7533,7 +7534,8 @@
    ],
    "enforced_by": [
     "explainer_engine/blender/j5_montage.py:lint_montage",
-    "explainer_engine/production/layers25d.py:LAYERS_MIN"
+    "explainer_engine/production/layers25d.py:LAYERS_MIN",
+    "explainer_engine/qa/send_validators.py:still_shot_drift"
    ],
    "supersedes": []
   },
@@ -7909,7 +7911,7 @@
    "area": "stills",
    "status": "hypothesis",
    "severity": "REVIEW",
-   "statement": "A photo shot is alive, measured on its frames (the owner, 2026-11-14: the P1 round 2 clips stood still for 27 of 38 seconds; Fable's 2.5D audit of the same day): the frame changes at least change_floor_pct_s per second by the 2026-11-12 reference method (128x72 grey, frames one second apart, mean absolute difference; the Gemini demo's photo shots measured reference_pct_s); no frozen_window_s window changes less than frozen_change_pct of the frame (a pixel counts above 12 grey levels; Fable's living-photo rules G-LIVE-1 of 2026-11-14 measured the deadest second of the four clips the owner rejected at 0.4-1.2 % and of the two moving ones at 39-49 %, and raised the audit's 2 % to 5 % so S05_SH020's still part is caught), so the camera may stand but the world may not; and with the camera taken out (each pair aligned by its similarity transform) the frame still changes local_floor_pct_s per second (calibrated on the six P1 round 2 C3 clips the owner called static: 0.06-1.44 %/s, S01 2.3 %/s mostly crane parallax, which this measure cannot tell from living motion, so the living inventory of BP-196 stays the main guard). The numbers are one measurement (the reference demo) and engineering defaults until the owner sets them or two source types back them.",
+   "statement": "A photo shot is alive, measured on its frames (the owner, 2026-11-14: the P1 round 2 clips stood still for 27 of 38 seconds; Fable's 2.5D audit of the same day): the frame changes at least change_floor_pct_s per second by the 2026-11-12 reference method (128x72 grey, frames one second apart, mean absolute difference; the Gemini demo's photo shots measured reference_pct_s); no frozen_window_s window changes less than frozen_change_pct of the frame (a pixel counts above 12 grey levels; Fable's living-photo rules G-LIVE-1 of 2026-11-14 measured the deadest second of the four clips the owner rejected at 0.4-1.2 % and of the two moving ones at 39-49 %, and raised the audit's 2 % to 5 % so S05_SH020's still part is caught), so the camera may stand but the world may not; and with the camera taken out (each pair aligned by its similarity transform) the frame still changes local_floor_pct_s per second (calibrated on the six P1 round 2 C3 clips the owner called static: 0.06-1.44 %/s, S01 2.3 %/s mostly crane parallax, which this measure cannot tell from living motion, so the living inventory of BP-196 stays the main guard). The numbers are one measurement (the reference demo) and engineering defaults until the owner sets them or two source types back them. The send gate's living_motion check (2026-11-20, the owner's R-LIVING) reads the same rule on a clip with a still camera: the camera counts as still while the phase-correlation shift between the two ends of a one-second window stays under still_shift_px of 480 (a moving camera is NOT_RUN, never a pass), and a zone named in the clip's .zones.json (the effect's mask) changes at least zone_min_pct % of its pixels in the median second (G-LIVE-3 of LIVING_PHOTO_RULES_2026-11-14); both are engineering defaults (REVIEW) until the owner has seen the clips.",
    "thresholds": {
     "change_floor_pct_s": 3.6,
     "reference_pct_s": [
@@ -7918,11 +7920,14 @@
     ],
     "frozen_window_s": 1.0,
     "frozen_change_pct": 5.0,
-    "local_floor_pct_s": 2.0
+    "local_floor_pct_s": 2.0,
+    "still_shift_px": 1.0,
+    "zone_min_pct": 25.0
    },
    "sources": [],
    "enforced_by": [
-    "explainer_engine/qa/liveliness.py:liveliness_rows"
+    "explainer_engine/qa/liveliness.py:liveliness_rows",
+    "explainer_engine/qa/send_validators.py:living_motion"
    ],
    "supersedes": []
   },
@@ -8458,6 +8463,88 @@
    ],
    "enforced_by": [
     "explainer_engine/validators/story.py"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-214",
+   "area": "stills",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Faces stay intact through any picture step (the owner's faces-intact requirement OR-V36; the lead's REVIEW-level engineering default 2026-11-20 09:06, not binding until the owner has seen it): the same number of YuNet faces are found before and after, and every face box of the result overlaps its face box of the original with IoU of at least face_iou_min (boxes in shares of the picture, so a 2x upscale compares). Basis: the skills team analyst's L16 run measured YuNet IoU 0.877 to 0.939 over Lanczos, Real-ESRGAN and ours on 5 faces (faces_report.json in HF group1/L16); a moved or warped face is the failure the check must catch. A picture where no face is found, or a machine without OpenCV or the YuNet model, is NOT_RUN, never PASS.",
+   "thresholds": {
+    "face_iou_min": 0.85
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Skills team analyst L16 run, faces_report.json (HF vano1919/tmr-artifacts, explainer-engine/skills_team_2026-11-20/group1/L16); relayed by the lead, not opened by the developer",
+     "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts",
+     "note": "origin recorded; proves nothing",
+     "verified": false
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/qa/send_validators.py"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-215",
+   "area": "stills",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "A photo shot's life is optical flow, per zone, with the camera taken out and the particle layer left out (the client's review of X1 2.5D run1, item 8, relayed by the lead 2026-11-20 09:33; the numbers are the developer's engineering defaults, calibrated on synthetic fixtures only and to be re-set on the analyst's run2 clip, not binding until the owner has seen them): the validator living_motion measures motion with OpenCV Farneback flow between frames flow_gap_s apart, takes the camera as still when still_prior_min_pct % of the frame outside the declared zones does not move (flow under 0.35 px), else fits it as a similarity transform to that part (a camera-only clip then has no residual and fails; fewer than camera_inliers_min_pct % inliers is NOT_RUN), and requires of every zone named in the clip's .zones.json that at least zone_cover_min_pct % of the zone's pixels (outside the particle layer, when the file names its matte) move faster than their kind's speed in the median pair: fire_min_px_s, smoke_min_px_s, sky_min_px_s (px of 480 per second); snow alone cannot pass, because flakes cover a few percent of a zone and a pixel only counts as moving when it also changed by at least flow_pixel_change_min grey levels between the two frames (Farneback smears a flake's flow over its window). Without zones the whole frame must reach frame_cover_min_pct % of its pixels at frame_min_px_s. A declared particle layer needs its far band and a depth map: at most far_over_foreground_max_pct % of the far particles' pixels may lie over foreground pixels (depth at or above foreground_depth_min of the map's range), i.e. the foreground hides the far flakes. Sky is the weakest zone: parallax of a slow camera drift is of the same order as slow clouds. Motion must be real, not noise or a pulse (tester Z1, Z2): every frame is first brought to the clip's median mean and spread (a brightness pulse of the whole picture is not motion), and a zone or the frame counts as moving in a pair only when, over its changed pixels, the error left after sampling the next frame where the whole flow points is under explain_ratio_max of the error left after the camera alone (Farneback reads independent noise as smooth flow, which compensates nothing; measured on the fixtures: noise and grain 0.75, a swaying band 0.55, drifting smoke 0.05-0.4). When the camera cannot be fitted and at least still_prior_min_pct % of the pixels did not change, the camera is still (a snow-only clip). When there is no zone and at least particle_share_min_pct % of the moving area lies in connected specks of at most particle_max_px pixels and particle_max_side_px px a side (a flake is compact; a sheared row of grass is not), only a particle layer moves and the clip fails, even above the frame cover. A sidecar that declares a particle layer but no fire, smoke or sky zone fails too: nothing but the particles is proven to move. Declaring nothing true is a FAIL (the tester's Z5-Z7, the lead's ruling 2026-11-20): the connected specks that move in the clip outside the declared particle matte (the whole layer, else its far band) may cover at most undeclared_speck_max_pct % of the frame; a clip that shows specks and declares no layer, a layer without its far band or its depth map, and a depth map whose foreground (depth at or above foreground_depth_min of its range) covers less than foreground_area_min_pct % of the frame all fail. Wind (OR-V19b): a zone of kind wind (cloth, hair, grass) needs wind_min_px_s like any other zone. Snow depth (OR-V19c): when the sidecar names both bands of the particle layer (particles.near and particles.far, matte videos), the near flakes must be at least near_far_ratio_min times the far ones in mean size and in speed (the owner's measure says ratio > 1; the 1.2 is an engineering default); a layer with one band is not ratio-checked. A still shot of 2.5D keeps a slow drift (OR-V24; the owner's 2026-11-14 12:37 UTC cards Q2 and Q3 settled: at most still_shot_max_s of BP-109, 5 s, and a camera that never stops; BP-181 stays in force): the validator still_shot_drift measures the clip's whole camera move (zoom and pan, the first frame against the last) scaled to 5 s and requires, for a shot the plan does not declare as a push, between still_drift_min_pct and still_drift_max_pct %; this 1-3 % band is the client's reading of the cards, not verified against a quoted owner word (the journal text names no number), a hypothesis. A shot the sidecar declares as a push (camera: push) is held to BP-181's still_move band (a scale change of 4-25 %). Two numbers, two named cases, no overlap. A visible flame is never frozen (LP-06, OR-V21): the validator flame_never_frozen takes every one-second window of the clip and requires that, in at least one pair of frames inside it, at least fire_window_min_pct % of every fire zone's pixels move faster than fire_min_px_s (the same flow, camera and particles out, so the whole-clip median of zone_cover_min_pct cannot hide a flame that stands for a second). A camera that moves the depth planes by different shares of one path is the camera, not life (the tester's Z17; the layered 2.5D engine's planes move by weights such as 0, .32, .68 and 1): when the samples outside the declared zones (and outside a guard band of layer_guard_px px around them) move in the way of one camera - at least layer_extent_min_pct % of them over layer_moving_px px per pair, in at least layer_quadrants_min quadrants (each with layer_quadrant_moving_min_pct % of its samples moving) and in at least layer_borders_min of the four border strips (layer_border_pct % of the side, each with layer_border_moving_min_pct % moving), because a camera moves the picture up to its border and a region of smoke or cloud stops short of it - the validator fits one camera field (a push about a centre found by least squares, or a pan along one direction), reads each sample's share of it (at least layer_min_radius_px px from the centre for a push), takes the median of layer_median_cells by layer_median_cells samples, fills the zones from their nearest neighbours, and takes that banded camera out of the flow; it is the camera only when it explains at least layer_explained_min_pct % of the moving flow energy (noise and local life do not), and where two bands meet, at a jump of more than layer_edge_share of the strongest band's share, the flow is a blend of both and counts as camera. The real control clips X4_S04_SH008_camera_only and its production twin read 17.4 % and 15.6 % before and 0.0 % after. Accepted limit: life that is itself shaped like a camera field over most of an undeclared frame (a fog bank over half of a frame, moving along one direction, touching two borders) is read as camera; declaring the zone is what proves it. Calibration on the analyst's real clips (the lead's order 2026-11-20 13:13; tuned on run2 S07_SH006, S07_SH008, S04_SH008 and run1 X1, S04_SH014 held out and never tuned on): (1) G-LIVE-1 (the whole-frame floor) applies only when no zone is declared; with a sidecar every zone is judged by its own floor and the declared zones together must cover zones_area_min_pct % of the frame (a localized effect, fire 0.2-1 %, smoke 1.5-3.4 %, is legitimate). (2) Fire may live by flicker in place (the lead's ruling on X1, whose flames move 2.5-2.9 px/s and change 71-85 % of their pixels): a fire zone also counts the share of its pixels whose structured, camera-compensated change (the signed difference blurred with structure_sigma_px) is at least flicker_amp_min grey levels, when the change is structured (its blurred rms is at least structure_ratio_min of its raw rms: white noise reads 0.11, the X1 flames 0.35-0.41, smoke 0.48-0.66, sky 0.44-0.92) and flicker_local_min times stronger than the rest of the frame's, so a global pulse and per-pixel noise are not a flame. (3) The second gate was a wrong model for smoke and sky: they are low in contrast and their flow does not compensate the change as sharply as a flake's (explained ratio 0.62-0.99 on X1, 16 % of pairs passing for sky), so a zone counts as moving in a pair when the flow explains the change or the change is structured (structure_ratio_min), never on noise; inside a zone a pixel counts as changed from zone_change_min grey levels (smoke and sky change 2-4 levels), smoke_min_px_s is 1 px/s (X1 smoke median residual speed 1.1-1.2 px/s at 480 wide, run2 smoke 2.6-3 px/s at 1280). The frame and the specks are gated by the camera-compensated change, since a drifting camera changes every edge. (4) The layered camera does not remove zone motion: it is fitted outside the zones and a guard band, and the drift clips read the same with it on and off (fire 62.6 against 61.6 %); the 0.0-0.1 % of the tester's table came from the 5 px/s fire floor. The undeclared-speck rule counts specks of at least speck_min_px_s outside the declared matte widened to matte_dilate_px (a flake's blur and halo reach past its alpha; parallax residual along the edges of a drifting picture otherwise reads as snow): run2 drift clips read 0.1-0.24 % against 0.7-2 % before, the X1 clips that declare no layer 1.2 and 2.4 %. The sidecar is searched beside the clip, in a zones/ folder next to it and next to the clip's folder (run1/clips and run1/zones); a clip without one says 'no zone sidecar found, whole frame judged'. Real-clip results (cover = median share of the zone's pixels moving, per clip; before = the pushed head 9a8d4f89, after = this calibration): run2 S07_SH006 still fire 0.0 -> 42.0, smoke 0.0 -> 71.2, sky 0.0 -> 71.8; S07_SH008 still fire 0.0 -> 73.8, smoke 0.0 -> 59.6, sky 1.8 -> 62.2; S04_SH008 still smoke 0.0 -> 71.3, sky 0.0 -> 35.4; S04_SH014 (held out) still fire 0.0 -> 94.0, smoke 0.0 -> 60.0, sky 0.5 -> 32.2 (the analyst's own flow reads its smoke 18 %: thin smoke is a judgement for the eye); all 12 run2 clips PASS. Run1 X1: S07_SH006 fire 0.0 -> 84.4, smoke 0.0 -> 39.4, sky 0.0 -> 56.9; S07_SH008 fire 0.0 -> 95.0, smoke 0.0 -> 39.0, sky 0.0 -> 13.9 (FAIL: a sky that barely moves, client items 2 and 8); S04_SH008 smoke 5.8 -> 63.2, sky 0.0 -> 55.1; X1 still FAILs for the undeclared snow over it (1.2 and 2.4 % of the frame, nothing declared), as the client's item 1 and 8 ask. The controls fail as before: X4_S04_SH008 camera-only and production 0.0 %, X4_S07_SH006 0.0 %, X4_S07_SH008 fire zone 0.0 %. Limits: the numbers are fitted on four photos; a sky whose clouds change without translating (X1 S07_SH008, 0.24 px/s) fails the 25 % cover; the speck rule cannot tell a snow layer thinner than the parallax residual from the residual.",
+   "thresholds": {
+    "flow_gap_s": 0.25,
+    "camera_inliers_min_pct": 30.0,
+    "zone_cover_min_pct": 25.0,
+    "fire_min_px_s": 5.0,
+    "smoke_min_px_s": 1.0,
+    "sky_min_px_s": 1.0,
+    "wind_min_px_s": 2.0,
+    "still_drift_min_pct": 1.0,
+    "still_drift_max_pct": 3.0,
+    "near_far_ratio_min": 1.2,
+    "frame_min_px_s": 1.0,
+    "frame_cover_min_pct": 12.0,
+    "fire_window_min_pct": 5.0,
+    "explain_ratio_max": 0.65,
+    "particle_max_px": 40,
+    "particle_max_side_px": 8,
+    "particle_share_min_pct": 80.0,
+    "undeclared_speck_max_pct": 0.5,
+    "foreground_area_min_pct": 5.0,
+    "far_over_foreground_max_pct": 2.0,
+    "foreground_depth_min": 0.6,
+    "flow_pixel_change_min": 8.0,
+    "still_prior_min_pct": 40.0,
+    "layer_moving_px": 0.1,
+    "layer_extent_min_pct": 50.0,
+    "layer_quadrants_min": 3,
+    "layer_quadrant_moving_min_pct": 30.0,
+    "layer_borders_min": 2,
+    "layer_border_pct": 12.0,
+    "layer_border_moving_min_pct": 50.0,
+    "layer_explained_min_pct": 65.0,
+    "layer_median_cells": 5,
+    "layer_edge_share": 0.15,
+    "layer_min_radius_px": 20.0,
+    "layer_guard_px": 15,
+    "zone_change_min": 2.0,
+    "structure_ratio_min": 0.25,
+    "structure_sigma_px": 2.5,
+    "flicker_amp_min": 3.0,
+    "flicker_local_min": 1.5,
+    "zones_area_min_pct": 5.0,
+    "layer_depth_bins": 10,
+    "speck_min_px_s": 1.5,
+    "matte_dilate_px": 9
+   },
+   "sources": [],
+   "enforced_by": [
+    "explainer_engine/qa/send_validators.py:living_motion",
+    "explainer_engine/qa/send_validators.py:flame_never_frozen"
    ],
    "supersedes": []
   }
