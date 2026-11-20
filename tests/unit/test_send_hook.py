@@ -22,7 +22,7 @@ MSG = "cmsg_01Hnu5zB86sjUj5GtTgaUkPW1oFAyBSLLgTCU7KMSLutpZ"
 @pytest.fixture
 def env(root):
     (root / "explainer_engine" / "validators" / "living.py").write_text(VALIDATOR, encoding="utf-8")
-    (root / "tests" / "unit" / "test_living.py").write_text("def test_living_motion():\n    assert True\n\ndef test_living_motion_fails():\n    assert True\n", encoding="utf-8")
+    (root / "tests" / "unit" / "test_living.py").write_text("def test_living_motion():\n    living_motion = True\n    assert living_motion\n\ndef test_living_motion_fails():\n    living_motion = True\n    assert living_motion\n", encoding="utf-8")
     put(root, registry(entry(1)))
     d = root / "out" / "trials" / "L9"
     d.mkdir(parents=True)

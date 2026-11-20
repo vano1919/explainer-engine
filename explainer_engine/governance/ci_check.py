@@ -28,7 +28,10 @@ def base_entries(base: str, root: Path) -> list[dict] | None:
         data = json.loads(r.stdout)
     except ValueError:
         return None
-    return [e for e in data.get("requirements", []) if isinstance(e, dict)] if isinstance(data, dict) else None
+    if not isinstance(data, dict):
+        return None
+    rows = [e for e in data.get("requirements", []) if isinstance(e, dict)]
+    return rows + [dict(e, kind="process") for e in data.get("process_requirements", []) if isinstance(e, dict)]   # R3: process rows count too
 
 
 def named_tests(entries: list[dict]) -> list[str]:

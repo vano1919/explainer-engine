@@ -34,6 +34,7 @@ CHOICES = ("adopt", "enrich", "keep_ours", "idea_only")
 TRIAL_STATUS = ("RUN", "NOT_RUN")
 TARGET_KINDS = ("skill_line", "validator", "validator_planned", "sourced_rule")
 MIN_CANDIDATES = 3
+LINK_KINDS = ("file", "page")
 # the logical groups of the skills team plan (section 3); a layer's record must carry its group
 GROUPS: dict[int, tuple[str, ...]] = {
     1: ("L9", "L10", "L11", "L16"), 2: ("L12", "L13", "L14"), 3: ("L15",), 4: ("L1", "L2", "L3", "L7", "L8", "L29", "L30"),
@@ -68,6 +69,33 @@ class GateResult:
 
 def _text(v) -> bool:
     return isinstance(v, str) and bool(v.strip())
+
+
+def _https(v) -> bool:
+    """An https url that names a host (a bare ``https://`` is not one)."""
+    if not (isinstance(v, str) and v.startswith("https://") and not any(c.isspace() for c in v)):
+        return False
+    from urllib.parse import urlsplit
+    try:
+        return bool(urlsplit(v).hostname)
+    except ValueError:
+        return False
+
+
+def _real_date(v) -> bool:
+    import datetime as dt
+    if not (isinstance(v, str) and _DATE.fullmatch(v)):
+        return False
+    try:
+        dt.date.fromisoformat(v)
+    except ValueError:
+        return False
+    return True
+
+
+def _int(v) -> bool:
+    """An integer that is not a bool (``True`` is an int in Python and must never read as 1)."""
+    return isinstance(v, int) and not isinstance(v, bool)
 
 
 def _ids(rows, errs: list[str], what: str) -> set[str]:
@@ -139,24 +167,24 @@ def _check_candidates(rec, sqs: dict[str, dict], errs) -> dict[str, dict]:
         who = c.get("id", "?")
         bad = []
         url = c.get("url")
-        if not (isinstance(url, str) and url.startswith("https://")):
-            bad.append("an https url")
+        if not _https(url):
+            bad.append("an https url with a host")
         if not _text(c.get("author")):
             bad.append("author")
         if c.get("monetised_ok") is not None and not isinstance(c.get("monetised_ok"), bool):
             bad.append("monetised_ok true or false (or left out)")   # licence, licence_source, monetised_ok: information only
         if not _text(c.get("teaches")):
             bad.append("teaches")
-        if not (isinstance(c.get("fit"), int) and not isinstance(c.get("fit"), bool) and 1 <= c["fit"] <= 5):
+        if not (_int(c.get("fit")) and 1 <= c["fit"] <= 5):
             bad.append("fit 1-5")
         kind = c.get("kind")
         if kind == "repo":
-            if not (isinstance(c.get("stars"), int) and not isinstance(c.get("stars"), bool) and c["stars"] >= 0):
+            if not (_int(c.get("stars")) and c["stars"] >= 0):
                 bad.append("stars")
             if not (isinstance(c.get("commit"), str) and _COMMIT.fullmatch(c["commit"])):
                 bad.append("a pinned commit hash")
         elif kind == "doc":
-            if not (isinstance(c.get("retrieved"), str) and _DATE.fullmatch(c["retrieved"])):
+            if not _real_date(c.get("retrieved")):
                 bad.append("retrieved date YYYY-MM-DD")
         else:
             bad.append("kind (repo|doc)")
@@ -168,7 +196,12 @@ def _check_candidates(rec, sqs: dict[str, dict], errs) -> dict[str, dict]:
             errs.append(f"MS2-CAND-FIELD: candidate {who} lacks {', '.join(bad)}")
         if _text(c.get("id")):
             out.setdefault(c["id"], c)
+    urls: dict[str, set[str]] = {}
+    for c in rows:
+        if _text(c.get("sub_question")) and _https(c.get("url")):
+            urls.setdefault(c["sub_question"], set()).add(c["url"].strip().rstrip("/").lower())
     for sid, sq in sqs.items():
+        per[sid] = min(per.get(sid, 0), len(urls.get(sid, ())))      # three rows with one url are one candidate (F3)
         if per.get(sid, 0) < MIN_CANDIDATES and not _text(sq.get("few_candidates_reason")):
             errs.append(f"MS2-CAND-MIN: sub-question {sid} has {per.get(sid, 0)} candidates (at least {MIN_CANDIDATES}, "
                         f"or a few_candidates_reason)")
@@ -218,6 +251,8 @@ def _check_trials(rec, sqs, cands, errs, res: GateResult) -> dict[str, dict]:
             link = link if isinstance(link, dict) else {}
             if not _text(link.get("ref")) or not _text(link.get("seen")):
                 errs.append(f"MS3-TRIAL-FIELD: trial {who} link {i} needs ref and a seen line")
+            if link.get("kind", "file") not in LINK_KINDS:
+                errs.append(f"MS3-TRIAL-FIELD: trial {who} link {i} has kind {link.get('kind')!r}, it is {' or '.join(LINK_KINDS)}")
             if link.get("kind", "file") == "file" and not (isinstance(link.get("sha256"), str) and _SHA256.fullmatch(link["sha256"])):
                 errs.append(f"MS3-TRIAL-FIELD: trial {who} link {i} is a file and needs its sha256")
     for sid in sqs:
@@ -247,8 +282,9 @@ def _check_keep_ours(rec, d, sid, cands, trials, errs) -> None:
     # (b) three strong candidates were run, among them the most-starred and a state-of-the-art one
     run = {i for t in trials.values() if _effective_run(t) and t.get("sub_question") == sid for i in (t.get("candidate_ids") or [])
            if cands.get(i, {}).get("sub_question") == sid}
-    if len(run) < 3:
-        errs.append(f"MS4-KEEP-RUN3: {who}: {len(run)} candidates were run, at least 3 are needed (trials with status RUN, "
+    run_urls = {str(cands[i].get("url")).strip().rstrip("/").lower() for i in run}      # one repo under three ids is one candidate (F3)
+    if len(run) < 3 or len(run_urls) < 3:
+        errs.append(f"MS4-KEEP-RUN3: {who}: {min(len(run), len(run_urls))} candidates were run, at least 3 are needed (trials with status RUN, "
                     f"config_ok not false, naming them in candidate_ids)")
     mine = {i: c for i, c in cands.items() if c.get("sub_question") == sid}
     stars = {i: c["stars"] for i, c in mine.items() if c.get("kind") == "repo" and isinstance(c.get("stars"), int)}
@@ -369,7 +405,7 @@ def _check_target(t, root: Path, res: GateResult, strict: bool) -> str | None:
     elif kind == "validator_planned":
         if strict:
             return f"validator_planned {ref!r} is refused in strict mode (build it first)"
-        if not isinstance(t.get("wave"), int):
+        if not _int(t.get("wave")):
             return f"validator_planned {ref!r} needs the wave that builds it"
         res.planned.append(f"{ref} (wave {t['wave']})")
     elif kind == "sourced_rule":
@@ -400,7 +436,17 @@ def _check_mapping(rec, req_ids, cap_rows, root, errs, res, strict) -> None:
 
 
 def check_record(rec, *, root=None, strict: bool = False, layer: str | None = None) -> GateResult:
-    """Check one record dict. ``strict`` also refuses ``validator_planned`` targets (the wave-2 gate)."""
+    """Check one record dict. ``strict`` also refuses ``validator_planned`` targets (the wave-2 gate). A record of the wrong shape is a
+    BLOCK (LG-SCHEMA), never an exception: a malformed file must not stop the check of the other layers (F1)."""
+    try:
+        return _check_record(rec, root=root, strict=strict, layer=layer)
+    except (TypeError, AttributeError, KeyError, ValueError, IndexError) as e:
+        name = layer or (str(rec.get("layer")) if isinstance(rec, dict) else "?")
+        state = rec.get("state") if isinstance(rec, dict) and rec.get("state") in STATES else "draft"
+        return GateResult(name, S.BLOCK, [f"LG-SCHEMA: the record has a field of the wrong type ({type(e).__name__}: {e})"], state=state)
+
+
+def _check_record(rec, *, root=None, strict: bool = False, layer: str | None = None) -> GateResult:
     root = root_dir(root)
     errs: list[str] = []
     res = GateResult(layer or str(rec.get("layer") if isinstance(rec, dict) else "?"), S.BLOCK)
@@ -408,14 +454,16 @@ def check_record(rec, *, root=None, strict: bool = False, layer: str | None = No
         res.errors = ["LG-SCHEMA: the record is not an object"]
         return res
     res.state = rec.get("state") if rec.get("state") in STATES else "draft"
+    if _text(rec.get("layer")) and rec["layer"] not in GROUP_OF:
+        errs.append(f"LG-SCHEMA: {rec['layer']!r} is not one of the 33 layers L1..L33")
     if rec.get("schema") != SCHEMA or not _text(rec.get("layer")) or not _text(rec.get("name")) or rec.get("state") not in STATES \
-            or not (isinstance(rec.get("group"), int) and 1 <= rec["group"] <= 10):
+            or not _int(rec.get("group")) or not 1 <= rec["group"] <= 10:
         errs.append(f"LG-SCHEMA: needs schema {SCHEMA}, layer, name, group 1-10 and state {'|'.join(STATES)}")
     if layer and rec.get("layer") != layer:
         errs.append(f"LG-SCHEMA: the file is for {layer} but the record says {rec.get('layer')!r}")
     if rec.get("state") == "final" and not (_text(rec.get("signed_by")) and _text(rec.get("signed_at"))):
         errs.append("LG-SIGN: a final record carries the team lead's signed_by and signed_at")
-    res.group = rec.get("group") if isinstance(rec.get("group"), int) else None
+    res.group = rec.get("group") if _int(rec.get("group")) else None
     if rec.get("layer") in GROUP_OF and rec.get("group") != GROUP_OF[rec["layer"]]:
         errs.append(f"LG-SCHEMA: layer {rec['layer']} belongs to group {GROUP_OF[rec['layer']]}, the record says {rec.get('group')!r}")
     waiver = rec.get("not_run_waiver")

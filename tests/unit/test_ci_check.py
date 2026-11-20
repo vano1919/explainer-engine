@@ -15,7 +15,7 @@ from test_owner_requirements import REG, entry, put, registry, root  # noqa: F40
 @pytest.fixture
 def env(root):
     (root / "tests" / "unit" / "test_living.py").write_text(
-        "def test_living_motion():\n    assert True\n\ndef test_living_motion_fails():\n    assert True\n", encoding="utf-8")
+        "def test_living_motion():\n    living_motion = True\n    assert living_motion\n\ndef test_living_motion_fails():\n    living_motion = True\n    assert living_motion\n", encoding="utf-8")
     put(root, registry(entry(1)))
     return root
 
@@ -69,7 +69,7 @@ def test_an_open_conflict_is_a_note_not_a_failure(env):
 
 def test_a_failing_named_test_fails_the_job(env):
     (env / "tests" / "unit" / "test_living.py").write_text(
-        "def test_living_motion():\n    assert False\n\ndef test_living_motion_fails():\n    assert True\n", encoding="utf-8")
+        "def test_living_motion():\n    living_motion = False\n    assert living_motion\n\ndef test_living_motion_fails():\n    living_motion = True\n    assert living_motion\n", encoding="utf-8")
     fails, _ = CI.problems(env)
     assert any(f.startswith("REQ-TESTFAIL") for f in fails)
 

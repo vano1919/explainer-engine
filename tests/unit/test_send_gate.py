@@ -29,7 +29,7 @@ def plan_turns(queue, size=6):
 @pytest.fixture
 def env(root):
     (root / "explainer_engine" / "validators" / "living.py").write_text(VALIDATOR, encoding="utf-8")
-    (root / "tests" / "unit" / "test_living.py").write_text("def test_living_motion():\n    assert True\n\ndef test_living_motion_fails():\n    assert True\n\ndef test_boom():\n    assert True\n", encoding="utf-8")
+    (root / "tests" / "unit" / "test_living.py").write_text("def test_living_motion():\n    living_motion = True\n    assert living_motion\n\ndef test_living_motion_fails():\n    living_motion = True\n    assert living_motion\n\ndef test_boom():\n    boom = True\n    assert boom\n\ndef test_plan_turns():\n    plan_turns = True\n    assert plan_turns\n\ndef test_plan_turns_fails():\n    plan_turns = True\n    assert plan_turns\n", encoding="utf-8")
     good = root / "good.txt"
     good.write_text("mmmm", encoding="utf-8")
     bad = root / "bad.txt"
@@ -150,7 +150,8 @@ def test_every_run_is_recorded_with_the_hash_of_each_file(env):
 
 def test_a_pipeline_function_without_kinds_is_not_run_and_an_adapter_in_send_ref_is_used(env):
     root, good, bad = env
-    pipe = dict(entry(1)["check"], ref="explainer_engine.validators.living:plan_turns")
+    pipe = dict(entry(1)["check"], ref="explainer_engine.validators.living:plan_turns", test="tests/unit/test_living.py::test_plan_turns",
+                negative_test="tests/unit/test_living.py::test_plan_turns_fails")
     put(root, registry(entry(1, check=pipe)))
     rep = SG.run("L9", [good], root=root)
     assert rep["status"] == "NOT_RUN" and "no send adapter" in rows(rep)["REQ-001"]["detail"]
