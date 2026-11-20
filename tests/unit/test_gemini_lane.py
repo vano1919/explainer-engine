@@ -267,6 +267,17 @@ def test_refuses_sha_mismatch_with_manifest(tmp_path, repo, sha):
     untouched(repo, sha)
 
 
+def test_zero_sha_is_taken_only_with_a_matching_sums_file(tmp_path, repo, sha):
+    d = make_task(tmp_path, sha)
+    path = "explainer_engine/fx/new.py"
+    answer(d, [(path, "new", NEW_CODE.encode())], sha_override={path: "0" * 64})
+    assert codes(run_intake(d, repo, apply=False)) == ["sha_mismatch"]                    # a zero sha alone proves nothing
+    (d / "out" / "SHA256SUMS").write_text(f"{'1' * 64}  {path}\n")
+    assert codes(run_intake(d, repo, apply=False)) == ["sha_mismatch"]                    # wrong sum
+    (d / "out" / "SHA256SUMS").write_text(f"{L.sha256_bytes(NEW_CODE.encode())}  {path}\n")
+    assert run_intake(d, repo, apply=False)["status"] == "accepted_not_applied"          # the driver's sum matches the file
+
+
 def test_refuses_manifest_for_another_base(tmp_path, repo, sha):
     d = make_task(tmp_path, sha)
     answer(d, [("explainer_engine/fx/new.py", "new", NEW_CODE.encode())], base_sha="f" * 40)

@@ -29,7 +29,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import gemini_lane as L  # noqa: E402
 
 AUTHOR = ("vano1919", "122537395+vano1919@users.noreply.github.com")
-OWN_FILES = {"MANIFEST.json", "NOTES.md", "INTAKE.json", "PR_BODY.md"}
+OWN_FILES = {"MANIFEST.json", "NOTES.md", "INTAKE.json", "PR_BODY.md", "SHA256SUMS", "RAW_ANSWER.txt"}
+ZERO_SHA = "0" * 64
 DIFF_FILE = re.compile(r"^(---|\+\+\+) (?:[ab]/)?(\S+)", re.M)
 HUNK = re.compile(r"^@@ -\d+(?:,\d+)? \+\d+(?:,\d+)? @@", re.M)
 
@@ -58,6 +59,17 @@ def _apply_hunks(base: bytes, diff: bytes, path: str) -> tuple[bytes | None, str
         return target.read_bytes(), ""
 
 
+def _read_sums(path: Path) -> dict[str, str]:
+    """``sha256sum`` format (``<hex>  <path>``) written by the driver from the exported files."""
+    sums: dict[str, str] = {}
+    if path.is_file():
+        for line in path.read_text(encoding="utf-8", errors="replace").splitlines():
+            parts = line.split(None, 1)
+            if len(parts) == 2 and re.fullmatch(r"[0-9a-f]{64}", parts[0]):
+                sums[parts[1].strip().lstrip("*")] = parts[0]
+    return sums
+
+
 def judge(task_dir: Path, repo: Path) -> tuple[dict, list[dict], dict[str, tuple[str, bytes]]]:
     """Check the answer. Returns (task, refusals, accepted) where accepted maps path -> (kind, final bytes)."""
     task_dir, repo = Path(task_dir), Path(repo)
@@ -78,6 +90,7 @@ def judge(task_dir: Path, repo: Path) -> tuple[dict, list[dict], dict[str, tuple
         _refuse(refusals, "base_sha_mismatch", None,
                 f"MANIFEST base_sha {str(manifest.get('base_sha'))[:12]} is not the pinned {sha[:12]}")
 
+    sums = _read_sums(out_dir / "SHA256SUMS")
     allowed = L.allowed_paths(task)
     locked_tests = set(task["tests"])
     seen: set[str] = set()
@@ -114,7 +127,10 @@ def judge(task_dir: Path, repo: Path) -> tuple[dict, list[dict], dict[str, tuple
             _refuse(refusals, "file_missing", path, "named in MANIFEST but absent from out/ (or a symlink)")
             continue
         data = f.read_bytes()
-        if L.sha256_bytes(data) != entry.get("sha256"):
+        want = entry.get("sha256")
+        if want == ZERO_SHA:                                  # Gemini cannot hash: the driver's SHA256SUMS stands in
+            want = sums.get(path)
+        if L.sha256_bytes(data) != want:
             _refuse(refusals, "sha_mismatch", path, "sha256 of the file differs from MANIFEST (a cut or edited upload)")
             continue
         hits = L.secret_hits(data)

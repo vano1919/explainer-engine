@@ -66,7 +66,7 @@ description: The default way of writing code in this project, for every thread a
 4. **Size:** keep a packet under about 3 MB per file (the Drive limit). Upload it as files, never paste into the chat (pastes are cut at about 16k characters).
 
 ## 4. Gemini's answer (Drive `gemini_dev/<task-id>/out/`)
-- `MANIFEST.json`: `{base_sha, files: [{path, kind: "new"|"patch", sha256}]}`.
+- `MANIFEST.json`: `{base_sha, files: [{path, kind: "new"|"patch", sha256}]}`. Gemini cannot run code, so it cannot hash: an all-zero `sha256` is accepted when the driver's `out/SHA256SUMS` (`sha256sum` format, written from the files as exported) names the path; with neither, intake refuses `sha_mismatch`.
 - New files are written in full.
 - Existing files come back **only as unified-diff hunks** against `base_sha`, never as whole files.
 - `NOTES.md` covers what it assumed and what it did not do.
@@ -99,7 +99,7 @@ description: The default way of writing code in this project, for every thread a
 - Confirm the requirement ids are really met, not only the tests.
 
 **Outcomes:**
-- **Green:** the lead merges into the team branch. The GitHub default branch still needs the creator's word.
+- **Green:** the PR stays draft and is reported to the owner at a milestone; it merges only on his word (a recorded `merge_approval` per PR number). Nobody merges on a standing exception.
 - **Red:** the failing output and the reviewer's notes go to `gemini_dev/<task-id>/round2/in/`, once.
 - **Second red:** Claude writes it, and the cause is recorded.
 
