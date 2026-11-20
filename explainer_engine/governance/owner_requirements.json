@@ -1544,7 +1544,19 @@
    },
    "measures": "plate has zero glyph pixels (OCR count 0); labels drawn in our own font; check by OCR on the plate",
    "repeats": 1,
-   "repeat_evidence": ""
+   "repeat_evidence": "",
+   "proposed_amendment": {
+    "change": {
+     "words_part": "font: 'our own font' becomes 'the font of the episode film's preset'; OCR-0 on map plates (no glyph pixels) unchanged",
+     "amended_by": "OR-F04"
+    },
+    "source": {
+     "kind": "card",
+     "ref": "coordinator relay 2026-11-20T20:15:27Z (card press); also OR-F02 typed words 20:06:07Z"
+    },
+    "applied": false,
+    "why_not_applied": "a card press does not change the registry and the CI forbids a words edit on a lead's reading; waits for his word (typed confirmation), the lead asks him separately"
+   }
   },
   {
    "id": "OR-V41",
@@ -6550,6 +6562,111 @@
    "measures": "every Short's frame is 1440x2560 (core/delivery.shorts_frame)",
    "words_partial": true,
    "note": "OR-E02 (master 2560x1440 at 24 fps, BP-167) is the long video; this is the Shorts frame. Date: the card batch of 2026-11-01, time not in the log."
+  },
+  {
+   "id": "OR-F01",
+   "kind": "requirement",
+   "status": "active",
+   "words": "ყველა ეპიზოდს თავის რუკის სტილი უნდა ქონდეს იმის მიხედვით თუ რაცსტილშია ვიდეო",
+   "words_origin": "owner typed message, relayed by the coordinator with its id",
+   "words_verbatim": true,
+   "gloss": "Every episode has its own map style, taken from the style the video is in.",
+   "date": "2026-11-20T19:50:14Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWN7eWpqaAGf9qwRANxGYZti"
+   },
+   "layers": [
+    "L15"
+   ],
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "map spec of an episode names a style_preset that comes from the episode's film; two episodes with different films never share a map preset by default",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "Loaded as delta 7 on his typed word 'ჩატვირთე დელტა' (2026-11-20 20:40:01 UTC, cmsg_01Hnu5zB86sjUj5GtTgaUkPWWbmkN4F56PpukNEm9N1set). extends rule 20 (style by film), OR-V01 (era-film look), OR-E05 (palette against the named film)."
+  },
+  {
+   "id": "OR-F02",
+   "kind": "requirement",
+   "status": "active",
+   "words": "კი კაია მთავარი. წესია ფილმის სტილი ყველგან ფოტოებშიც რიკრბშიც მთვლელებშიც და ყველაფერში . ყველა ეპიზოდს თავის ფილმი აქვს",
+   "words_origin": "owner typed message, relayed by the coordinator with its id",
+   "words_verbatim": true,
+   "gloss": "He liked map v2 (the 1917_film preset). Rule: the film's style everywhere: photos, maps, counters, everything. Every episode has its own film. (One word, 'რიკრბშიც', is garbled as typed; the coordinator reads it as 'maps'.)",
+   "date": "2026-11-20T20:06:07Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPW3RwHwWq7RAijoycD1PZe1u"
+   },
+   "layers": [
+    "L9",
+    "L10",
+    "L14",
+    "L15",
+    "L22",
+    "L25"
+   ],
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "one episode-level film id; every layer record, picture prompt, map spec, counter/HUD spec, colour grade and subtitle style of the episode carries that same id",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "Loaded as delta 7 on his typed word 'ჩატვირთე დელტა' (2026-11-20 20:40:01 UTC, cmsg_01Hnu5zB86sjUj5GtTgaUkPWWbmkN4F56PpukNEm9N1set). No fixed list of films: he chooses the topic and the style before each video and everything is rebuilt; the film is set when episode_film.json is made. extends rule 20 (style by film), OR-V01 (era-film look), OR-E05 (palette against the named film)."
+  },
+  {
+   "id": "OR-F03",
+   "kind": "requirement",
+   "status": "active",
+   "words": "მათშორის რეჟისორსაც სცენებისთვის თხრობასაც ფილმის სტილში ვიღებთ",
+   "words_origin": "owner typed message, relayed by the coordinator with its id",
+   "words_verbatim": true,
+   "gloss": "Among these, the director's work for scenes and the narration are also taken in the film's style.",
+   "date": "2026-11-20T20:06:35Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWCLK3soNHhgBwuWVm9Wqsws"
+   },
+   "layers": [
+    "L2",
+    "L3",
+    "L4",
+    "L7"
+   ],
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "director's book (L7), scene and dialogue writing (L2, L3) and narration (L4) read the same episode film id and carry its direction and narration style notes",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "Loaded as delta 7 on his typed word 'ჩატვირთე დელტა' (2026-11-20 20:40:01 UTC, cmsg_01Hnu5zB86sjUj5GtTgaUkPWWbmkN4F56PpukNEm9N1set). extends rule 20 (style by film), OR-V01 (era-film look), OR-E05 (palette against the named film)."
+  },
+  {
+   "id": "OR-F04",
+   "kind": "requirement",
+   "status": "active",
+   "words": "ბარათის არჩევანი: \"ფილმის ფონტი\"",
+   "words_origin": "card press 2026-11-20 20:15 UTC, relayed by the coordinator; NOT typed words (card presses are not enough to change the registry; his typed confirmation needed)",
+   "words_verbatim": false,
+   "gloss": "The font always comes from the episode film's preset. The earlier OR-V40 'our own font Inter' is replaced for the font part only: OCR-0 on map plates (no glyph pixels) is unchanged.",
+   "date": "2026-11-20T20:15:00Z",
+   "source": {
+    "kind": "doc",
+    "ref": "coordinator relay 2026-11-20T20:15:27Z (card press 20:15 UTC, not typed words); typed basis: OR-F02 cmsg_01Hnu5zB86sjUj5GtTgaUkPW3RwHwWq7RAijoycD1PZe1u"
+   },
+   "layers": [
+    "L15",
+    "L25"
+   ],
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "map spec font is 'preset' (or absent) and the rendered font is the film preset's font; a spec that names another font is refused",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "Amends OR-V40 (font part). Proposal; registry edit only after his typed word. Subtitles (L25): film block subtitles.font follows the same rule; this rests on his typed words in PROPOSED-FS-2 ('film style everywhere ... and everything', 20:06:07), as the coordinator reads them, not on an assumption of mine (20:16 UTC). Not a registry change to OR-V40: that amendment is stored as proposed_amendment (applied false) on OR-V40 until his typed word."
   }
  ],
  "process_requirements": [
