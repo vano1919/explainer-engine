@@ -4,8 +4,8 @@
 
 Opens Google's consent page (scopes: youtube.upload to upload and set thumbnails, youtube.readonly to check the channel and
 avoid double uploads; no scope can change a video's visibility after upload), catches the answer on localhost, prints the
-channel the token belongs to and writes ``tools/youtube/token.json`` (gitignored) plus ``token.b64.txt``: its content is the
-value of the cloud environment variable YOUTUBE_TOKEN_B64. Never prints the token itself.
+channel the token belongs to and writes ``tools/youtube/token.json`` (gitignored) and, only with ``--export-env``, ``token.b64.txt``: its
+content is the value of the cloud environment variable YOUTUBE_TOKEN_B64. Never prints the token itself.
 
 Without a PC (the creator on a phone, 2026-10-19), the same sign-in in two steps from the cloud session:
 
@@ -73,13 +73,15 @@ def _exchange(client: dict, code: str, redirect: str, verifier: str) -> tuple[di
     return saved, items
 
 
-def _save(saved: dict, items: list, out: Path = OUT) -> None:
+def _save(saved: dict, items: list, out: Path = OUT, export_env: bool = False) -> None:
     out.mkdir(parents=True, exist_ok=True)
     (out / "token.json").write_text(json.dumps(saved, indent=1), encoding="utf-8")
-    (out / "token.b64.txt").write_text(base64.b64encode(json.dumps(saved).encode()).decode(), encoding="utf-8")
+    if export_env:  # only on request: the value for the cloud env variable YOUTUBE_TOKEN_B64
+        (out / "token.b64.txt").write_text(base64.b64encode(json.dumps(saved).encode()).decode(), encoding="utf-8")
     for c in items:
         print(f"channel: {c['snippet']['title']}  id: {c['id']}  -> EXPLAINER_YT_CHANNEL={c['id']}")
-    print(f"saved {out / 'token.json'}; the value of YOUTUBE_TOKEN_B64 is in {out / 'token.b64.txt'}")
+    note = f"; the value of YOUTUBE_TOKEN_B64 is in {out / 'token.b64.txt'}" if export_env else ""
+    print(f"saved {out / 'token.json'}{note}")
 
 
 def url_step() -> int:
@@ -91,7 +93,7 @@ def url_step() -> int:
     return 0
 
 
-def finish_step(answer: str) -> int:
+def finish_step(answer: str, export_env: bool = False) -> int:
     pending = json.loads(PENDING.read_text(encoding="utf-8"))
     q = dict(urllib.parse.parse_qsl(urllib.parse.urlsplit(answer.strip()).query)) if "?" in answer else {"code": answer.strip()}
     if q.get("state", pending["state"]) != pending["state"]:
@@ -100,7 +102,7 @@ def finish_step(answer: str) -> int:
         raise SystemExit(f"no code in the answer ({q.get('error', 'unknown')})")
     saved, items = _exchange(_client_from_env(), q["code"], MANUAL_REDIRECT, pending["verifier"])
     PENDING.unlink()
-    _save(saved, items)
+    _save(saved, items, export_env=export_env)
     return 0
 
 
@@ -123,7 +125,7 @@ def _catch_code(state: str) -> tuple[str, int, http.server.HTTPServer]:
     return result, server.server_port, server
 
 
-def main(client_file: str) -> int:
+def main(client_file: str, export_env: bool = False) -> int:
     client = json.loads(Path(client_file).read_text(encoding="utf-8"))
     client = client.get("installed") or client.get("web") or client
     state = secrets.token_urlsafe(16)
@@ -134,5 +136,5 @@ def main(client_file: str) -> int:
     webbrowser.open(consent_url(client, redirect, state, verifier))
     while "code" not in result:
         server.handle_request()
-    _save(*_exchange(client, result["code"], redirect, verifier))
+    _save(*_exchange(client, result["code"], redirect, verifier), export_env=export_env)
     return 0

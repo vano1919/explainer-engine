@@ -3912,3 +3912,8 @@ No number is written in any of them; tests `test_first_shot.py`, `test_opening_d
 
 ## 2026-11-20 — Truce 1914 map shots: sourced facts, first real shot S05_SH101 with `truce_cold`
 - Of the 5 map shots only the counter (S05_SH101, C-03) and the date labels (C-05, C-06) are tied to claims; the arrow route, the 10 front-line places, the Flanders glow and the 4 pulse places have none (list for the researcher on HF `truce_S05_SH101/`). Only S05_SH101 rendered (6.25 s, 2560x1440, `truce_cold`, HUD OCR 45/45 on 15 frames). Spec + test: `examples/maps/truce_S05_SH101/`, `tests/unit/test_maps_truce_s05_sh101.py` (3).
+
+## 2026-11-20 — publish auth hygiene (L32)
+- `auth` / `auth-finish` write `tools/youtube/token.b64.txt` only with `--export-env` (the printed text names it only then); `load_token` logs one line naming the source (session file or `YOUTUBE_TOKEN_B64`), never the token; the env variable and its code path stay (owner card 2026-11-20 21:01).
+- Tests: `tests/unit/test_youtube_auth_hygiene.py` (flag on/off, source logged, no tracked `tools/` token or `pending.json`, `.gitignore` covers `tools/youtube/`).
+- Not done: the registry exception row to OR-P03 (needs the creator's typed word); the real sign-in flow was not run.
