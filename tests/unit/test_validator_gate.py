@@ -13,7 +13,8 @@ from explainer_engine.qa import validator_gate as VG
 
 EXAMPLES = Path(__file__).resolve().parents[2] / "examples"
 IDS = ["shift_line_id", "stated_theme", "claim_ledger", "camera_cards", "camera_clips", "ltx_prompts", "continuity_cards",
-       "language", "master_size", "attempt_ranking", "first_shot"]
+       "language", "master_size", "attempt_ranking", "first_shot",
+       "opening_density"]
 GEO = "ა"
 
 
@@ -229,3 +230,12 @@ def test_first_shot_runs_on_a_timed_json(tmp_path):
     assert VG.gate_row(tmp_path)[0] == "BLOCKED"
     write(tmp_path, "timed.json", timed_doc(3.0))
     assert by_id(VG.run_all(tmp_path))["first_shot"]["status"] == "PASS"
+
+
+def test_opening_density_runs_on_a_timed_json(tmp_path):
+    assert by_id(VG.run_all(tmp_path))["opening_density"]["status"] == "NOT_RUN"
+    write(tmp_path, "timed.json", {"duration": 60.0, "shots": [{"start": 0.0, "end": 60.0}]})
+    r = by_id(VG.run_all(tmp_path))["opening_density"]
+    assert r["status"] == "FAIL" and "BP-40" in r["detail"]
+    write(tmp_path, "timed.json", {"duration": 60.0, "shots": [{"start": i * 4.0, "end": i * 4.0 + 4.0} for i in range(15)]})
+    assert by_id(VG.run_all(tmp_path))["opening_density"]["status"] == "PASS"
