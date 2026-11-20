@@ -18,6 +18,7 @@ ACTIONS = ("model_switch", "effort_override", "protected_config", "channel_voice
            "stage_approval",   # target = "<episode>:<stage>:<input hash>": the word behind a REVIEW stage going on (episode/run.py approve)
            "cheapest_waive",    # target = one rule "CH-xx": his word breaks that cheapest-run rule for one run (D-133)
            "layer_waiver",      # target = one layer "L9": his word lets a stage's output go on although a validator of that layer FAILED on it (24 h)
+           "merge_approval",    # target = one pull request number: his word behind a GitHub merge (the owner keeps merges, T2.7)
            "layer_gate_mode")   # target = "fail_only" only: the audit trail of his word (2026-11-20 09:11) behind the soft layer gate; nothing reads it
 
 
@@ -39,6 +40,8 @@ def add(action: str, target: str, message_id: str, quote: str, *, by: str = "cre
         raise ValueError("cheapest_waive names one rule CH-xx; a wildcard would waive every cheapest-run rule")
     if action == "layer_waiver" and not re.fullmatch(r"L\d{1,2}", target):
         raise ValueError("layer_waiver names one layer L1..L33; a wildcard would open every layer")
+    if action == "merge_approval" and not re.fullmatch(r"\d{1,6}", target):
+        raise ValueError("merge_approval names one pull request number; a wildcard would approve every merge")
     if action == "layer_gate_mode" and target != "fail_only":
         raise ValueError("layer_gate_mode is fail_only: the strict layer gate no longer exists")
     if action == "stage_approval" and (target.count(":") < 2 or "*" in target):

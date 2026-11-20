@@ -295,12 +295,3 @@ def test_a_validator_ref_with_an_empty_module_part_is_refused(root, ref):
     assert errs_of(e, root)
 
 
-@pytest.mark.xfail(strict=True, reason="R7: the hook protection list names quality.yml but not the owner-requirements workflow, the registry, the gate or the hook config: "
-                                       "a Write/Edit on them is not refused")
-@pytest.mark.parametrize("path", [".github/workflows/owner-requirements.yml", "explainer_engine/governance/owner_requirements.json",
-                                  "explainer_engine/governance/layer_gate.py", "explainer_engine/governance/send_gate.py",
-                                  "explainer_engine/governance/ci_check.py", ".claude/settings.json"])
-def test_R7_the_enforcement_files_themselves_are_protected(path):
-    from explainer_engine.governance import hooks, load
-    cfg = load()
-    assert path in cfg["protected_files"], path

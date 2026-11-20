@@ -345,10 +345,14 @@ def test_stop_runs_the_listed_tests(repo, capsys):
 
 # ---- fail open + the real process --------------------------------------------------------------------------------------------
 
-def test_a_broken_hook_fails_open_and_garbage_stdin_is_ignored(monkeypatch, capsys):
+def test_a_broken_pre_hook_fails_closed_and_the_rest_fail_open_and_garbage_stdin_is_ignored(monkeypatch, capsys):
     monkeypatch.setattr(sys, "stdin", io.StringIO("not json"))
     monkeypatch.setitem(hooks.HOOKS, "pre-bash", lambda event: 1 / 0)
-    assert hooks.main(["pre-bash"]) == 0
+    assert hooks.main(["pre-bash"]) == 2                    # T2.7: pre-bash, pre-write, pre-agent fail CLOSED
+    assert "failed closed" in capsys.readouterr().err
+    monkeypatch.setattr(sys, "stdin", io.StringIO("not json"))
+    monkeypatch.setitem(hooks.HOOKS, "prompt", lambda event: 1 / 0)
+    assert hooks.main(["prompt"]) == 0
     assert "skipped" in capsys.readouterr().err
 
 

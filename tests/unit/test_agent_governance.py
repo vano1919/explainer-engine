@@ -92,7 +92,8 @@ def test_every_hook_command_names_an_existing_module_and_hook():
         assert path.exists(), m.group(1)
         if m.group(1) == "explainer_engine.governance.hooks":
             assert m.group(2) in hooks.HOOKS, m.group(2)
-    names = {re.search(r"hooks (\S+)$", c).group(1) for c in commands if c.endswith(tuple(hooks.HOOKS))}
+    # a command may end in `|| { ...; exit 2; }` (the closed pre-* hooks, T2.7): the hook name is the word after `governance.hooks`
+    names = {m.group(1) for c in commands for m in [re.search(r"governance\.hooks ([\w-]+)", c)] if m}
     assert names == set(hooks.HOOKS)  # every hook is wired
 
 

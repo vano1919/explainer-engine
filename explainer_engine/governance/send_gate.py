@@ -43,6 +43,46 @@ def sha256(path) -> str:
     return h.hexdigest()
 
 
+# ---- sealed logs (S2, S3): a hand-written or deleted line must not release a file --------------------------------------------------
+# Every row of records.jsonl and quarantine.jsonl carries ``seal`` = sha256(previous valid seal + the row without its seal). A reader
+# keeps a row only when its seal fits the chain, so a line a thread typed by hand, an edited line and every line after a deleted one
+# are ignored. The log is tamper-evident, not secret: a thread that reads this code can still compute a seal, which is why the
+# hooks also refuse any Write/Edit/Bash that touches ``jobs/send_gate/`` or ``jobs/creator_ok.jsonl`` (``hooks.NEVER_HAND_WRITTEN``).
+GENESIS = "genesis"
+
+
+def _seal(prev: str, row: dict) -> str:
+    body = json.dumps({k: v for k, v in row.items() if k != "seal"}, sort_keys=True, ensure_ascii=False)
+    return hashlib.sha256((prev + "\n" + body).encode("utf-8")).hexdigest()
+
+
+def read_sealed(path: Path) -> list[dict]:
+    """The rows of a sealed log that fit the chain, oldest first."""
+    prev, out = GENESIS, []
+    for line in path.read_text(encoding="utf-8").splitlines() if path.is_file() else []:
+        try:
+            row = json.loads(line)
+        except ValueError:
+            continue
+        if isinstance(row, dict) and row.get("seal") == _seal(prev, row):
+            out.append(row)
+            prev = row["seal"]
+    return out
+
+
+def append_sealed(path: Path, rows: list[dict]) -> list[dict]:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    prev = (read_sealed(path) or [{"seal": GENESIS}])[-1]["seal"]
+    out = []
+    with path.open("a", encoding="utf-8") as f:
+        for row in rows:
+            row = dict(row)
+            row["seal"] = prev = _seal(prev, {k: v for k, v in row.items() if k != "seal"})
+            f.write(json.dumps(row, ensure_ascii=False) + "\n")
+            out.append(row)
+    return out
+
+
 def _load_validator(ref: str, root: Path):
     mod, _, fn = ref.partition(":")
     file = root / (mod.replace(".", "/") + ".py")
@@ -145,10 +185,7 @@ def run(layer: str, files, *, root=None, owner_asked: str | None = None, now: fl
     out = {"layer": layer, "status": status, "rows": rows, "label": label,
            "files": [{"path": str(p), "sha256": sha256(p)} for p in paths if p.is_file()]}
     if record and not gate:
-        path = root / RECORDS
-        path.parent.mkdir(parents=True, exist_ok=True)
-        with path.open("a", encoding="utf-8") as f:
-            f.write(json.dumps(dict(out, at=now if now is not None else time.time()), ensure_ascii=False) + "\n")
+        append_sealed(root / RECORDS, [dict(out, at=now if now is not None else time.time())])
     return out
 
 
@@ -189,28 +226,28 @@ def render(rep: dict) -> str:
 
 def quarantine(files, reason: str, *, root=None, now: float | None = None) -> list[dict]:
     """Quarantine files a stop hook let go unchecked: the send gate and the upload hook refuse them as candidates until a PASS record that is
-    newer than the quarantine exists for the same bytes (a labelled owner-asked record does not lift it)."""
+    newer than the quarantine exists for the same bytes (a labelled owner-asked record does not lift it). The row is written to the sealed
+    quarantine log AND to the sealed records log, so deleting one file does not lift it (S3)."""
     root = root_dir(root)
-    path = root / QUARANTINE
-    path.parent.mkdir(parents=True, exist_ok=True)
-    rows = [{"path": str(f), "sha256": sha256(f), "reason": reason, "at": now if now is not None else time.time()}
-            for f in files if Path(f).is_file()]
-    with path.open("a", encoding="utf-8") as fh:
-        for r in rows:
-            fh.write(json.dumps(r, ensure_ascii=False) + "\n")
+    at = now if now is not None else time.time()
+    rows = [{"path": str(f), "sha256": sha256(f), "reason": reason, "at": at} for f in files if Path(f).is_file()]
+    append_sealed(root / QUARANTINE, rows)
+    if rows:
+        append_sealed(root / RECORDS, [{"layer": "-", "status": "QUARANTINE", "rows": [], "label": None, "at": at, "reason": reason,
+                                        "files": [{"path": r["path"], "sha256": r["sha256"]} for r in rows]}])
     return rows
 
 
 def quarantined(digest: str, *, root=None) -> dict | None:
-    """The newest quarantine row of these bytes (None when there is none)."""
-    log = root_dir(root) / QUARANTINE
+    """The newest quarantine row of these bytes in either sealed log (None when there is none)."""
+    root = root_dir(root)
     last = None
-    for line in log.read_text(encoding="utf-8").splitlines() if log.is_file() else []:
-        try:
-            row = json.loads(line)
-        except ValueError:
-            continue
-        if row.get("sha256") == digest:
+    rows = read_sealed(root / QUARANTINE)
+    for row in read_sealed(root / RECORDS):
+        if row.get("status") == "QUARANTINE":
+            rows += [{"sha256": f.get("sha256"), "reason": row.get("reason"), "at": row.get("at")} for f in row.get("files", [])]
+    for row in rows:
+        if row.get("sha256") == digest and (last is None or float(row.get("at", 0)) >= float(last.get("at", 0))):
             last = row
     return last
 
@@ -219,16 +256,11 @@ def passing_record(path: Path | str, *, root=None) -> dict | None:
     """The newest send record that covers this file's sha256 and lets it go: PASS (or NOT_RUN: nothing measurable failed) or a record
     labelled with the owner's ``owner_asked``; None when there is none (the hooks then refuse)."""
     root = root_dir(root)
-    log = root / RECORDS
-    if not log.is_file() or not Path(path).is_file():
+    if not Path(path).is_file():
         return None
     digest = sha256(path)
     best = None
-    for line in log.read_text(encoding="utf-8").splitlines():
-        try:
-            row = json.loads(line)
-        except ValueError:
-            continue
+    for row in read_sealed(root / RECORDS):
         if any(f.get("sha256") == digest for f in row.get("files", [])) and \
                 (row.get("status") in (PASS, NOT_RUN) or (row.get("label") or {}).get("owner_asked")):
             best = row
