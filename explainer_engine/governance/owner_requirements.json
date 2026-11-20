@@ -5730,6 +5730,32 @@
    "repeats": 1,
    "repeat_evidence": "",
    "note": "msg id given in memory is the Fable thread root (...SDJ6dN9sdcVPJPP6ZJszpc), not the message itself. The Fable threads were later retired; conflict OR-C07 with rule 13"
+  },
+  {
+   "id": "OR-G21",
+   "kind": "requirement",
+   "words": "Every thread must watch its own context cost: over 150k tokens of context or 300 steps it says \"I am expensive now: compact me or hand me over\" and writes a handover file; a new thread gets only that file and the files it names (the lead's relay of the creator's 14:01-14:09 UTC orders; the creator's own first name for it was OR-P-CC1)",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-11-20T14:04:00Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWErMkAFt6gNFPjWTWc3fxrr"
+   },
+   "layers": [],
+   "status": "active",
+   "check": {
+    "kind": "validator",
+    "ref": "explainer_engine.governance.thread_cost:stop_hook",
+    "test": "tests/unit/test_thread_cost.py::test_stop_hook_passes_once_satisfied_and_clears_the_counter",
+    "negative_test": "tests/unit/test_thread_cost.py::test_stop_hook_refuses_twice_lets_go_after_three_and_logs",
+    "note": "a hook can block the turn but not compact the thread; limits are a hypothesis in config/thread_cost.json"
+   },
+   "measures": "Stop hook refuses to end a turn over the limits until the request line is posted and the handover file is valid",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "words are a paraphrase of the lead's relay; the owner's typed words are not in this thread. Registry id OR-G21, creator's name OR-P-CC1, rule OR-38 in docs/ORCHESTRATION.md."
   }
  ]
 }
