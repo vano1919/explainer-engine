@@ -8486,6 +8486,32 @@
     "explainer_engine/qa/send_validators.py"
    ],
    "supersedes": []
+  },
+  {
+   "id": "BP-215",
+   "area": "stills",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "A photo shot's life is optical flow, per zone, with the camera taken out and the particle layer left out (the client's review of X1 2.5D run1, item 8, relayed by the lead 2026-11-20 09:33; the numbers are the developer's engineering defaults, calibrated on synthetic fixtures only and to be re-set on the analyst's run2 clip, not binding until the owner has seen them): the validator living_motion measures motion with OpenCV Farneback flow between frames flow_gap_s apart, takes the camera as still when still_prior_min_pct % of the frame outside the declared zones does not move (flow under 0.35 px), else fits it as a similarity transform to that part (a camera-only clip then has no residual and fails; fewer than camera_inliers_min_pct % inliers is NOT_RUN), and requires of every zone named in the clip's .zones.json that at least zone_cover_min_pct % of the zone's pixels (outside the particle layer, when the file names its matte) move faster than their kind's speed in the median pair: fire_min_px_s, smoke_min_px_s, sky_min_px_s (px of 480 per second); snow alone cannot pass, because flakes cover a few percent of a zone and a pixel only counts as moving when it also changed by at least flow_pixel_change_min grey levels between the two frames (Farneback smears a flake's flow over its window). Without zones the whole frame must reach frame_cover_min_pct % of its pixels at frame_min_px_s. A declared particle layer needs its far band and a depth map: at most far_over_foreground_max_pct % of the far particles' pixels may lie over foreground pixels (depth at or above foreground_depth_min of the map's range), i.e. the foreground hides the far flakes. Sky is the weakest zone: parallax of a slow camera drift is of the same order as slow clouds.",
+   "thresholds": {
+    "flow_gap_s": 0.25,
+    "camera_inliers_min_pct": 30.0,
+    "zone_cover_min_pct": 25.0,
+    "fire_min_px_s": 5.0,
+    "smoke_min_px_s": 2.0,
+    "sky_min_px_s": 1.0,
+    "frame_min_px_s": 1.0,
+    "frame_cover_min_pct": 12.0,
+    "far_over_foreground_max_pct": 2.0,
+    "foreground_depth_min": 0.6,
+    "flow_pixel_change_min": 8.0,
+    "still_prior_min_pct": 40.0
+   },
+   "sources": [],
+   "enforced_by": [
+    "explainer_engine/qa/send_validators.py:living_motion"
+   ],
+   "supersedes": []
   }
  ]
 }
