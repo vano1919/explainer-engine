@@ -41,3 +41,32 @@ private, GitHub Free no longer offers required status checks: the paid-plan alte
   anything because of this file alone.
 - If you prefer **Rules > Rulesets > New ruleset > New branch ruleset**: target the same branches and add the rule **Require status checks to
   pass** with `owner-requirements`; tick no bypass list.
+
+## Added by the tester (2026-11-20, STEP 1 and 2; evidence in `ENFORCEMENT_METHODS_2026-11-20.md` on HF)
+
+What the tests showed about how a thread gets round a rule, and which of those holes only GitHub can close. Items marked **UNVERIFIED** I could
+not check from the cloud container (it cannot read or change repository settings).
+
+### Extra clicks for the same rule on `main` and on `claude/skills-rebuild-2026-11-20` (classic branch protection, same screen as steps 3 to 9)
+1. Under **Require status checks to pass before merging** add a second required check, `quality` (the older workflow `quality.yml`: tests, docs lint,
+   palette). Today only `owner-requirements` is named; `quality` can be red and the merge still goes.
+2. Leave **Allow force pushes** and **Allow deletions** unticked (they are off by default). A force push is how a thread rewrites a branch past the check.
+3. Keep **Do not allow bypassing the above settings** ticked (step 8). Without it the repository owner's own token walks past a red check, and
+   every thread pushes with that token (below).
+4. Do not set a path filter or a "skip if" condition on the workflow: GitHub counts a skipped required check as passed. The tests
+   `test_the_workflow_has_no_way_to_skip_or_swallow_the_check` keep the file honest.
+5. After clicking, test it once: open a draft pull request that deletes one line of `explainer_engine/governance/owner_requirements.json` (any entry's
+   `words`). `owner-requirements` must turn red and **Merge** must be greyed. If Merge is clickable, step 8 or the check name is wrong.
+
+### What GitHub cannot do on this plan (say it to the owner as it is)
+- **Threads push as the owner.** A pull request created from a thread shows the owner as author, and asking the owner for a review of it fails with
+  "Review cannot be requested from pull request author". GitHub therefore cannot tell a thread's merge or push from the owner's, and a
+  "required review by the owner" rule cannot separate them either. What stops a red merge is only the required check plus no bypass. The only fix is a
+  second GitHub identity for threads (a machine user or the Claude GitHub App with its own token); whether this platform lets threads use one is **UNVERIFIED**.
+- **Restrict file paths** (the rule that would stop any commit touching `.claude/settings.json`, `explainer_engine/governance/**`, `docs/layers/**`,
+  `config/spend_caps.json`, `.github/workflows/**`) belongs to GitHub's *push rulesets*, and the GitHub documentation I read says push
+  rulesets are for private or internal repositories. This repository is public, so assume **it is not offered here**; do not buy a plan for it. UNVERIFIED on the live Settings screen.
+  The replacement is a step inside the `owner-requirements` job that fails when the diff touches those paths and no owner word (a `jobs/creator_ok.jsonl` line with a `cmsg_` id and a quote) is added in the same
+  diff. That makes the change visible to the owner in the pull request; it does not prove the word is his (the file is written by the same hands, see `test_W1`, `test_W2`).
+- **Managed settings** (the one Claude Code settings tier a project file cannot switch off, `disableAllHooks`): whether the owner's Claude plan offers it is **UNKNOWN**; nothing here assumes it.
+  Until it exists, `.claude/settings.json` is protected only by being listed in the paths above (CI step) and by review.
