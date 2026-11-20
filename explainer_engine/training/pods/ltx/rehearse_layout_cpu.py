@@ -56,6 +56,7 @@ FAKE_IC_LORA = textwrap.dedent('''\
         try:                                   # the real writer when imageio is installed (it picks the format by the suffix) ...
             if os.environ.get("FAKE_NO_IMAGEIO"):
                 raise ImportError("imageio hidden")
+            import imageio_ffmpeg  # noqa: F401  (without it imageio silently writes ONE frame to a .mp4 name: CI has imageio only)
             import imageio.v2 as iio
             wr = iio.get_writer(a.output_path, fps=int(a.frame_rate), macro_block_size=None, codec="libx264", quality=7)
             for i in range(n):
