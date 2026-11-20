@@ -79,7 +79,7 @@ frames, lip-sync against the line, a cut landing on the wrong word.
 | Same defect after two retries | the shot, not the prompt, is wrong | R4 fallback; tell the owner |
 | Sheet looks fine, master shows drift | judged the sheet, not the shot in sequence | review consecutive frames across cuts (F7, F16) |
 
-## Sources (idea sources only, no text copied)
+## Sources (what each taught; licence noted in one line)
 
 - Google AI Studio video-understanding docs, fetched 2026-11-20 in the SK-1 research: sampling, clipping, MM:SS
   questions, cost by seconds; not opened by me, model names on that page not verified.

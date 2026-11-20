@@ -80,7 +80,7 @@ channel shown before writing; read-back after every write; the token outside the
 checked before upload. Where we differ on purpose: no `videos.update` at all (their tool merges and resends parts; we
 leave edits to Studio so nothing can flip visibility).
 
-## Sources (idea sources only, no text copied)
+## Sources (what each taught; licence noted in one line)
 
 - laurigates/claude-plugins, page `youtube-upload` (MIT, commit `fba5be185c`): the audit list above.
 - ericrisco/rsc-harness, page `youtube-api` (MIT, commit `28a51a9100`): user OAuth instead of a service account,

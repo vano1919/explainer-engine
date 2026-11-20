@@ -68,7 +68,8 @@ warns it over-sharpens clean inputs like ours. Any GPU upscale is paid: the OR-2
 
 ## Not usable here
 
-- CodeFormer (S-Lab License 1.0, non-commercial): out for a monetised channel, whatever its quality.
+- CodeFormer (S-Lab License 1.0, non-commercial; noted only, the licence does not exclude a candidate, owner 2026-11-20 08:10 UTC): a full
+  candidate for face restoration, to be run and judged like the others.
 - GFPGAN-style face restoration: our faces are generated, and restoration tends to a plastic look; not used.
 - "4K quality" words in a Gemini prompt: measured on 2026-11-19, no change in size.
 
@@ -80,10 +81,10 @@ warns it over-sharpens clean inputs like ours. Any GPU upscale is paid: the OR-2
 4. For a clip, scrub frame by frame on a fine texture for shimmer; then `superres.qc` on a few frames.
 5. Record the master's sha256 in the ledger; a changed file loses its observation (`explainer_engine/episode/shot_state.py`).
 
-## Sources (idea sources only, no text copied)
+## Sources (what each taught; licence noted in one line)
 
 - artokun/comfyui-mcp, page `video-upscale` (MIT, commit `f4c4077c25`): restore and upscale before interpolation and
   encode; per-frame ESRGAN flickers on video; downscale messy input before a temporal restorer.
 - ByteDance-Seed/SeedVR (Apache-2.0, commit `e4de8c2444`): the temporal candidate, configs only read.
 - xinntao/Real-ESRGAN (BSD-3-Clause, commit `a4abfb2979`): the per-frame model class.
-- sczhou/CodeFormer (S-Lab non-commercial, commit `b33cc7d639`): licence read to rule it out.
+- sczhou/CodeFormer (S-Lab non-commercial, commit `b33cc7d639`): licence noted, no exclusion.

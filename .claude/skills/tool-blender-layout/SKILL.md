@@ -82,7 +82,7 @@ across shots is skill `v-scenario-storyboards`; pictures are skill `tool-gemini-
 `explainer_engine/blender/project.py` (version pin), `explainer_engine/blender/validate.py` (frame files, sizes),
 `explainer_engine/episode/retired.py` (the episode boundary). The plan's V1-V7 validators are planned, not built.
 
-## Sources (idea sources only, no text copied)
+## Sources (what each taught; licence noted in one line)
 
 - codepawl/creator-generalist, page `3d-generalist` (MIT, commit `57bcdb718c`): grey blockout or animatic with the real
   cameras before the look; build to camera, detail where the frame looks.

@@ -84,7 +84,7 @@ repo type flag `--type`, while older releases and our VAULT.md use `--repo-type`
 | Two writers on one path | parallel jobs on one prefix | one writer per job prefix (last write wins on HF and Volumes) |
 | A token visible in a log | printed by a script | rotate it (owner), scrub the log; never commit |
 
-## Sources (idea sources only, no text copied)
+## Sources (what each taught; licence noted in one line)
 
 - huggingface/skills, page `hf-cli` (Apache-2.0, commit `5291c2b936`): the official command line for upload, download,
   buckets and repo settings.

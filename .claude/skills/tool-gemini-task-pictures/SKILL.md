@@ -103,7 +103,7 @@ GC-18's never-words list in `config/visual_style_presets.json` refuses "realisti
 older adventure-film face look; a film-look series under rule 20 asks for realistic film frames. Until the owner rewrites
 those lines, give the film-look series its own look entry with its own `never_words`, and report the conflict.
 
-## Sources (idea sources only, no text copied)
+## Sources (what each taught; licence noted in one line)
 
 - Google, "Prompting tips for Nano Banana Pro" (blog) and the AI Studio image-generation docs, fetched 2026-11-20 in the
   SK-1 research: name what each reference contributes; reference limits differ per model and the chat has its own.
