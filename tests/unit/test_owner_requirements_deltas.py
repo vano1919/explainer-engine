@@ -89,16 +89,14 @@ def test_amendments_the_registry_allows_are_recorded_as_fields():
 
 def test_changes_the_ci_forbids_stay_proposals_until_he_says_so():
     _, by = _all()
-    for rid, key in (("OR-A11", "status"), ("OR-S06", "status"), ("OR-P10", "status"), ("OR-S13", "words"), ("OR-C04", "status")):
+    for rid, key in (("OR-A11", "status"), ("OR-S06", "status"), ("OR-P10", "status"), ("OR-S13", "words")):
         e = by[rid]
         prop = e["proposed_amendment"]
         assert prop["applied"] is False and key in prop["change"] and "waits for his word" in prop["why_not_applied"]
         if key == "status":
-            assert e.get("status") not in ("superseded", "resolved") or rid == "OR-C04" and e["status"] == "open"
+            assert e.get("status") not in ("superseded", "resolved")
     assert by["OR-A11"]["status"] == "active" and "superseded_by" not in by["OR-A11"]
     assert by["OR-S13"]["words"].startswith("The mix 10/30/60 is approximate")
-    assert by["OR-C04"]["status"] == "open"
-    assert by["OR-C04"]["proposed_amendment"]["change"]["status"] == "closed_by_lead_reading"
 
 
 def test_decision_log_sources_name_only_decision_ids_and_keep_the_detail():
@@ -128,8 +126,10 @@ def test_the_registry_stays_unsigned():
     assert not any(k in data for k in ("signed", "signature", "signed_by", "owner_signature"))
 
 
-def test_c04_stays_open_with_a_note_that_the_card_press_awaits_his_typed_confirmation():
+def test_c04_is_resolved_per_shot_after_his_typed_confirmation():
     _, by = _all()
-    assert by["OR-C04"]["status"] == "open" and "resolved_by" not in by["OR-C04"]
-    assert "awaiting his typed confirmation" in by["OR-C04"]["note"]
-    assert "OR-C04" in OR.report(ROOT)["open_conflicts"]
+    c04 = by["OR-C04"]
+    assert c04["status"] == "resolved" and c04["resolved_by"] == "cmsg_01Hnu5zB86sjUj5GtTgaUkPWJMmGE4iwH1R4hiLiKzwfVW"
+    assert "per shot" in c04["resolution"]["answer"] and c04["resolution"]["words_verbatim"] is False
+    assert "OR-C04" not in OR.report(ROOT)["open_conflicts"]
+    assert OR.check_registry(OR.load(ROOT)[0], ROOT) == []

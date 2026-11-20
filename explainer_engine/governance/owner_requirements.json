@@ -1861,7 +1861,7 @@
   {
    "id": "OR-C04",
    "kind": "conflict",
-   "status": "open",
+   "status": "resolved",
    "title": "LTX needs no background sounds (11-12 19:12) vs one continuous sound bed and no dead air",
    "conflicts": [
     "OR-A07",
@@ -1917,10 +1917,19 @@
      "ref": "D-136 (docs/DECISIONS_AND_OPEN_QUESTIONS.md @ origin/claude/project-thread-2vxd8y); OR-A18 (D-138 Q2, 11-13 13:55Z)"
     },
     "lead_reading": "closed as answered by D-136 plus OR-A18, no card now",
-    "applied": false,
-    "why_not_applied": "the registry CI keeps owner words and status immutable unless the superseding entry cites his own chat message (REG-WORDS-CHANGED, REG-SUPERSEDE-UNSOURCED); this one rests on the decision log or the lead's reading, so it waits for his word"
+    "applied": true,
+    "why_not_applied": "superseded: the conflict is resolved by his answer, see 'resolution'"
    },
-   "note": "answered by card press 2026-11-20 16:57 (per shot), awaiting his typed confirmation; status stays open"
+   "note": "answered by card press 2026-11-20 16:57 (per shot); resolved after his typed confirmation 17:39:57Z",
+   "resolved_by": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWJMmGE4iwH1R4hiLiKzwfVW",
+   "resolution": {
+    "answer": "per shot (თითო კადრზე)",
+    "card_option_text": "The director writes a reason for every shot and picks a bed or silence.",
+    "card_press": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWK9Ha9eydSoHSKEhJeDMfmr, 2026-11-20 16:57Z (reported by the lead)",
+    "confirmed_by": "his typed word 'მიდი' in the registry thread, 2026-11-20 17:39:57Z, answering the request to type his confirmation; and the project-chat card press 17:37Z reported by the coordinator",
+    "words_verbatim": false,
+    "effect": "no blanket rule for LTX beds or silence; each shot's sound_plan carries a bed or silent_by_design with a reason (fits OR-A14, OR-A15); L18/L20 are no longer blocked by this conflict"
+   }
   },
   {
    "id": "OR-S01",
