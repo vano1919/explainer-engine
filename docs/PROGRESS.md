@@ -3747,6 +3747,26 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 ## 2026-11-01 — `runpod create --datacenters` (v2 `dataCenterIds`)
 - From the live v2 OpenAPI (`api.runpod.io/v2/openapi.json`): `CreatePodRequest.dataCenterIds` = preferred sites; v2 has one `gpu.id` per request and no priority fields. New flag `--datacenters A,B,...` sets it. P12b measurement pod tried on RTX 4090 SECURE in EU-RO-1, EU-CZ-1, US-IL-1, EUR-IS-1/2 with CUDA floor 12.4: still "no instances available". Costs $0.
 
+## 2026-11-20 — MapLibre lane (G-04, group 3 maps): offline shots with the five camera moves and per-episode map styles
+- New: `explainer_engine/maps/maplibre_spec.py` (shot spec, camera state, schedule), `hud_layout.py` (HUD placement, colour-blind contrast), `maplibre_lane/` (`render.py`, `fetch_tiles.py`, `page.html`, `styles/`, README). Camera: truck, zoom_in, zoom_out, truck_zoom_in, truck_zoom_out only; static and orbit are refused by the spec check.
+- First real render ($0, sandbox Chromium + software GL): two 6 s clips at 2560x1440 / 24 fps, truck_zoom_in and zoom_out, plain and `1917_film`, HF `explainer-engine/comparisons/L15/g3_maps_wave2_render_2026-11-20/`. Frames not empty, camera moves on every frame, HUD clear of the line.
+- Fixed from that render: terrain hillshade hang (DEM source now gets the real max zoom and bounds, map idle has a 15 s timeout), HUD and line widths scale with the frame width (designed for 1280), `fetch_tiles` merges `manifest.json` instead of overwriting it, Playwright import is optional so the module imports without it.
+- Creator's rule 2026-11-20: every episode has its own map style. `style_preset` in the shot spec, presets `neutral` and `1917_film`; how to add one: `maplibre_lane/README.md`.
+- Tests: 244 in `tests/unit/test_maps_*.py` (hud_layout, maplibre_spec, camera, lane, presets, fetch manifest). `vendor/maplibre-gl.js|css` are not committed (README says where they come from).
+
+## 2026-11-20 — Map HUD OCR check: the "0" of the counter is an OCR limit, not a render defect
+- Clip from PR #231 (1917_film, truck_zoom_in): 57 of 58 HUD items read back by RapidOCR on 12 frames; the one miss was the counter's opening "0" in frame 0. Cause traced: the glyph is clear (dark blue on paper, 45 px tall at 2560, no fade-in), but the OCR engine reads no isolated single glyph (a plain black "0" or "8" on white is not read either; "00", "10", "20" are). Not contrast, size or fade.
+- New `maplibre_lane/hud_ocr.py` (+ `tests/unit/test_maps_hud_ocr.py`, 4 tests): expected text from the spec schedule, OCR for text, an ink check for a one-character counter, each item reports its method. Same clip: 58 of 58 (the "0" by ink). Costs $0.
+
+## 2026-11-20 — G-06: the map lane takes its style only from the episode film
+- `maplibre_lane/render.py`: `DEFAULT_STYLE_PRESET` removed; `resolve_style_preset_name(spec, spec_dir)` reads the spec's REQUIRED `film_file` through `episode_film.load_episode_film`/`block` (G-05) and returns (style_preset, film_id); spec `style_preset` must equal the film's; `font` must be absent or "preset"; `render_shot` refuses before any browser starts and returns `film_id`. `_validate_hud_palette(None)` is a TypeError. `maplibre_spec.py`: `film_file` is checked when present; `font` is no longer a required key. `page.html`: throws without a preset, no literal colours or font of its own in the page code (the CSS `var(--c-…, fallback)` colours remain; they apply only if a preset lacks a hud key).
+- `explainer_engine/episode_film.py` + its tests are taken from PR #233 (commit 219f179) unchanged so this branch runs on its own; identical content, no conflict expected when both merge.
+- New `tests/unit/test_map_reads_film.py` (11). 16 older tests rely on the old default look and now fail; they are listed for the creator and left untouched (invariant 10).
+
+## 2026-11-20 — Draft map style preset from 3-6 film_look frames (G-06 follow-up)
+- New `maplibre_lane/preset_from_frames.py` (+ `tests/unit/test_maps_preset_from_frames.py`, 10): k-means in Lab (seeded), role mapping ink/paper/water/accent, palette_check with a lightness repair search, finish grain/vignette/tint measured; `draft: true`, `font` empty; `render.load_style_preset` refuses drafts and an empty font.
+- Truce batch2 (cold blue-grey frames) vs `1917_film.json`: the draft is cold and neutral where the hand-made preset is warm sepia (background dE 19, tint dE 52); no warm saturated cluster, so the line colour fell back to Okabe-Ito vermillion. Use as a starting point only.
+
 ## 2026-11-20 — Lip-sync validator (BP-133, SyncNet) + two coverage gaps (OR-V56 trim, audio stream present)
 - New `qa/lipsync.py` (+ `lipsync_tolerances.json`): SyncNet adapter over an external checkout (`SYNCNET_DIR`), 25 fps / 16 kHz copy, whole-frame offset (40 ms step); codes LS-01..LS-04; a hypothesis REVIEW is `FAIL` with detail `REVIEW:`. `lipsync_max_ms`/`lipsync_review_frames` read from BP-133; `conf_min` and the track minimum are null (hypothesis), so a real measurement is NOT_RUN until the owner calibrates. Sign of the offset and the real runner are NOT verified on an install (no checkout here); the real-install test skips without one. BP-133 `enforced_by` gained `qa/lipsync.py` (a link only; no threshold or wording changed).
 - New `qa/trim_record.py` (OR-V56, 0.33 s from the owner's card answer, `house` in `trim_record_tolerances.json`, NOT in the registry; TR-01..TR-04) and `qa/audio_present.py` (a master without an audio stream FAILs). Both are standalone: the edit plan's `trim_s` field and the PR #211 observer do not exist on main, so nothing was hooked into them.
@@ -3776,6 +3796,9 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 - Source kind: platform policy (YouTube Data API field limits for `videos.insert` snippet), not a BP threshold; read 2026-11-20.
 - Tests: `tests/unit/test_publish_check.py` (4900 ASCII passes, 2600 em dashes fails, 5000 bytes passes, 5001 fails, `<` in the
   description fails, `>` in the title fails, title 100 passes / 101 fails). Doc: `docs/QA_SPECIFICATION.md` PC-06.
+
+## 2026-11-20 — Map style `truce_cold` (creator chose "C cold")
+- `maplibre_lane/styles/truce_cold.json`: the batch2-derived palette (no longer a draft), font from the episode film (creator card "film font"); test in `test_maps_style_presets.py`. Test clip and frame 143 comparison on HF `.../draft_preset_tool/`.
 
 ## 2026-11-20 — Effect audibility and click measurements (`audio/val_effect_audibility.py`, from earshot's two ideas)
 - New pure module, numpy only: `audibility` (an effect's level over the bed per 1/3-octave band, over its loudest 60 ms) and

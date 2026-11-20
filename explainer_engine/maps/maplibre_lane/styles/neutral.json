@@ -1,0 +1,23 @@
+{
+  "name": "neutral",
+  "font": "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+  "map": {
+    "background": "#f0f0eb",
+    "water": "#cfdce3",
+    "waterway": {"color": "#b7ccd6", "width": 1.2},
+    "landcover": {"color": "#e5e6dc", "opacity": 0.45},
+    "boundary": {"color": "#8c8f87", "width": 1.1, "dash": [3, 2]},
+    "roads": {"color": "#dcdad0", "width": 1.0},
+    "hillshade": {"exaggeration": 0.28, "shadow": "#6e736b", "highlight": "#ffffff"}
+  },
+  "line": {"stroke": "#d55e00", "stroke_width": 2.4, "casing": "#f7f6f1", "casing_width": 4.5, "casing_opacity": 0.9},
+  "hud": {
+    "counter_bg": "rgba(247,246,241,0.94)", "counter_border": "#1e242b", "counter_value": "#0072b2", "counter_label": "#1e242b",
+    "chip_bg": "#1e242b", "chip_fg": "#f7f6f1",
+    "dot": "#1e242b", "dot_border": "#f7f6f1",
+    "town_bg": "rgba(247,246,241,0.92)", "town_border": "rgba(30,36,43,0.35)", "town_text": "#1e242b",
+    "footnote_text": "#2c333a", "footnote_bg": "rgba(247,246,241,0.85)"
+  },
+  "finish": {"grain": {"opacity": 0.0, "size": 256}, "vignette": 0.0, "tint": {"color": "#000000", "opacity": 0.0}},
+  "palette_check": {"foreground": ["line.stroke", "hud.counter_value"], "background": "map.background"}
+}
