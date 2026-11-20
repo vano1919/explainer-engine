@@ -5,6 +5,20 @@ description: Write or fix the spoken narration of a Crossworld Theories video so
 
 # Narration script: write for the ear, then for the voice
 
+## Vendored methods (W8 phase B): when to load which
+
+- **Opening (first 30 seconds):** load `v-hook-writing` for the retention hook and `v-viral-hooks` for hook archetypes and
+  critique. Both are method only: use them to draft three hooks and to diagnose a weak one, then pick by our rules below.
+- **What stays ours:** N-01..N-17 and the sourced numbers (`docs/SOURCED_RULES.md`, BP ids), the one-narrator rule, the
+  70/30 spoken mix, the tag and capital conventions of `narration_tts.txt`, the AI-register rules, and everything about
+  the voice (`elevenlabs-voice`). Upstream advice that conflicts is overridden, for example a sound effect every few
+  seconds against the one continuous bed, or "subscribe" and greeting openers against N-01.
+- **Not used:** `v-viral-hooks` three-layer on-screen-text advice for a Short belongs to `shorts-for-video`
+  (`v-viral-youtube-shorts`); the YouTube-script structure sections of `v-hook-writing` do not replace our beat templates.
+- **Checked by:** `scripting/narration_lint.py` (N-01 hook form, N-06 question floor), `scripting/register_lint.py` (AI-register
+  words), `scripting/rhythm_lint.py`, and `scripting/claims.py` (every factual sentence maps to a claim). A hook is not
+  declared good by a vendored skill: the lint and the creator's listen decide.
+
 **Episode rulebook first (D-51, OR-11):** read `python -m explainer_engine.standards brief <episode>/episode_rules.json --role script` and follow it; legal, licence, likeness and art-direction questions are decided there (docs/EPISODE_STANDARDS.md), never invented in this skill. A conflict goes back to the orchestrator.
 
 Crossworld Theories is entertainment first, real facts second (SCRIPTING_SPEC §8.1): a witty historian telling an
