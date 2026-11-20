@@ -212,13 +212,16 @@ def _check_errs(e: dict, root: Path) -> list[str]:
     if kind == "validator":
         errs = []
         ref = check.get("ref")
-        m = _VALIDATOR_REF.fullmatch(ref) if isinstance(ref, str) else None
-        if not m:
-            errs.append(f"REQ-NOVALIDATOR: {who}: check.ref is module:function, not {ref!r}")
-        else:
+        for field, value in (("ref", ref), ("send_ref", check.get("send_ref"))):
+            if field == "send_ref" and value is None:
+                continue
+            m = _VALIDATOR_REF.fullmatch(value) if isinstance(value, str) else None
+            if not m:
+                errs.append(f"REQ-NOVALIDATOR: {who}: check.{field} is module:function, not {value!r}")
+                continue
             mod = root / (m.group(1).replace(".", "/") + ".py")
             if not (mod.is_file() and re.search(rf"^def {re.escape(m.group(2))}\(", mod.read_text(encoding="utf-8"), re.M)):
-                errs.append(f"REQ-NOVALIDATOR: {who}: {ref} does not exist (no def {m.group(2)} in {mod.relative_to(root).as_posix()})")
+                errs.append(f"REQ-NOVALIDATOR: {who}: {value} does not exist (no def {m.group(2)} in {mod.relative_to(root).as_posix()})")
         if not _test_exists(check.get("test"), root):
             errs.append(f"REQ-NOTEST: {who}: check.test must be path.py::test_name of an existing test (it passes the validator on a "
                         f"compliant fixture), not {check.get('test')!r}")

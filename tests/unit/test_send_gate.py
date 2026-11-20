@@ -19,6 +19,10 @@ living_motion.kinds = (".txt",)
 
 def boom(path):
     raise RuntimeError("the validator itself broke")
+boom.kinds = ()
+
+def plan_turns(queue, size=6):
+    return []
 '''
 
 
@@ -142,3 +146,16 @@ def test_every_run_is_recorded_with_the_hash_of_each_file(env):
     SG.run("L9", [good], root=root)
     line = json.loads((root / SG.RECORDS).read_text().splitlines()[-1])
     assert line["layer"] == "L9" and line["files"][0]["sha256"] == SG.sha256(good) and line["status"] == "PASS"
+
+
+def test_a_pipeline_function_without_kinds_is_not_run_and_an_adapter_in_send_ref_is_used(env):
+    root, good, bad = env
+    pipe = dict(entry(1)["check"], ref="explainer_engine.validators.living:plan_turns")
+    put(root, registry(entry(1, check=pipe)))
+    rep = SG.run("L9", [good], root=root)
+    assert rep["status"] == "NOT_RUN" and "no send adapter" in rows(rep)["REQ-001"]["detail"]
+    put(root, registry(entry(1, check=dict(pipe, send_ref="explainer_engine.validators.living:living_motion"))))
+    assert SG.run("L9", [good], root=root)["status"] == "PASS"
+    assert SG.run("L9", [bad], root=root)["status"] == "FAIL"
+    put(root, registry(entry(1, check=dict(pipe, send_ref="explainer_engine.validators.living:nope"))))
+    assert SG.run("L9", [good], root=root)["status"] == "BLOCK"                       # a send_ref that does not exist blocks

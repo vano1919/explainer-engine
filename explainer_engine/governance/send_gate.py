@@ -3,8 +3,9 @@ registered requirements have measured it.
 
     python -m explainer_engine.governance.send_gate <layer> <files...> [--owner-asked <cmsg id>]
 
-For every file, every active requirement of the layer whose check is a validator (``module:function``, see
-:mod:`explainer_engine.governance.owner_requirements`) is run: ``fn(path) -> {"status": PASS|FAIL|NOT_RUN, "value": number|None,
+For every file, every active requirement of the layer whose check is a validator (``check.send_ref``, else ``check.ref``, a ``module:function``, see
+:mod:`explainer_engine.governance.owner_requirements`) is run when it is a send validator (it carries ``fn.kinds``; a pipeline function
+such as ``plan_turns(queue)`` cannot measure a file and is NOT_RUN with a note to name an adapter in ``check.send_ref``): ``fn(path) -> {"status": PASS|FAIL|NOT_RUN, "value": number|None,
 "detail": str}``; a function may carry ``fn.kinds = (".mp4", ...)`` to say which files it applies to (a file of another kind is not
 measured by it; no file of its kind is NOT_RUN). Printed per requirement id: PASS / FAIL / NOT_RUN / BLOCK with the measured number.
 **FAIL** (a validator measured a violation) and **BLOCK** (the registry is missing, invalid or has an open conflict for the layer,
@@ -68,10 +69,14 @@ def _measure(e: dict, files: list[Path], root: Path) -> dict:
     bad = OR._check_errs(e, root)
     if bad:
         return dict(base, status=BLOCK, value=None, detail="; ".join(bad))
+    ref = check.get("send_ref") or check["ref"]
     try:
-        fn = _load_validator(check["ref"], root)
+        fn = _load_validator(ref, root)
     except Exception as exc:                                              # a validator that cannot be loaded fails closed
-        return dict(base, status=BLOCK, value=None, detail=f"the validator {check['ref']} cannot be loaded ({type(exc).__name__}: {exc})")
+        return dict(base, status=BLOCK, value=None, detail=f"the validator {ref} cannot be loaded ({type(exc).__name__}: {exc})")
+    if not hasattr(fn, "kinds"):                                          # a pipeline function (a queue, frames), not a check of a file
+        return dict(base, status=NOT_RUN, value=None, detail=f"{ref} runs inside the pipeline and cannot measure a file: no send adapter "
+                    "yet (check.send_ref names a function fn(path) with fn.kinds)")
     kinds = tuple(getattr(fn, "kinds", ()) or ())
     mine = [f for f in files if not kinds or f.suffix.lower() in kinds]
     if not mine:

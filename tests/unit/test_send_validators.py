@@ -123,3 +123,15 @@ def test_the_phase_shift_sees_a_translation():
 
 def test_the_validator_declares_its_kinds_for_the_send_gate():
     assert ".mp4" in V.living_motion.kinds
+
+
+def test_the_command_line_prints_a_line_per_clip_and_exits_1_on_a_fail(tmp_path, capsys):
+    ok, bad = smoke_clip(tmp_path / "ok.mp4"), fire_only_clip(tmp_path / "bad.mp4")
+    assert V.main(["living_motion", str(ok)]) == 0
+    assert "PASS" in capsys.readouterr().out
+    assert V.main(["living_motion", str(ok), str(bad)]) == 1
+    out = capsys.readouterr().out
+    assert "PASS" in out and "FAIL" in out and "G-LIVE-1" in out
+    junk = tmp_path / "junk.mp4"
+    junk.write_bytes(b"x")
+    assert V.main(["living_motion", str(junk)]) == 2

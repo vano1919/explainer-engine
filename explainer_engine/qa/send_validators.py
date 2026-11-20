@@ -94,3 +94,29 @@ def living_motion(path) -> dict:
 
 
 living_motion.kinds = (".mp4", ".mov", ".webm", ".mkv")
+
+
+def main(argv=None) -> int:
+    """``python -m explainer_engine.qa.send_validators living_motion <clip.mp4>...``: one line per clip, exit 1 on any FAIL, 2 on an error."""
+    import argparse
+    import sys
+    ap = argparse.ArgumentParser(prog="python -m explainer_engine.qa.send_validators")
+    ap.add_argument("validator", choices=("living_motion",))
+    ap.add_argument("files", nargs="+")
+    a = ap.parse_args(argv)
+    worst = 0
+    for f in a.files:
+        try:
+            r = living_motion(f)
+        except Exception as exc:                       # an undecodable file is an error, never a pass
+            print(f"BLOCK {f}: {type(exc).__name__}: {exc}", file=sys.stderr)
+            worst = max(worst, 2)
+            continue
+        print(f"{r['status']:8} {'' if r['value'] is None else r['value']!s:>7}  {f}  {r['detail']}")
+        worst = max(worst, 1 if r["status"] == FAIL else 0)
+    return worst
+
+
+if __name__ == "__main__":
+    import sys
+    sys.exit(main())
