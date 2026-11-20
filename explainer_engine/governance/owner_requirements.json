@@ -1,0 +1,3312 @@
+{
+ "schema": "owner_requirements/1",
+ "version": "v2",
+ "built": "2026-11-20",
+ "note": "Extends the client's v1 (OR-V01..OR-V34, kept with the same ids). Layer binding for OR-S/A/E/Q/P/I is by GROUP of layers (the lead's letters); the lead narrows it per layer. words_verbatim=true only where the text is his own Georgian from the chat (cmsg id) or quoted in a memory file (words_origin=memory_quote); false = our paraphrase or an English relay, not signable until he has seen it. Checks: validator entries were verified to exist (function and test name) but the analyst did NOT run the tests; everything else is unmapped.",
+ "requirements": [
+  {
+   "id": "OR-V01",
+   "kind": "requirement",
+   "words": "ყველა სერიისთვის ვეძებთ ეპოქისთვის შესაბამის წარმატებულ ფილმს ... და მის სტილში ვაგენერირებთ კადრებს. რეალისტურს მარტივად. შეაჩერე კვლევა",
+   "words_verbatim": true,
+   "words_origin": "memory_quote",
+   "gloss": "For every series we look for a successful film of that era and generate frames in its style; realistic, simply; stop the research.",
+   "date": "2026-11-19T22:08:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-era-film-style-rule-2026-11-19"
+   },
+   "layers": [
+    "L9",
+    "L13"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "series config names exactly one era film and every picture and video prompt contains that name (string check)",
+   "repeats": 3,
+   "repeat_evidence": "11-19 22:08, 22:15, 22:22-22:26 (naming the film beats describing it); 11-20 07:14 (same for video)",
+   "words_partial": true
+  },
+  {
+   "id": "OR-V02",
+   "kind": "requirement",
+   "words": "მოდი ერთი ცდაც ვცადოთ ახალ ჩატში აღწერე იგივე სცენები უბრალოდ პირდაპირ მიუთიტე ამ სტილს დააგენერირეო",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "Let us try once more: in a new chat describe the same scenes, just name this style directly and ask it to generate.",
+   "date": "2026-11-19T22:15:34Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWAXf1WgCKJ4hYdaBtFpvyyp"
+   },
+   "layers": [
+    "L9",
+    "L12",
+    "L13"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "prompt lint: the film name is present directly; GC-18 never_words conflict is open (OR-C01)",
+   "repeats": 3,
+   "repeat_evidence": "11-19 22:15, 11-20 07:14 (video), memory 22:22-22:26 (naming the film works better)"
+  },
+  {
+   "id": "OR-V03",
+   "kind": "requirement",
+   "words": "ფოტოები ყოვეკთვის  ფკეშზე თასქ მოუდში. არგონზე მხოლოდ კოდის წერა არგონის დრაივზე",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "Photos always on Flash in Task mode. Argon only for writing code on Argon's drive.",
+   "date": "2026-11-12T19:54:03Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPW93frR8iQ8X9aSwuhJkRMrn"
+   },
+   "layers": [
+    "L9"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "turn-pack manifest records mode=task and Flash/Hydrogen; intake refuses another mode. Candidate: tests/unit/test_gemini_task_flow.py::test_t0_fails_on_another_model_and_mode_needs_drive_read_and_verbatim_prompts (module function not located)",
+   "repeats": 2,
+   "repeat_evidence": "11-12 19:54, 11-19 22:03 (rule 19)"
+  },
+  {
+   "id": "OR-V35",
+   "kind": "requirement",
+   "words": "Rule 19: Gemini photos only in Task mode, 6 per batch (the memory's older name says 8; the batch size is the preset's DEFAULT_TURN = 6)",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-11-19T22:03:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-gemini-task-mode-8-pictures"
+   },
+   "layers": [
+    "L9"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "validator",
+    "ref": "explainer_engine.imagegen.turn_pack:plan_turns",
+    "test": "tests/unit/test_gemini_task_flow.py::test_t0_counts_set_the_batch_size_or_fail_with_a_card",
+    "note": "DEFAULT_TURN = 6 read in turn_pack.py:47; analyst did not run the test",
+    "verified": {
+     "ref_and_test_exist": true,
+     "tests_run_by_analyst": false
+    }
+   },
+   "measures": "queue split into turns of 6; a count mismatch fails",
+   "repeats": 2,
+   "repeat_evidence": "11-19 22:03 ('write it into the rules somewhere'), 11-12 19:54",
+   "note": "owner words on '6' not in chat text; the memory file names 8 pictures first, 6 later. Not signable until the owner has seen this line."
+  },
+  {
+   "id": "OR-V04",
+   "kind": "requirement",
+   "words": "როგორც ჩანს ახალი ფლეში ჰიდროგენია . ეს მოინიშნე",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "It seems the new Flash is Hydrogen. Note that.",
+   "date": "2026-11-12T19:56:53Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPW5TSjy8fJSxHu53zfAFtZTY"
+   },
+   "layers": [
+    "L9"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "turn-pack metadata model is Flash (Hydrogen); intake refuses Argon/Pro. Candidate: tests/unit/test_gemini_task_flow.py::test_t0_fails_on_another_model_and_mode_needs_drive_read_and_verbatim_prompts",
+   "repeats": 2,
+   "repeat_evidence": "11-12 19:54, 19:56"
+  },
+  {
+   "id": "OR-V05",
+   "kind": "requirement",
+   "words": "შეინახე სამუდამოდ ძირითადი გზა ჯემინაის ჩატი , სათადარიგო ჯემინაის აპი, სათადარიგოს სათადარიგო , ბფლ",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "Save forever: main route Gemini chat, backup Gemini app, backup of the backup BFL.",
+   "date": "2026-11-13T07:28:27Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPW7XLMto2qf2FBPYsqzyqvaU"
+   },
+   "layers": [
+    "L9"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "provider router enforces chat -> API batch -> BFL; each paid fallback needs a paid_offer record. Candidate: tests/unit/test_picture_route.py",
+   "repeats": 2,
+   "repeat_evidence": "11-13 07:28, memory picture-route-order"
+  },
+  {
+   "id": "OR-V06",
+   "kind": "requirement",
+   "words": "ეს ხო სტილისთვისაა  დავიტივოთ. გაიაზრე რატო მოხდა შეცდომა და მოინიშნე რო აღარ მოხდეს",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "That is for style, let us record it. Understand why the mistake happened and mark it so it does not happen again.",
+   "date": "2026-11-13T17:02:10Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWLDXrvygQpjduopBTcBb34w"
+   },
+   "layers": [
+    "L9"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "preflight: reference-object list per image, synonym check against the banned list, costume-shape field for strong-default items; every logged mistake class has a lint",
+   "repeats": 3,
+   "repeat_evidence": "11-12 21:06, 11-13 17:02, 11-13 (preflight memory)"
+  },
+  {
+   "id": "OR-V07",
+   "kind": "requirement",
+   "words": "მაგალტად ახლა დავტესტე ბლენდერით მერე ჯემინაი კარგად ინარჩუნებს გარემოს",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "For example I tested with Blender, then Gemini keeps the environment well.",
+   "date": "2026-11-20T07:02:57Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWW8G4AXJG77L6sCBVFxaLJEW"
+   },
+   "layers": [
+    "L9",
+    "L10",
+    "L11"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "every multi-shot place has a layout sheet; each shot of that place attaches it; blocking checked against the layout",
+   "repeats": 2,
+   "repeat_evidence": "11-20 07:02, 07:14"
+  },
+  {
+   "id": "OR-V08",
+   "kind": "requirement",
+   "words": "A still is material for its future clip; do not draw what the clip does not need.",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-11-06T15:53:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-stills-are-ltx-material-2026-11-06"
+   },
+   "layers": [
+    "L9",
+    "L13"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "per-shot in_shot list; the picture judge flags extra props",
+   "repeats": 1,
+   "repeat_evidence": ""
+  },
+  {
+   "id": "OR-V09",
+   "kind": "requirement",
+   "words": "Every fix fits the general logic, never tuned to the test frames.",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-10-26T21:41:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-general-logic-not-frames"
+   },
+   "layers": [
+    "L9",
+    "L10",
+    "L11",
+    "L12",
+    "L13",
+    "L14",
+    "L15",
+    "L16"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "parent: covered when OR-V09a and OR-V09b are covered",
+   "repeats": 2,
+   "repeat_evidence": "10-26, 11-20 (07:14 'not test frames')",
+   "note": "children carry the checks"
+  },
+  {
+   "id": "OR-V09a",
+   "kind": "requirement",
+   "words": "prompts and settings are built by code from cards, not hand-tuned per test frame",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-10-26T21:41:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-general-logic-not-frames"
+   },
+   "layers": [
+    "L9",
+    "L10",
+    "L11",
+    "L12",
+    "L13",
+    "L14",
+    "L15",
+    "L16"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "static check: no scene id or frame id literal in prompt-building code; prompts reproduced from the card alone",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "parent": "OR-V09"
+  },
+  {
+   "id": "OR-V09b",
+   "kind": "requirement",
+   "words": "a held-out scene confirms every winner before it is adopted",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-10-26T21:41:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-general-logic-not-frames"
+   },
+   "layers": [
+    "L9",
+    "L10",
+    "L11",
+    "L12",
+    "L13",
+    "L14",
+    "L15",
+    "L16"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "layer record lists the held-out scene id and its result for every adopt/enrich decision",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "parent": "OR-V09"
+  },
+  {
+   "id": "OR-V10",
+   "kind": "requirement",
+   "words": "Correct, logical orientation in one environment, keeping style and cinematography.",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-10-25T12:47:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-360-orientation-first"
+   },
+   "layers": [
+    "L10",
+    "L11"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "same-place-other-angle test; 180-degree line and one light direction per scene. Candidate: tests/unit/test_continuity.py::test_crossing_the_axis_without_a_reason_is_a_review",
+   "repeats": 2,
+   "repeat_evidence": ""
+  },
+  {
+   "id": "OR-V11",
+   "kind": "requirement",
+   "words": "Every picture, clip and sound is looked at before use; the decision follows what was seen (OB-1).",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-11-19T18:51:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-observe-everything-continuity-2026-11-19"
+   },
+   "layers": [
+    "L9",
+    "L10",
+    "L11",
+    "L12",
+    "L13",
+    "L14",
+    "L15",
+    "L16"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "parent: covered when OR-V11a and OR-V11b are covered",
+   "repeats": 4,
+   "repeat_evidence": "11-12 21:44 ('watch the video yourself'), 11-19 OB-1, 11-20 08:33, 08:34",
+   "note": "children carry the checks"
+  },
+  {
+   "id": "OR-V11a",
+   "kind": "requirement",
+   "words": "each asset has a seen-record (file hash, who looked, defects listed) before it is used",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-11-19T18:51:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-observe-everything-continuity-2026-11-19"
+   },
+   "layers": [
+    "L9",
+    "L10",
+    "L11",
+    "L12",
+    "L13",
+    "L14",
+    "L15",
+    "L16"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "per-asset record {sha256, seen_by, defects[]}; the gate refuses an asset without one",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "parent": "OR-V11"
+  },
+  {
+   "id": "OR-V11b",
+   "kind": "requirement",
+   "words": "the looking gives numbers: defects counted per asset, not a bare verdict",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-11-19T18:51:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-observe-everything-continuity-2026-11-19"
+   },
+   "layers": [
+    "L9",
+    "L10",
+    "L11",
+    "L12",
+    "L13",
+    "L14",
+    "L15",
+    "L16"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "judge",
+    "who": "blind judge",
+    "rubric": "docs/registry/judge_rubrics.md#j-seen-defects",
+    "number": "defects counted per asset (integer); PASS only when every listed defect is resolved or accepted by the owner"
+   },
+   "measures": "judge's defect count per asset",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "parent": "OR-V11"
+  },
+  {
+   "id": "OR-V12",
+   "kind": "requirement",
+   "words": "Continuity: a fresh keyframe from the master; last-frame reuse at most 2 hops, and only after comparison with the master (CT-1, CT-2).",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-11-19T18:51:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-observe-everything-continuity-2026-11-19"
+   },
+   "layers": [
+    "L10",
+    "L13"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "validator",
+    "ref": "explainer_engine.scripting.continuity:check",
+    "test": "tests/unit/test_continuity.py::test_chain_depth",
+    "note": "CT-09 uses MAX_CHAIN; analyst did not compare MAX_CHAIN with the owner's 2-hop rule or run the test",
+    "verified": {
+     "ref_and_test_exist": true,
+     "tests_run_by_analyst": false
+    }
+   },
+   "measures": "hop counter per shot; hop >= 3 blocked; hop 1-2 needs a master-comparison record",
+   "repeats": 2,
+   "repeat_evidence": ""
+  },
+  {
+   "id": "OR-V13",
+   "kind": "requirement",
+   "words": "The script plans the anchor photos and which shots come from each photo through the LTX chain.",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-11-14T14:14:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "final-cinematic-roadmap-2026-11-14"
+   },
+   "layers": [
+    "L10",
+    "L13"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "shot plan marks anchor/chain per shot; pictures drawn only for anchors and re-anchors",
+   "repeats": 1,
+   "repeat_evidence": ""
+  },
+  {
+   "id": "OR-V14",
+   "kind": "requirement",
+   "words": "ბლენდერი პლუს ლტხ პლუს ფოტო რამდენად კარგად მუშაობს.",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "How well do Blender plus LTX plus photo work together.",
+   "date": "2026-11-20T07:14:55Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWW6JyJD8JFB16BP7oNRafo4o"
+   },
+   "layers": [
+    "L11",
+    "L13"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "route trial exists with outputs; Blender renders contain no final character meshes (D-140)",
+   "repeats": 2,
+   "repeat_evidence": "11-20 07:02, 07:14"
+  },
+  {
+   "id": "OR-V15",
+   "kind": "requirement",
+   "words": "ასევე ვიპოვესხვადასხვა თულები რო ბლენდერს ფოტო პირდაპილ ჩააცვას. და რეალისტური მოძრაობები და რაღაცები მოხდეს.",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "I also found various tools that dress Blender directly with a photo, and realistic motion and things happen.",
+   "date": "2026-11-20T07:02:57Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWW8G4AXJG77L6sCBVFxaLJEW"
+   },
+   "layers": [
+    "L11"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "judge",
+    "who": "owner at MS-7",
+    "rubric": "docs/registry/judge_rubrics.md#j-ms2-list-complete",
+    "number": "number of candidate tools run or priced of the three families (camera projection, image-to-3D, scene reconstruction); PASS needs >= 1 per family"
+   },
+   "measures": "MS-2 list for L11 has camera-projection, image-to-3D and scene-reconstruction candidates, each run or priced",
+   "repeats": 1,
+   "repeat_evidence": ""
+  },
+  {
+   "id": "OR-V16",
+   "kind": "requirement",
+   "words": "ასევე ვიპოვესხვადასხვა თულები რო ბლენდერს ფოტო პირდაპილ ჩააცვას. და რეალისტური მოძრაობები და რაღაცები მოხდეს.",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "I also found various tools that dress Blender directly with a photo, and realistic motion and things happen.",
+   "date": "2026-11-20T07:02:57Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWW8G4AXJG77L6sCBVFxaLJEW"
+   },
+   "layers": [
+    "L12",
+    "L13"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "judge",
+    "who": "blind judge",
+    "rubric": "docs/registry/judge_rubrics.md#j-body-motion",
+    "number": "per clip: realism score 1-5 and count of body artifacts (limb melt, foot slide, face drift); PASS needs score >= 4 and 0 artifacts on every listed clip"
+   },
+   "measures": "body-motion trial vs mocap/motion-from-video candidates; judge's two numbers per clip; plus a measured foot-slide in pixels as a validator to be written",
+   "repeats": 2,
+   "repeat_evidence": "11-20 07:02, 07:14 ('realistic motion')",
+   "note": "judge-only is not enough for a hard requirement (lead's review 6): the foot-slide/limb measure is the validator still to be written"
+  },
+  {
+   "id": "OR-V17",
+   "kind": "requirement",
+   "words": "ლტხ ის შესაძლებლობას მულტი შოთს და რაღაცებს არ ვიყენებთ",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "We do not use LTX's multi-shot and other abilities.",
+   "date": "2026-11-20T07:14:55Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWW6JyJD8JFB16BP7oNRafo4o"
+   },
+   "layers": [
+    "L13"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "L13 record lists every LTX capability (multi-shot, keyframes, retake, audio-to-video, camera LoRA, IC LoRA) as used with a trial or not_used with a reason",
+   "repeats": 1,
+   "repeat_evidence": ""
+  },
+  {
+   "id": "OR-V18",
+   "kind": "requirement",
+   "words": "Fast change; a still may last 5 s only if a dramatic change happens in it (MrBeast rhythm).",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-11-01T13:20:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-mrbeast-style-direction"
+   },
+   "layers": [
+    "L12",
+    "L13",
+    "L14"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "shot length vs dramatic-change flag; numbers only from sourced BP rules",
+   "repeats": 2,
+   "repeat_evidence": "11-01, 11-14 (D-139 5 s)"
+  },
+  {
+   "id": "OR-V19",
+   "kind": "requirement",
+   "words": "ეს რა უაზრო რენდერებია უბრალოდ ზუმია არც ცეცხლის კვამლის მოძრაობები არც ქარი არც თოვლი",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "What pointless renders, it is just a zoom: no fire or smoke motion, no wind, no snow.",
+   "date": "2026-11-20T08:33:54Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPW6iZFxgisBDShz8rcqgKN6L"
+   },
+   "layers": [
+    "L14"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "parent: covered when OR-V19a..e are covered",
+   "repeats": 5,
+   "repeat_evidence": "11-12 21:44 (nothing moves), 11-14 ('only the fire moves'), 11-14 12:38 (director decides snow), 11-20 07:14 ('2.5D moves terribly'), 11-20 08:33",
+   "note": "children carry the checks; a camera-only clip fails MS-1 (R-LIVING)"
+  },
+  {
+   "id": "OR-V19a",
+   "kind": "requirement",
+   "words": "fire and smoke move inside the picture ('ცეცხლის კვამლის მოძრაობები')",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "What pointless renders, it is just a zoom: no fire or smoke motion, no wind, no snow.",
+   "date": "2026-11-20T08:33:54Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPW6iZFxgisBDShz8rcqgKN6L"
+   },
+   "layers": [
+    "L14"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "optical flow inside the fire and smoke masks above a threshold with the camera move removed, in every second of the shot; flame mask never at zero (LP-06)",
+   "repeats": 3,
+   "repeat_evidence": "11-14, 11-14 12:38, 11-20 08:33",
+   "parent": "OR-V19",
+   "words_partial": true
+  },
+  {
+   "id": "OR-V19b",
+   "kind": "requirement",
+   "words": "wind moves cloth, hair and grass ('ქარი')",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "What pointless renders, it is just a zoom: no fire or smoke motion, no wind, no snow.",
+   "date": "2026-11-20T08:33:54Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPW6iZFxgisBDShz8rcqgKN6L"
+   },
+   "layers": [
+    "L14"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "optical flow inside cloth, hair and grass masks above a threshold; one wind vector shared by all effect masks of the shot (LP-09)",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "parent": "OR-V19",
+   "words_partial": true
+  },
+  {
+   "id": "OR-V19c",
+   "kind": "requirement",
+   "words": "snow falls with depth, near flakes larger and faster than far ones ('თოვლი')",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "What pointless renders, it is just a zoom: no fire or smoke motion, no wind, no snow.",
+   "date": "2026-11-20T08:33:54Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPW6iZFxgisBDShz8rcqgKN6L"
+   },
+   "layers": [
+    "L14"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "particle speed and size differ by depth layer (near/far ratio > 1) and flow inside the snow mask; weather set once per scene by the director",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "parent": "OR-V19",
+   "words_partial": true
+  },
+  {
+   "id": "OR-V19d",
+   "kind": "requirement",
+   "words": "breath visible inside the picture (cold scenes, speaking faces)",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-11-14T00:00:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "audit-25d-liveliness-2026-11-14"
+   },
+   "layers": [
+    "L14"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "breath-cloud mask present in cold-scene plans and flow inside it above a threshold",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "parent": "OR-V19",
+   "note": "owner words not quoted in memory; audit directive of 11-14"
+  },
+  {
+   "id": "OR-V19e",
+   "kind": "requirement",
+   "words": "a camera move alone is not alive: remove the camera move and measure what is left ('უბრალოდ ზუმია')",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "What pointless renders, it is just a zoom: no fire or smoke motion, no wind, no snow.",
+   "date": "2026-11-20T08:33:54Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPW6iZFxgisBDShz8rcqgKN6L"
+   },
+   "layers": [
+    "L14"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "validator",
+    "ref": "explainer_engine.qa.liveliness:liveliness_rows",
+    "test": "tests/unit/test_liveliness.py::test_a_camera_move_alone_is_not_alive_beyond_the_camera",
+    "note": "whole-frame test only; masked fire/smoke/snow flow is NOT covered, those are 19a-c",
+    "verified": {
+     "ref_and_test_exist": true,
+     "tests_run_by_analyst": false
+    }
+   },
+   "measures": "camera-only clip fails; residual motion after camera removal above threshold",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "parent": "OR-V19",
+   "words_partial": true
+  },
+  {
+   "id": "OR-V20",
+   "kind": "requirement",
+   "words": "The director lists the photo's living elements, gives each an effect by priority, with balance rules (LP-01..LP-12, G-INV, G-BAL, G-WX, G-LIVE).",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-11-14T00:00:00Z",
+   "source": {
+    "kind": "doc",
+    "ref": "architecture_2026-11-14/LIVING_PHOTO_RULES_2026-11-14.md"
+   },
+   "layers": [
+    "L14"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "run living_photo_rules.py gates on every 2.5D plan and on the final mp4 (gates exist as a script, no test in tests/unit located)",
+   "repeats": 2,
+   "repeat_evidence": "",
+   "note": "LP rules are the team's proposals until the owner confirms; marked unmapped, not confirmed"
+  },
+  {
+   "id": "OR-V21",
+   "kind": "requirement",
+   "words": "A visible flame is never frozen (LP-06).",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-11-14T00:00:00Z",
+   "source": {
+    "kind": "doc",
+    "ref": "LIVING_PHOTO_RULES LP-06"
+   },
+   "layers": [
+    "L14"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "flow inside the flame mask > 0 in every 1 s window",
+   "repeats": 2,
+   "repeat_evidence": "",
+   "note": "overlaps OR-V19a (kept: distinct validator = per-second window at zero, not a threshold on the whole shot)"
+  },
+  {
+   "id": "OR-V22",
+   "kind": "requirement",
+   "words": "At least 3 effects besides flames; at least 2 not light; at least 1 moving air over the frame (LP-08).",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-11-14T00:00:00Z",
+   "source": {
+    "kind": "doc",
+    "ref": "LIVING_PHOTO_RULES LP-08"
+   },
+   "layers": [
+    "L14"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "effect count by class from the plan, confirmed by flow per class",
+   "repeats": 2,
+   "repeat_evidence": "",
+   "note": "overlaps OR-V19 children and OR-V20 (kept: distinct validator = counts by class in the plan, not flow)"
+  },
+  {
+   "id": "OR-V23",
+   "kind": "requirement",
+   "words": "რატო მეკითხები ყველგან უნდა თივდეს თუ არა? სადაც სცენარულად თივა სწორია თავად უნდა გადაწყვიტოს რეჟისორმა თუ ამ კითხვას სვამს ესეიგი კვლავ კარგად არ აქვს წესები გაწერილი",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "Why do you ask whether it must snow everywhere? Where snow is right for the scenario the director must decide; if he asks this, his rules are still not written well.",
+   "date": "2026-11-14T12:38:31Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWWWojGKCioK4XxEJiUguz9X"
+   },
+   "layers": [
+    "L14"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "weather set once per scene by the director with a written reason; one wind for all effects in a shot (LP-09)",
+   "repeats": 2,
+   "repeat_evidence": "11-14 12:38, 11-14 (LP-09)"
+  },
+  {
+   "id": "OR-V24",
+   "kind": "requirement",
+   "words": "A 2.5D shot is at most 5 s; a still shot keeps a slow drift (D-139).",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-11-14T12:37:00Z",
+   "source": {
+    "kind": "decision_log",
+    "ref": "D-139"
+   },
+   "layers": [
+    "L14"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "duration <= 5 s; camera never fully static on a still",
+   "repeats": 1,
+   "repeat_evidence": ""
+  },
+  {
+   "id": "OR-V25",
+   "kind": "requirement",
+   "words": "Body motion is LTX, not 2.5D (LP-02).",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-11-14T00:00:00Z",
+   "source": {
+    "kind": "doc",
+    "ref": "LIVING_PHOTO_RULES LP-02"
+   },
+   "layers": [
+    "L13",
+    "L14"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "the 2.5D plan contains no body-motion effect",
+   "repeats": 1,
+   "repeat_evidence": ""
+  },
+  {
+   "id": "OR-V26",
+   "kind": "requirement",
+   "words": "Motion at least as alive as Gemini's demo, 3.6-12.2 % frame change per second on photos.",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-11-12T21:44:18Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-realism-audit-2026-11-12"
+   },
+   "layers": [
+    "L14",
+    "L15"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "G-LIVE: % change per second on the final mp4 printed next to the 3.6-12.2 reference; < 5 %/s fails. Candidate (whole-frame only): qa.liveliness:change_per_s",
+   "repeats": 2,
+   "repeat_evidence": "11-12 21:44, 11-14 (living-photo gates)"
+  },
+  {
+   "id": "OR-V27",
+   "kind": "requirement",
+   "words": "Anything shown to the owner is built through the production path; no stand-in sound or camera.",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-11-12T21:44:18Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-realism-audit-2026-11-12"
+   },
+   "layers": [
+    "L9",
+    "L10",
+    "L11",
+    "L12",
+    "L13",
+    "L14",
+    "L15",
+    "L16"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "parent: covered when OR-V27a and OR-V27b are covered",
+   "repeats": 2,
+   "repeat_evidence": "11-12 21:44, 11-20 08:33 ('pointless renders')",
+   "note": "children carry the checks"
+  },
+  {
+   "id": "OR-V27a",
+   "kind": "requirement",
+   "words": "the demo is built with production modules only (no stand-in module)",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-11-12T21:44:18Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-realism-audit-2026-11-12"
+   },
+   "layers": [
+    "L9",
+    "L10",
+    "L11",
+    "L12",
+    "L13",
+    "L14",
+    "L15",
+    "L16"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "import check of the demo build against an allow-list of production modules",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "parent": "OR-V27"
+  },
+  {
+   "id": "OR-V27b",
+   "kind": "requirement",
+   "words": "no stand-in sound (numpy hiss) and no stand-in camera move in a shown render",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-11-12T21:44:18Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-realism-audit-2026-11-12"
+   },
+   "layers": [
+    "L9",
+    "L10",
+    "L11",
+    "L12",
+    "L13",
+    "L14",
+    "L15",
+    "L16"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "validator",
+    "ref": "explainer_engine.qa.sound_realism:measure",
+    "test": "tests/unit/test_sound_realism.py::test_one_noise_under_every_place_fails",
+    "note": "sound half only; camera half stays unmapped",
+    "verified": {
+     "ref_and_test_exist": true,
+     "tests_run_by_analyst": false
+    }
+   },
+   "measures": "sound: one noise under every place fails; camera: camera path comes from the director's plan",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "parent": "OR-V27"
+  },
+  {
+   "id": "OR-V28",
+   "kind": "requirement",
+   "words": "5 .ბლენდერის როლი 10% ის შექმნისას უნდა გაიზომოს ცნობილი ბიბლიოტეკებიტ",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "Blender's role in creating the 10 % must be measured against well-known libraries.",
+   "date": "2026-11-20T07:14:55Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWW6JyJD8JFB16BP7oNRafo4o"
+   },
+   "layers": [
+    "L15"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "judge",
+    "who": "blind judge",
+    "rubric": "docs/registry/judge_rubrics.md#j-map-vs-library",
+    "number": "rank 1..N of our map among >= 3 library maps rendered on the same data (integer rank per judge); PASS needs rank <= 2 and the blind key sealed first"
+   },
+   "measures": "L15 record: >= 3 libraries run on the same map; judge rank; a validator for letter-free plate and own type is OR-V40",
+   "repeats": 2,
+   "repeat_evidence": "11-20 07:02, 07:14"
+  },
+  {
+   "id": "OR-V29",
+   "kind": "requirement",
+   "words": "რატო მეკითხები ყველგან უნდა თივდეს თუ არა? სადაც სცენარულად თივა სწორია თავად უნდა გადაწყვიტოს რეჟისორმა თუ ამ კითხვას სვამს ესეიგი კვლავ კარგად არ აქვს წესები გაწერილი",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "Why do you ask whether it must snow everywhere? Where snow is right for the scenario the director must decide; if he asks this, his rules are still not written well.",
+   "date": "2026-11-14T12:38:31Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWWWojGKCioK4XxEJiUguz9X"
+   },
+   "layers": [
+    "L14",
+    "L15"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "every effect and every sound cue carries a reason field from the director stage; no hand-written lists",
+   "repeats": 3,
+   "repeat_evidence": "11-14 12:38, 11-14 13:13, 11-12 21:44"
+  },
+  {
+   "id": "OR-V30",
+   "kind": "requirement",
+   "words": "Overlay integration rules for the new module (video scenes forbidden; 30 % lane strict; sound on motion; style unity).",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-11-12T19:43:10Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPW3rTCNu86nqAMhP9fsPTVWZ"
+   },
+   "layers": [
+    "L14",
+    "L15"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "parent: covered when OR-V30a..e are covered",
+   "repeats": 2,
+   "repeat_evidence": "11-12 19:43, 11-13",
+   "note": "children carry the checks"
+  },
+  {
+   "id": "OR-V30a",
+   "kind": "requirement",
+   "words": "ვიდეო სცენებში ის საერთოდა იკრძალოს",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "In video scenes it (the overlay) is forbidden entirely.",
+   "date": "2026-11-12T19:43:10Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPW3rTCNu86nqAMhP9fsPTVWZ"
+   },
+   "layers": [
+    "L14",
+    "L15"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "validator",
+    "ref": "explainer_engine.overlay.rules:ov01",
+    "test": "tests/unit/test_overlay_rules.py::test_each_rule_fails_on_its_bad_input",
+    "note": "ov01 and ov03 return FAIL for an ltx shot that carries an overlay; analyst did not run the test",
+    "verified": {
+     "ref_and_test_exist": true,
+     "tests_run_by_analyst": false
+    }
+   },
+   "measures": "an overlay on a video (ltx) shot fails",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "parent": "OR-V30"
+  },
+  {
+   "id": "OR-V30b",
+   "kind": "requirement",
+   "words": "30 პროცენტში იმპლემენტაციას მკაცრი წესები სჭირდება მხოლოდ საჭიროება უნდა იყოს და არ უნდა აფუჭებდეს ძირითად კადრს",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "In the 30 % lane the implementation needs strict rules: only when needed, and it must not spoil the main frame.",
+   "date": "2026-11-12T19:43:10Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPW3rTCNu86nqAMhP9fsPTVWZ"
+   },
+   "layers": [
+    "L14",
+    "L15"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "in the 30 % lane an overlay exists only if a registered need says so, and never covers the main frame (occlusion of the focus region = 0). Candidate: overlay.rules ov33/ov18 occlusion rules",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "parent": "OR-V30"
+  },
+  {
+   "id": "OR-V30c",
+   "kind": "requirement",
+   "words": "მოძრაობა რუკაზე ჩარტზე მრუცხველზე თუ სხვა ხმას უნდა გამოსცემდეს",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "Motion on a map, chart, counter or anything else must make a sound.",
+   "date": "2026-11-12T19:43:10Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPW3rTCNu86nqAMhP9fsPTVWZ"
+   },
+   "layers": [
+    "L15",
+    "L17",
+    "L18"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "every motion on a map, chart or counter has a cue or a silent_by_design reason within budget (same entry as OR-A02)",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "parent": "OR-V30"
+  },
+  {
+   "id": "OR-V30d",
+   "kind": "requirement",
+   "words": "რუკა იქნება თუ სხვა ყველაფერი ჯერ ვიდეოს შემდეგ კი ერთმანეთის სტილში უნდა იყოს",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "Map or anything else: first in the video's style, then in each other's style.",
+   "date": "2026-11-12T19:43:10Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPW3rTCNu86nqAMhP9fsPTVWZ"
+   },
+   "layers": [
+    "L14",
+    "L15"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "judge",
+    "who": "blind judge",
+    "rubric": "docs/registry/judge_rubrics.md#j-style-unity",
+    "number": "style-unity score 1-5 between the overlay and the video frame next to it; PASS needs >= 4"
+   },
+   "measures": "judge's style-unity number per overlay shot",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "parent": "OR-V30"
+  },
+  {
+   "id": "OR-V30e",
+   "kind": "requirement",
+   "words": "ასევე მნიშველოვანია ზოგგან გამჭვირვალე სტილების გამოყენება განსაკუთრებით 30 % ში",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "Using transparent styles in places is also important, especially in the 30 % lane.",
+   "date": "2026-11-12T19:43:10Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPW3rTCNu86nqAMhP9fsPTVWZ"
+   },
+   "layers": [
+    "L14",
+    "L15"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "transparent (glass) surfaces used where the plan says so, most in the 30 % lane. Candidate: overlay.rules ov21 (glass)",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "parent": "OR-V30"
+  },
+  {
+   "id": "OR-V31",
+   "kind": "requirement",
+   "words": "Free local 2x upscale; only failing close-up hero shots are re-made at 2K, priced and asked first.",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-11-12T00:00:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-v43-picture-look-2026-11-12"
+   },
+   "layers": [
+    "L16"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "sharpness gate on the 1080p frame; a 2K re-make needs a paid_offer record. Candidate: tests/unit/test_finish_upscale.py (filter geometry only, not the sharpness gate)",
+   "repeats": 2,
+   "repeat_evidence": ""
+  },
+  {
+   "id": "OR-V32",
+   "kind": "requirement",
+   "words": "ჩვენი კოდი აჯობებს რა წესია? თუ ჩვენ არასწორი სქოლი ვიპოვეთ ან კარგად ვერ გავაკეთებს აჯობებს. ნუ დამაჯერებ რო ცვენი კოდი სამყაროშ საუკეთესოა",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "What is the rule by which our code wins? Do not convince me our code is the best in the world.",
+   "date": "2026-11-20T08:07:52Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPW6tXLmdZePqUCXQMxVwxSN4"
+   },
+   "layers": [
+    "L9",
+    "L10",
+    "L11",
+    "L12",
+    "L13",
+    "L14",
+    "L15",
+    "L16"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "layer_gate MS4-KEEP-* codes (PR #219): keep_ours needs (a)-(e) evidence; a blind judge with sealed labels",
+   "repeats": 2,
+   "repeat_evidence": "11-20 08:07, 08:10"
+  },
+  {
+   "id": "OR-V33",
+   "kind": "requirement",
+   "words": "ორკესტრატორმა გადმომცეს ხოლმე შესადარებელი რენდერები",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "The orchestrator should hand me the comparison renders.",
+   "date": "2026-11-20T08:30:01Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPW6KWDsJHV2oqLxmhPK6o6sa"
+   },
+   "layers": [
+    "L9",
+    "L10",
+    "L11",
+    "L12",
+    "L13",
+    "L14",
+    "L15",
+    "L16"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "each comparison render is uploaded under comparisons/<layer>/ with A/B/C labels and its exact link sent to the lead at once (send gate when it exists)",
+   "repeats": 2,
+   "repeat_evidence": "11-20 08:30, 08:33"
+  },
+  {
+   "id": "OR-V34",
+   "kind": "requirement",
+   "words": "წესებს რააზრი აქ თუ ის არ სრულდება?",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "What is the point of rules if they are not followed?",
+   "date": "2026-11-20T08:34:52Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPW1oFAyBSLLgTCU7KMSLutpZ"
+   },
+   "layers": [
+    "L9",
+    "L10",
+    "L11",
+    "L12",
+    "L13",
+    "L14",
+    "L15",
+    "L16"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "layer_gate blocks a layer whose registry entries are unmapped; trials run their validators before the owner sees them",
+   "repeats": 2,
+   "repeat_evidence": "11-20 08:34, 08:36, 08:37"
+  },
+  {
+   "id": "OR-V36",
+   "kind": "requirement",
+   "words": "Faces read as live-action actors in a warm adventure film, never as 3D-animation characters (GC-11); faces were rejected as 'too round, a cheap modern cartoon'.",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-11-12T10:15:00Z",
+   "source": {
+    "kind": "doc",
+    "ref": "docs/GEMINI_CONSISTENCY_RULES.md#GC-11"
+   },
+   "layers": [
+    "L9",
+    "L10"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "judge",
+    "who": "blind judge",
+    "rubric": "docs/registry/judge_rubrics.md#j-face-actor",
+    "number": "per hero face: actor score 1-5 and count of faces that read as round 3D cartoon; PASS needs every face >= 4 and 0 cartoon faces; owner sees the sheet at MS-7"
+   },
+   "measures": "faces-intact check (YuNet IoU floor, spec section 4 third validator) for identity; the actor/cartoon read stays a judge number",
+   "repeats": 3,
+   "repeat_evidence": "11-12 ('too round, cheap cartoon'), 10-25 ('primitive round faces'), 11-19 (shared planar rule)",
+   "note": "translated quote from the GC-11 text; owner's Georgian words not stored in repo"
+  },
+  {
+   "id": "OR-V37",
+   "kind": "requirement",
+   "words": "References first, in two rounds: R1 hero portraits and places, creator approves; R2 full bodies, each with its own approved portrait; no scene batch before (GC-23, Q7, Q8).",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-11-12T00:00:00Z",
+   "source": {
+    "kind": "doc",
+    "ref": "docs/GEMINI_CONSISTENCY_RULES.md#GC-23"
+   },
+   "layers": [
+    "L9"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "scene batch refused until R1 and R2 approval records exist; R2 doubles as test T1 (each body matches its own portrait only)",
+   "repeats": 1,
+   "repeat_evidence": ""
+  },
+  {
+   "id": "OR-V38",
+   "kind": "requirement",
+   "words": "Image 1 of a scene picture is the style anchor of its shot type, and an anchor shows no recognisable face where the shot type allows it (GC-21).",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-11-12T00:00:00Z",
+   "source": {
+    "kind": "doc",
+    "ref": "docs/GEMINI_CONSISTENCY_RULES.md#GC-21"
+   },
+   "layers": [
+    "L9"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "queue builder: image 1 = shot-type anchor; anchor image face count = 0 (face detector). Candidate: tests/unit/test_gemini_task_flow.py::test_queue_style_anchor_by_shot_type_reference_order_and_batches",
+   "repeats": 1,
+   "repeat_evidence": ""
+  },
+  {
+   "id": "OR-V39",
+   "kind": "requirement",
+   "words": "Map shots are made LAST (docudrama order).",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-11-14T00:00:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "MEMORY.md 'Older: DOCUDRAMA, maps LAST'"
+   },
+   "layers": [
+    "L15"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "episode runner order: map_action clips are queued after all picture and video shots",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "owner's original message not found in memory; source is the index line only. Not signable until the owner has seen it"
+  },
+  {
+   "id": "OR-V40",
+   "kind": "requirement",
+   "words": "Maps are Python over a letter-free relief plate with our own type (D-130, L15).",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-11-12T00:00:00Z",
+   "source": {
+    "kind": "decision_log",
+    "ref": "D-130"
+   },
+   "layers": [
+    "L15"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "plate has zero glyph pixels (OCR count 0); labels drawn in our own font; check by OCR on the plate",
+   "repeats": 1,
+   "repeat_evidence": ""
+  },
+  {
+   "id": "OR-V41",
+   "kind": "requirement",
+   "words": "2.5დ საშინლად ამოძრავცებ და მაინც არ აიღე სქილი",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "You move 2.5D terribly and still did not take a skill.",
+   "date": "2026-11-20T07:14:55Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWW6JyJD8JFB16BP7oNRafo4o"
+   },
+   "layers": [
+    "L14"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "judge",
+    "who": "blind judge",
+    "rubric": "docs/registry/judge_rubrics.md#j-25d-moves",
+    "number": "per 2.5D clip: speed-profile jumps (count, must be 0) and easing score 1-5 (>= 4); the validator to write is the camera-path curvature/jerk from qa.liveliness.camera_curve"
+   },
+   "measures": "camera curve jerk and easing measured from the clip (qa.liveliness:camera_curve exists, no test names this requirement)",
+   "repeats": 3,
+   "repeat_evidence": "11-12 21:44 (nothing moves), 11-20 07:14 ('moves terribly'), 11-20 08:33"
+  },
+  {
+   "id": "OR-V42",
+   "kind": "requirement",
+   "words": "Truce 1914 takes 1917 (2019) as its look reference.",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-11-19T22:00:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "MEMORY.md STYLE RULE (rule 20)"
+   },
+   "layers": [
+    "L9"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "series config era_film for Truce 1914 = 1917 (2019); string check",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "source is the memory index line; owner's words not quoted"
+  },
+  {
+   "id": "OR-V43",
+   "kind": "requirement",
+   "words": "The daily Gemini limit stops the batch; the next day resumes at the first picture 'NOT MADE: limit'; never switch model or fall back to code (GC-27).",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-11-12T00:00:00Z",
+   "source": {
+    "kind": "doc",
+    "ref": "docs/GEMINI_CONSISTENCY_RULES.md#GC-27"
+   },
+   "layers": [
+    "L9"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "batch report parser: every picture after the limit is NOT MADE; the model name never changes mid-batch",
+   "repeats": 1,
+   "repeat_evidence": ""
+  },
+  {
+   "id": "OR-V44",
+   "kind": "requirement",
+   "words": "არბილებს",
+   "words_verbatim": true,
+   "words_origin": "memory_quote",
+   "gloss": "It softens (said of the plain Python resize; rejected, RealPLKSR chosen).",
+   "date": "2026-11-14T00:00:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "upscale-direction-2026-11-14"
+   },
+   "layers": [
+    "L16"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "judge",
+    "who": "blind judge",
+    "rubric": "docs/registry/judge_rubrics.md#j-waxy",
+    "number": "per face crop: skin texture score 1-5 (1 = waxy/plastic) and count of waxy faces; PASS needs >= 4 on every crop and 0 waxy faces; plus static detail ratio 0.8-1.3 vs source (validator to write)"
+   },
+   "measures": "detail ratio and LPIPS vs source on face crops (BP-198 Q1..Q7); judge's number on the same crops",
+   "repeats": 2,
+   "repeat_evidence": "11-14 (plain resize rejected), 11-20 (plastic skin finding)",
+   "words_partial": true,
+   "note": "'არბილებს' was said of the plain Python resize, generalised by the upscale direction (BP-198)"
+  },
+  {
+   "id": "OR-V45",
+   "kind": "requirement",
+   "words": "ერთი სცენა მხოლოდ მაშინ თუ არენდერებს დაბლარული ფონით ან თუ ეს სცენები ერთმანეთის მიმდევრობით არაა და მაყურებელი ვერ შეამჩნევს",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "One scene may be re-rendered only with a blurred background, or when those scenes are not in sequence and the viewer cannot notice.",
+   "date": "2026-11-07T18:08:47Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWWWGFzRWxBehT3gJoao5ggGZ"
+   },
+   "layers": [
+    "L9",
+    "L10"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "a place is re-drawn between sequential shots only with a blurred background; otherwise one picture serves the shots (D-120)",
+   "repeats": 2,
+   "repeat_evidence": "11-07 18:08, 11-01 (reuse environments)"
+  },
+  {
+   "id": "OR-V46",
+   "kind": "requirement",
+   "words": "ვკრძალავ დარენდერებულ ფოტკებს რეფერენსად",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "I forbid rendered photos as references.",
+   "date": "2026-11-07T18:08:47Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWWWGFzRWxBehT3gJoao5ggGZ"
+   },
+   "layers": [
+    "L9",
+    "L10"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "reference slots never contain a rendered/clip frame; a photo of another scene may serve",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "words_partial": true
+  },
+  {
+   "id": "OR-V47",
+   "kind": "requirement",
+   "words": "Ltx ასჯერ უკეთესია .",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "LTX is a hundred times better.",
+   "date": "2026-11-12T19:10:06Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPW8KsicnVNwnnwMXbRDMPsji"
+   },
+   "layers": [
+    "L13"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "video route is LTX (D-132); a route trial must name LTX as the baseline",
+   "repeats": 2,
+   "repeat_evidence": "11-12 19:10, 11-13 07:00 ('LTX stays the generator')"
+  },
+  {
+   "id": "OR-C01",
+   "kind": "conflict",
+   "status": "open",
+   "title": "GC-18 never_words vs rule 20 (name the era film)",
+   "conflicts": [
+    "OR-V02",
+    "OR-V01",
+    "GC-18"
+   ],
+   "words": "",
+   "words_verbatim": false,
+   "words_origin": "none",
+   "gloss": "GC-18 refuses words the chat redraws as a photograph (photograph, photo, natural, realistic, 3D render) in every prompt; rule 20 asks to name the film and ask for realism directly. Card answered C 'test both'; pack B is running in a browser thread.",
+   "date": "2026-11-20T00:00:00Z",
+   "source": {
+    "kind": "doc",
+    "ref": "docs/GEMINI_CONSISTENCY_RULES.md#GC-18 + memory feedback-era-film-style-rule-2026-11-19"
+   },
+   "layers": [
+    "L9",
+    "L12",
+    "L13"
+   ],
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "owner answers; the gate BLOCKs the bound layers until then (REQ-CONFLICT-OPEN)",
+   "repeats": 0,
+   "repeat_evidence": ""
+  },
+  {
+   "id": "OR-C02",
+   "kind": "conflict",
+   "status": "open",
+   "title": "Rule 20 vs RR-03 / RR-15 (franchise episodes)",
+   "conflicts": [
+    "OR-V01",
+    "RR-03",
+    "RR-15"
+   ],
+   "words": "",
+   "words_verbatim": false,
+   "words_origin": "none",
+   "gloss": "Naming a film in prompts is a style reference to someone else's film; RR-03/RR-15 (docs/RIGHTS_AND_FAIR_USE.md) bar third-party media and franchise look in episodes about other people's worlds.",
+   "date": "2026-11-20T00:00:00Z",
+   "source": {
+    "kind": "doc",
+    "ref": "docs/RIGHTS_AND_FAIR_USE.md RR-03, RR-15"
+   },
+   "layers": [
+    "L9",
+    "L13",
+    "L32"
+   ],
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "owner answers; the gate BLOCKs the bound layers until then (REQ-CONFLICT-OPEN)",
+   "repeats": 0,
+   "repeat_evidence": ""
+  },
+  {
+   "id": "OR-C03",
+   "kind": "conflict",
+   "status": "open",
+   "title": "PRODUCTION_RULES approval #2 vs PC-08",
+   "conflicts": [
+    "PRODUCTION_RULES approval #2",
+    "PC-08"
+   ],
+   "words": "",
+   "words_verbatim": false,
+   "words_origin": "none",
+   "gloss": "The lead's review lists these two as in conflict; the analyst did not open the two texts for this version (PC-08 only seen in a PROGRESS.md line about gates that never ran).",
+   "date": "2026-11-20T00:00:00Z",
+   "source": {
+    "kind": "doc",
+    "ref": "docs/PRODUCTION_RULES.md approval #2; qa/publish_check.py PC-08 (not re-read here)"
+   },
+   "layers": [
+    "L26",
+    "L27",
+    "L28",
+    "L32"
+   ],
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "owner answers; the gate BLOCKs the bound layers until then (REQ-CONFLICT-OPEN)",
+   "repeats": 0,
+   "repeat_evidence": ""
+  },
+  {
+   "id": "OR-C04",
+   "kind": "conflict",
+   "status": "open",
+   "title": "LTX needs no background sounds (11-12 19:12) vs one continuous sound bed and no dead air",
+   "conflicts": [
+    "OR-A07",
+    "OR-A03",
+    "OR-A04"
+   ],
+   "words": "",
+   "words_verbatim": false,
+   "words_origin": "none",
+   "gloss": "On 11-12 19:12 he said LTX videos need no background sounds; on 11-12 21:44 he called silence in dialogue the most artificial thing and asked for a bed. Possibly different scopes (LTX clips vs the whole mix); needs his word. Analyst flag, not in the lead's list.",
+   "date": "2026-11-20T00:00:00Z",
+   "source": {
+    "kind": "doc",
+    "ref": "chats cmsg ..GKmz1ggG982FmdKJd1dYji and ..VMsQtbv2YdqWCRYtcMXpMu"
+   },
+   "layers": [
+    "L4",
+    "L5",
+    "L6",
+    "L17",
+    "L18",
+    "L19",
+    "L20"
+   ],
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "owner answers; the gate BLOCKs the bound layers until then (REQ-CONFLICT-OPEN)",
+   "repeats": 0,
+   "repeat_evidence": ""
+  },
+  {
+   "id": "OR-S01",
+   "kind": "requirement",
+   "words": "Before any script: a SHORT story in Georgian in the thread (what it is about, how it ends); the script is written only after his OK (OR-15, PV-45).",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-10-21T00:00:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "creator-workflow-preferences"
+   },
+   "layers": [
+    "L1",
+    "L2",
+    "L3",
+    "L7",
+    "L8",
+    "L29",
+    "L30"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "episode.scenario approval record present before a production_script exists",
+   "repeats": 3,
+   "repeat_evidence": "10-19, 10-20, 10-21"
+  },
+  {
+   "id": "OR-S02",
+   "kind": "requirement",
+   "words": "The channel is a storyteller: the goal is an interesting idea told well; hooks, animation and sound effects are only the means.",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-10-20T11:15:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "channel-storyteller-principle"
+   },
+   "layers": [
+    "L1",
+    "L2",
+    "L3",
+    "L7",
+    "L8",
+    "L29",
+    "L30"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "judge",
+    "who": "script-critic",
+    "rubric": "docs/registry/judge_rubrics.md#j-story-first",
+    "number": "story score 1-10 from the script-critic rubric and the predicted drop-off minute; PASS needs >= 7 before any paid step"
+   },
+   "measures": "script-critic score printed with the script hash",
+   "repeats": 3,
+   "repeat_evidence": "10-20 (twice), 10-26",
+   "note": "judge-only: a story cannot be measured; the owner approves the finished script (OR-17)"
+  },
+  {
+   "id": "OR-S03",
+   "kind": "requirement",
+   "words": "An episode idea is a mini-film, not a montage: main and secondary heroes, real multi-turn dialogues, mixed outcomes, a frame character is welcome.",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-10-20T11:15:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "channel-storyteller-principle"
+   },
+   "layers": [
+    "L1",
+    "L2",
+    "L3",
+    "L7",
+    "L8",
+    "L29",
+    "L30"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "scene_lint PV-48 counts: dialogue turns per scene >= 2 exchanges; named main/secondary hero list; outcome mix. Candidate: tests/unit/test_story_lint_p3.py",
+   "repeats": 2,
+   "repeat_evidence": ""
+  },
+  {
+   "id": "OR-S04",
+   "kind": "requirement",
+   "words": "Strict storytelling: show don't tell (no trait statements, ratings or biographies from the narrator, SC-12) and full immersion (no meta disclaimers, SC-11).",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-10-20T00:00:00Z",
+   "source": {
+    "kind": "decision_log",
+    "ref": "D-61"
+   },
+   "layers": [
+    "L1",
+    "L2",
+    "L3",
+    "L7",
+    "L8",
+    "L29",
+    "L30"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "story_lint SC-11/SC-12 on every script (rule ids exist in docs; test coverage not located)",
+   "repeats": 2,
+   "repeat_evidence": ""
+  },
+  {
+   "id": "OR-S05",
+   "kind": "requirement",
+   "words": "არანაირი მუდმივი გმირები. სამყაროა სრულიად გამოგონილი: ერთ დღეს რომზე ვიდეო, მეორე დღეს მომავალზე; ზოგიერთი გმირის შენახვა და ტანსაცმლის ცვლა შეიძლება, მაგრამ სამყარო ერთია, თემები და გმირები ყველანაირი.",
+   "words_verbatim": true,
+   "words_origin": "memory_quote",
+   "gloss": "No permanent heroes. The world is fully invented; a hero may be kept with costume changes, but the world is one.",
+   "date": "2026-10-22T22:41:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "no-permanent-heroes"
+   },
+   "layers": [
+    "L1",
+    "L2",
+    "L3",
+    "L7",
+    "L8",
+    "L29",
+    "L30"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "no character LoRA in any plan; a kept hero has a new sheet with new clothes",
+   "repeats": 2,
+   "repeat_evidence": "10-22 22:41 ('repeated')",
+   "amended_by": "OR-S06"
+  },
+  {
+   "id": "OR-S06",
+   "kind": "requirement",
+   "words": "Two permanent hosts (analyst, compass) as 2.5D figures in our style (Blueprint card 1/24); episode heroes still change per video.",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-10-29T08:55:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "project-blueprint-plan-2026-10-29"
+   },
+   "layers": [
+    "L1",
+    "L2",
+    "L3",
+    "L7",
+    "L8",
+    "L29",
+    "L30"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "host figures exist as sheets in the library; no host LoRA unless he decides",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "narrows OR-S05; card answer, no chat text stored"
+  },
+  {
+   "id": "OR-S07",
+   "kind": "requirement",
+   "words": "The creator approves the finished script before anything is paid (OR-17, `scripting/script_approval.py`).",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-10-20T00:00:00Z",
+   "source": {
+    "kind": "decision_log",
+    "ref": "D-61 / OR-17"
+   },
+   "layers": [
+    "L1",
+    "L2",
+    "L3",
+    "L7",
+    "L8",
+    "L29",
+    "L30"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "sha256-bound script approval record checked by the paid-asset gates",
+   "repeats": 3,
+   "repeat_evidence": "10-20, 10-21, 11-13 (truce script A approved 16:13)"
+  },
+  {
+   "id": "OR-S08",
+   "kind": "requirement",
+   "words": "Two-part sample first: voice and pictures only for the first two parts, rendered and stitched, notes fixed; only his recorded word opens the rest (D-67, OR-19, PP-09).",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-10-21T00:00:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "creator-workflow-preferences"
+   },
+   "layers": [
+    "L1",
+    "L2",
+    "L3",
+    "L7",
+    "L8",
+    "L29",
+    "L30",
+    "L26",
+    "L27",
+    "L28",
+    "L32"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "validator",
+    "ref": "explainer_engine.production.sample:approved",
+    "test": "tests/unit/test_sample_gate.py",
+    "note": "file exists; the specific test function name was not read",
+    "verified": {
+     "ref_and_test_exist": true,
+     "tests_run_by_analyst": false
+    }
+   },
+   "measures": "sample_approval.json bound to the script sha; paid audio/pictures refused without it",
+   "repeats": 2,
+   "repeat_evidence": ""
+  },
+  {
+   "id": "OR-S09",
+   "kind": "requirement",
+   "words": "Georgian is only for talking to the creator; everything the viewer sees or hears is English for the US audience.",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-10-17T00:00:00Z",
+   "source": {
+    "kind": "doc",
+    "ref": "CLAUDE.md Language (creator 2026-10-17)"
+   },
+   "layers": [
+    "L1",
+    "L2",
+    "L3",
+    "L7",
+    "L8",
+    "L29",
+    "L30",
+    "L26",
+    "L27",
+    "L28",
+    "L32"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "language check on narration, on-screen text, picture prompts, titles, metadata and Shorts: no Georgian script characters",
+   "repeats": 2,
+   "repeat_evidence": ""
+  },
+  {
+   "id": "OR-S10",
+   "kind": "requirement",
+   "words": "Docudrama speech: spoken words nominal 70 % narrator / 30 % voiced dialogue, REVIEW band 65-75 % (D-95/D-99, BP-105).",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-11-14T00:00:00Z",
+   "source": {
+    "kind": "decision_log",
+    "ref": "D-99, BP-105"
+   },
+   "layers": [
+    "L1",
+    "L2",
+    "L3",
+    "L7",
+    "L8",
+    "L29",
+    "L30",
+    "L4",
+    "L5",
+    "L6"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "validator",
+    "ref": "explainer_engine.qa.speech_mix:findings",
+    "test": "tests/unit/test_speech_mix.py::test_a_share_outside_the_band_is_a_kp39_review_naming_the_nominal",
+    "note": "analyst did not run the test",
+    "verified": {
+     "ref_and_test_exist": true,
+     "tests_run_by_analyst": false
+    }
+   },
+   "measures": "speech share outside 65-75 % is a REVIEW naming the nominal",
+   "repeats": 2,
+   "repeat_evidence": "",
+   "note": "'DOCUDRAMA' memory-index line has no stored owner message; D-99 is the decision text"
+  },
+  {
+   "id": "OR-S11",
+   "kind": "requirement",
+   "words": "No unsupported claims: every factual sentence maps to a claim with a source (invariant 5, PV-37).",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-10-26T00:00:00Z",
+   "source": {
+    "kind": "doc",
+    "ref": "CLAUDE.md invariant 5"
+   },
+   "layers": [
+    "L1",
+    "L2",
+    "L3"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "scripting/claims.py maps every factual sentence to a claim id; unmapped sentence = FAIL. Candidate: explainer_engine.scripting.claims (test not located)",
+   "repeats": 2,
+   "repeat_evidence": ""
+  },
+  {
+   "id": "OR-S12",
+   "kind": "requirement",
+   "words": "Research from Gemini and Argon is about 90 % reliable: use it as guidance at once, distrust only what is absolute and unverified, say which claims were not opened.",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-11-07T00:00:00Z",
+   "source": {
+    "kind": "doc",
+    "ref": "CLAUDE.md Research trust (creator 2026-11-07)"
+   },
+   "layers": [
+    "L1",
+    "L2"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "research dossier lists claims not opened by the analyst; registry grade follows D-59 (two source types = binding)",
+   "repeats": 1,
+   "repeat_evidence": ""
+  },
+  {
+   "id": "OR-A01",
+   "kind": "requirement",
+   "words": "Sounds come first from our library, then from free licence-checked sources, then ElevenLabs SFX for what is missing (priced list first, his word before buying).",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-11-12T22:15:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-sound-source-order-2026-11-12"
+   },
+   "layers": [
+    "L17",
+    "L18",
+    "L19",
+    "L20"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "sound plan records the source of each cue in the order library > free > ElevenLabs; a paid SFX call needs a priced list and an assets_reuse record (hook)",
+   "repeats": 2,
+   "repeat_evidence": "",
+   "note": "memory paraphrases his card answer 'Q1 = დ' (cmsg_..ARQ2k.. thread); no verbatim line stored"
+  },
+  {
+   "id": "OR-A02",
+   "kind": "requirement",
+   "words": "ეს უაზრო შხრიალი ასეცე არანაირი ხმები მოქმედებებზე რუკაში",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "This pointless hiss; also no sounds at all on the actions in the map.",
+   "date": "2026-11-12T21:44:18Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWVMsQtbv2YdqWCRYtcMXpMu"
+   },
+   "layers": [
+    "L15",
+    "L17",
+    "L18",
+    "L19",
+    "L20"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "every map move, counter start and overlay action has its own cue plus a background bed, or a silent_by_design reason within the budget (BP-81). Candidate: tests/unit/test_sound_cue_policy.py",
+   "repeats": 3,
+   "repeat_evidence": "11-12 19:43, 11-12 21:44, 11-12 22:15"
+  },
+  {
+   "id": "OR-A03",
+   "kind": "requirement",
+   "words": "აბსოლუტურად უაზრო ბეგრაუნდ ხმები",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "Absolutely pointless background sounds.",
+   "date": "2026-11-12T21:44:18Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWVMsQtbv2YdqWCRYtcMXpMu"
+   },
+   "layers": [
+    "L17",
+    "L18",
+    "L19",
+    "L20"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "validator",
+    "ref": "explainer_engine.qa.sound_realism:measure",
+    "test": "tests/unit/test_sound_realism.py::test_one_noise_under_every_place_fails",
+    "note": "analyst did not run the test",
+    "verified": {
+     "ref_and_test_exist": true,
+     "tests_run_by_analyst": false
+    }
+   },
+   "measures": "one generated noise under every place fails; beds are place- and era-specific",
+   "repeats": 2,
+   "repeat_evidence": "11-12 21:44 (twice in one message: 'hiss')",
+   "words_partial": true
+  },
+  {
+   "id": "OR-A04",
+   "kind": "requirement",
+   "words": "დიალოგია დროს სიჩუმე ყველაზე მეტად ხელოვნურიბას აჩენს",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "Silence during dialogue makes it feel artificial more than anything.",
+   "date": "2026-11-12T21:44:18Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWVMsQtbv2YdqWCRYtcMXpMu"
+   },
+   "layers": [
+    "L17",
+    "L18",
+    "L19",
+    "L20"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "validator",
+    "ref": "explainer_engine.qa.sound_realism:measure",
+    "test": "tests/unit/test_sound_realism.py::test_dead_air_between_lines_fails_and_a_bed_passes",
+    "note": "analyst did not run the test",
+    "verified": {
+     "ref_and_test_exist": true,
+     "tests_run_by_analyst": false
+    }
+   },
+   "measures": "dead air between lines fails unless declared with a reason; a bed passes",
+   "repeats": 2,
+   "repeat_evidence": "11-12 21:44, 11-12 19:12 (dialogue likes)"
+  },
+  {
+   "id": "OR-A05",
+   "kind": "requirement",
+   "words": "ცალკე წესები გვინდა ხმების გამდიდრების. კადრიდან გამონდინარე.",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "We want separate rules for enriching sounds, derived from the frame.",
+   "date": "2026-11-12T21:44:18Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWVMsQtbv2YdqWCRYtcMXpMu"
+   },
+   "layers": [
+    "L17",
+    "L18",
+    "L19",
+    "L20"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "per shot the sound plan lists what is seen and what is only heard, derived from the frame. Candidate: tests/unit/test_v43_sound_plan.py",
+   "repeats": 2,
+   "repeat_evidence": "11-12 21:44, 11-13 09:11 (audio guide)"
+  },
+  {
+   "id": "OR-A06",
+   "kind": "requirement",
+   "words": "New audio guide: adapt the other threads to the sound system, not the sound system to them (D-134, LIB-01..08, SP-03..SP-07).",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-11-13T09:11:16Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWP8uyVzMjdeETMLFhRBASf2"
+   },
+   "layers": [
+    "L17",
+    "L18",
+    "L19",
+    "L20"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "every sound change goes through episode/sound_plan and the library manifest; no bypass module",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "his message carries the full guide text; the sentence is a paraphrase of its opening instruction ('ესაა ახალი აუდიოს გზამკვლევი მოარგე შენ სისტემას შენ კი არ მოერგო')"
+  },
+  {
+   "id": "OR-A07",
+   "kind": "requirement",
+   "words": "ლტხ ვიდეოებს აღარ დაჭირდება ბეგრაუნდ ხმები. რადგან ლტხ იდეალურად აკეთებს",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "LTX videos will not need background sounds, because LTX makes them ideally.",
+   "date": "2026-11-12T19:12:52Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWGKmz1ggG982FmdKJd1dYji"
+   },
+   "layers": [
+    "L17",
+    "L18",
+    "L19",
+    "L20"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "clip audio from LTX is the base of video scenes; separate background tracks only where OR-C04 is answered",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "see OR-C04: possible conflict with dead-air and bed rules"
+  },
+  {
+   "id": "OR-A08",
+   "kind": "requirement",
+   "words": "საკითხია რამდენად შეძლებს საუბრის ხმის ყველგან შენარჩუნება",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "The question is how well it can keep the speaking voice the same everywhere.",
+   "date": "2026-11-12T19:12:52Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWGKmz1ggG982FmdKJd1dYji"
+   },
+   "layers": [
+    "L4",
+    "L5",
+    "L6"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "same voice identity across all clips of a character (speaker-embedding similarity above a floor across clips). Candidate: audio/voice_check.py (test not located)",
+   "repeats": 1,
+   "repeat_evidence": ""
+  },
+  {
+   "id": "OR-A09",
+   "kind": "requirement",
+   "words": "Odom (CcSJ2r3qw0XU9gJpEPyk) is the channel narrator with the fixed +12 dB bass polish ('make it standard').",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-11-01T18:13:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "project-narrator-odom-chosen"
+   },
+   "layers": [
+    "L4",
+    "L5",
+    "L6"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "validator",
+    "ref": "explainer_engine.audio.narrator_polish:polish",
+    "test": "tests/unit/test_narrator_polish.py",
+    "note": "file exists; test function not read",
+    "verified": {
+     "ref_and_test_exist": true,
+     "tests_run_by_analyst": false
+    }
+   },
+   "measures": "narrator voice id equals config/channel_voices.json; polish chain applied",
+   "repeats": 1,
+   "repeat_evidence": ""
+  },
+  {
+   "id": "OR-A10",
+   "kind": "requirement",
+   "words": "ONE narrator who changes tempo by zone (hook fast, middle calmer, finale fast), not two voices.",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-11-01T14:47:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-mrbeast-decisions-2026-11-01"
+   },
+   "layers": [
+    "L4",
+    "L5",
+    "L6"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "words per second by zone from the read; narrator voice id constant",
+   "repeats": 1,
+   "repeat_evidence": ""
+  },
+  {
+   "id": "OR-A11",
+   "kind": "requirement",
+   "words": "Heroes based on real people get type-matched voices (age, accent, region, temperament), never the person's voice or a soundalike; no paid voice samples.",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-10-20T14:30:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "hero-voices-real-people"
+   },
+   "layers": [
+    "L4",
+    "L5",
+    "L6"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "voice cast record lists traits per voice; VC-02 no-soundalike check; ElevenLabs sample calls refused by the hook without his yes",
+   "repeats": 2,
+   "repeat_evidence": "10-20 (twice)"
+  },
+  {
+   "id": "OR-A12",
+   "kind": "requirement",
+   "words": "Never run a paid ElevenLabs voice step before his explicit yes.",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-11-01T16:23:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-confirm-before-paid-voice-steps"
+   },
+   "layers": [
+    "L4",
+    "L5",
+    "L6"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "PreToolUse hook (standards/hook.py) refuses creative_design_voice without a recorded yes; negative test needed. Candidate: tests/unit/test_cloud_hooks_modal.py (Modal only)",
+   "repeats": 2,
+   "repeat_evidence": ""
+  },
+  {
+   "id": "OR-A13",
+   "kind": "requirement",
+   "words": "Every speaking character has their own voice chosen by personality (D-45) and speaks in their generally known manner, in our own words, no film quotes.",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-10-21T06:56:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "creator-workflow-preferences"
+   },
+   "layers": [
+    "L4",
+    "L5",
+    "L6"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "cast.<id>.speech present (PV-46); voice ids unique per speaking character",
+   "repeats": 1,
+   "repeat_evidence": ""
+  },
+  {
+   "id": "OR-E01",
+   "kind": "requirement",
+   "words": "პირველ და მეორე კადრშ შორის გადასვლა უაზრჯდ სწრაფი და არალოგიკურივითაა",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "The transition between the first and second shot is pointlessly fast and illogical.",
+   "date": "2026-11-12T21:44:18Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWVMsQtbv2YdqWCRYtcMXpMu"
+   },
+   "layers": [
+    "L21",
+    "L22",
+    "L25"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "shot transitions: no cut shorter than a floor without a story reason; match-on-action/eyeline continuity. Candidate: tests/unit/test_continuity.py::test_jump_cut (script-level, not clip-level)",
+   "repeats": 2,
+   "repeat_evidence": "11-12 21:44, 11-12 21:06"
+  },
+  {
+   "id": "OR-E02",
+   "kind": "requirement",
+   "words": "Master 2560x1440 at 24 fps (BP-167).",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-11-12T00:00:00Z",
+   "source": {
+    "kind": "decision_log",
+    "ref": "BP-167"
+   },
+   "layers": [
+    "L21",
+    "L22",
+    "L25"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "ffprobe of the master: 2560x1440, 24 fps. Candidate: tests/unit/test_delivery_constants.py (function not read)",
+   "repeats": 1,
+   "repeat_evidence": ""
+  },
+  {
+   "id": "OR-E03",
+   "kind": "requirement",
+   "words": "Sound at one loudness level everywhere (loudness and true-peak targets from one file).",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-11-12T00:00:00Z",
+   "source": {
+    "kind": "doc",
+    "ref": "CLAUDE.md (sound ... one level everywhere), qa/targets.py"
+   },
+   "layers": [
+    "L21",
+    "L22",
+    "L25"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "validator",
+    "ref": "explainer_engine.qa.targets:loudness_verdict",
+    "test": "tests/unit/test_delivery_constants.py",
+    "note": "function exists in targets.py; whether this test calls it was not checked",
+    "verified": {
+     "ref_and_test_exist": true,
+     "tests_run_by_analyst": false
+    }
+   },
+   "measures": "measured LUFS and true peak of the master against targets.py",
+   "repeats": 1,
+   "repeat_evidence": ""
+  },
+  {
+   "id": "OR-E04",
+   "kind": "requirement",
+   "words": "Assembly is chunked: a render longer than ~10 minutes is a tracked background task written in chunks (RULE-R1, ED-13).",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-11-11T00:00:00Z",
+   "source": {
+    "kind": "doc",
+    "ref": "CLAUDE.md RULE-R1"
+   },
+   "layers": [
+    "L21",
+    "L22",
+    "L25"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "assemble --chunks A:B run records; join once all chunks exist",
+   "repeats": 1,
+   "repeat_evidence": ""
+  },
+  {
+   "id": "OR-Q01",
+   "kind": "requirement",
+   "words": "Everything must have a test, and the rules must be followed, mandatory.",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "Relayed to the lead in English by the coordinator; the original Georgian is not in this thread.",
+   "date": "2026-11-20T08:36:00Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWJeJz94xNXLCuwzBF3nEN2p"
+   },
+   "layers": [
+    "L23",
+    "L24"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "registry gate: an unmapped entry BLOCKs its layers and the send gate; the tester reports PASS/FAIL/NOT_RUN per entry with a negative fixture",
+   "repeats": 3,
+   "repeat_evidence": "11-20 08:34, 08:36, 08:37"
+  },
+  {
+   "id": "OR-Q02",
+   "kind": "requirement",
+   "words": "Words are not enough, Claude still skips: a rule that exists only in a skill, CLAUDE.md, a brief or a message counts as not enforced.",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "English relay of his message.",
+   "date": "2026-11-20T08:37:22Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWW2A1bRr7NUP7oeYrpVG6D9V"
+   },
+   "layers": [
+    "L23",
+    "L24",
+    "L31",
+    "L33"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "hooks (PreToolUse, Stop, SubagentStop), require_pass() in code, a CI job owner-requirements, mutation check per validator",
+   "repeats": 2,
+   "repeat_evidence": "11-20 08:34, 08:37"
+  },
+  {
+   "id": "OR-Q03",
+   "kind": "requirement",
+   "words": "My eye and your system differ: his eye is the metric; some FAILs he likes and some PASSes are too primitive.",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-10-25T19:34:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-strict-eras-style-check"
+   },
+   "layers": [
+    "L23",
+    "L24"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "judge",
+    "who": "owner at MS-7",
+    "rubric": "docs/registry/judge_rubrics.md#j-owner-eye",
+    "number": "owner verdict per candidate: keep / reject / unsure (counted); the blind judge never overrules a reject"
+   },
+   "measures": "owner verdicts recorded in the layer record; an automatic score alone never passes a look",
+   "repeats": 2,
+   "repeat_evidence": "10-25 19:34, 10-25 19:54"
+  },
+  {
+   "id": "OR-Q04",
+   "kind": "requirement",
+   "words": "Judge EVERY variant strictly against the approved eras sheet (DINOv2 vs 20 cells, threshold 0.557, plus a visual rubric).",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-10-25T15:13:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-strict-eras-style-check"
+   },
+   "layers": [
+    "L23",
+    "L24"
+   ],
+   "status": "superseded",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "old Ink Chronicle method",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "superseded_by": "OR-V01",
+   "note": "superseded by the 2026-11-19 era-film look (nothing deleted)"
+  },
+  {
+   "id": "OR-Q05",
+   "kind": "requirement",
+   "words": "Every gate measures or says NOT_RUN; NOT_RUN is never PASS (D-131).",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-11-20T00:00:00Z",
+   "source": {
+    "kind": "decision_log",
+    "ref": "D-131"
+   },
+   "layers": [
+    "L23",
+    "L24"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "validator",
+    "ref": "explainer_engine.qa.gates:row",
+    "test": "tests/unit/test_v43_measuring_gates.py::test_row_refuses_a_non_bool_outcome_and_none_is_not_run",
+    "note": "name seen in the tests list; analyst did not run it",
+    "verified": {
+     "ref_and_test_exist": true,
+     "tests_run_by_analyst": false
+    }
+   },
+   "measures": "row() refuses a non-bool outcome; None is NOT_RUN",
+   "repeats": 2,
+   "repeat_evidence": ""
+  },
+  {
+   "id": "OR-P01",
+   "kind": "requirement",
+   "words": "No public upload, ever, without a recorded creator approval; going public is his click in Studio (invariant 4).",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-10-19T00:00:00Z",
+   "source": {
+    "kind": "doc",
+    "ref": "CLAUDE.md invariant 4, D-57"
+   },
+   "layers": [
+    "L26",
+    "L27",
+    "L28",
+    "L32"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "publish stage refuses privacyStatus public; negative test needed. Candidate: tests/unit/test_publish_check.py (checks metadata, not the upload call)",
+   "repeats": 3,
+   "repeat_evidence": "10-19 (twice), CLAUDE.md invariant"
+  },
+  {
+   "id": "OR-P02",
+   "kind": "requirement",
+   "words": "Each video or Short goes up to YouTube unlisted as soon as it passes its own tests, one at a time, never waiting for the batch.",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-10-19T00:00:00Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWYDkwpHPwbkPkZjE11J4EiR"
+   },
+   "layers": [
+    "L26",
+    "L27",
+    "L28",
+    "L32"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "stage --only <id> record per piece with its test pass timestamp",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "owner words not quoted in memory"
+  },
+  {
+   "id": "OR-P03",
+   "kind": "requirement",
+   "words": "No YouTube token stored or pasted anywhere; a fresh auth link per upload session.",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-10-19T15:44:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "youtube-staging-upload"
+   },
+   "layers": [
+    "L26",
+    "L27",
+    "L28",
+    "L32"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "repo hygiene test: no token file in repo; auth state not persisted",
+   "repeats": 1,
+   "repeat_evidence": ""
+  },
+  {
+   "id": "OR-P04",
+   "kind": "requirement",
+   "words": "The creator sets the thumbnail in Studio; disclosure is decided per video by the checklist.",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-10-19T00:00:00Z",
+   "source": {
+    "kind": "doc",
+    "ref": "CLAUDE.md Upload per piece"
+   },
+   "layers": [
+    "L26",
+    "L27",
+    "L28",
+    "L32"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "publish plan has thumbnail_set_by = creator; disclosure checklist row present",
+   "repeats": 1,
+   "repeat_evidence": ""
+  },
+  {
+   "id": "OR-P05",
+   "kind": "requirement",
+   "words": "Licence checks cover only third-party media YouTube can block (someone else's video, photo, audio); tool and library licences do not interest him.",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-11-19T00:00:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-review-threads-no-code-licenses-youtube-only"
+   },
+   "layers": [
+    "L26",
+    "L27",
+    "L28",
+    "L32",
+    "L31",
+    "L33"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "publish_check third_party_findings covers third-party media only. Candidate: qa.publish_check:third_party_findings (test not located)",
+   "repeats": 3,
+   "repeat_evidence": "10-29, 11-13 07:24, 11-19, 11-20 08:10"
+  },
+  {
+   "id": "OR-P06",
+   "kind": "requirement",
+   "words": "Crossover episodes of other people's worlds: no third-party media, our own art only, short analysed quotes, small recap, credited fan theories (RR rules, D-26).",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-10-26T00:00:00Z",
+   "source": {
+    "kind": "doc",
+    "ref": "docs/RIGHTS_AND_FAIR_USE.md RR-03.."
+   },
+   "layers": [
+    "L26",
+    "L27",
+    "L28",
+    "L32"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "rights/ip_check.py over the rights manifest; any FAIL blocks. Candidate: tests/unit/test_rights_and_fans.py",
+   "repeats": 1,
+   "repeat_evidence": ""
+  },
+  {
+   "id": "OR-I01",
+   "kind": "requirement",
+   "words": "ლტხ ვინახავთ ისევ გენერატორათ. შენ ვიდეო გენერაციის წესები განაახლე. ნახე სად ინახება წესები რომელიც ყველა ფასიანი გაშვების ყველაზე იაფ კომბინაციას ირჩევსა . სავალდებულო უნდა იყოს როგორც პრე თულ უზ",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "LTX stays the generator. Update the video generation rules; find where the rules that choose the cheapest combination of every paid run are kept; it must be mandatory as a pre-tool-use check.",
+   "date": "2026-11-13T07:00:45Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWK39gkFmq9K2RUuKFaBEx9g"
+   },
+   "layers": [
+    "L31",
+    "L33"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "validator",
+    "ref": "explainer_engine.cloud.cheapest:launch_problems",
+    "test": "tests/unit/test_cheapest.py::test_the_committed_launch_passes_and_each_launch_rule_has_its_refusal",
+    "note": "CH-01..CH-06; analyst did not run the test; waiver only by his recorded message",
+    "verified": {
+     "ref_and_test_exist": true,
+     "tests_run_by_analyst": false
+    }
+   },
+   "measures": "launch rules CH-01..CH-06 refused by hook and worker",
+   "repeats": 2,
+   "repeat_evidence": "11-13 07:00, 11-13 (protect cheapest.py: 'კი, დაიცავი')"
+  },
+  {
+   "id": "OR-I02",
+   "kind": "requirement",
+   "words": "Rule one: never take a system decision on an assumption; agree every detail with him; also in auto mode; before every pod/paid run an item-by-item plan (OR-22, OR-23).",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-10-26T01:05:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-agree-every-detail"
+   },
+   "layers": [
+    "L31",
+    "L33"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "paid_offer/1 file must pass `cloud.paid_offer check` before any paid launch (hook). Candidate: tests/unit/test_paid_preflight.py (not read)",
+   "repeats": 3,
+   "repeat_evidence": "10-26 (twice), 11-13 (CH-07)"
+  },
+  {
+   "id": "OR-I03",
+   "kind": "requirement",
+   "words": "PC ვარიანტი ჯობია ავკრძალოთ",
+   "words_verbatim": true,
+   "words_origin": "memory_quote",
+   "gloss": "Better forbid the PC variant (PC session may not start paid runs).",
+   "date": "2026-11-07T19:32:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-pc-no-paid-runs-2026-11-07"
+   },
+   "layers": [
+    "L31",
+    "L33"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "the PC Remote Control session cannot start a paid run; hook refuses it from that environment",
+   "repeats": 1,
+   "repeat_evidence": ""
+  },
+  {
+   "id": "OR-I04",
+   "kind": "requirement",
+   "words": "Long runs go to GitHub: push the branch and read its checks (`.github/workflows/quality.yml`); ask again after 2026-12-19.",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-11-19T10:14:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "project-long-runs-go-to-github"
+   },
+   "layers": [
+    "L31",
+    "L33"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "workflow exists and the run record names the workflow run id",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "his card answer 'GitHub-ზე' (12:14 Georgia time); card press, not chat text"
+  },
+  {
+   "id": "OR-I05",
+   "kind": "requirement",
+   "words": "All code in parallel: update both GitHub and Drive (folder Explainer_Engine_V4_Main).",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "English quote in the memory file from his Georgian message 12:43 Georgia time",
+   "date": "2026-11-19T08:43:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-sync-github-and-drive"
+   },
+   "layers": [
+    "L31",
+    "L33"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "sync record: commit sha present on both stores",
+   "repeats": 1,
+   "repeat_evidence": ""
+  },
+  {
+   "id": "OR-I06",
+   "kind": "requirement",
+   "words": "ლიცენზია გვკიდია",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "We do not care about licences.",
+   "date": "2026-11-20T08:10:00Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWW4g2aaMZ4SAJQUbEgZGWoPM"
+   },
+   "layers": [
+    "L31",
+    "L33",
+    "L9",
+    "L10",
+    "L11",
+    "L12",
+    "L13",
+    "L14",
+    "L15",
+    "L16"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "layer_gate no longer blocks on licence (MS4-LICENCE removed); licence is one informational line. Candidate: tests/unit/test_layer_gate.py once the developer's change lands",
+   "repeats": 4,
+   "repeat_evidence": "10-29, 11-13 07:24, 11-19, 11-20 08:10"
+  },
+  {
+   "id": "OR-I07",
+   "kind": "requirement",
+   "words": "გარედან კოდის შემოტანის წესი უგულვებელყავი. მთავარია ხარისხი, და ბუნებრივოვა მაქსიმალურად ეფექტურობით.",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "Ignore the rule about bringing code in from outside. Quality is what matters, and naturalness with maximum efficiency.",
+   "date": "2026-11-05T18:42:47Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWYHAh3udg8KVcPULBEmoi7B"
+   },
+   "layers": [
+    "L31",
+    "L33",
+    "L9",
+    "L10",
+    "L11",
+    "L12",
+    "L13",
+    "L14",
+    "L15",
+    "L16"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "no rule excludes a candidate for where its code comes from; quality decides",
+   "repeats": 2,
+   "repeat_evidence": "11-05 18:42, 11-20 08:07",
+   "words_partial": true
+  },
+  {
+   "id": "OR-I08",
+   "kind": "requirement",
+   "words": "გითჰაბზე ყველა კოდი დაწერილია რაც ჩვენ გვჭირდება ჩვენ უნდა ვიპოვოთ გავაერთიანოთ შევავსოთ და მოვარგოთ.",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "All the code we need is already written on GitHub; we must find, combine, complete and adapt it.",
+   "date": "2026-11-05T18:42:47Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWYHAh3udg8KVcPULBEmoi7B"
+   },
+   "layers": [
+    "L31",
+    "L33",
+    "L9",
+    "L10",
+    "L11",
+    "L12",
+    "L13",
+    "L14",
+    "L15",
+    "L16"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "MS-2 candidate lists contain existing GitHub repositories before new code is written",
+   "repeats": 3,
+   "repeat_evidence": "11-05, 11-20 06:52, 07:14"
+  },
+  {
+   "id": "OR-I09",
+   "kind": "requirement",
+   "words": "Money ceilings live only in config/spend_caps.json; at 80 % of a cap stop and ask; leave nothing paid running (invariants 1 and 2, D-56).",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-10-30T00:00:00Z",
+   "source": {
+    "kind": "doc",
+    "ref": "CLAUDE.md invariants 1, 2"
+   },
+   "layers": [
+    "L31",
+    "L33"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "ledger refuses a paid call above cap; pod/app check at start and end. Candidate: tests/unit/test_cloud_economy.py",
+   "repeats": 2,
+   "repeat_evidence": ""
+  }
+ ],
+ "process_requirements": [
+  {
+   "id": "OR-G01",
+   "words": "ასეთ რუტინულ სამუშაოებს შენ ნუ აკეთებ, გააკეთებინე ჰაიკუს ან სონეტს ხოლმე",
+   "words_verbatim": true,
+   "words_origin": "memory_quote",
+   "gloss": "Do not do such routine work yourself; have Haiku or Sonnet do it.",
+   "date": "2026-11-19T10:27:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-routine-work-to-haiku-sonnet"
+   },
+   "layers": [],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "model routing hook: a routine/browser task thread started on Opus is refused (RULE 21: model and effort set explicitly on every start)",
+   "repeats": 2,
+   "repeat_evidence": "11-19 14:27, 11-20 (RULE 21, angry)"
+  },
+  {
+   "id": "OR-G02",
+   "words": "ყველა კითხვა მკითხე აღწერებით არტო მეკითხები",
+   "words_verbatim": true,
+   "words_origin": "memory_quote",
+   "gloss": "Ask me all questions with descriptions, not bare questions.",
+   "date": "2026-11-07T22:18:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-questions-with-descriptions"
+   },
+   "layers": [],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "decision cards carry a description and options; no bare question",
+   "repeats": 1,
+   "repeat_evidence": ""
+  },
+  {
+   "id": "OR-G03",
+   "words": "Every deliverable comes with a link (HF/project files); results go to HF vano1919/tmr-artifacts with exact links; replies in Georgian, short, Georgia time.",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-11-07T00:00:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-links-to-everything"
+   },
+   "layers": [],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "post_message with an attached output or a link; no bare claim",
+   "repeats": 3,
+   "repeat_evidence": "11-07, 11-19, 11-20"
+  },
+  {
+   "id": "OR-G04",
+   "words": "Report at once and in detail every money event (idle/hung pod, wasted $/h, balance) and every main-work result, with options.",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-10-25T21:01:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-report-spend-immediately"
+   },
+   "layers": [],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "ledger event triggers a message with $/h, $ lost and options",
+   "repeats": 1,
+   "repeat_evidence": ""
+  },
+  {
+   "id": "OR-G05",
+   "words": "Be critical, not negative: verify what he says against facts and agree or disagree with arguments; never agree by default.",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-10-25T21:03:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-be-critical"
+   },
+   "layers": [],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "judge: the reply carries the evidence line",
+   "repeats": 2,
+   "repeat_evidence": "10-25, 11-20 08:07"
+  },
+  {
+   "id": "OR-G06",
+   "words": "Interpret, don't blindly forward his words (rule 18); his chat approvals are final and relayed by message id.",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-11-20T00:00:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "MEMORY.md Owner rules"
+   },
+   "layers": [],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "relay carries the cited cmsg id",
+   "repeats": 1,
+   "repeat_evidence": ""
+  },
+  {
+   "id": "OR-G07",
+   "words": "Write rules into the repo, not into memory only.",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-10-26T00:00:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-rules-into-repo"
+   },
+   "layers": [],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "every new owner rule has a registry entry and a test (this registry)",
+   "repeats": 2,
+   "repeat_evidence": ""
+  }
+ ]
+}

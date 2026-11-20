@@ -20,6 +20,7 @@ from pathlib import Path
 
 from explainer_engine.core.errors import ContractError, NeedsReview
 from explainer_engine.governance import owner_requirements as OR
+from explainer_engine.governance import records
 from explainer_engine.governance import root_dir
 from explainer_engine.qa import status as S
 
@@ -436,6 +437,8 @@ def check_record(rec, *, root=None, strict: bool = False, layer: str | None = No
     _check_mapping(rec, req_ids, _rows(rec, "tool_capabilities"), root, errs, res, strict)
     entries, reg_errs = OR.load(root)                 # the owner's registry: every active entry that binds the layer (spec section 3)
     errs += reg_errs + OR.check_registry(entries, root)
+    if rec.get("state") == "final":                    # deleting or emptying the registry must never open a layer
+        errs += OR.missing(entries)
     errs += OR.check_cover(rec, str(rec.get("layer")), entries, root)
     res.errors = errs
     res.status = S.BLOCK if errs else (S.NOT_RUN if res.not_run else S.PASS)
@@ -500,3 +503,54 @@ def require_pass(layer: str, *, root=None, strict: bool = False) -> GateResult:
     if res.status != S.PASS:
         raise NeedsReview(f"layer {layer} is {res.status}: " + "; ".join(res.not_run))
     return res
+
+
+# ---- the layers a runner stage or a trial script needs (spec section 7.2: code, not a brief) ------------------------------------
+# The layers whose records must be final and PASS before the stage starts (the router table of .claude/skills/film-direction).
+# A design choice of the developer, for the team lead to confirm.
+STAGE_LAYERS: dict[str, tuple[str, ...]] = {
+    "script": ("L1", "L2", "L3", "L4", "L7", "L8", "L29", "L30"),
+    "sound_plan": ("L18", "L19", "L20"),
+    "pictures": ("L9", "L10", "L11", "L16"),
+    "voice": ("L5", "L6", "L17"),
+    "clips": ("L12", "L13", "L14", "L15"),
+    "sound": ("L18", "L19", "L20"),
+    "assemble": ("L21", "L22", "L25"),
+    "qa": ("L23", "L24"),
+}
+WAIVER_MINUTES = 24 * 60     # the owner's recorded word on one layer holds for a day, then he is asked again
+
+
+def waived(layer: str, *, root=None) -> dict | None:
+    """The owner's recorded ``layer_waiver`` for exactly this layer (jobs/creator_ok.jsonl, the D-84 pattern), or None."""
+    row = records.last("layer_waiver", layer, root=root)
+    return row if row and row.get("target") == layer and records.valid("layer_waiver", layer, WAIVER_MINUTES, root=root, wildcard=False) \
+        else None
+
+
+def require_layers(layers, *, root=None) -> list[str]:
+    """Raise ContractError unless every layer is final and PASS (``require_pass``) or carries the owner's recorded
+    ``layer_waiver`` (``python -m explainer_engine.governance ok layer_waiver L9 <cmsg id> "<his words>"``): there is no flag. The owner's
+    registry must exist even when every layer is waived (REG-MISSING). Returns the notes of the waived layers."""
+    root = root_dir(root)
+    entries, errs = OR.load(root)
+    problems_ = errs + OR.check_registry(entries, root) + OR.missing(entries)
+    notes = []
+    for layer in layers:
+        w = waived(layer, root=root)
+        if w:
+            notes.append(f"{layer} waived by the owner ({w.get('message_id')})")
+            continue
+        try:
+            require_pass(layer, root=root)
+        except (ContractError, NeedsReview) as e:
+            problems_.append(f"{layer}: {e}")
+    if problems_:
+        raise ContractError("the layer gate refuses: " + " | ".join(problems_) + " | only the owner's recorded word passes it: "
+                            "`python -m explainer_engine.governance ok layer_waiver <layer> <cmsg id> \"<his words>\"`")
+    return notes
+
+
+def require_stage(stage: str, *, root=None) -> list[str]:
+    """``require_layers`` for a runner stage (``STAGE_LAYERS``)."""
+    return require_layers(STAGE_LAYERS[stage], root=root)

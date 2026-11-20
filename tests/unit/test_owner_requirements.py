@@ -25,7 +25,7 @@ def entry(i: int, layers=("L9",), *, check=None, **extra) -> dict:
     e = {"id": f"REQ-{i:03d}", "words": "only the fire moves is not allowed", "date": "2026-11-20T08:33:54Z",
          "source": {"kind": "chat", "ref": MSG}, "layers": list(layers), "status": "active",
          "check": check or {"kind": "validator", "ref": "explainer_engine.validators.living:living_motion",
-                            "test": "tests/unit/test_living.py::test_living_motion"}}
+                            "test": "tests/unit/test_living.py::test_living_motion", "negative_test": "tests/unit/test_living.py::test_living_motion_fails"}}
     e.update(extra)
     return e
 
@@ -46,7 +46,7 @@ def root(tmp_path):
     (tmp_path / "docs" / "DECISIONS_AND_OPEN_QUESTIONS.md").write_text("| D-131 | the v4.3 rebuild |\n| D-139 | x |\n", encoding="utf-8")
     (tmp_path / "docs" / "RUBRICS.md").write_text("# Rubrics\n\n## Faces intact\n\nthe judge looks at six frames\n", encoding="utf-8")
     (tmp_path / "tests" / "unit").mkdir(parents=True)
-    (tmp_path / "tests" / "unit" / "test_living.py").write_text("def test_living_motion():\n    assert True\n", encoding="utf-8")
+    (tmp_path / "tests" / "unit" / "test_living.py").write_text("def test_living_motion():\n    assert True\n\ndef test_living_motion_fails():\n    assert True\n", encoding="utf-8")
     (tmp_path / "explainer_engine" / "validators").mkdir(parents=True)
     (tmp_path / "explainer_engine" / "validators" / "living.py").write_text("def living_motion(path):\n    return {}\n", encoding="utf-8")
     return tmp_path
@@ -148,11 +148,11 @@ def test_an_entry_without_a_check_is_unmapped(root):
 @pytest.mark.parametrize("name,check", [
     ("no test field", {"kind": "validator", "ref": "explainer_engine.validators.living:living_motion"}),
     ("the test file is missing", {"kind": "validator", "ref": "explainer_engine.validators.living:living_motion",
-                                  "test": "tests/unit/test_nowhere.py::test_living_motion"}),
+                                  "test": "tests/unit/test_nowhere.py::test_living_motion", "negative_test": "tests/unit/test_living.py::test_living_motion_fails"}),
     ("the test function is missing", {"kind": "validator", "ref": "explainer_engine.validators.living:living_motion",
-                                      "test": "tests/unit/test_living.py::test_other"}),
+                                      "test": "tests/unit/test_living.py::test_other", "negative_test": "tests/unit/test_living.py::test_living_motion_fails"}),
     ("the test has no ::name", {"kind": "validator", "ref": "explainer_engine.validators.living:living_motion",
-                                "test": "tests/unit/test_living.py"}),
+                                "test": "tests/unit/test_living.py", "negative_test": "tests/unit/test_living.py::test_living_motion_fails"}),
 ])
 def test_a_validator_without_an_existing_test_blocks(root, name, check):
     put(root, registry(entry(1, check=check)))
@@ -161,13 +161,29 @@ def test_a_validator_without_an_existing_test_blocks(root, name, check):
 
 
 @pytest.mark.parametrize("name,check", [
-    ("no ref", {"kind": "validator", "test": "tests/unit/test_living.py::test_living_motion"}),
-    ("an empty ref", {"kind": "validator", "ref": "", "test": "tests/unit/test_living.py::test_living_motion"}),
-    ("not module:function", {"kind": "validator", "ref": "living_motion", "test": "tests/unit/test_living.py::test_living_motion"}),
+    ("no negative test", {"kind": "validator", "ref": "explainer_engine.validators.living:living_motion",
+                          "test": "tests/unit/test_living.py::test_living_motion"}),
+    ("the negative test file is missing", {"kind": "validator", "ref": "explainer_engine.validators.living:living_motion",
+                                           "test": "tests/unit/test_living.py::test_living_motion",
+                                           "negative_test": "tests/unit/test_nowhere.py::test_living_motion_fails"}),
+    ("the negative test function is missing", {"kind": "validator", "ref": "explainer_engine.validators.living:living_motion",
+                                               "test": "tests/unit/test_living.py::test_living_motion",
+                                               "negative_test": "tests/unit/test_living.py::test_no_such"}),
+])
+def test_a_validator_without_a_negative_test_blocks(root, name, check):
+    put(root, registry(entry(1, check=check)))
+    res = run(rec_for("REQ-001"), root)
+    assert "REQ-NONEGATIVE" in codes(res) and res.status == S.BLOCK, name
+
+
+@pytest.mark.parametrize("name,check", [
+    ("no ref", {"kind": "validator", "test": "tests/unit/test_living.py::test_living_motion", "negative_test": "tests/unit/test_living.py::test_living_motion_fails"}),
+    ("an empty ref", {"kind": "validator", "ref": "", "test": "tests/unit/test_living.py::test_living_motion", "negative_test": "tests/unit/test_living.py::test_living_motion_fails"}),
+    ("not module:function", {"kind": "validator", "ref": "living_motion", "test": "tests/unit/test_living.py::test_living_motion", "negative_test": "tests/unit/test_living.py::test_living_motion_fails"}),
     ("the module does not exist", {"kind": "validator", "ref": "explainer_engine.validators.nope:living_motion",
-                                   "test": "tests/unit/test_living.py::test_living_motion"}),
+                                   "test": "tests/unit/test_living.py::test_living_motion", "negative_test": "tests/unit/test_living.py::test_living_motion_fails"}),
     ("the function does not exist", {"kind": "validator", "ref": "explainer_engine.validators.living:other",
-                                     "test": "tests/unit/test_living.py::test_living_motion"}),
+                                     "test": "tests/unit/test_living.py::test_living_motion", "negative_test": "tests/unit/test_living.py::test_living_motion_fails"}),
 ])
 def test_a_validator_that_does_not_exist_blocks(root, name, check):
     put(root, registry(entry(1, check=check)))
@@ -325,8 +341,7 @@ def test_cli_requirements_prints_the_report_and_exit_code(root, capsys, monkeypa
 
 def test_the_group_ids_the_extra_fields_and_the_utc_date_form_are_accepted(root):
     a = entry(1, id="OR-V01", date="2026-11-19 22:08 UTC", measures="optical flow inside the fire mask above a threshold")
-    b = entry(2, id="OR-V02", parent="OR-V01", words_verbatim="only the fire moves is not allowed", date="2026-11-20 08:34 UTC")
-    del b["words"]
+    b = entry(2, id="OR-V02", parent="OR-V01", words_verbatim=True, date="2026-11-20 08:34 UTC")
     put(root, registry(a, b))
     assert OR.check_registry(OR.load(root)[0], root) == []
     assert run(rec_for("OR-V01", "OR-V02"), root).status == S.PASS
@@ -336,3 +351,94 @@ def test_the_group_ids_the_extra_fields_and_the_utc_date_form_are_accepted(root)
 def test_the_extra_fields_are_checked(root, kv):
     put(root, registry(entry(1, id="OR-V01"), entry(2, **{"id": "OR-V02", **kv})))
     assert "REG-FIELDS" in codes(run(rec_for(), root))
+
+
+# ---- the registry may not be deleted or emptied (REG-MISSING) and may only grow (CI against the base branch) ---------------------
+
+def final(rec):
+    rec.update(state="final", signed_by="team lead", signed_at="2026-11-20", owner_seen="pending",
+               owner_check=[{"url": "https://huggingface.co/datasets/x/y/blob/main/p.html", "sha256": "a" * 64}])
+    return rec
+
+
+def test_a_final_record_needs_the_registry_to_exist_and_hold_entries(root):
+    put(root, registry(entry(1)))
+    ok = final(rec_for("REQ-001"))
+    assert run(ok, root).status == S.PASS
+    (root / REG).unlink()                                                    # delete the file: every final layer BLOCKs
+    res = run(ok, root)
+    assert "REG-MISSING" in codes(res) and res.status == S.BLOCK
+    put(root, registry())                                                    # empty it: same
+    assert "REG-MISSING" in codes(run(ok, root))
+    put(root, {"schema": "owner_requirements/1", "requirements": []})
+    assert "REG-MISSING" in codes(run(ok, root))
+
+
+def test_a_draft_without_a_registry_is_only_reported(root):
+    assert "REG-MISSING" not in codes(run(good(), root))
+
+
+def test_require_pass_refuses_when_the_registry_is_gone(root):
+    import shutil
+    (root / "docs" / "layers").mkdir(parents=True, exist_ok=True)
+    put(root, registry(entry(1)))
+    (root / "docs" / "layers" / "L9.json").write_text(json.dumps(final(rec_for("REQ-001"))), encoding="utf-8")
+    assert LG.require_pass("L9", root=root).status == S.PASS
+    shutil.rmtree(root / "explainer_engine" / "governance")
+    with pytest.raises(LG.ContractError, match="REG-MISSING"):
+        LG.require_pass("L9", root=root)
+
+
+def test_the_base_comparison_refuses_a_removed_id_and_changed_words(root):
+    base = [entry(1), entry(2, words="the owner's second word")]
+    assert OR.compare_with_base(base, base + [entry(3)]) == []
+    assert any(e.startswith("REG-REMOVED") for e in OR.compare_with_base(base, [entry(1)]))
+    changed = [entry(1), entry(2, words="a softer word")]
+    assert any(e.startswith("REG-WORDS-CHANGED") for e in OR.compare_with_base(base, changed))
+    gone = [entry(1), dict(entry(2, words="the owner's second word"), status="superseded", superseded_by="REQ-003"), entry(3)]
+    assert OR.compare_with_base(base, gone) == []                              # retiring is allowed, deleting and rewording are not
+    assert OR.compare_with_base(None, base) == [] and any(e.startswith("REG-REMOVED") for e in OR.compare_with_base(base, None))
+
+
+# ---- the analyst's registry v2: child ids, process requirements, conflicts naming outside rules ------------------------------------
+
+def test_child_ids_decision_lists_and_flags_of_the_analysts_file_load_clean(root):
+    kid = entry(2, id="OR-V09a", parent="OR-V09", words_verbatim=True, words_partial=False, words_origin="memory_quote",
+                source={"kind": "decision_log", "ref": "D-131 / D-139, BP-105"})
+    put(root, registry(entry(1, id="OR-V09"), kid))
+    assert OR.check_registry(OR.load(root)[0], root) == []
+    put(root, registry(entry(1, id="OR-V09"), dict(kid, source={"kind": "decision_log", "ref": "D-131 / D-777"})))
+    assert "REG-FIELDS" in codes(run(rec_for(), root))                                   # one of the listed ids is not in the log
+    put(root, registry(entry(1, id="OR-V09"), dict(kid, words_verbatim="yes")))
+    assert "REG-FIELDS" in codes(run(rec_for(), root))                                   # the flag is a boolean
+
+
+def test_a_conflict_may_name_rules_outside_the_registry_but_a_registry_id_must_exist(root):
+    c = {"id": "OR-C01", "kind": "conflict", "status": "open", "title": "GC-18 against rule 20", "words": "", "layers": ["L9"],
+         "conflicts": ["OR-V02", "OR-V01", "GC-18"], "date": "2026-11-20T00:00:00Z", "source": {"kind": "doc", "ref": "docs/x.md#GC-18"}}
+    put(root, registry(entry(1, id="OR-V01", layers=["L14"]), entry(2, id="OR-V02", layers=["L14"]), c))
+    assert OR.check_registry(OR.load(root)[0], root) == []                               # an empty words field is by design for a conflict
+    c2 = dict(c, conflicts=["OR-V99", "GC-18"])
+    put(root, registry(entry(1, id="OR-V01", layers=["L14"]), c2))
+    assert "REG-CONFLICT" in codes(run(rec_for(), root))
+    c3 = dict(c, conflicts=["GC-18", "RR-03"], status="open")
+    put(root, registry(entry(1, id="OR-V01", layers=["L14"]), c3))
+    assert OR.check_registry(OR.load(root)[0], root) == []                               # two outside rules are enough to name a conflict
+
+
+def test_process_requirements_bind_no_layer_but_are_in_the_registry_and_the_report(root):
+    data = registry(entry(1))
+    data["process_requirements"] = [dict(entry(2, id="OR-G01", layers=[]), check={"kind": "unmapped"})]
+    put(root, data)
+    ents, errs = OR.load(root)
+    assert errs == [] and [e["id"] for e in ents if OR.is_process(e)] == ["OR-G01"]
+    assert OR.check_registry(ents, root) == []
+    assert run(rec_for("REQ-001"), root).status == S.PASS                                # the layer gate never reads a process requirement
+    rep = OR.report(root)
+    assert rep["process"] == ["OR-G01"] and "OR-G01" in rep["unmapped"]
+    data["process_requirements"][0]["layers"] = ["L9"]
+    put(root, data)
+    assert "REG-LAYER" in codes(run(rec_for("REQ-001"), root))                           # a process requirement that names a layer is a mistake
+    data["process_requirements"] = "no"
+    put(root, data)
+    assert "REG-SCHEMA" in codes(run(rec_for("REQ-001"), root))

@@ -89,3 +89,17 @@ def paid_offer(tmp_path):
         p.write_text(json.dumps(make_offer(entry, **kw)))
         return p
     return write
+
+
+@pytest.fixture
+def real_layer_gate():
+    """Ask for this fixture to run the real layer gate (spec section 7.2): every other unit test treats the gate of a runner stage and
+    of a trial script as passed, so the older tests stay about what they test; ``test_layer_gate_enforcement`` runs it for real."""
+
+
+@pytest.fixture(autouse=True)
+def _layer_gate_isolated(request, monkeypatch):
+    if "real_layer_gate" not in request.fixturenames:
+        from explainer_engine.governance import layer_gate as LG
+        monkeypatch.setattr(LG, "require_layers", lambda layers, **kw: [])
+    yield

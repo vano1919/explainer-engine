@@ -137,6 +137,12 @@ def main(argv=None):
     ap.add_argument("scene")
     ap.add_argument("out", nargs="?")
     a = ap.parse_args(argv)
+    from explainer_engine.core.errors import ContractError
+    from explainer_engine.governance import layer_gate
+    try:   # spec section 7.2: a trial script starts only when its layers are final and PASS, or the owner's recorded word waives one
+        layer_gate.require_layers(("L12", "L13"))
+    except ContractError as exc:
+        raise SystemExit(f"refused: {exc}")
     spec = job_spec(a.scene)
     if a.cmd == "job":
         if not a.out:

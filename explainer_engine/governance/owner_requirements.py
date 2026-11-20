@@ -22,7 +22,7 @@ SOURCE_KINDS = ("chat", "memory", "decision_log", "doc")
 STATUSES = ("active", "superseded")
 CHECK_KINDS = ("validator", "judge", "unmapped")
 LAYERS = tuple(f"L{i}" for i in range(1, 34))
-_ID = re.compile(r"REQ-\d{3,}|OR-[A-Z]\d{2,}")   # REQ-nnn, or OR-<group letter><nn> (OR-V visual, OR-S, OR-A, OR-E, OR-Q, OR-P, OR-I)
+_ID = re.compile(r"REQ-\d{3,}|OR-[A-Z]\d{2,}[a-z]?")   # REQ-nnn, or OR-<group letter><nn> (OR-V visual, OR-S, OR-A, OR-E, OR-Q, OR-P, OR-I; a child may add a letter: OR-V09a)
 _MSG = re.compile(r"cmsg_[A-Za-z0-9]+")
 _RULE_REF = re.compile(r"[A-Z]{1,3}-\d+")
 _DEC = re.compile(r"D-\d+")
@@ -51,12 +51,48 @@ def load(root=None) -> tuple[list[dict] | None, list[str]]:
         return [], [f"REG-SCHEMA: {REGISTRY.name} is not JSON ({e})"]
     if not isinstance(data, dict) or data.get("schema") != SCHEMA or not isinstance(data.get("requirements"), list):
         return [], [f"REG-SCHEMA: {REGISTRY.name} needs schema {SCHEMA} and a requirements list"]
-    return [e for e in data["requirements"] if isinstance(e, dict)] + \
-        [{"id": "?"} for e in data["requirements"] if not isinstance(e, dict)], []
+    proc = data.get("process_requirements", [])
+    if not isinstance(proc, list):
+        return [], [f"REG-SCHEMA: {REGISTRY.name}: process_requirements is a list"]
+    rows = [e if isinstance(e, dict) else {"id": "?"} for e in data["requirements"]]
+    rows += [dict(e, kind="process") if isinstance(e, dict) else {"id": "?", "kind": "process"} for e in proc]
+    return rows, []
+
+
+def missing(entries: list[dict] | None) -> list[str]:
+    """``REG-MISSING`` when the registry file is absent or holds no entry: deleting or emptying it must never open a layer.
+    Asked by a final layer record, ``require_pass``, the send gate and the CI job (the draft records of a repo without a registry
+    are only reported)."""
+    if entries:
+        return []
+    return [f"REG-MISSING: {REGISTRY.as_posix()} is absent or empty; a final layer, a send and the CI job need the owner's registry"]
+
+
+def compare_with_base(base: list[dict] | None, now: list[dict] | None) -> list[str]:
+    """What the CI job checks against the base branch (append-only): no id removed (``REG-REMOVED``), no owner ``words``
+    (or ``words_verbatim``) changed (``REG-WORDS-CHANGED``); a change of status to superseded is the way to retire an entry."""
+    errs = []
+    cur = {e.get("id"): e for e in now or []}
+    for old in base or []:
+        oid = old.get("id")
+        new = cur.get(oid)
+        if new is None:
+            errs.append(f"REG-REMOVED: {oid} was in the base branch and is gone; an entry is never deleted, it becomes superseded")
+            continue
+        for k in ("words", "words_verbatim"):
+            if old.get(k) != new.get(k):
+                errs.append(f"REG-WORDS-CHANGED: {oid}: the owner's {k} differ from the base branch; his words are never edited")
+    return errs
 
 
 def is_conflict(e: dict) -> bool:
     return e.get("kind") == "conflict"
+
+
+def is_process(e: dict) -> bool:
+    """A process requirement (``process_requirements`` of the file): it binds the way we work (model routing, thread starts), not a layer.
+    The layer gate never reads it; the CI job and the registry report do, and it needs a validator or a judge step with their tests like any other."""
+    return e.get("kind") == "process"
 
 
 def _source_errs(e: dict, who: str, log_ids: set[str] | None) -> list[str]:
@@ -67,10 +103,12 @@ def _source_errs(e: dict, who: str, log_ids: set[str] | None) -> list[str]:
     if kind == "chat" and not _MSG.fullmatch(ref):
         return [f"REG-FIELDS: {who}: a chat source is a cmsg_ id, not {ref!r}"]
     if kind == "decision_log":
-        if not _RULE_REF.fullmatch(ref):
-            return [f"REG-FIELDS: {who}: a decision_log source is an id like D-139, not {ref!r}"]
-        if _DEC.fullmatch(ref) and log_ids is not None and ref not in log_ids:
-            return [f"REG-FIELDS: {who}: {ref} is not in the decision log"]
+        refs = [t for t in re.split(r"[\s,/+;]+", ref) if t]
+        if not refs or not all(_RULE_REF.fullmatch(t) for t in refs):
+            return [f"REG-FIELDS: {who}: a decision_log source is one or more ids like D-139 (separated by , / or +), not {ref!r}"]
+        gone = [t for t in refs if _DEC.fullmatch(t) and log_ids is not None and t not in log_ids]
+        if gone:
+            return [f"REG-FIELDS: {who}: {', '.join(gone)} is not in the decision log"]
     return []
 
 
@@ -104,12 +142,16 @@ def check_registry(entries: list[dict] | None, root=None) -> list[str]:
         if not (isinstance(e.get("date"), str) and _DATE.fullmatch(e["date"])):
             errs.append(f"REG-FIELDS: {who} needs the date of the owner's word (ISO 8601)")
         errs += _source_errs(e, who, log_ids)
-        errs += _layer_errs(e, who)
+        errs += _layer_errs(e, who) if not is_process(e) else ([] if e.get("layers") in (None, []) else
+                                                                [f"REG-LAYER: {who} is a process requirement and binds no layer"])
         if is_conflict(e):
             errs += _conflict_errs(e, who, seen)
             continue
-        if not (_text(e.get("words")) or _text(e.get("words_verbatim"))):
+        if not _text(e.get("words")):
             errs.append(f"REG-FIELDS: {who} has no words: an entry quotes the owner verbatim")
+        for flag in ("words_verbatim", "words_partial"):
+            if e.get(flag) is not None and not isinstance(e[flag], bool):
+                errs.append(f"REG-FIELDS: {who}: {flag} is true or false (true = the owner's own words, quoted)")
         parent = e.get("parent")
         if parent is not None and not (isinstance(parent, str) and parent in seen and parent != e.get("id")):
             errs.append(f"REG-FIELDS: {who}: parent {parent!r} is no other existing entry")
@@ -133,12 +175,13 @@ def check_registry(entries: list[dict] | None, root=None) -> list[str]:
 
 def _conflict_errs(e: dict, who: str, seen: dict[str, dict]) -> list[str]:
     errs = []
-    if not _text(e.get("summary")):
-        errs.append(f"REG-FIELDS: {who} (conflict) needs a summary of what the two entries ask")
+    if not (_text(e.get("summary")) or _text(e.get("title"))):
+        errs.append(f"REG-FIELDS: {who} (conflict) needs a summary or title of what the entries ask")
     ids = e.get("conflicts")
-    if not (isinstance(ids, list) and len(set(ids)) >= 2 and all(isinstance(i, str) and i in seen and not is_conflict(seen[i])
-                                                                  for i in ids)):
-        errs.append(f"REG-CONFLICT: {who} lists at least two existing requirement ids in conflicts")
+    # a registry id must exist; a rule outside the registry (GC-18, RR-03, "PRODUCTION_RULES approval #2") is named as text
+    if not (isinstance(ids, list) and len(set(map(str, ids))) >= 2 and all(isinstance(i, str) and i.strip() for i in ids)
+            and all(i in seen and not is_conflict(seen[i]) for i in ids if _ID.fullmatch(i))):
+        errs.append(f"REG-CONFLICT: {who} lists at least two things in conflict, and a requirement id among them must exist")
     if e.get("status") not in ("open", "resolved"):
         errs.append(f"REG-CONFLICT: {who} status is open|resolved")
     elif e["status"] == "resolved" and not (isinstance(e.get("resolved_by"), str) and _MSG.fullmatch(e["resolved_by"])):
@@ -155,8 +198,14 @@ def _anchors(path: Path) -> set[str]:
     return out
 
 
+def _test_exists(ref, root: Path) -> bool:
+    t = _TEST_REF.fullmatch(ref) if isinstance(ref, str) else None
+    f = (root / t.group(1)) if t else None
+    return bool(t and f.is_file() and re.search(rf"^\s*(async )?def {re.escape(t.group(2))}\(", f.read_text(encoding="utf-8"), re.M))
+
+
 def _check_errs(e: dict, root: Path) -> list[str]:
-    """``REQ-UNMAPPED`` / ``REQ-NOVALIDATOR`` / ``REQ-NOTEST`` / ``REQ-NOJUDGE`` for one active entry."""
+    """``REQ-UNMAPPED`` / ``REQ-NOVALIDATOR`` / ``REQ-NOTEST`` / ``REQ-NONEGATIVE`` / ``REQ-NOJUDGE`` for one active entry."""
     who = e["id"]
     check = e.get("check") if isinstance(e.get("check"), dict) else {"kind": "unmapped"}
     kind = check.get("kind")
@@ -170,11 +219,12 @@ def _check_errs(e: dict, root: Path) -> list[str]:
             mod = root / (m.group(1).replace(".", "/") + ".py")
             if not (mod.is_file() and re.search(rf"^def {re.escape(m.group(2))}\(", mod.read_text(encoding="utf-8"), re.M)):
                 errs.append(f"REQ-NOVALIDATOR: {who}: {ref} does not exist (no def {m.group(2)} in {mod.relative_to(root).as_posix()})")
-        test = check.get("test")
-        t = _TEST_REF.fullmatch(test) if isinstance(test, str) else None
-        tfile = (root / t.group(1)) if t else None
-        if not (t and tfile.is_file() and re.search(rf"^\s*(async )?def {re.escape(t.group(2))}\(", tfile.read_text(encoding="utf-8"), re.M)):
-            errs.append(f"REQ-NOTEST: {who}: check.test must be path.py::test_name of an existing test, not {test!r}")
+        if not _test_exists(check.get("test"), root):
+            errs.append(f"REQ-NOTEST: {who}: check.test must be path.py::test_name of an existing test (it passes the validator on a "
+                        f"compliant fixture), not {check.get('test')!r}")
+        if not _test_exists(check.get("negative_test"), root):
+            errs.append(f"REQ-NONEGATIVE: {who}: check.negative_test must be path.py::test_name of an existing test (the validator FAILS "
+                        f"a known violation fixture), not {check.get('negative_test')!r}")
         return errs
     if kind == "judge":
         rubric = check.get("rubric")
@@ -240,6 +290,7 @@ def report(root=None) -> dict:
     entries, errs = load(root)
     entries = entries or []
     active = [e for e in entries if e.get("status") == "active" and not is_conflict(e)]
+    process = [e["id"] for e in active if is_process(e)]
     unmapped = [e["id"] for e in active if not (isinstance(e.get("check"), dict) and e["check"].get("kind") in ("validator", "judge"))]
     per: dict[str, dict] = {}
     for e in active:
@@ -249,4 +300,4 @@ def report(root=None) -> dict:
             row["unmapped"] += e["id"] in unmapped
     open_conflicts = [e["id"] for e in entries if is_conflict(e) and e.get("status") == "open"]
     return {"total": len(entries), "active": len(active), "unmapped": unmapped, "per_layer": per,
-            "open_conflicts": open_conflicts, "errors": errs + check_registry(entries, root)}
+            "open_conflicts": open_conflicts, "process": process, "errors": errs + check_registry(entries, root)}
