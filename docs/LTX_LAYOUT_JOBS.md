@@ -2,11 +2,10 @@
 
 > **Route-scoped since D-116 (2026-11-06), LTX-2.5 on the Modal path since D-132 (2026-11-12):** this worker belongs to the D-116 / D-132 LTX route (the Blender layout drives an LTX clip); for the v4.3 episode-first route (D-131) it is a separate, unrouted worker until the owner says otherwise.
 
-> Status: **free preparation finished; nothing has run on a GPU and nothing paid has been started.** Every number of the A100 (memory,
-> seconds per clip, price per clip, sound) is **UNMEASURED** until rung L3 measures it. Brief: project files
-> `explainer-engine/blender_series_plan_2026-11-20/BRIEFS_S3_T0B_AND_T1_CARD_ka.md`, item 1. The owner's money word (08:56 UTC, relayed
-> 08:58): this item has a ceiling of **$2.00**, inside the **$3.00** total of the paid tests; at 80 % of the total ($2.40, with the
-> P2 and P1 items) everything stops.
+> Status (2026-11-20 13:25 UTC): **the worker ran on an A100-80GB: L0..L3 green and T1 (`main`, one 10 s clip, 241 frames) DONE.** Measured
+> numbers are in section 10. The owner's money frame is a shared **$6.00** for the layout and series tests with the 80 % stop at
+> **$4.80** (his card, relayed 09:48 UTC, and his "go" at 13:02 UTC); the first $2.00 / $3.00 text below is history. Brief: project files
+> `explainer-engine/blender_series_plan_2026-11-20/BRIEFS_S3_T0B_AND_T1_CARD_ka.md`, item 1.
 
 ## 1. What the worker does
 
@@ -84,8 +83,9 @@ three files). Run only with `modal run <file>::<entry>`; the session hooks refus
 |---|---|---|---|---|
 | L1 | `::check` | CPU | token pair, the launch file, the image imports torch, ltx_core, `ltx_pipelines.ic_lora`, PIL, numpy; ffmpeg/ffprobe exist | cents |
 | L2 | `::weights` | CPU | the IC-LoRA (1.3 GB, gated) to the Volume and its sha256; the five base files checked by size (sha256 only with `--hash-base`) | `stage.cap_usd` 0.10 |
-| L3 | `::smoke` | A100-80GB | the smallest legal clip (9 frames) | `caps.smoke_usd` 0.20 |
-| L4 | `::main` | A100-80GB | the job's chain (T1: two clips) | `caps.run_usd` 1.40 |
+| L3 | `::smoke` | A100-80GB | the smallest legal clip (9 frames) | `caps.smoke_usd` 0.45 (was 0.20: the first smoke ran out of window) |
+| L4 | `::main` | A100-80GB | the job's chain (T1: one 10 s clip) | `caps.run_usd` 1.2 |
+| - | `::chain` | A100-80GB | one scene, each clip from a frame of the one before; a sibling row restarts from the first picture | `caps.chain_usd` 2.0 |
 
 In the container (`body()`): the launch passed in is the launch baked into the image; an **attempt marker** per run key on the Volume
 refuses a second attempt (Modal re-schedules a crashed input; a re-run with a fresh timeout would pay twice); the weights must be staged;
@@ -98,15 +98,16 @@ clip's measured seconds. Results are plain JSON.
 Local side: `preflight` (launch problems, the MODAL1 token pair, the creator's `modal` line in `spend_caps`, **CH-07**: a passing
 `paid_offer/1` that names `explainer_engine/training/pods/ltx/modal_layout_jobs.py::smoke|main` and the A100-80GB), the GO
 (`EE_MODAL_GO=<the creator's yes message id>:<plan sha256[:12]>`), the ladder gate, the batch on HF, the **ledger reservation before the
-call** (`core/ledger.Run`, line 2.0, STOP_FRACTION 0.8) and the night ledger, then settlement from the measured wall seconds.
+call** (`core/ledger.Run`, one ledger file per rung, line 3.5, STOP_FRACTION 0.8) and the night ledger, then settlement from the measured wall seconds.
 
 ## 5. The launch file's arithmetic
 
 - A100-80GB, 4 CPU, 32 GiB = **$2.9428/h** (`cloud/modal_schedule`, prices of 2026-11-07, the same card as the P2 judge launch). CPU
   stage 4 CPU / 16 GiB = $0.3165/h.
-- Ledger line 2.0 -> 80 % rule leaves 1.6 to reserve: smoke 0.20 + run 1.40. Function timeouts come from the caps:
-  `floor(0.9 * (cap - cold_start_s * rate/3600) / rate * 3600)` = **166 s** (smoke) and **1487 s** (run), CPU stage 996 s; the worst
-  hard bill of both GPU functions stays inside 1.6. Tests recompute all of it.
+- Caps (13:25 UTC): smoke 0.45, run 1.2, chain 2.0; each rung has its own ledger file with line 3.5 (the creator's modal per-run line), each cap
+  at most 80 % of it; `caps.item_ceiling_usd` 4.8 (80 % of the owner's $6.00) must hold for smoke + run + chain + `item_spent_before_usd` 0.64
+  (item 1 $0.53 + the first smoke $0.11). Function timeouts come from the caps: `floor(0.9 * (cap - cold_start_s * rate/3600) / rate * 3600)` =
+  **441 s** (smoke), **1267 s** (run), **2147 s** (chain), CPU stage 996 s. Tests recompute all of it.
 - `cold_start_s 60` and `margin_s 60` are **estimates** (the LTX bake-off measured about 34 s of overhead; the LTX launch uses 120/75).
 
 ## 6. What only the L3 smoke can measure (and what stops the run)
@@ -116,8 +117,8 @@ RSS peak and the cgroup peak, seconds to load and per clip, price per clip (sett
 (ffprobe), the frame count and size of the output. If the model does not fit or the host RAM is too small: the worker writes the
 failure and the numbers and stops. **No second GPU, no size change, no retry on a bigger box** (the brief).
 
-Honest limit of the planned smoke: with `smoke_usd` 0.20 the function window is about 106 s of work after the 60 s start estimate, so a
-9-frame clip measures weight loading and the first denoise, **not** the peak of a 241-frame clip. A longer smoke needs a higher cap (Q-L1).
+The first smoke (window 166 s at `smoke_usd` 0.20) did not finish: the CLI builds the 22B transformer twice from the Volume (stage 1 and stage 2
+with the IC-LoRA) and the deadline came during the second build. With 0.45 (window 441 s) it finished. See section 10.
 
 ## 7. Open questions (for the plan thread / the owner; nothing was decided on an assumption, OR-22)
 
@@ -151,3 +152,16 @@ smoke (one clip, no chain); a second attempt refused with nothing paid; the dead
 clip anywhere); not enough time for the next clip; a failing CLI; HF down (`UPLOAD_UNVERIFIED`, files on disk and on the Volume);
 unstaged weights; a wrong batch hash; a forbidden word in the container; a launch that is not the baked one. It found and fixed one real
 bug (`rows()` collided on a chain row's own `hop`). It proves the plumbing and **nothing about LTX, memory, seconds or sound**.
+
+## 10. Measured on the A100-80GB (2026-11-20, A100-80GB $2.9428/h, free Modal credit)
+
+| Run | What | Result | Modal bill (settled from wall s) |
+|---|---|---|---|
+| `2f7890a82e23_54fd37dec98c` smoke | 9 frames, window 166 s | **PARTIAL**: deadline during the stage-2 transformer build, 106 s into the CLI; card peak 41.2 GiB | $0.1094 / 134 s |
+| `3dea9204f241_a32ee2e2e617` smoke | 9 frames, window 441 s | **DONE**: 1280x704, 9 frames, sound yes; CLI 158 s (almost all the two loads, stage-1 denoise 4 s); torch max allocated 39.44 GiB, reserved 40.69 GiB, card peak 41.2 GiB of 79.28; host RSS peak 45.35 GiB | $0.1471 / 180 s |
+| `3dea9204f241_a32ee2e2e617` main (T1) | one 10 s clip, 241 frames, the T0b `am1` layout (5 camera views of 2 s) | **DONE**: 241 frames, sound yes; CLI 261.7 s (26.2 s per generated second); torch max allocated 42.95 GiB, reserved 49.88 GiB, card peak 50.4 GiB; host RSS peak 45.58 GiB | $0.2462 / 301 s |
+
+HF: `explainer-engine/layout_route/out/<run_id>/<smoke|main>/` (clip, `.vram.json`, `.log`, `layout_record.json`, all read back with sha256).
+Observation (one clip, not a verdict): the output followed the layout's cuts, obstacle positions and the figure's place; the look is an
+illustration, and a figure was smeared mid-clip. Host RSS above the 32 GiB container figure is mapped file pages, no kill happened.
+
