@@ -3752,3 +3752,12 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 - Thresholds are hypothesis defaults in each `Limits` dataclass, severity REVIEW; wiring to `sourced_rules.json` BP ids is a later step (D-59).
 - Tests: `tests/unit/test_val_*.py` (124 pass). Full suite: 2442 passed; failures unrelated to this change and present on the base: `test_lora_training.py` (4, cv2 missing in the cloud sandbox) and `test_xworld_v1_score.py::test_identical_frame_beats_a_different_one`.
 - Not done: BP wiring, hooking validators into gates. Next: lead decides wiring.
+
+## 2026-11-20 — L27: PC-06 counts the description in bytes and forbids `<` `>`
+- Fix: `qa/publish_check.py` PC-06 compared the description in characters; YouTube Data API limits it to 5000 bytes
+  (an em dash is 3 bytes, so 2600 of them pass a character check and fail the upload). Now `DESCRIPTION_MAX_BYTES` is compared
+  with the UTF-8 length, the message says "bytes", and `<` / `>` in title or description FAIL (the API refuses them). Title stays
+  100 characters. `publish/plan.py::field_findings` already counted bytes and forbade the brackets: unchanged.
+- Source kind: platform policy (YouTube Data API field limits for `videos.insert` snippet), not a BP threshold; read 2026-11-20.
+- Tests: `tests/unit/test_publish_check.py` (4900 ASCII passes, 2600 em dashes fails, 5000 bytes passes, 5001 fails, `<` in the
+  description fails, `>` in the title fails, title 100 passes / 101 fails). Doc: `docs/QA_SPECIFICATION.md` PC-06.
