@@ -3760,3 +3760,9 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
   PROPOSED-CAM-1): they are `value: null, status: OPEN` in `qa/camera_move_tolerances.json`, so CM-15 and the zoom-size part of the clip check are NOT_RUN (never a pass);
   enum, signs, rotation, truck/zoom channels and easing still run. Clip tests use placeholder floors (`tests/fixtures/camera_move/tolerances_TESTONLY.json`, not repo numbers).
 - Cost: $0.00.
+
+## 2026-11-20 — G-05 `episode_film.py`: one film source for every layer (same draft PR, separate commit, free work)
+- Gemini wrote `explainer_engine/episode_film.py` (schema `episode_film/1`: `load_episode_film`, `validate_episode_film`, `block`, `film_id`, `check_film_ids`) and a separate tester chat wrote
+  `tests/unit/test_episode_film.py` + `tests/fixtures/episode_film/` from the acceptance list (neither saw the other). Review: one bug in the module (an empty string was counted twice as a problem,
+  the brief asks for exactly one); patched; 5 tests added by the reviewing thread (the original 20 are untouched). 25 tests pass; the original module failed 2 of the 25.
+- No default film, preset or fallback anywhere; stdlib only; nothing written to disk. Not yet read by any layer (wiring is the lead's step). Cost: $0.00.

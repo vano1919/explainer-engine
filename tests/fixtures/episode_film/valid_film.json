@@ -1,0 +1,37 @@
+{
+  "schema": "episode_film/1",
+  "film_id": "owner_film_01",
+  "film_name": "The Fall of Constantinople",
+  "era": "15th Century Byzantine-Ottoman",
+  "picture": {
+    "era_look": "desaturated parchment warmth with deep bronze shadows",
+    "grade_words": "aged, solemn, dramatic, high-contrast"
+  },
+  "map": {
+    "style_preset": "test_preset_a",
+    "font": "Cinzel"
+  },
+  "counter": {
+    "style_preset": "test_preset_a"
+  },
+  "colour": {
+    "targets": "imperial_purple=#4B2E59, ottoman_crimson=#8B1E24, sea_slate=#2C3E50"
+  },
+  "subtitles": {
+    "font": "Inter",
+    "colour": "#F5F2EB",
+    "position": "bottom_center"
+  },
+  "direction": {
+    "notes": [
+      "Hold wide establishing map frame for 3 seconds before zooming to the Golden Horn.",
+      "Keep camera drift slow and steady during siege timeline transitions."
+    ]
+  },
+  "narration": {
+    "notes": [
+      "Measured, authoritative pacing with a brief pause before the date 1453.",
+      "Avoid theatrical inflection on troop count figures."
+    ]
+  }
+}
