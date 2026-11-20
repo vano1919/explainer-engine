@@ -3791,3 +3791,13 @@ text is still NOT_RUN (needs the owner's Chrome).
 `continuity.compose_prompt` now writes a cast member's `identity` as one clause after the verbatim description:
 `(locked: ...; anchors: ...; avoid: ...)`; `flexible` is never written. Cards without `identity` give a byte-identical
 prompt (test pins the sha256 of the example's prompts taken before the change). Test pack with the new text: NOT_RUN.
+
+## 2026-11-20 — Coverage gaps from the G11/G12 sample: Georgian-script check and master size (Claude, Gemini was at its limit)
+
+`explainer_engine/qa/language_check.py`: any character of the three Georgian blocks (ranges checked against `unicodedata`,
+Unicode 15.1) in the viewer-facing text files fails with the count and the first three places (`file:line:col`; a `.json`
+file is read as JSON so an escaped letter counts); an unreadable file is NOT_RUN; zero is zero, no threshold.
+`explainer_engine/qa/master_size.py`: ffprobe size of the master equals the declared size, default the delivery frame
+(BP-167 through `core/delivery.size()`; a job that names its size keeps it); mismatch FAIL, no file / no video stream NOT_RUN.
+Tests: `tests/unit/test_language_check.py` (9), `tests/unit/test_master_size.py` (6). Neither is wired into a gate or the
+registry yet.
