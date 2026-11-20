@@ -2504,7 +2504,7 @@
     "explainer_engine/audio/layers.py:SYNC_EARLY",
     "explainer_engine/production/timing.py:SFX_EARLY_MAX",
     "explainer_engine/qa/scorecard.py:synced",
-    "explainer_engine/audio/sound_director.py",
+    "explainer_engine/audio/val_cue_binding.py:Limits", "explainer_engine/audio/sound_director.py",
     "explainer_engine/core/delivery.py:frame_ms"
    ],
    "supersedes": [
