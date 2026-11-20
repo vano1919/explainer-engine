@@ -1,0 +1,41 @@
+{
+ "size": [
+  2560,
+  1440
+ ],
+ "fps": 24,
+ "seconds": 6.25,
+ "center": [
+  2.87,
+  50.66
+ ],
+ "zoom": 11.3,
+ "line_geojson": "line.geojson",
+ "line_t": [
+  0.0,
+  6.0
+ ],
+ "counter": {
+  "from": 0,
+  "to": 100000,
+  "t0": 0.5,
+  "t1": 4.8,
+  "label": "men (estimate)"
+ },
+ "date_chip": [
+  {
+   "t": 0.0,
+   "text": "Christmas 1914"
+  }
+ ],
+ "towns": [],
+ "footnote": "Map data: OpenStreetMap contributors, OpenFreeMap",
+ "camera": {
+  "move": "zoom_in",
+  "zoom_from": 11.0,
+  "zoom_to": 11.6,
+  "ease": "smoothstep"
+ },
+ "film_file": "episode_film.json",
+ "font": "preset"
+}
