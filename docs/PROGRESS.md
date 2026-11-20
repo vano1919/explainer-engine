@@ -3913,3 +3913,8 @@ No number is written in any of them; tests `test_first_shot.py`, `test_opening_d
 ## 2026-11-20 — Narration LRA after `level.py` (BP-59), measured on episode1
 - HF `episode1/out/narration.wav` (1184.7 s) and `read.wav` (1159.2 s), ffmpeg `ebur128`: narration raw 7.8 LU (over BP-59's 7.0), after `level_voice` 4.4 LU; read raw 7.7, levelled 4.3. Integrated -30.2 -> -29.7 and -30.1 -> -29.6 LUFS. So the 7.8 -> 4.4 claim holds on both tracks that episode1 has; no other narration track was found. The shipped mix uses the levelled stem (`production/assemble.py` calls `level_voice` in `build_audio`). Not measured: the stem inside the finished mix (BP-51) and the filtered `voice` after `acoustics.highpass`.
 - New `tests/unit/test_level_lra.py`: a seeded synthetic swinging read is over the limit raw (FAIL by `stem_lra_verdict`) and under it after `level_voice` (PASS); this check was missing (only the verdict function and the loudnorm string were tested). No code changed. Cost $0.
+
+## 2026-11-20 — publish auth hygiene (L32)
+- `auth` / `auth-finish` write `tools/youtube/token.b64.txt` only with `--export-env` (the printed text names it only then); `load_token` logs one line naming the source (session file or `YOUTUBE_TOKEN_B64`), never the token; the env variable and its code path stay (owner card 2026-11-20 21:01).
+- Tests: `tests/unit/test_youtube_auth_hygiene.py` (flag on/off, source logged, no tracked `tools/` token or `pending.json`, `.gitignore` covers `tools/youtube/`).
+- Not done: the registry exception row to OR-P03 (needs the creator's typed word); the real sign-in flow was not run.
