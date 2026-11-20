@@ -749,3 +749,42 @@ def test_a_fade_and_grain_are_not_a_living_world_for_alive_beyond_the_camera(tmp
     assert V.alive_beyond_camera(smoke_clip(tmp_path / "short.mp4", n=0.5))["status"] == "NOT_RUN"
     monkeypatch.setattr(V, "_cv2", lambda: None)
     assert V.alive_beyond_camera(smoke_clip(tmp_path / "nocv.mp4"))["status"] == "NOT_RUN" and V.alive_beyond_camera.kinds == V.living_motion.kinds
+
+
+# ---- OR-V24: a 2.5D shot is at most 5 s and its camera keeps a slow drift ----------------------------------------------------------------
+
+def zoom_clip(path, z, n=3.0, side=None):
+    import cv2
+    rng = np.random.default_rng(5)
+    pic = cv2.GaussianBlur(rng.normal(128, 50, (H, W)).astype(np.float32), (0, 0), 2.0)
+    pic = (pic - pic.min()) / (pic.max() - pic.min()) * 200 + 25
+    pic[100:170, 150:330] = 230
+    k = seconds(n)
+    clip_path = clip(path, [cv2.warpAffine(pic, cv2.getRotationMatrix2D((W / 2, H / 2), 0, 1 + z * i / k), (W, H), flags=cv2.INTER_CUBIC,
+                                           borderMode=cv2.BORDER_REFLECT) for i in range(k)])
+    if side:
+        path.with_suffix(".zones.json").write_text(json.dumps(side), encoding="utf-8")
+    return clip_path
+
+
+def test_a_slow_drift_inside_the_band_on_a_clip_within_five_seconds_passes(tmp_path):
+    r = V.still_shot_drift(zoom_clip(tmp_path / "ok.mp4", 0.015))
+    assert r["status"] == "PASS" and 1.0 <= r["value"] <= 3.0 and "cap 5 s" in r["detail"], r
+
+
+def test_a_standing_camera_a_push_and_an_over_long_shot_fail_the_drift_rule(tmp_path):      # the negative test of OR-V24
+    still = V.still_shot_drift(zoom_clip(tmp_path / "still.mp4", 0.0))
+    assert still["status"] == "FAIL" and "stands still" in still["detail"], still
+    push = V.still_shot_drift(zoom_clip(tmp_path / "push.mp4", 0.12))
+    assert push["status"] == "FAIL" and "declare a push" in push["detail"], push
+    long = V.still_shot_drift(zoom_clip(tmp_path / "long.mp4", 0.02, n=6.0))
+    assert long["status"] == "FAIL" and "5 s cap" in long["detail"], long
+
+
+def test_a_declared_push_is_held_to_the_bp_181_band_and_opencv_is_needed(tmp_path, monkeypatch):
+    ok = V.still_shot_drift(zoom_clip(tmp_path / "decl.mp4", 0.12, side={"camera": "push"}))
+    assert ok["status"] == "PASS" and "declared push" in ok["detail"], ok                      # 12 % over 3 s is about 19 % over 5 s: inside 4-25 %
+    weak = V.still_shot_drift(zoom_clip(tmp_path / "weak.mp4", 0.015, side={"camera": "push"}))
+    assert weak["status"] == "FAIL" and "under 4 %" in weak["detail"], weak
+    monkeypatch.setattr(V, "_cv2", lambda: None)
+    assert V.still_shot_drift(zoom_clip(tmp_path / "nocv.mp4", 0.015))["status"] == "NOT_RUN" and V.still_shot_drift.kinds == V.living_motion.kinds
