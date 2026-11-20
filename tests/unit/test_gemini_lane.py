@@ -278,6 +278,14 @@ def test_zero_sha_is_taken_only_with_a_matching_sums_file(tmp_path, repo, sha):
     assert run_intake(d, repo, apply=False)["status"] == "accepted_not_applied"          # the driver's sum matches the file
 
 
+def test_a_short_base_sha_of_the_pinned_commit_is_taken_but_another_is_not(tmp_path, repo, sha):
+    d = make_task(tmp_path, sha)
+    answer(d, [("explainer_engine/fx/new.py", "new", NEW_CODE.encode())], base_sha=sha[:8])
+    assert run_intake(d, repo, apply=False)["status"] == "accepted_not_applied"
+    answer(d, [("explainer_engine/fx/new.py", "new", NEW_CODE.encode())], base_sha=sha[:3])
+    assert codes(run_intake(d, repo, apply=False)) == ["base_sha_mismatch"]
+
+
 def test_refuses_manifest_for_another_base(tmp_path, repo, sha):
     d = make_task(tmp_path, sha)
     answer(d, [("explainer_engine/fx/new.py", "new", NEW_CODE.encode())], base_sha="f" * 40)

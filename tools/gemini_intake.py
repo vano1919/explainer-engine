@@ -86,7 +86,8 @@ def judge(task_dir: Path, repo: Path) -> tuple[dict, list[dict], dict[str, tuple
     except (OSError, ValueError, AssertionError):
         _refuse(refusals, "manifest_invalid", None, "out/MANIFEST.json is missing, not JSON, or has no files list")
         return task, refusals, accepted
-    if manifest.get("base_sha") != sha:
+    claimed = str(manifest.get("base_sha"))
+    if not (claimed == sha or (re.fullmatch(r"[0-9a-f]{8,39}", claimed) and sha.startswith(claimed))):   # TASK.md may give a short sha
         _refuse(refusals, "base_sha_mismatch", None,
                 f"MANIFEST base_sha {str(manifest.get('base_sha'))[:12]} is not the pinned {sha[:12]}")
 
