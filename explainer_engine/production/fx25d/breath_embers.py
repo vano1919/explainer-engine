@@ -1,7 +1,7 @@
 """2.5D atmospheric breath vapour and rising fire ember effects for single-frame rendering.
 
 Implements deterministic, pure-NumPy layer generators and compositing for the 2.5D lane:
-- `breath_alpha`: renders soft, drifting, fading cold-air breath puffs per character mouth (OR-V19d, LP-09, BP-215).
+- `breath_alpha`: renders soft, drifting, fading cold-air breath puffs per character mouth (OR-V19d, LP-09; its living-motion rule lives in the 2.5D stack, not on main yet).
 - `embers_layer`: renders sparse, rising, swaying, cooling fire embers with depth occlusion (OR-V19a, OR-V19c, LP-09).
 - `composite`: blends breath vapour and screen-lit embers onto an RGB frame without exceeding 255 (OR-V19d, OR-V19a).
 """
