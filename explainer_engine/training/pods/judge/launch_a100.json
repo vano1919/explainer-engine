@@ -22,13 +22,13 @@
   "torchvision_why": "Qwen3VLProcessor needs torchvision (found by the free CPU rehearsal: ImportError without it); 0.23.0 is the pair of torch 2.8.0"
  },
  "caps": {
-  "smoke_usd": 0.15,
-  "run_usd": 0.81,
-  "ledger_line_usd": 1.2,
+  "smoke_usd": 0.14,
+  "run_usd": 0.236,
+  "ledger_line_usd": 0.47,
   "cold_start_s": 45,
-  "margin_s": 60
+  "margin_s": 40
  },
- "caps_note": "cold_start_s 45 and margin_s 60 are ESTIMATES (the LTX bake-off measured ~34 s overhead; the end path is small JSON uploads). Smoke window = floor(0.9*(0.15-45*rate/3600)/rate*3600) - margin = about 64 s of work for loading Qwen3-VL-8B and one frame; if L3 shows it too tight the coordinator decides (not raised here).",
+ "caps_note": "2026-11-20 09:40 UTC: the coordinator's P2 share is $0.47 (P1 $0.53 spent, Layout-To-Render ~$2.00 reserved, of the $3.00). Ledger line = 0.47, reservations stop at 80 % = 0.376 = smoke 0.14 + run 0.236. margin_s 40 and cold_start_s 45 are ESTIMATES. Smoke window about 73 s, run window about 179 s (8B load ~30 s + 80 questions). Hard bills: smoke <= 0.129, run <= 0.216.",
  "hf_out": "explainer-engine/tests_paid_2026-11-20/P2",
  "models": {
   "qwen3vl_8b": {
@@ -250,5 +250,9 @@
   "provisional": true,
   "why": "placeholders, NOT a decision: the raw probabilities are the data; thresholds are refitted offline on the owner's PASS/FAIL (compare.py)"
  },
- "experts_note": "transformers 5.5 picks grouped_mm for MoE experts by default; torch._grouped_mm on an A100 (sm80) with torch 2.8 is UNVERIFIED (the CPU rehearsal of the default failed: no CPU kernel). eager runs everywhere, slower: estimate ~4 s per question on the 30B (unmeasured). Technical choice for the plan thread to confirm."
+ "experts_note": "transformers 5.5 picks grouped_mm for MoE experts by default; torch._grouped_mm on an A100 (sm80) with torch 2.8 is UNVERIFIED (the CPU rehearsal of the default failed: no CPU kernel). eager runs everywhere, slower: estimate ~4 s per question on the 30B (unmeasured). Technical choice for the plan thread to confirm.",
+ "run_models": [
+  "qwen3vl_8b"
+ ],
+ "run_models_note": "8B only: the 30B-A3B (pinned, 57.88 GiB) does not fit the $0.47 share by estimate (staging + load + 80 questions ~ $0.5 alone); it needs its own budget and the coordinator's word. Coordinator's choice A, proposed 09:40 UTC."
 }

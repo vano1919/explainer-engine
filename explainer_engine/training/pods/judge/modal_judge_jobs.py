@@ -96,6 +96,11 @@ def proof(launch: dict) -> dict:
     return {"launch_sha": sha_json(launch), "worker_sha": worker_sha()}
 
 
+def run_models(launch: dict) -> list[str]:
+    """The models the main run asks and the weights rung stages: ``run_models`` of the launch (all pinned models when absent)."""
+    return list(launch.get("run_models") or launch["models"])
+
+
 def rate_usd_h(launch: dict) -> float:
     from explainer_engine.cloud import modal_schedule as MS
     per_s = MS.GPUS[launch["gpu"]]["usd_s"] + launch["cpu"] * MS.CPU_CORE_S + launch["memory_gib"] * MS.MEM_GIB_S
@@ -138,6 +143,9 @@ def launch_problems(launch: dict, check_table: bool = True) -> list[str]:
         bad.append(f"smoke {c['smoke_usd']} + run {c['run_usd']} is above 80 % of the ledger line {c['ledger_line_usd']} (the ledger would refuse)")
     if launch["scaledown_window_s"] > 5:
         bad.append("scaledown_window_s is above 5 s")
+    for k in run_models(launch):
+        if k not in launch["models"]:
+            bad.append(f"run_models names {k}, which is not pinned")
     for k, m in launch["models"].items():
         if not re.fullmatch(r"[0-9a-f]{40}", m.get("revision", "")) or not m.get("files"):
             bad.append(f"models.{k}: no full revision sha or no pinned files")
@@ -396,7 +404,7 @@ def body(spec: dict, launch: dict, *, timeout_s: int, vol_root=VOL, work=WORK, c
     if err:
         return {"state": "FAILED", "error": err}
     models = [{"key": k, "path": str(weights_root(launch, k, vol_root)), "cls": launch["models"][k]["model_cls"], "experts": launch["models"][k].get("experts_implementation")}
-              for k in (["qwen3vl_8b"] if kind == "smoke" else list(launch["models"]))]
+              for k in (["qwen3vl_8b"] if kind == "smoke" else run_models(launch))]
     unstaged = [f"{m['key']}: {p}" for m in models for p in check_weights(launch, m["key"], vol_root, hash_files=False)]
     if unstaged:
         return {"state": "FAILED", "error": "the model files are not staged on the Volume (run the L2 rung first)", "problems": unstaged[:8]}
@@ -489,7 +497,7 @@ if modal is not None:
     @app.function(memory=(8192, 8192), timeout=3600, volumes={VOL: vol}, **CPU_KW)
     def weights_stage(launch: dict):
         out = {}
-        for k in launch["models"]:
+        for k in run_models(launch):
             out[k] = stage_weights(launch, k)
             vol.commit()
         return out

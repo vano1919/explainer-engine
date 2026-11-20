@@ -156,6 +156,7 @@ class FakeApi:
 @pytest.fixture
 def world(tmp_path):
     launch = json.loads(json.dumps(M.LAUNCH))
+    launch["run_models"] = list(launch["models"])      # the fixture rehearses both models; the real launch runs the 8B only
     vol = tmp_path / "vol"
     for k, m in launch["models"].items():             # tiny staged "weights": same file names, pinned sizes and ids replaced
         m["files"] = {}
@@ -231,7 +232,7 @@ def test_launch_file_is_consistent_with_the_price_table_and_the_80_percent_rule(
     L = M.LAUNCH
     assert M.launch_problems(L) == []
     c = L["caps"]
-    assert c["smoke_usd"] + c["run_usd"] <= 0.8 * c["ledger_line_usd"] + 1e-9 and c["ledger_line_usd"] == 1.2
+    assert c["smoke_usd"] + c["run_usd"] <= 0.8 * c["ledger_line_usd"] + 1e-9 and c["ledger_line_usd"] == 0.47
     t_smoke, t_run = M.timeouts(L)
     assert (t_smoke + c["cold_start_s"]) * M.stated_rate(L) / 3600 <= c["smoke_usd"]
     assert (t_run + c["cold_start_s"]) * M.stated_rate(L) / 3600 <= c["run_usd"]
@@ -277,3 +278,11 @@ def test_pack_batch_is_reproducible_and_sha_named(tmp_path):
     (src / "batch.json").write_text(json.dumps(dict(batch, style_examples=batch["style_examples"][:1])))
     with pytest.raises(SystemExit):
         pack_batch.pack(src, tmp_path / "o3")
+
+
+def test_the_real_launch_runs_the_8b_only_inside_the_047_share():
+    L = M.LAUNCH
+    assert M.run_models(L) == ["qwen3vl_8b"] and "qwen3vl_30b_a3b" in L["models"]      # the 30B stays pinned, not run, not staged
+    t_smoke, t_run = M.timeouts(L)
+    hard = (t_smoke + L["caps"]["cold_start_s"]) * M.stated_rate(L) / 3600 + (t_run + L["caps"]["cold_start_s"]) * M.stated_rate(L) / 3600
+    assert hard <= 0.47
