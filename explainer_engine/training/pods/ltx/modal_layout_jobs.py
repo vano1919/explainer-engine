@@ -158,9 +158,15 @@ def launch_problems(launch: dict, check_table: bool = True) -> list[str]:
             bad.append(f"caps.{k} is not set")
     if bad:
         return bad
-    if c["smoke_usd"] + c["run_usd"] + c["chain_usd"] > 0.8 * c["ledger_line_usd"] + 1e-9:
-        bad.append(f"smoke {c['smoke_usd']} + run {c['run_usd']} + chain {c['chain_usd']} is above 80 % of the ledger line "
-                   f"{c['ledger_line_usd']} (the ledger would refuse)")
+    for k in ("smoke_usd", "run_usd", "chain_usd"):          # each rung has its own ledger file: its cap must pass that ledger's 80 % rule
+        if c[k] > 0.8 * c["ledger_line_usd"] + 1e-9:
+            bad.append(f"caps.{k} {c[k]} is above 80 % of the ledger line {c['ledger_line_usd']} (the ledger would refuse)")
+    ceil, before = c.get("item_ceiling_usd"), c.get("item_spent_before_usd", 0.0)
+    if not isinstance(ceil, (int, float)) or ceil <= 0:
+        bad.append("caps.item_ceiling_usd is not set (the owner's shared ceiling, at its 80 % stop)")
+    elif c["smoke_usd"] + c["run_usd"] + c["chain_usd"] + before > ceil + 1e-9:
+        bad.append(f"smoke {c['smoke_usd']} + run {c['run_usd']} + chain {c['chain_usd']} + already spent {before} is above the item's "
+                   f"ceiling {ceil}")
     if not (isinstance(launch["scaledown_window_s"], int) and launch["scaledown_window_s"] <= 5):
         bad.append("CH-04: scaledown_window_s is above 5 s")
     if not (30 <= launch["startup_timeout_s"] <= c["cold_start_s"]):

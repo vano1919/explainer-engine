@@ -30,8 +30,9 @@ def _probe_ok(path):
 def test_launch_file_is_consistent_with_the_price_table_and_the_80_percent_rule():
     assert M.launch_problems(LAUNCH) == []
     c = LAUNCH["caps"]
-    assert c["smoke_usd"] + c["run_usd"] + c["chain_usd"] <= 0.8 * c["ledger_line_usd"] + 1e-9
-    assert c["smoke_usd"] + c["run_usd"] + c["chain_usd"] == 2.0          # the item's real ceiling (owner, via the coordinator)
+    assert all(c[k] <= 0.8 * c["ledger_line_usd"] + 1e-9 for k in ("smoke_usd", "run_usd", "chain_usd"))   # one ledger file per rung
+    assert c["ledger_line_usd"] <= 3.5                                    # the creator's modal per-run line
+    assert c["smoke_usd"] + c["run_usd"] + c["chain_usd"] + c["item_spent_before_usd"] <= c["item_ceiling_usd"] == 4.8   # owner: $6.00, 80 % stop
     t_smoke, t_run, t_chain = M.timeouts(LAUNCH)
     assert (t_smoke + c["cold_start_s"]) * M.stated_rate(LAUNCH) / 3600 <= c["smoke_usd"]
     assert (t_run + c["cold_start_s"]) * M.stated_rate(LAUNCH) / 3600 <= c["run_usd"]
@@ -45,11 +46,13 @@ def test_the_hard_bill_of_each_function_stays_inside_its_cap_and_the_ledger_line
     h = M.stated_rate(LAUNCH)
     c = LAUNCH["caps"]
     worst = sum((t + c["cold_start_s"]) * h / 3600 for t in M.timeouts(LAUNCH))
-    assert worst <= 2.0 + 1e-9
+    assert worst <= c["smoke_usd"] + c["run_usd"] + c["chain_usd"] + 1e-9
 
 
 @pytest.mark.parametrize("change,needle", [
-    (lambda L: L["caps"].update(run_usd=1.5), "80 %"),
+    (lambda L: L["caps"].update(run_usd=3.0), "80 %"),
+    (lambda L: L["caps"].update(chain_usd=2.8), "item's ceiling"),
+    (lambda L: L["caps"].pop("item_ceiling_usd"), "item_ceiling_usd is not set"),
     (lambda L: L["caps"].pop("chain_usd"), "chain_usd is not set"),
     (lambda L: L.update(scaledown_window_s=30), "CH-04"),
     (lambda L: L["native"].update(use=[1280, 720]), "CH-02"),

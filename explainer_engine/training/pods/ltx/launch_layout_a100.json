@@ -64,7 +64,7 @@
  },
  "smoke": {
   "frames": 9,
-  "why": "the smallest legal 8k+1 clip: with caps.smoke_usd 0.20 the function window is only about 100 s (see caps_note), so the smoke measures weight residency and the first denoise, NOT the peak of a 241-frame clip. A longer smoke needs a higher cap: the coordinator's decision (docs/LTX_LAYOUT_JOBS.md Q-L1)."
+  "why": "the smallest legal 8k+1 clip. The first smoke at caps.smoke_usd 0.20 (window 166 s) ran out of time while the CLI built the transformer for stage 2; with 0.45 the window is about 440 s. It still measures weight residency, load time and the first denoise, NOT the peak of a 241-frame clip."
  },
  "gpu": "A100-80GB",
  "cpu": 4,
@@ -95,14 +95,16 @@
   "overlap_frames": 0
  },
  "caps": {
-  "smoke_usd": 0.2,
-  "run_usd": 0.8,
-  "chain_usd": 1.0,
-  "ledger_line_usd": 2.5,
+  "smoke_usd": 0.45,
+  "run_usd": 1.2,
+  "chain_usd": 2.0,
+  "ledger_line_usd": 3.5,
   "cold_start_s": 60,
-  "margin_s": 60
+  "margin_s": 60,
+  "item_ceiling_usd": 4.8,
+  "item_spent_before_usd": 0.64
  },
- "caps_note": "coordinator 2026-11-20 09:35 UTC (owner: yes to everything, item ceiling $2.00 = smoke 0.20 + T1 0.80 + T3 1.00): smoke 0.20 and T1 (`main`, one clip: Blender layout, moving camera, film line) 0.80 together are the $1.00 of T1; T3 (`chain`, one scene 3 clips, each from the previous clip's frame) is its own launch at 1.00. The ledger line is 2.5 only because its 80 % rule must let the three worst-case reservations (2.0) through; the item's real ceiling is the sum of the three launch caps, 2.0. cold_start_s 60 and margin_s 60 are ESTIMATES; every window below is unmeasured.",
+ "caps_note": "RAISED 2026-11-20 13:xx UTC after the first smoke (run 2f7890a82e23_54fd37dec98c, $0.1094, window 166 s): the CLI loads the 22B transformer from the Volume twice (stage 1 and stage 2 with the IC-LoRA) and the deadline came during the second load, 106 s into the clip, so the 9-frame smoke did not finish. The owner set a shared ceiling of $6.00 with the 80 % stop at $4.80 (his card, relayed by the coordinator 09:48 UTC, and 'go' at 13:02 UTC). item_ceiling_usd 4.8 is that 80 % stop; item_spent_before_usd 0.64 = item 1 ($0.53) + the first smoke ($0.11); smoke + run + chain + spent must stay under it. Each rung has its own ledger file with line 3.5 (the creator's modal per-run line), each cap <= 80 % of that line. cold_start_s 60 and margin_s 60 are still ESTIMATES.",
  "verdict_fields": [
   "state",
   "gen_s",
