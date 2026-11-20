@@ -1,0 +1,142 @@
+{
+ "schema": "explainer.blender_scene",
+ "version": 1,
+ "scene_id": "t0_b1",
+ "place": "german_trench",
+ "fps": 24,
+ "clip_frames": 241,
+ "size": [
+  1280,
+  704
+ ],
+ "people": [
+  {
+   "id": "officer",
+   "side": "german",
+   "hero_id": "german_officer",
+   "track": [
+    {
+     "frame": 0,
+     "pos": [
+      -0.3,
+      3
+     ],
+     "heading": 0,
+     "pose": "stand"
+    },
+    {
+     "frame": 140,
+     "pos": [
+      -0.3,
+      6.5
+     ],
+     "heading": 0,
+     "pose": "stand"
+    }
+   ]
+  },
+  {
+   "id": "soldier",
+   "side": "german",
+   "hero_id": "german_soldier_1",
+   "track": [
+    {
+     "frame": 0,
+     "pos": [
+      -1.7,
+      11
+     ],
+     "heading": 180,
+     "pose": "stand"
+    }
+   ]
+  }
+ ],
+ "cameras": [
+  {
+   "id": "b_wide",
+   "pos": [
+    -1.0,
+    -2.0,
+    1.5
+   ],
+   "heading": 0,
+   "pitch": 0,
+   "lens": 28
+  },
+  {
+   "id": "b_back",
+   "pos": [
+    -0.9,
+    -1.5,
+    1.4
+   ],
+   "heading": 0,
+   "pitch": 0,
+   "lens": 50
+  },
+  {
+   "id": "b_sold_front",
+   "pos": [
+    -0.7,
+    16,
+    1.5
+   ],
+   "heading": 180,
+   "pitch": 0,
+   "lens": 50
+  },
+  {
+   "id": "b_wide_far",
+   "pos": [
+    -1.0,
+    16.5,
+    1.6
+   ],
+   "heading": 180,
+   "pitch": 0,
+   "lens": 28
+  }
+ ],
+ "cuts": [
+  {
+   "camera": "b_wide",
+   "frame_in": 0,
+   "frame_out": 48,
+   "focus": [
+    "officer"
+   ]
+  },
+  {
+   "camera": "b_back",
+   "frame_in": 48,
+   "frame_out": 96,
+   "focus": [
+    "officer"
+   ]
+  },
+  {
+   "camera": "b_sold_front",
+   "frame_in": 96,
+   "frame_out": 144,
+   "focus": [
+    "soldier"
+   ]
+  },
+  {
+   "camera": "b_wide_far",
+   "frame_in": 144,
+   "frame_out": 192,
+   "focus": []
+  },
+  {
+   "camera": "b_sold_front",
+   "frame_in": 192,
+   "frame_out": 240,
+   "focus": [
+    "soldier"
+   ]
+  }
+ ],
+ "new_photo": true
+}
