@@ -1,5 +1,7 @@
 # LTX Layout-To-Render jobs (S3, 2026-11-20)
 
+> **Route-scoped since D-116 (2026-11-06), LTX-2.5 on the Modal path since D-132 (2026-11-12):** this worker belongs to the D-116 / D-132 LTX route (the Blender layout drives an LTX clip); for the v4.3 episode-first route (D-131) it is a separate, unrouted worker until the owner says otherwise.
+
 > Status: **free preparation finished; nothing has run on a GPU and nothing paid has been started.** Every number of the A100 (memory,
 > seconds per clip, price per clip, sound) is **UNMEASURED** until rung L3 measures it. Brief: project files
 > `explainer-engine/blender_series_plan_2026-11-20/BRIEFS_S3_T0B_AND_T1_CARD_ka.md`, item 1. The owner's money word (08:56 UTC, relayed

@@ -246,7 +246,7 @@ def preflight(launch: dict, *, entry: str | None = None, paid: bool = True, env=
 def container_gate(launch: dict, baked=BAKED / "launch_layout_a100.json") -> list[str]:
     """The last line inside the container: the launch passed in is the one baked into the image; CH-02 and CH-04 on it."""
     bad = []
-    if Path(baked).exists() and json.loads(Path(baked).read_text(encoding="utf-8")) != launch:
+    if _exists(baked) and json.loads(Path(baked).read_text(encoding="utf-8")) != launch:
         bad.append("the launch passed in is not the launch file baked into the image")
     return bad + launch_problems(launch, check_table=False)
 
@@ -517,9 +517,21 @@ def _job_code():
     try:
         from explainer_engine.training.pods.ltx import layout_job
     except ImportError:
-        sys.path.insert(0, str(BAKED if BAKED.exists() else LTX_DIR))
+        sys.path.insert(0, str(BAKED if _exists(BAKED) else LTX_DIR))
         import layout_job
     return layout_job
+
+
+def _exists(p) -> bool:
+    try:
+        return Path(p).exists()
+    except OSError:      # /root is not readable for a non-root user (a CI box)
+        return False
+
+
+def _wrapper_path() -> Path:
+    """The wrapper baked into the image, else the one beside this file (an unreadable /root on a CI box is 'not baked', not a crash)."""
+    return BAKED / "ic_lora_run.py" if _exists(BAKED / "ic_lora_run.py") else LTX_DIR / "ic_lora_run.py"
 
 
 def claim_attempt(vol_root, key: str, now=time.time, reload=lambda: None, commit=lambda: None) -> str | None:
@@ -613,7 +625,7 @@ def body(spec: dict, launch: dict, *, timeout_s: int, vol_root=VOL, work=WORK, c
     m = {"run_id": run_id, "kind": kind, "gpu": launch["gpu"], "launch_sha": sha_json(launch), "worker_sha": spec.get("worker_sha"),
          "batch_sha": spec["batch_sha"], "warnings": warnings, "error": None, "state": "FAILED"}
     poller_factory = poller_factory or (lambda: GpuPoller())
-    wrapper = wrapper if wrapper is not None else (BAKED / "ic_lora_run.py" if (BAKED / "ic_lora_run.py").exists() else LTX_DIR / "ic_lora_run.py")
+    wrapper = wrapper if wrapper is not None else _wrapper_path()
     rows: list[dict] = []
 
     def to_volume():

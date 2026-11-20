@@ -610,3 +610,16 @@ def test_body_runs_without_imageio_and_without_the_hub_package(tmp_path, monkeyp
     w = R.make_world(tmp_path, chain=0)
     res = R.run_body(w)
     assert res["state"] == "DONE" and res["clips"][0]["frames_out"] == 9 and set(res["verified"].values()) == {"ok"}
+
+
+def test_an_unreadable_baked_folder_is_not_baked_not_a_crash(monkeypatch):
+    """On a CI box /root is closed to the runner: stat() raises PermissionError there (found by the first CI run of this worker)."""
+    real = Path.exists
+
+    def exists(self, *a, **k):
+        if str(self).startswith(str(M.BAKED)):
+            raise PermissionError(13, "Permission denied", str(self))
+        return real(self, *a, **k)
+    monkeypatch.setattr(Path, "exists", exists)
+    assert M._wrapper_path() == M.LTX_DIR / "ic_lora_run.py"
+    assert M.container_gate(M.LAUNCH) == []
