@@ -142,8 +142,8 @@ def check_registry(entries: list[dict] | None, root=None) -> list[str]:
         if not (isinstance(e.get("date"), str) and _DATE.fullmatch(e["date"])):
             errs.append(f"REG-FIELDS: {who} needs the date of the owner's word (ISO 8601)")
         errs += _source_errs(e, who, log_ids)
-        errs += _layer_errs(e, who) if not is_process(e) else ([] if e.get("layers") in (None, []) else
-                                                                [f"REG-LAYER: {who} is a process requirement and binds no layer"])
+        errs += _layer_errs(e, who) if not is_process(e) else ([] if e.get("layers") in (None, [], ["L33"]) else
+                                                                [f"REG-LAYER: {who} is a process requirement: it binds no layer except L33 (dev process)"])
         if is_conflict(e):
             errs += _conflict_errs(e, who, seen)
             continue
@@ -304,3 +304,23 @@ def report(root=None) -> dict:
     open_conflicts = [e["id"] for e in entries if is_conflict(e) and e.get("status") == "open"]
     return {"total": len(entries), "active": len(active), "unmapped": unmapped, "per_layer": per,
             "open_conflicts": open_conflicts, "process": process, "errors": errs + check_registry(entries, root)}
+
+
+def coverage_md(root=None) -> str:
+    """``docs/registry/LAYER_COVERAGE.md``: per layer the active entries, how many have a validator, a judge step, or are unmapped.
+    Generated: ``python -m explainer_engine.governance requirements --coverage``; never edited by hand."""
+    entries, _ = load(root)
+    active = [e for e in entries or [] if e.get("status") == "active" and not is_conflict(e)]
+    rows = {}
+    for e in active:
+        kind = (e.get("check") or {}).get("kind") if isinstance(e.get("check"), dict) else None
+        for layer in e.get("layers") or []:
+            r = rows.setdefault(layer, {"validator": 0, "judge": 0, "unmapped": 0})
+            r[kind if kind in ("validator", "judge") else "unmapped"] += 1
+    lines = ["# Layer coverage of the owner's requirements registry (generated, do not edit)", "",
+             f"{len(active)} active entries; {sum(1 for e in entries or [] if is_conflict(e) and e.get('status') == 'open')} open conflict(s).", "",
+             "| layer | active | validator | judge | unmapped |", "|---|---|---|---|---|"]
+    for layer in sorted(rows, key=lambda x: int(x[1:])):
+        r = rows[layer]
+        lines.append(f"| {layer} | {sum(r.values())} | {r['validator']} | {r['judge']} | {r['unmapped']} |")
+    return "\n".join(lines) + "\n"

@@ -102,4 +102,6 @@ def _layer_gate_isolated(request, monkeypatch):
     if "real_layer_gate" not in request.fixturenames:
         from explainer_engine.governance import layer_gate as LG
         monkeypatch.setattr(LG, "require_layers", lambda layers, **kw: [])
+        from explainer_engine.governance import send_gate as SG
+        monkeypatch.setattr(SG, "stage_check", lambda layers, files, **kw: {"failed": [], "passed": [], "not_run": [], "waived": []})
     yield

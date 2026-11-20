@@ -58,7 +58,7 @@ def _worst(rows: list[dict]) -> str:
     return max((r["status"] for r in rows), key=_ORDER.get, default=NOT_RUN)
 
 
-def _measure(e: dict, files: list[Path], root: Path) -> dict:
+def _measure(e: dict, files: list[Path], root: Path, soft: bool = False) -> dict:
     """One row for one requirement: the worst file result, the number and what was seen."""
     rid = e["id"]
     check = e.get("check") if isinstance(e.get("check"), dict) else {"kind": "unmapped"}
@@ -66,6 +66,8 @@ def _measure(e: dict, files: list[Path], root: Path) -> dict:
     if check.get("kind") == "judge":
         return dict(base, status=NOT_RUN, value=None, detail=f"judge step: {check.get('who')} against {check.get('rubric')}")
     if check.get("kind") != "validator":
+        if soft:                                                          # a runner stage (owner 2026-11-20 09:11): listed, never a stop
+            return dict(base, status=NOT_RUN, value=None, detail="unmapped: no validator and no judge step yet (listed, does not stop production)")
         return dict(base, status=BLOCK, value=None, detail="unmapped: no validator and no judge step yet; the registry entry blocks the send")
     bad = OR._check_errs(e, root)
     if bad:
@@ -97,8 +99,10 @@ def _measure(e: dict, files: list[Path], root: Path) -> dict:
     return dict(base, status=worst, value=pick["value"], detail=f"{pick['detail']} [{Path(pick['file']).name}]", files=rows)
 
 
-def run(layer: str, files, *, root=None, owner_asked: str | None = None, now: float | None = None, record: bool = True) -> dict:
-    """The report: ``{layer, status, rows, files, label}``; ``status`` is the worst of BLOCK > FAIL > NOT_RUN > PASS."""
+def run(layer: str, files, *, root=None, owner_asked: str | None = None, now: float | None = None, record: bool = True,
+        soft: bool = False) -> dict:
+    """The report: ``{layer, status, rows, files, label}``; ``status`` is the worst of BLOCK > FAIL > NOT_RUN > PASS. ``soft`` (the runner's
+    stage check, never the send to the owner) lists an unmapped entry and an open conflict as NOT_RUN instead of BLOCK."""
     root = root_dir(root)
     paths = [Path(f) for f in files]
     rows: list[dict] = []
@@ -117,10 +121,11 @@ def run(layer: str, files, *, root=None, owner_asked: str | None = None, now: fl
         for e in OR.bound(entries, layer):
             if OR.is_conflict(e):
                 if e.get("status") == "open":
-                    rows.append({"id": e["id"], "status": BLOCK, "value": None, "measures": "", "detail":
-                                 f"open conflict ({e.get('summary', '')[:80]}): blocked until the owner answers"})
+                    rows.append({"id": e["id"], "status": NOT_RUN if soft else BLOCK, "value": None, "measures": "", "detail":
+                                 f"open conflict ({e.get('summary', '')[:80]}): " +
+                                 ("listed, the owner has not answered" if soft else "blocked until the owner answers")})
                 continue
-            rows.append(_measure(e, paths, root))
+            rows.append(_measure(e, paths, root, soft))
         if not rows:
             rows.append({"id": "-", "status": NOT_RUN, "value": None, "measures": "", "detail": f"no active requirement binds {layer}"})
     if not gate and _worst(rows) != PASS:
@@ -144,6 +149,31 @@ def run(layer: str, files, *, root=None, owner_asked: str | None = None, now: fl
         path.parent.mkdir(parents=True, exist_ok=True)
         with path.open("a", encoding="utf-8") as f:
             f.write(json.dumps(dict(out, at=now if now is not None else time.time()), ensure_ascii=False) + "\n")
+    return out
+
+
+def stage_check(layers, files, *, root=None) -> dict:
+    """The runner's validator check on a stage's output files (owner 2026-11-20 09:11, the soft layer gate): every active requirement of the
+    stage's layers whose validator can measure these files is run. Returns ``{"failed": [...], "passed": [...], "not_run": [...],
+    "waived": [...]}``, each item ``"<layer> <id>: <detail>"``. Only ``failed`` stops production: a validator FAIL (or one that raised or
+    cannot be loaded, or a broken registry) on a layer without the owner's recorded ``layer_waiver``. Unmapped entries, judge steps, open
+    conflicts, validators without a send adapter and files of no validator's kind are ``not_run``: listed in every report, never a stop."""
+    root = root_dir(root)
+    out = {"failed": [], "passed": [], "not_run": [], "waived": []}
+    paths = [Path(f) for f in files if Path(f).is_file()]
+    if not paths:
+        out["not_run"].append("no output file to measure")
+        return out
+    for layer in layers:
+        rep = run(layer, paths, root=root, soft=True)
+        for r in rep["rows"]:
+            line = f"{layer} {r['id']}: {r['detail']}"
+            if r["status"] in (FAIL, BLOCK):
+                (out["waived"] if layer_gate.waived(layer, root=root) else out["failed"]).append(line)
+            elif r["status"] == PASS:
+                out["passed"].append(line)
+            else:
+                out["not_run"].append(line)
     return out
 
 

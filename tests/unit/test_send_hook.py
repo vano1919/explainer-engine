@@ -98,15 +98,17 @@ def test_a_folder_upload_checks_every_file_under_it(env):
 # ---- pre-bash: trial commands --------------------------------------------------------------------------------------------------
 
 @pytest.mark.usefixtures("real_layer_gate")
-def test_a_trial_command_needs_its_layers(env, monkeypatch):
+def test_a_trial_command_needs_a_valid_registry_and_nothing_else(env, monkeypatch):
+    """The soft layer gate (owner 2026-11-20 09:11): a trial command is refused only when the registry is missing or invalid; layers that
+    are not final are listed, never a stop."""
     root, _, _ = env
-    assert "L12" in refused(H.pre_bash, bash("python -m explainer_engine.training.pods.ltx.scene_run job scene.json spec.json"), root=root)
-    assert "L9" in refused(H.pre_bash, bash("python -m explainer_engine.episode run episodes/x --stage pictures"), root=root)
-    H.pre_bash(bash("python -m explainer_engine.episode status episodes/x"), root=root)
-    from explainer_engine.governance import records
-    for layer in ("L9", "L10", "L11", "L16"):
-        records.add("layer_waiver", layer, MSG, "go on", root=root)
+    H.pre_bash(bash("python -m explainer_engine.training.pods.ltx.scene_run job scene.json spec.json"), root=root)
     H.pre_bash(bash("python -m explainer_engine.episode run episodes/x --stage pictures"), root=root)
+    H.pre_bash(bash("python -m explainer_engine.episode status episodes/x"), root=root)
+    (root / "explainer_engine" / "governance" / "owner_requirements.json").unlink()
+    assert "REG-MISSING" in refused(H.pre_bash, bash("python -m explainer_engine.training.pods.ltx.scene_run job scene.json spec.json"), root=root)
+    assert "REG-MISSING" in refused(H.pre_bash, bash("python -m explainer_engine.episode run episodes/x --stage pictures"), root=root)
+    H.pre_bash(bash("python -m explainer_engine.episode status episodes/x"), root=root)
 
 
 def test_the_stages_up_to_the_target_are_all_needed():
