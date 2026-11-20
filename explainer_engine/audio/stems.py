@@ -10,6 +10,8 @@ shot, so a Wan shot, a 2.5D shot and a map sound alike (R-D).
   says ``shippable: false``; a shippable render with one stops. ``PLACEHOLDER`` only names the generator an older preview used.
 - Every sound plays from a row of the episode's cue sheet (``episode/cue_sheet``, SP-06): asset, time, gain, pan, fades, pitch,
   low-pass and reverb come from the row; the renderer decides nothing on its own.
+- Mix (W6): the buses go through ``audio/mix_chain`` (sidechain duck, 1-4 kHz carve, music >= BP-208 under the voice, master at
+  BP-50 with one true-peak limiter on every stem alike; docs/MIX_CHAIN.md); ``master=False`` skips the master.
 - Levels: every event of a kind is set to the same RMS (``LEVELS``, engineering defaults kept under BP-65's caps), music and
   ambience duck under the voice (BP-53's house depth for music, its floor for the bed), each place gets its room tone and its
   room (a cave's impulse response), and a place change carries the plan's J/L bridge.
@@ -27,6 +29,7 @@ import numpy as np
 from scipy import signal
 
 from explainer_engine.audio import acoustics, duck, sfx_library
+from explainer_engine.audio import mix_chain as MC
 from explainer_engine.audio.environmental_sound_design import validate_narration_source_file
 from explainer_engine.core.errors import ContractError
 from explainer_engine.episode import cue_sheet as CS
@@ -383,7 +386,7 @@ def clip_audio_layer(plan: dict, clip_audio: dict | None, n: int) -> tuple[np.nd
 
 
 def render(plan: dict, sources: dict, out_dir: Path, *, library_root: Path, narration: Path | None = None,
-           shippable: bool = True, sheet: dict | None = None, clip_audio: dict | None = None) -> dict:
+           shippable: bool = True, sheet: dict | None = None, clip_audio: dict | None = None, master: bool = True) -> dict:
     """Render the plan into the five stems in ``out_dir`` by playing its cue sheet (``episode/cue_sheet``; built here when
     none is given, validated, written next to the stems). ``shippable=False`` is a preview: a class without a real take stays
     silent (never a procedural sound, D-136), no voice needed, and the report says it cannot ship."""
@@ -420,20 +423,14 @@ def render(plan: dict, sources: dict, out_dir: Path, *, library_root: Path, narr
                            "layer": row["layer"], "end_s": row["end_s"],
                            "onset_s": onsets.get(row["cue_id"])})
     amb, sfx, mus = stem_of["ambience"], stem_of["sfx"], stem_of["music"]
-    g_mus = duck.duck_gain(voice, SR, n, depth_db=MUSIC_DUCK_DB, threshold=SPEECH_THRESHOLD).astype(np.float32)
-    g_bed = duck.duck_gain(voice, SR, n, depth_db=BED_DUCK_DB, threshold=SPEECH_THRESHOLD).astype(np.float32)
-    mus *= g_mus[:, None]
-    amb *= g_bed[:, None]
     clip_layer, clip_laid, clip_state = clip_audio_layer(plan, clip_audio, n)
-    sfx += clip_layer * g_bed[:, None]          # the clip's own sound in the effects stem, ducked like the bed
+    sfx += clip_layer                           # the clip's own sound in the effects stem; the chain ducks it like the bed
     nar = (acoustics.pan(voice, 0.0) * acoustics.CENTRE_GAIN).astype(np.float32)
-    env = bus_limit(nar, amb + sfx + mus)[:, None]
-    amb, sfx, mus = amb * env, sfx * env, mus * env
-    mix = nar + amb + sfx + mus
-    peak = float(np.abs(mix).max()) if n else 0.0
-    if peak > PEAK_CEILING:                      # only the voice itself can still be over: scale everything once
-        k = PEAK_CEILING / peak
-        nar, amb, sfx, mus, mix = (s * k for s in (nar, amb, sfx, mus, mix))
+    # W6: one chain (audio/mix_chain, docs/MIX_CHAIN.md): sidechain duck, 1-4 kHz carve, music >= BP-208 under the voice, master
+    # at BP-50's loudness with one true-peak limiter acting on every stem alike
+    chain_stems, chain_rec = MC.mix_stems(nar, amb, sfx, mus, voice, bed_duck_db=BED_DUCK_DB, music_duck_db=MUSIC_DUCK_DB,
+                                          master=master)
+    nar, mus, amb, sfx, mix = (chain_stems[k] for k in ("narration", "music", "ambience", "sfx", "mix"))
     stems = {"narration": nar, "music": mus, "ambience": amb, "sfx": sfx, "mix": mix}
     for name, s in stems.items():
         _write(out_dir / f"{name}.wav", s)
@@ -454,7 +451,7 @@ def render(plan: dict, sources: dict, out_dir: Path, *, library_root: Path, narr
             "cue_sheet": str(out_dir / "cue_sheet.json"), "cue_gate": {r["gate"]: r["status"] for r in gate["rows"]},
             "coverage": plan.get("coverage", {}), "credits": sheet.get("credits", []), "sounds_used": snd.used,
             "onsets_measured": len(onsets), "cue_rows": gate["rows"], "missing": sheet.get("missing", []),
-            "av": plan.get("av"), "clip_audio": {"state": clip_state, "laid": clip_laid}}
+            "av": plan.get("av"), "clip_audio": {"state": clip_state, "laid": clip_laid}, "mix_chain": chain_rec}
 
 
 def level_report(plan: dict, voice: np.ndarray, background: np.ndarray) -> dict:

@@ -101,15 +101,15 @@ The trial task per skill (P-3) is done by the stream that first uses it, before 
 | Folder | Trial owner | Trial status |
 |---|---|---|
 | `v-animate-characters` | W5 | NOT_RUN |
-| `v-audio-production-skill` | W6 | NOT_RUN |
+| `v-audio-production-skill` | W6 | DONE 2026-11-19: `NORMALIZE` (-14 LUFS, -1.5 dBTP, via ffmpeg-skill `loudness`) ran on the 60 s 1914 stem set's mix: re-measured -14.0 LUFS, -1.5 dBTP, same as the chain's ffmpeg measurement method; contract is strict (typed graph, no defaults), works; use for delivery loudness versions only, the chain stays ours |
 | `v-color-grading-skill` | W7 | NOT_RUN |
-| `v-design-sound` | W6 | NOT_RUN |
+| `v-design-sound` | W6 | DONE 2026-11-19: `scripts/mix.py` ran on the 60 s 1914 stems (voice, music, bed, effects): -14.05 LUFS, -1.63 dBTP, 0 whole-mix flags, voice +19.2 LU over music and beds; its AAC/opus check -0.98 / -0.68 dBTP. Needs `librosa soundfile psutil pyloudnorm` and a shim for `psutil.BELOW_NORMAL_PRIORITY_CLASS` (Windows-only constant, upstream untouched). Our chain follows its mix.md order and numbers; its effects stem was silent here (see PROGRESS W6) |
 | `v-director-cinematic` | W8 | NOT_RUN |
 | `v-edit-video` | W7 | NOT_RUN |
-| `v-elevenlabs-music` | W6 | NOT_RUN |
-| `v-elevenlabs-sound-effects` | W6 | NOT_RUN |
-| `v-elevenlabs-speech-to-text` | W6 | NOT_RUN |
-| `v-elevenlabs-text-to-speech` | W6 | NOT_RUN |
+| `v-elevenlabs-music` | W6 | NOT_RUN: its trial is a paid or credit-counted API call; W6 is $0, so the skill is read (named in the `elevenlabs-voice` overlay) and not run; the first use is E1 or the next real read |
+| `v-elevenlabs-sound-effects` | W6 | NOT_RUN: its trial is a paid or credit-counted API call; W6 is $0, so the skill is read (named in the `elevenlabs-voice` overlay) and not run; the first use is E1 or the next real read |
+| `v-elevenlabs-speech-to-text` | W6 | NOT_RUN: its trial is a paid or credit-counted API call; W6 is $0, so the skill is read (named in the `elevenlabs-voice` overlay) and not run; the first use is E1 or the next real read |
+| `v-elevenlabs-text-to-speech` | W6 | NOT_RUN: its trial is a paid or credit-counted API call; W6 is $0, so the skill is read (named in the `elevenlabs-voice` overlay) and not run; the first use is E1 or the next real read |
 | `v-fact-check-workflow` | W8 | NOT_RUN |
 | `v-ffmpeg-skill` | W7 | NOT_RUN |
 | `v-hook-writing` | W8 | NOT_RUN |
