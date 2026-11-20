@@ -398,9 +398,10 @@ def run(frame, out_mp4, seconds=5.0, drift=False, particles=True, tel=None, **sh
         if f < s.n: p.stdin.write(fr_img.tobytes())
         if f + 1 in CHK:      # 1-based frame numbers, as in the X3 reports; measured on the frame as it is seen (after the camera move)
             t_ = f / FPS; a_ = s.parallax(s.plume_a, t_); pm_ = s.parallax(s.pmask_f, t_) > 0.5
-            tot = float(a_.sum()); inp = float(a_[pm_].sum())
-            metrics["f%d" % (f + 1)] = dict(person_share=round(inp / tot, 5) if tot > 0 else None, plume_area_share=round(float((a_ > 0.05).mean()), 5), plume_mean_alpha=round(float(a_.mean()), 5),
-                                            in_clip=bool(f < s.n))
+            from explainer_engine.qa import plume_zones as PZ   # the shared measure: NOT_RUN (never PASS) without a person mask or without a plume
+            ps = PZ.plume_in_person_share(a_, pm_ if s.pmask.any() else None); ts = PZ.plume_total_share(a_)
+            metrics["f%d" % (f + 1)] = dict(person_share=ps["value"], person_share_status=ps["status"], plume_area_share=ts["value"], plume_area_share_status=ts["status"],
+                                            plume_mean_alpha=round(float(a_.mean()), 5), in_clip=bool(f < s.n))
             cv2.imwrite(stem + "_f%03d.png" % (f + 1), cv2.resize(fr_img, (640, 360), interpolation=cv2.INTER_AREA))
             cv2.imwrite(stem + "_f%03d_alpha.png" % (f + 1), cv2.resize((np.clip(a_, 0, 1) * 255).astype(np.uint8), (640, 360), interpolation=cv2.INTER_AREA))
             if f + 1 == 1: cv2.imwrite(stem + "_person_zone.png", (pm_ * 255).astype(np.uint8))
