@@ -56,3 +56,30 @@ def test_a_bad_shape_is_a_schema_fail():
     p = copy.deepcopy(GOOD)
     p["chapters"][0]["t"] = "zero"
     assert rules(p) == {"PC-01"}
+
+
+def _pc06(**fields):
+    p = copy.deepcopy(GOOD)
+    p.update(fields)
+    return [f for f in PC.check(p) if f["rule"] == "PC-06"]
+
+
+def test_pc06_description_limit_is_bytes_not_characters():
+    link = "Sources: https://example.org/claims "
+    assert _pc06(description=link + "a" * (4900 - len(link))) == []
+    # 2600 em dashes are 2600 characters but 7800 bytes: YouTube refuses it, so the check must too
+    assert [f["where"] for f in _pc06(description=link + "—" * 2600)] == ["description"]
+    exactly = link + "a" * (5000 - len(link))
+    assert len(exactly.encode()) == 5000 and _pc06(description=exactly) == []
+    over = _pc06(description=exactly + "a")
+    assert [f["where"] for f in over] == ["description"] and "bytes" in over[0]["detail"]
+
+
+def test_pc06_forbids_angle_brackets_in_title_and_description():
+    assert [f["where"] for f in _pc06(description="Sources: https://example.org <b>x</b>")] == ["description"]
+    assert [f["where"] for f in _pc06(title="A > B")] == ["title"]
+
+
+def test_pc06_title_limit_is_100():
+    assert _pc06(title="t" * 100) == []
+    assert [f["where"] for f in _pc06(title="t" * 101)] == ["title"]
