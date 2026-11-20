@@ -118,9 +118,7 @@ def _upstream_text(f) -> bool:
         return False
     folder = ROOT / ".claude" / Path(*parts[:vdir + 1])
     rel = Path(*parts[vdir + 1:]).as_posix()
-    if rel == "UPSTREAM_SKILL.md":
-        return True
-    if rel == "SKILL.md" and (folder / "UPSTREAM_SKILL.md").is_file():
+    if rel == "OVERLAY.md":  # our rules on top of a vendored skill (team plan rule 4): scanned like any skill of ours
         return False
     src = folder / "SOURCE.md"
     return rel == "SOURCE.md" or (src.is_file() and f"  {rel}\n" in src.read_text(encoding="utf-8"))
@@ -128,7 +126,7 @@ def _upstream_text(f) -> bool:
 
 def test_everything_an_agent_or_a_skill_names_exists():
     missing = []
-    # vendored upstream text (`v-*` files pinned in SOURCE.md, and UPSTREAM_SKILL.md) is byte-pinned third-party text guarded by
+    # vendored upstream text (`v-*` files pinned in SOURCE.md; our OVERLAY.md is scanned) is byte-pinned third-party text guarded by
     # tests/unit/test_vendored_skills.py, not this scan; our RW-50 rewrite of a v-* SKILL.md is ours and is scanned (2026-11-20)
     files = [f for f in (ROOT / ".claude").rglob("*.md") if not _upstream_text(f)]
     for f in files:

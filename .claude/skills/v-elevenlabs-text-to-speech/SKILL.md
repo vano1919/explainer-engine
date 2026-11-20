@@ -1,82 +1,288 @@
 ---
-name: v-elevenlabs-text-to-speech
-description: The ElevenLabs text-to-speech tool as this channel uses it - eleven_v4 through the connector, voice ids only from the library listing, one take per call, what the model and the connector expose, text normalisation and pronunciation, stitching chunks, output formats, errors and cost tracking. Use when making any narration or hero-line read, when choosing a model, or when a read call fails.
+name: text-to-speech
+description: Convert text to speech using ElevenLabs voice AI. Use when generating audio from text, creating voiceovers, building voice apps, or synthesizing speech in 90+ languages.
+license: MIT
+compatibility: Requires internet access and an ElevenLabs API key (ELEVENLABS_API_KEY).
+metadata: {"openclaw": {"requires": {"env": ["ELEVENLABS_API_KEY"]}, "primaryEnv": "ELEVENLABS_API_KEY"}}
 ---
 
-# ElevenLabs text-to-speech, the tool (layer L5, stage G6)
+# ElevenLabs Text-to-Speech
 
-Built from the official elevenlabs/skills, page `text-to-speech` (MIT, commit `97478d1b23`). Rewritten under RW-50
-([docs/SKILL_LAYERS.md](../../../docs/SKILL_LAYERS.md)) for how we call it: through the ElevenLabs connector, guarded by
-the PreToolUse hook, never with a raw API key from a script. Upstream text with SDK examples is unloaded in
-`UPSTREAM_SKILL.md`; details in `references/` (installation, streaming, voice settings, text-to-dialogue). The direction
-and credit rules are in skill `elevenlabs-voice`; what the words say, in `narration-script`.
+Generate natural speech from text - supports 90+ languages, multiple models for quality vs latency tradeoffs. Examples default to `eleven_v4`, the latest and highest-quality model.
 
-## How a read is made here
+> **Setup, before writing any code:** if `ELEVENLABS_API_KEY` isn't set for this project, run `npx -y @elevenlabs/cli@latest onboard init` from the app's folder first and follow what it prints: it signs the user in and stores a key for the project, so nobody copies one by hand. Otherwise see the [Installation Guide](references/installation.md). For JavaScript, use `@elevenlabs/*` packages only.
 
-1. The words are frozen and tagged (performance stage), the episode's sample gate allows these segments (OR-19), the
-   rulebook's `paid_assets` gate passed, and the estimate is in the ledger.
-2. The voice id comes from `creative_list_voices` or the creator, never from memory (the connector's own rule); it must be
-   the id cast in `production_script.json` (`voice`, `cast.<id>.voice`).
-3. One call per chunk with `generations_count: 1` (the hook refuses anything else).
-4. Poll `creative_get_flow_run_status` with the returned ids at its `poll_after_seconds` until done; never re-submit to
-   retry: a second call is a second charge.
-5. Download at once, write the file and its sha256 to the episode folder and the ledger (OR-33), check it (EL-12), then the
-   next chunk.
+## Quick Start
 
-## Models (what to pick)
+### Python
 
-| Model | Use here |
-|---|---|
-| `eleven_v4` | **the default** for narration and hero lines: widest emotional range, audio tags, best text understanding |
-| `eleven_v3` | only for an episode already read on it, so a re-read matches |
-| `eleven_multilingual_v2` | a fallback for very long, flat reads where v4 drifts; no tags |
-| `eleven_flash_v2_5`, `eleven_flash_v2` | not for episodes (low latency for agents); never for a published read |
+```python
+from elevenlabs import ElevenLabs
 
-v4 facts from upstream: supports stability and similarity in the API but not style or speed, no SSML, audio tags in
-square brackets direct delivery. Our connector exposes only voice and language for v4 (MARKET_RESEARCH V-29); re-check
-`creative_get_model_schema` before assuming any other parameter.
+client = ElevenLabs()
 
-## Text that reads right
+audio = client.text_to_speech.convert(
+    text="Hello, welcome to ElevenLabs!",
+    voice_id="JBFqnCBsd6RMkjVDRZzb",  # George
+    model_id="eleven_v4"
+)
 
-- **Normalisation**: v4 reads numbers and dates from context; for anything ambiguous write it the way it should be said in
-  the TTS text ("nineteen fourteen", "the twenty-fourth"), and keep the display form in `narration.txt`.
-- **Pronunciation**: names and places the voice may miss get IPA between slashes and a one-sentence test (EL-07).
-- **Language**: `language_code` "en" for the US narrator; a hero's foreign words stay inside an English line ("Frohe
-  Weihnachten, Tommy"); test that sentence alone first.
-- **Tags**: `[softly]`, `[whispers]`, `[curious]`, `[sighs]`, `[short pause]` and the like; they are spoken as direction, cost
-  characters, and carry forward until the next tag.
+with open("output.mp3", "wb") as f:
+    for chunk in audio:
+        f.write(chunk)
+```
 
-## Stitching chunks
+### JavaScript
 
-Upstream's request stitching (`previous_text` / `next_text` or previous request ids) smooths joins between chunks. The
-connector does not expose it (V-29, BP-14), so we stand in with chunks of one size class cut at beat ends, the same tag
-state at each chunk start, and levelling plus edge fades after the read (ED-01). Never cut mid-sentence.
+```javascript
+import { ElevenLabsClient } from "@elevenlabs/elevenlabs-js";
+import { createWriteStream } from "fs";
+import { Readable } from "stream";
 
-## Output
+const client = new ElevenLabsClient();
+const audio = await client.textToSpeech.convert("JBFqnCBsd6RMkjVDRZzb", {
+  text: "Hello, welcome to ElevenLabs!",
+  modelId: "eleven_v4",
+});
+// convert() returns a web ReadableStream — bridge it to a Node stream to write to disk
+Readable.fromWeb(audio).pipe(createWriteStream("output.mp3"));
+```
 
-Take the connector's highest-quality audio; store as delivered, then convert in our audio stage (skill
-`v-audio-production-skill`) to the mix format; never re-encode lossy to lossy twice. Upstream's audio effects (reverb,
-distance, filters) are not used for narration; a hero's distance or a radio colour is placed by the sound stage on the stem,
-where it can be changed without a new read.
+### CLI
 
-## Errors and what to do
+Use `say` to play text immediately with the default voice and `eleven_v3` model:
 
-| Symptom | Meaning | Do |
-|---|---|---|
-| `402 paid_plan_required` | a library voice on a plan that cannot use it | choose a voice the plan can use; ask the creator before any plan change |
-| a 4xx about the voice | wrong or retired voice id | re-list voices; never guess an id |
-| `429` or a timeout | rate limit or slow service | wait and poll; do not re-submit until the first call's state is known |
-| the hook refuses | a rule (one take, sample gate, `paid_assets`) is not met | fix the cause; never work around the hook |
-| the take's words differ from the script | the model skipped or added words | re-read only the affected sentence (EL-08) after the check |
+```bash
+elevenlabs say "Hello!"
+```
 
-## Cost
+Pipe text into `say` when another command produces the input:
 
-One credit per character including tags (re-check the account's rate in the usage page or `account_get_usage` before an
-estimate). Estimate before every paid read, record it in the ledger, and stop at 80 % of the cap in
-`config/spend_caps.json` (invariant 2). Upstream's cost-tracking headers are not visible through the connector: the ledger is
-our record.
+```bash
+echo "The build finished successfully." | elevenlabs say
+```
 
-## Not used from upstream
+Use the API command when you need to set request parameters directly:
 
-Raw SDK and CLI calls with an API key in a script, the WebSocket and streaming paths, voice cloning of real people, and the
-upstream default voice suggestion (we cast per episode).
+```bash
+elevenlabs text-to-speech convert --voice-id JBFqnCBsd6RMkjVDRZzb \
+  --text "Hello!" --model-id eleven_v4 --output output.mp3
+```
+
+The CLI reads `ELEVENLABS_API_KEY` from the environment automatically.
+
+## Models
+
+| Model ID | Languages | Latency | Best For |
+|----------|-----------|---------|----------|
+| `eleven_v4` | 90+ | Standard | **Default.** Highest quality, emotional range, audio tags, voice cloning accuracy |
+| `eleven_v4_turbo` | 90+ | ~100ms | Real-time v4 quality for agents and interactive apps (via [Text to Dialogue WebSocket](references/streaming.md#eleven-v4-turbo-websocket)) |
+| `eleven_flash_v2_5` | 32 | ~75ms | Lowest latency, lowest cost, `stream-input` WebSocket |
+| `eleven_flash_v2` | English | ~75ms | English-only, lowest latency |
+| `eleven_multilingual_v2` | 29 | Standard | Previous generation; most stable on very long-form generations |
+| `eleven_v3` | 70+ | Standard | Previous generation expressive model |
+
+`eleven_turbo_v2_5` and `eleven_turbo_v2` are superseded by the Flash models (same output, lower latency) — use `eleven_flash_v2_5` / `eleven_flash_v2` instead.
+
+**Eleven v4 notes:** supports only `stability` and `similarity_boost` voice settings (no `style` or `speed`), does not support SSML, and is not available on the `stream-input` TTS WebSocket. Direct delivery with audio tags such as `[whispers]`, `[laughs]`, `[sarcastic]`.
+
+## Voice IDs
+
+Use pre-made voices or create custom voices in the dashboard.
+
+**Popular voices:**
+- `JBFqnCBsd6RMkjVDRZzb` - George (male, narrative)
+- `EXAVITQu4vr4xnSDxMaL` - Sarah (female, soft)
+- `onwK4e9ZLuTAKqWW03F9` - Daniel (male, authoritative)
+
+**Pick a voice the account's plan can use.** Free plans can use pre-made voices through the API, but not Voice Library voices: those fail with a `402` (`paid_plan_required`). Use George unless the user asks for something else. Do not use a voice ID from memory. Tutorials still use voices that have since been retired (Rachel, Charlotte, Josh and others), and those fail the same way on a free plan. To choose another voice, list the pre-made ones:
+
+```python
+voices = client.voices.get_all()
+for voice in voices.voices:
+    if voice.category == "premade":
+        print(f"{voice.voice_id}: {voice.name}")
+```
+
+## Voice Settings
+
+Fine-tune how the voice sounds:
+
+- **Stability**: How consistent the voice stays. Lower values = more emotional range and variation, but can sound unstable. Higher = steady, predictable delivery.
+- **Similarity boost**: How closely to match the original voice sample. Higher values sound more like the original but may amplify audio artifacts.
+- **Style**: Exaggerates the voice's unique style characteristics (v2/v3 models; not supported on Eleven v4).
+- **Speed**: Speech speed multiplier (v2/v3 models; not supported on Eleven v4).
+- **Speaker boost**: Post-processing that enhances clarity and voice similarity.
+
+```python
+from elevenlabs import VoiceSettings
+
+audio = client.text_to_speech.convert(
+    text="Customize my voice settings.",
+    voice_id="JBFqnCBsd6RMkjVDRZzb",
+    model_id="eleven_v4",
+    voice_settings=VoiceSettings(
+        stability=0.5,          # Lower = more expressive, higher = more consistent
+        similarity_boost=0.75,  # Higher = closer to the reference voice
+    )
+)
+```
+
+## Language Selection
+
+Use `language_code` with models that support language enforcement to guide pronunciation and text normalization. Unsupported language codes are ignored, and `language_code` is not supported on `eleven_multilingual_v2`.
+
+```python
+audio = client.text_to_speech.convert(
+    text="Bonjour, comment allez-vous?",
+    voice_id="JBFqnCBsd6RMkjVDRZzb",
+    model_id="eleven_v4",
+    language_code="fr"  # ISO 639-1 code
+)
+```
+
+## Text Normalization
+
+Controls how numbers, dates, and abbreviations are converted to spoken words. For example, "01/15/2026" becomes "January fifteenth, twenty twenty-six":
+
+- `"auto"` (default): Model decides based on context
+- `"on"`: Always normalize (use when you want natural speech)
+- `"off"`: Speak literally (use when you want "zero one slash one five...")
+
+```python
+audio = client.text_to_speech.convert(
+    text="Call 1-800-555-0123 on 01/15/2026",
+    voice_id="JBFqnCBsd6RMkjVDRZzb",
+    model_id="eleven_v4",
+    apply_text_normalization="on"
+)
+```
+
+## Audio Effects
+
+Use `audio_effects` to process the generated audio with a filter preset, perceived distance, a reverb environment, a looped background noise bed, and stereo panning. Effects do not change the cost of a request.
+
+| Field | Range | Description |
+|-------|-------|-------------|
+| `filter_preset_id` | Catalog ID | Filter that colors the voice, such as `phone` or `old_radio` |
+| `distance` | 0-1 (default 0) | How far the speaker sounds from the microphone |
+| `environment_id` | Catalog ID | Reverb environment, such as `small_room` or `hall` |
+| `send_level` | 0-1 (default 1) | How much of the voice feeds the reverb; 0 turns reverb off |
+| `background_noise_id` | Catalog ID | Background noise looped under the voice, such as `cafe` or `keyboard` |
+| `pan` | -1 to 1 (default 0) | Stereo position of the voice, from hard left to hard right |
+
+List valid filter preset, environment, and background noise IDs with the catalog endpoint (`GET /v1/audio-effects/catalog`):
+
+```python
+from elevenlabs import EffectsSpecInput
+
+catalog = client.audio_effects.get_catalog()
+for environment in catalog.environments:
+    print(f"{environment.environment_id}: {environment.name}")
+
+audio = client.text_to_speech.convert(
+    text="Welcome to the concert hall.",
+    voice_id="JBFqnCBsd6RMkjVDRZzb",
+    model_id="eleven_v4",
+    audio_effects=EffectsSpecInput(
+        environment_id="hall",
+        distance=0.3,
+        pan=-0.5,
+    )
+)
+```
+
+Reverb and non-zero `pan` produce stereo audio and are rejected for `ulaw_*`, `alaw_*`, and `pcm_*` output formats. Unknown effect IDs return a 404 error.
+
+## Request Stitching
+
+When generating long audio in multiple requests, the audio can have pops, unnatural pauses, or tone shifts at the boundaries. Request stitching solves this by letting each request know what comes before/after it:
+
+```python
+# First request
+audio1 = client.text_to_speech.convert(
+    text="This is the first part.",
+    voice_id="JBFqnCBsd6RMkjVDRZzb",
+    model_id="eleven_v4",
+    next_text="And this continues the story."
+)
+
+# Second request using previous context
+audio2 = client.text_to_speech.convert(
+    text="And this continues the story.",
+    voice_id="JBFqnCBsd6RMkjVDRZzb",
+    model_id="eleven_v4",
+    previous_text="This is the first part."
+)
+```
+
+## Output Formats
+
+| Format | Description |
+|--------|-------------|
+| `mp3_44100_128` | MP3 44.1kHz 128kbps (default) - compressed, good for web/apps |
+| `mp3_44100_192` | MP3 44.1kHz 192kbps (Creator+) - higher quality compressed |
+| `mp3_44100_64` | MP3 44.1kHz 64kbps - lower quality, smaller files |
+| `mp3_22050_32` | MP3 22.05kHz 32kbps - smallest MP3 files |
+| `pcm_16000` | Raw PCM 16kHz - use for real-time processing |
+| `pcm_22050` | Raw PCM 22.05kHz |
+| `pcm_24000` | Raw PCM 24kHz - good balance for streaming |
+| `pcm_44100` | Raw PCM 44.1kHz (Pro+) - CD quality |
+| `pcm_48000` | Raw PCM 48kHz (Pro+) - highest quality |
+| `ulaw_8000` | μ-law 8kHz - standard for phone systems (Twilio, telephony) |
+| `alaw_8000` | A-law 8kHz - telephony (alternative to μ-law) |
+| `opus_48000_64` | Opus 48kHz 64kbps - efficient streaming codec |
+| `wav_44100` | WAV 44.1kHz - uncompressed with headers |
+
+## Streaming
+
+Use the `stream` method to receive audio chunks as they're generated:
+
+```python
+audio_stream = client.text_to_speech.stream(
+    text="This text will be streamed as audio.",
+    voice_id="JBFqnCBsd6RMkjVDRZzb",
+    model_id="eleven_v4"
+)
+
+for chunk in audio_stream:
+    play_audio(chunk)
+```
+
+For real-time apps where latency matters most, use `eleven_v4_turbo` (~100ms) over the Text to Dialogue WebSocket, or `eleven_flash_v2_5` (~75ms) over HTTP streaming or the `stream-input` WebSocket. See [references/streaming.md](references/streaming.md).
+
+## Error Handling
+
+```python
+try:
+    audio = client.text_to_speech.convert(
+        text="Generate speech",
+        voice_id="invalid-voice-id",
+        model_id="eleven_v4"
+    )
+except Exception as e:
+    print(f"API error: {e}")
+```
+
+Common errors:
+- **401**: Invalid API key
+- **422**: Invalid parameters (check voice_id, model_id)
+- **429**: Rate limit exceeded
+
+## Tracking Costs
+
+Monitor character usage via response headers (`x-character-count`, `request-id`):
+
+```python
+response = client.text_to_speech.convert.with_raw_response(
+    text="Hello!", voice_id="JBFqnCBsd6RMkjVDRZzb", model_id="eleven_v4"
+)
+audio = response.parse()
+print(f"Characters used: {response.headers.get('x-character-count')}")
+```
+
+## References
+
+- [Installation Guide](references/installation.md)
+- [Streaming Audio](references/streaming.md)
+- [Voice Settings](references/voice-settings.md)

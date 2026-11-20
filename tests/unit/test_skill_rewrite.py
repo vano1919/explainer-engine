@@ -1,4 +1,4 @@
-"""RW-50 (owner rule 2026-11-20): every loaded skill is rewritten by at least half; the measure is code, not a claim."""
+"""RW-50 (owner 2026-11-20): the share of new text per skill is measured in code and reported for information (team plan MS-6)."""
 from __future__ import annotations
 
 import subprocess
@@ -40,41 +40,37 @@ def test_half_replaced_text_sits_on_the_line():
     assert rw.measure(OLD, half)["share"] == pytest.approx(0.5)
 
 
-def test_upstream_reference_files_are_not_counted_but_our_skill_md_is(tmp_path):
+def test_vendored_upstream_files_are_not_counted_but_our_overlay_is(tmp_path):
     folder = tmp_path / ".claude" / "skills" / "v-demo"
     (folder / "references").mkdir(parents=True)
-    (folder / "SKILL.md").write_text("ours\n", encoding="utf-8")
-    (folder / "UPSTREAM_SKILL.md").write_text("theirs\n", encoding="utf-8")
+    (folder / "SKILL.md").write_text("theirs\n", encoding="utf-8")
+    (folder / "OVERLAY.md").write_text("ours\n", encoding="utf-8")
     (folder / "references" / "a.md").write_text("theirs too\n", encoding="utf-8")
     (folder / "PROJECT_NOTES.md").write_text("ours too\n", encoding="utf-8")
     (folder / "SOURCE.md").write_text("repo: x\n\n" + "a" * 64 + "  SKILL.md\n" + "b" * 64 + "  references/a.md\n", encoding="utf-8")
-    assert rw.our_files(folder) == ["SKILL.md", "PROJECT_NOTES.md"]
-    text, where = rw.baseline_text(tmp_path, "v-demo")
-    assert (text, where) == ("theirs\n", "upstream")
+    assert rw.our_files(folder) == ["OVERLAY.md", "PROJECT_NOTES.md"]
 
 
-def test_every_skill_touched_on_this_branch_is_rewritten_by_at_least_half():
-    """A skill is either still untouched (share 0, waiting for its wave) or rewritten to the minimum: no half-done rewrite."""
+def test_the_report_is_information_only_and_strict_is_opt_in():
     rows = rw.report(ROOT)
     if all(r["status"] == "NOT_RUN" for r in rows):
         pytest.skip("baseline commit not in this clone (shallow checkout): RW-50 NOT_RUN")
-    half_done = [(r["skill"], r["share"]) for r in rows if 0 < r["share"] < rw.MINIMUM]
-    assert not half_done, half_done
-    done = [r["skill"] for r in rows if r["status"] == "PASS"]
-    assert len(done) >= 1
+    assert {r["status"] for r in rows} <= {"PASS", "FAIL", "NOT_RUN"}
+    assert rw.main([]) == 0  # a share under 50 % never fails the suite (owner 07:14 UTC: MS-1..MS-7 are the rule)
 
 
-def test_every_rewritten_vendored_skill_keeps_its_upstream_text_pinned_and_names_the_folder():
+def test_every_vendored_skill_md_is_the_upstream_text_and_overlays_are_ours():
+    """Team plan rule 4: public text whole, never paraphrased; our rules for a vendored skill live in OVERLAY.md."""
     for folder in sorted((ROOT / rw.SKILLS).glob("v-*")):
-        if not (folder / rw.UPSTREAM_SKILL).is_file():
-            continue
-        head = (folder / "SKILL.md").read_text(encoding="utf-8").split("---")[1]
-        assert f"name: {folder.name}\n" in head, folder.name  # the loaded name is the folder name (no upstream name clash)
-        assert "UPSTREAM_SKILL.md" in (folder / "SKILL.md").read_text(encoding="utf-8"), folder.name
+        assert not (folder / "UPSTREAM_SKILL.md").exists(), folder.name  # the loaded SKILL.md is the upstream one again
+        if (folder / rw.OVERLAY).is_file():
+            assert "SKILL.md" in rw._upstream_files(folder), folder.name
+            text = (folder / rw.OVERLAY).read_text(encoding="utf-8")
+            assert text.startswith("# Overlay"), folder.name
     done = subprocess.run([sys.executable, str(ROOT / "tools" / "vendor_skill.py"), "verify"], cwd=ROOT, capture_output=True, text=True)
     assert done.returncode == 0, done.stdout
 
 
 def test_cli_prints_the_table_and_the_rule_line():
     done = subprocess.run([sys.executable, "-m", "explainer_engine.governance.skill_rewrite"], cwd=ROOT, capture_output=True, text=True)
-    assert "RW-50:" in done.stdout and "| skill |" in done.stdout
+    assert "RW-50 (information):" in done.stdout and "| skill |" in done.stdout

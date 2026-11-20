@@ -1,14 +1,15 @@
-"""RW-50 (owner rule, 2026-11-20): every loaded skill is rewritten by at least half against the baseline of 2026-11-20.
+"""RW-50: how much of each loaded skill's instruction text is new against the baseline of 2026-11-20 (an information report).
 
-The owner's words (cmsg_01Hnu5zB86sjUj5GtTgaUkPWNNvx3o1PK2FXoWi85XNDV9): every skill must be rewritten by at least 50 %, as a
-minimum. The measure is the loaded instruction text of each skill folder ``.claude/skills/<name>/``: ``SKILL.md`` plus every other
+The owner's words (cmsg_01Hnu5zB86sjUj5GtTgaUkPWNNvx3o1PK2FXoWi85XNDV9, 06:52 UTC): every skill must be rewritten by at least
+50 %. His follow-up (cmsg_01Hnu5zB86sjUj5GtTgaUkPW6JyJD8JFB16BP7oNRafo4o, 07:14 UTC; team plan SKILLS_TEAM_PLAN_2026-11-20 rule
+1, MS-6) made the mandatory steps MS-1..MS-7 the rule and this share a number "reported for information, not as a target":
+the gate is ``governance/layer_gate.py`` (planned, W2); this module only reports. Public skill text is copied whole and never
+paraphrased (team plan rule 4): a vendored folder's ``SKILL.md`` stays the byte-pinned upstream text and our rules for it live
+in ``OVERLAY.md`` next to it. The measure is the loaded instruction text of each skill folder ``.claude/skills/<name>/``: ``SKILL.md`` plus every other
 ``.md`` file that is ours (a vendored folder's upstream reference files are byte-pinned third-party text listed in its
 ``SOURCE.md`` and are not counted; the owner chose "SKILL.md only" for them on 2026-11-20).
 
-Baseline text per skill:
-- a vendored folder that carries ``UPSTREAM_SKILL.md`` (the upstream ``SKILL.md`` moved aside, byte-pinned by
-  ``tools/vendor_skill.py verify``): that file;
-- otherwise the folder's ``SKILL.md`` (and our other ``.md`` files) at the git commit ``BASELINE`` (the branch point of the
+Baseline text per skill: the folder's ``SKILL.md`` (and our other ``.md`` files) at the git commit ``BASELINE`` (the branch point of the
   rewrite, 2026-11-20); a skill absent at the baseline is new and counts 1.0.
 
 Share: lines are compared after whitespace is collapsed, blank lines dropped. ``kept`` is the number of lines in matching blocks
@@ -16,7 +17,8 @@ Share: lines are compared after whitespace is collapsed, blank lines dropped. ``
 the new text is new). The rewrite share is the smaller of the two, so neither appending to an untouched text nor cutting a text
 down passes. stdlib only.
 
-    python -m explainer_engine.governance.skill_rewrite            # table, exit 1 if any skill is under the minimum
+    python -m explainer_engine.governance.skill_rewrite            # table (exit 0: information only)
+    python -m explainer_engine.governance.skill_rewrite --strict   # exit 1 if a skill is under --min
     python -m explainer_engine.governance.skill_rewrite --json
 """
 from __future__ import annotations
@@ -33,7 +35,7 @@ ROOT = Path(__file__).resolve().parents[2]
 SKILLS = Path(".claude") / "skills"
 BASELINE = "5e6dc41aabe8b981957bd32700570347b1598614"  # W8 phase B head, the base of the RW-50 branch (2026-11-20)
 MINIMUM = 0.5
-UPSTREAM_SKILL = "UPSTREAM_SKILL.md"
+OVERLAY = "OVERLAY.md"  # our rules on top of a vendored skill (team plan rule 4, MS-5)
 NOT_LOADED = {"_archive"}  # Claude Code loads .claude/skills/<name>/SKILL.md only; _archive is never loaded
 
 
@@ -66,17 +68,15 @@ def _upstream_files(folder: Path) -> set[str]:
 
 
 def our_files(folder: Path) -> list[str]:
-    """The .md files of a skill folder that are ours: SKILL.md first, then the rest sorted (upstream-pinned files left out)."""
+    """The .md files of a skill folder that are ours: SKILL.md or OVERLAY.md first, then the rest (upstream-pinned files left out)."""
     upstream = _upstream_files(folder)
     rels = []
     for p in sorted(folder.rglob("*.md")):
         rel = p.relative_to(folder).as_posix()
-        if rel in ("SOURCE.md", UPSTREAM_SKILL):
-            continue
-        if rel in upstream and rel != "SKILL.md":  # the loaded SKILL.md always counts, rewritten or not
+        if rel == "SOURCE.md" or rel in upstream:  # byte-pinned third-party text, the vendored SKILL.md included
             continue
         rels.append(rel)
-    return sorted(rels, key=lambda r: (r != "SKILL.md", r))
+    return sorted(rels, key=lambda r: (r not in ("SKILL.md", OVERLAY), r))
 
 
 def _git_show(root: Path, baseline: str, rel: str) -> str | None:
@@ -85,10 +85,8 @@ def _git_show(root: Path, baseline: str, rel: str) -> str | None:
 
 
 def baseline_text(root: Path, name: str, baseline: str = BASELINE) -> tuple[str, str]:
-    """(text, where) of a skill's baseline; where is 'upstream', 'git', 'new' or 'git-missing'."""
+    """(text, where) of a skill's baseline (our files only); where is 'git', 'new' or 'git-missing'."""
     folder = root / SKILLS / name
-    if (folder / UPSTREAM_SKILL).is_file():
-        return (folder / UPSTREAM_SKILL).read_text(encoding="utf-8"), "upstream"
     done = subprocess.run(["git", "cat-file", "-e", baseline], cwd=root, capture_output=True)
     if done.returncode != 0:
         return "", "git-missing"
@@ -98,7 +96,7 @@ def baseline_text(root: Path, name: str, baseline: str = BASELINE) -> tuple[str,
     upstream = _upstream_files(folder)
     for rel in sorted(tree, key=lambda r: (not r.endswith("/SKILL.md"), r)):
         short = rel.split(f"{name}/", 1)[1]
-        if not rel.endswith(".md") or short == "SOURCE.md" or (short in upstream and short != "SKILL.md"):
+        if not rel.endswith(".md") or short == "SOURCE.md" or short in upstream:
             continue
         text = _git_show(root, baseline, rel)
         if text is not None:
@@ -118,7 +116,8 @@ def report(root: Path | str = ROOT, baseline: str = BASELINE, minimum: float = M
         folder = root / SKILLS / name
         old, where = baseline_text(root, name, baseline)
         new = "\n".join((folder / rel).read_text(encoding="utf-8") for rel in our_files(folder))
-        row = {"skill": name, "baseline": where, "files": our_files(folder), **measure(old, new)}
+        row = {"skill": name, "baseline": where, "files": our_files(folder), "vendored": bool(_upstream_files(folder)),
+               **measure(old, new)}
         if where == "git-missing":
             row["status"] = "NOT_RUN"
         else:
@@ -133,6 +132,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--baseline", default=BASELINE)
     ap.add_argument("--min", type=float, default=MINIMUM)
     ap.add_argument("--json", action="store_true")
+    ap.add_argument("--strict", action="store_true", help="exit 1 when a skill is under --min (off: information only)")
     args = ap.parse_args(argv)
     rows = report(args.root, args.baseline, args.min)
     if args.json:
@@ -144,8 +144,9 @@ def main(argv: list[str] | None = None) -> int:
             print(f"| `{r['skill']}` | {r['baseline']} | {r['old']} | {r['new']} | {r['kept']} | {r['replaced']:.0%} | "
                   f"{r['new_share']:.0%} | {r['share']:.0%} | {r['status']} |")
         bad = [r["skill"] for r in rows if r["status"] != "PASS"]
-        print(f"\nRW-50: {len(rows) - len(bad)} of {len(rows)} skills at or above {args.min:.0%}; not passing: {', '.join(bad) or 'none'}")
-    return 1 if any(r["status"] != "PASS" for r in rows) else 0
+        print(f"\nRW-50 (information): {len(rows) - len(bad)} of {len(rows)} skills at or above {args.min:.0%}; under: "
+              f"{', '.join(bad) or 'none'}")
+    return 1 if args.strict and any(r["status"] != "PASS" for r in rows) else 0
 
 
 if __name__ == "__main__":
