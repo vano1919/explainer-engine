@@ -157,6 +157,13 @@ def load_style_preset(name: str) -> dict[str, Any]:
     for key in ("map", "line", "hud", "finish", "palette_check"):
         if key not in preset:
             raise ValueError(f"style preset {name!r} is missing the {key!r} block")
+    finish = preset["finish"]
+    for dotted in ("tint.color", "tint.opacity", "grain.opacity", "grain.size", "vignette"):
+        node: Any = finish
+        for part in dotted.split("."):
+            if not isinstance(node, dict) or part not in node:
+                raise ValueError(f"style preset {name!r} is missing finish.{dotted} (the lane has no finish of its own)")
+            node = node[part]
     return preset
 
 

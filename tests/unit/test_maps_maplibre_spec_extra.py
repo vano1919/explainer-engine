@@ -12,7 +12,7 @@ def _spec():
         "line_geojson": "a.geojson", "line_t": [0.4, 3.6],
         "counter": {"from": 0, "to": 100, "t0": 1.0, "t1": 4.0, "label": "X"},
         "date_chip": [{"t": 0.0, "text": "A"}, {"t": 2.2, "text": "B"}],
-        "towns": [], "font": "Inter", "footnote": "",
+        "towns": [], "font": "preset", "footnote": "",
     }
 
 

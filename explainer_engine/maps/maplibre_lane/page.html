@@ -323,18 +323,21 @@
         }
         const fin = cfg.preset.finish;
         finishCfg = fin;
-        const tint = fin.tint || { color: "#000", opacity: 0 };
+        if (!fin.tint || !fin.grain || fin.vignette === undefined) {
+          throw new Error("style preset has no finish.tint, finish.grain or finish.vignette: the page has no finish of its own");
+        }
+        const tint = fin.tint;
         const tintEl = document.getElementById("fin-tint");
         tintEl.style.background = tint.color;
-        tintEl.style.opacity = String(tint.opacity || 0);
+        tintEl.style.opacity = String(tint.opacity);
         tintEl.style.mixBlendMode = "multiply";
-        const vig = Number(fin.vignette || 0);
+        const vig = Number(fin.vignette);
         document.getElementById("fin-vignette").style.background = vig > 0
           ? `radial-gradient(ellipse at center, rgba(0,0,0,0) 55%, rgba(20,12,4,${vig}) 100%)` : "none";
         const grainEl = document.getElementById("fin-grain");
-        grainEl.style.opacity = String((fin.grain && fin.grain.opacity) || 0);
+        grainEl.style.opacity = String(fin.grain.opacity);
         grainEl.style.mixBlendMode = "overlay";
-        grainEl.style.backgroundSize = (((fin.grain && fin.grain.size) || 256) * (width / 1280)) + "px";
+        grainEl.style.backgroundSize = (fin.grain.size * (width / 1280)) + "px";
         const counterBox = layout.counter_box || [48, 48, 268, 112];
         const [cx0, cy0, cx1, cy1] = counterBox;
         const counterEl = document.getElementById("hud-counter");
@@ -477,7 +480,7 @@
         }
         if (finishCfg.grain && finishCfg.grain.opacity > 0) {
           // new grain pattern every frame (film grain flickers); seed = frame index, deterministic
-          const sz = finishCfg.grain.size || 256;
+          const sz = finishCfg.grain.size;
           const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='${sz}' height='${sz}'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='${clampedIdx % 997}' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>`;
           document.getElementById("fin-grain").style.backgroundImage = `url("data:image/svg+xml;utf8,${svg}")`;
         }

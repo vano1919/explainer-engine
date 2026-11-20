@@ -105,3 +105,20 @@ def test_page_has_no_look_of_its_own():
     assert "no style preset: this page has no look of its own" in html
     assert "P ?" not in html and '"Inter"' not in html and "#f0f0eb" not in html
     assert "cfg.preset.font" in html
+
+
+def test_preset_without_finish_tint_is_refused(tmp_path, monkeypatch):
+    preset = json.loads((R.STYLES_DIR / "1917_film.json").read_text(encoding="utf-8"))
+    for dotted in ("tint", "grain", "vignette"):
+        broken = copy.deepcopy(preset)
+        del broken["finish"][dotted]
+        (tmp_path / "broken.json").write_text(json.dumps(broken), encoding="utf-8")
+        monkeypatch.setattr(R, "STYLES_DIR", tmp_path)
+        with pytest.raises(ValueError, match=f"finish.{dotted}"):
+            R.load_style_preset("broken")
+
+
+def test_page_has_no_finish_of_its_own():
+    html = PAGE.read_text(encoding="utf-8")
+    assert '{ color: "#000", opacity: 0 }' not in html and "|| 256" not in html
+    assert "has no finish of its own" in html
