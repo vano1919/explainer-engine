@@ -685,13 +685,14 @@ def test_the_module_imports_where_it_sits_at_the_container_root(tmp_path):
     import shutil
     import subprocess
     import sys
-    shallow = tmp_path / "a"
-    shallow.mkdir()
+    import tempfile
+    shallow = Path(tempfile.mkdtemp(dir="/tmp"))               # /tmp/xyz/file: only three parents, like /root/file in the image
     for f in M.FILES + ("launch_layout_a100.json",):         # what the image mounts at /root
         shutil.copy(Path(M.LTX_DIR) / f, shallow / f)
-    code = ("import importlib.util, sys; from pathlib import Path\n"
-            "import explainer_engine.training.pods.ltx.modal_layout_jobs as M0\n"
-            "M0.SHARED_GATES = Path('/nonexistent')\n"
+    src = (shallow / "modal_layout_jobs.py").read_text()      # the container has no /mnt/project-files
+    assert 'SHARED_GATES = Path("/mnt/project-files' in src
+    (shallow / "modal_layout_jobs.py").write_text(src.replace('SHARED_GATES = Path("/mnt/project-files', 'SHARED_GATES = Path("/nonexistent'))
+    code = ("import importlib.util, sys\n"
             "s = importlib.util.spec_from_file_location('m', sys.argv[1]); m = importlib.util.module_from_spec(s); s.loader.exec_module(m)\n"
             "print(m.LADDER_PATH)")
     r = subprocess.run([sys.executable, "-c", code, str(shallow / "modal_layout_jobs.py")], capture_output=True, text=True,
