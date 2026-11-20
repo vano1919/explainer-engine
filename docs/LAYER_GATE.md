@@ -80,6 +80,77 @@ Example decision that passes (the record also needs its candidates, trials, requ
 `LG-SCHEMA`, `LG-DUP`, `LG-SIGN`, `LG-OWNER`, `MS1-REQ-NONE`, `MS1-REQ-FIELD`, `MS1-REQ-SOURCE`, `MS1-CAP-NONE`, `MS1-CAP-FIELD`, `MS2-SUBQ`,
 `MS2-CAND-MIN`, `MS2-CAND-FIELD`, `MS3-TRIAL-NONE`, `MS3-TRIAL-FIELD`, `MS4-DEC-MISSING`, `MS4-DEC-FIELD`, `MS4-KEEP-EVIDENCE`,
 `MS4-KEEP-REQ`, `MS4-KEEP-RUN3`, `MS4-KEEP-TOP`, `MS4-KEEP-SOTA`, `MS4-KEEP-CONFIG`, `MS4-KEEP-JUDGE`, `MS4-KEEP-OWNER`,
-`MS5-MAP-MISSING`, `MS5-MAP-TARGET`.
+`MS5-MAP-MISSING`, `MS5-MAP-TARGET`; the owner's registry (below): `REQ-UNCOVERED`, `REQ-UNMAPPED`, `REQ-NOVALIDATOR`,
+`REQ-NOTEST`, `REQ-NONEGATIVE`, `REQ-NOJUDGE`, `REQ-CONFLICT-OPEN`, `REQ-SUPERSEDED-USED`, `REQ-UNKNOWN`, `REQ-COVER-FIELD`, and the registry's own schema
+codes `REG-SCHEMA`, `REG-DUP`, `REG-FIELDS`, `REG-LAYER`, `REG-SUPERSEDED`, `REG-CONFLICT`, `REG-MISSING` (registry absent or empty), and for the CI job
+`REG-REMOVED`, `REG-WORDS-CHANGED`.
 The gate checks that the parts exist and are well formed and that references resolve; whether a candidate is the right choice is
 the team lead's call and is not judged by code.
+
+## The owner's requirements registry (MS-8, owner 2026-11-20 08:34 UTC: "what is the point of rules if they are not followed?")
+Home of the decision: [D-143](DECISIONS_AND_OPEN_QUESTIONS.md). `explainer_engine/governance/owner_requirements.json`, code
+`governance/owner_requirements.py`, tests `tests/unit/test_owner_requirements.py`, CLI `python -m explainer_engine.governance requirements [--layer L14]`
+(count per layer, the unmapped entries; exit 1 when any entry is unmapped, a conflict is open or the registry is invalid; `governance check` prints the
+registry's schema errors too). A repo without the file binds nothing.
+
+```json
+{"schema": "owner_requirements/1",
+ "requirements": [{"id": "REQ-014", "words": "his words, verbatim", "gloss": "English, only if the words are not", "date": "2026-11-20T08:33:54Z",
+   "source": {"kind": "chat|memory|decision_log|doc", "ref": "cmsg_... | memory file | D-139 | path#line"},
+   "layers": ["L14"], "status": "active|superseded", "superseded_by": "REQ-0xx (only when superseded)",
+   "measures": "one line on what the check measures (optional)", "parent": "another entry id (optional)",
+   "check": {"kind": "validator", "ref": "module:function", "test": "tests/unit/test_x.py::test_name"}
+          | {"kind": "judge", "who": "blind judge | owner at MS-7 | Gemini eye", "rubric": "path#heading-anchor"}
+          | {"kind": "unmapped"}}]}
+```
+An open conflict is its own entry: `{"id", "kind": "conflict", "status": "open|resolved", "conflicts": [id, id, ...], "summary", "resolved_by": "cmsg_ (when resolved)", "layers", "date", "source"}`.
+
+- **Ids:** `REQ-nnn`, or `OR-<group letter><nn>` (OR-V visual, OR-S, OR-A, OR-E, OR-Q, OR-P, OR-I). Dates: ISO 8601 or `2026-11-19 22:08 UTC`. `words_verbatim` is accepted for `words`.
+- **A layer record BLOCKs** unless every `active` entry whose `layers` holds it is in the record's `requirements_covered: [{id, evidence}]` and its check is real:
+  `REQ-UNCOVERED` (active entry missing from the record, so a new entry reopens every layer it binds), `REQ-UNMAPPED` (check `unmapped` or none),
+  `REQ-NOVALIDATOR` (the `module:function` does not exist), `REQ-NOTEST` (the `path.py::test_name` of `check.test` does not exist), `REQ-NONEGATIVE` (the test of `check.negative_test`, which shows the validator FAILS a known violation fixture, does not exist), `REQ-NOJUDGE` (a judge without `who`
+  or without an existing rubric file and heading), `REQ-CONFLICT-OPEN` (an open conflict binds the layer; blocked until the owner answers),
+  `REQ-SUPERSEDED-USED` (the record cites a superseded entry), `REQ-UNKNOWN` (cites an id not in the registry), `REQ-COVER-FIELD` (a malformed row).
+- **The registry schema** (`REG-*`) is checked on every record: duplicate ids, a missing or empty quote, date or source (a chat source is a `cmsg_` id, a
+  `D-` source must be in the decision log), a layer outside L1..L33, `superseded` without an existing newer entry, a conflict naming fewer than two existing ids.
+  A broken registry BLOCKs every layer, not only the bound ones. `superseded` entries are never deleted.
+- **Honest `unmapped`:** an entry with no check yet is allowed in the registry and blocks the layers it binds until its validator (with its test, and a bad and a good
+  fixture) or its judge step exists. Design choices for the team lead to confirm: the conflict entry shape above; `REQ-NOVALIDATOR`, `REQ-UNKNOWN` and `REQ-COVER-FIELD` as
+  three codes beyond the spec's six; a `doc` source is not checked for existence (many sit outside the repo); the append-only id counter is not checked in code
+  (a snapshot cannot show it; git history does).
+- **Deleting or emptying the registry never opens a layer:** a `final` record, `require_layers`, the send gate and the CI job BLOCK with `REG-MISSING` when
+  `owner_requirements.json` is absent or holds no entry (a draft without one is only reported). **Append-only in code:** the CI job compares the registry with the base
+  branch (`owner_requirements.compare_with_base`): an id that disappeared is `REG-REMOVED`, a changed `words` / `words_verbatim` is `REG-WORDS-CHANGED`; retiring an
+  entry means `status: superseded`.
+
+## Stages and trial scripts call the gate (spec section 7.2, owner 2026-11-20 08:37 UTC: "words are not enough, Claude still skips")
+`layer_gate.require_layers(layers)` raises `ContractError` unless every layer is `final` and PASS (`require_pass`: the group order included) or carries the owner's recorded
+`layer_waiver`; the registry must exist and be valid even when every layer is waived. `episode/run.py: run_stage` calls `require_stage(stage)` (`STAGE_LAYERS`: script
+L1-L4, L7, L8, L29, L30; sound_plan and sound L18-L20; pictures L9-L11, L16; voice L5, L6, L17; clips L12-L15; assemble L21, L22, L25; qa L23, L24) and refuses the stage
+(`StageRefused`); `training/pods/ltx/scene_run.py main` (the D-132 video route) calls it for L12 and L13 before it reserves or writes anything. **There is no flag.** The only way past is the owner's own
+word in `jobs/creator_ok.jsonl` (the D-84 pattern): `python -m explainer_engine.governance ok layer_waiver <layer> <cmsg id> "<his words>"`, one layer, held a day
+(`WAIVER_MINUTES`), never a wildcard. Until the records of a stage's layers are signed final, the runner therefore stops for that stage unless he waives the layer.
+The unit tests get a gate that passes (`tests/unit/conftest.py`, the `real_layer_gate` opt-in as for the dry run); `tests/unit/test_layer_gate_enforcement.py` runs the real one.
+
+### The registry file as the analyst delivers it (v2, 123 entries)
+`requirements` (kind `requirement` or `conflict`) and `process_requirements` (kind `process`: the way we work, e.g. model routing; they bind no layer, `layers: []`) are one registry.
+Process entries are never read by the layer gate; the CI job and `governance requirements` do, and each still needs a validator or a judge step with its tests like any other.
+Booleans `words_verbatim` (his own words, quoted) and `words_partial`, the string `words_origin`, `repeats`, `note`, `title` of a conflict and extra keys inside `check` are accepted;
+a conflict has no `words` by design and may name rules outside the registry in `conflicts` (`GC-18`, `RR-03`); ids may carry a letter (`OR-V09a`); a `decision_log` source may list
+several ids (`D-61 / OR-17`). An entry with `words_verbatim: false` is our paraphrase: the team lead does not sign it until the owner has seen it.
+
+## The send gate, the hooks and the CI job (spec sections 4 and 7.1, 7.3)
+- **Send gate** `python -m explainer_engine.governance.send_gate <layer> <files...> [--owner-asked <cmsg id>]` (`governance/send_gate.py`): runs the validator of every active requirement
+  that binds the layer on every file and prints PASS / FAIL / NOT_RUN / BLOCK with the measured number. FAIL (a measured violation) and BLOCK (registry missing or invalid, an open conflict,
+  an `unmapped` entry, a validator that does not exist or raised, a file that is missing) exit 1: such a candidate is never sent. NOT_RUN (a judge step, a file of another kind, a camera
+  that moves where a still one is required) is shown. A failing candidate goes only as a labelled record when the owner asked to see failures (`--owner-asked`, his `cmsg_` id). Every run appends a
+  line with the sha256 of each file to `jobs/send_gate/records.jsonl`. A validator is `fn(path) -> {status, value, detail}` with `fn.kinds` (suffixes); the first is
+  `qa/send_validators.py: living_motion` (G-LIVE-1 on the delivered frames with a still camera, G-LIVE-3 per zone from `<clip>.zones.json`; BP-194 numbers).
+- **Hooks** (`governance/send_hook.py`, wired in `.claude/settings.json`, extending the D-84 hooks and FAILING CLOSED: an exception, a missing scope file or a command that cannot start exits 2):
+  `pre-bash` refuses an upload (`upload_file`, `hf upload`, ...) of a file under a trial or comparison path (`send_scope.json`) without a passing send record of that file's sha256 (or a record labelled with
+  the owner's word) and a trial command (`scene_run`, `episode run`) whose layers the gate does not let through; `stop` and `subagent-stop` refuse to end a turn that wrote such files (from the transcript, newer
+  than the last user message) without the record; after 3 refusals in a row the stop hook lets go and writes `jobs/send_gate/incidents.jsonl`, so a loop is visible and not endless. A log or a vault file passes.
+- **CI** (`.github/workflows/owner-requirements.yml`, job `owner-requirements`; code `governance/ci_check.py`): fails on a missing, empty or invalid registry, an active unmapped entry (process entries too),
+  a validator without its code, test or negative test, a judge without its rubric, an id removed or an owner's words changed against the base branch, or a failing named test; an open conflict is printed. The
+  owner makes it required: [OWNER_REQUIREMENTS_CI_STEPS.md](OWNER_REQUIREMENTS_CI_STEPS.md). Until the registry is mapped the job is red: that is the honest state.
+

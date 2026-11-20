@@ -1,0 +1,12 @@
+{
+  "schema": "send_scope/1",
+  "note": "Which paths are trial or comparison outputs that a send hook guards, and which commands are uploads or trial runs (spec section 7.1). Scope by path so a log or a vault file passes.",
+  "trial_path": "(^|/)(trials?|comparisons?|candidates?|ab_tests?|t_tests?)(/|_)|(^|/)[^/]*_(trial|comparison|candidate)s?[^/]*$",
+  "layer_in_path": "(^|[/_.-])(L(?:[1-9]|[12][0-9]|3[0-3]))([/_.-]|$)",
+  "upload_command": "(upload_file|upload_folder|upload_large_folder|\\bhf\\s+upload\\b|huggingface-cli\\s+upload|\\bcreate_commit\\b)",
+  "trial_command": {
+    "scene_run": ["L12", "L13"],
+    "episode_run": "stage"
+  },
+  "file_suffixes": [".png", ".jpg", ".jpeg", ".webp", ".mp4", ".mov", ".webm", ".gif", ".wav", ".mp3", ".html", ".md", ".json", ".txt", ".zip"]
+}

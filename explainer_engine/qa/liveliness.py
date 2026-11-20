@@ -74,8 +74,12 @@ def change_per_s(frames: list[np.ndarray], fps: float) -> dict:
 
 def frozen_windows(frames: list[np.ndarray], fps: float) -> dict:
     """One-second windows (every half second) and the share of the frame that changes visibly between their ends."""
+    return frozen_windows_grey([_grey(f, FROZEN_SIZE) for f in frames], fps)
+
+
+def frozen_windows_grey(g: list[np.ndarray], fps: float) -> dict:
+    """``frozen_windows`` on frames already grey and at ``FROZEN_SIZE`` (pure numpy: the send gate decodes them with ffmpeg)."""
     step, half = max(1, int(round(fps * FROZEN_WINDOW_S))), max(1, int(round(fps / 2)))
-    g = [_grey(f, FROZEN_SIZE) for f in frames]
     rows = []
     for i in range(0, len(g) - step, half):
         share = float((np.abs(g[i + step] - g[i]) > FROZEN_PIXEL).mean() * 100)

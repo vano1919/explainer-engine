@@ -58,6 +58,11 @@ def root(tmp_path):
     (tmp_path / "skill" / "OVERLAY.md").write_text("# overlay\nTask mode only: batches of 6\n", encoding="utf-8")
     (tmp_path / "docs").mkdir()
     (tmp_path / "docs" / "DECISIONS_AND_OPEN_QUESTIONS.md").write_text("| D-131 | the v4.3 rebuild |\n| D-140 | x |\n", encoding="utf-8")
+    reg = tmp_path / "explainer_engine" / "governance"      # a final record needs the owner's registry (REG-MISSING): one entry of a layer these tests do not use
+    reg.mkdir(parents=True)
+    (reg / "owner_requirements.json").write_text(json.dumps({"schema": "owner_requirements/1", "requirements": [{
+        "id": "REQ-901", "words": "x", "date": "2026-11-20T08:00:00Z", "source": {"kind": "chat", "ref": "cmsg_01AbCdEf"},
+        "layers": ["L33"], "status": "active", "check": {"kind": "unmapped"}}]}), encoding="utf-8")
     return tmp_path
 
 

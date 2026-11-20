@@ -1,5 +1,5 @@
 
-"""CLI: ok | start | attempt | status | log | check | layers | backup | backup-if-over."""
+"""CLI: ok | start | attempt | status | log | check | layers | requirements | backup | backup-if-over."""
 from __future__ import annotations
 
 import argparse
@@ -8,7 +8,7 @@ import sys
 import time
 
 from explainer_engine.core.errors import NeedsReview
-from explainer_engine.governance import layer_gate, load, records, status, usage
+from explainer_engine.governance import layer_gate, load, owner_requirements, records, status, usage
 from explainer_engine.core.store import write_json_atomic
 from explainer_engine.governance import root_dir
 
@@ -38,6 +38,9 @@ def main(argv=None) -> int:
     ly = sub.add_parser("layers", help="MS-6 layer gate: check docs/layers/<layer>.json (exit 0 PASS, 1 BLOCK, 2 NOT_RUN)")
     ly.add_argument("--layer", help="one layer, e.g. L9; default every record")
     ly.add_argument("--strict", action="store_true", help="refuse validator_planned targets (the wave-2 gate)")
+    rq = sub.add_parser("requirements", help="the owner's requirements registry: count per layer, unmapped entries (exit 1 when any is unmapped, "
+                                             "open or invalid)")
+    rq.add_argument("--layer", help="one layer, e.g. L14")
     b = sub.add_parser("backup")
     b.add_argument("--reason", default="manual")
     b.add_argument("--no-push", action="store_true")
@@ -69,7 +72,7 @@ def main(argv=None) -> int:
                            "level": args.level, "model": args.model, "effort": args.effort, "result": args.result, "note": args.note})
     elif args.cmd == "check":
         load()
-        errs = status.check_all() + layer_gate.problems(layer_gate.check_all(root=root))
+        errs = status.check_all() + layer_gate.problems(layer_gate.check_all(root=root)) + owner_requirements.report(root)["errors"]
         print("\n".join(errs) or "ok")
         return 1 if errs else 0
     elif args.cmd == "layers":
@@ -88,6 +91,21 @@ def main(argv=None) -> int:
                 print(f"group {g['group']}: {waits}{own}")
         worst = layer_gate.S.rollup(r.status for r in results)
         return {layer_gate.S.PASS: 0, layer_gate.S.NOT_RUN: 2}.get(worst, 1)
+    elif args.cmd == "requirements":
+        rep = owner_requirements.report(root)
+        layers = [args.layer] if args.layer else sorted(rep["per_layer"], key=lambda x: int(x[1:]))
+        print(f"registry: {rep['total']} entries, {rep['active']} active, {len(rep['unmapped'])} unmapped, "
+              f"{len(rep['open_conflicts'])} open conflicts")
+        for layer in layers:
+            row = rep["per_layer"].get(layer, {"active": 0, "unmapped": 0})
+            print(f"{layer}: {row['active']} active, {row['unmapped']} unmapped")
+        for rid in rep["unmapped"]:
+            print(f"  unmapped {rid}")
+        for rid in rep["open_conflicts"]:
+            print(f"  open conflict {rid}")
+        for e in rep["errors"]:
+            print(f"  {e}")
+        return 1 if (rep["unmapped"] or rep["open_conflicts"] or rep["errors"]) else 0
     elif args.cmd == "backup":
         print(json.dumps(usage.backup(args.reason, push=not args.no_push), ensure_ascii=False))
     elif args.cmd == "backup-if-over":
