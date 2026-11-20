@@ -28,5 +28,6 @@ Archived (not loaded): `_archive/` holds `video-editing-architect`, `shot-visual
 | S19 Shorts | `v-viral-youtube-shorts` | `shorts-for-video` |
 | Dev process, every code thread | `v-superpowers-test-driven-development`, `v-superpowers-systematic-debugging`, `v-superpowers-verification-before-completion`, `v-superpowers-subagent-driven-development` | CLAUDE.md invariants |
 | Code writing, every code thread (creator 2026-11-20) | none | `gemini-coding` (Gemini Hydrogen writes through Drive `gemini_dev`; Claude plans, packs, takes in and checks) |
+| Thread cost, every thread (creator 2026-11-20, CC-1, OR-38) | none | `thread-cost-check` (after every N steps look for waste, post the one-line request, write the handover; `tools/thread_cost.py`) |
 
 Cloud and cost skills (`cloud-cost-audit`, `cloud-provider-selection`, `hyperstack-operations`, `modal-operations`) are not part of the film stages and stay as they are.
