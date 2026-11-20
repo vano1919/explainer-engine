@@ -13,7 +13,7 @@ from explainer_engine.qa import validator_gate as VG
 
 EXAMPLES = Path(__file__).resolve().parents[2] / "examples"
 IDS = ["shift_line_id", "stated_theme", "claim_ledger", "camera_cards", "camera_clips", "ltx_prompts", "continuity_cards",
-       "language", "master_size", "attempt_ranking"]
+       "language", "master_size", "attempt_ranking", "first_shot"]
 GEO = "ა"
 
 
@@ -45,7 +45,7 @@ def test_empty_folder_is_all_not_run_and_the_gate_waits(tmp_path):
     rows = VG.run_all(tmp_path)
     assert [r["id"] for r in rows] == IDS and {r["status"] for r in rows} == {"NOT_RUN"}
     status, detail, _ = VG.gate_row(tmp_path)
-    assert status == "WAIT" and "0 of 10 ran" in detail
+    assert status == "WAIT" and f"0 of {len(IDS)} ran" in detail
     assert VG.main([str(tmp_path)]) == 2
 
 
@@ -55,19 +55,19 @@ def test_each_validator_is_called_from_the_gate(tmp_path, monkeypatch):
     fake = [(rid, (lambda d, rid=rid: seen.append((rid, d)) or VG._row(rid, rid, "PASS", "ok"))) for rid in IDS]
     monkeypatch.setattr(VG, "REGISTRY", fake)
     rows = VG.run_all(tmp_path)
-    assert [s[0] for s in seen] == IDS and all(s[1] == tmp_path for s in seen) and len(rows) == 10
+    assert [s[0] for s in seen] == IDS and all(s[1] == tmp_path for s in seen) and len(rows) == len(IDS)
 
 
 def test_gate_row_folds_statuses(tmp_path, monkeypatch):
     def reg(*statuses):
         return [(rid, (lambda d, rid=rid, st=st: VG._row(rid, rid, st, "x"))) for rid, st in zip(IDS, statuses)]
-    monkeypatch.setattr(VG, "REGISTRY", reg(*["PASS"] * 10))
+    monkeypatch.setattr(VG, "REGISTRY", reg(*["PASS"] * len(IDS)))
     assert VG.gate_row(tmp_path)[0] == "PASS"
-    monkeypatch.setattr(VG, "REGISTRY", reg(*["PASS"] * 9, "REVIEW"))
+    monkeypatch.setattr(VG, "REGISTRY", reg(*["PASS"] * (len(IDS) - 1), "REVIEW"))
     assert VG.gate_row(tmp_path)[0] == "PASS"
-    monkeypatch.setattr(VG, "REGISTRY", reg(*["PASS"] * 9, "NOT_RUN"))
+    monkeypatch.setattr(VG, "REGISTRY", reg(*["PASS"] * (len(IDS) - 1), "NOT_RUN"))
     status, detail, _ = VG.gate_row(tmp_path)
-    assert status == "WAIT" and "attempt_ranking" in detail
+    assert status == "WAIT" and IDS[-1] in detail
     monkeypatch.setattr(VG, "REGISTRY", reg("FAIL", *["NOT_RUN"] * 9))
     assert VG.gate_row(tmp_path)[0] == "BLOCKED" and VG.main([str(tmp_path)]) == 1
 
@@ -215,3 +215,17 @@ def test_production_gate_has_the_validators_row(tmp_path):
     rows = {r["gate"]: r for r in PG.script_gates(tmp_path)}
     assert rows["V"]["name"] == "validators" and rows["V"]["status"] in ("BLOCKED", "WAIT")
     assert rows["V"]["status"] != "PASS"        # nothing but the script exists, so most validators are NOT_RUN
+
+
+def timed_doc(first_len):
+    return {"duration": 60.0, "shots": [{"start": 0.0, "end": first_len}, {"start": first_len, "end": 60.0}]}
+
+
+def test_first_shot_runs_on_a_timed_json(tmp_path):
+    assert by_id(VG.run_all(tmp_path))["first_shot"]["status"] == "NOT_RUN"
+    write(tmp_path, "timed.json", timed_doc(1.0))
+    r = by_id(VG.run_all(tmp_path))["first_shot"]
+    assert r["status"] == "FAIL" and "flash" in r["detail"]
+    assert VG.gate_row(tmp_path)[0] == "BLOCKED"
+    write(tmp_path, "timed.json", timed_doc(3.0))
+    assert by_id(VG.run_all(tmp_path))["first_shot"]["status"] == "PASS"

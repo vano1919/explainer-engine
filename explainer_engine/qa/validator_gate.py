@@ -275,11 +275,34 @@ def run_attempt_ranking(day: Path) -> dict:
     return _row("attempt_ranking", "attempts at the retry cap", "REVIEW", "the creator chooses by eye: " + text[:260])
 
 
+def _timed(day: Path):
+    """The timed production script of the episode (``timed.json``, assemble's own input), or None."""
+    for p in sorted(day.rglob("timed.json"), key=lambda q: len(q.relative_to(day).parts)):
+        if len(p.relative_to(day).parts) <= 3:
+            doc = _json(p)
+            if isinstance(doc, dict) and isinstance(doc.get("shots"), list):
+                return doc
+    return None
+
+
+def _timed_row(day: Path, rid: str, name: str, check) -> dict:
+    timed = _timed(day)
+    if timed is None:
+        return _missing(rid, name, "timed.json")
+    r = check(timed)
+    return _row(rid, name, r["status"], r["detail"])
+
+
+def run_first_shot(day: Path) -> dict:
+    from explainer_engine.qa import first_shot
+    return _timed_row(day, "first_shot", "first shot is not a flash", first_shot.check_timed)
+
+
 REGISTRY: list[tuple[str, Callable[[Path], dict]]] = [
     ("shift_line_id", run_shift_line_id), ("stated_theme", run_stated_theme), ("claim_ledger", run_claim_ledger),
     ("camera_cards", run_camera_cards), ("camera_clips", run_camera_clips), ("ltx_prompts", run_ltx_prompts),
     ("continuity_cards", run_continuity_cards), ("language", run_language), ("master_size", run_master_size),
-    ("attempt_ranking", run_attempt_ranking),
+    ("attempt_ranking", run_attempt_ranking), ("first_shot", run_first_shot),
 ]
 
 
