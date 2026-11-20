@@ -46,7 +46,8 @@ def render_frames(spec: dict, out_dir: Path, samples: int, a: int, b: int) -> di
     from explainer_engine.lab import blender_lib as bl  # noqa: PLC0415
     bpy = bl.bb._bpy()
     sc = bl.build_scene(spec, samples)
-    gap = bl.blender_projection_check(spec, sorted({c["frame_in"] for c in spec["cuts"]} | {spec["clip_frames"] - 1}))
+    check = {c["frame_in"] for c in spec["cuts"]} | {spec["clip_frames"] - 1} | set(range(0, spec["clip_frames"], 24))
+    gap = bl.blender_projection_check(spec, sorted(check))
     (out_dir / "frames").mkdir(parents=True, exist_ok=True)
     sc.render.filepath = str(out_dir / "frames" / "f_")
     sc.render.use_overwrite = False
@@ -139,9 +140,14 @@ def view_pngs(spec: dict, out_dir: Path, video: Path) -> tuple[list[dict], dict]
 
 
 def plan_png(spec: dict, path: Path, size=(1100, 1100)) -> Path:
-    """Top-down plan of the whole clip: tracks (start filled, end ring), every camera with its view wedge."""
+    """Top-down plan of the whole clip: tracks (start filled, end ring), every camera's path with an arrow and the view
+    wedge at the start of its cut and at its end."""
     from PIL import Image, ImageDraw  # noqa: PLC0415
-    pts = [c["pos"][:2] for c in spec["cameras"]]
+    cut_paths = []
+    for cut in spec["cuts"]:
+        frames = sorted(set(range(cut["frame_in"], cut["frame_out"], 6)) | {cut["frame_in"], max(cut["frame_out"] - 1, cut["frame_in"])})
+        cut_paths.append([(fr, ss.camera_state(spec, cut, fr)) for fr in frames])
+    pts = [st["pos"][:2] for cp in cut_paths for _, st in cp]
     for p in spec["people"]:
         pts += [k["pos"] for k in p["track"]]
     xs, ys = [q[0] for q in pts], [q[1] for q in pts]
@@ -154,19 +160,32 @@ def plan_png(spec: dict, path: Path, size=(1100, 1100)) -> Path:
     img = Image.new("RGB", size, (245, 245, 242))
     d = ImageDraw.Draw(img)
     palette = [(40, 40, 160), (160, 60, 120), (30, 130, 90), (170, 110, 20), (90, 60, 160)]
-    for i, cut in enumerate(spec["cuts"]):
+
+    def wedge(st, col, length):
+        cx, cy = st["pos"][:2]
+        half = math.degrees(math.atan(ss.SENSOR_WIDTH_MM / 2 / st["lens"]))
+        for sgn in (-1, 1):
+            hx = math.sin(math.radians(st["heading"] + sgn * half))
+            hy = math.cos(math.radians(st["heading"] + sgn * half))
+            d.line([px(cx, cy), px(cx + hx * length, cy + hy * length)], fill=col, width=1)
+    for i, (cut, cp) in enumerate(zip(spec["cuts"], cut_paths)):
         cam = ss.camera_by_id(spec, cut["camera"])
         col = palette[i % len(palette)]
-        cx, cy = cam["pos"][:2]
-        half = math.degrees(math.atan(ss.SENSOR_WIDTH_MM / 2 / cam["lens"]))
-        for sgn in (-1, 1):
-            hx = math.sin(math.radians(cam["heading"] + sgn * half))
-            hy = math.cos(math.radians(cam["heading"] + sgn * half))
-            d.line([px(cx, cy), px(cx + hx * 8, cy + hy * 8)], fill=col, width=1)
-        bx, by = px(cx, cy)
+        first, last = cp[0][1], cp[-1][1]
+        wedge(first, col, 8)
+        moving = ss.camera_moves(spec, cut)
+        if moving:
+            wedge(last, col, 5)
+            d.line([px(*st["pos"][:2]) for _, st in cp], fill=col, width=4)
+            (ax, ay), (bx2, by2) = px(*cp[-2][1]["pos"][:2]), px(*last["pos"][:2])
+            ang = math.atan2(by2 - ay, bx2 - ax)
+            for da in (2.6, -2.6):
+                d.line([(bx2, by2), (bx2 + 16 * math.cos(ang + da), by2 + 16 * math.sin(ang + da))], fill=col, width=3)
+        bx, by = px(*first["pos"][:2])
         d.ellipse([bx - 7, by - 7, bx + 7, by + 7], fill=col)
         t0, t1 = cut["frame_in"] / spec["fps"], cut["frame_out"] / spec["fps"]
-        d.text((bx + 11, by - 6), f"{i + 1}: {cam['id']} {cam['lens']} mm  {t0:.1f}-{t1:.1f} s", fill=col)
+        d.text((bx + 11, by - 6), f"{i + 1}: {cam['id']} {round(first['lens'])} mm  {t0:.1f}-{t1:.1f} s"
+                                  f"{'  (moves)' if moving else ''}", fill=col)
     for p in spec["people"]:
         colour = (190, 150, 60) if p["side"] == "british" else (70, 110, 150)
         keys = sorted(p["track"], key=lambda k: k["frame"])
@@ -177,8 +196,8 @@ def plan_png(spec: dict, path: Path, size=(1100, 1100)) -> Path:
         d.ellipse([ex - 9, ey - 9, ex + 9, ey + 9], outline=colour, width=3)
         d.text((sx + 12, sy - 6), f"{p['id']} start", fill=(60, 60, 60))
         d.text((ex + 12, ey - 6), f"{p['id']} end", fill=(60, 60, 60))
-    d.text((20, 14), f"{spec['scene_id']} plan (top-down, y up the page): filled = start, ring = end, "
-                     f"coloured wedges = the five cameras", fill=(30, 30, 30))
+    d.text((20, 14), f"{spec['scene_id']} plan (top-down, y up the page): filled = start, ring = end, thick line + arrow = "
+                     f"camera path, wedges = view at the cut's first and last frame", fill=(30, 30, 30))
     img.save(path)
     return path
 
@@ -212,7 +231,7 @@ def build_report(spec: dict, spec_path: Path, out_dir: Path, inner: list[dict], 
         "blender": inner[0]["blender"], "samples": inner[0]["samples"], "render_seconds": round(sum(i["render_seconds"] for i in inner), 1),
         "wall_seconds": round(seconds, 1), "video": {"file": "layout.mp4", "sha256": sha256(video), **probe,
                                                      "seconds": round(spec["clip_frames"] / spec["fps"], 3)},
-        "views": views, "validators": results, "measured": measured,
+        "views": views, "validators": results, "transitions": ss.transitions(spec), "measured": measured,
         "thresholds": {"min_focus_height_frac": ss.MIN_FOCUS_HEIGHT_FRAC, "max_overlap": ss.MAX_OVERLAP,
                        "max_walk_speed": ss.MAX_WALK_SPEED, "view_s": [ss.VIEW_MIN_S, ss.VIEW_MAX_S]},
     }

@@ -16,6 +16,7 @@ import math
 from pathlib import Path
 
 SCHEMA_PATH = Path(__file__).resolve().parents[1] / "schemas" / "blender_scene_1.schema.json"
+FILM_STYLE_DIR = Path(__file__).resolve().parent / "film_styles"
 PLACES = ("british_trench", "no_mans_land", "german_trench")
 FPS = 24
 CLIP_FRAMES = 241                     # 8k+1 (LTX frame rule), 10.04 s of playback, frames 0..240
@@ -32,6 +33,7 @@ MAX_WALK_SPEED = 2.5                  # V4 hypothesis (REVIEW), m/s: a fast walk
 TAIL_SECONDS, TAIL_MAX_MOVE = 0.75, 0.05   # V9 (plan 3a): the last 0.75 s are calm; metres a person may move in them
 LAST_VIEW_MIN_S = 1.0                 # V9
 CHAIN_POS_TOL = 0.05                  # V8, metres
+MOVING_SAMPLE_EVERY = 12              # V1/V2 look every half second while the camera moves
 
 
 class SceneSpecError(ValueError):
@@ -91,8 +93,45 @@ def camera_by_id(spec: dict, cam_id: str) -> dict:
     return next(c for c in spec["cameras"] if c["id"] == cam_id)
 
 
+def cam_start(cam: dict) -> dict:
+    """The camera's first pose: its own fields, or the first key of its path (version 2)."""
+    path = cam.get("path")
+    return min(path, key=lambda k: k["frame"]) if path else cam
+
+
+def _ease(t: float, kind: str) -> float:
+    if kind == "in_out":
+        return t * t * (3 - 2 * t)
+    if kind == "out":                    # fast start, comes to rest at the key: the way a camera stops
+        return 1 - (1 - t) ** 2
+    if kind == "in":
+        return t * t
+    return t
+
+
+def path_state(cam: dict, frame: float) -> dict:
+    """Camera pose on its path (``cameras[].path``, version 2): linear between keys, or the ease named on the key
+    the segment starts at (``in_out``, ``out``, ``in``); before the first key and after the last it holds."""
+    keys = sorted(cam["path"], key=lambda k: k["frame"])
+    if frame <= keys[0]["frame"]:
+        a = b = keys[0]
+        t = 0.0
+    elif frame >= keys[-1]["frame"]:
+        a = b = keys[-1]
+        t = 0.0
+    else:
+        a = max((k for k in keys if k["frame"] <= frame), key=lambda k: k["frame"])
+        b = next(k for k in keys if k["frame"] > a["frame"])
+        t = _ease((frame - a["frame"]) / (b["frame"] - a["frame"]), a.get("ease", "linear"))
+    return {"pos": [_lerp(a["pos"][i], b["pos"][i], t) for i in range(3)],
+            "heading": _lerp(a["heading"], b["heading"], t), "pitch": _lerp(a["pitch"], b["pitch"], t),
+            "lens": _lerp(a["lens"], b["lens"], t)}
+
+
 def camera_state(spec: dict, cut: dict, frame: float) -> dict:
     cam = camera_by_id(spec, cut["camera"])
+    if cam.get("path"):
+        return path_state(cam, frame)
     move = cam.get("move")
     t = 0.0
     if move and cut["frame_out"] > cut["frame_in"]:
@@ -138,15 +177,23 @@ def measure_person(cam: dict, size: tuple[int, int], st: dict) -> dict:
             "box": [round(v, 1) for v in box], "in_frame": bool(in_frame)}
 
 
-def sample_frames(cut: dict) -> list[int]:
+def camera_moves(spec: dict, cut: dict) -> bool:
+    a, b = cut["frame_in"], max(cut["frame_out"] - 1, cut["frame_in"])
+    return camera_state(spec, cut, a) != camera_state(spec, cut, b)
+
+
+def sample_frames(cut: dict, every: int | None = None) -> list[int]:
     a, b = cut["frame_in"], cut["frame_out"]
-    return sorted({a, (a + b) // 2, b - 1 if b > a else a})
+    base = {a, (a + b) // 2, b - 1 if b > a else a}
+    if every:
+        base |= set(range(a, b, every))
+    return sorted(base)
 
 
 def measure_cut(spec: dict, cut: dict) -> list[dict]:
     size = tuple(spec["size"])
     out = []
-    for fr in sample_frames(cut):
+    for fr in sample_frames(cut, MOVING_SAMPLE_EVERY if camera_moves(spec, cut) else None):
         cam = camera_state(spec, cut, fr)
         people = {p["id"]: measure_person(cam, size, person_state(p, fr)) for p in spec["people"]}
         out.append({"frame": fr, "people": people})
@@ -201,10 +248,18 @@ def validate_spec(spec: dict) -> list[dict]:
     size = tuple(spec["size"])
     fps = spec["fps"]
     # V3 view length
-    bad = [(c["camera"], (c["frame_out"] - c["frame_in"]) / fps) for c in spec["cuts"]
-           if not VIEW_MIN_S - 1e-9 <= (c["frame_out"] - c["frame_in"]) / fps <= VIEW_MAX_S + 1e-9]
-    res.append(_res("V3", "FAIL", f"view length out of {VIEW_MIN_S}-{VIEW_MAX_S} s: {bad}") if bad else
-               _res("V3", "PASS", f"{len(spec['cuts'])} views, each {VIEW_MIN_S}-{VIEW_MAX_S} s"))
+    def _secs(c):
+        return (c["frame_out"] - c["frame_in"]) / fps
+    takes = [(c["camera"], _secs(c)) for c in spec["cuts"] if c.get("long_take") and _secs(c) > VIEW_MAX_S + 1e-9]
+    bad = [(c["camera"], _secs(c)) for c in spec["cuts"]
+           if not VIEW_MIN_S - 1e-9 <= _secs(c) <= VIEW_MAX_S + 1e-9 and not (c.get("long_take") and _secs(c) > VIEW_MAX_S)]
+    if bad:
+        res.append(_res("V3", "FAIL", f"view length out of {VIEW_MIN_S}-{VIEW_MAX_S} s: {bad}"))
+    elif takes:     # the creator's 2.0 s rule is broken on purpose: it must be seen, never silently passed
+        res.append(_res("V3", "REVIEW", f"declared long take(s) longer than {VIEW_MAX_S} s (creator's rule, exception "
+                                        f"needs his look): {takes}"))
+    else:
+        res.append(_res("V3", "PASS", f"{len(spec['cuts'])} views, each {VIEW_MIN_S}-{VIEW_MAX_S} s"))
     # V4 static people stay, speed limit
     problems, fast = [], []
     for p in spec["people"]:
@@ -223,9 +278,7 @@ def validate_spec(spec: dict) -> list[dict]:
     else:
         res.append(_res("V4", "PASS", "static people stay, nobody moves faster than a walk"))
     # V5 lenses
-    badl = [c["id"] for c in spec["cameras"] if c["lens"] not in LENSES_ALLOWED]
-    res.append(_res("V5", "FAIL", f"lens not in {LENSES_ALLOWED}: {badl}") if badl else
-               _res("V5", "PASS", f"every lens in {LENSES_ALLOWED}"))
+    res.append(validate_camera(spec))
     # V6 frame count and size rules
     issues = []
     if (spec["clip_frames"] - 1) % 8:
@@ -238,6 +291,7 @@ def validate_spec(spec: dict) -> list[dict]:
                _res("V6", "PASS", f"{spec['clip_frames']} frames (8k+1), size {size[0]}x{size[1]} divisible by 64"))
     res += validate_pixels(spec)
     res.append(validate_tail(spec))
+    res += validate_transitions(spec)
     return res
 
 
@@ -333,3 +387,190 @@ def load_series(directory: str | Path) -> dict[str, list[dict]]:
         stem = spec["scene_id"]
         groups.setdefault(stem[:-1], []).append((stem, spec))
     return {k: [s for _, s in sorted(v)] for k, v in groups.items()}
+
+
+
+# ------------------------------------------------------------------------------------------------ film style card
+
+def load_film_style(name: str | Path) -> dict:
+    """``film_styles/<name>.json`` (or a path). A card holds camera language only: no colour, no light."""
+    path = Path(name)
+    if not path.suffix:
+        path = FILM_STYLE_DIR / f"{name}.json"
+    card = json.loads(path.read_text(encoding="utf-8"))
+    if any(k in card for k in ("light", "lighting", "colour", "color", "palette")):
+        raise SceneSpecError(f"film style {path.name}: Blender's role is camera and angles only, no colour/light field")
+    return card
+
+
+def spec_card(spec: dict) -> dict | None:
+    return load_film_style(spec["film_style"]) if spec.get("film_style") else None
+
+
+def _card_status(card: dict | None) -> str:
+    """A draft card is a hypothesis: a broken number asks the creator to look (REVIEW); a verified card blocks."""
+    return "REVIEW" if card is None or card.get("draft", True) else "FAIL"
+
+
+def validate_camera(spec: dict) -> dict:
+    """V5: every lens on every camera (path keys included) is in the allowed list, from the film card when the spec names
+    one, else the T0 list; with a card the camera height must also stay in the card's range."""
+    card = spec_card(spec)
+    lenses = tuple(card["lens_mm"]) if card else LENSES_ALLOWED
+    bad = []
+    heights = []
+    for cam in spec["cameras"]:
+        keys = cam.get("path") or [cam]
+        if any(k["lens"] not in lenses for k in keys):
+            bad.append(cam["id"])
+        if card:
+            lo, hi = card["camera_height_m"]["min"], card["camera_height_m"]["max"]
+            if any(not lo - 1e-9 <= k["pos"][2] <= hi + 1e-9 for k in keys):
+                heights.append(cam["id"])
+    if bad:
+        return _res("V5", "FAIL", f"lens not in {lenses}: {bad}")
+    if heights:
+        return _res("V5", _card_status(card), f"camera height outside the card's {card['camera_height_m']['min']}-"
+                                              f"{card['camera_height_m']['max']} m (card draft={card.get('draft', True)}): {heights}")
+    return _res("V5", "PASS", f"every lens in {lenses}" + (f" and every height inside the card ({card['film']})" if card else ""))
+
+
+# ------------------------------------------------------------------------------------------------ V11 / V12
+
+def _compass(dx: float, dy: float) -> float:
+    return math.degrees(math.atan2(dx, dy)) % 360
+
+
+def _angle_diff(a: float, b: float) -> float:
+    d = abs(a - b) % 360
+    return 360 - d if d > 180 else d
+
+
+def size_class(frac: float, card: dict | None) -> str:
+    """close / medium / wide from the subject's height as a share of the frame height; the cut-offs come from the card."""
+    t = (card or {}).get("size_classes", {"close_min_frac": 0.6, "medium_min_frac": 0.3})
+    return "close" if frac >= t["close_min_frac"] else "medium" if frac >= t["medium_min_frac"] else "wide"
+
+
+_SIZE_RANK = {"wide": 0, "medium": 1, "close": 2}
+
+
+def _subject(spec: dict, a: dict, b: dict) -> str | None:
+    shared = [p for p in b["focus"] if p in a["focus"]]
+    if shared:
+        return shared[0]
+    return (b["focus"] or a["focus"] or [None])[0]
+
+
+def _cam_velocity(spec: dict, cut: dict, frame: int, forward: bool) -> dict:
+    """Camera velocity at a frame in the camera's own frame (forward, right), metres/second."""
+    f0, f1 = (frame, frame + 1) if forward else (frame - 1, frame)
+    s0, s1 = camera_state(spec, cut, f0), camera_state(spec, cut, f1)
+    dx, dy = (s1["pos"][0] - s0["pos"][0]) * spec["fps"], (s1["pos"][1] - s0["pos"][1]) * spec["fps"]
+    h = math.radians(s1["heading"])
+    fwd, right = dx * math.sin(h) + dy * math.cos(h), dx * math.cos(h) - dy * math.sin(h)
+    speed = math.hypot(fwd, right)
+    return {"speed": round(speed, 3), "dir": round(math.degrees(math.atan2(right, fwd)), 1) if speed else None,
+            "fwd": round(fwd, 3), "right": round(right, 3)}
+
+
+def _axis_pair(spec: dict) -> list[str]:
+    ids = spec.get("axis") or [p["id"] for p in spec["people"][:2]]
+    return ids
+
+
+def _side(spec: dict, cam_pos, frame: int, neutral_m: float) -> int:
+    """Which side of the 180-degree line (person 1 -> person 2) the camera is on: +1 / -1, 0 on the line."""
+    ids = _axis_pair(spec)
+    if len(ids) < 2:
+        return 0
+    people = {p["id"]: p for p in spec["people"]}
+    p1, p2 = person_state(people[ids[0]], frame)["pos"], person_state(people[ids[1]], frame)["pos"]
+    ax, ay = p2[0] - p1[0], p2[1] - p1[1]
+    length = math.hypot(ax, ay)
+    if length < 1e-6:
+        return 0
+    cross = (ax * (cam_pos[1] - p1[1]) - ay * (cam_pos[0] - p1[0])) / length    # signed metres from the line
+    return 0 if abs(cross) <= neutral_m else (1 if cross > 0 else -1)
+
+
+def transitions(spec: dict) -> list[dict]:
+    """One row per cut-to-cut transition: the camera's angle change around the subject, the size change, the side of
+    the 180-degree line and the camera speed (direction in the camera's own frame) leaving and entering."""
+    card = spec_card(spec)
+    tr = (card or {}).get("transition", {})
+    neutral = tr.get("axis_neutral_m", 0.3)
+    size = tuple(spec["size"])
+    people = {p["id"]: p for p in spec["people"]}
+    rows = []
+    for a, b in zip(spec["cuts"], spec["cuts"][1:]):
+        fa, fb = a["frame_out"] - 1, b["frame_in"]
+        row = {"from": a["camera"], "to": b["camera"], "frame": b["frame_in"], "axis_cross_ok": bool(b.get("axis_cross_ok"))}
+        subj = _subject(spec, a, b)
+        ca, cb = camera_state(spec, a, fa), camera_state(spec, b, fb)
+        if subj:
+            sa, sb = person_state(people[subj], fa), person_state(people[subj], fb)
+            az_a = _compass(ca["pos"][0] - sa["pos"][0], ca["pos"][1] - sa["pos"][1])
+            az_b = _compass(cb["pos"][0] - sb["pos"][0], cb["pos"][1] - sb["pos"][1])
+            ma, mb = measure_person(ca, size, sa), measure_person(cb, size, sb)
+            fra, frb = ma["height_px"] / size[1], mb["height_px"] / size[1]
+            row.update(subject=subj, angle_deg=round(_angle_diff(az_a, az_b), 1),
+                       size_from=size_class(fra, card), size_to=size_class(frb, card),
+                       height_frac_from=round(fra, 3), height_frac_to=round(frb, 3))
+            row["size_steps"] = abs(_SIZE_RANK[row["size_from"]] - _SIZE_RANK[row["size_to"]])
+        else:
+            row.update(subject=None, angle_deg=None, size_from=None, size_to=None, size_steps=None)
+        row["side_from"], row["side_to"] = _side(spec, ca["pos"], fa, neutral), _side(spec, cb["pos"], fb, neutral)
+        va, vb = _cam_velocity(spec, a, fa, False), _cam_velocity(spec, b, fb, True)
+        row["speed_from_mps"], row["speed_to_mps"] = va["speed"], vb["speed"]
+        row["dir_from_deg"], row["dir_to_deg"] = va["dir"], vb["dir"]
+        rows.append(row)
+    return rows
+
+
+def validate_transitions(spec: dict) -> list[dict]:
+    """V11 (angle/size jump) and V12 (a: 180-degree line, b: movement handoff). Only for version 2 specs: the T0 specs
+    (version 1) were drawn without them and report N/A with what V11/V12 would have said."""
+    rows = transitions(spec)
+    v2 = spec.get("version", 1) >= 2
+    out = []
+    card = spec_card(spec)
+    tr = (card or {}).get("transition", {})
+    min_angle = tr.get("min_angle_deg", 30)
+    min_steps = tr.get("min_size_steps", 1)
+    still = tr.get("still_speed_mps", 0.1)
+    max_dir = tr.get("handoff_max_direction_deg", 45)
+    max_ratio = tr.get("handoff_max_speed_ratio", 2.0)
+    status = _card_status(card)
+    jumps, crossed, mism_dir, mism_speed = [], [], [], []
+    for r in rows:
+        tag = f"{r['from']}->{r['to']}"
+        if r["angle_deg"] is not None and r["angle_deg"] < min_angle and r["size_steps"] < min_steps:
+            jumps.append(f"{tag}: {r['angle_deg']}° and {r['size_from']}->{r['size_to']} (needs >= {min_angle}° or a size step)")
+        if r["side_from"] and r["side_to"] and r["side_from"] != r["side_to"] and not r["axis_cross_ok"]:
+            crossed.append(f"{tag}: side {r['side_from']:+d} -> {r['side_to']:+d}")
+        sa, sb = r["speed_from_mps"], r["speed_to_mps"]
+        if sa > still and sb > still:
+            d = _angle_diff(r["dir_from_deg"], r["dir_to_deg"])
+            if d > max_dir:
+                mism_dir.append(f"{tag}: direction {r['dir_from_deg']}° -> {r['dir_to_deg']}° ({d:.0f}° apart > {max_dir}°)")
+            ratio = max(sa, sb) / min(sa, sb)
+            if ratio > max_ratio:
+                mism_speed.append(f"{tag}: speed {sa} -> {sb} m/s (x{ratio:.1f} > x{max_ratio})")
+    if not v2:
+        def _would(items):
+            return "would FAIL/REVIEW" if items else "would PASS"
+        return [_res("V11", "N/A", f"version 1 spec, not checked ({_would(jumps)})"),
+                _res("V12", "N/A", f"version 1 spec, not checked (180° line {_would(crossed)}, handoff "
+                                   f"{_would(mism_dir + mism_speed)})")]
+    out.append(_res("V11", status, f"jump cut(s), card draft={(card or {}).get('draft', True)}: {jumps}") if jumps else
+               _res("V11", "PASS", f"{len(rows)} transition(s), each >= {min_angle}° around the subject or a size step"))
+    if crossed:
+        out.append(_res("V12", "FAIL", f"camera crosses the 180° line without axis_cross_ok: {crossed}"))
+    elif mism_dir:
+        out.append(_res("V12", status, f"movement does not hand over: {mism_dir}"))
+    elif mism_speed:
+        out.append(_res("V12", status, f"movement speed jumps at the cut: {mism_speed}"))
+    else:
+        out.append(_res("V12", "PASS", "same side of the 180° line, movement hands over (direction and speed)"))
+    return out

@@ -32,7 +32,7 @@ def contact_sheet(spec_dir: Path, render_root: Path, out: Path) -> Path:
             x = 6 + ci * (THUMB[0] + 6)
             im = Image.open(render_root / spec["scene_id"] / v["png"]).convert("RGB").resize(THUMB)
             sheet.paste(im, (x, y + head))
-            lens = ss.camera_by_id(spec, v["camera"])["lens"]
+            lens = round(ss.cam_start(ss.camera_by_id(spec, v["camera"]))["lens"])
             d.text((x + 2, y + 18), f"{v['view']}: {v['camera']} {lens} mm {v['seconds']:.2f} s", fill=(200, 200, 140))
     sheet.save(out)
     return out
