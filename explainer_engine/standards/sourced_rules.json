@@ -4979,7 +4979,8 @@
    ],
    "enforced_by": [
     "explainer_engine/standards/craft_checklists/sound.json:CRAFT-SND-02",
-    "explainer_engine/audio/sound_director.py"
+    "explainer_engine/audio/sound_director.py",
+    "explainer_engine/finish/cut_check.py"
    ],
    "supersedes": [],
    "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
@@ -8367,7 +8368,8 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/validators/subtitles.py"
+    "explainer_engine/validators/subtitles.py",
+    "explainer_engine/finish/subtitles.py"
    ],
    "supersedes": []
   },

@@ -272,17 +272,21 @@ def test_delivery_codec_comes_from_bp63_and_is_what_the_mux_and_the_shorts_use(t
     out = tmp_path / "out"
     (out / "chunks").mkdir(parents=True)
     (out / "chunks" / "c_0000.mp4").write_bytes(b"x")
+    (out / "chunks" / "c_0001.mp4").write_bytes(b"x")
     (out / "audio.wav").write_bytes(b"x")
     seen = []
 
-    def fake_run(cmd, **kw):
-        seen.append(cmd)
-        Path(cmd[-1]).write_bytes(b"mp4")
+    def fake_run(tool, args, **kw):   # the typed ffmpeg-skill calls (W7): join by copy, then the mix under the picture
+        seen.append((tool, [str(a) for a in args]))
+        Path(args[args.index("-o") + 1]).write_bytes(b"mp4")
+        return {"summary": {}}
 
-    monkeypatch.setattr(A.subprocess, "run", fake_run)
-    A.mux(out, [(0, 1)])
-    cmd = seen[0]
-    assert (out / "video.mp4").exists() and cmd[cmd.index("-ac") + 1] == "2" and cmd[cmd.index("-b:a") + 1] == "384k"
+    monkeypatch.setattr(A.ffwrap, "run", fake_run)
+    A.mux(out, [(0, 1), (1, 2)])
+    assert [t for t, _ in seen] == ["join", "audio"] and "--copy" in seen[0][1]
+    audio = seen[1][1]
+    assert (out / "video.mp4").exists() and "--stereo" in audio and audio[audio.index("--bitrate") + 1] == "384k"
+    assert audio[audio.index("--sample-rate") + 1] == str(t["sample_rate"])
     for path in ("explainer_engine/production/assemble.py", "explainer_engine/production/shorts.py"):
         assert '"192k"' not in (ROOT / path).read_text(encoding="utf-8"), path  # mono 192k is not a delivery (BP-63)
     shorts_src = (ROOT / "explainer_engine/production/shorts.py").read_text(encoding="utf-8")

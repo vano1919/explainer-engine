@@ -108,3 +108,115 @@ def apply_transfer(frame: np.ndarray, params: dict, blend: float) -> np.ndarray:
 def transfer_to_key(frame: np.ndarray, key_frame: np.ndarray, blend: float) -> np.ndarray:
     """Reinhard colour transfer: ``frame`` toward ``key_frame`` by mean and std per LAB channel, blend <= BP-130 ``blend_max``."""
     return apply_transfer(frame, transfer_params(frame, key_frame), blend)
+
+
+# --- grade ONCE on the master (final plan S15, W7; method of scenario-video-color-grade: Lab Reinhard, 33^3 LUT, applied once) ---
+# A per-pixel colour function bakes into a 33^3 .cube LUT that ffmpeg applies in one pass over the master. The transfer is the
+# Reinhard one above, capped at BP-130's blend_max. A record next to the output names the input hash, the LUT hash and the key, and a
+# file that already carries such a record (an input that is itself a graded master) is refused: the grade is applied once.
+import hashlib as _hashlib
+import json as _json
+from pathlib import Path as _Path
+
+LUT_SIZE = 33
+GRADE_RECORD = "grade_record/1"
+
+
+def build_lut(params: dict, blend: float, size: int = LUT_SIZE) -> np.ndarray:
+    """``size``^3 x 3 RGB lattice (red varies fastest, the .cube order) the transfer maps every grid colour to."""
+    g = np.linspace(0.0, 1.0, size)
+    b, gg, r = np.meshgrid(g, g, g, indexing="ij")     # axis order b, g, r: the last index (red) runs fastest on flattening
+    grid = np.stack([r, gg, b], axis=-1).reshape(-1, 3)
+    return np.clip(apply_transfer(grid.reshape(-1, 1, 3), params, blend).reshape(-1, 3), 0.0, 1.0)
+
+
+def write_cube(path, lattice: np.ndarray, title: str = "scene key grade", size: int = LUT_SIZE) -> str:
+    """The .cube text; returns its sha256 (the grade record's LUT hash)."""
+    if lattice.shape != (size ** 3, 3):
+        raise ValueError(f"a {size}^3 LUT has {size ** 3} rows, got {lattice.shape}")
+    text = f'TITLE "{title}"\nLUT_3D_SIZE {size}\nDOMAIN_MIN 0 0 0\nDOMAIN_MAX 1 1 1\n' + "".join(
+        f"{r:.6f} {g:.6f} {b:.6f}\n" for r, g, b in lattice)
+    p = _Path(path)
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_text(text, encoding="ascii")
+    return _hashlib.sha256(text.encode("ascii")).hexdigest()
+
+
+def read_cube(path) -> tuple[int, np.ndarray]:
+    size, rows = 0, []
+    for ln in _Path(path).read_text(encoding="ascii").splitlines():
+        if ln.startswith("LUT_3D_SIZE"):
+            size = int(ln.split()[1])
+        elif ln and (ln[0].isdigit() or ln[0] == "-"):
+            rows.append([float(x) for x in ln.split()])
+    return size, np.asarray(rows)
+
+
+def lut_apply(lattice: np.ndarray, rgb: np.ndarray, size: int = LUT_SIZE) -> np.ndarray:
+    """Trilinear lookup (what ffmpeg's lut3d does) of float RGB ``[0,1]`` pixels, shape (..., 3): the check that the baked LUT
+    does what the transfer does."""
+    cube = lattice.reshape(size, size, size, 3)          # [b][g][r]
+    x = np.clip(np.asarray(rgb, dtype=np.float64), 0.0, 1.0) * (size - 1)
+    i0 = np.minimum(np.floor(x).astype(int), size - 2)
+    f = x - i0
+    out = 0.0
+    for db in (0, 1):
+        for dg in (0, 1):
+            for dr in (0, 1):
+                w = (f[..., 2] if db else 1 - f[..., 2]) * (f[..., 1] if dg else 1 - f[..., 1]) * (f[..., 0] if dr else 1 - f[..., 0])
+                out = out + w[..., None] * cube[i0[..., 2] + db, i0[..., 1] + dg, i0[..., 0] + dr]
+    return out
+
+
+def delta_e_to_key(frame: np.ndarray, key_frame: np.ndarray) -> float:
+    """CIE76 distance between the Lab means of a frame (or a set of sampled frames stacked) and the scene key frame."""
+    return lab_distance(frame, key_frame)
+
+
+def _sha(path) -> str:
+    h = _hashlib.sha256()
+    with open(path, "rb") as f:
+        for chunk in iter(lambda: f.read(1 << 20), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def record_path(video) -> _Path:
+    p = _Path(video)
+    return p.with_name(p.stem + ".grade.json")
+
+
+def graded(video) -> bool:
+    """True when ``video`` is the output of ``grade_master`` (its record exists and names this very file)."""
+    rec = record_path(video)
+    if not rec.exists():
+        return False
+    try:
+        return _json.loads(rec.read_text(encoding="utf-8")).get("output_sha256") == _sha(video)
+    except (ValueError, OSError):
+        return False
+
+
+def grade_master(master, out, key_frame: np.ndarray, sample_frames: np.ndarray, *, blend: float | None = None,
+                 lut_dir=None) -> dict:
+    """Grade the master ONCE toward the scene key: the Reinhard parameters from ``sample_frames`` (the master's own frames, RGB 0-1,
+    stacked on axis 0 or one image) against ``key_frame``, baked into a 33^3 LUT, applied through ffmpeg-skill ``color --lut``.
+    Writes ``<out stem>.grade.json`` (``grade_record/1``). Raises ``ContractError`` when ``master`` is already a graded output."""
+    from explainer_engine.core.errors import ContractError
+    from explainer_engine.core.store import write_json_atomic
+    from explainer_engine.finish import ffwrap
+    master, out = _Path(master), _Path(out)
+    if graded(master):
+        raise ContractError(f"{master} already carries a grade record: the grade is applied once, on the master (S15)")
+    top = float(SR.T("BP-130", "blend_max"))
+    b, capped = blend_cap(top if blend is None else blend)
+    frames = np.asarray(sample_frames, dtype=np.float32)
+    params = transfer_params(frames.reshape(-1, frames.shape[-2], 3) if frames.ndim == 4 else frames, key_frame)
+    lut_path = _Path(lut_dir or out.parent) / (out.stem + ".cube")
+    lut_sha = write_cube(lut_path, build_lut(params, b))
+    ffwrap.run("color", [master, "--lut", lut_path, "-o", out, "--overwrite"])
+    rec = {"schema": GRADE_RECORD, "input_sha256": _sha(master), "output_sha256": _sha(out), "lut": lut_path.name,
+           "lut_sha256": lut_sha, "lut_size": LUT_SIZE, "blend": b, "blend_capped": capped, "scale_clipped": params["scale_clipped"],
+           "key_mean_lab": [float(x) for x in params["key_mean"]], "method": "lab_reinhard_33_lut_once"}
+    write_json_atomic(record_path(out), rec)
+    return rec

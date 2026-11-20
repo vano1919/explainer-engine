@@ -132,7 +132,8 @@ def test_edit_critic_rows_never_pass_and_name_missing_fields():
     empty = E.critic_rows({"cuts": [{}], "segments": [{}], "beats": [{}], "frames": [{}], "host_shots": [{}]})
     assert all(r["status"] == G.REVIEW and r["measured"]["missing"] for r in empty)
     assert _gates(E.validate({**full, "cuts": [{"cut_id": "a", "cut_frame": 3, "motion_onset_frame": 0, "rule_of_six": "x", "reason": "y"}]})) \
-        >= set(E.RULE_IDS) - {"CRAFT-EDC-04", "CRAFT-EDC-06", "CRAFT-EDC-08", "CRAFT-MOG-01", "CRAFT-MOG-02", "CRAFT-MOG-03"}
+        >= set(E.RULE_IDS) - {"CRAFT-EDC-04", "CRAFT-EDC-06", "CRAFT-EDC-08", "CRAFT-MOG-01", "CRAFT-MOG-02", "CRAFT-MOG-03",
+                                       "VAL-EDT-01", "VAL-EDT-02"}   # the last two need a rendered file / shot cards (W7)
 
 
 # --- color ----------------------------------------------------------------------------------------------------------------

@@ -7,6 +7,13 @@
 """
 from __future__ import annotations
 
+if __name__ == "__main__":   # P-8: preview only, checked before any heavy import
+    try:
+        from tools.render_tools import _preview
+    except ImportError:   # run as a script from its own folder
+        import _preview
+    _preview.guard("build_segments")
+
 import glob
 import hashlib
 import json

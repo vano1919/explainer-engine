@@ -6759,3 +6759,30 @@ S02_L001 one-word fix (2026-11-19, plan thread, on top of W8): "Everyone said it
 W3 asset vault and shot state (2026-11-19, final plan 5.1/5.3, $0): `imagegen/vault.py` (the asset layer: records + read-only untouched originals at `assets/originals/<ep>/<shot>_<kind>_v<N>.<ext>`, byte-identical copy, never overwritten, `v<N+1>` with `parent`, identical bytes return the existing record, `verify` re-hashes the local file and, with a D-73 listing, the HF copy by `lfs.oid`; HF facts only through `explainer_engine/vault.py`, no new HF client; there is no push call in D-73, so the HF copy is made as before and recorded by `migrate`/`verify --hf`). `turn_pack.promote` ingests each promoted Chat picture and its master. `episode/shot_state.py` holds the 5.1 machine (retry cap 2, FALLBACK_25D) with a sha256 per state; `check` re-hashes and drops the changed file's state and every later one, so the old observation/acceptance no longer counts. Hooks in `episode/run.py` `run_stage` only: `check_all` before a stage, `record_stage` after its record (pictures bind image hashes, clips bind clip hashes, assemble marks the master). Decision: stages bind hashes but do not move a shot past IMAGE_GENERATED, because no observation exists yet (W4); VOICE_READY is optional because `STAGES` makes pictures before the read. Migration: records for the 1914 start pictures, raw LTX takes and the 2026-11-19 new-style pictures straight from the HF listing (no download, no bytes changed). Tests: `test_asset_vault.py`, `test_shot_state.py`. NOT_RUN: observation/QA states (W4), `GO_ON` (W2).
 
 W2 review fix (plan thread, 2026-11-19): an approval must carry the creator's own word. `qa/approvals.json` entries now require `approved_by == "creator"`, a chat `message_id` (`cmsg_...`) and his `words`, and count only when the same message id is in `jobs/creator_ok.jsonl` as a governance record of the new action `stage_approval` (target `<episode>:<stage>:<input hash>`, no wildcard); a hand-written file is not enough. `python -m explainer_engine.episode approve <episode> <stage> --message-id ... --words ...` writes both, bound to the record's fingerprint, and refuses unless the stage ended REVIEW, is fresh, and has the id and words. VAL-STO-01 reads the value charge from the script's segment skeleton (shot cards carry none), NOT_RUN otherwise. The creator_ok file is plain JSONL like the other actions: as strong as they are, not tamper-evident.
+
+## W7
+
+Edit, colour, finish (final plan S14-S16, S18, P-8; 2026-11-19, base `claude/project-thread-empw4e`). Cost $0, nothing paid, no pod.
+- **One path, typed tools.** `finish/ffwrap.py` calls the vendored kajisho5 ffmpeg-skill (join by stream copy, mix under the picture,
+  `check`, `look`, `probe`, `color --lut`) with `--json`; `production/assemble.py` no longer holds a concat or mux ffmpeg string (both the
+  chunk `mux` and the episode master join go through `ffwrap.join_with_audio`). Left as raw ffmpeg on purpose: the numpy-to-encoder frame
+  pipes and the measuring readers (no typed tool takes stdin frames). `finish/chain.py: run_chain` is the finishing chain (join, grade once,
+  rows, captions); wiring it into `episode/run.py` is the plan thread's call (that file is not W7's).
+- **Grade once.** `finish/grade.py`: `build_lut` (33^3, Reinhard in Lab toward the scene key, capped at BP-130), `write_cube`, `grade_master`
+  (ffmpeg-skill `color --lut`, record `grade_record/1` with input/output/LUT hashes; a graded file is refused a second grade).
+- **Rows** (thin, in `validators/`; logic in `finish/`): VAL-EDT-01 blended cuts (method of check_blended_cuts), VAL-EDT-02 J/L offsets
+  (`edit.j_offset_frames` / `edit.l_offset_frames`, BP-117), VAL-CLR-01 dE to the scene key (BP-212), VAL-CLR-02 graded once, VAL-QA-07
+  ffmpeg-skill check, VAL-QA-08 contact sheet (REVIEW, never PASS). `docs/SKILL_RULE_MAP.md` section C. `continuity_card` schema: two optional
+  integer fields under `shots[].edit` (additive).
+- **Captions and thumbnail.** `finish/subtitles.py`: cues from the read's words (BP-210), SRT by subtitle-skill, soft track by ffmpeg-skill
+  `caption --mode mux`. `publish/thumbnail.py: compose_via_skill` (thumbnail-skill) is opt-in (`thumbnail.engine: "skill"`): the skill only has
+  registered fonts (`sans-bold`), not the channel's Bangers, so the default stays the Pillow path until the creator chooses.
+- **render_tools** print PREVIEW ONLY and refuse `--final` / `--master` before any import (`tools/render_tools/_preview.py`). **Resolver:**
+  `world/resolver.check_prompt(text, route)`: UR-22..27 for `legacy_ink`, `validators/prompts` for `v43`; `check_text` unchanged.
+- Tests: `test_finish_*.py`, `test_assemble_typed_ffmpeg.py`; `test_sourced_audio` mux test follows the typed calls (same BP-63 asserts).
+- Parity run on the old 4 push clips (2560x1440): see `HANDOFF_W7.md`. SK-1 trials: `docs/VENDORED_SKILLS.md`.
+
+
+### W7 follow-up: finishing chain wired into G9 (2026-11-19)
+`episode/run.py::stage_assemble` runs `_finish_rows` (-> `finish/chain.finish_rows`) at its end, only when the master exists, it is not a rehearsal and every G9 row is PASS; rows are appended. Scene key = accepted keyframe of the scene's first shot (IMAGE_ACCEPTED, hash-checked); no keyframe -> `VAL-CLR-01:<scene>` NOT_RUN. A failing tool becomes a NOT_RUN row. Tests: `tests/unit/test_finish_run_wiring.py` (FAIL master and rehearsal do not run it; PASS master appends; no-key scene). Stale text: none found. Open: VAL-QA-08 is always REVIEW, so G9 reads REVIEW after the chain until the observer looks.
+W7 review fixes (2026-11-19): G9 now records `graded_master` (path, sha256, source master sha256) in `production/master.json` when the finishing rows measured the graded copy; an unreadable scene key file is a NOT_RUN row; `finish/cut_check.py` and `finish/subtitles.py` are listed in `enforced_by` of BP-117 and BP-210. VAL-QA-08 stays REVIEW until W4's observation record turns it PASS (plan thread: after #211).

@@ -27,6 +27,8 @@ import sys
 import time
 from pathlib import Path
 
+import numpy as np
+
 from explainer_engine.core.errors import ConfigError, ContractError
 from explainer_engine.core.store import write_json_atomic, write_text_atomic
 from explainer_engine.episode import shot_state as SS
@@ -1662,6 +1664,34 @@ def _expand_script_for_records(script: dict, records: list[dict], fps: int) -> d
     return dict(script, shots=expanded)
 
 
+def _finish_rows(ep: Episode, master: Path, records: list[dict]) -> list[dict]:
+    """W7: the finishing chain's rows on a master whose G9 rows are all PASS (``finish/chain.finish_rows``). The scene key of each scene is
+    the accepted keyframe of its first shot (shot state IMAGE_ACCEPTED, hash-checked); a scene without one has no key, so its
+    VAL-CLR-01 row is NOT_RUN (never PASS). A failing tool is a NOT_RUN row, not a crash."""
+    from explainer_engine.core.errors import ContractError
+    from explainer_engine.finish import chain as FIN
+    ss, scenes, frame = SS.ShotStates(ep.root), {}, 0
+    for r in records:
+        scenes.setdefault(str(r["shot_id"]).split("_")[0], [r["shot_id"], frame, frame])[2] = frame + int(r["total_frames"])
+        frame += int(r["total_frames"])
+    keys, rows = {}, []
+    for sid, (first_shot, a, b) in scenes.items():
+        h = next((h for h in reversed(ss.shot(first_shot)["history"]) if h["state"] == "IMAGE_ACCEPTED"), None)
+        if h is None or not ss.has_valid(first_shot, "IMAGE_ACCEPTED") or not h.get("path"):
+            rows.append(G.row(f"VAL-CLR-01:{sid}", None, f"NOT_RUN: scene {sid} has no accepted keyframe (shot {first_shot} is not IMAGE_ACCEPTED)"))
+            continue
+        from PIL import Image
+        try:
+            with Image.open(ep.root / h["path"]) as im:
+                keys[sid] = (np.asarray(im.convert("RGB").resize((256, 144)), np.float32) / 255.0, (a, b))
+        except (OSError, ValueError) as exc:   # a missing or unreadable key file is a NOT_RUN row, never a crash of G9
+            rows.append(G.row(f"VAL-CLR-01:{sid}", None, f"NOT_RUN: the keyframe of scene {sid} cannot be read ({exc})"))
+    try:
+        return rows + FIN.finish_rows(master, master.parent / "finish", scene_keys=keys, fps=ep.fps, expected_frames=frame)
+    except (ContractError, OSError, ValueError) as exc:
+        return rows + [G.row("finish_chain", None, f"NOT_RUN: the finishing chain could not run ({exc})")]
+
+
 def stage_assemble(ep: Episode, rehearsal: bool):
     """G9: the clips in order with the cut plan's transitions, written in chunks through ``production/assemble``
     (RULE-R1); ``--chunks A:B`` draws only those chunks and joins nothing until all exist."""
@@ -1733,6 +1763,13 @@ def stage_assemble(ep: Episode, rehearsal: bool):
         ff_manifest = FFQA.build_resize_encode_manifest(ff_ops, output_path=master)
         res["final_frame_manifest"] = ff_manifest
         write_json_atomic(ep.path("qa/final_frame_manifest.json"), ff_manifest)
+    if not left and master.is_file() and not rehearsal and all(r["status"] == G.PASS for r in rows):   # W7: only a master that passed G9
+        rows += _finish_rows(ep, master, records)
+        graded = master.parent / "finish" / (master.stem + "_graded.mp4")
+        if graded.is_file():   # the finishing rows measured the graded copy: master.json names it with its hash, never silently the other file
+            from explainer_engine.episode.shot_state import sha256_of
+            res["graded_master"] = {"path": str(graded.relative_to(ep.root)), "sha256": sha256_of(graded),
+                                    "source_master_sha256": sha256_of(master)}
     write_json_atomic(ep.path("production/master.json"), res)
     return rows, {"master": str(master.relative_to(ep.root)) if not left else None, "chunks": res["chunks"]["count"],
                   "left": left}

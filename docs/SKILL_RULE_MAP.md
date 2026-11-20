@@ -278,3 +278,14 @@ the existing home; the last column names the archived skills that cite the id.
 | `VL-13` | existing | `docs/VIDEO_LANE.md` | editing-style, shot-visuals |
 | `VQ-01` | existing | `docs/LORA_TRAINING.md` | lora-training |
 | `VQ-10` | existing | `docs/LORA_TRAINING.md` | animation-principles |
+
+## C. Validator ids with no craft rule (W7, plan thread 2026-11-19)
+
+| Rule | Skill-table id | Skill | Check (planned cell) | Mapping | Target | Rule text |
+|---|---|---|---|---|---|---|
+| `VAL-EDT-01` | - | v-edit-video | code | validator | `explainer_engine/validators/edit.py` | no blended frame (unplanned dissolve) in the finished picture: method of check_blended_cuts |
+| `VAL-EDT-02` | - | v-ffmpeg-skill | code | validator | `explainer_engine/validators/edit.py` | J/L offsets of the shot cards (`edit.j_offset_frames`, `edit.l_offset_frames`) inside BP-117's bridges |
+| `VAL-CLR-01` | - | v-scenario-video-color-grade | code | validator | `explainer_engine/validators/color.py` | the graded master's Lab mean is within BP-212's residual dE of the scene key |
+| `VAL-CLR-02` | - | v-scenario-video-color-grade | code | validator | `explainer_engine/validators/color.py` | the grade is applied once: one grade record names the master and a different input |
+| `VAL-QA-07` | - | v-ffmpeg-skill | code | validator | `explainer_engine/validators/tech_qa.py` | the ffmpeg-skill check (platform spec, black, frozen, silent, dropout, flash) of the render |
+| `VAL-QA-08` | - | v-ffmpeg-skill | code | validator | `explainer_engine/validators/tech_qa.py` | a timecoded contact sheet of the render exists for the observer (REVIEW, never PASS) |

@@ -741,6 +741,21 @@
               "description": "maps/laws ids the plate must pass"
             }
           }
+        },
+        "edit": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "edit decisions of the cut into this shot (W7): J/L split-edit offsets in frames at 24 fps, 0 or absent = none; they match the script's transition_out j_cut / l_cut",
+          "properties": {
+            "j_offset_frames": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "l_offset_frames": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
         }
       },
       "allOf": [

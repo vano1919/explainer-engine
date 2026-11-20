@@ -10,7 +10,7 @@ from explainer_engine.validators import _common as C
 
 RULE_IDS = ("CRAFT-CIN-09", "CRAFT-EDC-01", "CRAFT-EDC-02", "CRAFT-EDC-03", "CRAFT-EDC-04", "CRAFT-EDC-06", "CRAFT-EDC-08",
             "CRAFT-MOG-01", "CRAFT-MOG-02", "CRAFT-MOG-03", "CRAFT-MOG-05", "CRAFT-MOG-06", "CRAFT-MOG-07", "CRAFT-MOG-10",
-            "CRAFT-MOG-11", "CRAFT-MOG-15")
+            "CRAFT-MOG-11", "CRAFT-MOG-15", "VAL-EDT-01", "VAL-EDT-02")
 
 
 def cut_after_onset(cuts: list[dict]) -> list[dict]:
@@ -155,10 +155,25 @@ def critic_rows(plan: dict) -> list[dict]:
     ]
 
 
+def blended_cuts(video, allow: int = 0) -> dict:
+    """VAL-EDT-01 (W7): no blended frames (an unplanned dissolve) in the finished picture; the finding is ``finish/cut_check``'s
+    (the method of the vendored codepawl check_blended_cuts). REVIEW on a miss, NOT_RUN when the picture cannot be read."""
+    from explainer_engine.finish import cut_check
+    return cut_check.blended_row(video, allow, gate="VAL-EDT-01")
+
+
+def jl_offsets(cards: list[dict]) -> list[dict]:
+    """VAL-EDT-02 (W7): the J/L offsets of the shot cards (``edit.j_offset_frames`` / ``edit.l_offset_frames``) inside BP-117's bridges."""
+    from explainer_engine.finish import cut_check
+    return cut_check.jl_offsets(cards, gate="VAL-EDT-02")
+
+
 def validate(plan: dict, fps: int = 24) -> list[dict]:
     """``plan`` keys: cuts, clips, transitions, accents, graphics, counters, graphic_events, segments, beats, frames, captions,
-    chapter_cards, first_30s_names_and_sides, host_shots (each optional; a missing code input is NOT_RUN)."""
+    chapter_cards, first_30s_names_and_sides, host_shots, cards, video (each optional; a missing code input is NOT_RUN)."""
     return [*cut_after_onset(plan.get("cuts") or []), *handles(plan.get("clips") or []),
             occlusion_wipes(plan.get("transitions") or []), *accents(plan.get("accents") or [], fps),
             *graphic_easing(plan.get("graphics") or []), *counters(plan.get("counters") or []),
-            moving_elements(plan.get("graphic_events") or []), *critic_rows(plan)]
+            moving_elements(plan.get("graphic_events") or []), *critic_rows(plan),
+            *([blended_cuts(plan["video"])] if plan.get("video") else []),
+            *(jl_offsets(plan["cards"]) if plan.get("cards") else [])]

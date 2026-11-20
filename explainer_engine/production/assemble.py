@@ -36,6 +36,7 @@ from explainer_engine.production import continuity
 from explainer_engine.production import parallax as PAR
 from explainer_engine.production import graphics as GFX
 from explainer_engine.finish import bubbles as BUB
+from explainer_engine.finish import ffwrap
 from explainer_engine.finish import grade as grade_mod
 from explainer_engine.finish.grade import grade
 from explainer_engine.world import resolver
@@ -1222,9 +1223,7 @@ def mux(out: Path, bounds: list) -> None:
     """The finished chunks joined without re-encoding, with the audio; the chunk files go only after video.mp4 is whole."""
     chunks = out / "chunks"
     names = [f"c_{i:04d}.mp4" for i in range(len(bounds))]
-    (chunks / "list.txt").write_text("".join(f"file '{n}'\n" for n in names))
-    subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "concat", "-safe", "0", "-i", str(chunks / "list.txt"), "-i", str(out / "audio.wav"),
-                    "-map", "0:v", "-map", "1:a", "-c:v", "copy", *AUDIO_CODEC, str(out / "video.part.mp4")], check=True)
+    ffwrap.join_with_audio([chunks / n for n in names], out / "audio.wav", out / "video.part.mp4", **_audio_args())
     os.replace(out / "video.part.mp4", out / "video.mp4")  # a video.mp4 on disk is always a finished one
     for f in chunks.iterdir():
         f.unlink()
@@ -1235,6 +1234,11 @@ def mux(out: Path, bounds: list) -> None:
 # settings); the mono mix is upmixed to two identical channels. Shared with the Shorts renderer.
 _DELIVERY = RULES.rule("BP-63")["thresholds"]
 AUDIO_CODEC = ["-c:a", "aac", "-b:a", f"{_DELIVERY['aac_kbps']}k", "-ar", str(_DELIVERY["sample_rate"]), "-ac", str(_DELIVERY["channels"])]
+
+
+def _audio_args() -> dict:
+    """BP-63's delivery audio for ``ffwrap`` (the typed ffmpeg-skill calls): the mix as stereo AAC at the registry's rate."""
+    return {"sample_rate": int(_DELIVERY["sample_rate"]), "channels": int(_DELIVERY["channels"]), "kbps": int(_DELIVERY["aac_kbps"])}
 
 
 def measure_delivery(audio: Path, narration: Path | None = None, profile: str = "long") -> dict:
@@ -1570,11 +1574,8 @@ def assemble_shot_clips(records: list[dict], transitions: list[dict], audio_wav:
     if left:
         return result
     names = [f"c_{i:04d}.mp4" for i in range(len(bounds))]
-    (work / "list.txt").write_text("".join(f"file '{n}'\n" for n in names))
     tmp = out_mp4.with_name(out_mp4.stem + ".part.mp4")
-    subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "concat", "-safe", "0", "-i", str(work / "list.txt"), "-i",
-                    str(audio_wav), "-map", "0:v", "-map", "1:a", "-c:v", "copy", *AUDIO_CODEC, "-t", f"{total / fps:.6f}",
-                    str(tmp)], check=True)
+    ffwrap.join_with_audio([work / n for n in names], audio_wav, tmp, **_audio_args())
     os.replace(tmp, out_mp4)   # a master on disk is always a finished one; the chunks stay for a cheap re-mux
     n_frames, _w, _h = clip_info(out_mp4)
     result.update({"master_mp4_path": str(out_mp4), "total_frames": n_frames, "duration_sec": round(n_frames / fps, 3),

@@ -9,12 +9,15 @@ every upload path takes it). The creator's OK is recorded in ``publish/thumbnail
 
 publish.json:
     "thumbnail": {"file": "publish/thumbnail.jpg", "text": "WHO FALLS FIRST?", "concept": "...", "refs": ["pictures/p_x.png"],
-                  "text_side": "left"}
+                  "text_side": "left", "engine": "skill"}      # engine: "skill" renders through the vendored thumbnail-skill (W7)
 """
 
 from __future__ import annotations
 
 import json
+import subprocess
+import sys
+import tempfile
 import time
 from pathlib import Path
 
@@ -107,6 +110,46 @@ def compose(picture: Path, text: str, out: Path, side: str = "left") -> Path:
         quality -= 8
 
 
+SKILL_SRC = Path(__file__).resolve().parents[2] / ".claude" / "skills" / "v-thumbnail-skill" / "src"
+SKILL_FONT = "sans-bold"   # the skill renders only its registered font ids; the channel's Bangers is the "pil" engine's (open question)
+
+
+def compose_via_skill(picture: Path, text: str, out: Path, side: str = "left") -> Path:
+    """The same layout as ``compose`` rendered by the vendored kajisho5 thumbnail-skill (a typed ThumbnailDocument, no ffmpeg or
+    Pillow string of ours): picture cover-fitted to 1280x720, the headline in the skill's ``sans-bold`` with an ink outline. The
+    picture is the creator's choice and is only placed, never altered. Raises ``RuntimeError`` with the skill's error on failure."""
+    tokens = palette.load()["tokens"]
+    words = text.upper().split()
+    lines = "\n".join(" ".join(words[i:i + 2]) for i in range(0, len(words), 2))
+    size = 120 if max(len(l) for l in lines.split("\n")) <= 10 else 96
+    x = int(SIZE[0] * 0.06) if side == "left" else int(SIZE[0] * 0.52)
+    doc = {"document": {"document_id": out.stem, "canvas": {"width": SIZE[0], "height": SIZE[1], "background": tokens["ink"]["hex"]},
+                        "assets": [{"asset_id": "pic", "kind": "image", "path": str(Path(picture).resolve())}],
+                        "elements": [{"element_id": "pic", "type": "image", "z_index": 0,
+                                      "image": {"asset_id": "pic", "position": {"x": 0, "y": 0},
+                                                "size": {"width": SIZE[0], "height": SIZE[1]}, "fit": "cover"}},
+                                     {"element_id": "headline", "type": "text", "z_index": 10,
+                                      "text": {"text": lines, "font_id": SKILL_FONT, "font_size": size, "color": tokens["paper"]["hex"],
+                                               "position": {"x": x, "y": int(SIZE[1] * 0.08)},
+                                               "align": {"horizontal": "left", "vertical": "top"},
+                                               "stroke": {"color": tokens["ink"]["hex"], "width": max(4, size // 14)}}}]},
+           "output": {"path": str(Path(out).resolve()), "format": "jpeg", "overwrite": True},
+           "options": {"workspace": str(Path(out).resolve().parent), "allowed_input_roots": [str(Path(picture).resolve().parent)]}}
+    out.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory() as td:
+        req = Path(td) / "request.json"
+        req.write_text(json.dumps(doc), encoding="utf-8")
+        proc = subprocess.run([sys.executable, "-m", "thumbnail_skill.cli", "render", str(req), "--json"], capture_output=True, text=True,
+                              env={**__import__("os").environ, "PYTHONPATH": str(SKILL_SRC), "PYTHONDONTWRITEBYTECODE": "1"})
+    try:
+        res = json.loads(proc.stdout)
+    except ValueError:
+        res = {}
+    if proc.returncode != 0 or not res.get("ok"):
+        raise RuntimeError(f"thumbnail-skill render failed: {(res.get('error') or {}).get('message') or proc.stderr.strip()[:300]}")
+    return out
+
+
 def run(episode: Path, *, generate: bool = False, approved_by: str = "", tier: str = TIER, client=None, log=print) -> int:
     episode = Path(episode)
     pub, _ = load_episode(episode)
@@ -146,7 +189,10 @@ def run(episode: Path, *, generate: bool = False, approved_by: str = "", tier: s
     final = episode / (thumb.get("file") or "publish/thumbnail.jpg")
     if tier != TIER:  # a cheaper try sits beside the final file and never replaces it
         final = final.with_name(f"{final.stem}_{tier}{final.suffix}")
-    compose(painted, thumb["text"], final, thumb.get("text_side", "left"))
+    if thumb.get("engine") == "skill":   # opt-in: the vendored renderer, its own font (the channel's Bangers is the default engine's)
+        compose_via_skill(painted, thumb["text"], final, thumb.get("text_side", "left"))
+    else:
+        compose(painted, thumb["text"], final, thumb.get("text_side", "left"))
     problems = check_image(final)
     for t in problems:
         log(f"FAIL   {t}")
