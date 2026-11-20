@@ -48,7 +48,10 @@ JUDGE_FAILED = "JUDGE_FAILED"
 
 
 def _ladder_dir() -> Path:
-    return SHARED_GATES if SHARED_GATES.is_dir() else JUDGE_DIR.parents[3] / "jobs" / "judge_modal"
+    if SHARED_GATES.is_dir():
+        return SHARED_GATES
+    parents = JUDGE_DIR.parents      # in the container the file sits at /root, which has no 4th parent
+    return (parents[3] if len(parents) > 3 else Path("/tmp")) / "jobs" / "judge_modal"
 
 
 LADDER_PATH = Path(os.environ.get("EE_JUDGE_LADDER") or (_ladder_dir() / "ladder_modal_judge.json"))
