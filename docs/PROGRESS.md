@@ -3905,3 +3905,7 @@ No number is written in any of them; tests `test_first_shot.py`, `test_opening_d
 - Tests: `tests/unit/test_val_effect_audibility.py` (margin follows the level, window position, silent effect, bad input,
   NOT_RUN without limits, judged with limits, step click found and clean tone not, long treble burst not concentrated).
 - Not run on episode1: its mix does not exist as a file (only `narration.wav`).
+
+## 2026-11-20 — test_video_qa_clip_rows: the clean test clip no longer depends on muxing timing
+- Symptom: `test_real_clips_probe_and_rows` failed on CI runs with an extra `CLIP-05` (audio vs picture length) on a clip meant to be clean; it passed on re-run and always passes locally (40 of 40 builds identical: picture 2.0417 s, audio 2.026 s, tolerance one frame = 41.7 ms).
+- Cause (the most likely one, not reproduced locally even under CPU load): the fixture mixed an endless sine with `-shortest`, so the number of audio packets muxed before the picture ends depends on thread timing; two extra AAC frames (2 x 21 ms) are enough to pass the one-frame tolerance. Fix: the sine is bounded to `frames / fps` itself and `-shortest` is gone; the assertion now prints the findings and both durations, and a new test builds the clip six times and checks audio and picture end within half a frame. No assertion or threshold weakened.
