@@ -235,8 +235,11 @@ def localize(src: str, dst_root="/tmp/model_local", threads: int = 8, chunk: int
         out.parent.mkdir(parents=True, exist_ok=True)
         with open(f, "rb") as r, open(out, "wb") as w:
             shutil.copyfileobj(r, w, chunk)
-        return f.stat().st_size
+        n = f.stat().st_size
+        print(f"localize {f.name} {n / 2 ** 20:.0f} MiB done at {time.time() - t0:.1f} s", flush=True)
+        return n
 
+    print(f"localize start {src}", flush=True)
     files = [f for f in src_p.rglob("*") if f.is_file()]
     with ThreadPoolExecutor(threads) as ex:
         total = sum(ex.map(one, files))

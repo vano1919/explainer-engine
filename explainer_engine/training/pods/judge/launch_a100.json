@@ -22,9 +22,9 @@
   "torchvision_why": "Qwen3VLProcessor needs torchvision (found by the free CPU rehearsal: ImportError without it); 0.23.0 is the pair of torch 2.8.0"
  },
  "caps": {
-  "smoke_usd": 0.14,
-  "run_usd": 0.236,
-  "ledger_line_usd": 0.47,
+  "smoke_usd": 0.3,
+  "run_usd": 0.45,
+  "ledger_line_usd": 1.0,
   "cold_start_s": 45,
   "margin_s": 40
  },
