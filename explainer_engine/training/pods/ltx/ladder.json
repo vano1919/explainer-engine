@@ -7,16 +7,16 @@
   ],
   "red": null,
   "measured": {
-    "gpu": "H100",
-    "s_per_clip_s": 38.6,
-    "setup_s": 13.8,
-    "body_s": 91.0,
+    "gpu": "A100-80GB",
+    "s_per_clip_s": 44.4,
+    "setup_s": 20.3,
+    "body_s": 109.1,
     "runner": "inproc",
     "setup": {
-      "pipeline_s": 4.9,
-      "prompts_s": 29.5,
+      "pipeline_s": 1.2,
+      "prompts_s": 27.7,
       "prompts": 1,
-      "transformer_s": 18.2
+      "transformer_s": 25.5
     }
   },
   "rungs": {
@@ -33,33 +33,33 @@
       "at": "2026-11-13T14:51:19Z"
     },
     "L1": {
-      "launch_sha": "fc6ae61bf4108b3b8adc0dff7c8bc5fb5a68b3b15181df632e041b149f616a27",
-      "worker_sha": "803eea113276c948bcae60f2be32c8108cfe55a88b2dc6e08d9a1743880a5014",
+      "launch_sha": "7ada61ce171b0135703124b7a98d1d6de02a167926d946fe01a84191de065b6e",
+      "worker_sha": "cc5f2a03effb5ced37b73c6318879ec493303ba30af6155261359d6828fc73fe",
       "missing": [],
       "ok": true,
-      "at": "2026-11-13T14:51:47Z"
+      "at": "2026-11-20T09:16:07Z"
     },
     "L2": {
-      "launch_sha": "fc6ae61bf4108b3b8adc0dff7c8bc5fb5a68b3b15181df632e041b149f616a27",
-      "worker_sha": "803eea113276c948bcae60f2be32c8108cfe55a88b2dc6e08d9a1743880a5014",
+      "launch_sha": "7ada61ce171b0135703124b7a98d1d6de02a167926d946fe01a84191de065b6e",
+      "worker_sha": "cc5f2a03effb5ced37b73c6318879ec493303ba30af6155261359d6828fc73fe",
       "problems": [],
       "ok": true,
-      "at": "2026-11-13T14:53:39Z"
+      "at": "2026-11-20T09:18:17Z"
     },
     "L3": {
-      "launch_sha": "fc6ae61bf4108b3b8adc0dff7c8bc5fb5a68b3b15181df632e041b149f616a27",
-      "worker_sha": "803eea113276c948bcae60f2be32c8108cfe55a88b2dc6e08d9a1743880a5014",
+      "launch_sha": "7ada61ce171b0135703124b7a98d1d6de02a167926d946fe01a84191de065b6e",
+      "worker_sha": "cc5f2a03effb5ced37b73c6318879ec493303ba30af6155261359d6828fc73fe",
       "measured": {
-        "gpu": "H100",
-        "s_per_clip_s": 38.6,
-        "setup_s": 13.8,
-        "body_s": 91.0,
+        "gpu": "A100-80GB",
+        "s_per_clip_s": 44.4,
+        "setup_s": 20.3,
+        "body_s": 109.1,
         "runner": "inproc",
         "setup": {
-          "pipeline_s": 4.9,
-          "prompts_s": 29.5,
+          "pipeline_s": 1.2,
+          "prompts_s": 27.7,
           "prompts": 1,
-          "transformer_s": 18.2
+          "transformer_s": 25.5
         }
       },
       "result": {
@@ -67,7 +67,7 @@
         "error": null
       },
       "ok": true,
-      "at": "2026-11-13T15:30:21Z"
+      "at": "2026-11-20T09:23:08Z"
     }
   }
 }

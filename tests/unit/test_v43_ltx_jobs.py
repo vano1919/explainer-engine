@@ -23,7 +23,7 @@ WORKER = "explainer_engine/training/pods/ltx/modal_ltx_jobs.py"
 
 def test_the_launch_file_is_pinned_with_the_bakeoffs_weights_and_priced_from_the_table():
     assert L.launch_problems(LAUNCH) == []
-    assert LAUNCH["module"] == "ltx_pipelines.distilled" and LAUNCH["gpu"] == "H100"
+    assert LAUNCH["module"] == "ltx_pipelines.distilled" and LAUNCH["gpu"] == "A100-80GB"   # the owner's card since 2026-11-20 (launch.json gpu_change)
     assert set(LAUNCH["uses"].values()) <= set(LAUNCH["model_files"])
     assert abs(L.schedule_rate(LAUNCH) - L.usd_per_h(LAUNCH)) <= 0.01 * L.schedule_rate(LAUNCH)
     assert LAUNCH["scaledown_window_s"] <= 5                      # nothing stays warm

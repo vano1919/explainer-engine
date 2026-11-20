@@ -40,11 +40,11 @@
     "checked": "2026-11-12"
   },
   "sound": "native: LTX makes speech, effects and ambience with the picture (D-132)",
-  "gpu": "H100",
+  "gpu": "A100-80GB",
   "cpu": 8,
   "memory_gib": 96,
-  "usd_per_h": 5.0937,
-  "prices_date": "2026-11-07",
+  "usd_per_h": 3.6429,
+  "prices_date": "2026-11-20",
   "base_image": "ghcr.io/vano1919/tmr-pod@sha256:6852f3d9e49de298606baf19fada5ee57a32cc74f3bef8b8f88ed35e890b68c0",
   "hf_hub_pin": "1.33.0",
   "hf_out": "explainer-engine/ltx_route/out",
@@ -56,7 +56,7 @@
   "chain_overlap_why": "BP-188 (research 2026-11-12, the creator 20:07 UTC): LTX makes a clip's picture and sound together, so two chained clips meet at a hard cut with no overlap; the next clip starts from the last frame of the one before, and assembly drops that repeated first frame and gives each side a 30 ms fade. The 12-frame overlap of audit B3 served a 0.5 s crossfade that BP-188 no longer asks for",
   "caps": {
     "smoke_usd": 0.5,
-    "run_usd": 0.97,
+    "run_usd": 0.9,
     "cold_start_s": 120
   },
   "decided": {
@@ -66,5 +66,14 @@
     "at": "2026-11-12T19:10:06Z",
     "money": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWWqRxqiE28kSDxnNPn41fng ($1 per test run, 19:20 UTC)"
   },
-  "caps_why": "run_usd 0.97 for the battle scene (the creator 2026-11-12 20:44 UTC: $1 in total; card cmsg_01Hnu5zB86sjUj5GtTgaUkPWFqZzbAMMDCTETvK3bpDNzd, 20:59 UTC: '4 clips, $1.1'): the run timeout 509 s less the 75 s end path leaves 434 s for four cuts (~380 s at the love run's speed, a cold clip at the bake-off's 147 s still fits); the hard bill (run timeout + cold start) is $0.890 and the scene's budget adds the pictures and the CPU rungs (scene_run.budget_problems). Was 1.2 for the love scene"
+  "caps_why": "run_usd 0.97 for the battle scene (the creator 2026-11-12 20:44 UTC: $1 in total; card cmsg_01Hnu5zB86sjUj5GtTgaUkPWFqZzbAMMDCTETvK3bpDNzd, 20:59 UTC: '4 clips, $1.1'): the run timeout 509 s less the 75 s end path leaves 434 s for four cuts (~380 s at the love run's speed, a cold clip at the bake-off's 147 s still fits); the hard bill (run timeout + cold start) is $0.890 and the scene's budget adds the pictures and the CPU rungs (scene_run.budget_problems). Was 1.2 for the love scene",
+  "gpu_change": {
+    "from": "H100 ($5.0937/h)",
+    "to": "A100-80GB ($3.6429/h, modal.com/pricing read 2026-11-20 09:04 UTC)",
+    "why": "the owner's A100-80GB choice (2026-11-20 08:26 UTC, relayed by the coordinator) after the H100 failed to start twice on 2026-11-19/20; run_usd 0.97 -> 0.90 so the still-camera scene's worst GPU bill (0.8217) + CPU checks stay under its $1.00",
+    "by": "creator",
+    "message_id": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWJLmaDqg36CujmcxCmchKB5",
+    "words": "კი ყველაფერზე",
+    "ladder": "launch_sha changed: rungs L1-L3 are re-proved on the A100 before L4 (the worker file changed too since 2026-11-13)"
+  }
 }

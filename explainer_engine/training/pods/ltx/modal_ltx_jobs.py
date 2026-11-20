@@ -48,7 +48,7 @@ except ImportError:
 HF_REPO = "vano1919/tmr-artifacts"
 LAUNCH_PATH = Path(__file__).with_name("launch.json")
 LADDER_PATH = Path(os.environ.get("EE_LTX_LADDER") or Path(__file__).with_name("ladder.json"))
-SECRET_NAME = "huggingface-secret"
+SECRET_NAME = "custom-secret"   # the owner's second Modal account holds his HF token under this name (his message 2026-11-19 20:41 UTC); the key inside is HF_TOKEN
 PINS = ("model_repo", "model_revision", "model_files", "ltx_code", "module", "uses", "hf_out", "scaledown_window_s",
         "base_image")
 USES = ("transformer", "text_encoder", "video_vae", "audio_vae", "spatial_upsampler")
@@ -537,7 +537,9 @@ def ltx_cmd(launch, job, picture, mp4, python=None):
            "--audio-vae-path", str(root / u["audio_vae"]), "--spatial-upsampler-path", str(root / u["spatial_upsampler"])]
     if u.get("distilled_lora"):
         cmd += ["--distilled-lora", str(root / u["distilled_lora"])]
-    cmd += ["--image", str(picture), "0", "1.0", "--prompt", job["motion_prompt"], "--negative-prompt", neg,
+    # the distilled CLI has no CFG and takes no --negative-prompt (the L3 smoke on Modal, 2026-11-19 22:46: "unrecognized
+    # arguments"); the painterly-safe text stays resolved for the run record (resolve_negative_prompt)
+    cmd += ["--image", str(picture), "0", "1.0", "--prompt", job["motion_prompt"],
             "--width", str(job["width"]), "--height", str(job["height"]),
             "--num-frames", str(ltx_frames(job["seconds"], job["fps"])),
             "--frame-rate", str(job["fps"]), "--seed", str(job["seed"]), "--output-path", str(mp4)]
@@ -704,7 +706,10 @@ class LtxSession:
                 tiling_config=D.AUTO_TILING, generated_keyframes=args.num_generated_keyframes,
                 decode_with_keyframes=args.decode_with_keyframes, chunk_config=chunk_config,
             )
-            if neg_prompt is not None:
+            import inspect       # the distilled pipeline has no CFG: its stream_chunks takes a negative prompt only if it declares one
+            if neg_prompt is not None and getattr(args, "negative_prompt", None) \
+                    and any(p.name == "negative_prompt" or p.kind is p.VAR_KEYWORD
+                            for p in inspect.signature(self.pipe.stream_chunks).parameters.values()):
                 stream_kw["negative_prompt"] = neg_prompt
             chunks, num_frames, tiling_config = self.pipe.stream_chunks(**stream_kw)
             if chunk_config is not None:
@@ -1222,7 +1227,7 @@ if modal is not None:
         return bad
 
     if TIMEOUTS:
-        GPU_KW = dict(image=image, gpu=LAUNCH["gpu"] + "!", cpu=(float(LAUNCH["cpu"]),) * 2,
+        GPU_KW = dict(image=image, gpu=LAUNCH["gpu"] + ("!" if LAUNCH["gpu"] == "H100" else ""), cpu=(float(LAUNCH["cpu"]),) * 2,
                       memory=(LAUNCH["memory_gib"] * 1024,) * 2, retries=0, volumes={"/w": vol}, secrets=secrets,
                       scaledown_window=LAUNCH["scaledown_window_s"], startup_timeout=LAUNCH["startup_timeout_s"])
 
