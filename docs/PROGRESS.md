@@ -3776,3 +3776,14 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 - Source kind: platform policy (YouTube Data API field limits for `videos.insert` snippet), not a BP threshold; read 2026-11-20.
 - Tests: `tests/unit/test_publish_check.py` (4900 ASCII passes, 2600 em dashes fails, 5000 bytes passes, 5001 fails, `<` in the
   description fails, `>` in the title fails, title 100 passes / 101 fails). Doc: `docs/QA_SPECIFICATION.md` PC-06.
+
+## 2026-11-20 — Effect audibility and click measurements (`audio/val_effect_audibility.py`, from earshot's two ideas)
+- New pure module, numpy only: `audibility` (an effect's level over the bed per 1/3-octave band, over its loudest 60 ms) and
+  `click_candidates` (high-frequency bursts and how concentrated they are), `check` for a list of effects. Idea from earshot
+  `real-sound` QA (MIT); re-implemented from the description, no code copied.
+- Rule one / D-59: the registry has no margin and no click rule, and earshot's numbers (6/3/0 dB, 14 kHz, 9x, 6x, 0.8) are one
+  author's norms (one source type). So every judging number in `Limits` is `None` and `check` returns `NOT_RUN` with the measured
+  values, never a PASS; given sourced numbers the same call returns AUD-01/AUD-02/CLK-01 findings.
+- Tests: `tests/unit/test_val_effect_audibility.py` (margin follows the level, window position, silent effect, bad input,
+  NOT_RUN without limits, judged with limits, step click found and clean tone not, long treble burst not concentrated).
+- Not run on episode1: its mix does not exist as a file (only `narration.wav`).
