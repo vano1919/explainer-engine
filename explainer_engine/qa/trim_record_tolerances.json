@@ -1,0 +1,8 @@
+{
+  "about": "Tolerance of qa/trim_record.py (OR-V56). Not in sourced_rules.json: the number comes from the owner's card answer and needs his typed word to enter the registry.",
+  "trim_max_s": {
+    "value": 0.33,
+    "kind": "house",
+    "source": "owner card answer Q4 = A, 2026-11-06 (as recorded in coverage_inputs/GAP_TASKS_G11_G12_2026-11-20.md); a card press, not his typed word; not in sourced_rules.json"
+  }
+}

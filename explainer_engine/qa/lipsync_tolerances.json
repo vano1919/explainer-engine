@@ -1,0 +1,13 @@
+{
+  "about": "Tolerances of qa/lipsync.py (BP-133, SyncNet). lipsync_max_ms and lipsync_review_frames are NOT here: they are read from the registry (SR.T BP-133). A null value means 'no sourced number yet' and the validator says NOT_RUN, never PASS.",
+  "conf_min": {
+    "value": null,
+    "kind": "hypothesis",
+    "note": "REVIEW-level default, not binding until the owner has seen it. Open: calibrate on clips he accepts as in sync and rejects as out of sync (none labelled yet)."
+  },
+  "min_track_frames": {
+    "value": null,
+    "kind": "hypothesis",
+    "note": "REVIEW-level default, not binding until the owner has seen it. null = SyncNet's own default (100 frames = 4 s at 25 fps). Open: shorter speaking shots stay NOT_RUN until the owner decides after one free measurement."
+  }
+}
