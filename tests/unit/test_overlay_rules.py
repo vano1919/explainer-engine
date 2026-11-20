@@ -303,3 +303,19 @@ def test_a_solid_or_too_opaque_panel_in_the_30_percent_lane_fails_the_glass_rule
     assert solid["status"] == R.FAIL and "OV-20" in solid["detail"], solid
     opaque = R.lane30_glass(ctx(base, 6, lambda sp: panel0(sp).update(alpha=0.9)))
     assert opaque["status"] == R.FAIL and "OV-21" in opaque["detail"], opaque
+
+
+# ---- OR-V30a: no overlay in video scenes (the v4.3 route is called video, D-132; wan and ltx are older names of it) ------------------------
+
+@pytest.mark.parametrize("route", ["video", "wan", "ltx"])
+def test_a_clean_video_shot_has_no_overlay_and_passes_ov01_and_ov03(base, route):
+    assert R.ov01(ctx(base, 8, shot_mut=lambda sh: sh.update(route=route)))["status"] == R.PASS
+    assert R.ov03(ctx(base, 8, shot_mut=lambda sh: sh.update(route=route)))["status"] == R.PASS
+
+
+@pytest.mark.parametrize("route", ["video", "wan", "ltx"])
+def test_an_overlay_on_a_video_shot_fails_ov01_and_ov03_whatever_the_route_is_called(base, route):      # the negative test of OR-V30a
+    bad = ctx(base, 8, lambda sp: sp["items"].append({"id": "x", "kind": "label"}), lambda sh: sh.update(route=route))
+    assert R.ov01(bad)["status"] == R.FAIL and route in R.ov01(bad)["detail"]
+    reason = ctx(base, 8, lambda sp: sp.update(overlay_reason="date"), lambda sh: sh.update(route=route))
+    assert R.ov03(reason)["status"] == R.FAIL

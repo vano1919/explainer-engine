@@ -77,7 +77,8 @@ def motion_items(c: Ctx) -> list[dict]:
 
 
 # ------------------------------------------------------------------------------------------------ section 2: where the overlay is allowed
-def ov01(c): return r(NA) if c.route != "ltx" else (r(FAIL, f"{len(c.items)} items, {len(c.panels)} panels on an ltx shot") if (c.items or c.panels) else r(PASS, "no overlay element, no chip, no inset"))
+VIDEO_ROUTES = ("ltx", "video", "wan")      # tester Z15: the v4.3 router names the video route `video` (D-132), D-131 named it `wan`, the demo says `ltx`
+def ov01(c): return r(NA) if c.route not in VIDEO_ROUTES else (r(FAIL, f"{len(c.items)} items, {len(c.panels)} panels on a {c.route} shot") if (c.items or c.panels) else r(PASS, "no overlay element, no chip, no inset"))
 def ov02(c):
     if not c.panels: return r(NA)
     lo, hi = HOUSE["OV-02 first frame"], c.n - HOUSE["OV-02 exit margin frames"]
@@ -85,7 +86,7 @@ def ov02(c):
     bad += [f"{i['id']} start {i['start']}" for i in c.items if i["start"] < lo]
     bad += [f"{i['id']} end {i['end']}" for i in c.items if i["end"] is not None and i["end"] > hi]
     return r(FAIL, "; ".join(bad)) if bad else r(PASS, f"every element starts at frame >= {lo} and ends at frame <= {hi} of {c.n}")
-def ov03(c): return r(NA) if c.route != "ltx" else (r(FAIL, "an ltx shot carries an overlay_reason") if c.spec.get("overlay_reason") else r(PASS, "an ltx shot has no overlay_reason"))
+def ov03(c): return r(NA) if c.route not in VIDEO_ROUTES else (r(FAIL, f"a {c.route} shot carries an overlay_reason") if c.spec.get("overlay_reason") else r(PASS, f"a {c.route} shot has no overlay_reason"))
 def ov04(c): return r(NA) if c.spec.get("mode") != "full" else (r(PASS, "full on a map_action shot") if c.route == "map_action" else r(FAIL, f"full on a {c.route} shot"))
 def ov05(c): return r(NA) if c.route != "still_25d" or not c.items else (r(PASS, "accent only") if c.spec.get("mode") == "accent" else r(FAIL, f"mode {c.spec.get('mode')} on a still_25d shot"))
 def ov06(c): return r(PASS, f"route {c.spec['route']} unchanged by the overlay") if c.spec["route"] == c.shot["route"] else r(FAIL, f"route {c.shot['route']} -> {c.spec['route']}")

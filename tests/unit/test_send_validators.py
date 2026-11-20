@@ -250,12 +250,12 @@ def test_far_flakes_drawn_over_the_soldiers_fail(tmp_path):
     assert r["status"] == "FAIL" and "does not hide them" in r["detail"] and r["value"] > V.FAR_OVER_FG_MAX, r
 
 
-def test_a_declared_particle_layer_without_its_depth_map_is_not_proven(tmp_path):
+def test_a_declared_particle_layer_without_its_depth_map_fails(tmp_path):                    # lead's ruling 2026-11-20: declaring nothing true is a FAIL, never a NOT_RUN
     p = alive_world_clip(tmp_path / "nodepth.mp4")
     zones_json(tmp_path, "nodepth", ZONES, {"particles": {"far": "far.mp4"}})
     clip(tmp_path / "far.mp4", far_flakes(3.0, False))
     r = V.living_motion(p)
-    assert r["status"] == "NOT_RUN" and "occlusion not proven" in r["detail"], r
+    assert r["status"] == "FAIL" and "depth map is missing" in r["detail"], r
 
 
 def test_the_thresholds_are_read_from_bp_215():
@@ -649,3 +649,103 @@ def test_a_body_swayed_or_animated_in_2_5d_fails_the_body_motion_check(tmp_path)
     r = V.no_body_motion_in_25d(_direction(tmp_path, d, "b.json"))
     assert r["status"] == "FAIL" and "hands" in r["detail"], r
     assert V.no_body_motion_in_25d(_direction(tmp_path, {"zones": []}, "z.json"))["status"] == "NOT_RUN" and V.no_body_motion_in_25d.kinds == (".json",)
+
+
+# ---- OR-V19b: wind moves cloth, hair and grass (zone kind "wind") -------------------------------------------------------------------
+
+def grass_clip(path, sways=True, n=3.0):
+    """A still camera; smoke drifts (the world is alive elsewhere); a band of grass along the bottom sways sideways, or stands dead."""
+    bg, tex = np.tile(background(), (1, 2)), wide_texture(2)
+    smoke = (slice(60, 160), slice(60, 260))
+    frames = []
+    for i in range(seconds(n)):
+        f = bg[:, :W].copy()
+        sh = int(round(0.7 * i)) % 300
+        f[smoke] = tex[smoke[0], smoke[1].start + sh:smoke[1].stop + sh]
+        if sways:
+            for r in range(200, H):
+                f[r] = np.roll(bg[r, :W], int(4 * np.sin(2 * np.pi * (i / FPS * 1.5 + r / 20))))
+        frames.append(f)
+    return clip(path, frames)
+
+
+GRASS = [("grass", "wind", (0, 200, 480, 270))]
+
+
+def test_wind_that_sways_a_band_of_grass_in_its_wind_zone_passes(tmp_path):
+    zones_json(tmp_path, "sway", GRASS)
+    r = V.living_motion(grass_clip(tmp_path / "sway.mp4"))
+    assert r["status"] == "PASS" and "grass " in r["detail"] and r["value"] >= V.ZONE_COVER_MIN, r
+
+
+def test_a_wind_zone_over_grass_that_stands_dead_fails_by_name(tmp_path):                    # the negative test of OR-V19b
+    zones_json(tmp_path, "dead", GRASS)
+    r = V.living_motion(grass_clip(tmp_path / "dead.mp4", sways=False))
+    assert r["status"] == "FAIL" and "grass zone" in r["detail"] and "G-LIVE-3" in r["detail"], r
+    assert V.ZONE_SPEED["wind"] == 2.0
+
+
+# ---- OR-V19c: snow falls with depth, near flakes larger and faster than far ones -------------------------------------------------------
+
+def band_matte(n, flakes, size, px_per_s, seed, x_lo=W // 2):
+    rng = np.random.default_rng(seed)
+    x0, y0 = rng.integers(x_lo, W - size, flakes), rng.integers(0, H, flakes)
+    out = []
+    for i in range(seconds(n)):
+        m = np.zeros((H, W), np.float32)
+        for x, y in zip(x0, (y0 + px_per_s * i / FPS) % (H - size)):
+            m[int(y):int(y) + size, x:x + size] = 255
+        out.append(m)
+    return out
+
+
+def depth_case(tmp_path, near_size, near_speed):
+    """The alive world with a far band (2 px flakes, 20 px/s) and a near band over the far half; the soldiers' half is the depth map's foreground."""
+    p = alive_world_clip(tmp_path / "snow.mp4")
+    clip(tmp_path / "far.mp4", band_matte(3.0, 160, 2, 20, 5))
+    clip(tmp_path / "near.mp4", band_matte(3.0, 60, near_size, near_speed, 6))
+    depth = np.zeros((H, W), np.uint8)
+    depth[:, :W // 2], depth[:, W // 2:] = 230, 40
+    Image.fromarray(depth).save(tmp_path / "depth.png")
+    zones_json(tmp_path, "snow", ZONES, {"particles": {"far": "far.mp4", "near": "near.mp4"}, "depth": "depth.png"})
+    return p
+
+
+def test_near_flakes_larger_and_faster_than_far_ones_pass_with_their_ratios(tmp_path):
+    r = V.living_motion(depth_case(tmp_path, near_size=5, near_speed=90))
+    assert r["status"] == "PASS" and "near flakes" in r["detail"] and "x the size" in r["detail"], r
+
+
+def test_snow_whose_near_and_far_flakes_are_alike_has_no_depth_and_fails(tmp_path):         # the negative test of OR-V19c
+    r = V.living_motion(depth_case(tmp_path, near_size=2, near_speed=20))
+    assert r["status"] == "FAIL" and "snow has no depth" in r["detail"], r
+    assert V.NEAR_FAR_MIN == 1.2
+
+
+def test_snow_with_a_dense_layer_and_no_zones_is_a_fail_not_a_not_run(tmp_path):
+    snow, _ = snow_frames(3.0)
+    r = V.living_motion(clip(tmp_path / "snowonly.mp4", snow))
+    assert r["status"] == "FAIL", r                                                           # lead's ruling 2026-11-20: a lazy generator picks that route
+
+
+# ---- OR-V19e: a camera move alone is not alive (the cheap whole-frame row, on the delivered clip) ---------------------------------------
+
+def test_a_drifting_camera_over_a_living_world_stays_alive_beyond_the_camera(tmp_path):
+    r = V.alive_beyond_camera(alive_world_clip(tmp_path / "alive.mp4", camera_px=1))
+    assert r["status"] == "PASS" and r["value"] >= LV.LOCAL_FLOOR, r
+
+
+def test_a_camera_move_over_a_dead_picture_fails_alive_beyond_the_camera(tmp_path):         # the negative test of OR-V19e
+    r = V.alive_beyond_camera(camera_move_clip(tmp_path / "pan.mp4"))
+    assert r["status"] == "FAIL" and "camera move alone" in r["detail"], r
+
+
+def test_a_fade_and_grain_are_not_a_living_world_for_alive_beyond_the_camera(tmp_path, monkeypatch):
+    bg = background()
+    fade = [bg * (0.4 + 0.6 * i / seconds(3)) for i in range(seconds(3))]
+    assert V.alive_beyond_camera(clip(tmp_path / "fade.mp4", fade))["status"] == "FAIL"
+    rng = np.random.default_rng(7)
+    assert V.alive_beyond_camera(clip(tmp_path / "grain.mp4", [bg + rng.normal(0, 25, bg.shape) for _ in range(seconds(3))]))["status"] == "FAIL"
+    assert V.alive_beyond_camera(smoke_clip(tmp_path / "short.mp4", n=0.5))["status"] == "NOT_RUN"
+    monkeypatch.setattr(V, "_cv2", lambda: None)
+    assert V.alive_beyond_camera(smoke_clip(tmp_path / "nocv.mp4"))["status"] == "NOT_RUN" and V.alive_beyond_camera.kinds == V.living_motion.kinds

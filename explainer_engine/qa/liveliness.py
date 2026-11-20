@@ -139,6 +139,12 @@ def local_change_per_s(frames: list[np.ndarray], fps: float) -> dict:
         aw = cv2.resize(np.where(keep, w, 0), REF_SIZE, interpolation=cv2.INTER_AREA)
         bb = cv2.resize(np.where(keep, b.astype(np.float32), 0), REF_SIZE, interpolation=cv2.INTER_AREA)
         kk = cv2.resize(keep.astype(np.float32), REF_SIZE, interpolation=cv2.INTER_AREA) > 0.99
+        # tester Z9/Z10: a brightness fade is not a camera and per-frame grain is not a world that moves: bring the two frames to one mean and
+        # spread, and smooth the grain away, before the difference
+        if kk.any():
+            ma, mb, sa, sb = aw[kk].mean(), bb[kk].mean(), max(float(aw[kk].std()), 1e-6), max(float(bb[kk].std()), 1e-6)
+            aw = (aw - ma) * (sb / sa) + mb
+        aw, bb = cv2.GaussianBlur(aw, (0, 0), 1.2), cv2.GaussianBlur(bb, (0, 0), 1.2)
         d.append(float(np.mean(np.abs(aw - bb)[kk]) / 255 * 100))
     return {"pct_per_s": round(float(np.mean(d)), 2) if d else None, "series": [round(x, 2) for x in d]}
 
