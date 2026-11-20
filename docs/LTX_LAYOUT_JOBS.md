@@ -121,8 +121,8 @@ Honest limit of the planned smoke: with `smoke_usd` 0.20 the function window is 
 
 | ID | Question | Why it matters |
 |---|---|---|
-| Q-L1 | Smoke size: 9 frames inside $0.20 (measures loading, not the 241-frame peak) or a larger smoke cap? | A 9-frame pass cannot show whether 241 frames fit in 80 GB |
-| Q-L2 | `--stage-2-ic-lora` on (the card's example) or off (the CLI default, less memory)? Now ON, not measured. | memory and time on stage 2 |
+| Q-L1 | **Decided 2026-11-20 09:14 UTC (coordinator, technical, cost low): smoke stays 9 frames at $0.20.** Was: smoke size: 9 frames inside $0.20 (measures loading, not the 241-frame peak) or a larger smoke cap? | A 9-frame pass cannot show whether 241 frames fit in 80 GB |
+| Q-L2 | **Decided 2026-11-20 09:14 UTC (coordinator, follow the card): `--stage-2-ic-lora` stays ON.** Was: `--stage-2-ic-lora` on (the card's example) or off (the CLI default, less memory)? Now ON, not measured. | memory and time on stage 2 |
 | Q-L3 | CH-01 (in-process model residency) is a rule of the protected LTX launch; this worker runs one CLI process per clip, so every clip reloads the 22B + text encoder from the Volume. Accept, or build an in-process session later? | each clip's price includes a full model load (unmeasured); a 2-clip chain pays it twice |
 | Q-L4 | The film line (variant B) may push the prompt over the card's "one or two sentences": a warning today. Refuse instead? | prompt discipline vs the film-style test |
 | Q-L5 | The split of the $2.00 line: smoke 0.20 + run 1.40 (my arithmetic; one launch capped at 1.40, the item's launches together at 1.6). | one failed run leaves 0.2..1.4 for a retry |

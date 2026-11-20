@@ -6842,4 +6842,4 @@ Upscale (plan thread 23:00 UTC): `training/pods/upscale/launch.json` pins SeedVR
 - Tests: `tests/unit/test_layout_worker.py` 71 (70 on a plain box + 1 against the real pinned `ic_lora.main()` in the LTX venv, passed). The CPU rehearsal found and fixed a real bug (`rows()` collided on a chain row's own `hop`). Protected files untouched: `ltx/launch.json`, `cloud/cheapest.*`, `config/retired_era.json`.
 - UNMEASURED until the L3 smoke: GPU memory (torch + nvidia-smi), host RAM fit (32 GiB), seconds and price per clip, sound. The planned 9-frame smoke fits only about 106 s of work inside $0.20 and cannot show the 241-frame peak (Q-L1). Every clip is its own CLI process, so each reloads the model (Q-L3).
 - Blocked on: the owner's personal yes, a CH-07 offer file, the OR-34 audit (Sonnet/Opus), the Haiku low watchdog (coordinator), and the gated IC-LoRA access check (Q-L6). Stale text found: none new.
-
+- 09:14 UTC coordinator: Q-L1 (smoke 9 frames, cap $0.20) and Q-L2 (`--stage-2-ic-lora` on, as the card) are decided; the owner's personal yes and the HF gated-licence check wait until item 1 (LTX static camera) passes. Nothing is launched; waiting, $0.00.
