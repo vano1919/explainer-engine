@@ -1,0 +1,6 @@
+{
+ "schema": "known_review_items/1",
+ "items": [
+  "DIPS not ported: 7 of 9 differ from the Mac master by authored choice (the script's transition_out stays; build_segments' 10-frame end fade was a mix side effect; ask for fade_to_black as a creative edit if wanted)"
+ ]
+}

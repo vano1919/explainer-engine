@@ -1,0 +1,44 @@
+# SOURCE: v-visual-skills-image
+
+repo: https://github.com/smixs/visual-skills
+path: image
+commit: 61a60d317f0fa0c3dc98902e58a7cb178838ae3f
+commit_date: 2026-11-06
+retrieved: 2026-11-19
+author: Serge Shima (smixs)
+licence: CC-BY-4.0 (LICENSE)
+stars_seen: 712 (plan figure)
+stage: S5
+tool: tools/vendor_skill.py (byte-for-byte copy; upstream files are never edited)
+name_clash: upstream frontmatter name 'image' differs from folder 'v-visual-skills-image'; Claude Code uses the folder name
+note: CC-BY-4.0: credit Serge Shima, source https://github.com/smixs/visual-skills (see NOTICE)
+excluded:
+  (nothing)
+
+files:
+9ba9550ad48438d0836ddab3da480b3b69ffa0aac7b7878b5a0039e7ab429411  LICENSE
+de856e49bba89750eb1d3d155f201c5bbbef05e55afaa6942ed4e0937ad44fbf  NOTICE
+6d574e0b524bf80896271cad8d7192d5eb3db238c4543367ad90235982f3a530  SKILL.md
+96d269d6f29aa72c21937bf8586c709ab7f5d4227908813035e06d5dd6798889  references/characters.md
+61aabd842ce799140250bcd082b8a9f65f3b0d714581a04bf51454830d15f708  references/creative-direction.md
+53adcec948607fa84e17f7d0d1843c73194265972685bac657245084e39ac5c8  references/de-slop.md
+35486e3d86c7808a9bae4b67b91c1bd2051dc2daad414d99044b97716484cf5c  references/dimensional.md
+3635143be1ee0be8e7ecb16bdd847676a18b2f5b5c9a281dd9e1ee48edb418bd  references/editing.md
+998b29dad0db2e19d7089d92a6ac705a1d7c191270bb65d89aac65ac1c850754  references/golden-rules.md
+19b8d9382273e8a2f26a815b0f29f71fb7d4eb4d9d6ce5d602a914460bdba649  references/gpt-image.md
+4d8f13fb106377b622dbba34b9f5f6bbec356ce2dd5beb61da89795650c34eba  references/models.md
+3edcaac4fb74dcd6aa0d803e3176bc92cd92c7c80871f6be32b23ac726257e53  references/multi-panel.md
+2288295a583be5d222e5e204ebc8b555b9c1b44de134859811ffdff27ab7e6bd  references/nano-banana.md
+155874899ffc23a07cdcf833f617ee62efd433a03a2e64650c440db6a8a2de14  references/patterns/character-design.md
+1ed6ae8b5f957db43113771f3157b34b5cb73e50f6c94f929099caddbe2c35fd  references/patterns/ecommerce.md
+e657c4a21a12d587d9b4af955f1c1a2f3dded87594fd2f08bbfcbfd532caeb3e  references/patterns/fashion-editorial.md
+456f1c5f1eb2dac84135a68bdd68ed3fee8303ec4773ebb4f3df582f8672bd79  references/patterns/food-beverage.md
+e12474d771939dafbb0044e95b77a17d89e87edf581bc2028f82d22b705da739  references/patterns/portrait-cinema.md
+4e7d04368d473b5107f15e364e86a42ebb162fbdd0a63a6362c5efebdf814bdd  references/patterns/poster-illustration.md
+232847fb5a67b9511d83cbfa4beb525a847704cfea2fbfb4dade560b1df2c9f3  references/patterns/ui-social.md
+98df03976b8fd0ac44e4079b9b19edcac4853294ccec88406aec9e81e049e3e5  references/prompt-framework.md
+4e7f83e4d064b9c490ad9dedb6b13dca713557fbf8965f5aaa47b3dd7636cdc0  references/slides.md
+08525c80f209f73cb934d68c51c80dc59edf93a1f93b8f0b79f9832f9c4d38a3  references/storyboards.md
+cf362d002bbcbe28ee438531aaff7ee3af424e03cd4992d31401d8740da15b03  references/structural.md
+4eb69e58d86f8ccebd8dd6a61e61de7d73dbd7f2e255c8381f63e372518aea04  references/text-rendering.md
+8baca2001e1cbc300d8f84acc44e96a9b1fcc11a6038a3bd7a2ddd0b0592026f  references/vision-decomposer.md

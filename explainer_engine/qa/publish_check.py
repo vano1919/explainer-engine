@@ -210,7 +210,15 @@ def unresolved_reviews(found: list[dict], episode: Path | None) -> dict:
     from explainer_engine.videolane import ingest as I
     clips = I.unresolved_reviews(episode) if episode is not None else {"count": 0, "items": []}
     third = [f"{f['where']}: {f['detail']}" for f in found if f["rule"] == "PC-10" and f["severity"] == "REVIEW"]
-    return {"count": clips["count"] + len(third), "clips": clips["items"], "third_party_media": third}
+    known: list[str] = []      # Step 1.5: documented differences the creator decides later (qa/known_review_items.json)
+    kp = Path(episode) / "qa" / "known_review_items.json" if episode is not None else None
+    if kp is not None and kp.is_file():
+        try:
+            known = [str(x) for x in json.loads(kp.read_text(encoding="utf-8")).get("items") or []]
+        except (OSError, ValueError):
+            known = []
+    return {"count": clips["count"] + len(third) + len(known), "clips": clips["items"], "third_party_media": third,
+            "known_differences": known}
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -229,7 +237,8 @@ def main(argv: list[str] | None = None) -> int:
     open_items = unresolved_reviews(found, episode)
     print(f"{sum(f['severity'] == 'FAIL' for f in found)} FAIL, {sum(f['severity'] == 'REVIEW' for f in found)} REVIEW "
           f"(unresolved_reviews: {open_items['count']})")
-    for heading, key in (("clips", "clips"), ("third_party_media", "third_party_media")):
+    for heading, key in (("clips", "clips"), ("third_party_media", "third_party_media"),
+                         ("known_differences", "known_differences")):
         for it in open_items[key]:
             print(f"  unresolved [{heading}] {it}")
     return 1 if any(f["severity"] == "FAIL" for f in found) else 0

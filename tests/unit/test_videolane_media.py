@@ -544,3 +544,24 @@ def test_ingest_records_frame0_against_the_pinned_picture_and_needs_evidence_wit
     r2 = IN.ingest_scene(tmp_path / "ep2", scene_script(), [{"shot_id": "C", "path": str(raw)}], FPS)[0]
     assert r2["start_frame_check"]["frame0_vs_source"]["status"] == "PASS"
     assert r2["start_frame_check"]["status"] in ("PASS", "REVIEW")   # PASS needs inspection evidence too, never from the compare alone
+
+
+# --- Step 1.5 (D-139): ingest guarantees exact frames; one frame short is padded and recorded, more is refused ---------------
+
+def test_a_clip_one_frame_short_gets_its_last_frame_held_once_and_says_so(tmp_path):
+    from explainer_engine.videolane import ingest as IN
+    raw = write_clip(tmp_path / "short.mp4", moving(24, 1.0), fps=24)
+    info: dict = {}
+    out = IN.cut(raw, tmp_path / "cut.mp4", 0.0, 25, FPS, info=info)         # the edit wants 25 frames, the clip has 24
+    assert frames_of(out) == 25 and info["frame_pad"] == 1
+    info2: dict = {}
+    out2 = IN.cut(raw, tmp_path / "cut2.mp4", 0.0, 24, FPS, info=info2)      # exact: no pad
+    assert frames_of(out2) == 24 and info2["frame_pad"] == 0
+
+
+def test_a_clip_two_frames_short_is_still_refused(tmp_path):
+    from explainer_engine.videolane import ingest as IN
+    raw = write_clip(tmp_path / "short.mp4", moving(24, 1.0), fps=24)
+    with pytest.raises(ContractError):
+        IN.cut(raw, tmp_path / "cut.mp4", 0.0, 26, FPS)
+    assert not (tmp_path / "cut.mp4").exists()

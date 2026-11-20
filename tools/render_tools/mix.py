@@ -598,6 +598,28 @@ def synth_music_cue(kind: str, dur_s: float, fade_in_s: float = 1.0, fade_out_s:
     return fade(sig.astype(np.float32), fade_in_s, fade_out_s)
 
 
+MASTER_DIR_PARTS = ("renders", "final")
+
+
+def refuse_master_destination(out_dir: Path, episode_dir: Path | None = None) -> None:
+    """D-139 decision 2 (Step 1.5): this mixer synthesizes its sound (D-136, OV-56), so its output is a preview and never a master.
+    Refuse any output folder that resolves into ``renders/final`` (a symlink or ``..`` does not get around it) or into the
+    episode's own ``renders/final``. The comparison is on resolved paths, not on the text."""
+    out = Path(out_dir).resolve()
+    targets = []
+    if episode_dir is not None:
+        targets.append((Path(episode_dir) / Path(*MASTER_DIR_PARTS)).resolve())
+    for t in targets:
+        if out == t or t in out.parents:
+            raise ContractError(f"mix.py is preview only (D-139): {out} is inside the master folder {t}; masters come from "
+                                "`python -m explainer_engine.episode run <episode> --to qa` (sound from G8 audio/stems)")
+    parts = out.parts
+    for i in range(len(parts) - len(MASTER_DIR_PARTS) + 1):
+        if tuple(parts[i:i + len(MASTER_DIR_PARTS)]) == MASTER_DIR_PARTS:
+            raise ContractError(f"mix.py is preview only (D-139): {out} is inside a renders/final folder; masters come from "
+                                "`python -m explainer_engine.episode run <episode> --to qa` (sound from G8 audio/stems)")
+
+
 def run_mix(
     *,
     episode_dir: Path | None = None,
@@ -612,6 +634,7 @@ def run_mix(
     R = Path(episode_dir) if episode_dir is not None else r_dir
     DL = Path(dl_dir) if dl_dir is not None else d_dir
     W = Path(work_dir) if work_dir is not None else w_dir
+    refuse_master_destination(W, R)
     W.mkdir(parents=True, exist_ok=True)
     T_PATH = Path(timing_path) if timing_path is not None else t_p
 
@@ -839,6 +862,8 @@ def run_mix(
         sr=SR,
     )
     report["normalization"] = norm_meta
+    report["preview_only"] = True     # D-139: synthesized beds and music (D-136, OV-56); never a master
+    report["preview_reason"] = "mix.py synthesizes its sound; a master takes its sound from G8 audio/stems"
     write_json_atomic(out_wav.with_suffix(".loudness.json"), report)
     return report
 
