@@ -38,9 +38,11 @@ def main(argv: list[str] | None = None) -> int:
                    help="draft = a cheap try beside the final file; premium = the final thumbnail")
     a = sub.add_parser("auth", help="one-time sign-in on the creator's PC")
     a.add_argument("client_secret")
+    a.add_argument("--export-env", action="store_true", help="also write tools/youtube/token.b64.txt (YOUTUBE_TOKEN_B64)")
     sub.add_parser("auth-url", help="print the consent link (sign in on a phone)")
     f = sub.add_parser("auth-finish", help="exchange the address the phone ended on for a token")
     f.add_argument("answer")
+    f.add_argument("--export-env", action="store_true", help="also write tools/youtube/token.b64.txt (YOUTUBE_TOKEN_B64)")
     args = ap.parse_args(argv)
     if args.cmd == "stage":
         from explainer_engine.publish import stage
@@ -56,8 +58,8 @@ def main(argv: list[str] | None = None) -> int:
     if args.cmd == "auth-url":
         return auth.url_step()
     if args.cmd == "auth-finish":
-        return auth.finish_step(args.answer)
-    return auth.main(args.client_secret)
+        return auth.finish_step(args.answer, args.export_env)
+    return auth.main(args.client_secret, args.export_env)
 
 
 if __name__ == "__main__":
