@@ -65,11 +65,26 @@ def scan_file(path: str | Path) -> tuple[list[str], str | None]:
     return _hits_in_text(text, str(p)), None
 
 
-def check_files(paths: list[str | Path]) -> dict:
-    """{status, value, detail}: FAIL with the count when any Georgian character is found (a hit beats an unreadable file),
-    NOT_RUN when a file cannot be read or no file was given and nothing was found, else PASS (value 0)."""
-    if not paths:
+def scan_text(text: str, where: str) -> list[str]:
+    """Hits in a text that is not a file (for example the narration read out of a script); ``where`` names it."""
+    return _hits_in_text(text, where)
+
+
+def verdict(hits: list[str], errors: list[str], sources: int) -> dict:
+    """{status, value, detail}: FAIL with the count when any Georgian character was found (a hit beats an unreadable source),
+    NOT_RUN when a source could not be read or there was none and nothing was found, else PASS (value 0)."""
+    if hits:
+        more = f" (+{len(hits) - SHOW} more)" if len(hits) > SHOW else ""
+        return {"status": "FAIL", "value": len(hits), "detail": "Georgian script in viewer text: " + "; ".join(hits[:SHOW]) + more}
+    if errors:
+        return {"status": "NOT_RUN", "value": None, "detail": "not run, unreadable: " + "; ".join(errors[:SHOW])}
+    if sources == 0:
         return {"status": "NOT_RUN", "value": None, "detail": "no files given: nothing was checked"}
+    return {"status": "PASS", "value": 0, "detail": f"no Georgian script in {sources} source(s)"}
+
+
+def check_files(paths: list[str | Path]) -> dict:
+    """``verdict`` over the files."""
     hits: list[str] = []
     errors: list[str] = []
     for path in paths:
@@ -77,12 +92,7 @@ def check_files(paths: list[str | Path]) -> dict:
         hits += h
         if err:
             errors.append(err)
-    if hits:
-        more = f" (+{len(hits) - SHOW} more)" if len(hits) > SHOW else ""
-        return {"status": "FAIL", "value": len(hits), "detail": "Georgian script in viewer text: " + "; ".join(hits[:SHOW]) + more}
-    if errors:
-        return {"status": "NOT_RUN", "value": None, "detail": "not run, unreadable: " + "; ".join(errors[:SHOW])}
-    return {"status": "PASS", "value": 0, "detail": f"no Georgian script in {len(paths)} file(s)"}
+    return verdict(hits, errors, len(paths))
 
 
 def main(argv: list[str] | None = None) -> int:

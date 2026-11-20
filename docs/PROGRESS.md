@@ -3817,6 +3817,7 @@ The group-4 validators, the film-id and prompt lint, the continuity identity rul
 size check and the attempt ranking now run from `explainer_engine/qa/validator_gate.py` (`python -m explainer_engine.qa.validator_gate
 <episode folder>`), and `production_gate.script_gates` has a row `V`. NOT_RUN is never a pass: a missing input, a missing tool or
 a crash is NOT_RUN with the reason; any FAIL is BLOCKED, any NOT_RUN is WAIT, PASS only when all ten ran without a FAIL. The
-file names each validator reads from the episode folder are this module's proposal (listed in its docstring) for the lead to
-confirm. Tests: `tests/unit/test_validator_gate.py` (14): each validator is called from the gate, empty folder is WAIT, a crash is
+validators read only files the pipeline already writes (listed in the module docstring): `production_script.json` or
+`story/production_script.json`, `claim_map.md`, `narration*.txt`, `metadata.md`, `publish.json` (viewer fields only), `prompts.json`,
+continuity cards found by their `schema`, `video.mp4`, `attempts.json`. Tests: `tests/unit/test_validator_gate.py` (14): each validator is called from the gate, empty folder is WAIT, a crash is
 NOT_RUN, FAIL/REVIEW/NOT_RUN fold as above. The animated route's gate list is not changed.
