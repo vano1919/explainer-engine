@@ -3929,6 +3929,7 @@ No number is written in any of them; tests `test_first_shot.py`, `test_opening_d
 - Tests: `tests/unit/test_fx25d_living.py` (inputs required, no machine paths, a frame is a pure function of its number, synthetic person next to the
   source: without avoidance the plume share on the person FAILs, with it PASSes while a plume remains, only the S07_SH008 plume has the new keys).
 - `Shot(person_mask=...)` / `--person-mask`: extra person zones for the measurement (image, non-zero = person), unioned with silhouettes and faces; it never changes the picture. Run metrics come from `qa/plume_zones.py` (NOT_RUN without a person mask).
+- S07_SH006 plume: `lean` + `avoid` too (a plume with `avoid=True` refuses to render without person zones). On that photo the brazier stands between soldiers, so lean alone does not clear them (person share 12-18 % at every lean tried); avoid brings it to ~0 with the plume still 2.8-3.5 % of the frame. The person mask came from Mask2Former (free, local), not committed.
 - Not run: the real S07_SH008 photo through the CLI (inputs are on HF), the other three photos, any gate wiring.
 
 

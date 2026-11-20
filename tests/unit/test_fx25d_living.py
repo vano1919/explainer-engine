@@ -65,12 +65,21 @@ def test_without_avoidance_the_plume_lies_on_the_person_and_with_it_it_does_not(
     assert PZ.plume_total_share(off.plume_a)["status"] == "PASS"
 
 
-def test_only_the_s07_sh008_plume_reads_the_new_keys():
-    assert LV.INV["S07_SH008"]["smoke"][0]["avoid"] is True and LV.INV["S07_SH008"]["smoke"][0]["lean"] > 0
+def test_only_the_s07_plumes_read_the_new_keys():
+    for k in ("S07_SH008", "S07_SH006"):
+        sm = LV.INV[k]["smoke"][0]
+        assert sm["avoid"] is True and sm["lean"] > 0, k
     for k, inv in LV.INV.items():
         for sm in inv["smoke"]:
-            if k != "S07_SH008":
+            if k not in ("S07_SH008", "S07_SH006"):
                 assert "avoid" not in sm and "lean" not in sm, k
+
+
+def test_a_plume_that_must_avoid_people_refuses_to_render_without_person_zones():
+    inv = copy.deepcopy(LV.INV["S07_SH006"]); inv["persons"] = []
+    with pytest.raises(ValueError):
+        LV.Shot("S07_SH006", 1.0, False, False, pic=_pic(), depth=_depth(), inventory=inv)
+    LV.Shot("S07_SH006", 1.0, False, False, pic=_pic(), depth=_depth(), inventory=inv, person_mask=np.full((90, 160), 255, np.uint8))
 
 
 def test_an_extra_person_mask_is_measurement_only_when_no_plume_avoids_it():

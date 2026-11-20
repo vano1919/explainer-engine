@@ -63,7 +63,7 @@ def box(b): return (int(b[0] * SX), int(b[1] * SY), int(b[2] * SX), int(b[3] * S
 INV = {
     "S07_SH006": dict(
         fires=[dict(box=(300, 520, 440, 720), src=(360, 545), spread=28, embers=60, R=2.4)],
-        smoke=[dict(src=(360, 520), spread=0.30, a=2.6, w=46, h=380, depth=7.0, soft=True, v2=True, peak=0.9, hole=0.10)],
+        smoke=[dict(src=(360, 520), spread=0.30, a=2.6, w=46, h=380, depth=7.0, soft=True, v2=True, peak=0.9, hole=0.10, lean=SMOKE_LEAN, avoid=True)],   # smoke2d: avoid needs a person mask (--person-mask): the brazier stands between soldiers, lean alone does not clear them
         sway_trees=[dict(box=(800, 40, 970, 290), base=285, amp=3.2)], sway_cloth=[dict(box=(940, 90, 1110, 470), amp=1.6, y0=260)],
         candles=[1], wind=(1.0, 0.0), snow=1.0, mist=0.22, sky_amp=1.2),
     "S04_SH008": dict(
@@ -171,6 +171,8 @@ class Shot:
             if pm_in.ndim == 3: pm_in = pm_in.max(axis=2)
             self.pmask = np.maximum(self.pmask, (cv2.resize(pm_in.astype(np.uint8), (W, H), interpolation=cv2.INTER_NEAREST) > 0).astype(np.uint8))
         self.pmask_f = self.pmask.astype(np.float32)
+        if any(sm.get("avoid") for sm in self.inv["smoke"]) and not self.pmask.any():
+            raise ValueError("a plume with avoid=True needs person zones (inventory 'persons', faces or person_mask): refusing to render it onto people unchecked")
         self.phide = np.clip(cv2.GaussianBlur(cv2.dilate(self.pmask, np.ones((7, 7), np.uint8)).astype(np.float32), (0, 0), 2.5) * 1.15, 0, 1)   # nearer person covers the plume (feathered, 3 px grown)
         self.plume_a = np.zeros((H, W), np.float32)
         self.z0 = 1.0; self.edge = None
