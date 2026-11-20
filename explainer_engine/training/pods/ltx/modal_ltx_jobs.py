@@ -1227,7 +1227,7 @@ if modal is not None:
         return bad
 
     if TIMEOUTS:
-        GPU_KW = dict(image=image, gpu=LAUNCH["gpu"] + "!", cpu=(float(LAUNCH["cpu"]),) * 2,
+        GPU_KW = dict(image=image, gpu=LAUNCH["gpu"] + ("!" if LAUNCH["gpu"] == "H100" else ""), cpu=(float(LAUNCH["cpu"]),) * 2,
                       memory=(LAUNCH["memory_gib"] * 1024,) * 2, retries=0, volumes={"/w": vol}, secrets=secrets,
                       scaledown_window=LAUNCH["scaledown_window_s"], startup_timeout=LAUNCH["startup_timeout_s"])
 
