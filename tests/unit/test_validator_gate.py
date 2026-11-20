@@ -14,7 +14,7 @@ from explainer_engine.qa import validator_gate as VG
 EXAMPLES = Path(__file__).resolve().parents[2] / "examples"
 IDS = ["shift_line_id", "stated_theme", "claim_ledger", "camera_cards", "camera_clips", "ltx_prompts", "continuity_cards",
        "language", "master_size", "attempt_ranking", "first_shot",
-       "opening_density"]
+       "opening_density", "dead_air"]
 GEO = "ა"
 
 
@@ -239,3 +239,12 @@ def test_opening_density_runs_on_a_timed_json(tmp_path):
     assert r["status"] == "FAIL" and "BP-40" in r["detail"]
     write(tmp_path, "timed.json", {"duration": 60.0, "shots": [{"start": i * 4.0, "end": i * 4.0 + 4.0} for i in range(15)]})
     assert by_id(VG.run_all(tmp_path))["opening_density"]["status"] == "PASS"
+
+
+def test_dead_air_runs_on_a_timed_json(tmp_path):
+    assert by_id(VG.run_all(tmp_path))["dead_air"]["status"] == "NOT_RUN"
+    write(tmp_path, "timed.json", {"duration": 100.0, "shots": [{"start": 0.0, "end": 100.0}], "lines": [{"start": 0.0, "end": 100.0}]})
+    assert by_id(VG.run_all(tmp_path))["dead_air"]["status"] == "FAIL"
+    write(tmp_path, "timed.json", {"duration": 100.0, "shots": [{"start": i * 5.0, "end": i * 5.0 + 5.0} for i in range(20)],
+                                    "lines": [{"start": 0.0, "end": 100.0}]})
+    assert by_id(VG.run_all(tmp_path))["dead_air"]["status"] == "PASS"

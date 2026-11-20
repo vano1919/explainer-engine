@@ -303,12 +303,18 @@ def run_opening_density(day: Path) -> dict:
     return _timed_row(day, "opening_density", "opening (30 s) keeps changing", opening_density.check_timed)
 
 
+def run_dead_air(day: Path) -> dict:
+    from explainer_engine.qa import dead_air
+    return _timed_row(day, "dead_air", "no dead air under narration", dead_air.check_timed)
+
+
 REGISTRY: list[tuple[str, Callable[[Path], dict]]] = [
     ("shift_line_id", run_shift_line_id), ("stated_theme", run_stated_theme), ("claim_ledger", run_claim_ledger),
     ("camera_cards", run_camera_cards), ("camera_clips", run_camera_clips), ("ltx_prompts", run_ltx_prompts),
     ("continuity_cards", run_continuity_cards), ("language", run_language), ("master_size", run_master_size),
     ("attempt_ranking", run_attempt_ranking), ("first_shot", run_first_shot),
     ("opening_density", run_opening_density),
+    ("dead_air", run_dead_air),
 ]
 
 
