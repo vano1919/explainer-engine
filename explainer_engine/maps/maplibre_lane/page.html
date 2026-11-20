@@ -485,6 +485,7 @@
           document.getElementById("fin-grain").style.backgroundImage = `url("data:image/svg+xml;utf8,${svg}")`;
         }
         const counterValEl = document.getElementById("hud-counter-value");
+        document.getElementById("hud-counter").style.display = state.counter === null || state.counter === undefined ? "none" : "";
         counterValEl.textContent = Number(state.counter || 0).toLocaleString("en-US");
         const dateEl = document.getElementById("hud-date-chip");
         if (state.date) {
