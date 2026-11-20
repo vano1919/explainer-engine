@@ -1,0 +1,14 @@
+{
+  "schema": "ltx_prompt_tolerances/1",
+  "max_words": {
+    "value": 200,
+    "kind": "hypothesis",
+    "status": "OPEN",
+    "note": "LTX-2 README, one source type; REVIEW-level default, not binding until the owner has seen it"
+  },
+  "non_action_openers": ["the", "a", "an", "this", "there", "in", "it"],
+  "forbidden_camera_phrases": [
+    "orbit", "orbits", "orbiting", "whip-pan", "whip pan", "crash zoom", "rack focus", "dolly", "arc shot", "360",
+    "static camera", "locked camera", "locked-off camera", "camera does not move"
+  ]
+}

@@ -187,3 +187,103 @@ def test_cli_refuses_prompts_on_fail(doc, tmp_path, capsys):
 def test_the_example_style_line_passes_the_d80_trigger_check(doc):
     assert doc["style_line"] == lora_rules.trigger()
     assert [f for f in style_prompt.check(doc["style_line"]) if f["severity"] == "FAIL"] == []
+
+
+# --- CT-17..CT-20 (L10: identity bible, geography ids, film id) ---
+
+def _with_identity(d):
+    d["film_id"] = "owner_film_01"
+    for c in d["cast"].values():
+        c["identity"] = {"canon_frame": "canon/" + c["name"] + ".png", "locked": ["face shape"]}
+    return d
+
+
+def test_old_card_without_new_fields_is_unchanged(doc):
+    assert "CT-17" not in rules(cc.check(doc)) and not cc.identity_findings(doc)
+
+
+def test_identity_card_passes(doc):
+    assert not [f for f in cc.check(_with_identity(doc)) if f["rule"] in {"CT-17", "CT-18", "CT-19", "CT-20"}]
+
+
+def test_new_fields_need_a_film_id(doc):
+    d = _with_identity(doc)
+    del d["film_id"]
+    assert "CT-17" in rules(cc.check(d))
+    d2 = copy.deepcopy(doc)
+    d2["location"]["geo_id"] = "tent_a"
+    assert "CT-17" in rules(cc.check(d2))
+
+
+def test_film_id_must_match_the_episode_film(doc):
+    d = _with_identity(doc)
+    assert "CT-17" not in rules(cc.check(d, film_id="owner_film_01"))
+    assert "CT-17" in rules(cc.check(d, film_id="other_film"))
+
+
+def test_bad_film_id_shape_is_a_schema_failure(doc):
+    d = _with_identity(doc)
+    d["film_id"] = "Owner Film"
+    assert rules(cc.check(d)) == {"CT-01"}
+
+
+def test_every_person_on_screen_needs_an_identity(doc):
+    d = _with_identity(doc)
+    shown = d["shots"][0]["characters"][0]["id"]
+    del d["cast"][shown]["identity"]
+    assert any(f["rule"] == "CT-18" and shown in f["detail"] for f in cc.check(d))
+
+
+def test_identity_needs_canon_frame_and_locked_list(doc):
+    d = _with_identity(doc)
+    cid = next(iter(d["cast"]))
+    del d["cast"][cid]["identity"]["canon_frame"]
+    assert rules(cc.check(d)) == {"CT-01"}
+    d = _with_identity(copy.deepcopy(doc))
+    d["cast"][cid]["identity"]["locked"] = []
+    assert any(f["rule"] == "CT-18" and "locked" in f["detail"] for f in cc.check(d))
+
+
+def test_trait_cannot_be_locked_and_flexible(doc):
+    d = _with_identity(doc)
+    cid = next(iter(d["cast"]))
+    d["cast"][cid]["identity"]["flexible"] = ["face shape"]
+    assert "CT-19" in rules(cc.check(d))
+
+
+def test_geography_inheritance(doc):
+    d = copy.deepcopy(doc)
+    d["film_id"] = "owner_film_01"
+    d["location"]["inherits_from"] = "camp"
+    assert "CT-20" in rules(cc.check(d))                     # no own geo_id
+    d["location"]["geo_id"] = "camp"
+    assert "CT-20" in rules(cc.check(d))                     # itself
+    d["location"]["geo_id"] = "tent"
+    assert "CT-20" not in rules(cc.check(d))                 # known ids not given: not compared
+    assert "CT-20" not in rules(cc.check(d, known_geo_ids={"camp"}))
+    assert "CT-20" in rules(cc.check(d, known_geo_ids={"hill"}))
+
+
+def test_identity_text_goes_into_the_prompt(doc):
+    d = _with_identity(copy.deepcopy(doc))
+    cid = d["shots"][1]["characters"][0]["id"]
+    d["cast"][cid]["identity"].update({"locked": ["square jaw", "grey eyes"], "anchors": ["scar on left cheek"],
+                                       "flexible": ["hair length"], "never": ["beard"]})
+    prompt = cc.compose_prompt(d, d["shots"][1])
+    assert "(locked: square jaw, grey eyes; anchors: scar on left cheek; avoid: beard)" in prompt
+    assert "hair length" not in prompt
+    assert d["cast"][cid]["description"] in prompt
+
+
+def test_cards_without_identity_give_the_exact_old_prompt(doc):
+    import copy as _c
+    d = _c.deepcopy(doc)
+    d["film_id"] = "owner_film_01"            # film id alone changes nothing in the prompt
+    before = [cc.compose_prompt(doc, s) for s in doc["shots"]]
+    assert [cc.compose_prompt(d, s) for s in d["shots"]] == before
+    assert all("locked:" not in p for p in before)
+    # frozen: sha256 of the example's prompts as assembled before CT-17..CT-20 (byte-identical)
+    import hashlib
+    joined = "\n".join(cc.compose_prompt(doc, s) for s in doc["shots"])
+    assert hashlib.sha256(joined.encode()).hexdigest() == \
+        "7b18c19d8790cf4ce61c865fe8eaa9eadc44a53c74678dcbe02843628941ed8c"

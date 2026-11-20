@@ -15,6 +15,7 @@
       "properties": {"scene_set": {"type": "object", "required": ["path", "sha256"], "additionalProperties": false,
         "properties": {"path": {"type": "string", "minLength": 1}, "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}}}
     },
+    "film_id": {"type": "string", "pattern": "^[a-z0-9_]+$", "description": "the episode's film id (episode_film/1 film_id); required by CT-17 when identity, geo_id or inherits_from is used"},
     "scene_id": {"type": "string", "minLength": 1},
     "model": {"type": "string", "description": "a key of continuity.MODEL_REFS: the picture model these cards are for"},
     "style_line": {"type": "string", "minLength": 10, "description": "the global style line, verbatim in every prompt"},
@@ -24,6 +25,8 @@
       "additionalProperties": false,
       "properties": {
         "id": {"type": "string"},
+        "geo_id": {"type": "string", "pattern": "^[a-z0-9_]+$", "description": "geography id of this place, stable across scenes (CT-20)"},
+        "inherits_from": {"type": "string", "pattern": "^[a-z0-9_]+$", "description": "the geo_id of the place this one continues (CT-20)"},
         "where_when": {"type": "string", "pattern": "^[^/]+ / [^/]+$", "description": "H-B BG note: 'Castle hallway / Night'"},
         "int_ext": {"enum": ["INT", "EXT"]},
         "time_of_day": {"enum": ["dawn", "day", "dusk", "night"]},
@@ -53,7 +56,20 @@
           "name": {"type": "string", "description": "a cast tag for the prompt, never a story name (KP rules)"},
           "description": {"type": "string", "minLength": 10, "description": "identity text, copied verbatim into every prompt"},
           "sheet": {"type": "string", "description": "model sheet picture: the character's reference"},
-          "costumes": {"type": "object", "additionalProperties": {"type": "string"}}
+          "costumes": {"type": "object", "additionalProperties": {"type": "string"}},
+          "identity": {
+            "type": "object",
+            "description": "identity bible of one person (CT-18, CT-19): what must never drift, what may, what is wrong for this person",
+            "required": ["canon_frame", "locked"],
+            "additionalProperties": false,
+            "properties": {
+              "canon_frame": {"type": "string", "minLength": 1, "description": "the person's one canon picture, approved once and never regenerated"},
+              "anchors": {"$ref": "#/$defs/text_list"},
+              "locked": {"$ref": "#/$defs/text_list"},
+              "flexible": {"$ref": "#/$defs/text_list"},
+              "never": {"$ref": "#/$defs/text_list"}
+            }
+          }
         }
       }
     },
@@ -62,6 +78,7 @@
   "allOf": [{"if": {"properties": {"schema": {"const": "continuity_card/2"}}, "required": ["schema"]},
              "then": {"required": ["derived_from"]}, "else": {"not": {"required": ["derived_from"]}}}],
   "$defs": {
+    "text_list": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
     "light_dir": {"enum": ["left", "right", "top", "back", "front"]},
     "side": {"enum": ["left", "centre", "right"]},
     "landmark_def": {
