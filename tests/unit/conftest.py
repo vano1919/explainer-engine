@@ -53,13 +53,16 @@ def word(tmp_path, monkeypatch):
     return add
 
 
-def make_offer(entry="smoke", gpu="H100", worker="explainer_engine/training/pods/ltx/modal_ltx_jobs.py", now=None):
+def make_offer(entry="smoke", gpu=None, worker="explainer_engine/training/pods/ltx/modal_ltx_jobs.py", now=None):
     """CH-07: a passing ``paid_offer/1`` (free credit first, today's cards, two priced combinations, the cheapest chosen)."""
     import datetime as dt
 
     from explainer_engine.cloud import paid_offer as P
     now = now or dt.datetime.now(dt.timezone.utc)
     t = P._iso(now)
+    from explainer_engine.training.pods.ltx import modal_ltx_jobs as L   # the offer's card is the launch file's card (CH-07)
+    gpu = gpu or str(L.load_launch()["gpu"]).rstrip("!")
+    other = "H100" if gpu != "H100" else "A100-80GB"
     setup = {"cpu": 8, "memory_gib": 96, "model_loads_per_container": 1, "containers": 1, "scenes": 1, "clips": 4,
              "clip_s": [5, 5, 5, 5], "generated_s": 20, "scaledown_s": 2}
     offer = {
@@ -72,7 +75,7 @@ def make_offer(entry="smoke", gpu="H100", worker="explainer_engine/training/pods
                           {"gpu": "L40S", "usd_s": 0.000542, "vram_gb": 48}]},
         "need": {"vram_gb": 80, "basis": "known", "ref": "LTX-2.5 22B ran on 80 GB (the battle run)"},
         "combos": [dict(setup, id="a", gpu=gpu, gpu_s=200, worst_gpu_s=300, speed_basis="measured", speed_ref="battle run"),
-                   dict(setup, id="b", gpu="A100-80GB", gpu_s=400, worst_gpu_s=600, speed_basis="estimate",
+                   dict(setup, id="b", gpu=other, gpu_s=400, worst_gpu_s=600, speed_basis="estimate",
                         speed_ref="modal_schedule.GPUS speed 0.6")],
         "chosen": "a", "cap_usd": 1.0, "watchdog": {"model": "haiku", "effort": "low", "every_min": 2},
     }

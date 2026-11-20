@@ -30,7 +30,7 @@ STATUS = json.dumps({"included": [
 
 
 def _offer(**kw):
-    o = make_offer(now=NOW)
+    o = make_offer(now=NOW, gpu="H100")   # these cases are about the offer rules, not the launch file card
     o.update(kw)
     return P.price(o)
 
