@@ -210,3 +210,33 @@ def test_a_pipe_inside_a_cell_does_not_shift_the_ledger_columns():
     m = M.parse_ledger(text)
     assert m["C-01"]["type"] is None and m["C-01"]["verdict"] is None
     assert m["C-02"]["type"] is None
+
+
+# ---- boundary tests (2026-11-20 mutation spot-check: CL-03 `or`, CL-06 `>`, CL-07b `<` survived) ----
+
+def test_cl03_absolute_word_fails_when_either_opened_or_link_is_missing():
+    """CL-03: not opened OR no source link. Opened but unlinked, and linked but not opened, each fail on their own."""
+    opened_no_link = mk(row("C-14", "He was never beaten", opened="yes", source="a book, no link"))
+    f = rules(chk(script(ln("x", "C-14")), opened_no_link), "CL-03")
+    assert f and f[0]["severity"] == "FAIL" and "linked=False" in f[0]["detail"]
+    linked_not_opened = mk(row("C-14", "He was never beaten", opened="no", source="a book https://e.org/a"))
+    f = rules(chk(script(ln("x", "C-14")), linked_not_opened), "CL-03")
+    assert f and f[0]["severity"] == "FAIL" and "opened=False" in f[0]["detail"]
+
+
+def test_cl06_a_checked_date_of_today_passes_and_tomorrow_fails():
+    today = rules(chk(script(ln("x")), mk(row("C-01", "fire", checked=TODAY.isoformat()))), "CL-06")
+    assert not today
+    tomorrow = rules(chk(script(ln("x")), mk(row("C-01", "fire", checked="2026-11-21"))), "CL-06")
+    assert tomorrow and tomorrow[0]["severity"] == "FAIL"
+
+
+def test_cl07b_overlap_exactly_at_the_minimum_is_not_flagged():
+    claim, line = "The army crossed the frozen river at night", "The army crossed the road"
+    c = mk(row("C-07", claim))
+    score = M._overlap_score(line, claim)
+    assert 0.0 < score < 1.0
+    at = rules(chk(script(ln(line, "C-07")), c, rules={"support_overlap_min": score}), "CL-07b")
+    assert not at                                                               # equal to the minimum: not below it
+    above = rules(chk(script(ln(line, "C-07")), c, rules={"support_overlap_min": score + 0.01}), "CL-07b")
+    assert above and above[0]["severity"] == "REVIEW"

@@ -173,3 +173,27 @@ def test_findings_quote_the_line_and_address():
     d = doc(seg("S01", [CHAR("a"), CHAR("Nothing relevant happens here at all")], "safe -> hunted", "S01#2"))
     f = rules(M.check(d), "SL-06")[0]
     assert "S01#2" in f["detail"] and "Nothing relevant" in f["detail"] and f["where"] == "S01#2"
+
+
+# ---- boundary tests (2026-11-20 mutation spot-check: these two survived the first test set) ----
+
+def test_sl06_overlap_exactly_at_the_minimum_is_not_flagged_and_just_above_it_is(tmp_path):
+    """SL-06 flags overlap strictly BELOW the minimum; the rules file is injected so the score can be made exact."""
+    after_state, line_text = "gate opened", "The gate is shut"      # content-word overlap is exactly 0.5
+    d = doc(seg("S01", [NARR("a"), CHAR(line_text)], f"locked -> {after_state}", "S01#2"))
+    assert M._overlap_score(after_state, line_text) == 0.5
+
+    def rules_file(minimum):
+        p = tmp_path / f"r{minimum}.json"
+        p.write_text(json.dumps({"after_overlap_min": minimum, "neighbour_window": 0}))
+        return p
+    assert not rules(M.check(d, rules_path=rules_file(0.5)), "SL-06")          # equal: not below the minimum
+    assert rules(M.check(d, rules_path=rules_file(0.51)), "SL-06")             # just above the score: flagged
+    assert not rules(M.check(d, rules_path=rules_file(0.49)), "SL-06")
+
+
+def test_sl01_empty_shift_line_is_fail_under_strict_and_review_otherwise():
+    d = doc(seg("S01", [NARR("a"), NARR("b")], "safe -> hunted", []))
+    assert [x["severity"] for x in rules(M.check(d), "SL-01")] == ["REVIEW"]
+    f = rules(M.check(d, strict=True), "SL-01")
+    assert [x["severity"] for x in f] == ["FAIL"] and "empty" in f[0]["detail"]
