@@ -97,18 +97,47 @@ def living_motion(path) -> dict:
 living_motion.kinds = (".mp4", ".mov", ".webm", ".mkv")
 
 
+def gemini_task_report(path) -> dict:
+    """Rule 19 (OR-V35, the owner's memory rule: Gemini photos only in Task mode, 6 per batch) on the pasted answer of a Gemini turn, a
+    text file holding a ``T0 REPORT`` or a ``BATCH REPORT`` (the forms of ``gemini_task/report.py``; a structure that does not parse raises,
+    so the send gate BLOCKs, it is never a pass).
+
+    - **Count**: the number of picture lines of the batch must not exceed ``imagegen.turn_pack.DEFAULT_TURN`` (6); a shorter batch passes
+      with its number (a queue's last batch or a limit stop is shorter and the report cannot say which).
+    - **Mode**: only the T0 report carries ``MODE:`` (``MODEL: <name> | MODE: <name>``): FAIL when it does not name Task. A ``BATCH REPORT``
+      has no mode line, so it is NOT_RUN when its count is fine (the requirement is only half measured) and FAIL when the count is over (the mode of a batch is known only from the T0 report of the same run)."""
+    from explainer_engine.gemini_task import report as RP
+    from explainer_engine.imagegen import turn_pack as TP
+    text = Path(path).read_text(encoding="utf-8")
+    t0 = "T0 REPORT" in text.upper()
+    rep = RP.parse_t0_report(text) if t0 else {"batch": RP.parse_batch_report(text), "mode": None}
+    n = len(rep["batch"]["items"])
+    limit = int(TP.DEFAULT_TURN)
+    if t0 and "task" not in (rep["mode"] or "").lower():
+        return {"status": FAIL, "value": n, "detail": f"MODE is {rep['mode']!r}, rule 19 allows Gemini photos only in Task mode"}
+    if n > limit:
+        return {"status": FAIL, "value": n, "detail": f"{n} pictures in one batch, rule 19 allows {limit}"}
+    if not t0:
+        return {"status": NOT_RUN, "value": n, "detail": f"{n} of at most {limit} pictures (counted), but a BATCH REPORT carries no MODE line, "
+                "so rule 19's Task mode is not measured: send the T0 report of the same run too"}
+    return {"status": PASS, "value": n, "detail": f"{n} of at most {limit} pictures; mode {rep['mode']}"}
+
+
+gemini_task_report.kinds = (".txt", ".md")
+
+
 def main(argv=None) -> int:
-    """``python -m explainer_engine.qa.send_validators living_motion <clip.mp4>...``: one line per clip, exit 1 on any FAIL, 2 on an error."""
+    """``python -m explainer_engine.qa.send_validators living_motion|gemini_task_report <file>...``: one line per clip, exit 1 on any FAIL, 2 on an error."""
     import argparse
     import sys
     ap = argparse.ArgumentParser(prog="python -m explainer_engine.qa.send_validators")
-    ap.add_argument("validator", choices=("living_motion",))
+    ap.add_argument("validator", choices=("living_motion", "gemini_task_report"))
     ap.add_argument("files", nargs="+")
     a = ap.parse_args(argv)
     worst = 0
     for f in a.files:
         try:
-            r = living_motion(f)
+            r = {"living_motion": living_motion, "gemini_task_report": gemini_task_report}[a.validator](f)
         except Exception as exc:                       # an undecodable file is an error, never a pass
             print(f"BLOCK {f}: {type(exc).__name__}: {exc}", file=sys.stderr)
             worst = max(worst, 2)

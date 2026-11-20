@@ -135,3 +135,44 @@ def test_the_command_line_prints_a_line_per_clip_and_exits_1_on_a_fail(tmp_path,
     junk = tmp_path / "junk.mp4"
     junk.write_bytes(b"x")
     assert V.main(["living_motion", str(junk)]) == 2
+
+
+# ---- rule 19 (OR-V35): Gemini photos only in Task mode, 6 per batch ---------------------------------------------------------------
+
+def _batch(n, batch="3"):
+    lines = [f"BATCH REPORT {batch}"] + [f"{k} | p{k:02d} | MADE | refs: 1 | prompt: AS GIVEN | note: -" for k in range(1, n + 1)]
+    return "\n".join(lines + [f"MADE {n} of {n}"])
+
+
+def _t0(mode, n=6, model="Gemini 3.8 Flash"):
+    return f"T0 REPORT abcdef12\nMODEL: {model} | MODE: {mode}\nDRIVE READ: OK \"v1\"\nDRIVE WRITE: OK x\n{_batch(n, '0')}\nLIMIT: not reached"
+
+
+def _f(tmp_path, text, name="a.txt"):
+    p = tmp_path / name
+    p.write_text(text, encoding="utf-8")
+    return p
+
+
+def test_a_t0_report_in_task_mode_with_six_pictures_passes(tmp_path):
+    r = V.gemini_task_report(_f(tmp_path, _t0("Task")))
+    assert r["status"] == "PASS" and r["value"] == 6
+
+
+def test_gemini_task_report_fails_outside_task_mode_and_over_six(tmp_path):                       # the negative test of OR-V35
+    r = V.gemini_task_report(_f(tmp_path, _t0("Chat")))
+    assert r["status"] == "FAIL" and "Task mode" in r["detail"]
+    r = V.gemini_task_report(_f(tmp_path, _batch(7), "b.txt"))
+    assert r["status"] == "FAIL" and r["value"] == 7
+
+
+def test_a_batch_report_counts_but_its_mode_is_not_measured(tmp_path):
+    r = V.gemini_task_report(_f(tmp_path, _batch(6)))
+    assert r["status"] == "NOT_RUN" and r["value"] == 6 and "no MODE line" in r["detail"]
+    assert V.gemini_task_report(_f(tmp_path, _batch(4), "c.txt"))["status"] == "NOT_RUN"           # a shorter batch is not a failure
+
+
+def test_a_report_that_does_not_parse_raises_so_the_send_gate_blocks(tmp_path):
+    with pytest.raises(Exception):
+        V.gemini_task_report(_f(tmp_path, "hello"))
+    assert V.gemini_task_report.kinds == (".txt", ".md")
