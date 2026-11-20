@@ -3929,3 +3929,8 @@ No number is written in any of them; tests `test_first_shot.py`, `test_opening_d
 - Tests: `tests/unit/test_fx25d_living.py` (inputs required, no machine paths, a frame is a pure function of its number, synthetic person next to the
   source: without avoidance the plume share on the person FAILs, with it PASSes while a plume remains, only the S07_SH008 plume has the new keys).
 - Not run: the real S07_SH008 photo through the CLI (inputs are on HF), the other three photos, any gate wiring.
+
+## 2026-11-20 — publish auth hygiene (L32)
+- `auth` / `auth-finish` write `tools/youtube/token.b64.txt` only with `--export-env` (the printed text names it only then); `load_token` logs one line naming the source (session file or `YOUTUBE_TOKEN_B64`), never the token; the env variable and its code path stay (owner card 2026-11-20 21:01).
+- Tests: `tests/unit/test_youtube_auth_hygiene.py` (flag on/off, source logged, no tracked `tools/` token or `pending.json`, `.gitignore` covers `tools/youtube/`).
+- Not done: the registry exception row to OR-P03 (needs the creator's typed word); the real sign-in flow was not run.
