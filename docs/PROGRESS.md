@@ -3821,3 +3821,22 @@ validators read only files the pipeline already writes (listed in the module doc
 `story/production_script.json`, `claim_map.md`, `narration*.txt`, `metadata.md`, `publish.json` (viewer fields only), `prompts.json`,
 continuity cards found by their `schema`, `video.mp4`, `attempts.json`. Tests: `tests/unit/test_validator_gate.py` (14): each validator is called from the gate, empty folder is WAIT, a crash is
 NOT_RUN, FAIL/REVIEW/NOT_RUN fold as above. The animated route's gate list is not changed.
+
+## 2026-11-20 — L27: PC-06 counts the description in bytes and forbids `<` `>`
+- Fix: `qa/publish_check.py` PC-06 compared the description in characters; YouTube Data API limits it to 5000 bytes
+  (an em dash is 3 bytes, so 2600 of them pass a character check and fail the upload). Now `DESCRIPTION_MAX_BYTES` is compared
+  with the UTF-8 length, the message says "bytes", and `<` / `>` in title or description FAIL (the API refuses them). Title stays
+  100 characters. `publish/plan.py::field_findings` already counted bytes and forbade the brackets: unchanged.
+- Source kind: platform policy (YouTube Data API field limits for `videos.insert` snippet), not a BP threshold; read 2026-11-20.
+- Tests: `tests/unit/test_publish_check.py` (4900 ASCII passes, 2600 em dashes fails, 5000 bytes passes, 5001 fails, `<` in the
+  description fails, `>` in the title fails, title 100 passes / 101 fails). Doc: `docs/QA_SPECIFICATION.md` PC-06.
+
+## 2026-11-20 — claim_ledger: a '|' inside a claim no longer shifts the ledger columns
+
+The G-12 dry run on `examples/syndicate_wars_ep1` showed CL-02 FAIL "invalid type 'official'" on claim C-01. 'official' is a
+label of that claim map, not a type: the claim text holds an unescaped `|` (Xbox Series X|S), the row had one cell more than
+the header, and the positional fallback read a shifted cell as the type (and another as the verdict). A row with more cells
+than the header now keeps its ledger fields empty. Test: `test_a_pipe_inside_a_cell_does_not_shift_the_ledger_columns`. The
+ledger's type list (factual, implied, opinion, prediction, statistical) is unchanged; the repo also documents two other claim
+vocabularies (script editorial claim `type` fact / estimate / interpretation / allegation / speculation; claim-map `label`), which are
+different fields.

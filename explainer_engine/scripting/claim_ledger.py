@@ -241,6 +241,10 @@ def parse_ledger(text: str) -> dict[str, dict[str, Any]]:
         if header_cols and len(header_cols) >= len(cells):
             for idx, col_name in enumerate(header_cols):
                 row_values[col_name] = cells[idx]
+        elif header_cols:
+            # more cells than the header has columns: a '|' inside a cell shifted them, so no column can be trusted.
+            # (The positional guess below once read 'official' from a shifted cell as the claim's type, G-12 dry run.)
+            continue
         else:
             # Positional fallback for 4 base columns + up to 6 optional ledger columns:
             # [id, sentence/claim, source, notes/link, type, opened, verdict, confidence, checked, counter_source]

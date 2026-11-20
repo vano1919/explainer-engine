@@ -197,3 +197,16 @@ def test_findings_use_the_repo_shape():
 def test_no_network_and_no_llm_call():
     src = (Path(M.__file__)).read_text()
     assert not re.search(r"^\s*(import|from)\s+(requests|urllib|http|socket|anthropic|openai|httpx)", src, re.M)
+
+
+def test_a_pipe_inside_a_cell_does_not_shift_the_ledger_columns():
+    """A row with more cells than the header (an unescaped '|' in a claim) keeps its ledger fields empty instead of
+    reading a neighbouring cell such as a label ('official') as its type."""
+    text = (
+        "| id | claim | tier | label | verified | note |\n|---|---|---|---|---|---|\n"
+        "| C-01 | Page says PS5, Xbox Series X|S | primary_read | official | yes | first-hand |\n"
+        "| C-02 | Plain claim | primary_read | official | yes | |\n"
+    )
+    m = M.parse_ledger(text)
+    assert m["C-01"]["type"] is None and m["C-01"]["verdict"] is None
+    assert m["C-02"]["type"] is None
