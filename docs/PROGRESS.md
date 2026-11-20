@@ -3810,3 +3810,13 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 - Tests: `tests/unit/test_val_effect_audibility.py` (margin follows the level, window position, silent effect, bad input,
   NOT_RUN without limits, judged with limits, step click found and clean tone not, long treble burst not concentrated).
 - Not run on episode1: its mix does not exist as a file (only `narration.wav`).
+
+## 2026-11-20 — Plume zone measurements (`qa/plume_zones.py`), free, hypothesis limits
+- New pure module, numpy only: `plume_in_person_share` (plume alpha on person zones / total plume alpha), `plume_total_share` (share of frame
+  pixels with visible plume) and `check_frames` (worst status wins). Result `{status, value, detail}`; NOT_RUN, never PASS, when the person mask
+  is missing or empty, the shapes differ, the alpha is bad, or the plume has zero total alpha (0/0): a plume cut away by the silhouette must not
+  pass by construction.
+- Limits (person share at most 5 %, total at least 2 %, visible alpha 0.05) are in `qa/plume_zones_tolerances.json` with `kind: hypothesis`:
+  the lead's numbers for the smoke clips, REVIEW-level default, not binding until the owner has seen it. Nothing is registered in `sourced_rules.json`.
+- Tests: `tests/unit/test_plume_zones.py` (synthetic arrays only: outside = 0 PASS, half inside = 50 % FAIL, empty plume / no mask / empty mask /
+  shape mismatch / bad alpha NOT_RUN, under 2 % flagged). Not run: on real renders (the S07_SH008 clips are not in the repo), not wired into any gate or renderer.
