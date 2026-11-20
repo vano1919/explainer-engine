@@ -3746,3 +3746,10 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 
 ## 2026-11-01 — `runpod create --datacenters` (v2 `dataCenterIds`)
 - From the live v2 OpenAPI (`api.runpod.io/v2/openapi.json`): `CreatePodRequest.dataCenterIds` = preferred sites; v2 has one `gpu.id` per request and no priority fields. New flag `--datacenters A,B,...` sets it. P12b measurement pod tried on RTX 4090 SECURE in EU-RO-1, EU-CZ-1, US-IL-1, EUR-IS-1/2 with CUDA floor 12.4: still "no instances available". Costs $0.
+
+## 2026-11-20 — MapLibre lane (G-04, group 3 maps): offline shots with the five camera moves and per-episode map styles
+- New: `explainer_engine/maps/maplibre_spec.py` (shot spec, camera state, schedule), `hud_layout.py` (HUD placement, colour-blind contrast), `maplibre_lane/` (`render.py`, `fetch_tiles.py`, `page.html`, `styles/`, README). Camera: truck, zoom_in, zoom_out, truck_zoom_in, truck_zoom_out only; static and orbit are refused by the spec check.
+- First real render ($0, sandbox Chromium + software GL): two 6 s clips at 2560x1440 / 24 fps, truck_zoom_in and zoom_out, plain and `1917_film`, HF `explainer-engine/comparisons/L15/g3_maps_wave2_render_2026-11-20/`. Frames not empty, camera moves on every frame, HUD clear of the line.
+- Fixed from that render: terrain hillshade hang (DEM source now gets the real max zoom and bounds, map idle has a 15 s timeout), HUD and line widths scale with the frame width (designed for 1280), `fetch_tiles` merges `manifest.json` instead of overwriting it, Playwright import is optional so the module imports without it.
+- Creator's rule 2026-11-20: every episode has its own map style. `style_preset` in the shot spec, presets `neutral` and `1917_film`; how to add one: `maplibre_lane/README.md`.
+- Tests: 244 in `tests/unit/test_maps_*.py` (hud_layout, maplibre_spec, camera, lane, presets, fetch manifest). `vendor/maplibre-gl.js|css` are not committed (README says where they come from).
