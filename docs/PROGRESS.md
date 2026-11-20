@@ -3766,3 +3766,11 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
   `tests/unit/test_episode_film.py` + `tests/fixtures/episode_film/` from the acceptance list (neither saw the other). Review: one bug in the module (an empty string was counted twice as a problem,
   the brief asks for exactly one); patched; 5 tests added by the reviewing thread (the original 20 are untouched). 25 tests pass; the original module failed 2 of the 25.
 - No default film, preset or fallback anywhere; stdlib only; nothing written to disk. Not yet read by any layer (wiring is the lead's step). Cost: $0.00.
+
+## 2026-11-20 — G-07 LTX prompt lint (Claude wrote it; Gemini's two rounds were red)
+
+`explainer_engine/qa/ltx_prompt_lint.py` + `ltx_prompt_tolerances.json` (`ltx_prompt_tolerances/1`): rules LP-00..LP-06
+(empty, line break, word count, non-action opener, forbidden camera phrases with character offset, hero not named,
+film id mismatch) plus `check_prompt_film` (PASS/FAIL/NOT_RUN). The only number is `max_words` 200, kind hypothesis,
+status OPEN (one source type, not binding until the owner has seen it). Tests: `tests/unit/test_ltx_prompt_lint.py` (33).
+Gemini's test files for G-07 were not on disk, so the tests were written from the brief's acceptance list.
