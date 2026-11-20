@@ -139,8 +139,9 @@ def main(argv=None):
     a = ap.parse_args(argv)
     from explainer_engine.core.errors import ContractError
     from explainer_engine.governance import layer_gate
-    try:   # spec section 7.2: a trial script starts only when its layers are final and PASS, or the owner's recorded word waives one
-        layer_gate.require_layers(("L12", "L13"))
+    try:   # spec section 7.2, soft gate (owner 2026-11-20 09:11): only a missing or invalid registry refuses; the layers show as notes
+        for note in layer_gate.require_layers(("L12", "L13")):
+            print(f"layer gate: {note}")
     except ContractError as exc:
         raise SystemExit(f"refused: {exc}")
     spec = job_spec(a.scene)

@@ -528,14 +528,22 @@ def waived(layer: str, *, root=None) -> dict | None:
         else None
 
 
+MODE = "fail_only"   # the owner's word (2026-11-20 09:11 UTC, cmsg_01Hnu5zB86sjUj5GtTgaUkPWMd8fDv9ExMX3zJq6nwZXau, recorded in jobs/creator_ok.jsonl):
+# "turn on the soft mode: production stops only on a validator that failed". The one behaviour of the layer gate; no flag, no strict mode.
+
+
 def require_layers(layers, *, root=None) -> list[str]:
-    """Raise ContractError unless every layer is final and PASS (``require_pass``) or carries the owner's recorded
-    ``layer_waiver`` (``python -m explainer_engine.governance ok layer_waiver L9 <cmsg id> "<his words>"``): there is no flag. The owner's
-    registry must exist even when every layer is waived (REG-MISSING). Returns the notes of the waived layers."""
+    """The soft layer gate. Raises ContractError ONLY when the owner's requirements registry is missing or invalid (REG-MISSING and the
+    REG-* codes: with no registry nothing is measured at all). A layer whose record is not final, not PASS or BLOCK does not stop
+    production: it is a ``NOT_RUN <layer>: why`` note in the returned list, which every runner record and send-gate report carries
+    (the layer records decide when a layer's skill work is final, not whether production runs). A layer waived by the owner's recorded
+    ``layer_waiver`` is a note too. What stops production is a validator that FAILED on a stage's output (``send_gate.stage_check``)."""
     root = root_dir(root)
     entries, errs = OR.load(root)
     problems_ = errs + OR.check_registry(entries, root) + OR.missing(entries)
-    notes = []
+    if problems_:
+        raise ContractError("the layer gate refuses (the registry is missing or invalid, nothing could be measured): " + " | ".join(problems_))
+    notes = [f"layer gate: {MODE}"]
     for layer in layers:
         w = waived(layer, root=root)
         if w:
@@ -544,10 +552,7 @@ def require_layers(layers, *, root=None) -> list[str]:
         try:
             require_pass(layer, root=root)
         except (ContractError, NeedsReview) as e:
-            problems_.append(f"{layer}: {e}")
-    if problems_:
-        raise ContractError("the layer gate refuses: " + " | ".join(problems_) + " | only the owner's recorded word passes it: "
-                            "`python -m explainer_engine.governance ok layer_waiver <layer> <cmsg id> \"<his words>\"`")
+            notes.append(f"NOT_RUN {layer}: {e}")
     return notes
 
 

@@ -123,13 +123,18 @@ An open conflict is its own entry: `{"id", "kind": "conflict", "status": "open|r
   branch (`owner_requirements.compare_with_base`): an id that disappeared is `REG-REMOVED`, a changed `words` / `words_verbatim` is `REG-WORDS-CHANGED`; retiring an
   entry means `status: superseded`.
 
-## Stages and trial scripts call the gate (spec section 7.2, owner 2026-11-20 08:37 UTC: "words are not enough, Claude still skips")
-`layer_gate.require_layers(layers)` raises `ContractError` unless every layer is `final` and PASS (`require_pass`: the group order included) or carries the owner's recorded
-`layer_waiver`; the registry must exist and be valid even when every layer is waived. `episode/run.py: run_stage` calls `require_stage(stage)` (`STAGE_LAYERS`: script
-L1-L4, L7, L8, L29, L30; sound_plan and sound L18-L20; pictures L9-L11, L16; voice L5, L6, L17; clips L12-L15; assemble L21, L22, L25; qa L23, L24) and refuses the stage
-(`StageRefused`); `training/pods/ltx/scene_run.py main` calls it for L12 and L13 before it reserves or writes anything. **There is no flag.** The only way past is the owner's own
-word in `jobs/creator_ok.jsonl` (the D-84 pattern): `python -m explainer_engine.governance ok layer_waiver <layer> <cmsg id> "<his words>"`, one layer, held a day
-(`WAIVER_MINUTES`), never a wildcard. Until the records of a stage's layers are signed final, the runner therefore stops for that stage unless he waives the layer.
+## Stages and trial scripts call the gate: the soft mode (spec section 7.2; owner 2026-11-20 09:11 UTC, msg `cmsg_01Hnu5zB86sjUj5GtTgaUkPWMd8fDv9ExMX3zJq6nwZXau`, "turn on the soft mode: production stops only on a validator that failed")
+`layer_gate.require_layers(layers)` raises `ContractError` only when the registry is missing or invalid (`REG-MISSING`, `REG-*`; a waiver never opens that). A layer whose record is
+not final, not PASS or BLOCK is a `NOT_RUN <layer>: why` note, a waived layer a "waived by the owner" note; the layer records decide when a layer's skill work is final, not whether
+production runs. `episode/run.py: run_stage` calls `require_stage(stage)` (`STAGE_LAYERS`: script L1-L4, L7, L8, L29, L30; sound_plan and sound L18-L20; pictures L9-L11, L16;
+voice L5, L6, L17; clips L12-L15; assemble L21, L22, L25; qa L23, L24) before the stage and `send_gate.stage_check(layers, files)` after it, on the files the stage made (every file or
+folder named in its outputs, and every `clip_path` of the clips stage): each active requirement of those layers whose validator can measure them is run. **Only a validator that FAILED
+stops production** (a row `owner_requirements` FAIL in the stage record; a validator that raised or cannot be loaded counts as a failure). Unmapped entries, judge steps, open conflicts,
+validators without a send adapter and files of no validator's kind are listed, never a stop: the stage record carries `layer_gate: {mode: fail_only, notes, validators: {failed, passed,
+not_run, waived}}` and `training/pods/ltx/scene_run.py main` (the D-132 video route) prints the notes for L12 and L13 before it reserves or writes anything. **There is one behaviour and no
+flag**: the strict mode was removed; the owner's word is kept as an audit record (`governance ok layer_gate_mode fail_only <cmsg id> "<his words>"`, nothing reads it). The owner's recorded
+`layer_waiver` (`python -m explainer_engine.governance ok layer_waiver <layer> <cmsg id> "<his words>"`, one layer, a day, never a wildcard) is for a validator that FAILS for a reason he
+accepts: its failure then shows under `waived`. The send to the owner stays hard: `send_gate` still BLOCKs an unmapped entry (spec section 6); only the runner's check is soft.
 The unit tests get a gate that passes (`tests/unit/conftest.py`, the `real_layer_gate` opt-in as for the dry run); `tests/unit/test_layer_gate_enforcement.py` runs the real one.
 
 ### The registry file as the analyst delivers it (v2, 123 entries)

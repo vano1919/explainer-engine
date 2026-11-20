@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+from pathlib import Path
 import json
 import sys
 import time
@@ -41,6 +42,7 @@ def main(argv=None) -> int:
     rq = sub.add_parser("requirements", help="the owner's requirements registry: count per layer, unmapped entries (exit 1 when any is unmapped, "
                                              "open or invalid)")
     rq.add_argument("--layer", help="one layer, e.g. L14")
+    rq.add_argument("--coverage", action="store_true", help="write docs/registry/LAYER_COVERAGE.md (generated) and exit 0")
     b = sub.add_parser("backup")
     b.add_argument("--reason", default="manual")
     b.add_argument("--no-push", action="store_true")
@@ -92,6 +94,12 @@ def main(argv=None) -> int:
         worst = layer_gate.S.rollup(r.status for r in results)
         return {layer_gate.S.PASS: 0, layer_gate.S.NOT_RUN: 2}.get(worst, 1)
     elif args.cmd == "requirements":
+        if args.coverage:
+            out = Path(root) / "docs" / "registry" / "LAYER_COVERAGE.md"
+            out.parent.mkdir(parents=True, exist_ok=True)
+            out.write_text(owner_requirements.coverage_md(root), encoding="utf-8")
+            print(f"wrote {out}")
+            return 0
         rep = owner_requirements.report(root)
         layers = [args.layer] if args.layer else sorted(rep["per_layer"], key=lambda x: int(x[1:]))
         print(f"registry: {rep['total']} entries, {rep['active']} active, {len(rep['unmapped'])} unmapped, "

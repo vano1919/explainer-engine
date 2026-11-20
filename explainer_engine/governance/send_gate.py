@@ -29,6 +29,7 @@ from explainer_engine.governance import layer_gate, root_dir
 from explainer_engine.governance import owner_requirements as OR
 
 RECORDS = Path("jobs") / "send_gate" / "records.jsonl"
+QUARANTINE = Path("jobs") / "send_gate" / "quarantine.jsonl"
 PASS, FAIL, NOT_RUN, BLOCK = "PASS", "FAIL", "NOT_RUN", "BLOCK"
 _ORDER = {BLOCK: 3, FAIL: 2, NOT_RUN: 1, PASS: 0}
 _MSG = re.compile(r"cmsg_[A-Za-z0-9]+")
@@ -57,7 +58,7 @@ def _worst(rows: list[dict]) -> str:
     return max((r["status"] for r in rows), key=_ORDER.get, default=NOT_RUN)
 
 
-def _measure(e: dict, files: list[Path], root: Path) -> dict:
+def _measure(e: dict, files: list[Path], root: Path, soft: bool = False) -> dict:
     """One row for one requirement: the worst file result, the number and what was seen."""
     rid = e["id"]
     check = e.get("check") if isinstance(e.get("check"), dict) else {"kind": "unmapped"}
@@ -65,6 +66,8 @@ def _measure(e: dict, files: list[Path], root: Path) -> dict:
     if check.get("kind") == "judge":
         return dict(base, status=NOT_RUN, value=None, detail=f"judge step: {check.get('who')} against {check.get('rubric')}")
     if check.get("kind") != "validator":
+        if soft:                                                          # a runner stage (owner 2026-11-20 09:11): listed, never a stop
+            return dict(base, status=NOT_RUN, value=None, detail="unmapped: no validator and no judge step yet (listed, does not stop production)")
         return dict(base, status=BLOCK, value=None, detail="unmapped: no validator and no judge step yet; the registry entry blocks the send")
     bad = OR._check_errs(e, root)
     if bad:
@@ -96,8 +99,10 @@ def _measure(e: dict, files: list[Path], root: Path) -> dict:
     return dict(base, status=worst, value=pick["value"], detail=f"{pick['detail']} [{Path(pick['file']).name}]", files=rows)
 
 
-def run(layer: str, files, *, root=None, owner_asked: str | None = None, now: float | None = None, record: bool = True) -> dict:
-    """The report: ``{layer, status, rows, files, label}``; ``status`` is the worst of BLOCK > FAIL > NOT_RUN > PASS."""
+def run(layer: str, files, *, root=None, owner_asked: str | None = None, now: float | None = None, record: bool = True,
+        soft: bool = False) -> dict:
+    """The report: ``{layer, status, rows, files, label}``; ``status`` is the worst of BLOCK > FAIL > NOT_RUN > PASS. ``soft`` (the runner's
+    stage check, never the send to the owner) lists an unmapped entry and an open conflict as NOT_RUN instead of BLOCK."""
     root = root_dir(root)
     paths = [Path(f) for f in files]
     rows: list[dict] = []
@@ -116,12 +121,20 @@ def run(layer: str, files, *, root=None, owner_asked: str | None = None, now: fl
         for e in OR.bound(entries, layer):
             if OR.is_conflict(e):
                 if e.get("status") == "open":
-                    rows.append({"id": e["id"], "status": BLOCK, "value": None, "measures": "", "detail":
-                                 f"open conflict ({e.get('summary', '')[:80]}): blocked until the owner answers"})
+                    rows.append({"id": e["id"], "status": NOT_RUN if soft else BLOCK, "value": None, "measures": "", "detail":
+                                 f"open conflict ({e.get('summary', '')[:80]}): " +
+                                 ("listed, the owner has not answered" if soft else "blocked until the owner answers")})
                 continue
-            rows.append(_measure(e, paths, root))
+            rows.append(_measure(e, paths, root, soft))
         if not rows:
             rows.append({"id": "-", "status": NOT_RUN, "value": None, "measures": "", "detail": f"no active requirement binds {layer}"})
+    if not gate and _worst(rows) != PASS:
+        for p in paths:
+            q = quarantined(sha256(p), root=root) if p.is_file() else None
+            if q:
+                rows.append({"id": "QUARANTINE", "status": BLOCK, "value": None, "measures": "", "detail":
+                             f"{p.name} was let go unchecked by the stop hook ({q.get('reason')}) and is quarantined: it can be a candidate only "
+                             "after a send gate run that PASSES"})
     status = _worst(rows)
     failed = sorted(r["id"] for r in rows if r["status"] in (FAIL, BLOCK))
     label = None
@@ -139,6 +152,31 @@ def run(layer: str, files, *, root=None, owner_asked: str | None = None, now: fl
     return out
 
 
+def stage_check(layers, files, *, root=None) -> dict:
+    """The runner's validator check on a stage's output files (owner 2026-11-20 09:11, the soft layer gate): every active requirement of the
+    stage's layers whose validator can measure these files is run. Returns ``{"failed": [...], "passed": [...], "not_run": [...],
+    "waived": [...]}``, each item ``"<layer> <id>: <detail>"``. Only ``failed`` stops production: a validator FAIL (or one that raised or
+    cannot be loaded, or a broken registry) on a layer without the owner's recorded ``layer_waiver``. Unmapped entries, judge steps, open
+    conflicts, validators without a send adapter and files of no validator's kind are ``not_run``: listed in every report, never a stop."""
+    root = root_dir(root)
+    out = {"failed": [], "passed": [], "not_run": [], "waived": []}
+    paths = [Path(f) for f in files if Path(f).is_file()]
+    if not paths:
+        out["not_run"].append("no output file to measure")
+        return out
+    for layer in layers:
+        rep = run(layer, paths, root=root, soft=True)
+        for r in rep["rows"]:
+            line = f"{layer} {r['id']}: {r['detail']}"
+            if r["status"] in (FAIL, BLOCK):
+                (out["waived"] if layer_gate.waived(layer, root=root) else out["failed"]).append(line)
+            elif r["status"] == PASS:
+                out["passed"].append(line)
+            else:
+                out["not_run"].append(line)
+    return out
+
+
 def render(rep: dict) -> str:
     lines = [f"send gate {rep['layer']}: {rep['status']}"]
     for r in rep["rows"]:
@@ -147,6 +185,34 @@ def render(rep: dict) -> str:
     if rep.get("label"):
         lines.append(f"  LABEL: {rep['label']['text']} (the owner asked to see failures: {rep['label']['owner_asked']})")
     return "\n".join(lines)
+
+
+def quarantine(files, reason: str, *, root=None, now: float | None = None) -> list[dict]:
+    """Quarantine files a stop hook let go unchecked: the send gate and the upload hook refuse them as candidates until a PASS record that is
+    newer than the quarantine exists for the same bytes (a labelled owner-asked record does not lift it)."""
+    root = root_dir(root)
+    path = root / QUARANTINE
+    path.parent.mkdir(parents=True, exist_ok=True)
+    rows = [{"path": str(f), "sha256": sha256(f), "reason": reason, "at": now if now is not None else time.time()}
+            for f in files if Path(f).is_file()]
+    with path.open("a", encoding="utf-8") as fh:
+        for r in rows:
+            fh.write(json.dumps(r, ensure_ascii=False) + "\n")
+    return rows
+
+
+def quarantined(digest: str, *, root=None) -> dict | None:
+    """The newest quarantine row of these bytes (None when there is none)."""
+    log = root_dir(root) / QUARANTINE
+    last = None
+    for line in log.read_text(encoding="utf-8").splitlines() if log.is_file() else []:
+        try:
+            row = json.loads(line)
+        except ValueError:
+            continue
+        if row.get("sha256") == digest:
+            last = row
+    return last
 
 
 def passing_record(path: Path | str, *, root=None) -> dict | None:
@@ -166,6 +232,9 @@ def passing_record(path: Path | str, *, root=None) -> dict | None:
         if any(f.get("sha256") == digest for f in row.get("files", [])) and \
                 (row.get("status") in (PASS, NOT_RUN) or (row.get("label") or {}).get("owner_asked")):
             best = row
+    q = quarantined(digest, root=root)
+    if best is not None and q is not None and not (best.get("status") == PASS and float(best.get("at", 0)) > float(q.get("at", 0))):
+        return None                                                        # a quarantined file needs a newer PASS, nothing weaker
     return best
 
 

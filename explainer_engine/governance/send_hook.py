@@ -7,9 +7,11 @@ for a hook that cannot even start).
                     is refused unless ``send_gate`` recorded that file's sha256 as PASS (or labelled with the owner's ``--owner-asked``);
                     a trial command (``scene_run``, ``episode run``) is refused unless the layer gate lets its layers through
     stop            a turn that wrote files under a trial or comparison path (from the transcript, newer than the last user message)
-                    without a passing send record cannot end; after 3 refusals in a row it lets go and writes an incident line to
+                    without a passing send record cannot end; after 3 refusals in a row it lets go, QUARANTINES the files (``send_gate.quarantine``:
+                    the send gate and the upload hook refuse them until a newer PASS record) and writes an incident line to
                     ``jobs/send_gate/incidents.jsonl`` so that a stuck loop never hides (``stop_hook_active``)
     subagent-stop   the same for a sub-agent's turn
+    prompt          shows every incident not shown yet at the start of the next turn (fails open: an exit 2 would erase the owner's prompt)
 
 Paths outside the trial pattern (a log, a vault file, a handoff note) pass. stdlib only."""
 from __future__ import annotations
@@ -74,8 +76,8 @@ def paths_in(text: str, *, root: Path, sc: dict | None = None, _depth: int = 0) 
     return list(dict.fromkeys(out))
 
 
-def check_files(files: list[Path], *, root: Path, sc: dict | None = None) -> list[str]:
-    """Problems for the trial or comparison files among ``files`` (empty = they may go)."""
+def check_files(files: list[Path], *, root: Path, sc: dict | None = None, with_paths: bool = False):
+    """Problems for the trial or comparison files among ``files`` (empty = they may go); ``with_paths`` returns ``(file, problem)`` pairs."""
     sc = sc or scope()
     bad = []
     for f in files:
@@ -83,11 +85,11 @@ def check_files(files: list[Path], *, root: Path, sc: dict | None = None) -> lis
             continue
         layer = layer_of(str(f), sc)
         if layer is None:
-            bad.append(f"{f}: a trial output must sit under a path that names its layer (.../trials/L14/...) so its validators can run")
+            bad.append((f, f"{f}: a trial output must sit under a path that names its layer (.../trials/L14/...) so its validators can run"))
         elif send_gate.passing_record(f, root=root) is None:
-            bad.append(f"{f}: no passing send record; run `python -m explainer_engine.governance.send_gate {layer} {f}` first "
-                       f"(a failing candidate goes only labelled, with --owner-asked <cmsg id>)")
-    return bad
+            bad.append((f, f"{f}: no passing send record; run `python -m explainer_engine.governance.send_gate {layer} {f}` first "
+                           f"(a failing candidate goes only labelled, with --owner-asked <cmsg id>)"))
+    return bad if with_paths else [m for _, m in bad]
 
 
 def pre_bash(event: dict, *, root: Path | None = None) -> None:
@@ -196,7 +198,8 @@ def stop(event: dict, *, root: Path | None = None, sub: bool = False) -> None:
     if not path or not Path(path).is_file():
         raise Refused("send gate (spec 7.1): the transcript of this turn is not readable, so the turn's outputs cannot be checked")
     sc = scope()
-    bad = check_files(turn_outputs(Path(path), root=root, sc=sc), root=root, sc=sc)
+    pairs = check_files(turn_outputs(Path(path), root=root, sc=sc), root=root, sc=sc, with_paths=True)
+    bad = [m for _, m in pairs]
     counter = root / STOP_COUNT
     state = json.loads(counter.read_text(encoding="utf-8")) if counter.is_file() else {}
     key = str(event.get("session_id") or "session")
@@ -208,16 +211,41 @@ def stop(event: dict, *, root: Path | None = None, sub: bool = False) -> None:
     n = int(state.get(key, 0)) + 1
     counter.parent.mkdir(parents=True, exist_ok=True)
     if n > MAX_STOP_BLOCKS:                                               # a loop that never ends hides nothing: record it, let go
+        q = send_gate.quarantine([f for f, _ in pairs], "the stop hook let the turn end after 3 refusals", root=root)
         with (root / INCIDENTS).open("a", encoding="utf-8") as f:
-            f.write(json.dumps({"at": time.time(), "session": key, "unchecked": bad}, ensure_ascii=False) + "\n")
+            f.write(json.dumps({"at": time.time(), "session": key, "unchecked": bad, "quarantined": [r["sha256"] for r in q]},
+                               ensure_ascii=False) + "\n")
         state.pop(key, None)
         counter.write_text(json.dumps(state), encoding="utf-8")
-        print("send gate: let go after 3 refusals; the unchecked outputs are in jobs/send_gate/incidents.jsonl", file=sys.stderr)
+        print("send gate: let go after 3 refusals; the unchecked outputs are QUARANTINED (jobs/send_gate/quarantine.jsonl): the send gate and the "
+              "upload hook refuse them until a send gate run passes; the incident is shown at the next prompt", file=sys.stderr)
         return
     state[key] = n
     counter.write_text(json.dumps(state), encoding="utf-8")
     raise Refused("send gate (spec 7.1): this turn produced trial or comparison outputs without a passing validator record: "
                   + " | ".join(bad))
+
+
+SEEN = Path("jobs") / "send_gate" / "incidents_seen.json"
+
+
+def prompt(event: dict, *, root: Path | None = None) -> str:
+    """The lines to show at the start of the next turn (UserPromptSubmit adds stdout as context): every incident not shown yet."""
+    root = root_dir(root)
+    log = root / INCIDENTS
+    rows = [r for r in log.read_text(encoding="utf-8").splitlines() if r.strip()] if log.is_file() else []
+    seen_file = root / SEEN
+    seen = int(json.loads(seen_file.read_text(encoding="utf-8")).get("n", 0)) if seen_file.is_file() else 0
+    new = rows[seen:]
+    if new:
+        seen_file.parent.mkdir(parents=True, exist_ok=True)
+        seen_file.write_text(json.dumps({"n": len(rows)}), encoding="utf-8")
+    out = []
+    for line in new:
+        r = json.loads(line)
+        out.append("SEND GATE INCIDENT: a turn ended with trial or comparison outputs no validator measured; they are quarantined and may not "
+                   "go to the owner as candidates until `send_gate` passes them: " + "; ".join(r.get("unchecked", []))[:600])
+    return "\n".join(out)
 
 
 def main(argv=None) -> int:
@@ -232,6 +260,14 @@ def main(argv=None) -> int:
             stop(event)
         elif cmd == "subagent-stop":
             stop(event, sub=True)
+        elif cmd == "prompt":                                              # fails OPEN: exit 2 would erase the owner's prompt
+            try:
+                text = prompt(event)
+                if text:
+                    print(text)
+            except Exception as exc:
+                print(f"send hook prompt could not read the incidents ({type(exc).__name__}: {exc})", file=sys.stderr)
+            return 0
         else:
             raise Refused(f"unknown hook command {cmd!r}")
     except Refused as exc:

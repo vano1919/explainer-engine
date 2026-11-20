@@ -29,6 +29,12 @@ stops a merge only if you mark the job as **required**; that is a setting in you
 - On a pull request, the box "Merging is blocked" lists `owner-requirements` as **Required**. A red `owner-requirements` means: do not merge.
 - To check the setting: **Settings > Branches**; both rules are listed and each says `owner-requirements` under "Require status checks".
 
+## What applies to this repository (checked 2026-11-20 via the GitHub search API)
+`vano1919/explainer-engine` is a **public** repository on a personal account (`visibility: public`). On GitHub Free, public repositories
+have branch protection and required status checks, so steps 1 to 10 work as written and need no paid plan. If the repository is ever made
+private, GitHub Free no longer offers required status checks: the paid-plan alternative is below, and until then the other three layers
+(hooks, `require_layers`, the send gate) are the machine enforcement and the red `owner-requirements` check is only advice.
+
 ## If a step does not match
 - If **Settings > Branches** says branch protection needs a paid plan for a private repository, tell Claude; there is then no GitHub-side
   lock on this plan, and the other three layers (hooks, `require_layers`, the send gate) stay the machine enforcement. Do not upgrade

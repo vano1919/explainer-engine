@@ -98,15 +98,17 @@ def test_a_folder_upload_checks_every_file_under_it(env):
 # ---- pre-bash: trial commands --------------------------------------------------------------------------------------------------
 
 @pytest.mark.usefixtures("real_layer_gate")
-def test_a_trial_command_needs_its_layers(env, monkeypatch):
+def test_a_trial_command_needs_a_valid_registry_and_nothing_else(env, monkeypatch):
+    """The soft layer gate (owner 2026-11-20 09:11): a trial command is refused only when the registry is missing or invalid; layers that
+    are not final are listed, never a stop."""
     root, _, _ = env
-    assert "L12" in refused(H.pre_bash, bash("python -m explainer_engine.training.pods.ltx.scene_run job scene.json spec.json"), root=root)
-    assert "L9" in refused(H.pre_bash, bash("python -m explainer_engine.episode run episodes/x --stage pictures"), root=root)
-    H.pre_bash(bash("python -m explainer_engine.episode status episodes/x"), root=root)
-    from explainer_engine.governance import records
-    for layer in ("L9", "L10", "L11", "L16"):
-        records.add("layer_waiver", layer, MSG, "go on", root=root)
+    H.pre_bash(bash("python -m explainer_engine.training.pods.ltx.scene_run job scene.json spec.json"), root=root)
     H.pre_bash(bash("python -m explainer_engine.episode run episodes/x --stage pictures"), root=root)
+    H.pre_bash(bash("python -m explainer_engine.episode status episodes/x"), root=root)
+    (root / "explainer_engine" / "governance" / "owner_requirements.json").unlink()
+    assert "REG-MISSING" in refused(H.pre_bash, bash("python -m explainer_engine.training.pods.ltx.scene_run job scene.json spec.json"), root=root)
+    assert "REG-MISSING" in refused(H.pre_bash, bash("python -m explainer_engine.episode run episodes/x --stage pictures"), root=root)
+    H.pre_bash(bash("python -m explainer_engine.episode status episodes/x"), root=root)
 
 
 def test_the_stages_up_to_the_target_are_all_needed():
@@ -182,6 +184,59 @@ def test_the_stop_hook_lets_go_after_three_refusals_and_records_the_incident(env
     assert rows and "good.txt" in rows[0]["unchecked"][0]
 
 
+def _let_go(root, f, sid="q"):
+    ev = {"transcript_path": str(transcript(root, [f])), "session_id": sid}
+    for _ in range(3):
+        refused(H.stop, ev, root=root)
+    H.stop(ev, root=root)
+    return ev
+
+
+def test_a_released_turn_quarantines_its_files_and_only_a_newer_pass_lifts_it(env):
+    root, good, bad = env
+    _let_go(root, bad)
+    assert SG.quarantined(SG.sha256(bad), root=root)
+    assert SG.passing_record(bad, root=root) is None
+    SG.run("L9", [bad], root=root)                                                             # FAIL (too short): still quarantined
+    assert SG.passing_record(bad, root=root) is None
+    SG.run("L9", [bad], root=root, owner_asked=MSG)                                            # a labelled record does not lift it
+    assert SG.passing_record(bad, root=root) is None
+    assert "no passing send record" in refused(H.pre_bash, bash(upload(bad)), root=root)
+    SG.run("L9", [good], root=root)                                                            # another file passing does nothing for it
+    assert SG.passing_record(bad, root=root) is None
+
+
+def test_an_older_pass_does_not_survive_a_quarantine_and_a_newer_pass_lifts_it(env):
+    root, good, _ = env
+    now = time.time()
+    SG.run("L9", [good], root=root, now=now - 10)
+    assert SG.passing_record(good, root=root) is not None
+    SG.quarantine([good], "released by the stop hook", root=root, now=now - 5)
+    assert SG.passing_record(good, root=root) is None                                          # the PASS is older than the quarantine
+    SG.run("L9", [good], root=root, now=now)                                                   # measured again, newer
+    assert SG.passing_record(good, root=root) is not None
+
+
+def test_a_send_that_fails_reports_the_quarantine_next_to_the_failure(env):
+    root, _, bad = env
+    SG.quarantine([bad], "released by the stop hook", root=root)
+    rep = SG.run("L9", [bad], root=root)
+    assert rep["status"] == SG.BLOCK and any(r["status"] == SG.FAIL for r in rep["rows"])      # the failure stays visible
+    assert any(r["id"] == "QUARANTINE" and r["status"] == SG.BLOCK for r in rep["rows"])
+
+
+def test_the_prompt_hook_shows_each_incident_once_and_fails_open(env, monkeypatch, capsys):
+    root, good, _ = env
+    assert H.prompt({}, root=root) == ""
+    _let_go(root, good, "q3")
+    first = H.prompt({}, root=root)
+    assert "SEND GATE INCIDENT" in first and "good.txt" in first
+    assert H.prompt({}, root=root) == ""                                                       # shown once
+    monkeypatch.setattr(H, "prompt", lambda *a, **k: (_ for _ in ()).throw(RuntimeError("boom")))
+    assert run_main(monkeypatch, "prompt", {}, root) == 0                                      # fails open: never erases the owner's prompt
+    assert "could not read the incidents" in capsys.readouterr().err
+
+
 # ---- fail closed ---------------------------------------------------------------------------------------------------------------
 
 def run_main(monkeypatch, cmd, event, root):
@@ -237,7 +292,7 @@ def _send_hook_commands():
 def test_the_send_hooks_are_wired_on_bash_stop_and_subagent_stop_and_keep_the_d84_hooks():
     from _gov import ROOT
     wired = _send_hook_commands()
-    assert set(wired) == {"PreToolUse", "Stop", "SubagentStop"}
+    assert set(wired) == {"PreToolUse", "Stop", "SubagentStop", "UserPromptSubmit"}
     assert "pre-bash" in wired["PreToolUse"][0] and "subagent-stop" in wired["SubagentStop"][0] and " stop " in wired["Stop"][0] + " "
     text = (ROOT / ".claude" / "settings.json").read_text(encoding="utf-8")
     assert "governance.hooks pre-bash" in text and "governance.hooks stop" in text      # extended, not replaced
@@ -245,8 +300,10 @@ def test_the_send_hooks_are_wired_on_bash_stop_and_subagent_stop_and_keep_the_d8
 
 def test_a_send_hook_command_that_cannot_start_exits_2(tmp_path):
     import subprocess
-    for cmds in _send_hook_commands().values():
+    for event, cmds in _send_hook_commands().items():
         for c in cmds:
+            if event == "UserPromptSubmit":      # fails open on purpose: an exit 2 would erase the owner's prompt
+                continue
             r = subprocess.run(["/bin/bash", "-c", c], env={"PATH": "/nonexistent", "CLAUDE_PROJECT_DIR": str(tmp_path)},
                                input="{}", capture_output=True, text=True)
             assert r.returncode == 2 and "closed" in r.stderr, (c, r.returncode, r.stderr)
