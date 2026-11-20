@@ -133,55 +133,191 @@ def rows_of(frames) -> dict:
     return {"rows": {r["gate"]: r["status"] for r in rs}, "m": m}
 
 
-# ===================================================================================== OR-V19a / V19b / V19c: living_motion
-# ---- guards: what the validator does right today
+# ===================================================================================== OR-V19a / V19b / V19c: living_motion (v2, BP-215)
+from PIL import Image  # noqa: E402
+
+ZONE_SKY = ("sky", "sky", (0, 0, 480, 40))
+ZONE_SMOKE = ("smoke", "smoke", (60, 60, 260, 200))
+ZONE_FIRE = ("fire", "fire", (300, 200, 400, 260))
+FULL = lambda kind: ("all", kind, (0, 0, W, H))      # noqa: E731  a zone mask covering the whole frame
+
+
+def zones_for(clip_path: Path, zones, extra=None) -> None:
+    """``<clip>.zones.json`` + masks beside the clip; ``zones`` = [(name, kind, (x0, y0, x1, y1))]."""
+    rows = []
+    for zn, kind, (x0, y0, x1, y1) in zones:
+        m = np.zeros((H, W), np.uint8)
+        m[y0:y1, x0:x1] = 255
+        Image.fromarray(m).save(clip_path.parent / f"{clip_path.stem}_{zn}.png")
+        rows.append({"name": zn, "kind": kind, "mask": f"{clip_path.stem}_{zn}.png"})
+    clip_path.with_suffix(".zones.json").write_text(json.dumps(dict({"zones": rows}, **(extra or {}))), encoding="utf-8")
+
+
+def with_zones(tmp_path: Path, name: str, frames, zones, extra=None) -> dict:
+    p = write_clip(tmp_path / f"{name}.mp4", frames)
+    zones_for(p, zones, extra)
+    return V.living_motion(p)
+
+
+def noise_patch_frames(box, sigma: float, n: int = N):
+    """The lazy generator's trick: per-frame random noise inside the declared zone, nothing moves coherently."""
+    rng = np.random.default_rng(21)
+    x0, y0, x1, y1 = box
+    out = []
+    for _ in range(n):
+        f = P.copy()
+        f[y0:y1, x0:x1] = np.clip(f[y0:y1, x0:x1] + rng.normal(0, sigma, (y1 - y0, x1 - x0)), 0, 255)
+        out.append(f)
+    return out
+
+
+def pulse_frames(amp: float, hz: float, n: int = N):
+    return [np.clip(P * (1 + amp * np.sin(2 * np.pi * hz * i / FPS)), 0, 255) for i in range(n)]
+
+
+def smooth_pan_frames(px_per_s: float, sigma: float, n: int = N):
+    a = cv2.GaussianBlur(np.random.default_rng(5).normal(128, 50, (H, W * 3)).astype(np.float32), (0, 0), sigma)
+    a = (a - a.min()) / (a.max() - a.min()) * 200 + 25
+    return [a[:, int(px_per_s * i / FPS):int(px_per_s * i / FPS) + W] for i in range(n)]
+
+
+def alive_world(tmp_path: Path, name: str = "alive", draw_over=None) -> Path:
+    """The compliant world: a still camera, sky, smoke and fire textures drift by themselves (the developer's own compliant shape)."""
+    rng = np.random.default_rng(2)
+    base = np.tile(np.clip(np.kron(rng.integers(40, 200, (27, 48)), np.ones((10, 10))), 0, 255).astype(np.float32), (1, 2))
+    tex = np.clip(np.kron(np.random.default_rng(8).integers(30, 220, (27, 96)), np.ones((10, 10))), 0, 255).astype(np.float32)
+    areas = (((slice(0, 40), slice(0, W)), 0.5), ((slice(60, 200), slice(60, 260)), 0.7), ((slice(200, 260), slice(300, 400)), 1.5))
+    frames = []
+    for i in range(N):
+        f = base[:, :W].copy()
+        for (ys, xs), speed in areas:
+            sh = int(round(speed * i)) % 300
+            f[ys, xs] = tex[ys, xs.start + sh:xs.stop + sh]
+        if draw_over is not None:
+            f = np.where(draw_over[min(i, len(draw_over) - 1)] > 0, 255, f)
+        frames.append(f)
+    return write_clip(tmp_path / f"{name}.mp4", frames)
+
+
+def flake_matte(left_too: bool, n: int = N):
+    """Far flakes (200 of 3x3 px): over the right half only, or over the left half (the soldiers) too."""
+    rng = np.random.default_rng(5)
+    lo = 0 if left_too else W // 2
+    x0, y0 = rng.integers(lo, W - 3, 200), rng.integers(0, H, 200)
+    out = []
+    for i in range(n):
+        m = np.zeros((H, W), np.float32)
+        for x, y in zip(x0, (y0 + 1.5 * i * 24 / FPS) % (H - 3)):
+            m[int(y):int(y) + 3, x:x + 3] = 255
+        out.append(m)
+    return out
+
+
+def occlusion(tmp_path: Path, drawn_left: bool, declared_left: bool, flat_depth: bool = False, declare: bool = True) -> dict:
+    """The delivered clip has flakes drawn over the world (right half, or the soldiers' left half too); the sidecar declares a far-particle matte and a
+    depth map (near half = left)."""
+    p = alive_world(tmp_path, "occ", draw_over=flake_matte(drawn_left))
+    write_clip(tmp_path / "far.mp4", flake_matte(declared_left))
+    depth = np.zeros((H, W), np.uint8)
+    depth[:, :W // 2], depth[:, W // 2:] = 230, 40
+    if flat_depth:
+        depth[:] = 40
+    Image.fromarray(depth).save(tmp_path / "depth.png")
+    zones_for(p, [ZONE_SKY, ZONE_SMOKE, ZONE_FIRE], {"particles": {"far": "far.mp4"}, "depth": "depth.png"} if declare else None)
+    return V.living_motion(p)
+
+
+# ---- guards: what living_motion v2 does right today
 @needs_ffmpeg
-def test_V19_a_compliant_living_picture_passes(tmp_path):
-    r = living(tmp_path, "proper", proper_frames())
-    assert r["status"] == "PASS" and r["value"] >= LV.FROZEN_CHANGE, r
-
-
-@needs_ffmpeg
-@pytest.mark.parametrize("pct", [1, 4])
-def test_V19a_only_the_fire_moves_fails_for_a_small_flame(tmp_path, pct):
-    r = living(tmp_path, f"fire{pct}", fire_frames(pct))
-    assert r["status"] == "FAIL" and "G-LIVE-1" in r["detail"], r
-
-
-@needs_ffmpeg
-def test_V19_a_still_photograph_fails(tmp_path):
-    r = living(tmp_path, "static", [P.copy() for _ in range(N)])
-    assert r["status"] == "FAIL" and r["value"] == 0.0, r
-
-
-@needs_ffmpeg
-@pytest.mark.parametrize("px_per_s", [4, 20, 60])
-def test_V19e_a_pan_is_not_run_never_a_pass(tmp_path, px_per_s):
-    r = living(tmp_path, f"pan{px_per_s}", pan_frames(px_per_s))
-    assert r["status"] == "NOT_RUN" and "camera moves" in r["detail"], r
-
-
-@needs_ffmpeg
-@pytest.mark.parametrize("zoom", [0.10, 0.20])
-def test_V19e_a_fast_zoom_is_not_run_never_a_pass(tmp_path, zoom):
-    assert living(tmp_path, f"zoom{zoom}", zoom_frames(zoom))["status"] == "NOT_RUN"
-
-
-@needs_ffmpeg
-def test_V19a_a_named_smoke_zone_that_does_not_move_fails_even_when_the_rest_moves(tmp_path):
-    from PIL import Image
-    frames = wind_frames()
-    frames = [f.copy() for f in frames]
-    rng = np.random.default_rng(4)
-    for f in frames:                                         # also churn the lower half so the whole-frame floor is met
-        f[150:260, 20:460] = np.clip(f[150:260, 20:460] + rng.normal(0, 40, (110, 440)), 0, 255)
-    p = write_clip(tmp_path / "zoned.mp4", frames)
-    m = np.zeros((H, W), np.uint8)
-    m[20:80, 100:300] = 255                                  # "smoke" over a region that never changes
-    Image.fromarray(m).save(tmp_path / "smoke.png")
-    (tmp_path / "zoned.zones.json").write_text(json.dumps({"zones": [{"name": "smoke", "mask": "smoke.png"}]}), encoding="utf-8")
+def test_V19_a_compliant_world_with_its_zones_passes_with_its_numbers(tmp_path):
+    p = alive_world(tmp_path)
+    zones_for(p, [ZONE_SKY, ZONE_SMOKE, ZONE_FIRE])
     r = V.living_motion(p)
+    assert r["status"] == "PASS" and r["value"] >= V.ZONE_COVER_MIN, r
+    assert all(k in r["detail"] for k in ("sky ", "smoke ", "fire "))
+
+
+@needs_ffmpeg
+@pytest.mark.parametrize("pct", [1, 4, 8])
+def test_V19a_only_the_fire_moves_fails_at_every_flame_size(tmp_path, pct):
+    r = living(tmp_path, f"fire{pct}", fire_frames(pct))
+    assert r["status"] == "FAIL", r
+
+
+@needs_ffmpeg
+def test_V19_a_still_photograph_fails_by_the_cheap_guard(tmp_path):
+    r = living(tmp_path, "static", [P.copy() for _ in range(N)])
+    assert r["status"] == "FAIL" and r["value"] == 0.0 and "G-LIVE-1" in r["detail"], r
+
+
+@needs_ffmpeg
+@pytest.mark.parametrize("zoom", [0.05, 0.12])
+def test_V19e_a_zoom_alone_fails_with_the_camera_taken_out(tmp_path, zoom):
+    r = living(tmp_path, f"zoom{zoom}", zoom_frames(zoom))
+    assert r["status"] == "FAIL" and "camera" in r["detail"], r
+
+
+@needs_ffmpeg
+@pytest.mark.parametrize("px_per_s,sigma", [(6, 6), (10, 6), (20, 3), (40, 3), (20, 1.5), (40, 0.8)])
+def test_V19e_a_pan_alone_fails_on_a_textured_picture(tmp_path, px_per_s, sigma):
+    r = living(tmp_path, f"pan{px_per_s}_{sigma}", smooth_pan_frames(px_per_s, sigma))
+    assert r["status"] == "FAIL", r
+
+
+@needs_ffmpeg
+def test_V19_a_brightness_fade_alone_fails(tmp_path):
+    assert living(tmp_path, "fade", fade_frames())["status"] == "FAIL"
+
+
+@needs_ffmpeg
+@pytest.mark.parametrize("zoom", [0.05])
+def test_V19e_a_zoom_alone_fails_even_with_a_whole_frame_zone(tmp_path, zoom):
+    r = with_zones(tmp_path, "zoomzone", zoom_frames(zoom), [FULL("sky")])
     assert r["status"] == "FAIL" and "G-LIVE-3" in r["detail"], r
+
+
+@needs_ffmpeg
+def test_V19_a_dead_picture_fails_even_with_a_whole_frame_zone(tmp_path):
+    assert with_zones(tmp_path, "deadzone", [P.copy() for _ in range(N)], [FULL("sky")])["status"] == "FAIL"
+
+
+@needs_ffmpeg
+def test_V19_a_fade_inside_a_declared_smoke_zone_fails(tmp_path):
+    assert with_zones(tmp_path, "fadezone", fade_frames(), [ZONE_SMOKE])["status"] == "FAIL"
+
+
+@needs_ffmpeg
+def test_V19a_a_flat_patch_that_only_changes_brightness_fails_in_the_smoke_zone(tmp_path):
+    rng = np.random.default_rng(1)
+    frames = []
+    for _ in range(N):
+        f = P.copy()
+        f[60:200, 60:260] = rng.integers(60, 255)
+        frames.append(f)
+    assert with_zones(tmp_path, "flatflicker", frames, [ZONE_SMOKE])["status"] == "FAIL"
+
+
+@needs_ffmpeg
+@pytest.mark.parametrize("name,frames", [("grain", grain_frames()), ("snow1500", snow_frames(1500)), ("snow1500_flat", snow_frames(1500, depth=False))])
+def test_V19_noise_and_dense_snow_are_never_a_pass(tmp_path, name, frames):
+    assert living(tmp_path, name, frames)["status"] != "PASS"
+
+
+@needs_ffmpeg
+def test_V19b_wind_swaying_a_band_of_grass_passes_without_zones(tmp_path):
+    r = living(tmp_path, "wind", wind_frames())
+    assert r["status"] == "PASS", r
+
+
+@needs_ffmpeg
+def test_V19c_far_flakes_hidden_behind_the_foreground_pass_and_drawn_over_it_fail(tmp_path):
+    ok_dir, bad_dir = tmp_path / "ok", tmp_path / "bad"
+    ok_dir.mkdir()
+    bad_dir.mkdir()
+    ok = occlusion(ok_dir, False, False)
+    bad = occlusion(bad_dir, True, True)
+    assert ok["status"] == "PASS" and "far particles over the foreground 0.00 %" in ok["detail"], ok
+    assert bad["status"] == "FAIL" and "does not hide them" in bad["detail"], bad
 
 
 def test_V19_the_registry_binds_all_three_to_the_one_function():
@@ -190,72 +326,73 @@ def test_V19_the_registry_binds_all_three_to_the_one_function():
     assert {by[i]["check"]["ref"] for i in ("OR-V19a", "OR-V19b", "OR-V19c")} == {"explainer_engine.qa.send_validators:living_motion"}
 
 
-# ---- defects: the validator passes, or does not judge, what the owner's words reject
+# ---- defects: each is a way the check is passed (or skipped) by a clip the owner's words reject
 @needs_ffmpeg
-@pytest.mark.xfail(strict=True, reason="V19e/Z1: a slow CENTRED zoom has zero translation, so the still-camera test (phase correlation) calls the camera still, and "
-                                       "the zoom itself is counted as the world moving: 5 % zoom over 3 s measures 13.7 % change and PASSes 'it is just a zoom' (the owner's own words)")
-def test_Z1_a_slow_zoom_alone_is_not_a_pass(tmp_path):
-    assert living(tmp_path, "zoom5", zoom_frames(0.05))["status"] != "PASS"
-
-
-@needs_ffmpeg
-@pytest.mark.xfail(strict=True, reason="Z2: per-frame film grain changes 70 % of the pixels, nothing moves; whole-frame change cannot tell noise from motion "
-                                       "(the validator's own 'smoke' fixture is gaussian noise)")
-def test_Z2_film_grain_alone_is_not_a_pass(tmp_path):
-    assert living(tmp_path, "grain", grain_frames())["status"] != "PASS"
+@pytest.mark.parametrize("zone,box,sigma", [(ZONE_SMOKE, (60, 60, 260, 200), 25), (ZONE_SMOKE, (60, 60, 260, 200), 15), (ZONE_SKY, (0, 0, 480, 40), 40)])
+@pytest.mark.xfail(strict=True, reason="V19a/Z1 (gaming): per-frame random noise inside the declared zone is read by Farneback as 46-87 % of the zone 'moving' "
+                                       "(BP-215 needs 25 %): a lazy generator declares a zone and flickers noise in it; nothing moves coherently")
+def test_Z1_noise_flickering_inside_a_declared_zone_is_not_a_pass(tmp_path, zone, box, sigma):
+    assert with_zones(tmp_path, "noisezone", noise_patch_frames(box, sigma), [zone])["status"] != "PASS"
 
 
 @needs_ffmpeg
-@pytest.mark.xfail(strict=True, reason="Z3: a brightness fade changes 98 % of the pixels; a fade is a transition, not motion, yet it PASSes G-LIVE-1")
-def test_Z3_a_brightness_fade_alone_is_not_a_pass(tmp_path):
-    assert living(tmp_path, "fade", fade_frames())["status"] != "PASS"
+@pytest.mark.parametrize("hz", [0.5, 1.3])
+@pytest.mark.xfail(strict=True, reason="V19/Z2 (gaming): a global brightness pulse (25 % amplitude) PASSes with no zones and measures 32-68 % 'moving'; "
+                                       "a pulse of the whole picture is not motion (a monotone fade fails, a sinusoid does not)")
+def test_Z2_a_global_brightness_pulse_is_not_a_pass(tmp_path, hz):
+    assert living(tmp_path, "pulse", pulse_frames(0.25, hz))["status"] != "PASS"
 
 
 @needs_ffmpeg
-@pytest.mark.parametrize("flakes", [1500, 3000])
-@pytest.mark.xfail(strict=True, reason="V19c/Z4: dense snow on a still camera is read as 'the camera moves' (the falling flakes dominate the phase correlation, "
-                                       "50-98 px/s) and the clip is NOT_RUN: snow, the very effect V19c is about, switches the check off; and it can never PASS "
-                                       "(sparse snow is under the 5 % floor and FAILs), so V19c cannot be proven by snow at all")
-def test_Z4_falling_snow_is_not_mistaken_for_a_moving_camera(tmp_path, flakes):
-    r = living(tmp_path, f"snow{flakes}", snow_frames(flakes))
-    assert "camera moves" not in r["detail"], r
+@pytest.mark.xfail(strict=True, reason="V19/Z2b (gaming): the same pulse with a smoke zone declared over it PASSes too (32 % of the zone 'moves')")
+def test_Z2b_a_global_pulse_with_a_declared_zone_is_not_a_pass(tmp_path):
+    assert with_zones(tmp_path, "pulsezone", pulse_frames(0.25, 1.3), [ZONE_SMOKE])["status"] != "PASS"
 
 
 @needs_ffmpeg
-@pytest.mark.xfail(strict=True, reason="V19c/Z5: snow depth ('near flakes larger and faster than far') is not measured anywhere; a snow clip whose flakes are all "
-                                       "alike gets the same verdict as one with depth (here: both NOT_RUN)")
-def test_Z5_snow_with_depth_and_snow_without_depth_are_told_apart(tmp_path):
-    a = living(tmp_path, "snow_depth", snow_frames(1500, depth=True))
-    b = living(tmp_path, "snow_flat", snow_frames(1500, depth=False))
-    assert a["status"] == "PASS" and b["status"] == "FAIL", (a, b)
+@pytest.mark.xfail(strict=True, reason="V19e/Z3: a 20 px/s pan of a very smooth (blur sigma 6, fog/sky-like) picture PASSes: the similarity fit leaves 28-37 % of "
+                                       "the frame 'moving' once the camera is out; on any texture with sigma <= 3 the same pan FAILs correctly (guards above)")
+def test_Z3_a_camera_pan_of_a_low_texture_picture_is_not_a_pass(tmp_path):
+    assert living(tmp_path, "smoothpan", smooth_pan_frames(20, 6))["status"] != "PASS"
 
 
 @needs_ffmpeg
-@pytest.mark.xfail(strict=True, reason="V19b: wind has no measure; the registry's compliant and negative tests for V19b are the smoke fixture and the small-flame "
-                                       "fixture shared with V19a/V19c, so nothing in the registered proof is about wind (a wind-only clip passes only because "
-                                       "a band of pixels changes)")
-def test_Z6_each_of_v19a_v19b_v19c_has_its_own_compliant_and_negative_test():
+@pytest.mark.parametrize("flakes", [800, 1500])
+@pytest.mark.xfail(strict=True, reason="V19c/Z4: a snow-only clip (still camera, dead picture) is NOT_RUN ('camera could not be separated', 5-11 % inliers), "
+                                       "not FAIL; BP-215 says snow alone cannot pass, and NOT_RUN is what the send gate releases today (S1, lead's open decision)")
+def test_Z4_a_snow_only_clip_is_a_fail_not_a_not_run(tmp_path, flakes):
+    assert living(tmp_path, f"snow{flakes}", snow_frames(flakes))["status"] == "FAIL"
+
+
+@needs_ffmpeg
+@pytest.mark.xfail(strict=True, reason="V19c/Z5: the far-particle matte is declared by the sidecar, never compared with the delivered clip: flakes drawn over "
+                                       "the soldiers while the matte lists only right-half flakes PASS ('far particles over the foreground 0.00 %')")
+def test_Z5_flakes_drawn_over_the_soldiers_with_a_matte_that_says_otherwise_do_not_pass(tmp_path):
+    assert occlusion(tmp_path, drawn_left=True, declared_left=False)["status"] != "PASS"
+
+
+@needs_ffmpeg
+@pytest.mark.xfail(strict=True, reason="V19c/Z6: a flat depth map (nothing is foreground) makes 'over the foreground' 0 % for any flake; the check passes "
+                                       "flakes drawn over the soldiers with an honest matte")
+def test_Z6_a_flat_depth_map_does_not_prove_the_occlusion(tmp_path):
+    assert occlusion(tmp_path, drawn_left=True, declared_left=True, flat_depth=True)["status"] != "PASS"
+
+
+@needs_ffmpeg
+@pytest.mark.xfail(strict=True, reason="V19c/Z7: no `particles` block in the sidecar is 'no particle layer declared' = PASS; flakes drawn over the soldiers and not "
+                                       "declared are never looked at (design question for the lead: undeclared snow should be NOT_RUN, not PASS)")
+def test_Z7_snow_drawn_over_the_soldiers_without_a_declared_layer_is_not_a_pass(tmp_path):
+    assert occlusion(tmp_path, drawn_left=True, declared_left=True, declare=False)["status"] != "PASS"
+
+
+@needs_ffmpeg
+@pytest.mark.xfail(strict=True, reason="V19b: wind has no measure of its own: the registered compliant and negative tests of V19a, V19b and V19c are the same two "
+                                       "nodes, so nothing in the registered proof is about wind (V19b) or snow depth (V19c)")
+def test_Z8_each_of_v19a_v19b_v19c_has_its_own_compliant_and_negative_test():
     reg = json.loads((Path(__file__).resolve().parents[2] / "explainer_engine/governance/owner_requirements.json").read_text(encoding="utf-8"))
     by = {e["id"]: e["check"] for e in reg["requirements"]}
     tests = [(by[i]["test"], by[i]["negative_test"]) for i in ("OR-V19a", "OR-V19b", "OR-V19c")]
     assert len(set(tests)) == 3, tests
-
-
-@needs_ffmpeg
-@pytest.mark.xfail(strict=True, reason="Z7: without a .zones.json the zone rule (G-LIVE-3) is skipped and 'only the fire moves' is judged by area alone: a flame "
-                                       "covering 8 % of the frame PASSes with no smoke, wind or snow anywhere")
-def test_Z7_a_big_flame_alone_without_a_zones_file_is_not_a_pass(tmp_path):
-    assert living(tmp_path, "bigfire", fire_frames(8))["status"] != "PASS"
-
-
-@needs_ffmpeg
-@pytest.mark.xfail(strict=True, reason="Z8: a one-second flicker (period of exactly the 1 s window) is invisible to a window that compares frames 1 s apart; "
-                                       "an all-frame luminance pulse measures 0.0 % and FAILs: the right verdict for the wrong reason (nothing else moves), "
-                                       "but the same pulse with a moving world inside would be measured as if it did not pulse; recorded as a window-aliasing limit")
-def test_Z8_the_window_does_not_alias_with_a_one_second_period(tmp_path):
-    pulse = [np.clip(P * (1 + 0.25 * np.sin(2 * np.pi * 1.0 * i / FPS)), 0, 255) for i in range(N)]
-    r = living(tmp_path, "pulse", pulse)
-    assert r["value"] is not None and r["value"] > 0.0, r
 
 
 # ===================================================================================== OR-V19e: liveliness_rows
@@ -271,12 +408,6 @@ def test_V19e_a_still_picture_is_review_on_all_three_rows():
     assert set(out["rows"].values()) == {"REVIEW"}, out
 
 
-def test_V19e_a_living_picture_passes_the_row():
-    out = rows_of(proper_frames())
-    assert out["rows"]["alive_beyond_camera"] in ("PASS", "REVIEW")           # recorded: see the numbers below
-    assert out["rows"]["no_frozen_second"] == "PASS", out
-
-
 def test_V19e_a_moving_blob_on_a_still_camera_passes_all_rows():
     frames = []
     for i in range(N):
@@ -288,7 +419,6 @@ def test_V19e_a_moving_blob_on_a_still_camera_passes_all_rows():
 
 
 def test_V19e_the_rows_are_review_not_fail_so_they_wait_for_the_director_never_block():
-    from explainer_engine.governance import layer_gate  # noqa: F401  (imported: the row level is the registry's, G.REVIEW)
     out = rows_of(zoom_frames(0.12))
     assert "FAIL" not in out["rows"].values()
 
