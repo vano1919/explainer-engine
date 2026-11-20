@@ -1606,7 +1606,7 @@ if modal is not None:
         plan_sha = _sha(plan)
         print("GO card", go_gate(plan_sha=plan_sha), "smoke timeout", TIMEOUTS[0], "s", flush=True)
         ladder_gate("L3")
-        smoke_item = f"ltx_smoke_{run_id(plan_sha, LAUNCH)}"
+        smoke_item = f"ltx_smoke_{run_id(plan_sha, LAUNCH)}_{worker_sha()[:8]}"   # a repeat on FIXED bytes is a new item; the same bytes stay refused
         night_reserve(smoke_item, hard_bill_usd(LAUNCH, TIMEOUTS[0]), "L3 smoke")
         pic = Path(picture).read_bytes()
         nat = native_spec(LAUNCH, SMOKE_JOB["seconds"])
