@@ -3767,6 +3767,12 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 - New `maplibre_lane/preset_from_frames.py` (+ `tests/unit/test_maps_preset_from_frames.py`, 10): k-means in Lab (seeded), role mapping ink/paper/water/accent, palette_check with a lightness repair search, finish grain/vignette/tint measured; `draft: true`, `font` empty; `render.load_style_preset` refuses drafts and an empty font.
 - Truce batch2 (cold blue-grey frames) vs `1917_film.json`: the draft is cold and neutral where the hand-made preset is warm sepia (background dE 19, tint dE 52); no warm saturated cluster, so the line colour fell back to Okabe-Ito vermillion. Use as a starting point only.
 
+## 2026-11-20 — Audio validators V-01..V-11 placed in the repo (free, no paid run)
+- Eleven pure validators in `explainer_engine/audio/val_*.py`, written by Gemini, checked by the tester, requirement ids in each module docstring: `val_pace` (OR-A22, OR-A10; includes the sort patch (rule, where)), `val_clip_fit` (OR-A29, OR-S28), `val_cast` (OR-A13, OR-A20, OR-A11/A21), `val_voice_similarity` (OR-A08, OR-A13), `val_word_cuts` (OR-A23), `val_shot_sound_plan` (OR-A14, A15, A02, A28, OR-C04), `val_cue_binding` (OR-S26, OR-A27, OR-V30c), `val_reaction_latency` (OR-S26, OR-A15), `val_stem_levels` (OR-A24), `val_sound_licences` (OR-A16, OR-A17), `val_text_drift` (OR-A26).
+- Thresholds are hypothesis defaults in each `Limits` dataclass, severity REVIEW; wiring to `sourced_rules.json` BP ids is a later step (D-59).
+- Tests: `tests/unit/test_val_*.py` (124 pass). Full suite: 2442 passed; failures unrelated to this change and present on the base: `test_lora_training.py` (4, cv2 missing in the cloud sandbox) and `test_xworld_v1_score.py::test_identical_frame_beats_a_different_one`.
+- Not done: BP wiring, hooking validators into gates. Next: lead decides wiring.
+
 ## 2026-11-20 — L27: PC-06 counts the description in bytes and forbids `<` `>`
 - Fix: `qa/publish_check.py` PC-06 compared the description in characters; YouTube Data API limits it to 5000 bytes
   (an em dash is 3 bytes, so 2600 of them pass a character check and fail the upload). Now `DESCRIPTION_MAX_BYTES` is compared
