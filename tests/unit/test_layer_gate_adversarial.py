@@ -424,16 +424,42 @@ def test_F4_a_bool_is_not_a_wave(root):
     assert "MS5-MAP-TARGET" in codes(check(rec, root))
 
 
-# F5: PROPOSAL (needs the lead's decision, not a settled rule): a candidate the record itself marks state_of_the_art, that no
+# F5 (decided by the lead 2026-11-20 09:43: option b): a candidate the record itself marks state_of_the_art, that no
 # trial ran and no NOT_RUN row names, lets the layer say PASS. The analyst's L16 draft is exactly this (SeedVR, CodeFormer). ---
 
-@pytest.mark.xfail(strict=False, reason="F5 proposal: a never-run state_of_the_art candidate with no NOT_RUN row should keep the layer at NOT_RUN")
 def test_F5_an_unrun_state_of_the_art_candidate_keeps_the_layer_not_run(root):
     rec = good()
     rec["candidates"][0]["state_of_the_art"] = True          # C1 is marked best-in-class by the record itself
     rec["trials"][0]["candidate_ids"] = ["C2", "C3"]          # and the only RUN trial says it ran the other two
     res = check(rec, root)
     assert res.status == S.NOT_RUN, res.status
+    assert any("state_of_the_art candidate C1" in n for n in res.not_run)
+
+
+def test_F5_a_not_run_row_that_names_the_candidate_with_a_reason_lets_it_stand(root):
+    rec = good()
+    rec["candidates"][0]["state_of_the_art"] = True
+    rec["trials"][0]["candidate_ids"] = ["C2", "C3"]
+    rec["trials"].append({"id": "T9", "sub_question": rec["trials"][0]["sub_question"], "status": "NOT_RUN", "candidate_ids": ["C1"],
+                          "not_run_reason": "needs a priced GPU run: asked in the owner thread 2026-11-20"})
+    res = check(rec, root)
+    assert res.status == S.PASS, (res.status, res.errors, res.not_run)
+
+
+def test_F5_a_not_run_row_without_a_reason_does_not(root):
+    rec = good()
+    rec["candidates"][0]["state_of_the_art"] = True
+    rec["trials"][0]["candidate_ids"] = ["C2", "C3"]
+    rec["trials"].append({"id": "T9", "sub_question": rec["trials"][0]["sub_question"], "status": "NOT_RUN", "candidate_ids": ["C1"]})
+    res = check(rec, root)
+    assert res.status in (S.BLOCK, S.NOT_RUN)
+
+
+def test_F5_a_run_trial_that_names_it_counts(root):
+    rec = good()
+    rec["candidates"][0]["state_of_the_art"] = True
+    rec["trials"][0]["candidate_ids"] = ["C1", "C2", "C3"]
+    assert check(rec, root).status == S.PASS
 
 
 # F6 (low): formal checks that accept impossible values ----------------------------------------------------------------------

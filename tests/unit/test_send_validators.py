@@ -35,16 +35,23 @@ def seconds(n):
     return int(n * FPS)
 
 
+def wide_texture(seed):
+    rng = np.random.default_rng(seed)
+    return np.clip(np.kron(rng.integers(30, 220, (27, 88)), np.ones((10, 10))), 0, 255).astype(np.float32)   # 270 x 880
+
+
+def drifting(bg, area, tex, px_per_frame, i):
+    """The picture with one region replaced by a texture that drifts sideways (smoke, cloud, flame body): a world that moves under a still camera."""
+    f = bg.copy()
+    sh = int(round(px_per_frame * i)) % 300
+    f[area] = tex[area[0], area[1].start + sh:area[1].stop + sh]
+    return f
+
+
 def smoke_clip(path, n=3.0, area=(slice(40, 230), slice(60, 400))):
-    """A still camera, a textured picture, a big region of turbulent change (smoke, snow, sky)."""
-    rng = np.random.default_rng(2)
-    bg = background()
-    frames = []
-    for _ in range(seconds(n)):
-        f = bg.copy()
-        f[area] = np.clip(f[area] + rng.normal(0, 40, f[area].shape), 0, 255)
-        frames.append(f)
-    return clip(path, frames)
+    """A still camera, a textured picture, a big region of drifting texture (smoke, snow bank, sky)."""
+    bg, tex = background(), wide_texture(2)
+    return clip(path, [drifting(bg, area, tex, 0.5, i) for i in range(seconds(n))])
 
 
 def fire_only_clip(path, n=3.0):
@@ -59,15 +66,69 @@ def fire_only_clip(path, n=3.0):
     return clip(path, frames)
 
 
-def camera_move_clip(path, n=3.0):
+def camera_move_clip(path, n=3.0, px_per_frame=1):
+    """The violation: the camera drifts over a dead picture, nothing in the world moves (the whole frame changes, the world does not)."""
     bg = np.tile(background(), (1, 2))
-    return clip(path, [bg[:, 4 * i % 400:4 * i % 400 + W] for i in range(seconds(n))])
+    return clip(path, [bg[:, px_per_frame * i % 400:px_per_frame * i % 400 + W] for i in range(seconds(n))])
+
+
+FLAKES = 450
+
+
+def snow_frames(n, matte_only=False):
+    """Still camera, dead picture, 450 flakes of 3x3 px falling 60 px/s: the particle layer alone (and its matte)."""
+    rng = np.random.default_rng(4)
+    x0, y0 = rng.integers(0, W - 3, FLAKES), rng.integers(0, H, FLAKES)
+    bg, out, mattes = background(), [], []
+    for i in range(seconds(n)):
+        f, m = bg.copy(), np.zeros((H, W), np.float32)
+        for x, y in zip(x0, (y0 + 2.5 * i) % (H - 3)):
+            f[int(y):int(y) + 3, x:x + 3] = 255
+            m[int(y):int(y) + 3, x:x + 3] = 255
+        out.append(f)
+        mattes.append(m)
+    return out, mattes
+
+
+def snow_only_clip(path, n=3.0):
+    return clip(path, snow_frames(n)[0])
+
+
+def zones_json(tmp_path, name, zones, extra=None):
+    """Write masks and ``<name>.zones.json``; ``zones`` = [(zone name, kind, (x0, y0, x1, y1))]."""
+    rows = []
+    for zn, kind, (x0, y0, x1, y1) in zones:
+        m = np.zeros((H, W), np.uint8)
+        m[y0:y1, x0:x1] = 255
+        Image.fromarray(m).save(tmp_path / f"{zn}.png")
+        rows.append({"name": zn, "kind": kind, "mask": f"{zn}.png"})
+    (tmp_path / f"{name}.zones.json").write_text(json.dumps(dict({"zones": rows}, **(extra or {}))), encoding="utf-8")
+
+
+def alive_world_clip(path, n=3.0, with_snow=False, camera_px=0):
+    """The compliant clip: a still (or slowly drifting) camera; fire and smoke and clouds move by themselves; optionally a snow layer on top."""
+    bg, tex = np.tile(background(), (1, 2)), wide_texture(2)
+    sky, smoke, fire = (slice(0, 40), slice(0, W)), (slice(60, 200), slice(60, 260)), (slice(200, 260), slice(300, 400))
+    frames = []
+    snow, _ = snow_frames(n) if with_snow else (None, None)
+    for i in range(seconds(n)):
+        f = bg[:, camera_px * i % 400:camera_px * i % 400 + W].copy()
+        for area, speed in ((sky, 0.5), (smoke, 0.7), (fire, 1.5)):
+            sh = int(round(speed * i)) % 300
+            f[area] = tex[area[0], area[1].start + sh:area[1].stop + sh]
+        if snow is not None:
+            f = np.where(snow[i] == 255, 255, f)
+        frames.append(f)
+    return clip(path, frames)
+
+
+ZONES = [("sky", "sky", (0, 0, 480, 40)), ("smoke", "smoke", (60, 60, 260, 200)), ("fire", "fire", (300, 200, 400, 260))]
 
 
 def test_a_still_camera_with_moving_smoke_passes_with_its_number(tmp_path):
     r = V.living_motion(smoke_clip(tmp_path / "ok.mp4"))
-    assert r["status"] == "PASS" and r["value"] >= LV.FROZEN_CHANGE, r
-    assert "zones not measured" in r["detail"] and "camera still" in r["detail"]
+    assert r["status"] == "PASS" and r["value"] >= V.FRAME_COVER_MIN, r
+    assert "no .zones.json" in r["detail"] and "flow with the camera out" in r["detail"]
 
 
 def test_only_the_fire_moves_fails(tmp_path):
@@ -76,25 +137,131 @@ def test_only_the_fire_moves_fails(tmp_path):
     assert "G-LIVE-1" in r["detail"]
 
 
-def test_a_moving_camera_is_not_run_not_passed(tmp_path):
+def test_a_camera_move_alone_fails_with_the_camera_taken_out(tmp_path):
+    """Client item 8: camera-only must FAIL (it used to be NOT_RUN: the camera is now fitted and subtracted)."""
     r = V.living_motion(camera_move_clip(tmp_path / "pan.mp4"))
-    assert r["status"] == "NOT_RUN" and "camera moves" in r["detail"], r
+    assert r["status"] == "FAIL" and "camera" in r["detail"] and r["value"] < V.FRAME_COVER_MIN, r
 
 
-def test_a_zone_that_barely_moves_fails_and_one_that_moves_passes(tmp_path):
-    p = smoke_clip(tmp_path / "z.mp4")
-    for name, box, want in (("smoke", (60, 40, 400, 230), "PASS"), ("sky", (0, 0, 480, 30), "FAIL")):
-        m = np.zeros((H, W), np.uint8)
-        x0, y0, x1, y1 = box
-        m[y0:y1, x0:x1] = 255
-        Image.fromarray(m).save(tmp_path / f"{name}.png")
-        (tmp_path / "z.zones.json").write_text(json.dumps({"zones": [{"name": name, "mask": f"{name}.png"}]}), encoding="utf-8")
-        r = V.living_motion(p)
-        assert r["status"] == want, (name, r)
-        if want == "FAIL":
-            assert "G-LIVE-3" in r["detail"]
-        else:
-            assert f"{name} " in r["detail"]
+def test_snow_alone_fails_without_zones_and_with_zones(tmp_path):
+    """Client item 8: snow alone cannot pass a clip (flakes cover a few percent of the frame)."""
+    clip_ = snow_only_clip(tmp_path / "snow.mp4")
+    r = V.living_motion(clip_)
+    assert r["status"] == "FAIL" and "particles alone" in r["detail"], r
+    zones_json(tmp_path, "snow", ZONES)
+    r = V.living_motion(clip_)
+    assert r["status"] == "FAIL" and "G-LIVE-3" in r["detail"], r
+
+
+def test_with_the_particle_layer_left_out_snow_alone_has_no_zone_motion(tmp_path):
+    frames, mattes = snow_frames(3.0)
+    clip_ = clip(tmp_path / "snow2.mp4", frames)
+    clip(tmp_path / "matte.mp4", mattes)
+    zones_json(tmp_path, "snow2", ZONES, {"particles": {"matte": "matte.mp4"}})
+    r = V.living_motion(clip_)
+    assert r["status"] == "FAIL" and "G-LIVE-3" in r["detail"], r
+
+
+def test_a_compliant_clip_with_zones_passes(tmp_path):
+    p = alive_world_clip(tmp_path / "ok.mp4")
+    zones_json(tmp_path, "ok", ZONES)
+    r = V.living_motion(p)
+    assert r["status"] == "PASS" and all(z in r["detail"] for z in ("sky", "smoke", "fire")), r
+
+
+def test_a_compliant_clip_on_a_drifting_camera_passes(tmp_path):
+    """The world moves by itself while the camera drifts (the slow 2.5D drift of D-139): the camera is fitted and taken out, the effects stay."""
+    p = alive_world_clip(tmp_path / "drift.mp4", camera_px=1)
+    zones_json(tmp_path, "drift", ZONES)
+    r = V.living_motion(p)
+    assert r["status"] == "PASS", r
+
+
+def test_a_camera_drift_with_parallax_and_a_dead_world_still_fails(tmp_path):
+    """A 2.5D drift where the far sky moves half as fast as the near layer (parallax) and nothing is alive: the smoke and fire zones fail
+    (their motion is the camera's). Limit, stated in BP-215: with the sky zone alone, parallax of the same order as slow clouds could pass."""
+    bg, sky_bg = np.tile(background(), (1, 2)), np.tile(wide_texture(7), (1, 2))
+    frames = []
+    for i in range(seconds(3.0)):
+        f = bg[:, i % 400:i % 400 + W].copy()
+        f[:40] = sky_bg[:40, (i // 2) % 400:(i // 2) % 400 + W]
+        frames.append(f)
+    p = clip(tmp_path / "parallax.mp4", frames)
+    zones_json(tmp_path, "parallax", ZONES[1:])                       # smoke and fire zones
+    r = V.living_motion(p)
+    assert r["status"] == "FAIL" and ("smoke zone" in r["detail"] or "fire zone" in r["detail"]), r
+
+
+def test_a_dead_zone_in_a_moving_clip_fails_by_name(tmp_path):
+    p = alive_world_clip(tmp_path / "dead_fire.mp4")
+    zones_json(tmp_path, "dead_fire", ZONES[:2] + [("fire", "fire", (400, 100, 470, 180))])    # the 'fire' mask sits on a static part
+    r = V.living_motion(p)
+    assert r["status"] == "FAIL" and "fire zone" in r["detail"], r
+
+
+def test_a_zone_kind_without_a_threshold_is_refused(tmp_path):
+    p = smoke_clip(tmp_path / "k.mp4")
+    zones_json(tmp_path, "k", [("lava", "lava", (60, 40, 400, 230))])
+    with pytest.raises(ValueError, match="BP-215"):
+        V.living_motion(p)
+
+
+def test_without_opencv_the_flow_is_not_measured_never_passed(tmp_path, monkeypatch):
+    p = smoke_clip(tmp_path / "nocv.mp4")
+    monkeypatch.setattr(V, "_cv2", lambda: None)
+    r = V.living_motion(p)
+    assert r["status"] == "NOT_RUN" and "OpenCV" in r["detail"], r
+
+
+# ---- the depth-occlusion check (client item 8): the foreground hides the far particles -------------------------------------------
+
+def far_flakes(n, left_too):
+    """Far flakes: only over the right half (far background) when compliant; also over the left half (the soldiers) when not."""
+    rng = np.random.default_rng(5)
+    lo = 0 if left_too else W // 2
+    x0, y0 = rng.integers(lo, W - 3, 200), rng.integers(0, H, 200)
+    out = []
+    for i in range(seconds(n)):
+        m = np.zeros((H, W), np.float32)
+        for x, y in zip(x0, (y0 + 1.5 * i) % (H - 3)):
+            m[int(y):int(y) + 3, x:x + 3] = 255
+        out.append(m)
+    return out
+
+
+def occlusion_case(tmp_path, left_too):
+    p = alive_world_clip(tmp_path / "occ.mp4")
+    clip(tmp_path / "far.mp4", far_flakes(3.0, left_too))
+    depth = np.zeros((H, W), np.uint8)
+    depth[:, :W // 2] = 230                    # the near half (soldiers, sandbags); the far half is dark
+    depth[:, W // 2:] = 40
+    Image.fromarray(depth).save(tmp_path / "depth.png")
+    zones_json(tmp_path, "occ", ZONES, {"particles": {"far": "far.mp4"}, "depth": "depth.png"})
+    return p
+
+
+def test_far_flakes_hidden_behind_the_foreground_pass(tmp_path):
+    r = V.living_motion(occlusion_case(tmp_path, left_too=False))
+    assert r["status"] == "PASS" and "far particles over the foreground 0.00 %" in r["detail"], r
+
+
+def test_far_flakes_drawn_over_the_soldiers_fail(tmp_path):
+    r = V.living_motion(occlusion_case(tmp_path, left_too=True))
+    assert r["status"] == "FAIL" and "does not hide them" in r["detail"] and r["value"] > V.FAR_OVER_FG_MAX, r
+
+
+def test_a_declared_particle_layer_without_its_depth_map_is_not_proven(tmp_path):
+    p = alive_world_clip(tmp_path / "nodepth.mp4")
+    zones_json(tmp_path, "nodepth", ZONES, {"particles": {"far": "far.mp4"}})
+    clip(tmp_path / "far.mp4", far_flakes(3.0, False))
+    r = V.living_motion(p)
+    assert r["status"] == "NOT_RUN" and "occlusion not proven" in r["detail"], r
+
+
+def test_the_thresholds_are_read_from_bp_215():
+    from explainer_engine.standards import sourced_rules as SR
+    assert V.ZONE_SPEED["fire"] == SR.T("BP-215", "fire_min_px_s") and V.FAR_OVER_FG_MAX == SR.T("BP-215", "far_over_foreground_max_pct")
+    assert SR.rule("BP-215")["status"] == "hypothesis"
 
 
 def test_a_clip_shorter_than_a_second_is_not_run(tmp_path):

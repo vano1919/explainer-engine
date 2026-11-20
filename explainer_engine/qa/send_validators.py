@@ -1,7 +1,7 @@
 """Validators the send gate runs on a candidate before the owner sees it (``governance/send_gate``, spec section 4). Each one is named by a
 registry entry of ``owner_requirements.json`` (``check.ref`` = ``module:function``) and has a test on a compliant and on a violating
 fixture. Contract: ``fn(path) -> {"status": PASS | FAIL | NOT_RUN, "value": number | None, "detail": str}``; ``fn.kinds`` lists the file
-suffixes it applies to. Numpy and ffmpeg only (no OpenCV), so it also runs in the cloud container.
+suffixes it applies to. Numpy and ffmpeg, plus OpenCV for the optical flow of ``living_motion`` (without it that validator says NOT_RUN, never a pass).
 
 ``living_motion`` (R-LIVING, the owner 2026-11-20 08:33 UTC and 2026-11-14: "only the fire moves" is not alive): on a clip with a still camera
 the world must move, not only the flame. Measured on the delivered frames (480x270 grey, 8 frames a second):
@@ -67,32 +67,179 @@ def _zones(path: Path) -> list[tuple[str, np.ndarray]]:
     return out
 
 
+FLOW_GAP_S = float(SR.T("BP-215", "flow_gap_s"))
+CAMERA_INLIERS_MIN = float(SR.T("BP-215", "camera_inliers_min_pct"))
+ZONE_COVER_MIN = float(SR.T("BP-215", "zone_cover_min_pct"))
+ZONE_SPEED = {"fire": float(SR.T("BP-215", "fire_min_px_s")), "smoke": float(SR.T("BP-215", "smoke_min_px_s")),
+              "sky": float(SR.T("BP-215", "sky_min_px_s"))}
+FRAME_MIN_PX_S = float(SR.T("BP-215", "frame_min_px_s"))
+FRAME_COVER_MIN = float(SR.T("BP-215", "frame_cover_min_pct"))
+FAR_OVER_FG_MAX = float(SR.T("BP-215", "far_over_foreground_max_pct"))
+STILL_PRIOR_MIN = float(SR.T("BP-215", "still_prior_min_pct"))
+FLOW_CHANGE_MIN = float(SR.T("BP-215", "flow_pixel_change_min"))
+FG_DEPTH_MIN = float(SR.T("BP-215", "foreground_depth_min"))
+MATTE_ON = 30                         # a matte pixel above this grey level is a particle
+
+
+def _cv2():
+    try:
+        import cv2
+    except ImportError:
+        return None
+    return cv2
+
+
+def _sidecar(path: Path) -> dict:
+    side = path.with_suffix(".zones.json")
+    if not side.is_file():
+        return {}
+    data = json.loads(side.read_text(encoding="utf-8"))
+    if not isinstance(data, dict):
+        raise ValueError(f"{side.name} is not an object")
+    return data
+
+
+def _zone_masks(path: Path, side: dict) -> list[tuple[str, str, np.ndarray]]:
+    """``[(name, kind, mask)]`` of the zones in the clip's ``.zones.json``; ``kind`` (default: the name) is fire, smoke or sky, the kinds that have
+    a speed in BP-215 (any other kind raises, so the send gate BLOCKs: a zone with no threshold is never a pass)."""
+    from PIL import Image
+    out = []
+    for z in side.get("zones", []):
+        kind = str(z.get("kind") or z["name"]).lower()
+        if kind not in ZONE_SPEED:
+            raise ValueError(f"zone {z['name']!r} has kind {kind!r}: BP-215 sets a speed for {', '.join(ZONE_SPEED)} only")
+        m = Image.open(path.parent / z["mask"]).convert("L").resize(SIZE)
+        out.append((z["name"], kind, np.asarray(m) > 127))
+    return out
+
+
+def _flow_fields(g: list[np.ndarray], gap: int, cv2):
+    """Farneback flow between frames ``gap`` apart (uint8 grey, 480x270): one (h, w, 2) float32 field per start frame."""
+    u8 = [np.clip(f, 0, 255).astype(np.uint8) for f in g]
+    return [cv2.calcOpticalFlowFarneback(u8[i], u8[i + gap], None, 0.5, 3, 15, 3, 5, 1.2, 0) for i in range(0, len(u8) - gap)]
+
+
+def _camera_residual(flow: np.ndarray, exclude: np.ndarray, cv2) -> tuple[np.ndarray, float | None]:
+    """The flow minus the camera: a similarity transform fitted by RANSAC to the flow of the pixels outside ``exclude`` (the declared
+    zones and the particles), and the share of its inliers (None when no transform could be fitted)."""
+    h, w = flow.shape[:2]
+    ys, xs = np.mgrid[6:h - 6:6, 6:w - 6:6]
+    use = ~exclude[ys, xs]
+    if use.sum() < 40:
+        use = np.ones_like(use, dtype=bool)
+    src = np.stack([xs[use], ys[use]], axis=1).astype(np.float32)
+    fv = flow[ys[use], xs[use]]
+    still = float((np.hypot(fv[:, 0], fv[:, 1]) < 0.35).mean()) * 100
+    if still >= STILL_PRIOR_MIN:                       # a still camera is the default: the world that moves is the minority
+        return flow, still
+    dst = src + fv
+    M, inl = cv2.estimateAffinePartial2D(src, dst, method=cv2.RANSAC, ransacReprojThreshold=0.35, maxIters=2000)
+    gy, gx = np.mgrid[0:h, 0:w].astype(np.float32)
+    if M is None:
+        return flow, None
+    cam = np.stack([M[0, 0] * gx + M[0, 1] * gy + M[0, 2] - gx, M[1, 0] * gx + M[1, 1] * gy + M[1, 2] - gy], axis=-1)
+    return flow - cam, float(np.mean(inl)) * 100
+
+
+def _depth_check(path: Path, side: dict) -> tuple[str, float | None, str]:
+    """Does the foreground hide the far particles? Returns (status, share %, text)."""
+    parts, depth = side.get("particles"), side.get("depth")
+    if not parts:
+        return PASS, None, "no particle layer declared"
+    far = parts.get("far") if isinstance(parts, dict) else None
+    if not far or not depth:
+        return NOT_RUN, None, "a particle layer is declared but its far band or the depth map is missing: occlusion not proven"
+    from PIL import Image
+    dm = np.asarray(Image.open(path.parent / depth).convert("L").resize(SIZE)).astype(np.float32)
+    span = float(dm.max() - dm.min()) or 1.0
+    fg = (dm - dm.min()) / span >= FG_DEPTH_MIN
+    on = [m > MATTE_ON for m in decode_grey(path.parent / far)]
+    total = sum(int(m.sum()) for m in on)
+    if total == 0:
+        return FAIL, None, "the far-particle matte shows no particle at all: nothing proves the far band exists"
+    over = 100.0 * sum(int((m & fg).sum()) for m in on) / total
+    if over > FAR_OVER_FG_MAX:
+        return FAIL, round(over, 2), (f"{over:.1f} % of the far particles are drawn over foreground pixels (at most {FAR_OVER_FG_MAX:g} %): "
+                                      f"the foreground does not hide them (client item 8, BP-215)")
+    return PASS, round(over, 2), f"far particles over the foreground {over:.2f} % (at most {FAR_OVER_FG_MAX:g} %)"
+
+
 def living_motion(path) -> dict:
     path = Path(path)
     g = decode_grey(path)
     step = max(1, int(round(ANALYSIS_FPS * LV.FROZEN_WINDOW_S)))
     if len(g) <= step:
         return {"status": NOT_RUN, "value": None, "detail": f"too short for a one-second window ({len(g)} frames at {ANALYSIS_FPS} fps)"}
-    shift = max(phase_shift(g[i], g[i + step]) for i in range(0, len(g) - step, max(1, step // 2)))
-    if shift > STILL_SHIFT_PX:
-        return {"status": NOT_RUN, "value": round(shift, 2), "detail": f"the camera moves (up to {shift:.1f} px of 480 in one second): the "
-                f"still-camera rule does not apply; the owner's eye judges this clip"}
+    # 1. G-LIVE-1: no one-second window may stand (pixel change, kept: it is the cheap guard of the whole frame)
     fw = LV.frozen_windows_grey(g, ANALYSIS_FPS)
     low = fw["min_share_pct"]
     if fw["frozen"]:
         return {"status": FAIL, "value": low, "detail": f"{fw['frozen']} of {fw['windows']} one-second windows change under {LV.FROZEN_CHANGE:g} % of the "
-                f"frame with a still camera (deadest {low:.2f} % from {fw['frozen_from_s'][0]:.1f} s): only a small part moves (G-LIVE-1, BP-194)"}
-    zones, notes = _zones(path), []
-    for name, mask in zones:
-        shares = [float((np.abs(g[i + step] - g[i])[mask] > LV.FROZEN_PIXEL).mean() * 100) for i in range(0, len(g) - step, max(1, step // 2))]
-        med = float(np.median(shares))
-        if med < ZONE_MIN_PCT:
-            return {"status": FAIL, "value": round(med, 2), "detail": f"the {name} zone changes {med:.1f} % of its pixels in the median second "
-                    f"(under {ZONE_MIN_PCT:g} %): the effect barely moves (G-LIVE-3)"}
-        notes.append(f"{name} {med:.1f} %")
-    zone_text = ("zones " + ", ".join(notes)) if zones else "zones not measured (no .zones.json beside the clip)"
-    return {"status": PASS, "value": low, "detail": f"deadest second changes {low:.2f} % of the frame (floor {LV.FROZEN_CHANGE:g} %), camera still "
-            f"({shift:.2f} px); {zone_text}"}
+                f"frame (deadest {low:.2f} % from {fw['frozen_from_s'][0]:.1f} s): only a small part moves (G-LIVE-1, BP-194)"}
+    # 2. optical flow with the camera taken out (client item 8, BP-215)
+    cv2 = _cv2()
+    if cv2 is None:
+        return {"status": NOT_RUN, "value": low, "detail": "optical flow needs OpenCV (opencv-python-headless): the motion is not measured, "
+                "never passed; the owner's eye judges this clip"}
+    side = _sidecar(path)
+    zones = _zone_masks(path, side)
+    parts = side.get("particles") if isinstance(side.get("particles"), dict) else {}
+    matte = [m > MATTE_ON for m in decode_grey(path.parent / parts["matte"])] if parts.get("matte") else None
+    gap = max(1, int(round(FLOW_GAP_S * ANALYSIS_FPS)))
+    flows = _flow_fields(g, gap, cv2)
+    if not flows:
+        return {"status": NOT_RUN, "value": low, "detail": f"too short for optical flow ({len(g)} frames, gap {gap})"}
+    zone_union = np.zeros((SIZE[1], SIZE[0]), bool)
+    for _, _, m in zones:
+        zone_union |= m
+    dt = gap / ANALYSIS_FPS
+    cover = {name: [] for name, _, _ in zones}
+    frame_cover, inliers = [], []
+    k = np.ones((5, 5), np.uint8)
+    for i, fl in enumerate(flows):
+        parts_i = np.zeros_like(zone_union)
+        if matte is not None:
+            parts_i = cv2.dilate((matte[i] | matte[min(i + gap, len(matte) - 1)]).astype(np.uint8), k).astype(bool)
+        resid, inl = _camera_residual(fl, zone_union | parts_i, cv2)
+        if inl is not None:
+            inliers.append(inl)
+        speed = np.hypot(resid[..., 0], resid[..., 1]) / dt
+        speed = np.where(np.abs(g[i + gap] - g[i]) >= FLOW_CHANGE_MIN, speed, 0.0)    # a pixel that did not change does not move (flow smear)
+        for name, kind, m in zones:
+            valid = m & ~parts_i
+            if valid.sum() >= 50:
+                cover[name].append(float((speed[valid] >= ZONE_SPEED[kind]).mean() * 100))
+        keep = ~parts_i
+        frame_cover.append(float((speed[keep] >= FRAME_MIN_PX_S).mean() * 100) if keep.any() else 0.0)
+    cam = float(np.median(inliers)) if inliers else 0.0
+    if cam < CAMERA_INLIERS_MIN:
+        return {"status": NOT_RUN, "value": round(cam, 1), "detail": f"the camera could not be separated from the motion ({cam:.0f} % inliers, at "
+                f"least {CAMERA_INLIERS_MIN:g} %): the owner's eye judges this clip"}
+    notes, worst = [], None
+    if zones:
+        for name, kind, _ in zones:
+            vals = cover[name]
+            med = float(np.median(vals)) if vals else 0.0
+            if med < ZONE_COVER_MIN:
+                why = "only the particle layer moves in it" if not vals else "the effect barely moves"
+                return {"status": FAIL, "value": round(med, 2), "detail": f"the {name} zone has {med:.1f} % of its pixels moving over "
+                        f"{ZONE_SPEED[kind]:g} px/s with the camera and the particles taken out (at least {ZONE_COVER_MIN:g} %): {why} (G-LIVE-3, BP-215)"}
+            notes.append(f"{name} {med:.1f} %")
+            worst = med if worst is None else min(worst, med)
+    else:
+        med = float(np.median(frame_cover))
+        if med < FRAME_COVER_MIN:
+            return {"status": FAIL, "value": round(med, 2), "detail": f"only {med:.1f} % of the frame moves over {FRAME_MIN_PX_S:g} px/s once the "
+                    f"camera is taken out (at least {FRAME_COVER_MIN:g} %): a camera move or a few particles alone do not make it alive (BP-215)"}
+        worst = med
+        notes.append("no .zones.json, whole frame " + f"{med:.1f} %")
+    status, share, text = _depth_check(path, side)
+    if status == FAIL:
+        return {"status": FAIL, "value": share, "detail": text}
+    zone_text = ("zones " + ", ".join(notes)) if zones else notes[0]
+    return {"status": status, "value": round(worst, 2) if worst is not None else low,
+            "detail": f"deadest second changes {low:.2f} % of the frame (floor {LV.FROZEN_CHANGE:g} %); flow with the camera out ({cam:.0f} % inliers): "
+                      f"{zone_text}; {text}"}
 
 
 living_motion.kinds = (".mp4", ".mov", ".webm", ".mkv")
