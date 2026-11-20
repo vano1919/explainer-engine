@@ -3928,6 +3928,14 @@ one and two, video-only, unreadable file, missing ffprobe, the `-select_streams 
 - Tests: `tests/unit/test_youtube_auth_hygiene.py` (flag on/off, source logged, no tracked `tools/` token or `pending.json`, `.gitignore` covers `tools/youtube/`).
 - Not done: the registry exception row to OR-P03 (needs the creator's typed word); the real sign-in flow was not run.
 
+## 2026-11-20 — G-01 breath and embers: module (Gemini, intake) and its tests by a separate chat
+
+`production/fx25d/breath_embers.py` (breath vapour and rising embers for the 2.5D lane, written by Gemini, taken in by the intake tool) with
+`tests/unit/test_breath_embers.py`: 42 tests written from the rules of the G-01 TASK (interface, limits, puff timing, smoothness, ember life,
+occlusion, far pixels, determinism, wind, composite, speed on 1280x704) by a separate chat before the module's text was read. A mutation
+spot-check of 24 hand-made mutations: 23 caught, 1 equivalent survivor (the breath clip at 0.35 is redundant, the union formula already
+caps it). Two edge notes, not defects at the pipeline's 1280x704 frame: the ember size is in pixels (a quarter-size frame exceeds the 2 %
+cover rule), and the plume has an 8 px floor (`max(8.0, size_share * width)`).
 ## 2026-11-20 — Map spec: `"counter": null`; Truce S05_SH101 with the "Flanders" label; S02_SH102 sourced part
 - `maplibre_spec`: `"counter": null` = no counter (key still required, a forgotten key is still reported); schedule returns None, page hides the box, OCR expects no counter text. `tests/unit/test_maps_counter_null.py` (5).
 - S05_SH101 now shows the region label "Flanders" (C-07). S02_SH102 rendered with only its sourced part (date chip "December 1914" C-06, a straight line between the two sourced end points, no intermediate places, no counter): the straight line is schematic and visibly NOT the real front, so it stays on HF only and is not in the repo.
