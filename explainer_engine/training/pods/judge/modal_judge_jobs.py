@@ -34,6 +34,8 @@ except ImportError:  # pragma: no cover
 
 HF_REPO = "vano1919/tmr-artifacts"
 JUDGE_DIR = Path(__file__).resolve().parent
+if not (JUDGE_DIR / "launch_a100.json").exists() and Path("/root/judge/launch_a100.json").exists():
+    JUDGE_DIR = Path("/root/judge")      # in the container the entry file sits at /root, the folder was baked into /root/judge
 LAUNCH_PATH = JUDGE_DIR / "launch_a100.json"
 SHARED_GATES = Path("/mnt/project-files/explainer-engine/final_plan_2026-11-19/ab_gates")
 NIGHT_LEDGER = Path(os.environ.get("EE_NIGHT_LEDGER") or
