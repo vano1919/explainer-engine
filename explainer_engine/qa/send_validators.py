@@ -156,9 +156,123 @@ def _flow_fields(g: list[np.ndarray], gap: int, cv2):
     return [cv2.calcOpticalFlowFarneback(u8[i], u8[i + gap], None, 0.5, 3, 15, 3, 5, 1.2, 0) for i in range(0, len(u8) - gap)]
 
 
+LAYERED = True
+LAYER_MOVING_PX = float(SR.T("BP-215", "layer_moving_px"))          # a flow vector longer than this (px per gap) is a moving sample
+LAYER_EXTENT_MIN = float(SR.T("BP-215", "layer_extent_min_pct"))        # % of the samples outside the zones that must move for a camera to be the cause
+LAYER_QUADRANTS_MIN = int(SR.T("BP-215", "layer_quadrants_min"))        # quadrants of the frame in which at least LAYER_QUAD_MIN % of the samples move
+LAYER_QUAD_MIN = float(SR.T("BP-215", "layer_quadrant_moving_min_pct"))
+LAYER_EXPLAINED_MIN = float(SR.T("BP-215", "layer_explained_min_pct"))     # % of the moving flow energy the banded camera must explain
+LAYER_MEDIAN_CELLS = int(SR.T("BP-215", "layer_median_cells"))
+LAYER_GUARD_PX = int(SR.T("BP-215", "layer_guard_px"))
+LAYER_BORDER_PCT = float(SR.T("BP-215", "layer_border_pct"))         # width of the border strips, % of the frame side
+LAYER_BORDER_MOVING_MIN = float(SR.T("BP-215", "layer_border_moving_min_pct")) # % of a strip's samples that move for the strip to count
+LAYER_BORDERS_MIN = int(SR.T("BP-215", "layer_borders_min"))          # strips (of top, bottom, left, right) that must move
+LAYER_EDGE_S = float(SR.T("BP-215", "layer_edge_share"))
+LAYER_MIN_R_PX = float(SR.T("BP-215", "layer_min_radius_px"))
+
+
+def _layered_camera(flow: np.ndarray, exclude: np.ndarray, cv2):
+    """The camera of a depth-layered move (Z17): every pixel moves as ``s(x)`` times one camera field (push about a centre, or a pan), ``s`` the depth band's
+    weight, smooth in space. Returns (residual, share of the moving energy the camera explains) or None when the flow is not such a camera: too few of
+    the samples outside the declared zones move, or they do not move in most of the frame, or the explained share is low (noise, local life)."""
+    h, w = flow.shape[:2]
+    ys, xs = np.mgrid[6:h - 6:6, 6:w - 6:6]
+    near = cv2.dilate(exclude.astype(np.uint8), np.ones((LAYER_GUARD_PX, LAYER_GUARD_PX), np.uint8)).astype(bool)   # the flow window smears a zone's life over its neighbours
+    use = ~near[ys, xs]
+    if int(use.sum()) < 40:
+        return None
+    fx, fy = flow[ys, xs, 0], flow[ys, xs, 1]
+    mag = np.hypot(fx, fy)
+    mov = (mag >= LAYER_MOVING_PX) & use
+    if float(mov.sum()) * 100.0 / float(use.sum()) < LAYER_EXTENT_MIN:
+        return None
+    quads = 0
+    for qy in (slice(0, ys.shape[0] // 2), slice(ys.shape[0] // 2, None)):
+        for qx in (slice(0, xs.shape[1] // 2), slice(xs.shape[1] // 2, None)):
+            u = use[qy, qx]
+            if u.any() and float(mov[qy, qx].sum()) * 100.0 / float(u.sum()) >= LAYER_QUAD_MIN:
+                quads += 1
+    if quads < LAYER_QUADRANTS_MIN:
+        return None
+    ring = 0                                             # a camera moves the picture up to its border; a region of life (smoke, cloud) stops short of it
+    bw, bh = int(w * LAYER_BORDER_PCT / 100), int(h * LAYER_BORDER_PCT / 100)
+    for strip in (ys < bh, ys >= h - bh, xs < bw, xs >= w - bw):
+        u = use & strip
+        if u.any() and float((mov & strip).sum()) * 100.0 / float(u.sum()) >= LAYER_BORDER_MOVING_MIN:
+            ring += 1
+    if ring < LAYER_BORDERS_MIN:
+        return None
+    m = mov
+    best = None
+    d = np.array([fx[m].mean(), fy[m].mean()])             # candidate 1: a pan, every flow along one direction
+    if np.hypot(*d) > 1e-6:
+        d = d / np.hypot(*d)
+        best = np.stack([np.full((h, w), d[0], np.float32), np.full((h, w), d[1], np.float32)], axis=-1)
+    px_, py_ = xs[m].astype(np.float64), ys[m].astype(np.float64)   # candidate 2: a push, every flow along a line through one centre
+    ux, uy = fx[m] / mag[m], fy[m] / mag[m]
+    wt = np.ones(px_.size)
+    c = np.array([w / 2.0, h / 2.0])
+    for _ in range(3):
+        A = np.stack([uy, -ux], axis=1) * wt[:, None]
+        b = (uy * px_ - ux * py_) * wt
+        c = np.linalg.lstsq(A, b, rcond=None)[0]
+        r = np.abs(ux * (py_ - c[1]) - uy * (px_ - c[0]))
+        wt = 1.0 / np.maximum(r, 5.0)
+    gx, gy = np.meshgrid(np.arange(w, dtype=np.float32), np.arange(h, dtype=np.float32))
+    shape_r = np.stack([gx - c[0], gy - c[1]], axis=-1).astype(np.float32)
+    cands = [shape_r] + ([best] if best is not None else [])
+    out = None
+    for shp in cands:
+        sh = shp[ys, xs]
+        n2 = (sh ** 2).sum(-1)
+        ok = use & ((np.sqrt(n2) >= LAYER_MIN_R_PX) if shp is shape_r else (n2 > 0.5))
+        if int(ok.sum()) < 40:
+            continue
+        s = np.where(ok, (fx * sh[..., 0] + fy * sh[..., 1]) / np.maximum(n2, 1e-9), np.nan)
+        s = np.clip(s, 0.0, None)
+        k = LAYER_MEDIAN_CELLS
+        sp = np.pad(s, k // 2, mode="edge")
+        win = np.lib.stride_tricks.sliding_window_view(sp, (k, k)).reshape(s.shape + (k * k,))
+        with np.errstate(all="ignore"):
+            import warnings
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                sm = np.nanmedian(win, axis=-1)
+        known = np.isfinite(sm)
+        if not known.any():
+            continue
+        observed = sm.copy()
+        if not known.all():
+            _, lab = cv2.distanceTransformWithLabels((~known).astype(np.uint8), cv2.DIST_L2, 3, labelType=cv2.DIST_LABEL_PIXEL)
+            idx = np.zeros(int(lab.max()) + 1)
+            idx[lab[known]] = sm[known]
+            sm = idx[lab]
+        sfull = cv2.resize(sm.astype(np.float32), (w, h), interpolation=cv2.INTER_LINEAR)
+        resid = flow - sfull[..., None] * shp
+        e_f = float((flow[ys, xs][mov] ** 2).sum())
+        e_r = float((resid[ys, xs][mov] ** 2).sum())
+        explained = 100.0 * (1.0 - e_r / max(e_f, 1e-9))
+        # an edge between two bands: the flow there is a blend, not a motion (judged on the cells the flow was read from, never on the filled ones)
+        mx = cv2.dilate(np.where(known, observed, -np.inf).astype(np.float32), np.ones((3, 3), np.uint8))
+        mn = cv2.erode(np.where(known, observed, np.inf).astype(np.float32), np.ones((3, 3), np.uint8))
+        ref = max(float(np.nanpercentile(s[ok], 90)), 1e-9)                     # the band weights are relative to the strongest band
+        fin = (mx > -1e30) & (mn < 1e30)                        # cv2 turns the infinities into the largest floats
+        edge = (fin & (np.where(fin, mx, 0.0) - np.where(fin, mn, 0.0) > LAYER_EDGE_S * ref)).astype(np.uint8)
+        edge = cv2.dilate(cv2.resize(edge, (w, h), interpolation=cv2.INTER_NEAREST), np.ones((9, 9), np.uint8)).astype(bool)
+        resid = np.where(edge[..., None], 0.0, resid).astype(np.float32)
+        if out is None or explained > out[1]:
+            out = (resid, explained)
+    if out is None or out[1] < LAYER_EXPLAINED_MIN:
+        return None
+    return out
+
+
 def _camera_residual(flow: np.ndarray, exclude: np.ndarray, cv2, unchanged: np.ndarray | None = None) -> tuple[np.ndarray, float | None]:
     """The flow minus the camera: a similarity transform fitted by RANSAC to the flow of the pixels outside ``exclude`` (the declared
     zones and the particles), and the share of its inliers (None when no transform could be fitted)."""
+    lay = _layered_camera(flow, exclude, cv2) if LAYERED else None
+    if lay is not None:                                  # a depth-layered camera (Z17): every band moves by its own share of one camera path
+        return lay
     h, w = flow.shape[:2]
     ys, xs = np.mgrid[6:h - 6:6, 6:w - 6:6]
     use = ~exclude[ys, xs]
