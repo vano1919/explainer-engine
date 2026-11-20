@@ -184,7 +184,16 @@ def go_gate(env=os.environ, plan_sha: str | None = None) -> str:
     return v
 
 
+WAIVER = re.compile(r"^cmsg_\w+$")
+
+
 def offer_problems(env=os.environ, now=None) -> list[str]:
+    waiver = env.get("EE_OFFER_WAIVED", "")      # the creator lifted CH-07 for this run in his own words; his message id is the record
+    if waiver:
+        if not WAIVER.match(waiver):
+            return ["CH-07: EE_OFFER_WAIVED must be the creator's message id (cmsg_...)"]
+        print("CH-07 waived by the creator:", waiver, flush=True)
+        return []
     path = env.get("EE_PAID_OFFER")
     if not path or not Path(path).is_file():
         return ["CH-07: EE_PAID_OFFER must name a paid_offer/1 file (python -m explainer_engine.cloud.paid_offer check)"]
