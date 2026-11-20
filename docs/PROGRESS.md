@@ -6794,3 +6794,17 @@ Skills rewrite and the overlay form (2026-11-20, skills thread, Opus high; owner
   measured ~$0.283, A100-80GB estimate ~$0.228 (not chosen, reason in the offer). Test: `tests/unit/test_ltx_still_camera_scene.py`.
 - Open before any launch: the layer gate for L12/L13 (owner's recorded word), the OR-37 ladder (worker sha changed, L1-L3 must
   be re-proved, L3 is a paid smoke), the OR-34 audit, the watchdog, the owner's GO.
+
+## 2026-11-20 — Paid item 1 (LTX, still camera) run: three clips DONE, the camera did not stay still
+- Owner's word "კი ყველაფერზე" (cmsg_01Hnu5zB86sjUj5GtTgaUkPWJLmaDqg36CujmcxCmchKB5, relayed): layer waiver L12/L13, A100-80GB, $3.00 total; the
+  coordinator switched off the OR-34 re-audit wait and the Haiku watchdog for this run by the owner's "launch now" order (09:17).
+  The OR-34 delta audit (Sonnet) ran only on the earlier H100 version of the plan, not on the A100 diff.
+- `launch.json` now A100-80GB ($3.6429/h, `run_usd` 0.90, `gpu_change` records the word). Worker fixes from the failed L3 smokes of
+  2026-11-19: Secret `custom-secret` (second workspace), no `--negative-prompt` for the distilled CLI and in-process session, the
+  `!` exact-card suffix only for H100 (`A100-80GB!` is not a valid Modal GPU type). Tests that hard-coded the H100 follow the launch file's card.
+- Ladder L1, L2 (CPU) and L3 (A100 smoke: body 109 s, 88.8 s generation for a 2 s clip) re-proved on launch sha 7ada61ce171b, worker sha cc5f2a03effb.
+- Main run 8bebfe7898d5_7ada61ce171b: 3 x 5 s, 1280x704@24, DONE, every file hash-verified on HF; ledger settled $0.2366, Modal's own
+  bill for the run ~$0.38 (container start and end path are not in the ledger's wall clock), whole item ~$0.53, all on the free credit; no app left running.
+- Result: `qa.send_validators living_motion` is NOT_RUN on all three (camera moved: 12.0, 2.0, 1.4 px of 480), and the clips show a push-in
+  or drift and, in S04_SH008, the soldier walking. Fire, sparks, smoke, mist and snow do move. Clips and sheets: HF
+  `explainer-engine/skills_team_2026-11-20/comparisons/L14/ltx_still_camera/` (run_record.json holds the numbers).
