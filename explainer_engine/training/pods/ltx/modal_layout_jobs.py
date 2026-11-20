@@ -64,7 +64,10 @@ FILES = ("modal_layout_jobs.py", "layout_job.py", "ic_lora_run.py")
 
 
 def _ladder_dir() -> Path:
-    return SHARED_GATES if SHARED_GATES.is_dir() else LTX_DIR.parents[3] / "jobs" / "layout_modal"
+    if SHARED_GATES.is_dir():
+        return SHARED_GATES
+    # inside the container the module sits at /root, three parents up does not exist: the ladder is never read there
+    return LTX_DIR.parents[3] / "jobs" / "layout_modal" if len(LTX_DIR.parents) > 3 else Path("/tmp/layout_modal")
 
 
 LADDER_PATH = Path(os.environ.get("EE_LAYOUT_LADDER") or (_ladder_dir() / "ladder_modal_layout.json"))

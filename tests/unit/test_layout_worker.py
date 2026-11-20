@@ -677,3 +677,23 @@ def test_body_runs_the_pair_from_the_same_picture_with_two_prompts(tmp_path):
     assert "1917" not in a["prompt"] and "1917 (2019)" in b["prompt"] and a["run"]["seed"] == b["run"]["seed"] == 42
     lines = w.log.read_text().splitlines()
     assert len(lines) == 2 and "1917" not in lines[0] and "1917 (2019)" in lines[1]
+
+
+def test_the_module_imports_where_it_sits_at_the_container_root(tmp_path):
+    """The first L1 run died in the container on ``LTX_DIR.parents[3]`` (the module is /root/modal_layout_jobs.py there) and the
+    function hung until the 30-minute limit: the import must work from a shallow path with no shared gates folder."""
+    import shutil
+    import subprocess
+    import sys
+    shallow = tmp_path / "a"
+    shallow.mkdir()
+    for f in M.FILES + ("launch_layout_a100.json",):         # what the image mounts at /root
+        shutil.copy(Path(M.LTX_DIR) / f, shallow / f)
+    code = ("import importlib.util, sys; from pathlib import Path\n"
+            "import explainer_engine.training.pods.ltx.modal_layout_jobs as M0\n"
+            "M0.SHARED_GATES = Path('/nonexistent')\n"
+            "s = importlib.util.spec_from_file_location('m', sys.argv[1]); m = importlib.util.module_from_spec(s); s.loader.exec_module(m)\n"
+            "print(m.LADDER_PATH)")
+    r = subprocess.run([sys.executable, "-c", code, str(shallow / "modal_layout_jobs.py")], capture_output=True, text=True,
+                       cwd=str(Path(M.LTX_DIR).parents[3]))
+    assert r.returncode == 0, r.stderr[-400:]
