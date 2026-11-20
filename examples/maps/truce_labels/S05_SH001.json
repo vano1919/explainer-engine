@@ -1,0 +1,44 @@
+{
+ "size": [
+  2560,
+  1440
+ ],
+ "fps": 24,
+ "seconds": 6.0,
+ "line_geojson": "line.geojson",
+ "line_t": [
+  0.0,
+  5.9
+ ],
+ "counter": null,
+ "date_chip": [
+  {
+   "t": 0.0,
+   "text": "Christmas 1914"
+  }
+ ],
+ "towns": [
+  {
+   "name": "Unofficial truce, in patches",
+   "lonlat": [
+    2.9,
+    50.72
+   ],
+   "t": 0.3
+  }
+ ],
+ "footnote": "Map data: OpenStreetMap contributors, OpenFreeMap",
+ "film_file": "../s05/episode_film.json",
+ "font": "preset",
+ "center": [
+  2.87,
+  50.66
+ ],
+ "zoom": 11.0,
+ "camera": {
+  "move": "zoom_in",
+  "zoom_from": 10.6,
+  "zoom_to": 11.2,
+  "ease": "smoothstep"
+ }
+}

@@ -1,0 +1,35 @@
+{
+ "size": [
+  2560,
+  1440
+ ],
+ "fps": 24,
+ "seconds": 6.0,
+ "line_geojson": "line.geojson",
+ "line_t": [
+  0.0,
+  5.9
+ ],
+ "counter": null,
+ "date_chip": [
+  {
+   "t": 0.0,
+   "text": "August 1914"
+  }
+ ],
+ "towns": [],
+ "footnote": "Map data: OpenStreetMap contributors, OpenFreeMap",
+ "film_file": "../s05/episode_film.json",
+ "font": "preset",
+ "center": [
+  4.6,
+  49.4
+ ],
+ "zoom": 6.8,
+ "camera": {
+  "move": "zoom_in",
+  "zoom_from": 6.6,
+  "zoom_to": 7.0,
+  "ease": "smoothstep"
+ }
+}

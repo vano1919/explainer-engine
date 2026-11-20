@@ -3943,3 +3943,7 @@ cover rule), and the plume has an 8 px floor (`max(8.0, size_share * width)`).
 ## 2026-11-20 — Map spec: `"counter": null`; Truce S05_SH101 with the "Flanders" label; S02_SH102 sourced part
 - `maplibre_spec`: `"counter": null` = no counter (key still required, a forgotten key is still reported); schedule returns None, page hides the box, OCR expects no counter text. `tests/unit/test_maps_counter_null.py` (5).
 - S05_SH101 now shows the region label "Flanders" (C-07). S02_SH102 rendered with only its sourced part (date chip "December 1914" C-06, a straight line between the two sourced end points, no intermediate places, no counter): the straight line is schematic and visibly NOT the real front, so it stays on HF only and is not in the repo.
+
+## 2026-11-20 — Truce 1914 label-only map shots (S02_SH101, S02_SH103, S05_SH001)
+- Rendered with `truce_cold` and only sourced text: "August 1914" (C-05), "Flanders: lines 50 to 300 yards apart" (C-07), "Christmas 1914" + "Unofficial truce, in patches" (C-01, C-15); no front line, no counter (`"counter": null`), no place names beyond "Flanders". HUD OCR 12/12, 10/10, 23/23. Specs + `tests/unit/test_maps_truce_labels.py` (9) in `examples/maps/truce_labels/`; clips on HF `truce_labels/`.
+- A real December 1914 front line is still missing: the PD West Point plate on Commons could not be downloaded from this sandbox (see `FRONT_LINE_SOURCE_SEARCH.md`).
