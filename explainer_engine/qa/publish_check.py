@@ -23,7 +23,9 @@ from pathlib import Path
 import jsonschema
 
 SCHEMA = Path(__file__).resolve().parents[1] / "schemas" / "publish.schema.json"
-TITLE_MAX, DESCRIPTION_MAX = 100, 5000  # Studio's field limits (characters)
+TITLE_MAX = 100  # characters (YouTube Data API: title, max 100 characters)
+DESCRIPTION_MAX_BYTES = 5000  # bytes, not characters (YouTube Data API: description, max 5000 bytes)
+FORBIDDEN_CHARS = "<>"  # the API refuses angle brackets in title and description
 MIN_CHAPTER_S, MIN_CHAPTERS = 10, 3
 SHORT_MAX_S, SHORT_CLAIM_RISK_S = 180, 60
 SAFE_AUDIO = {"own_voice", "library", "procedural"}
@@ -86,8 +88,13 @@ def check(pub: dict, doc: dict | None = None, episode: Path | None = None) -> li
     # PC-06 field limits and honest packaging
     if len(pub["title"]) > TITLE_MAX:
         add("PC-06", "title", f"{len(pub['title'])} characters; Studio takes {TITLE_MAX}")
-    if len(pub["description"]) > DESCRIPTION_MAX:
-        add("PC-06", "description", f"{len(pub['description'])} characters; Studio takes {DESCRIPTION_MAX}")
+    nbytes = len(pub["description"].encode("utf-8"))
+    if nbytes > DESCRIPTION_MAX_BYTES:
+        add("PC-06", "description", f"{nbytes} bytes; YouTube takes {DESCRIPTION_MAX_BYTES} bytes, not characters")
+    for field in ("title", "description"):
+        bad = sorted(c for c in FORBIDDEN_CHARS if c in pub[field])
+        if bad:
+            add("PC-06", field, f"contains {' '.join(bad)}; YouTube refuses angle brackets in the {field}")
     # PC-07 sources and the decisions the creator records
     if not re.search(r"https?://", pub["description"]):
         add("PC-07", "description", "no source link in the description (PUBLISHING_AND_ANALYTICS checklist)", "REVIEW")

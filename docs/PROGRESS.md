@@ -3766,3 +3766,12 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 ## 2026-11-20 — Draft map style preset from 3-6 film_look frames (G-06 follow-up)
 - New `maplibre_lane/preset_from_frames.py` (+ `tests/unit/test_maps_preset_from_frames.py`, 10): k-means in Lab (seeded), role mapping ink/paper/water/accent, palette_check with a lightness repair search, finish grain/vignette/tint measured; `draft: true`, `font` empty; `render.load_style_preset` refuses drafts and an empty font.
 - Truce batch2 (cold blue-grey frames) vs `1917_film.json`: the draft is cold and neutral where the hand-made preset is warm sepia (background dE 19, tint dE 52); no warm saturated cluster, so the line colour fell back to Okabe-Ito vermillion. Use as a starting point only.
+
+## 2026-11-20 — L27: PC-06 counts the description in bytes and forbids `<` `>`
+- Fix: `qa/publish_check.py` PC-06 compared the description in characters; YouTube Data API limits it to 5000 bytes
+  (an em dash is 3 bytes, so 2600 of them pass a character check and fail the upload). Now `DESCRIPTION_MAX_BYTES` is compared
+  with the UTF-8 length, the message says "bytes", and `<` / `>` in title or description FAIL (the API refuses them). Title stays
+  100 characters. `publish/plan.py::field_findings` already counted bytes and forbade the brackets: unchanged.
+- Source kind: platform policy (YouTube Data API field limits for `videos.insert` snippet), not a BP threshold; read 2026-11-20.
+- Tests: `tests/unit/test_publish_check.py` (4900 ASCII passes, 2600 em dashes fails, 5000 bytes passes, 5001 fails, `<` in the
+  description fails, `>` in the title fails, title 100 passes / 101 fails). Doc: `docs/QA_SPECIFICATION.md` PC-06.
