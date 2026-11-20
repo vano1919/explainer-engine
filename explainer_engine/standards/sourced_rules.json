@@ -1578,7 +1578,9 @@
    "enforced_by": [
     "explainer_engine/production/beats.py:GAP_FAIL_3",
     "explainer_engine/production/beats.py:check_timed",
-    "explainer_engine/edit/motion_lint.py:events"
+    "explainer_engine/edit/motion_lint.py:events",
+    "explainer_engine/qa/dead_air.py:GAP_REVIEW_S",
+    "explainer_engine/qa/dead_air.py:GAP_FAIL_S"
    ],
    "supersedes": [
     "VB-01 /3 8/15 s literals",
@@ -1748,7 +1750,9 @@
     "explainer_engine/edit/board.py:MAX_PER_MIN",
     "explainer_engine/edit/motion_lint.py:MO-01",
     "explainer_engine/edit/board.py:change_times",
-    "explainer_engine/production/beats.py:counts_as_new"
+    "explainer_engine/production/beats.py:counts_as_new",
+    "explainer_engine/qa/opening_density.py:OPENING_WINDOW_S",
+    "explainer_engine/qa/opening_density.py:OPENING_MAX_STILL_S"
    ],
    "supersedes": [
     "UR-31 flat 9 s",
@@ -3642,7 +3646,8 @@
    ],
    "enforced_by": [
     "explainer_engine/edit/shot_rules.py:DURATIONS",
-    "explainer_engine/edit/shot_rules.py:DISSOLVE_SHARE"
+    "explainer_engine/edit/shot_rules.py:DISSOLVE_SHARE",
+    "explainer_engine/qa/first_shot.py:FIRST_SHOT_MIN_S"
    ],
    "supersedes": [
     "shot_rules UR literals",

@@ -1,0 +1,27 @@
+{
+  "kind": "hypothesis",
+  "note": "REVIEW-level default, not binding until the owner has seen it",
+  "support_overlap_min": 0.25,
+  "cl07a_severity": "FAIL",
+  "absolute_words": [
+    "always",
+    "never",
+    "every",
+    "all",
+    "none",
+    "no one",
+    "nobody",
+    "only",
+    "first",
+    "last",
+    "largest",
+    "smallest",
+    "most",
+    "least",
+    "impossible",
+    "proved",
+    "proven",
+    "undefeated",
+    "unprecedented"
+  ]
+}

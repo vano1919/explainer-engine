@@ -1,4 +1,4 @@
-"""Scene continuity cards (CT-01..CT-16, docs/SHOT_CONTINUITY.md): one card per shot describes the shot's whole state (place,
+"""Scene continuity cards (CT-01..CT-20, docs/SHOT_CONTINUITY.md): one card per shot describes the shot's whole state (place,
 camera and axis, every person with position, facing, eyeline, costume and props, landmarks, light), the references in
 order and what changed since the previous shot. Code checks the cards and assembles the keyframe prompt; nobody writes a
 continuity prompt by hand. Research: docs/research/SHOT_CONTINUITY_2026-10-25.md. stdlib + jsonschema.
@@ -98,11 +98,54 @@ def _size_step(a: str, b: str) -> int:
     return abs(SIZES.index(a) - SIZES.index(b))
 
 
-def check(doc: dict) -> list[dict]:
+def identity_findings(doc: dict, film_id: str | None = None, known_geo_ids: "set[str] | None" = None) -> list[dict]:
+    """CT-17..CT-20 (L10, G1 decision): the optional identity bible and geography ids. A card that uses none of the new
+    fields passes unchanged. ``film_id`` is the episode's G-05 film id, ``known_geo_ids`` the geo ids of the other scenes;
+    each is compared only when given (nothing known is never a pass or a fail)."""
+    found: list[dict] = []
+
+    def add(rule: str, shot: str, detail: str) -> None:
+        found.append({"rule": rule, "level": "FAIL", "shot": shot, "detail": detail})
+
+    cast, loc = doc["cast"], doc["location"]
+    with_identity = {cid for cid, c in cast.items() if "identity" in c}
+    uses_new = bool(with_identity) or "geo_id" in loc or "inherits_from" in loc
+    if uses_new and "film_id" not in doc:
+        add("CT-17", "-", "identity / geo_id are used but the card has no film_id (the episode's film, G-05)")
+    if film_id is not None and "film_id" in doc and doc["film_id"] != film_id:
+        add("CT-17", "-", f"card film_id {doc['film_id']!r} != episode film {film_id!r}")
+    if with_identity:
+        shown = []
+        for shot in doc["shots"]:
+            for p in shot["characters"]:
+                if p["id"] in cast and p["id"] not in shown:
+                    shown.append(p["id"])
+        for cid in shown:
+            if cid not in with_identity:
+                add("CT-18", "-", f"{cid} is on screen but has no identity (canon frame and locked list)")
+    for cid in sorted(with_identity):
+        ident = cast[cid]["identity"]
+        if not ident["locked"]:
+            add("CT-18", "-", f"{cid}: identity.locked is empty")
+        both = sorted(set(ident["locked"]) & set(ident.get("flexible", [])))
+        if both:
+            add("CT-19", "-", f"{cid}: {both} is both locked and flexible")
+    if "inherits_from" in loc:
+        if "geo_id" not in loc:
+            add("CT-20", "-", "inherits_from needs this location's own geo_id")
+        elif loc["inherits_from"] == loc["geo_id"]:
+            add("CT-20", "-", "a place cannot inherit from itself")
+        if known_geo_ids is not None and loc["inherits_from"] not in known_geo_ids:
+            add("CT-20", "-", f"inherits_from {loc['inherits_from']!r} is not a known geo_id")
+    return found
+
+
+def check(doc: dict, film_id: str | None = None, known_geo_ids: "set[str] | None" = None) -> list[dict]:
     """All CC findings for one scene: FAIL blocks generation, REVIEW goes to the agent's second look."""
     found = schema_findings(doc)
     if found:
         return found
+    found.extend(identity_findings(doc, film_id, known_geo_ids))
 
     def add(rule: str, level: str, shot: str, detail: str) -> None:
         found.append({"rule": rule, "level": level, "shot": shot, "detail": detail})
@@ -285,6 +328,19 @@ def _refs_text(doc: dict, shot: dict) -> list[str]:
     return lines
 
 
+def _identity_clause(identity: dict | None) -> str:
+    """CT-13: the person's identity bible (CT-18) as one clause; empty without it, so old cards keep their exact prompt.
+    ``flexible`` traits are not written: they may change."""
+    if not identity:
+        return ""
+    bits = [f"locked: {', '.join(identity['locked'])}"]
+    if identity.get("anchors"):
+        bits.append(f"anchors: {', '.join(identity['anchors'])}")
+    if identity.get("never"):
+        bits.append(f"avoid: {', '.join(identity['never'])}")
+    return " (" + "; ".join(bits) + ")"
+
+
 def compose_prompt(doc: dict, shot: dict) -> str:
     """CT-13: the keyframe prompt, assembled from the card in a fixed order (research section 4 H)."""
     cast, state = doc["cast"], scene_state(doc, shot)
@@ -299,6 +355,7 @@ def compose_prompt(doc: dict, shot: dict) -> str:
     for p in shot["characters"]:
         who = cast[p["id"]]
         text = f"{who['name'][0].upper()}{who['name'][1:]}, {who['description'].rstrip('.')}"
+        text += _identity_clause(who.get("identity"))
         if p.get("costume"):
             text += f", wearing {who['costumes'][p['costume']]}"
         if p.get("flags"):
