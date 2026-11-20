@@ -1,0 +1,14 @@
+{
+  "schema": "thread_cost/1",
+  "status": "hypothesis",
+  "note": "Context-cost rule CC-1 (owner 2026-11-20 14:01 and 14:04 UTC, OR-38). The ONE place of the limits; they are a hypothesis until measured and change only on the owner's word. A thread over either limit must post the one-line request and write its handover file before it may finish a turn (explainer_engine/governance/thread_cost.py, hooks UserPromptSubmit and Stop).",
+  "context_tokens": 150000,
+  "steps": 300,
+  "max_stop_blocks": 3,
+  "max_request_chars": 600,
+  "min_handover_bytes": 150,
+  "max_handover_bytes": 8000,
+  "handover_dirs": ["/mnt/project-files/handover", "jobs/_handover"],
+  "sections": ["goal", "state", "paths", "open questions"],
+  "request_phrase": "I am expensive now: compact me or hand me over"
+}

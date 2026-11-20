@@ -128,7 +128,7 @@ ZONES = [("sky", "sky", (0, 0, 480, 40)), ("smoke", "smoke", (60, 60, 260, 200))
 def test_a_still_camera_with_moving_smoke_passes_with_its_number(tmp_path):
     r = V.living_motion(smoke_clip(tmp_path / "ok.mp4"))
     assert r["status"] == "PASS" and r["value"] >= V.FRAME_COVER_MIN, r
-    assert "no .zones.json" in r["detail"] and "flow with the camera out" in r["detail"]
+    assert "no zone sidecar found" in r["detail"] and "flow with the camera out" in r["detail"]
 
 
 def test_only_the_fire_moves_fails(tmp_path):
@@ -239,6 +239,107 @@ def test_a_region_of_life_that_stops_short_of_the_border_is_not_taken_for_the_ca
     assert r is None
     p = smoke_clip(tmp_path / "region.mp4")
     assert V.living_motion(p)["status"] == "PASS"
+
+
+def flicker_frames(blob_sigma, amp=40.0, n=3.0, box=(300, 180, 420, 260)):
+    """A still camera and a still picture; inside ``box`` the brightness changes every frame by a random field: blobs of ``blob_sigma`` px (a flame
+    that flickers in place) or, with sigma 0, white noise per pixel."""
+    import cv2
+    x0, y0, x1, y1 = box
+    bg, rng, frames = background(), np.random.default_rng(11), []
+    for _ in range(seconds(n)):
+        f = bg.copy()
+        field = rng.normal(0, 1, (y1 - y0, x1 - x0)).astype(np.float32)
+        if blob_sigma:
+            field = cv2.GaussianBlur(field, (0, 0), blob_sigma)
+            field = field / max(float(field.std()), 1e-6)
+        f[y0:y1, x0:x1] = np.clip(f[y0:y1, x0:x1] + amp * field, 0, 255)
+        frames.append(f)
+    return frames
+
+
+FIRE_BOX = [("fire", "fire", (300, 180, 420, 260))]
+
+
+def test_a_flame_that_flickers_in_place_passes_as_structured_change(tmp_path):
+    """The lead's ruling on X1 (2026-11-20): fire may be alive by flicker (blobs of brightness and shape change) without moving at 5 px/s."""
+    p = clip(tmp_path / "flicker.mp4", flicker_frames(5.0))
+    zones_json(tmp_path, "flicker", FIRE_BOX)
+    r = V.living_motion(p)
+    assert r["status"] == "PASS" and "fire" in r["detail"], r
+
+
+def test_per_pixel_noise_in_a_fire_zone_is_not_a_flame(tmp_path):
+    p = clip(tmp_path / "noise_fire.mp4", flicker_frames(0.0))
+    zones_json(tmp_path, "noise_fire", FIRE_BOX)
+    r = V.living_motion(p)
+    assert r["status"] == "FAIL" and "fire zone" in r["detail"], r
+
+
+def test_a_global_pulse_is_not_a_flame_it_is_measured_against_the_rest_of_the_frame(tmp_path):
+    frames = [np.clip(f * (1.0 + 0.25 * np.sin(2 * np.pi * 1.3 * i / FPS)), 0, 255) for i, f in enumerate([background()] * seconds(3.0))]
+    p = clip(tmp_path / "pulse_fire.mp4", frames)
+    zones_json(tmp_path, "pulse_fire", FIRE_BOX)
+    r = V.living_motion(p)
+    assert r["status"] == "FAIL" and "fire zone" in r["detail"], r
+
+
+def _rest_and_zone_flicker(zone_amp, rest_amp):
+    """The whole frame flickers in blobs of 5 px by ``rest_amp`` grey levels and the declared flame zone by ``zone_amp``."""
+    import cv2
+    frames, rng, bg = [], np.random.default_rng(3), background()
+    for _ in range(seconds(3.0)):
+        field = cv2.GaussianBlur(rng.normal(0, 1, (H, W)).astype(np.float32), (0, 0), 5.0)
+        field = field / float(field.std())
+        f = np.clip(bg + rest_amp * field, 0, 255)
+        f[180:260, 300:420] = np.clip(bg[180:260, 300:420] + zone_amp * field[180:260, 300:420], 0, 255)
+        frames.append(f)
+    return frames
+
+
+def test_a_flame_that_flickers_no_more_than_the_rest_of_the_frame_is_not_local_life(tmp_path):
+    """Local, not global: the structured change must be 1.5 times stronger inside the zone than in the rest of the frame."""
+    p = clip(tmp_path / "equal.mp4", _rest_and_zone_flicker(30.0, 30.0))
+    zones_json(tmp_path, "equal", FIRE_BOX)
+    r = V.living_motion(p)
+    assert r["status"] == "FAIL" and "fire zone" in r["detail"], r         # a frame that flickers everywhere does not read as a flame
+
+
+def test_a_flame_that_flickers_much_more_than_the_rest_of_the_frame_passes(tmp_path):
+    p = clip(tmp_path / "stronger.mp4", _rest_and_zone_flicker(40.0, 4.0))
+    zones_json(tmp_path, "stronger", FIRE_BOX)
+    r = V.living_motion(p)
+    assert r["status"] == "PASS", r
+
+
+def test_a_localized_effect_is_judged_per_zone_not_by_the_whole_frame(tmp_path):
+    """G-LIVE-1 (5 % of the frame per second) applies only without zones: a flame of 7 % of the frame that flickers passes, though the frame as a whole changes under 5 %."""
+    p = clip(tmp_path / "local.mp4", flicker_frames(5.0, amp=40.0))
+    zones_json(tmp_path, "local", FIRE_BOX)
+    assert V.living_motion(p)["status"] == "PASS"
+    q = clip(tmp_path / "nozone.mp4", flicker_frames(5.0, amp=40.0))
+    assert V.living_motion(q)["status"] == "FAIL"                          # the same clip without its sidecar is the whole frame, under 5 %
+
+
+def test_declared_zones_that_cover_almost_nothing_fail(tmp_path):
+    p = clip(tmp_path / "tiny.mp4", flicker_frames(5.0, box=(300, 200, 330, 215)))
+    zones_json(tmp_path, "tiny", [("fire", "fire", (300, 200, 330, 215))])
+    r = V.living_motion(p)
+    assert r["status"] == "FAIL" and "declared zones cover" in r["detail"], r
+
+
+def test_the_sidecar_is_found_in_the_zones_folder_next_to_the_clips(tmp_path):
+    (tmp_path / "clips").mkdir()
+    (tmp_path / "clips" / "zones").mkdir()
+    p = clip(tmp_path / "clips" / "found.mp4", flicker_frames(5.0))
+    zones_json(tmp_path / "clips" / "zones", "found", FIRE_BOX)
+    r = V.living_motion(p)
+    assert r["status"] == "PASS" and "fire" in r["detail"], r
+
+
+def test_no_sidecar_says_so_and_names_the_whole_frame(tmp_path):
+    r = V.living_motion(clip(tmp_path / "bare.mp4", [background()] * seconds(3.0)))
+    assert r["status"] == "FAIL" and "no zone sidecar found" in r["detail"] and "whole frame judged" in r["detail"], r
 
 
 def test_a_dead_zone_in_a_moving_clip_fails_by_name(tmp_path):

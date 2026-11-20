@@ -87,6 +87,14 @@ PARTICLE_MAX_PX = int(SR.T("BP-215", "particle_max_px"))
 PARTICLE_MAX_SIDE = int(SR.T("BP-215", "particle_max_side_px"))
 PARTICLE_SHARE_MIN = float(SR.T("BP-215", "particle_share_min_pct"))
 EXPLAIN_RATIO = float(SR.T("BP-215", "explain_ratio_max"))                  # the compensated error must be under this share of the plain error for the flow to count as a motion
+MATTE_DILATE_PX = int(SR.T("BP-215", "matte_dilate_px"))                     # a flake's motion blur and halo reach past its matte
+SPECK_MIN_PX_S = float(SR.T("BP-215", "speck_min_px_s"))                       # a speck moves at least this fast (parallax residual of a drifting camera is slower)
+ZONES_AREA_MIN = float(SR.T("BP-215", "zones_area_min_pct"))              # declared zones together, % of the frame, when there are zones (G-LIVE-1 then judges per zone)
+ZONE_CHANGE_MIN = float(SR.T("BP-215", "zone_change_min"))                 # grey levels a zone pixel must change by to count as moving (smoke is low in contrast)
+STRUCT_RATIO = float(SR.T("BP-215", "structure_ratio_min"))                 # blurred change over raw change: white noise reads 0.11, a flame or a cloud 0.35-0.9
+STRUCT_SIGMA = float(SR.T("BP-215", "structure_sigma_px"))
+FLICKER_AMP = float(SR.T("BP-215", "flicker_amp_min"))                      # grey levels of structured (blurred) change that count as a flicker
+FLICKER_LOCAL = float(SR.T("BP-215", "flicker_local_min"))                  # the zone's structured change over the rest of the frame's
 MATTE_ON = 30                         # a matte pixel above this grey level is a particle
 
 
@@ -98,9 +106,33 @@ def _cv2():
     return cv2
 
 
+def _sidecar_file(path: Path) -> Path | None:
+    """The clip's zone sidecar: ``<clip>.zones.json`` beside it, else in a ``zones/`` folder next to it or next to the clip's folder (the analyst's run layout is
+    ``run1/clips/`` and ``run1/zones/``)."""
+    name = path.stem + ".zones.json"
+    for side in (path.with_suffix(".zones.json"), path.parent / "zones" / name, path.parent.parent / "zones" / name):
+        if side.is_file():
+            return side
+    return None
+
+
+def _side_dir(path: Path) -> Path:
+    """The folder the sidecar's masks, mattes and depth map are named in (the sidecar's own folder)."""
+    side = _sidecar_file(path)
+    return side.parent if side is not None else path.parent
+
+
+def _side_file(path: Path, name: str) -> Path:
+    """A file the sidecar names (mask, matte, band, depth map): in the sidecar's folder, else in the clip's folder, else in a ``zones/`` folder next to either."""
+    for d in (_side_dir(path), path.parent, path.parent / "zones", path.parent.parent / "zones"):
+        if (d / name).is_file():
+            return d / name
+    return _side_dir(path) / name
+
+
 def _sidecar(path: Path) -> dict:
-    side = path.with_suffix(".zones.json")
-    if not side.is_file():
+    side = _sidecar_file(path)
+    if side is None:
         return {}
     data = json.loads(side.read_text(encoding="utf-8"))
     if not isinstance(data, dict):
@@ -117,7 +149,7 @@ def _zone_masks(path: Path, side: dict) -> list[tuple[str, str, np.ndarray]]:
         kind = str(z.get("kind") or z["name"]).lower()
         if kind not in ZONE_SPEED:
             raise ValueError(f"zone {z['name']!r} has kind {kind!r}: BP-215 sets a speed for {', '.join(ZONE_SPEED)} only")
-        m = Image.open(path.parent / z["mask"]).convert("L").resize(SIZE)
+        m = Image.open(_side_file(path, z["mask"])).convert("L").resize(SIZE)
         out.append((z["name"], kind, np.asarray(m) > 127))
     return out
 
@@ -150,6 +182,37 @@ def _explained(e0: np.ndarray, e1: np.ndarray, mask: np.ndarray) -> bool:  # e0:
     return float(e1[m].mean() / e0[m].mean()) < EXPLAIN_RATIO
 
 
+def _signed_compensated(a: np.ndarray, b: np.ndarray, cam: np.ndarray, cv2) -> np.ndarray:
+    """``b`` sampled where the camera field ``cam`` points, minus ``a``: the change the camera alone does not explain, with its sign."""
+    h, w = a.shape
+    gx, gy = np.meshgrid(np.arange(w, dtype=np.float32), np.arange(h, dtype=np.float32))
+    cam = cam.astype(np.float32)
+    return cv2.remap(b, gx + cam[..., 0], gy + cam[..., 1], cv2.INTER_LINEAR, borderMode=cv2.BORDER_REPLICATE) - a
+
+
+def _structured(d: np.ndarray, blurred: np.ndarray, mask: np.ndarray) -> bool:
+    """Is the change inside ``mask`` spatially structured (blobs, a flame, a cloud) and not per-pixel noise? Blurring the signed change keeps
+    ``STRUCT_RATIO`` of its energy (rms) when it is coherent and about 0.11 when it is white noise (sigma 2.5): measured on the analyst's X1 clips
+    (fire 0.35-0.41, smoke 0.48-0.66, sky 0.44-0.92) against white noise 0.11 and a dead zone under 0.1."""
+    if int(mask.sum()) < 50:
+        return False
+    raw = float(np.sqrt((d[mask] ** 2).mean()))
+    return raw > 1e-6 and float(np.sqrt((blurred[mask] ** 2).mean())) / raw >= STRUCT_RATIO
+
+
+def _flicker_cover(blurred: np.ndarray, d: np.ndarray, mask: np.ndarray, rest: np.ndarray) -> float:
+    """A flame may live by flicker in place (lead's ruling 2026-11-20, X1): the share (%) of the zone's pixels whose structured, camera-compensated
+    change is at least ``FLICKER_AMP`` grey levels, when that change is structured and ``FLICKER_LOCAL`` times stronger than the rest of the frame's
+    (a global pulse, already levelled out by the normalisation, and noise are not a flame)."""
+    if not _structured(d, blurred, mask):
+        return 0.0
+    rms_z = float(np.sqrt((blurred[mask] ** 2).mean()))
+    rms_r = float(np.sqrt((blurred[rest] ** 2).mean())) if int(rest.sum()) >= 500 else 0.0
+    if rms_z < FLICKER_LOCAL * rms_r:
+        return 0.0
+    return float((np.abs(blurred[mask]) >= FLICKER_AMP).mean() * 100)
+
+
 def _flow_fields(g: list[np.ndarray], gap: int, cv2):
     """Farneback flow between frames ``gap`` apart (uint8 grey, 480x270): one (h, w, 2) float32 field per start frame."""
     u8 = [np.clip(f, 0, 255).astype(np.uint8) for f in g]
@@ -163,6 +226,7 @@ LAYER_QUADRANTS_MIN = int(SR.T("BP-215", "layer_quadrants_min"))        # quadra
 LAYER_QUAD_MIN = float(SR.T("BP-215", "layer_quadrant_moving_min_pct"))
 LAYER_EXPLAINED_MIN = float(SR.T("BP-215", "layer_explained_min_pct"))     # % of the moving flow energy the banded camera must explain
 LAYER_MEDIAN_CELLS = int(SR.T("BP-215", "layer_median_cells"))
+LAYER_DEPTH_BINS = int(SR.T("BP-215", "layer_depth_bins"))
 LAYER_GUARD_PX = int(SR.T("BP-215", "layer_guard_px"))
 LAYER_BORDER_PCT = float(SR.T("BP-215", "layer_border_pct"))         # width of the border strips, % of the frame side
 LAYER_BORDER_MOVING_MIN = float(SR.T("BP-215", "layer_border_moving_min_pct")) # % of a strip's samples that move for the strip to count
@@ -171,7 +235,32 @@ LAYER_EDGE_S = float(SR.T("BP-215", "layer_edge_share"))
 LAYER_MIN_R_PX = float(SR.T("BP-215", "layer_min_radius_px"))
 
 
-def _layered_camera(flow: np.ndarray, exclude: np.ndarray, cv2):
+def _depth_banded(s: np.ndarray, ok: np.ndarray, depth: np.ndarray, flow: np.ndarray, shp: np.ndarray, ys, xs, mov: np.ndarray, cv2):
+    """The banded camera with the bands taken from the sidecar's depth map (edges exactly where the depth map has them): the samples' camera shares are
+    medianed per depth bin (``LAYER_DEPTH_BINS`` bins of equal sample count) and every pixel takes its bin's share. Returns (residual, explained %)."""
+    h, w = flow.shape[:2]
+    ds = depth[ys, xs]
+    edges = np.quantile(ds[ok], np.linspace(0, 1, LAYER_DEPTH_BINS + 1)[1:-1])
+    b_s = np.digitize(ds, edges)
+    share = np.zeros(LAYER_DEPTH_BINS)
+    have = np.zeros(LAYER_DEPTH_BINS, bool)
+    for k in range(LAYER_DEPTH_BINS):
+        sel = ok & (b_s == k)
+        if int(sel.sum()) >= 5:
+            share[k], have[k] = float(np.median(s[sel])), True
+    if not have.any():
+        return None
+    for k in range(LAYER_DEPTH_BINS):                     # a bin without samples takes the nearest bin's share
+        if not have[k]:
+            share[k] = share[int(np.flatnonzero(have)[np.argmin(np.abs(np.flatnonzero(have) - k))])]
+    sfull = share[np.digitize(depth, edges)].astype(np.float32)
+    resid = flow - sfull[..., None] * shp
+    e_f = float((flow[ys, xs][mov] ** 2).sum())
+    e_r = float((resid[ys, xs][mov] ** 2).sum())
+    return resid.astype(np.float32), 100.0 * (1.0 - e_r / max(e_f, 1e-9))
+
+
+def _layered_camera(flow: np.ndarray, exclude: np.ndarray, cv2, depth: np.ndarray | None = None):
     """The camera of a depth-layered move (Z17): every pixel moves as ``s(x)`` times one camera field (push about a centre, or a pan), ``s`` the depth band's
     weight, smooth in space. Returns (residual, share of the moving energy the camera explains) or None when the flow is not such a camera: too few of
     the samples outside the declared zones move, or they do not move in most of the frame, or the explained share is low (noise, local life)."""
@@ -230,6 +319,11 @@ def _layered_camera(flow: np.ndarray, exclude: np.ndarray, cv2):
             continue
         s = np.where(ok, (fx * sh[..., 0] + fy * sh[..., 1]) / np.maximum(n2, 1e-9), np.nan)
         s = np.clip(s, 0.0, None)
+        if depth is not None and int(ok.sum()) >= 40 * LAYER_DEPTH_BINS // 4:
+            res = _depth_banded(s, ok, depth, flow, shp, ys, xs, mov, cv2)
+            if res is not None and (out is None or res[1] > out[1]):
+                out = res
+            continue
         k = LAYER_MEDIAN_CELLS
         sp = np.pad(s, k // 2, mode="edge")
         win = np.lib.stride_tricks.sliding_window_view(sp, (k, k)).reshape(s.shape + (k * k,))
@@ -267,10 +361,11 @@ def _layered_camera(flow: np.ndarray, exclude: np.ndarray, cv2):
     return out
 
 
-def _camera_residual(flow: np.ndarray, exclude: np.ndarray, cv2, unchanged: np.ndarray | None = None) -> tuple[np.ndarray, float | None]:
+def _camera_residual(flow: np.ndarray, exclude: np.ndarray, cv2, unchanged: np.ndarray | None = None,
+                     depth: np.ndarray | None = None) -> tuple[np.ndarray, float | None]:
     """The flow minus the camera: a similarity transform fitted by RANSAC to the flow of the pixels outside ``exclude`` (the declared
     zones and the particles), and the share of its inliers (None when no transform could be fitted)."""
-    lay = _layered_camera(flow, exclude, cv2) if LAYERED else None
+    lay = _layered_camera(flow, exclude, cv2, depth) if LAYERED else None
     if lay is not None:                                  # a depth-layered camera (Z17): every band moves by its own share of one camera path
         return lay
     h, w = flow.shape[:2]
@@ -320,8 +415,8 @@ def _near_far_check(path: Path, side: dict, cv2) -> tuple[str, float | None, str
     parts = side.get("particles")
     if not isinstance(parts, dict) or not parts.get("near") or not parts.get("far"):
         return PASS, None, "near/far ratio not measured (the sidecar names no near band)"
-    ns, nv = _band_stats(decode_grey(path.parent / parts["near"]), cv2)
-    fs, fv = _band_stats(decode_grey(path.parent / parts["far"]), cv2)
+    ns, nv = _band_stats(decode_grey(_side_file(path, parts["near"])), cv2)
+    fs, fv = _band_stats(decode_grey(_side_file(path, parts["far"])), cv2)
     if fs <= 0 or fv <= 0:
         return FAIL, None, "the far band shows no flake or no motion: nothing to compare the near band with"
     rs, rv = ns / fs, nv / fv
@@ -347,13 +442,13 @@ def _depth_check(path: Path, side: dict, series=None) -> tuple[str, float | None
     if not far or not depth:
         return FAIL, None, "a particle layer is declared but its far band or the depth map is missing: nothing proves the foreground hides the far ones"
     from PIL import Image
-    dm = np.asarray(Image.open(path.parent / depth).convert("L").resize(SIZE)).astype(np.float32)
+    dm = np.asarray(Image.open(_side_file(path, depth)).convert("L").resize(SIZE)).astype(np.float32)
     span = float(dm.max() - dm.min()) or 1.0
     fg = (dm - dm.min()) / span >= FG_DEPTH_MIN
     if span < 1.0 or 100.0 * float(fg.mean()) < FG_AREA_MIN:
         return FAIL, round(100.0 * float(fg.mean()), 2), (f"the depth map has a foreground of {100.0 * float(fg.mean()):.1f} % of the frame (at least "
                                                          f"{FG_AREA_MIN:g} %): a flat map hides nothing, so it proves nothing")
-    on = [m > MATTE_ON for m in decode_grey(path.parent / far)]
+    on = [m > MATTE_ON for m in decode_grey(_side_file(path, far))]
     total = sum(int(m.sum()) for m in on)
     if total == 0:
         return FAIL, None, "the far-particle matte shows no particle at all: nothing proves the far band exists"
@@ -376,9 +471,9 @@ def _motion_series(path, g, cv2):
     side = _sidecar(path)
     zones = _zone_masks(path, side)
     parts = side.get("particles") if isinstance(side.get("particles"), dict) else {}
-    matte = [m > MATTE_ON for m in decode_grey(path.parent / parts["matte"])] if parts.get("matte") else None
+    matte = [m > MATTE_ON for m in decode_grey(_side_file(path, parts["matte"]))] if parts.get("matte") else None
     named = parts.get("matte") or parts.get("far")                    # what the sidecar says the particles are (the whole layer, else its far band)
-    declared = matte if matte is not None else ([m > MATTE_ON for m in decode_grey(path.parent / named)] if named else None)
+    declared = matte if matte is not None else ([m > MATTE_ON for m in decode_grey(_side_file(path, named))] if named else None)
     gap = max(1, int(round(FLOW_GAP_S * ANALYSIS_FPS)))
     g = _normalised(g)
     flows = _flow_fields(g, gap, cv2)
@@ -387,34 +482,49 @@ def _motion_series(path, g, cv2):
     zone_union = np.zeros((SIZE[1], SIZE[0]), bool)
     for _, _, m in zones:
         zone_union |= m
+    depth_map = None                                      # the sidecar's depth map gives the camera's bands their exact edges
+    if side.get("depth"):
+        from PIL import Image
+        dm = np.asarray(Image.open(_side_file(path, side["depth"])).convert("L").resize(SIZE)).astype(np.float32)
+        depth_map = dm if float(dm.max() - dm.min()) >= 1.0 else None
     dt = gap / ANALYSIS_FPS
     cover = {name: [] for name, _, _ in zones}
     frame_cover, inliers, specks, speck_area, undeclared = [], [], [], [], []
     k = np.ones((5, 5), np.uint8)
+    kw = np.ones((MATTE_DILATE_PX, MATTE_DILATE_PX), np.uint8)
     for i, fl in enumerate(flows):
         parts_i = np.zeros_like(zone_union)
         if matte is not None:
             parts_i = cv2.dilate((matte[i] | matte[min(i + gap, len(matte) - 1)]).astype(np.uint8), k).astype(bool)
-        resid, inl = _camera_residual(fl, zone_union | parts_i, cv2, np.abs(g[i + gap] - g[i]) < FLOW_CHANGE_MIN)
+        resid, inl = _camera_residual(fl, zone_union | parts_i, cv2, np.abs(g[i + gap] - g[i]) < FLOW_CHANGE_MIN, depth_map)
         if inl is not None:
             inliers.append(inl)
         speed = np.hypot(resid[..., 0], resid[..., 1]) / dt
         _, e1 = _compensated(g[i], g[i + gap], fl, cv2)
         _, e0 = _compensated(g[i], g[i + gap], fl - resid, cv2)             # what the camera alone explains (nothing, for a still camera)
-        speed = np.where(np.abs(g[i + gap] - g[i]) >= FLOW_CHANGE_MIN, speed, 0.0)    # a pixel that did not change does not move (flow smear)
+        dz = _signed_compensated(g[i], g[i + gap], fl - resid, cv2)                     # the change the camera does not explain (a drifting camera changes every edge)
+        chg = np.abs(dz)
+        zspeed = np.where(np.abs(g[i + gap] - g[i]) >= ZONE_CHANGE_MIN, speed, 0.0)       # inside a zone the change gate is lower (smoke is low in contrast) and raw
+        speed = np.where(chg >= FLOW_CHANGE_MIN, speed, 0.0)    # a pixel that did not change does not move (flow smear)
+        if zones:
+            bl = cv2.GaussianBlur(dz, (0, 0), STRUCT_SIGMA)
         for name, kind, m in zones:
             valid = m & ~parts_i
             if valid.sum() >= 50:
-                cover[name].append(float((speed[valid] >= ZONE_SPEED[kind]).mean() * 100) if _explained(e0, e1, valid) else 0.0)
+                real = _explained(e0, e1, valid) or _structured(dz, bl, valid)           # a motion the flow explains, or a structured change (not noise)
+                c = float((zspeed[valid] >= ZONE_SPEED[kind]).mean() * 100) if real else 0.0
+                if kind == "fire":
+                    c = max(c, _flicker_cover(bl, dz, valid, ~zone_union & ~parts_i))
+                cover[name].append(c)
         keep = ~parts_i
         frame_cover.append(float((speed[keep] >= FRAME_MIN_PX_S).mean() * 100) if keep.any() and _explained(e0, e1, keep) else 0.0)
-        mv = ((speed >= FRAME_MIN_PX_S) & keep).astype(np.uint8)                 # tester Z4/Z5: how much of what moves is a speck (a flake, a spark)
+        mv = ((speed >= SPECK_MIN_PX_S) & keep).astype(np.uint8)                 # tester Z4/Z5: how much of what moves is a speck (a flake, a spark)
         if mv.any():
             lab, stats = cv2.connectedComponentsWithStats(mv, connectivity=8)[1:3]
             small = np.isin(lab, np.flatnonzero((stats[1:, 4] <= PARTICLE_MAX_PX) & (stats[1:, 2] <= PARTICLE_MAX_SIDE) & (stats[1:, 3] <= PARTICLE_MAX_SIDE)) + 1)
             specks.append(100.0 * float(small.sum()) / float(mv.sum()))
             speck_area.append(100.0 * float(small.sum()) / mv.size)
-            dcl = cv2.dilate((declared[i] | declared[min(i + gap, len(declared) - 1)]).astype(np.uint8), k).astype(bool) if declared is not None else None
+            dcl = cv2.dilate((declared[i] | declared[min(i + gap, len(declared) - 1)]).astype(np.uint8), kw).astype(bool) if declared is not None else None
             outside = small & ~zone_union                  # sparks and shear inside a declared zone are the zone's own life
             undeclared.append(100.0 * float((outside & ~dcl).sum() if dcl is not None else outside.sum()) / mv.size)
         else:
@@ -439,8 +549,15 @@ def living_motion(path) -> dict:
     # 1. G-LIVE-1: no one-second window may stand (pixel change, kept: it is the cheap guard of the whole frame)
     fw = LV.frozen_windows_grey(g, ANALYSIS_FPS)
     low = fw["min_share_pct"]
-    if fw["frozen"]:
-        return {"status": FAIL, "value": low, "detail": f"{fw['frozen']} of {fw['windows']} one-second windows change under {LV.FROZEN_CHANGE:g} % of the "
+    declared_zones = _zone_masks(path, _sidecar(path))
+    if declared_zones:                      # a localized effect (a flame of 0.2 %, smoke of 2 %) is legitimate: each declared zone is judged by its own floor below
+        area = 100.0 * float(np.logical_or.reduce([m for _, _, m in declared_zones]).mean())
+        if area < ZONES_AREA_MIN:
+            return {"status": FAIL, "value": round(area, 2), "detail": f"the declared zones cover {area:.1f} % of the frame together (at least {ZONES_AREA_MIN:g} %): "
+                    "too little of the picture is declared alive (G-LIVE-1, BP-215)"}
+    elif fw["frozen"]:
+        return {"status": FAIL, "value": low, "detail": "no zone sidecar found (beside the clip or in its zones/ folder), whole frame judged: "
+                f"{fw['frozen']} of {fw['windows']} one-second windows change under {LV.FROZEN_CHANGE:g} % of the "
                 f"frame (deadest {low:.2f} % from {fw['frozen_from_s'][0]:.1f} s): only a small part moves (G-LIVE-1, BP-194)"}
     # 2. optical flow with the camera taken out (client item 8, BP-215)
     cv2 = _cv2()
@@ -471,20 +588,21 @@ def living_motion(path) -> dict:
             if med < ZONE_COVER_MIN:
                 why = "only the particle layer moves in it" if not vals else "the effect barely moves"
                 return {"status": FAIL, "value": round(med, 2), "detail": f"the {name} zone has {med:.1f} % of its pixels moving over "
-                        f"{ZONE_SPEED[kind]:g} px/s with the camera and the particles taken out (at least {ZONE_COVER_MIN:g} %): {why} (G-LIVE-3, BP-215)"}
+                        f"{ZONE_SPEED[kind]:g} px/s{' or flickering as structured blobs' if kind == 'fire' else ''} with the camera and the particles taken out "
+                        f"(at least {ZONE_COVER_MIN:g} %): {why} (G-LIVE-3, BP-215)"}
             notes.append(f"{name} {med:.1f} %")
             worst = med if worst is None else min(worst, med)
     else:
         med = float(np.median(frame_cover))
         speck = float(np.median(specks)) if specks else 0.0
         if med >= FRAME_COVER_MIN and speck >= PARTICLE_SHARE_MIN:
-            return {"status": FAIL, "value": round(med, 2), "detail": f"{speck:.0f} % of what moves is connected specks of at most {PARTICLE_MAX_PX} px "
+            return {"status": FAIL, "value": round(med, 2), "detail": "no zone sidecar found (beside the clip or in its zones/ folder), whole frame judged: " + f"{speck:.0f} % of what moves is connected specks of at most {PARTICLE_MAX_PX} px "
                     f"(at least {PARTICLE_SHARE_MIN:g} % fails): only a particle layer moves, and snow alone is not a living picture (BP-215)"}
         if med < FRAME_COVER_MIN:
-            return {"status": FAIL, "value": round(med, 2), "detail": f"only {med:.1f} % of the frame moves over {FRAME_MIN_PX_S:g} px/s once the "
+            return {"status": FAIL, "value": round(med, 2), "detail": "no zone sidecar found (beside the clip or in its zones/ folder), whole frame judged: " + f"only {med:.1f} % of the frame moves over {FRAME_MIN_PX_S:g} px/s once the "
                     f"camera is taken out (at least {FRAME_COVER_MIN:g} %): a camera move or a few particles alone do not make it alive (BP-215)"}
         worst = med
-        notes.append("no .zones.json, whole frame " + f"{med:.1f} %")
+        notes.append("no zone sidecar found, whole frame judged " + f"{med:.1f} %")
     status, share, text = _depth_check(path, side, series)
     if status == FAIL:
         return {"status": FAIL, "value": share, "detail": text}
