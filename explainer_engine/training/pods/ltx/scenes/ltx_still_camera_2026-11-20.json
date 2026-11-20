@@ -1,0 +1,52 @@
+{
+ "schema": "ltx_scene_test/2",
+ "id": "ltx_still_camera_2026-11-20",
+ "asked": "the creator, 2026-11-20 08:56 UTC, card cmsg_01Hnu5zB86sjUj5GtTgaUkPWBQZpDyNFcr8yafcCS9ips3 ('$3 in stages', relayed by the coordinator in its own words; item 1 at most $1.00): how alive can a picture look when the camera does not move (fire, smoke, wind, snow), the reference for the free 2.5D candidates",
+ "method": "three cuts, one clip each, 5 s at 1280x704@24, every shot from its own picture, static locked-off camera, only the living elements of the picture move (LP-02: the people stand still), the film named in the look sentence (rule 20, the test the owner allowed); all three shots in one container (CH-03, model loaded once)",
+ "sound": "LTX's own (way A, D-132): fire, wind from the prompt; no speech",
+ "budget": {
+  "total_usd": 1.0,
+  "pictures_usd": 0.0,
+  "cpu_checks_usd": 0.05,
+  "note": "item 1 of the owner's $3.00 staged total: at most $1.00; the GPU launch's hard bill (run timeout + cold start at the rate) plus the CPU checks must stay under it; expected well below (about $0.3)"
+ },
+ "ledger": {
+  "path": "/mnt/project-files/explainer-engine/ledgers/ltx_still_camera_2026-11-20.json",
+  "caps": {
+   "modal_ltx": 1.25
+  }
+ },
+ "pictures": {
+  "source": "Gemini film-look frames of 2026-11-19, HF vano1919/tmr-artifacts explainer-engine/demo_truce_1914/film_look_2026-11-19/batch3/",
+  "dir": "/home/user/ee-data/ltx_scene/still_camera",
+  "manifest": "/home/user/ee-data/ltx_scene/still_camera/pictures.json",
+  "hf": "explainer-engine/demo_truce_1914/film_look_2026-11-19/batch3"
+ },
+ "shots": [
+  {
+   "shot_id": "still_s07sh006",
+   "picture": "s07_sh006",
+   "seconds": 5.0,
+   "seed": 5701,
+   "line": null,
+   "motion_prompt": "Static locked-off camera on a tripod: the frame never moves, zooms, pans or tilts. Nothing in the picture moves except the living elements named here. A frame from the film 1917 (2019), Christmas 1914 on the Western Front. A German trench at dusk. The flame in the iron fire basket flickers and sparks rise from it and drift away, its orange light flickers on the faces and greatcoats of the soldiers and on the frosty sandbags. The candles on the small fir tree flicker softly. Cold breath vapour rises from the men's mouths and drifts away. A light wind stirs the coat skirts and thin smoke. A few light snowflakes fall through the cold air, larger near flakes drifting slowly past the foreground and tiny far flakes against the dusk sky. The people stand perfectly still; nobody walks, turns, gestures or speaks, and no new object appears. Nobody speaks. Sound: crackling fire, soft wind.",
+   "added_test_element": "snow (the owner's explicit wish; light, only on this shot; weather is the director's choice with the scene's weather as the ceiling, D-139)"
+  },
+  {
+   "shot_id": "still_s04sh008",
+   "picture": "s04_sh008",
+   "seconds": 5.0,
+   "seed": 5702,
+   "line": null,
+   "motion_prompt": "Static locked-off camera on a tripod: the frame never moves, zooms, pans or tilts. Nothing in the picture moves except the living elements named here. A frame from the film 1917 (2019), Christmas 1914 on the Western Front. A frozen field at dawn between two lines of barbed wire. Ground fog drifts slowly and softly across the frosty ground and around the wire; thin smoke rises from the ruined farmhouse chimney, bends in the wind and thins out; the low sun glows through the mist; a light wind stirs the hem of the soldier's long coat and the frosty grass; faint breath vapour at the soldier's mouth. The people stand perfectly still; nobody walks, turns, gestures or speaks, and no new object appears. Nobody speaks. Sound: soft wind, distant quiet air."
+  },
+  {
+   "shot_id": "still_s07sh008",
+   "picture": "s07_sh008",
+   "seconds": 5.0,
+   "seed": 5703,
+   "line": null,
+   "motion_prompt": "Static locked-off camera on a tripod: the frame never moves, zooms, pans or tilts. Nothing in the picture moves except the living elements named here. A frame from the film 1917 (2019), Christmas 1914 on the Western Front. A British trench at dawn. The flame in the brazier in the background flickers and its orange glow flickers on the corrugated iron, the wicker wall and the duckboards; smoke rises from the brazier and drifts along the trench; a light wind stirs the skirt of the soldier's greatcoat; faint breath vapour at the soldier's mouth. The people stand perfectly still; nobody walks, turns, gestures or speaks, and no new object appears. Nobody speaks. Sound: crackling fire, soft wind."
+  }
+ ]
+}
