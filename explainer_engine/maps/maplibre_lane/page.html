@@ -1,0 +1,515 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Explainer Engine — MapLibre Offline Lane (G-04c)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="./vendor/maplibre-gl.css" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    #stage {
+      position: relative;
+      width: 1280px;
+      height: 704px;
+      overflow: hidden;
+    }
+    #map {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+    .maplibregl-ctrl-attrib,
+    .maplibregl-ctrl-logo,
+    .maplibregl-ctrl {
+      display: none !important;
+    }
+    #hud-layer {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 10;
+    }
+    #finish { position: absolute; inset: 0; pointer-events: none; z-index: 5; }
+    #finish > div { position: absolute; inset: 0; }
+    .hud-counter {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: calc(10px * var(--k, 1)) calc(16px * var(--k, 1));
+      background: var(--c-counter-bg, rgba(247, 246, 241, 0.94));
+      border: calc(1.5px * var(--k, 1)) solid var(--c-counter-border, #1e242b);
+      border-radius: calc(6px * var(--k, 1));
+      box-shadow: 0 calc(2px * var(--k, 1)) calc(10px * var(--k, 1)) rgba(0, 0, 0, 0.08);
+    }
+    .hud-counter-value {
+      font-size: calc(26px * var(--k, 1));
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: var(--c-counter-value, #0072b2);
+      font-variant-numeric: tabular-nums;
+    }
+    .hud-counter-label {
+      margin-top: calc(3px * var(--k, 1));
+      font-size: calc(12px * var(--k, 1));
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--c-counter-label, #1e242b);
+    }
+    .hud-date-chip {
+      position: absolute;
+      padding: calc(7px * var(--k, 1)) calc(14px * var(--k, 1));
+      background: var(--c-chip-bg, #1e242b);
+      color: var(--c-chip-fg, #f7f6f1);
+      font-size: calc(15px * var(--k, 1));
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      border-radius: calc(5px * var(--k, 1));
+      display: none;
+    }
+    .hud-town {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      display: none;
+      align-items: center;
+      gap: calc(6px * var(--k, 1));
+    }
+    .hud-town-dot {
+      width: calc(8px * var(--k, 1));
+      height: calc(8px * var(--k, 1));
+      border-radius: 50%;
+      background: var(--c-dot, #1e242b);
+      border: calc(1.5px * var(--k, 1)) solid var(--c-dot-border, #f7f6f1);
+      flex-shrink: 0;
+    }
+    .hud-town-name {
+      padding: calc(2px * var(--k, 1)) calc(7px * var(--k, 1));
+      background: var(--c-town-bg, rgba(247, 246, 241, 0.92));
+      border: calc(1px * var(--k, 1)) solid var(--c-town-border, rgba(30, 36, 43, 0.35));
+      border-radius: calc(4px * var(--k, 1));
+      font-size: calc(13px * var(--k, 1));
+      font-weight: 600;
+      color: var(--c-town-text, #1e242b);
+      white-space: nowrap;
+    }
+    .hud-footnote {
+      position: absolute;
+      bottom: calc(12px * var(--k, 1));
+      right: calc(16px * var(--k, 1));
+      font-size: calc(11px * var(--k, 1));
+      font-weight: 500;
+      color: var(--c-footnote-text, #2c333a);
+      background: var(--c-footnote-bg, rgba(247, 246, 241, 0.85));
+      padding: calc(3px * var(--k, 1)) calc(8px * var(--k, 1));
+      border-radius: calc(3px * var(--k, 1));
+    }
+  </style>
+</head>
+<body>
+  <div id="stage">
+    <div id="map"></div>
+    <div id="finish"><div id="fin-tint"></div><div id="fin-grain"></div><div id="fin-vignette"></div></div>
+    <div id="hud-layer">
+      <div id="hud-counter" class="hud-counter">
+        <div id="hud-counter-value" class="hud-counter-value">0</div>
+        <div id="hud-counter-label" class="hud-counter-label"></div>
+      </div>
+      <div id="hud-date-chip" class="hud-date-chip"></div>
+      <div id="hud-towns"></div>
+      <div id="hud-footnote" class="hud-footnote"></div>
+    </div>
+  </div>
+  <script src="./vendor/maplibre-gl.js"></script>
+  <script>
+    (function () {
+      "use strict";
+      let mapInstance = null;
+      let bootConfig = null;
+      let finishCfg = {};
+      let fullLineCoords = [];
+      let cumulativeLengths = [];
+      let totalLineLength = 0;
+      let townNodes = new Map();
+      function computeCumulativeLengths(coords) {
+        const cum = [0];
+        let total = 0;
+        for (let i = 1; i < coords.length; i++) {
+          const dx = coords[i][0] - coords[i - 1][0];
+          const dy = coords[i][1] - coords[i - 1][1];
+          total += Math.hypot(dx, dy);
+          cum.push(total);
+        }
+        return { cum, total };
+      }
+      function sliceLineByProgress(u) {
+        const clamped = Math.max(0, Math.min(1, Number(u) || 0));
+        if (fullLineCoords.length < 2 || clamped <= 0) {
+          return [];
+        }
+        if (clamped >= 1 || totalLineLength <= 0) {
+          return fullLineCoords.slice();
+        }
+        const targetDist = clamped * totalLineLength;
+        const out = [fullLineCoords[0]];
+        for (let i = 1; i < fullLineCoords.length; i++) {
+          const prevDist = cumulativeLengths[i - 1];
+          const nextDist = cumulativeLengths[i];
+          if (nextDist <= targetDist) {
+            out.push(fullLineCoords[i]);
+          } else {
+            const segLen = nextDist - prevDist;
+            const localT = segLen > 0 ? (targetDist - prevDist) / segLen : 0;
+            const p0 = fullLineCoords[i - 1];
+            const p1 = fullLineCoords[i];
+            out.push([
+              p0[0] + (p1[0] - p0[0]) * localT,
+              p0[1] + (p1[1] - p0[1]) * localT
+            ]);
+            break;
+          }
+        }
+        return out;
+      }
+      function extractLineCoordinates(geojson) {
+        if (!geojson) return [];
+        if (geojson.type === "FeatureCollection" && Array.isArray(geojson.features)) {
+          for (const feat of geojson.features) {
+            const coords = extractLineCoordinates(feat);
+            if (coords.length >= 2) return coords;
+          }
+          return [];
+        }
+        if (geojson.type === "Feature" && geojson.geometry) {
+          return extractLineCoordinates(geojson.geometry);
+        }
+        if (geojson.type === "LineString" && Array.isArray(geojson.coordinates)) {
+          return geojson.coordinates;
+        }
+        if (geojson.type === "MultiLineString" && Array.isArray(geojson.coordinates) && geojson.coordinates.length > 0) {
+          return geojson.coordinates[0];
+        }
+        return [];
+      }
+      function buildOfflineStyle(cfg) {
+        if (cfg.style && typeof cfg.style === "object") {
+          const cloned = JSON.parse(JSON.stringify(cfg.style));
+          if (Array.isArray(cloned.layers)) {
+            cloned.layers = cloned.layers.filter((l) => l && l.type !== "symbol");
+          }
+          return cloned;
+        }
+        if (!cfg.preset) {
+          throw new Error("no style preset: this page has no look of its own");
+        }
+        const M = cfg.preset.map;
+        const KW = cfg.spec.size ? cfg.spec.size[0] / 1280 : 1;
+        const sources = {
+          openmaptiles: {
+            type: "vector",
+            tiles: [cfg.vectorTileUrl],
+            minzoom: 0,
+            maxzoom: 14
+          }
+        };
+        const layers = [
+          {
+            id: "background",
+            type: "background",
+            paint: { "background-color": M.background }
+          },
+          {
+            id: "water",
+            type: "fill",
+            source: "openmaptiles",
+            "source-layer": "water",
+            paint: { "fill-color": M.water }
+          },
+          {
+            id: "waterway",
+            type: "line",
+            source: "openmaptiles",
+            "source-layer": "waterway",
+            paint: {
+              "line-color": M.waterway.color,
+              "line-width": M.waterway.width * KW
+            }
+          },
+          {
+            id: "landcover",
+            type: "fill",
+            source: "openmaptiles",
+            "source-layer": "landcover",
+            paint: {
+              "fill-color": M.landcover.color,
+              "fill-opacity": M.landcover.opacity
+            }
+          },
+          {
+            id: "boundary-admin",
+            type: "line",
+            source: "openmaptiles",
+            "source-layer": "boundary",
+            filter: ["==", ["get", "admin_level"], 2],
+            paint: {
+              "line-color": M.boundary.color,
+              "line-width": M.boundary.width * KW,
+              "line-dasharray": M.boundary.dash
+            }
+          },
+          {
+            id: "transportation-major",
+            type: "line",
+            source: "openmaptiles",
+            "source-layer": "transportation",
+            filter: ["in", ["get", "class"], ["literal", ["motorway", "trunk", "primary"]]],
+            paint: {
+              "line-color": M.roads.color,
+              "line-width": M.roads.width * KW
+            }
+          }
+        ];
+        if (cfg.demTileUrl) {
+          sources.terrarium = {
+            type: "raster-dem",
+            tiles: [cfg.demTileUrl],
+            tileSize: 256,
+            encoding: "terrarium",
+            maxzoom: cfg.demMaxZoom || 12
+          };
+          if (cfg.demBounds) {
+            sources.terrarium.bounds = cfg.demBounds;
+          }
+          layers.splice(1, 0, {
+            id: "terrain-hillshade",
+            type: "hillshade",
+            source: "terrarium",
+            paint: {
+              "hillshade-exaggeration": M.hillshade.exaggeration,
+              "hillshade-shadow-color": M.hillshade.shadow,
+              "hillshade-highlight-color": M.hillshade.highlight
+            }
+          });
+        }
+        return {
+          version: 8,
+          sources,
+          layers: layers.filter((l) => l.type !== "symbol")
+        };
+      }
+      function applyHudLayout(cfg) {
+        const spec = cfg.spec;
+        const layout = cfg.hudLayout || {};
+        const [width, height] = spec.size || [1280, 704];
+        const stage = document.getElementById("stage");
+        document.documentElement.style.setProperty("--k", String(width / 1280));
+        stage.style.width = width + "px";
+        stage.style.height = height + "px";
+        document.body.style.fontFamily = cfg.preset.font;
+        document.documentElement.style.background = cfg.preset.map.background;
+        document.body.style.background = cfg.preset.map.background;
+        const hud = cfg.preset.hud;
+        const root = document.documentElement.style;
+        for (const [key, val] of Object.entries(hud)) {
+          root.setProperty("--c-" + key.replace(/_/g, "-"), val);
+        }
+        const fin = cfg.preset.finish;
+        finishCfg = fin;
+        if (!fin.tint || !fin.grain || fin.vignette === undefined) {
+          throw new Error("style preset has no finish.tint, finish.grain or finish.vignette: the page has no finish of its own");
+        }
+        const tint = fin.tint;
+        const tintEl = document.getElementById("fin-tint");
+        tintEl.style.background = tint.color;
+        tintEl.style.opacity = String(tint.opacity);
+        tintEl.style.mixBlendMode = "multiply";
+        const vig = Number(fin.vignette);
+        document.getElementById("fin-vignette").style.background = vig > 0
+          ? `radial-gradient(ellipse at center, rgba(0,0,0,0) 55%, rgba(20,12,4,${vig}) 100%)` : "none";
+        const grainEl = document.getElementById("fin-grain");
+        grainEl.style.opacity = String(fin.grain.opacity);
+        grainEl.style.mixBlendMode = "overlay";
+        grainEl.style.backgroundSize = (fin.grain.size * (width / 1280)) + "px";
+        const counterBox = layout.counter_box || [48, 48, 268, 112];
+        const [cx0, cy0, cx1, cy1] = counterBox;
+        const counterEl = document.getElementById("hud-counter");
+        counterEl.style.left = cx0 + "px";
+        counterEl.style.top = cy0 + "px";
+        counterEl.style.width = Math.max(120, cx1 - cx0) + "px";
+        counterEl.style.height = Math.max(48, cy1 - cy0) + "px";
+        const counterLabelEl = document.getElementById("hud-counter-label");
+        counterLabelEl.textContent = (spec.counter && spec.counter.label) || "";
+        const dateBox = layout.date_box || [48, cy1 + 12, 220, cy1 + 48];
+        const dateEl = document.getElementById("hud-date-chip");
+        dateEl.style.left = dateBox[0] + "px";
+        dateEl.style.top = dateBox[1] + "px";
+        const footnoteEl = document.getElementById("hud-footnote");
+        footnoteEl.textContent = spec.footnote || "";
+        footnoteEl.style.display = spec.footnote ? "block" : "none";
+        const townsContainer = document.getElementById("hud-towns");
+        townsContainer.innerHTML = "";
+        townNodes.clear();
+        for (const town of spec.towns || []) {
+          const row = document.createElement("div");
+          row.className = "hud-town";
+          const dot = document.createElement("span");
+          dot.className = "hud-town-dot";
+          const label = document.createElement("span");
+          label.className = "hud-town-name";
+          label.textContent = town.name;
+          row.appendChild(dot);
+          row.appendChild(label);
+          townsContainer.appendChild(row);
+          townNodes.set(town.name, { el: row, lonlat: town.lonlat });
+        }
+      }
+      // A failed tile (e.g. missing offline tile) can keep the map from ever reporting "idle": never wait forever.
+      const IDLE_TIMEOUT_MS = 15000;
+      function waitForMapIdle(map) {
+        return new Promise((resolve) => {
+          let done = false;
+          const finish = () => { if (!done) { done = true; clearTimeout(timer); resolve(); } };
+          const timer = setTimeout(() => { window.idleTimeouts = (window.idleTimeouts || 0) + 1; finish(); }, IDLE_TIMEOUT_MS);
+          map.once("idle", finish);
+          if (map.loaded() && !map.isMoving()) {
+            map.triggerRepaint();
+          }
+        });
+      }
+      window.initScene = async function initScene(configJson) {
+        bootConfig = typeof configJson === "string" ? JSON.parse(configJson) : configJson;
+        if (!bootConfig.preset) {
+          throw new Error("no style preset: this page has no look of its own");
+        }
+        const spec = bootConfig.spec;
+        fullLineCoords = extractLineCoordinates(bootConfig.lineGeojson);
+        const { cum, total } = computeCumulativeLengths(fullLineCoords);
+        cumulativeLengths = cum;
+        totalLineLength = total;
+        applyHudLayout(bootConfig);
+        const style = buildOfflineStyle(bootConfig);
+        mapInstance = new maplibregl.Map({
+          container: "map",
+          style,
+          center: (bootConfig.camera0 || spec).center,
+          zoom: (bootConfig.camera0 || spec).zoom,
+          interactive: false,
+          attributionControl: false,
+          preserveDrawingBuffer: true,
+          fadeDuration: 0
+        });
+        await new Promise((resolve, reject) => {
+          mapInstance.once("load", resolve);
+          mapInstance.once("error", (e) => reject(e && e.error ? e.error : e));
+        });
+        const LN = bootConfig.preset.line;
+        mapInstance.addSource("front-line", {
+          type: "geojson",
+          data: {
+            type: "Feature",
+            geometry: {
+              type: "LineString",
+              coordinates: []
+            }
+          }
+        });
+        mapInstance.addLayer({
+          id: "front-line-casing",
+          type: "line",
+          source: "front-line",
+          layout: {
+            "line-cap": "round",
+            "line-join": "round"
+          },
+          paint: {
+            "line-color": LN.casing,
+            "line-width": LN.casing_width * (bootConfig.spec.size ? bootConfig.spec.size[0] / 1280 : 1),
+            "line-opacity": LN.casing_opacity
+          }
+        });
+        mapInstance.addLayer({
+          id: "front-line-stroke",
+          type: "line",
+          source: "front-line",
+          layout: {
+            "line-cap": "round",
+            "line-join": "round"
+          },
+          paint: {
+            "line-color": LN.stroke,
+            "line-width": LN.stroke_width * (bootConfig.spec.size ? bootConfig.spec.size[0] / 1280 : 1)
+          }
+        });
+        await waitForMapIdle(mapInstance);
+        return true;
+      };
+      window.setCamera = async function setCamera(center, zoom) {
+        if (!mapInstance) {
+          throw new Error("Scene not initialized; call window.initScene first");
+        }
+        // flat moves only: bearing and pitch stay 0 (no orbit, no tilt)
+        mapInstance.jumpTo({ center: center, zoom: zoom, bearing: 0, pitch: 0 });
+        await waitForMapIdle(mapInstance);
+        return true;
+      };
+      window.setFrame = async function setFrame(frameIndex) {
+        if (!mapInstance || !bootConfig) {
+          throw new Error("Scene not initialized; call window.initScene first");
+        }
+        const frames = bootConfig.frames || [];
+        const clampedIdx = Math.max(0, Math.min(frames.length - 1, Number(frameIndex) || 0));
+        const state = frames[clampedIdx];
+        const activeCoords = sliceLineByProgress(state.line_u);
+        const src = mapInstance.getSource("front-line");
+        if (src) {
+          src.setData({
+            type: "Feature",
+            geometry: {
+              type: "LineString",
+              coordinates: activeCoords
+            }
+          });
+        }
+        if (finishCfg.grain && finishCfg.grain.opacity > 0) {
+          // new grain pattern every frame (film grain flickers); seed = frame index, deterministic
+          const sz = finishCfg.grain.size;
+          const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='${sz}' height='${sz}'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='${clampedIdx % 997}' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>`;
+          document.getElementById("fin-grain").style.backgroundImage = `url("data:image/svg+xml;utf8,${svg}")`;
+        }
+        const counterValEl = document.getElementById("hud-counter-value");
+        counterValEl.textContent = Number(state.counter || 0).toLocaleString("en-US");
+        const dateEl = document.getElementById("hud-date-chip");
+        if (state.date) {
+          dateEl.textContent = state.date;
+          dateEl.style.display = "block";
+        } else {
+          dateEl.style.display = "none";
+        }
+        const visibleSet = new Set(state.towns_visible || []);
+        for (const [name, item] of townNodes.entries()) {
+          if (visibleSet.has(name)) {
+            const pt = mapInstance.project(item.lonlat);
+            item.el.style.left = pt.x.toFixed(1) + "px";
+            item.el.style.top = pt.y.toFixed(1) + "px";
+            item.el.style.display = "flex";
+          } else {
+            item.el.style.display = "none";
+          }
+        }
+        await waitForMapIdle(mapInstance);
+        await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+        return clampedIdx;
+      };
+    })();
+  </script>
+</body>
+</html>
+# **2. Python Headless Renderer Driver**

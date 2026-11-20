@@ -1,0 +1,24 @@
+{
+  "name": "1917_film",
+  "note": "Aged trench-map paper under a desaturated, warm 1917-film grade: khaki land, grey-green water, brown ink, blood-red front, film grain and vignette.",
+  "font": "'Liberation Serif', 'Times New Roman', Georgia, serif",
+  "map": {
+    "background": "#d9cca8",
+    "water": "#a7b0a6",
+    "waterway": {"color": "#8d9990", "width": 1.3},
+    "landcover": {"color": "#c9bb93", "opacity": 0.55},
+    "boundary": {"color": "#5b4a38", "width": 1.3, "dash": [4, 2, 1, 2]},
+    "roads": {"color": "#a8987a", "width": 1.0},
+    "hillshade": {"exaggeration": 0.45, "shadow": "#4a3c2b", "highlight": "#f1e6c8"}
+  },
+  "line": {"stroke": "#8f1d1d", "stroke_width": 2.8, "casing": "#efe3c4", "casing_width": 5.2, "casing_opacity": 0.85},
+  "hud": {
+    "counter_bg": "rgba(232,220,189,0.95)", "counter_border": "#2f261b", "counter_value": "#1f4a66", "counter_label": "#2f261b",
+    "chip_bg": "#2f261b", "chip_fg": "#eadfc0",
+    "dot": "#2f261b", "dot_border": "#eadfc0",
+    "town_bg": "rgba(232,220,189,0.92)", "town_border": "rgba(47,38,27,0.5)", "town_text": "#2f261b",
+    "footnote_text": "#3b3022", "footnote_bg": "rgba(232,220,189,0.85)"
+  },
+  "finish": {"grain": {"opacity": 0.22, "size": 300}, "vignette": 0.42, "tint": {"color": "#b07a3a", "opacity": 0.10}},
+  "palette_check": {"foreground": ["line.stroke", "hud.counter_value"], "background": "map.background"}
+}
