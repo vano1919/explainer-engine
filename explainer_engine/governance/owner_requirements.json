@@ -1,8 +1,8 @@
 {
  "schema": "owner_requirements/1",
- "version": "v2",
+ "version": "v3",
  "built": "2026-11-20",
- "note": "Extends the client's v1 (OR-V01..OR-V34, kept with the same ids). Layer binding for OR-S/A/E/Q/P/I is by GROUP of layers (the lead's letters); the lead narrows it per layer. words_verbatim=true only where the text is his own Georgian from the chat (cmsg id) or quoted in a memory file (words_origin=memory_quote); false = our paraphrase or an English relay, not signable until he has seen it. Checks: validator entries were verified to exist (function and test name) but the analyst did NOT run the tests; everything else is unmapped.",
+ "note": "Extends the client v1 (OR-V01..OR-V34, same ids). v3: every OR-S/A/E/Q/P/I entry is bound to the layers it governs (router groups of SKILLS_TEAM_PLAN, L1..L33); layers with no owner requirement are listed in LAYER_COVERAGE.md. words_verbatim=true only where the text is his own Georgian from the chat (cmsg id) or quoted in a memory file (words_origin=memory_quote); false = our paraphrase or an English relay, not signable until he has seen it. Checks: validator entries were verified to exist (function and test name) but the analyst did NOT run the tests; everything else is unmapped.",
  "requirements": [
   {
    "id": "OR-V01",
@@ -1188,8 +1188,8 @@
    },
    "layers": [
     "L15",
-    "L17",
-    "L18"
+    "L18",
+    "L20"
    ],
    "status": "active",
    "check": {
@@ -1667,17 +1667,16 @@
    "title": "GC-18 never_words vs rule 20 (name the era film)",
    "conflicts": [
     "OR-V02",
-    "OR-V01",
     "GC-18"
    ],
-   "words": "",
+   "words": "მოდი ერთი ცდაც ვცადოთ ახალ ჩატში აღწერე იგივე სცენები უბრალოდ პირდაპირ მიუთიტე ამ სტილს დააგენერირეო; Words the chat redraws as a photograph are never sent: the preset's never_words (photograph, photo, natural, naturalistic, candid, realistic, 3D render) are refused in the look and in every prompt outside a negation.",
    "words_verbatim": false,
-   "words_origin": "none",
-   "gloss": "GC-18 refuses words the chat redraws as a photograph (photograph, photo, natural, realistic, 3D render) in every prompt; rule 20 asks to name the film and ask for realism directly. Card answered C 'test both'; pack B is running in a browser thread.",
+   "words_origin": "both sides quoted in `sides`",
+   "gloss": "Rule 20 (name the era film in the picture and video prompts) against GC-18 (never send the words the chat redraws as a photograph). Owner card answer: C, test both; pack B runs in a browser thread.",
    "date": "2026-11-20T00:00:00Z",
    "source": {
     "kind": "doc",
-    "ref": "docs/GEMINI_CONSISTENCY_RULES.md#GC-18 + memory feedback-era-film-style-rule-2026-11-19"
+    "ref": "chat cmsg_01Hnu5zB86sjUj5GtTgaUkPWAXf1WgCKJ4hYdaBtFpvyyp (2026-11-19 22:15); docs/GEMINI_CONSISTENCY_RULES.md line 37, finding of reference round v6, 2026-11-12"
    },
    "layers": [
     "L9",
@@ -1689,7 +1688,20 @@
    },
    "measures": "owner answers; the gate BLOCKs the bound layers until then (REQ-CONFLICT-OPEN)",
    "repeats": 0,
-   "repeat_evidence": ""
+   "repeat_evidence": "",
+   "summary": "Rule 20 (name the era film in the picture and video prompts) against GC-18 (never send the words the chat redraws as a photograph). Owner card answer: C, test both; pack B runs in a browser thread.",
+   "sides": [
+    {
+     "id": "OR-V02",
+     "text": "მოდი ერთი ცდაც ვცადოთ ახალ ჩატში აღწერე იგივე სცენები უბრალოდ პირდაპირ მიუთიტე ამ სტილს დააგენერირეო",
+     "source": "chat cmsg_01Hnu5zB86sjUj5GtTgaUkPWAXf1WgCKJ4hYdaBtFpvyyp (2026-11-19 22:15)"
+    },
+    {
+     "id": "GC-18",
+     "text": "Words the chat redraws as a photograph are never sent: the preset's never_words (photograph, photo, natural, naturalistic, candid, realistic, 3D render) are refused in the look and in every prompt outside a negation.",
+     "source": "docs/GEMINI_CONSISTENCY_RULES.md line 37, finding of reference round v6, 2026-11-12"
+    }
+   ]
   },
   {
    "id": "OR-C02",
@@ -1699,28 +1711,52 @@
    "conflicts": [
     "OR-V01",
     "RR-03",
-    "RR-15"
+    "RR-15",
+    "OR-P07"
    ],
-   "words": "",
+   "words": "ყველა სერიისთვის ვეძებთ ეპოქისთვის შესაბამის წარმატებულ ფილმს ... და მის სტილში ვაგენერირებთ კადრებს. რეალისტურს მარტივად. შეაჩერე კვლევა; All pictures are our own drawings in our style ... No image-generator prompt names a franchise, a character, an actor or 'in the style of' one.; Official screenshots, trailer frames or key art are private study only: never an image input, reference upload or 'in the style of this picture' to a generator.; Whether what I publish breaks monetisation rules is my decision (memory English quote of his 10-22 20:35 words).",
    "words_verbatim": false,
-   "words_origin": "none",
-   "gloss": "Naming a film in prompts is a style reference to someone else's film; RR-03/RR-15 (docs/RIGHTS_AND_FAIR_USE.md) bar third-party media and franchise look in episodes about other people's worlds.",
+   "words_origin": "both sides quoted in `sides`",
+   "gloss": "Rule 20 names a film in generator prompts; RR-03 forbids any generator prompt that names a franchise, character, actor or 'in the style of' one; RR-15 forbids official screenshots or key art as generator input. His own 10-22/10-25 words say he decides the rights risk himself (OR-P07) and 10-29 that RR rules for story sources are unchanged.",
    "date": "2026-11-20T00:00:00Z",
    "source": {
     "kind": "doc",
-    "ref": "docs/RIGHTS_AND_FAIR_USE.md RR-03, RR-15"
+    "ref": "memory feedback-era-film-style-rule-2026-11-19 (2026-11-19 22:08 UTC); docs/RIGHTS_AND_FAIR_USE.md RR-03 (FAIL); docs/RIGHTS_AND_FAIR_USE.md RR-15 (FAIL); memory feedback-references-creator-call"
    },
    "layers": [
     "L9",
     "L13",
-    "L32"
+    "L29"
    ],
    "check": {
     "kind": "unmapped"
    },
    "measures": "owner answers; the gate BLOCKs the bound layers until then (REQ-CONFLICT-OPEN)",
    "repeats": 0,
-   "repeat_evidence": ""
+   "repeat_evidence": "",
+   "summary": "Rule 20 names a film in generator prompts; RR-03 forbids any generator prompt that names a franchise, character, actor or 'in the style of' one; RR-15 forbids official screenshots or key art as generator input. His own 10-22/10-25 words say he decides the rights risk himself (OR-P07) and 10-29 that RR rules for story sources are unchanged.",
+   "sides": [
+    {
+     "id": "OR-V01",
+     "text": "ყველა სერიისთვის ვეძებთ ეპოქისთვის შესაბამის წარმატებულ ფილმს ... და მის სტილში ვაგენერირებთ კადრებს. რეალისტურს მარტივად. შეაჩერე კვლევა",
+     "source": "memory feedback-era-film-style-rule-2026-11-19 (2026-11-19 22:08 UTC)"
+    },
+    {
+     "id": "RR-03",
+     "text": "All pictures are our own drawings in our style ... No image-generator prompt names a franchise, a character, an actor or 'in the style of' one.",
+     "source": "docs/RIGHTS_AND_FAIR_USE.md RR-03 (FAIL)"
+    },
+    {
+     "id": "RR-15",
+     "text": "Official screenshots, trailer frames or key art are private study only: never an image input, reference upload or 'in the style of this picture' to a generator.",
+     "source": "docs/RIGHTS_AND_FAIR_USE.md RR-15 (FAIL)"
+    },
+    {
+     "id": "OR-P07",
+     "text": "Whether what I publish breaks monetisation rules is my decision (memory English quote of his 10-22 20:35 words).",
+     "source": "memory feedback-references-creator-call"
+    }
+   ]
   },
   {
    "id": "OR-C03",
@@ -1728,22 +1764,19 @@
    "status": "open",
    "title": "PRODUCTION_RULES approval #2 vs PC-08",
    "conflicts": [
-    "PRODUCTION_RULES approval #2",
+    "OR-P02",
     "PC-08"
    ],
-   "words": "",
+   "words": "Each video or Short goes up to YouTube unlisted as soon as it passes its own tests, one at a time (standing order 9: the creator's standing approval for unlisted staging; approval #2 is the creator's own click to Public).; no recorded creator approval (publish.json approval {by, ref}): nothing may be uploaded (invariant 4)",
    "words_verbatim": false,
-   "words_origin": "none",
-   "gloss": "The lead's review lists these two as in conflict; the analyst did not open the two texts for this version (PC-08 only seen in a PROGRESS.md line about gates that never ran).",
+   "words_origin": "both sides quoted in `sides`",
+   "gloss": "PRODUCTION_RULES standing order 9 stages every passing piece unlisted at once on the creator's standing approval, and says approval #2 is only his click to Public; PC-08 is a FAIL without a recorded creator approval (publish.json approval {by, ref}) and publish/stage.py blocks on it, so an unlisted staging needs a per-piece recorded approval first. ORCHESTRATION OR-05 says staging happens 'after the creator's recorded approval (PC-08)'.",
    "date": "2026-11-20T00:00:00Z",
    "source": {
     "kind": "doc",
-    "ref": "docs/PRODUCTION_RULES.md approval #2; qa/publish_check.py PC-08 (not re-read here)"
+    "ref": "docs/PRODUCTION_RULES.md row 9 and standing order 9 (2026-10-19); explainer_engine/qa/publish_check.py line 105-108; docs/ORCHESTRATION.md OR-05"
    },
    "layers": [
-    "L26",
-    "L27",
-    "L28",
     "L32"
    ],
    "check": {
@@ -1751,7 +1784,20 @@
    },
    "measures": "owner answers; the gate BLOCKs the bound layers until then (REQ-CONFLICT-OPEN)",
    "repeats": 0,
-   "repeat_evidence": ""
+   "repeat_evidence": "",
+   "summary": "PRODUCTION_RULES standing order 9 stages every passing piece unlisted at once on the creator's standing approval, and says approval #2 is only his click to Public; PC-08 is a FAIL without a recorded creator approval (publish.json approval {by, ref}) and publish/stage.py blocks on it, so an unlisted staging needs a per-piece recorded approval first. ORCHESTRATION OR-05 says staging happens 'after the creator's recorded approval (PC-08)'.",
+   "sides": [
+    {
+     "id": "OR-P02",
+     "text": "Each video or Short goes up to YouTube unlisted as soon as it passes its own tests, one at a time (standing order 9: the creator's standing approval for unlisted staging; approval #2 is the creator's own click to Public).",
+     "source": "docs/PRODUCTION_RULES.md row 9 and standing order 9 (2026-10-19)"
+    },
+    {
+     "id": "PC-08",
+     "text": "no recorded creator approval (publish.json approval {by, ref}): nothing may be uploaded (invariant 4)",
+     "source": "explainer_engine/qa/publish_check.py line 105-108; docs/ORCHESTRATION.md OR-05"
+    }
+   ]
   },
   {
    "id": "OR-C04",
@@ -1760,25 +1806,21 @@
    "title": "LTX needs no background sounds (11-12 19:12) vs one continuous sound bed and no dead air",
    "conflicts": [
     "OR-A07",
-    "OR-A03",
-    "OR-A04"
+    "OR-A04",
+    "OR-A03"
    ],
-   "words": "",
+   "words": "ლტხ ვიდეოებს აღარ დაჭირდება ბეგრაუნდ ხმები. რადგან ლტხ იდეალურად აკეთებს; დიალოგია დროს სიჩუმე ყველაზე მეტად ხელოვნურიბას აჩენს; აბსოლუტურად უაზრო ბეგრაუნდ ხმები",
    "words_verbatim": false,
-   "words_origin": "none",
-   "gloss": "On 11-12 19:12 he said LTX videos need no background sounds; on 11-12 21:44 he called silence in dialogue the most artificial thing and asked for a bed. Possibly different scopes (LTX clips vs the whole mix); needs his word. Analyst flag, not in the lead's list.",
+   "words_origin": "both sides quoted in `sides`",
+   "gloss": "His 11-12 19:12 message says LTX videos need no background sounds; his 11-12 21:44 message calls silence in dialogue the most artificial thing and asks for beds and action sounds. Possibly different scopes (clip audio vs the assembled mix). Goes to him as a card via the lead.",
    "date": "2026-11-20T00:00:00Z",
    "source": {
     "kind": "doc",
-    "ref": "chats cmsg ..GKmz1ggG982FmdKJd1dYji and ..VMsQtbv2YdqWCRYtcMXpMu"
+    "ref": "chat cmsg_01Hnu5zB86sjUj5GtTgaUkPWGKmz1ggG982FmdKJd1dYji; chat cmsg_01Hnu5zB86sjUj5GtTgaUkPWVMsQtbv2YdqWCRYtcMXpMu; chat cmsg_01Hnu5zB86sjUj5GtTgaUkPWVMsQtbv2YdqWCRYtcMXpMu"
    },
    "layers": [
-    "L4",
-    "L5",
-    "L6",
-    "L17",
+    "L13",
     "L18",
-    "L19",
     "L20"
    ],
    "check": {
@@ -1786,7 +1828,25 @@
    },
    "measures": "owner answers; the gate BLOCKs the bound layers until then (REQ-CONFLICT-OPEN)",
    "repeats": 0,
-   "repeat_evidence": ""
+   "repeat_evidence": "",
+   "summary": "His 11-12 19:12 message says LTX videos need no background sounds; his 11-12 21:44 message calls silence in dialogue the most artificial thing and asks for beds and action sounds. Possibly different scopes (clip audio vs the assembled mix). Goes to him as a card via the lead.",
+   "sides": [
+    {
+     "id": "OR-A07",
+     "text": "ლტხ ვიდეოებს აღარ დაჭირდება ბეგრაუნდ ხმები. რადგან ლტხ იდეალურად აკეთებს",
+     "source": "chat cmsg_01Hnu5zB86sjUj5GtTgaUkPWGKmz1ggG982FmdKJd1dYji"
+    },
+    {
+     "id": "OR-A04",
+     "text": "დიალოგია დროს სიჩუმე ყველაზე მეტად ხელოვნურიბას აჩენს",
+     "source": "chat cmsg_01Hnu5zB86sjUj5GtTgaUkPWVMsQtbv2YdqWCRYtcMXpMu"
+    },
+    {
+     "id": "OR-A03",
+     "text": "აბსოლუტურად უაზრო ბეგრაუნდ ხმები",
+     "source": "chat cmsg_01Hnu5zB86sjUj5GtTgaUkPWVMsQtbv2YdqWCRYtcMXpMu"
+    }
+   ]
   },
   {
    "id": "OR-S01",
@@ -1801,13 +1861,7 @@
     "ref": "creator-workflow-preferences"
    },
    "layers": [
-    "L1",
-    "L2",
-    "L3",
-    "L7",
-    "L8",
-    "L29",
-    "L30"
+    "L2"
    ],
    "status": "active",
    "check": {
@@ -1830,13 +1884,9 @@
     "ref": "channel-storyteller-principle"
    },
    "layers": [
-    "L1",
     "L2",
     "L3",
-    "L7",
-    "L8",
-    "L29",
-    "L30"
+    "L7"
    ],
    "status": "active",
    "check": {
@@ -1863,13 +1913,8 @@
     "ref": "channel-storyteller-principle"
    },
    "layers": [
-    "L1",
     "L2",
-    "L3",
-    "L7",
-    "L8",
-    "L29",
-    "L30"
+    "L3"
    ],
    "status": "active",
    "check": {
@@ -1892,13 +1937,9 @@
     "ref": "D-61"
    },
    "layers": [
-    "L1",
     "L2",
     "L3",
-    "L7",
-    "L8",
-    "L29",
-    "L30"
+    "L4"
    ],
    "status": "active",
    "check": {
@@ -1921,13 +1962,8 @@
     "ref": "no-permanent-heroes"
    },
    "layers": [
-    "L1",
     "L2",
-    "L3",
-    "L7",
-    "L8",
-    "L29",
-    "L30"
+    "L8"
    ],
    "status": "active",
    "check": {
@@ -1951,13 +1987,8 @@
     "ref": "project-blueprint-plan-2026-10-29"
    },
    "layers": [
-    "L1",
     "L2",
-    "L3",
-    "L7",
-    "L8",
-    "L29",
-    "L30"
+    "L8"
    ],
    "status": "active",
    "check": {
@@ -1981,13 +2012,10 @@
     "ref": "D-61 / OR-17"
    },
    "layers": [
-    "L1",
     "L2",
     "L3",
     "L7",
-    "L8",
-    "L29",
-    "L30"
+    "L31"
    ],
    "status": "active",
    "check": {
@@ -2010,17 +2038,8 @@
     "ref": "creator-workflow-preferences"
    },
    "layers": [
-    "L1",
-    "L2",
-    "L3",
-    "L7",
-    "L8",
-    "L29",
-    "L30",
-    "L26",
-    "L27",
-    "L28",
-    "L32"
+    "L21",
+    "L31"
    ],
    "status": "active",
    "check": {
@@ -2050,17 +2069,13 @@
     "ref": "CLAUDE.md Language (creator 2026-10-17)"
    },
    "layers": [
-    "L1",
-    "L2",
-    "L3",
-    "L7",
-    "L8",
-    "L29",
-    "L30",
+    "L4",
+    "L9",
+    "L12",
+    "L25",
     "L26",
     "L27",
-    "L28",
-    "L32"
+    "L28"
    ],
    "status": "active",
    "check": {
@@ -2083,16 +2098,10 @@
     "ref": "D-99, BP-105"
    },
    "layers": [
-    "L1",
     "L2",
     "L3",
-    "L7",
-    "L8",
-    "L29",
-    "L30",
     "L4",
-    "L5",
-    "L6"
+    "L30"
    ],
    "status": "active",
    "check": {
@@ -2125,7 +2134,7 @@
    "layers": [
     "L1",
     "L2",
-    "L3"
+    "L4"
    ],
    "status": "active",
    "check": {
@@ -2148,8 +2157,7 @@
     "ref": "CLAUDE.md Research trust (creator 2026-11-07)"
    },
    "layers": [
-    "L1",
-    "L2"
+    "L1"
    ],
    "status": "active",
    "check": {
@@ -2172,10 +2180,8 @@
     "ref": "feedback-sound-source-order-2026-11-12"
    },
    "layers": [
-    "L17",
     "L18",
-    "L19",
-    "L20"
+    "L19"
    ],
    "status": "active",
    "check": {
@@ -2200,9 +2206,7 @@
    },
    "layers": [
     "L15",
-    "L17",
     "L18",
-    "L19",
     "L20"
    ],
    "status": "active",
@@ -2226,7 +2230,6 @@
     "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWVMsQtbv2YdqWCRYtcMXpMu"
    },
    "layers": [
-    "L17",
     "L18",
     "L19",
     "L20"
@@ -2260,9 +2263,7 @@
     "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWVMsQtbv2YdqWCRYtcMXpMu"
    },
    "layers": [
-    "L17",
     "L18",
-    "L19",
     "L20"
    ],
    "status": "active",
@@ -2293,10 +2294,7 @@
     "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWVMsQtbv2YdqWCRYtcMXpMu"
    },
    "layers": [
-    "L17",
-    "L18",
-    "L19",
-    "L20"
+    "L18"
    ],
    "status": "active",
    "check": {
@@ -2319,7 +2317,6 @@
     "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWP8uyVzMjdeETMLFhRBASf2"
    },
    "layers": [
-    "L17",
     "L18",
     "L19",
     "L20"
@@ -2346,10 +2343,8 @@
     "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWGKmz1ggG982FmdKJd1dYji"
    },
    "layers": [
-    "L17",
-    "L18",
-    "L19",
-    "L20"
+    "L13",
+    "L18"
    ],
    "status": "active",
    "check": {
@@ -2373,9 +2368,8 @@
     "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWGKmz1ggG982FmdKJd1dYji"
    },
    "layers": [
-    "L4",
-    "L5",
-    "L6"
+    "L6",
+    "L13"
    ],
    "status": "active",
    "check": {
@@ -2399,7 +2393,6 @@
    },
    "layers": [
     "L4",
-    "L5",
     "L6"
    ],
    "status": "active",
@@ -2431,8 +2424,7 @@
    },
    "layers": [
     "L4",
-    "L5",
-    "L6"
+    "L5"
    ],
    "status": "active",
    "check": {
@@ -2455,8 +2447,6 @@
     "ref": "hero-voices-real-people"
    },
    "layers": [
-    "L4",
-    "L5",
     "L6"
    ],
    "status": "active",
@@ -2480,9 +2470,9 @@
     "ref": "feedback-confirm-before-paid-voice-steps"
    },
    "layers": [
-    "L4",
     "L5",
-    "L6"
+    "L6",
+    "L31"
    ],
    "status": "active",
    "check": {
@@ -2505,8 +2495,6 @@
     "ref": "creator-workflow-preferences"
    },
    "layers": [
-    "L4",
-    "L5",
     "L6"
    ],
    "status": "active",
@@ -2530,9 +2518,7 @@
     "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWVMsQtbv2YdqWCRYtcMXpMu"
    },
    "layers": [
-    "L21",
-    "L22",
-    "L25"
+    "L21"
    ],
    "status": "active",
    "check": {
@@ -2556,8 +2542,7 @@
    },
    "layers": [
     "L21",
-    "L22",
-    "L25"
+    "L23"
    ],
    "status": "active",
    "check": {
@@ -2580,9 +2565,8 @@
     "ref": "CLAUDE.md (sound ... one level everywhere), qa/targets.py"
    },
    "layers": [
-    "L21",
-    "L22",
-    "L25"
+    "L20",
+    "L23"
    ],
    "status": "active",
    "check": {
@@ -2613,8 +2597,7 @@
    },
    "layers": [
     "L21",
-    "L22",
-    "L25"
+    "L31"
    ],
    "status": "active",
    "check": {
@@ -2638,7 +2621,8 @@
    },
    "layers": [
     "L23",
-    "L24"
+    "L24",
+    "L33"
    ],
    "status": "active",
    "check": {
@@ -2663,7 +2647,6 @@
    "layers": [
     "L23",
     "L24",
-    "L31",
     "L33"
    ],
    "status": "active",
@@ -2687,7 +2670,6 @@
     "ref": "feedback-strict-eras-style-check"
    },
    "layers": [
-    "L23",
     "L24"
    ],
    "status": "active",
@@ -2714,7 +2696,6 @@
     "ref": "feedback-strict-eras-style-check"
    },
    "layers": [
-    "L23",
     "L24"
    ],
    "status": "superseded",
@@ -2771,9 +2752,6 @@
     "ref": "CLAUDE.md invariant 4, D-57"
    },
    "layers": [
-    "L26",
-    "L27",
-    "L28",
     "L32"
    ],
    "status": "active",
@@ -2797,8 +2775,6 @@
     "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWYDkwpHPwbkPkZjE11J4EiR"
    },
    "layers": [
-    "L26",
-    "L27",
     "L28",
     "L32"
    ],
@@ -2824,9 +2800,6 @@
     "ref": "youtube-staging-upload"
    },
    "layers": [
-    "L26",
-    "L27",
-    "L28",
     "L32"
    ],
    "status": "active",
@@ -2851,8 +2824,6 @@
    },
    "layers": [
     "L26",
-    "L27",
-    "L28",
     "L32"
    ],
    "status": "active",
@@ -2876,12 +2847,8 @@
     "ref": "feedback-review-threads-no-code-licenses-youtube-only"
    },
    "layers": [
-    "L26",
-    "L27",
-    "L28",
-    "L32",
-    "L31",
-    "L33"
+    "L29",
+    "L32"
    ],
    "status": "active",
    "check": {
@@ -2904,10 +2871,7 @@
     "ref": "docs/RIGHTS_AND_FAIR_USE.md RR-03.."
    },
    "layers": [
-    "L26",
-    "L27",
-    "L28",
-    "L32"
+    "L29"
    ],
    "status": "active",
    "check": {
@@ -2930,8 +2894,8 @@
     "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWK39gkFmq9K2RUuKFaBEx9g"
    },
    "layers": [
-    "L31",
-    "L33"
+    "L13",
+    "L31"
    ],
    "status": "active",
    "check": {
@@ -2985,8 +2949,7 @@
     "ref": "feedback-pc-no-paid-runs-2026-11-07"
    },
    "layers": [
-    "L31",
-    "L33"
+    "L31"
    ],
    "status": "active",
    "check": {
@@ -3034,7 +2997,6 @@
     "ref": "feedback-sync-github-and-drive"
    },
    "layers": [
-    "L31",
     "L33"
    ],
    "status": "active",
@@ -3058,16 +3020,7 @@
     "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWW4g2aaMZ4SAJQUbEgZGWoPM"
    },
    "layers": [
-    "L31",
-    "L33",
-    "L9",
-    "L10",
-    "L11",
-    "L12",
-    "L13",
-    "L14",
-    "L15",
-    "L16"
+    "L33"
    ],
    "status": "active",
    "check": {
@@ -3090,16 +3043,7 @@
     "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWYHAh3udg8KVcPULBEmoi7B"
    },
    "layers": [
-    "L31",
-    "L33",
-    "L9",
-    "L10",
-    "L11",
-    "L12",
-    "L13",
-    "L14",
-    "L15",
-    "L16"
+    "L33"
    ],
    "status": "active",
    "check": {
@@ -3123,16 +3067,7 @@
     "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWYHAh3udg8KVcPULBEmoi7B"
    },
    "layers": [
-    "L31",
-    "L33",
-    "L9",
-    "L10",
-    "L11",
-    "L12",
-    "L13",
-    "L14",
-    "L15",
-    "L16"
+    "L33"
    ],
    "status": "active",
    "check": {
@@ -3155,8 +3090,7 @@
     "ref": "CLAUDE.md invariants 1, 2"
    },
    "layers": [
-    "L31",
-    "L33"
+    "L31"
    ],
    "status": "active",
    "check": {
@@ -3165,6 +3099,447 @@
    "measures": "ledger refuses a paid call above cap; pod/app check at start and end. Candidate: tests/unit/test_cloud_economy.py",
    "repeats": 2,
    "repeat_evidence": ""
+  },
+  {
+   "id": "OR-S13",
+   "kind": "requirement",
+   "words": "The mix 10/30/60 is approximate: it must never sacrifice the video; tolerance +-5 % (BP-109 lane_tolerance 0.05).",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-11-01T20:03:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-answers-2026-11-01-open-list"
+   },
+   "layers": [
+    "L30"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "lane shares by duration from the shot plan within +-5 % of 10/30/60; a lane share never raised by cutting video seconds. Candidate: tests/unit/test_film_shots.py (BP-109 users, function not read)",
+   "repeats": 2,
+   "repeat_evidence": "11-01 20:03, 11-12 (CLAUDE.md D-131 mix)",
+   "note": "English summary in memory of his 20:03 answers"
+  },
+  {
+   "id": "OR-S14",
+   "kind": "requirement",
+   "words": "Pace must CHANGE: the average is redistributed, regular frequency, a normal talking hook (BP-169, house rule); the frequency number is not sourced, do not invent it.",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-11-01T20:03:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-answers-2026-11-01-open-list"
+   },
+   "layers": [
+    "L30",
+    "L21"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "shot-length variation measured on the cut; no invented frequency threshold (REVIEW only)",
+   "repeats": 2,
+   "repeat_evidence": "11-01 14:47, 11-01 20:03"
+  },
+  {
+   "id": "OR-S15",
+   "kind": "requirement",
+   "words": "When he names an example (Napoleon) it may stand for a GENRE, not the topic: docudrama = documentary + dramatized scenes, any topic.",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-10-25T23:17:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-references-creator-call"
+   },
+   "layers": [
+    "L2",
+    "L30"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "episode format record names the genre (docudrama) and the topic separately",
+   "repeats": 2,
+   "repeat_evidence": "10-25 23:17, MEMORY.md 'DOCUDRAMA'"
+  },
+  {
+   "id": "OR-S16",
+   "kind": "requirement",
+   "words": "Dialogue in episodes so expressions can change (~1 s) and visual beats come about every 1.5 s with short cues (D-54, D-55).",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-10-21T06:56:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "creator-workflow-preferences"
+   },
+   "layers": [
+    "L3",
+    "L7"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "dialogue lines per minute and beat spacing from edit/motion_lint (BP numbers only). Candidate: edit/motion_lint.py measure (test not located)",
+   "repeats": 2,
+   "repeat_evidence": "10-20, 10-21"
+  },
+  {
+   "id": "OR-S17",
+   "kind": "requirement",
+   "words": "An episode with many heroes runs about 13 minutes; the 2026-11-13 demo is 6 minutes.",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-10-20T11:15:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "channel-storyteller-principle"
+   },
+   "layers": [
+    "L30"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "runtime in the episode format record; no hard threshold (his example, not a limit)",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "an example from his titans thread; treat as guidance"
+  },
+  {
+   "id": "OR-S18",
+   "kind": "requirement",
+   "words": "Topics come from him: he finds the topic himself; the three offered topics were all rejected.",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-11-01T20:03:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-answers-2026-11-01-open-list"
+   },
+   "layers": [
+    "L1",
+    "L2"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "episode topic record cites his message id before research starts",
+   "repeats": 1,
+   "repeat_evidence": ""
+  },
+  {
+   "id": "OR-Q06",
+   "kind": "requirement",
+   "words": "Compare every test image with the approved reference sheet before showing it as 'our style'; a wrong look loses his trust.",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-10-24T14:05:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "style-check-before-showing"
+   },
+   "layers": [
+    "L24",
+    "L9"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "candidate sheet carries a side-by-side with the approved reference and the NOT_RUN/PASS line; old reference was the eras sheet, the current reference is the era-film look",
+   "repeats": 2,
+   "repeat_evidence": "10-24 18:23, 10-25 15:13"
+  },
+  {
+   "id": "OR-Q07",
+   "kind": "requirement",
+   "words": "Best tail/still frame from a clip is chosen by the person's face and pose stillness: pick the sharpest, stillest face, then crop and upscale (BP-199). He called it 'the main rule'.",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-11-14T16:18:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "frame-pick-face-rule"
+   },
+   "layers": [
+    "L13",
+    "L16",
+    "L24"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "validator",
+    "ref": "explainer_engine.finish.frame_pick:score",
+    "test": "tests/unit/test_frame_pick.py::test_the_still_face_wins_over_a_still_background",
+    "note": "analyst did not run the test",
+    "verified": {
+     "ref_and_test_exist": true,
+     "tests_run_by_analyst": false
+    }
+   },
+   "measures": "face sharpness and stillness score of the chosen frame vs the window; a frame caught mid-move loses",
+   "repeats": 2,
+   "repeat_evidence": "11-14 16:18, 11-14 (rifle frame f084 vs f088)"
+  },
+  {
+   "id": "OR-P07",
+   "kind": "requirement",
+   "words": "Use his reference images fully; whether what he publishes breaks monetisation rules is his decision; do not lecture about rights at each step, mention only concrete technical blockers.",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-10-22T20:35:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-references-creator-call"
+   },
+   "layers": [
+    "L29",
+    "L9"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "the rights check reports technical blockers only (provider refusal); no step is blocked for look-alike or reference reasons. Conflicts with RR-03/RR-15 (OR-C02)",
+   "repeats": 2,
+   "repeat_evidence": "10-22 20:35, 10-25 23:17 ('skip every copyright rule; be unlimited now')"
+  },
+  {
+   "id": "OR-P08",
+   "kind": "requirement",
+   "words": "სამართლებრივ საკითხებსა და ლიცენზიებზე დაფუძნებული ყველა გადაწყვეტილება პერფორმანსის სასარგებლოდ უნდა გადაწყვიტო!",
+   "words_verbatim": true,
+   "words_origin": "memory_quote",
+   "gloss": "Decide every legal or licence-based question in favour of performance.",
+   "date": "2026-10-29T17:53:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-licence-decisions-performance"
+   },
+   "layers": [
+    "L29",
+    "L31",
+    "L33"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "licence is recorded as information, never as a gate; of two tools differing only by licence the better-performing one is chosen. Candidate: tests/unit/test_layer_gate.py after the developer's change",
+   "repeats": 4,
+   "repeat_evidence": "10-29 17:53, 11-13 07:24, 11-19, 11-20 08:10",
+   "note": "RR rules (rights of story sources) are a separate matter he has not changed (memory)"
+  },
+  {
+   "id": "OR-I10",
+   "kind": "requirement",
+   "words": "The working session does the work; the Opus thread writes the plans; hard technical questions (code and test design of a new method) go to the Opus thread before the work (OR-24, OR-26).",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-10-26T17:06:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-opus-plans-sonnet-works"
+   },
+   "layers": [
+    "L33"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "plan thread confirmation recorded before a paid plan starts (OR-24); Sonnet implements the plan as written",
+   "repeats": 2,
+   "repeat_evidence": "10-26 12:49, 10-26 17:06"
+  },
+  {
+   "id": "OR-I11",
+   "kind": "requirement",
+   "words": "Reusable beats fast when the money cost is the same: a tool in the repo with its test, not a scratchpad one-off (OR-21).",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-10-26T00:33:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-reusable-first"
+   },
+   "layers": [
+    "L31",
+    "L33"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "paid launches only from committed scripts under explainer_engine/training/pods/; hook refuses a scratchpad launcher",
+   "repeats": 1,
+   "repeat_evidence": ""
+  },
+  {
+   "id": "OR-I12",
+   "kind": "requirement",
+   "words": "Audits run on Opus (xhigh/high/medium) or Sonnet by complexity, never Haiku; Fable only when he asks for it specially.",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-11-19T18:22:00Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPW1a92KaiMwuj36b1j7MXsgT"
+   },
+   "layers": [
+    "L33"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "model routing (config/model_routing.json) refuses Haiku for an audit thread; routine/browser work goes to Sonnet medium or Haiku (RULE 21)",
+   "repeats": 3,
+   "repeat_evidence": "11-14 13:52, 11-19 18:17, 18:22"
+  },
+  {
+   "id": "OR-I13",
+   "kind": "requirement",
+   "words": "A Fable full-repo audit is the last gate before any paid test (OR-34).",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-10-30T00:00:00Z",
+   "source": {
+    "kind": "doc",
+    "ref": "CLAUDE.md OR-34"
+   },
+   "layers": [
+    "L33"
+   ],
+   "status": "superseded",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "old gate",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "superseded_by": "OR-I12",
+   "note": "Fable banned 11-14 13:52 and 11-19 18:17; the audit before a paid test still happens, on Opus/Sonnet by OR-I12"
+  },
+  {
+   "id": "OR-I14",
+   "kind": "requirement",
+   "words": "Technical decisions are Claude's job (the most effective, highest-quality option for the video plan); ask him only about goals, creative choices, money above caps, deletes and irreversible steps.",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-10-29T08:57:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-technical-decisions-delegated"
+   },
+   "layers": [
+    "L33",
+    "L31"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "decision log row with one-line reason per technical decision; cards only for his categories",
+   "repeats": 2,
+   "repeat_evidence": "10-22 22:06 (cheapest, decide yourself), 10-29 12:57"
+  },
+  {
+   "id": "OR-I15",
+   "kind": "requirement",
+   "words": "In review and plan threads Claude writes only plans or reports, never code ('main rule: you do not write code, you write a plan or a report').",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-11-19T00:00:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-review-threads-no-code-licenses-youtube-only"
+   },
+   "layers": [
+    "L33"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "review-thread commits touching .py are refused by a hook",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "English quote in the memory file"
+  },
+  {
+   "id": "OR-I16",
+   "kind": "requirement",
+   "words": "Always pick the cheapest workable option and decide it yourself when waiting costs more than deciding; change rules that block that.",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-10-22T22:06:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-cheapest-decide-yourself"
+   },
+   "layers": [
+    "L31"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "cheapest-combo hook (OR-I01) is the machine form; decisions below the approved cap need no card",
+   "repeats": 2,
+   "repeat_evidence": "10-22 22:06, 11-13 07:00"
+  },
+  {
+   "id": "OR-E05",
+   "kind": "requirement",
+   "words": "What matters is frame quality and the colour palette; reflections and shadows are secondary (they slow the render); judge on video, not stills.",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-11-05T14:23:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-ink-style-priorities-2026-11-05"
+   },
+   "layers": [
+    "L22",
+    "L24"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "palette fidelity vs the named film's palette (mean dE) on the graded master; clips not stills in the candidate sheet",
+   "repeats": 2,
+   "repeat_evidence": "11-05 14:23, 11-05 14:58",
+   "note": "said for the Ink Chronicle era renders; he has not restated it for the era-film look, so it is active but may be superseded by OR-V01"
   }
  ],
  "process_requirements": [
