@@ -3753,3 +3753,7 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 - Fixed from that render: terrain hillshade hang (DEM source now gets the real max zoom and bounds, map idle has a 15 s timeout), HUD and line widths scale with the frame width (designed for 1280), `fetch_tiles` merges `manifest.json` instead of overwriting it, Playwright import is optional so the module imports without it.
 - Creator's rule 2026-11-20: every episode has its own map style. `style_preset` in the shot spec, presets `neutral` and `1917_film`; how to add one: `maplibre_lane/README.md`.
 - Tests: 244 in `tests/unit/test_maps_*.py` (hud_layout, maplibre_spec, camera, lane, presets, fetch manifest). `vendor/maplibre-gl.js|css` are not committed (README says where they come from).
+
+## 2026-11-20 — Map HUD OCR check: the "0" of the counter is an OCR limit, not a render defect
+- Clip from PR #231 (1917_film, truck_zoom_in): 57 of 58 HUD items read back by RapidOCR on 12 frames; the one miss was the counter's opening "0" in frame 0. Cause traced: the glyph is clear (dark blue on paper, 45 px tall at 2560, no fade-in), but the OCR engine reads no isolated single glyph (a plain black "0" or "8" on white is not read either; "00", "10", "20" are). Not contrast, size or fade.
+- New `maplibre_lane/hud_ocr.py` (+ `tests/unit/test_maps_hud_ocr.py`, 4 tests): expected text from the spec schedule, OCR for text, an ink check for a one-character counter, each item reports its method. Same clip: 58 of 58 (the "0" by ink). Costs $0.

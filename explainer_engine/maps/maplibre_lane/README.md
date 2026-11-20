@@ -17,3 +17,8 @@ blood-red front, serif type, sepia tint, vignette, per-frame grain).
 Add a style: copy `styles/neutral.json` to `styles/<episode_style>.json` (letters, digits, underscore), change the values from the episode's
 reference film (project rule 20), keep the palette_check colours distinct, set `style_preset` in the episode's specs. `tests/unit/test_maps_style_presets.py`
 checks every preset in the folder.
+
+## HUD readability check
+`python -m explainer_engine.maps.maplibre_lane.hud_ocr <spec.json> <frames_dir> [step]` (needs `pip install rapidocr-onnxruntime`): OCR reads back what the schedule says is on screen
+(counter, label, date, towns). Scene-text OCR cannot read an isolated single glyph (measured: even a plain black "0" or "8" on white), so a
+one-character counter ("0" at the start) is checked as ink in the preset's counter colour, and the report says which method decided each item.
