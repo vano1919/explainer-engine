@@ -3913,6 +3913,16 @@ No number is written in any of them; tests `test_first_shot.py`, `test_opening_d
 ## 2026-11-20 — Truce 1914 map shots: sourced facts, first real shot S05_SH101 with `truce_cold`
 - Of the 5 map shots only the counter (S05_SH101, C-03) and the date labels (C-05, C-06) are tied to claims; the arrow route, the 10 front-line places, the Flanders glow and the 4 pulse places have none (list for the researcher on HF `truce_S05_SH101/`). Only S05_SH101 rendered (6.25 s, 2560x1440, `truce_cold`, HUD OCR 45/45 on 15 frames). Spec + test: `examples/maps/truce_S05_SH101/`, `tests/unit/test_maps_truce_s05_sh101.py` (3).
 
+
+## 2026-11-20 — Boundary tests that kill the ten surviving mutants of seven validators; `audio_present` gets its own test file
+
+A mutation spot-check (three hand-made mutations per module: `shift_line_id`, `stated_theme`, `claim_ledger`, `camera_move`, `lipsync`,
+`trim_record`, `audio_present`) left ten mutants alive: the boundary at the minimum overlap of SL-06, CL-07b and STH-01, the CL-06 date
+of today, the CM-06 final run and CM-10 rotation limit, the LS-03 confidence boundary, LS-04's worst offset by magnitude, SL-01 under
+`strict`, and `audio_present`'s stream count. Tests only, no validator logic changed; each boundary uses an injected rules file or
+tolerance so the score is exact. After them all 21 mutations are caught (run with bytecode off and `__pycache__` deleted: an earlier
+run reused stale bytecode and listed an eleventh survivor wrongly). New file `tests/unit/test_audio_present.py` (stream count of
+one and two, video-only, unreadable file, missing ffprobe, the `-select_streams a` call, exit codes).
 ## 2026-11-20 — publish auth hygiene (L32)
 - `auth` / `auth-finish` write `tools/youtube/token.b64.txt` only with `--export-env` (the printed text names it only then); `load_token` logs one line naming the source (session file or `YOUTUBE_TOKEN_B64`), never the token; the env variable and its code path stay (owner card 2026-11-20 21:01).
 - Tests: `tests/unit/test_youtube_auth_hygiene.py` (flag on/off, source logged, no tracked `tools/` token or `pending.json`, `.gitignore` covers `tools/youtube/`).

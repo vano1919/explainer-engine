@@ -148,3 +148,19 @@ def test_real_install_sign_with_known_shifts(tmp_path):
         out = tmp_path / name
         subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(ex), "-i", str(ex), "-map", "0:v", "-map", "1:a", "-af", af, "-c:v", "copy", str(out)], check=True)
         assert LS.measure_lipsync(out)["tracks"][0]["offset_frames"] == base + delta
+
+
+# ---- boundary tests (2026-11-20 mutation spot-check: LS-03 `>=` and LS-04 abs() survived) ----
+
+def test_ls03_a_track_exactly_at_conf_min_is_trusted(conf):
+    r = run(tracks((5, 3.0)))
+    assert r["status"] == "FAIL" and r["detail"].startswith("REVIEW: LS-02")      # trusted, so judged (not NOT_RUN)
+    assert run(tracks((5, 2.99)))["status"] == "NOT_RUN"
+
+
+def test_ls04_the_worst_offset_is_by_magnitude_so_a_large_negative_offset_counts(conf):
+    r = run(tracks((-5, 9.0), (1, 9.0)))
+    assert r["status"] == "FAIL" and "-5 fr" in r["detail"].split(";")[0]
+    r2 = run(tracks((1, 9.0), (-5, 9.0)))
+    assert r2["status"] == "FAIL"
+    assert run(tracks((-5, 1.0), (1, 9.0)))["status"] == "PASS"                    # the untrusted big one is ignored
