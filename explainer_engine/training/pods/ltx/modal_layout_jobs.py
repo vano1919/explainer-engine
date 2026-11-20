@@ -17,7 +17,8 @@ GO card, a passing CH-07 offer, the OR-34 audit and the Haiku watchdog the coord
     L2  ::weights  CPU: the IC-LoRA is downloaded and its sha256 checked; the base files are checked (size; sha256 with --hash-base)
     L3  ::smoke    GPU, the smallest clip (``launch.smoke.frames``) under ``caps.smoke_usd``: measures memory (torch peak and
                    nvidia-smi peak, host RSS, cgroup peak), seconds, sound; stop-and-write if it does not fit
-    L4  ::main     GPU, the job's chain (T1: two clips, A and B) under ``caps.run_usd``
+    L4  ::main     GPU, T1: one 10 s clip (Blender layout + picture + film line) under ``caps.run_usd``
+    --  ::chain    GPU, T3: one scene as a chain (each clip from a frame of the one before), after L4 is green, under ``caps.chain_usd``
 
 Nothing here has run on a GPU. Everything that is a number of the A100 (memory, seconds, price per clip, sound) is UNMEASURED until L3.
 The container holds this worker's three files (image ``add_local_file``) and ``launch_layout_a100.json``, not the repo; the local
@@ -119,16 +120,16 @@ def cost_timeout(cap_usd: float, usd_h: float, cold_start_s: float) -> int:
     return int(0.9 * (cap_usd - cold_start_s * usd_h / 3600) / usd_h * 3600)
 
 
-def timeouts(launch: dict) -> tuple[int, int]:
-    """(smoke, run) function timeouts, each checked to leave work time beyond the margin and to fit its cap."""
+def timeouts(launch: dict) -> tuple[int, int, int]:
+    """(smoke, run, chain) function timeouts, each checked to leave work time beyond the margin and to fit its cap."""
     c, h = launch["caps"], stated_rate(launch)
     out = []
-    for k in ("smoke_usd", "run_usd"):
+    for k in ("smoke_usd", "run_usd", "chain_usd"):
         t = cost_timeout(c[k], h, c["cold_start_s"])
         if t <= c["margin_s"] or (t + c["cold_start_s"]) * h / 3600 > c[k] + 1e-9:
             raise ValueError(f"{k}: timeout {t}s leaves no room beyond the {c['margin_s']}s end path, or does not fit the cap")
         out.append(t)
-    return out[0], out[1]
+    return out[0], out[1], out[2]
 
 
 def stage_timeout(launch: dict) -> int:
@@ -147,13 +148,14 @@ def launch_problems(launch: dict, check_table: bool = True) -> list[str]:
     if bad:
         return bad
     c = launch["caps"]
-    for k in ("smoke_usd", "run_usd", "ledger_line_usd", "cold_start_s", "margin_s"):
+    for k in ("smoke_usd", "run_usd", "chain_usd", "ledger_line_usd", "cold_start_s", "margin_s"):
         if not isinstance(c.get(k), (int, float)) or c[k] <= 0:
             bad.append(f"caps.{k} is not set")
     if bad:
         return bad
-    if c["smoke_usd"] + c["run_usd"] > 0.8 * c["ledger_line_usd"] + 1e-9:
-        bad.append(f"smoke {c['smoke_usd']} + run {c['run_usd']} is above 80 % of the ledger line {c['ledger_line_usd']} (the ledger would refuse)")
+    if c["smoke_usd"] + c["run_usd"] + c["chain_usd"] > 0.8 * c["ledger_line_usd"] + 1e-9:
+        bad.append(f"smoke {c['smoke_usd']} + run {c['run_usd']} + chain {c['chain_usd']} is above 80 % of the ledger line "
+                   f"{c['ledger_line_usd']} (the ledger would refuse)")
     if not (isinstance(launch["scaledown_window_s"], int) and launch["scaledown_window_s"] <= 5):
         bad.append("CH-04: scaledown_window_s is above 5 s")
     if not (30 <= launch["startup_timeout_s"] <= c["cold_start_s"]):
@@ -652,6 +654,7 @@ def body(spec: dict, launch: dict, *, timeout_s: int, vol_root=VOL, work=WORK, c
         prev, prev_row = None, None
         for r in all_rows:
             sid = r["shot_id"]
+            sibling = J.is_sibling(r)
             if prev is not None:
                 if prev.get("state") != "DONE":
                     break
@@ -660,15 +663,18 @@ def body(spec: dict, launch: dict, *, timeout_s: int, vol_root=VOL, work=WORK, c
                     rows.append({"shot_id": sid, "state": "PARTIAL", "why": f"{deadline.left():.0f} s left, the clip needs ~{need:.0f} s: not started"})
                     break
                 cont = r.get("continue_frame") or {}
-                hand = J.handover_frame(out / prev["clip"], int(prev["frames"]), int(r["fps"]), cont, launch, sh=sh,
+                hand = {"frame": -1} if sibling else J.handover_frame(out / prev["clip"], int(prev["frames"]), int(r["fps"]), cont, launch, sh=sh,
                                         speech_end_s=prev_row.get("speech_end_s"), tail_s=prev_row.get("speech_tail_s"))
                 if hand["frame"] is None:
                     rows.append({"shot_id": sid, "state": "FAILED", "why": hand["why"] + "; not started", "handover": hand})
                     break
-                png = out / f"{sid}.first.png"
-                J.frame_png(out / prev["clip"], hand["frame"], png, sh=sh, crop=cont.get("crop"))
-                src_png, handover = png, {"clip": prev["clip"], "frame": hand["frame"], "pick": hand["pick"], "crop": cont.get("crop"),
-                                          "window": hand.get("window"), "after": hand.get("after")}
+                if sibling:
+                    src_png, handover = root / job["first_picture"], None
+                else:
+                    png = out / f"{sid}.first.png"
+                    J.frame_png(out / prev["clip"], hand["frame"], png, sh=sh, crop=cont.get("crop"))
+                    src_png, handover = png, {"clip": prev["clip"], "frame": hand["frame"], "pick": hand["pick"], "crop": cont.get("crop"),
+                                              "window": hand.get("window"), "after": hand.get("after")}
             else:
                 src_png, handover = root / job["first_picture"], None
             fitted = Path(work) / "tmp" / f"{sid}_{r['width']}x{r['height']}.png"
@@ -676,7 +682,7 @@ def body(spec: dict, launch: dict, *, timeout_s: int, vol_root=VOL, work=WORK, c
             with Image.open(src_png) as im:
                 J.fit_picture(im, r["width"], r["height"]).save(fitted)
             row = _clip_row(J, launch, r, fitted, root / r["layout_mp4"], out, work, deadline, sh, poller_factory, python, wrapper, now,
-                            job.get("film_line"), vol_root)
+                            r.get("film_line", job.get("film_line")), vol_root)
             row["first_picture"] = {"source": "job" if handover is None else "previous clip's frame", "sha256": _sha(fitted),
                                     "handover": handover}
             rows.append(row)
@@ -748,7 +754,7 @@ if modal is not None:
         vol.commit()
         return bad
 
-    _t_smoke, _t_run = timeouts(LAUNCH)
+    _t_smoke, _t_run, _t_chain = timeouts(LAUNCH)
     _gpu_kw = dict(image=image, gpu=LAUNCH["gpu"], cpu=(float(LAUNCH["cpu"]),) * 2, memory=(LAUNCH["memory_gib"] * 1024,) * 2, retries=0,
                    volumes={VOL: vol}, secrets=secrets, scaledown_window=LAUNCH["scaledown_window_s"],
                    startup_timeout=LAUNCH["startup_timeout_s"], max_containers=1)
@@ -757,13 +763,17 @@ if modal is not None:
         from huggingface_hub import HfApi
         return body(spec, launch, timeout_s=timeout_s, commit=vol.commit, reload=vol.reload, api=HfApi(token=_tok()))
 
-    @app.function(timeout=_t_smoke, name="layout_smoke", serialized=True, **_gpu_kw)
+    @app.function(timeout=_t_smoke, name="layout_smoke", **_gpu_kw)
     def smoke_fn(spec: dict, launch: dict):
         return _remote(spec, launch, _t_smoke)
 
-    @app.function(timeout=_t_run, name="layout_main", serialized=True, **_gpu_kw)
+    @app.function(timeout=_t_run, name="layout_main", **_gpu_kw)
     def main_fn(spec: dict, launch: dict):
         return _remote(spec, launch, _t_run)
+
+    @app.function(timeout=_t_chain, name="layout_chain", **_gpu_kw)
+    def chain_fn(spec: dict, launch: dict):
+        return _remote(spec, launch, _t_chain)
 
     def _spec(plan: str, batch: str, kind: str, cap: float) -> dict:
         plan_sha, bsha = _sha(plan), _sha(batch)
@@ -797,10 +807,10 @@ if modal is not None:
         record("L2", not res, LAUNCH, problems=res, hash_base=bool(hash_base))
 
     def _launch(plan: str, ledger: str, batch: str, rung: str, kind: str):
-        entry = "smoke" if kind == "smoke" else "main"
+        entry = kind                                   # the entry, the cap and the function carry the kind's name
         preflight(LAUNCH, entry=entry)
-        cap = LAUNCH["caps"]["smoke_usd" if kind == "smoke" else "run_usd"]
-        t = _t_smoke if kind == "smoke" else _t_run
+        cap = LAUNCH["caps"][{"smoke": "smoke_usd", "main": "run_usd", "chain": "chain_usd"}[kind]]
+        t = {"smoke": _t_smoke, "main": _t_run, "chain": _t_chain}[kind]
         print("GO", go_gate(plan_sha=_sha(plan)), "timeout", t, "s on", LAUNCH["gpu"], flush=True)
         ladder_gate(rung, LAUNCH)
         spec = _spec(plan, batch, kind, cap)
@@ -811,7 +821,7 @@ if modal is not None:
         night_reserve(item, hard, f"layout {kind}")
         t0, res = time.time(), None
         try:
-            res = (smoke_fn if kind == "smoke" else main_fn).remote(spec, LAUNCH)
+            res = {"smoke": smoke_fn, "main": main_fn, "chain": chain_fn}[kind].remote(spec, LAUNCH)
         finally:
             wall = time.time() - t0
             usd = settle_launch(run, item, wall, stated_rate(LAUNCH))
@@ -834,6 +844,14 @@ if modal is not None:
     def main(plan: str = "", ledger: str = "", batch: str = ""):
         """L4 (GPU, the run's cap): the job's chain, every clip saved and read back from HF."""
         res = _launch(plan, ledger, batch, "L4", "main")
+        if res.get("state") != "DONE":
+            print(LAYOUT_FAILED, flush=True)
+            raise SystemExit(4)
+
+    @app.local_entrypoint()
+    def chain(plan: str = "", ledger: str = "", batch: str = ""):
+        """T3 (GPU, ``caps.chain_usd``): one scene, each clip from a frame of the one before; its own launch after L4 is green."""
+        res = _launch(plan, ledger, batch, "L4", "chain")
         if res.get("state") != "DONE":
             print(LAYOUT_FAILED, flush=True)
             raise SystemExit(4)

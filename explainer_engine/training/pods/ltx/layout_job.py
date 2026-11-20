@@ -15,6 +15,9 @@ A job (all paths relative to the folder the job file is in, so the folder packs 
                 "hop": 1, "continue_frame": {"pick": "best_tail", "window_s": 1.5}}],       # hop = depth in the chain (CT-1)
      "hop3_word": "<cmsg id of the owner's yes>"}                                           # only a hop of 3 or more needs it
 
+A chain row may carry ``"start": "first_picture"`` (a sibling: the same first picture, its own prompt/film_line, hop 0, no hand-over;
+the T1 pair A and B) and its own ``film_line`` (else the job's applies).
+
 Rules (each a ``problem`` that refuses the job; warnings are recorded, never block):
 - LR-1 size 1280x704 at 24 fps (CH-02, D-133), sides in 64, frames 8k+1 and not above the launch's ``native.max_frames``;
 - LR-2 the layout file's sha256 is the one in the job (and in its ``report.json`` ``video.sha256`` when named), and the layout is
@@ -98,10 +101,17 @@ def rows(job: dict) -> list[dict]:
     """The shot and the shots chained after it, each with the run's size and rate (chained rows may omit them)."""
     keep = ("fps", "width", "height")
     top = {k: job.get(k) for k in keep}
-    out = [dict(job, hop=0, chain=None)]
-    for i, c in enumerate(job.get("chain") or []):
-        out.append({**top, **c, "hop": c.get("hop", i + 1)})
+    out, depth = [dict(job, hop=0, chain=None)], 0
+    for c in job.get("chain") or []:
+        depth = 0 if is_sibling(c) else depth + 1          # a sibling restarts from the job's picture: its own depth 0
+        out.append({**top, **c, "hop": c.get("hop", depth), "depth": depth})
     return out
+
+
+def is_sibling(row: dict) -> bool:
+    """A row with ``"start": "first_picture"`` is NOT a continuation: it starts from the job's own first picture (the T1 pair: the same
+    shot twice with another prompt), so it has no hand-over and no hop."""
+    return row.get("start") == "first_picture"
 
 
 def job_problems(job: dict, root, launch: dict, probe=probe_video, smoke: bool = False) -> tuple[list[str], list[str]]:
@@ -129,13 +139,19 @@ def job_problems(job: dict, root, launch: dict, probe=probe_video, smoke: bool =
             if r.get("first_picture") or r.get("first_picture_sha256"):
                 bad.append(f"{sid}: a chained row continues from the previous clip's frame and brings no picture of its own "
                            "(a cut is a job of its own)")
-            if r["hop"] != i:
-                bad.append(f"{sid}: hop {r['hop']} is not its place {i} in the chain")
-            if i > MAX_HOP_FREE and not (isinstance(hop3, str) and CMSG.match(hop3)):
-                bad.append(f"{sid}: hop {i} needs the owner's word (job.hop3_word = his message id; CT-1, Q6 open)")
-            cf = r.get("continue_frame") or {}
-            if cf.get("pick", "last") not in ("best_tail", "last"):
-                bad.append(f"{sid}: continue_frame.pick must be best_tail or last")
+            if r.get("start") not in (None, "first_picture"):
+                bad.append(f"{sid}: start must be absent (a continuation) or 'first_picture' (a sibling of the first clip)")
+            elif is_sibling(r):
+                if r["hop"] != 0 or r.get("continue_frame"):
+                    bad.append(f"{sid}: a row that starts from the first picture has hop 0 and no continue_frame")
+            else:
+                if r["hop"] != r["depth"]:
+                    bad.append(f"{sid}: hop {r['hop']} is not its place {r['depth']} in the chain")
+                if r["depth"] > MAX_HOP_FREE and not (isinstance(hop3, str) and CMSG.match(hop3)):
+                    bad.append(f"{sid}: hop {r['depth']} needs the owner's word (job.hop3_word = his message id; CT-1, Q6 open)")
+                cf = r.get("continue_frame") or {}
+                if cf.get("pick", "last") not in ("best_tail", "last"):
+                    bad.append(f"{sid}: continue_frame.pick must be best_tail or last")
         w, h, fps = r.get("width"), r.get("height"), r.get("fps")
         if [w, h] != nat["use"] or fps != nat["fps"]:
             bad.append(f"CH-02: {sid} asks {w}x{h}@{fps}, not the native {nat['use'][0]}x{nat['use'][1]}@{nat['fps']}")
@@ -181,14 +197,15 @@ def job_problems(job: dict, root, launch: dict, probe=probe_video, smoke: bool =
             except (OSError, ValueError):
                 bad.append(f"{sid}: layout_report {rep} cannot be read")
         # the words
-        words = forbidden_words(r.get("motion_prompt"), job.get("film_line") if i == 0 or job.get("film_line") else None)
+        fl = r.get("film_line", job.get("film_line"))
+        words = forbidden_words(r.get("motion_prompt"), fl)
         if words:
             bad.append(f"{sid}: the prompt holds {words}: the model card forbids 'clay', '3D' and 'Unreal'")
         n = sentences(r.get("motion_prompt"))
         if not 1 <= n <= MAX_SENTENCES:
             bad.append(f"{sid}: motion_prompt is {n} sentences, the card asks for one or two")
-        if job.get("film_line") and sentences(compose_prompt(r, job["film_line"])) > MAX_SENTENCES:
-            warn.append(f"{sid}: with the film line the prompt is {sentences(compose_prompt(r, job['film_line']))} sentences "
+        if fl and sentences(compose_prompt(r, fl)) > MAX_SENTENCES:
+            warn.append(f"{sid}: with the film line the prompt is {sentences(compose_prompt(r, fl))} sentences "
                         f"(the card says one or two): recorded, not refused (docs/LTX_LAYOUT_JOBS.md Q-L4)")
     # the first picture (the one the chain's first clip starts from)
     pic = root / str(job["first_picture"])

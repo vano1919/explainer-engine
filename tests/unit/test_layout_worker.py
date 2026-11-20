@@ -30,11 +30,13 @@ def _probe_ok(path):
 def test_launch_file_is_consistent_with_the_price_table_and_the_80_percent_rule():
     assert M.launch_problems(LAUNCH) == []
     c = LAUNCH["caps"]
-    assert c["smoke_usd"] + c["run_usd"] <= 0.8 * c["ledger_line_usd"] + 1e-9 and c["ledger_line_usd"] == 2.0
-    t_smoke, t_run = M.timeouts(LAUNCH)
+    assert c["smoke_usd"] + c["run_usd"] + c["chain_usd"] <= 0.8 * c["ledger_line_usd"] + 1e-9
+    assert c["smoke_usd"] + c["run_usd"] + c["chain_usd"] == 2.0          # the item's real ceiling (owner, via the coordinator)
+    t_smoke, t_run, t_chain = M.timeouts(LAUNCH)
     assert (t_smoke + c["cold_start_s"]) * M.stated_rate(LAUNCH) / 3600 <= c["smoke_usd"]
     assert (t_run + c["cold_start_s"]) * M.stated_rate(LAUNCH) / 3600 <= c["run_usd"]
-    assert t_smoke > c["margin_s"] and t_run > c["margin_s"]
+    assert (t_chain + c["cold_start_s"]) * M.stated_rate(LAUNCH) / 3600 <= c["chain_usd"]
+    assert t_smoke > c["margin_s"] and t_run > c["margin_s"] and t_chain > c["margin_s"]
     assert LAUNCH["gpu"] == "A100-80GB" and LAUNCH["scaledown_window_s"] <= 5
     assert M.stage_timeout(LAUNCH) * LAUNCH["stage"]["usd_per_h"] / 3600 <= LAUNCH["stage"]["cap_usd"] == 0.1
 
@@ -42,13 +44,13 @@ def test_launch_file_is_consistent_with_the_price_table_and_the_80_percent_rule(
 def test_the_hard_bill_of_each_function_stays_inside_its_cap_and_the_ledger_line():
     h = M.stated_rate(LAUNCH)
     c = LAUNCH["caps"]
-    t_smoke, t_run = M.timeouts(LAUNCH)
-    worst = (t_smoke + c["cold_start_s"]) * h / 3600 + (t_run + c["cold_start_s"]) * h / 3600
-    assert worst <= 0.8 * c["ledger_line_usd"] + 1e-9
+    worst = sum((t + c["cold_start_s"]) * h / 3600 for t in M.timeouts(LAUNCH))
+    assert worst <= 2.0 + 1e-9
 
 
 @pytest.mark.parametrize("change,needle", [
     (lambda L: L["caps"].update(run_usd=1.5), "80 %"),
+    (lambda L: L["caps"].pop("chain_usd"), "chain_usd is not set"),
     (lambda L: L.update(scaledown_window_s=30), "CH-04"),
     (lambda L: L["native"].update(use=[1280, 720]), "CH-02"),
     (lambda L: L["settings"].update(first_frame_index=-1), "first_frame_index"),
@@ -623,3 +625,55 @@ def test_an_unreadable_baked_folder_is_not_baked_not_a_crash(monkeypatch):
     monkeypatch.setattr(Path, "exists", exists)
     assert M._wrapper_path() == M.LTX_DIR / "ic_lora_run.py"
     assert M.container_gate(M.LAUNCH) == []
+
+
+# --- siblings: the T1 pair (the same first picture, another prompt) ----------------------------------------------------------------
+
+def _sibling_job(folder):
+    job = R.make_job(folder, seconds=9 / 24, chain=0)
+    job["chain"] = [{"shot_id": "t1_b", "seed": 42, "seconds": 9 / 24, "start": "first_picture", "layout_mp4": job["layout_mp4"],
+                     "layout_sha256": job["layout_sha256"], "motion_prompt": job["motion_prompt"],
+                     "film_line": "In the style of the film 1917 (2019), the camera follows steadily behind him."}]
+    (folder / "job.json").write_text(json.dumps(job))
+    return job
+
+
+def test_a_sibling_row_has_hop_0_its_own_film_line_and_no_picture_of_its_own(tmp_path):
+    job = _sibling_job(tmp_path)
+    assert J.job_problems(job, tmp_path, LAUNCH) == ([], [])
+    rs = J.rows(job)
+    assert [r["hop"] for r in rs] == [0, 0] and J.is_sibling(rs[1]) and not J.is_sibling(rs[0])
+    assert J.compose_prompt(rs[1], rs[1]["film_line"]).endswith("behind him.") and "1917" not in J.compose_prompt(rs[0], None)
+    bad = dict(job, chain=[dict(job["chain"][0], first_picture="first.png")])
+    assert any("brings no picture" in p for p in J.job_problems(bad, tmp_path, LAUNCH)[0])
+    bad = dict(job, chain=[dict(job["chain"][0], hop=1)])
+    assert any("hop 0" in p for p in J.job_problems(bad, tmp_path, LAUNCH)[0])
+    bad = dict(job, chain=[dict(job["chain"][0], start="elsewhere")])
+    assert any("start must be" in p for p in J.job_problems(bad, tmp_path, LAUNCH)[0])
+    bad = dict(job, chain=[dict(job["chain"][0], film_line="A clay film.")])
+    assert any("forbids" in p for p in J.job_problems(bad, tmp_path, LAUNCH)[0])
+
+
+def test_a_sibling_after_a_continuation_restarts_the_depth(tmp_path):
+    job = _sibling_job(tmp_path)
+    cont = {"shot_id": "t1_c", "seed": 9, "seconds": 9 / 24, "layout_mp4": job["layout_mp4"], "layout_sha256": job["layout_sha256"],
+            "motion_prompt": "He stops."}
+    job["chain"] = [cont, dict(job["chain"][0]), dict(cont, shot_id="t1_d")]
+    assert [r["depth"] for r in J.rows(job)[1:]] == [1, 0, 1]
+    assert J.job_problems(job, tmp_path, LAUNCH)[0] == []
+
+
+def test_body_runs_the_pair_from_the_same_picture_with_two_prompts(tmp_path):
+    w = R.make_world(tmp_path, chain=0)
+    folder = tmp_path / "job"
+    job = _sibling_job(folder)
+    path, bsha = J.pack(folder, tmp_path / "pack2", w.launch, smoke=True)
+    w.tar, w.spec = path, dict(w.spec, batch_sha=bsha, batch_path=f"code/layout/batch-{bsha}.tar.gz", run_id="pair")
+    res = R.run_body(w)
+    assert res["state"] == "DONE" and [c["shot_id"] for c in res["clips"]] == ["t1_a", "t1_b"]
+    assert [c["first_picture"]["source"] for c in res["clips"]] == ["job", "job"]
+    assert res["clips"][0]["first_picture"]["sha256"] == res["clips"][1]["first_picture"]["sha256"]      # the very same picture
+    a, b = res["clips"]
+    assert "1917" not in a["prompt"] and "1917 (2019)" in b["prompt"] and a["run"]["seed"] == b["run"]["seed"] == 42
+    lines = w.log.read_text().splitlines()
+    assert len(lines) == 2 and "1917" not in lines[0] and "1917 (2019)" in lines[1]
