@@ -278,3 +278,33 @@ def test_sign_convention_is_one_constant(tmp_path, monkeypatch):
     monkeypatch.setattr(M, "TRUCK_L_PAN_SIGN", -1.0)
     assert M.camera_move_clip(clip, move="truck_l")["status"] == "FAIL"
     assert M.camera_move_clip(clip, move="truck_r")["status"] == "PASS"
+
+
+# ---- boundary tests (2026-11-20 mutation spot-check: CM-06 final run `>` and CM-10 `>` survived) ----
+
+def test_cm06_a_final_run_of_exactly_the_maximum_is_fine_and_one_more_is_review():
+    limit = int(M._load_tolerances()["same_move_run_max"]["value"])
+    narr_for = lambda cs: {c["id"]: NARR for c in cs}                             # noqa: E731
+
+    def cards_with_final_run(n):
+        head = dict(card("zoom_in", '"he decided to stay"'), id="SH00")
+        run = [dict(card("truck_l"), id=f"SH{i + 1:02d}") for i in range(n)]
+        return [head] + run
+    ok = cards_with_final_run(limit)
+    assert not rules(M.check_shot_cards(ok, narr_for(ok)), "CM-06")
+    over = cards_with_final_run(limit + 1)
+    f = rules(M.check_shot_cards(over, narr_for(over)), "CM-06")
+    assert f and f[0]["severity"] == "REVIEW"
+
+
+@clip_only
+def test_cm10_rotation_exactly_at_the_limit_passes_and_just_above_fails(tmp_path, monkeypatch):
+    clip = make_clip(tmp_path, "zi", zoom_pct=10)
+    real = M.measure_camera
+    limit = float(M._load_tolerances()["rotation_max_deg"]["value"])
+
+    def with_rotation(value):
+        monkeypatch.setattr(M, "measure_camera", lambda *a, **k: {**real(*a, **k), "max_abs_rotation_deg": value})
+        return M.camera_move_clip(clip, move="zoom_in")
+    assert not rules(with_rotation(limit)["findings"], "CM-10")
+    assert rules(with_rotation(limit + 0.001)["findings"], "CM-10")

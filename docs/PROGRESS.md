@@ -3910,6 +3910,15 @@ No number is written in any of them; tests `test_first_shot.py`, `test_opening_d
 - Symptom: `test_real_clips_probe_and_rows` failed on CI runs with an extra `CLIP-05` (audio vs picture length) on a clip meant to be clean; it passed on re-run and always passes locally (40 of 40 builds identical: picture 2.0417 s, audio 2.026 s, tolerance one frame = 41.7 ms).
 - Cause (the most likely one, not reproduced locally even under CPU load): the fixture mixed an endless sine with `-shortest`, so the number of audio packets muxed before the picture ends depends on thread timing; two extra AAC frames (2 x 21 ms) are enough to pass the one-frame tolerance. Fix: the sine is bounded to `frames / fps` itself and `-shortest` is gone; the assertion now prints the findings and both durations, and a new test builds the clip six times and checks audio and picture end within half a frame. No assertion or threshold weakened.
 
+## 2026-11-20 — Boundary tests that kill the ten surviving mutants of seven validators; `audio_present` gets its own test file
+
+A mutation spot-check (three hand-made mutations per module: `shift_line_id`, `stated_theme`, `claim_ledger`, `camera_move`, `lipsync`,
+`trim_record`, `audio_present`) left ten mutants alive: the boundary at the minimum overlap of SL-06, CL-07b and STH-01, the CL-06 date
+of today, the CM-06 final run and CM-10 rotation limit, the LS-03 confidence boundary, LS-04's worst offset by magnitude, SL-01 under
+`strict`, and `audio_present`'s stream count. Tests only, no validator logic changed; each boundary uses an injected rules file or
+tolerance so the score is exact. After them all 21 mutations are caught (run with bytecode off and `__pycache__` deleted: an earlier
+run reused stale bytecode and listed an eleventh survivor wrongly). New file `tests/unit/test_audio_present.py` (stream count of
+one and two, video-only, unreadable file, missing ffprobe, the `-select_streams a` call, exit codes).
 ## 2026-11-20 — publish auth hygiene (L32)
 - `auth` / `auth-finish` write `tools/youtube/token.b64.txt` only with `--export-env` (the printed text names it only then); `load_token` logs one line naming the source (session file or `YOUTUBE_TOKEN_B64`), never the token; the env variable and its code path stay (owner card 2026-11-20 21:01).
 - Tests: `tests/unit/test_youtube_auth_hygiene.py` (flag on/off, source logged, no tracked `tools/` token or `pending.json`, `.gitignore` covers `tools/youtube/`).
