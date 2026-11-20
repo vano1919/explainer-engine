@@ -3840,3 +3840,15 @@ than the header now keeps its ledger fields empty. Test: `test_a_pipe_inside_a_c
 ledger's type list (factual, implied, opinion, prediction, statistical) is unchanged; the repo also documents two other claim
 vocabularies (script editorial claim `type` fact / estimate / interpretation / allegation / speculation; claim-map `label`), which are
 different fields.
+
+## 2026-11-20 — Three opening checks on the timed script, wired to the validator gate
+
+The creator's card answers of 20:58 UTC, written as three separate modules and commits, each read from `timed.json` and each
+a row of `qa/validator_gate.py` (production gate row `V`; NOT_RUN without a `timed.json`, never a pass):
+- `qa/first_shot.py`: the first shot lasts at least [BP-85](SOURCED_RULES.md)'s C-shot minimum (`c_shot_s[0]`).
+- `qa/opening_density.py`: inside the opening window ([BP-40](SOURCED_RULES.md) `hook_window_s`, 30 s) nothing stays unchanged
+  longer than BP-40's `hook_max_still_s`; changes are `edit/board.change_times`' (the same events as RHYTHM-3).
+- `qa/dead_air.py`: the creator said "from the registry": a change-free stretch under narration is REVIEW over
+  [BP-36](SOURCED_RULES.md) `gap_review_s` and FAIL over `gap_fail_s` (the /3 line of VB-01).
+No number is written in any of them; tests `test_first_shot.py`, `test_opening_density.py`, `test_dead_air.py`,
+`test_validator_gate.py` (the gate tests now count the registry instead of a literal).
