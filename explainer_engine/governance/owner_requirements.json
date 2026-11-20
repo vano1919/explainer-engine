@@ -1919,7 +1919,8 @@
     "lead_reading": "closed as answered by D-136 plus OR-A18, no card now",
     "applied": false,
     "why_not_applied": "the registry CI keeps owner words and status immutable unless the superseding entry cites his own chat message (REG-WORDS-CHANGED, REG-SUPERSEDE-UNSOURCED); this one rests on the decision log or the lead's reading, so it waits for his word"
-   }
+   },
+   "note": "answered by card press 2026-11-20 16:57 (per shot), awaiting his typed confirmation; status stays open"
   },
   {
    "id": "OR-S01",

@@ -126,3 +126,10 @@ def test_the_client_candidates_of_delta_5_are_not_loaded():
 def test_the_registry_stays_unsigned():
     data, _ = _all()
     assert not any(k in data for k in ("signed", "signature", "signed_by", "owner_signature"))
+
+
+def test_c04_stays_open_with_a_note_that_the_card_press_awaits_his_typed_confirmation():
+    _, by = _all()
+    assert by["OR-C04"]["status"] == "open" and "resolved_by" not in by["OR-C04"]
+    assert "awaiting his typed confirmation" in by["OR-C04"]["note"]
+    assert "OR-C04" in OR.report(ROOT)["open_conflicts"]
