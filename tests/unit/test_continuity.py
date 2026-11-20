@@ -187,3 +187,78 @@ def test_cli_refuses_prompts_on_fail(doc, tmp_path, capsys):
 def test_the_example_style_line_passes_the_d80_trigger_check(doc):
     assert doc["style_line"] == lora_rules.trigger()
     assert [f for f in style_prompt.check(doc["style_line"]) if f["severity"] == "FAIL"] == []
+
+
+# --- CT-17..CT-20 (L10: identity bible, geography ids, film id) ---
+
+def _with_identity(d):
+    d["film_id"] = "owner_film_01"
+    for c in d["cast"].values():
+        c["identity"] = {"canon_frame": "canon/" + c["name"] + ".png", "locked": ["face shape"]}
+    return d
+
+
+def test_old_card_without_new_fields_is_unchanged(doc):
+    assert "CT-17" not in rules(cc.check(doc)) and not cc.identity_findings(doc)
+
+
+def test_identity_card_passes(doc):
+    assert not [f for f in cc.check(_with_identity(doc)) if f["rule"] in {"CT-17", "CT-18", "CT-19", "CT-20"}]
+
+
+def test_new_fields_need_a_film_id(doc):
+    d = _with_identity(doc)
+    del d["film_id"]
+    assert "CT-17" in rules(cc.check(d))
+    d2 = copy.deepcopy(doc)
+    d2["location"]["geo_id"] = "tent_a"
+    assert "CT-17" in rules(cc.check(d2))
+
+
+def test_film_id_must_match_the_episode_film(doc):
+    d = _with_identity(doc)
+    assert "CT-17" not in rules(cc.check(d, film_id="owner_film_01"))
+    assert "CT-17" in rules(cc.check(d, film_id="other_film"))
+
+
+def test_bad_film_id_shape_is_a_schema_failure(doc):
+    d = _with_identity(doc)
+    d["film_id"] = "Owner Film"
+    assert rules(cc.check(d)) == {"CT-01"}
+
+
+def test_every_person_on_screen_needs_an_identity(doc):
+    d = _with_identity(doc)
+    shown = d["shots"][0]["characters"][0]["id"]
+    del d["cast"][shown]["identity"]
+    assert any(f["rule"] == "CT-18" and shown in f["detail"] for f in cc.check(d))
+
+
+def test_identity_needs_canon_frame_and_locked_list(doc):
+    d = _with_identity(doc)
+    cid = next(iter(d["cast"]))
+    del d["cast"][cid]["identity"]["canon_frame"]
+    assert rules(cc.check(d)) == {"CT-01"}
+    d = _with_identity(copy.deepcopy(doc))
+    d["cast"][cid]["identity"]["locked"] = []
+    assert any(f["rule"] == "CT-18" and "locked" in f["detail"] for f in cc.check(d))
+
+
+def test_trait_cannot_be_locked_and_flexible(doc):
+    d = _with_identity(doc)
+    cid = next(iter(d["cast"]))
+    d["cast"][cid]["identity"]["flexible"] = ["face shape"]
+    assert "CT-19" in rules(cc.check(d))
+
+
+def test_geography_inheritance(doc):
+    d = copy.deepcopy(doc)
+    d["film_id"] = "owner_film_01"
+    d["location"]["inherits_from"] = "camp"
+    assert "CT-20" in rules(cc.check(d))                     # no own geo_id
+    d["location"]["geo_id"] = "camp"
+    assert "CT-20" in rules(cc.check(d))                     # itself
+    d["location"]["geo_id"] = "tent"
+    assert "CT-20" not in rules(cc.check(d))                 # known ids not given: not compared
+    assert "CT-20" not in rules(cc.check(d, known_geo_ids={"camp"}))
+    assert "CT-20" in rules(cc.check(d, known_geo_ids={"hill"}))

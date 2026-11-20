@@ -3774,3 +3774,14 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 film id mismatch) plus `check_prompt_film` (PASS/FAIL/NOT_RUN). The only number is `max_words` 200, kind hypothesis,
 status OPEN (one source type, not binding until the owner has seen it). Tests: `tests/unit/test_ltx_prompt_lint.py` (33).
 Gemini's test files for G-07 were not on disk, so the tests were written from the brief's acceptance list.
+
+## 2026-11-20 — Group 1 T2: continuity_card identity bible, geography ids, film id (CT-17..CT-20)
+
+Optional new fields in `continuity_card/1` and `/2` (no new schema version, old cards pass unchanged): card-level `film_id`
+(the G-05 episode film id), `location.geo_id` and `location.inherits_from`, and per cast member `identity`
+(`canon_frame`, `locked` required; `anchors`, `flexible`, `never` optional). Validator `continuity.identity_findings`, run by
+`continuity.check(doc, film_id=None, known_geo_ids=None)`; rules in [SHOT_CONTINUITY](SHOT_CONTINUITY.md). Source: the G1
+analyst decision (L10 SQ1, SQ2). No numbers. Checked before writing: no branch or open PR on the repo had these fields.
+Tests: 9 new in `tests/unit/test_continuity.py`. Not done: `compose_prompt` does not yet write the identity text into
+prompts (a prompt contract change, the lead's call); no card in `examples/` uses the new fields; the test pack with the new
+text is still NOT_RUN (needs the owner's Chrome).

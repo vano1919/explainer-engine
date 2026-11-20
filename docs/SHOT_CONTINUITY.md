@@ -75,6 +75,10 @@ One card per shot:
 | CT-12 | On a match-on-action cut on the same camera side, a moving person keeps their screen direction | source (H-B Sc 28-30; match on action) | FAIL |
 | CT-13 | The keyframe prompt is assembled by `compose_prompt`, in a fixed order: style line, images by position with their role, size and angle, head count, each person (verbatim identity, costume, place, facing, eyeline, props, action), landmarks with sides, set state, time and light, changes, "Keep everything else the same" | source (research section 4 H) | code |
 | CT-14 | Every finished keyframe is asked the card's questions: head count, each person's side, facing, props and sheet match, the landmarks, light direction, and a new framing versus the previous shot. The answers feed the blind check's second look ([KEYFRAME_GATE](KEYFRAME_GATE.md) KG-) | house | `vision_questions` |
+| CT-17 | A card that uses `identity`, `geo_id` or `inherits_from` carries the episode's `film_id` (the G-05 `episode_film` id, `[a-z0-9_]+`); given the episode's film id, the two must be equal | house (owner's film-style rule, L10 decision) | FAIL |
+| CT-18 | Identity bible: once any cast member has `identity`, every person on screen has one, each with a `canon_frame` (the person's one picture, approved once and never regenerated) and a non-empty `locked` list. `anchors`, `flexible` and `never` are optional lists | source (L10 SQ1: calesthio locked/flexible tiers, Nagacash canon frame; G1 decision) | FAIL |
+| CT-19 | A trait is not both `locked` and `flexible` for the same person | house | FAIL |
+| CT-20 | Geography: `inherits_from` needs the location's own `geo_id`, is not that same id, and (when the other scenes' ids are given) names a known `geo_id` | source (L10 SQ2: hosnye geography ids; inheritance rule untested, G1 decision) | FAIL |
 
 Video clips keep the prompt rules of [SHOT_PROMPTS](SHOT_PROMPTS.md) (KP-). LTX takes first and last frames only from the
 same setup.
