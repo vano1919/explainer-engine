@@ -487,6 +487,7 @@ if modal is not None:
              .pip_install(f"torch=={_img.get('torch')}", extra_index_url=_img.get("torch_index"))
              .pip_install(f"torchvision=={_img.get('torchvision')}", extra_index_url=_img.get("torch_index"))
              .pip_install(f"huggingface_hub=={LAUNCH.get('hf_hub_pin')}", f"transformers=={_img.get('transformers')}", "accelerate", "pillow")
+             .env({"PYTHONPATH": str(BAKED)})      # the serialized GPU functions import this module by name
              .add_local_dir(str(JUDGE_DIR), str(BAKED), ignore=["__pycache__", "*.pyc"]))
     secrets = [modal.Secret.from_name(SECRET_NAME)]
     CPU_KW = dict(image=image, cpu=(2.0, 2.0), retries=0, secrets=secrets)
@@ -535,7 +536,7 @@ if modal is not None:
 
     def _spec(plan: str, batch: str, kind: str, cap: float) -> dict:
         plan_sha, bsha = _sha(plan), _sha(batch)
-        run_id = f"{plan_sha[:12]}_{sha_json(LAUNCH)[:12]}"
+        run_id = f"{plan_sha[:12]}_{sha_json(LAUNCH)[:12]}_{worker_sha()[:6]}"
         return {"kind": kind, "cap_usd": cap, "plan_sha256": plan_sha, "run_id": run_id, "batch_sha": bsha,
                 "batch_path": f"code/judge/batch-{bsha}.tar.gz", "launch_sha": sha_json(LAUNCH), "worker_sha": worker_sha(),
                 "nonce": uuid.uuid4().hex[:12]}
