@@ -10,12 +10,12 @@ import pytest
 HERE = Path(__file__).resolve().parent
 from explainer_engine.qa import camera_move as M
 
-TEST_RULES = HERE.parent / "fixtures" / "camera_move" / "sourced_rules_TESTONLY.json"  # placeholders, NOT repo numbers
+TEST_TOL = HERE.parent / "fixtures" / "camera_move" / "tolerances_TESTONLY.json"  # placeholder floors, NOT repo numbers
 
 
 @pytest.fixture(autouse=True)
-def _test_registry(monkeypatch):
-    monkeypatch.setenv("CAMERA_MOVE_SOURCED_RULES", str(TEST_RULES))
+def _test_floors(monkeypatch):
+    monkeypatch.setenv("CAMERA_MOVE_TOLERANCES", str(TEST_TOL))
 
 try:
     import cv2, numpy as np
@@ -239,13 +239,21 @@ def test_not_run_cases(tmp_path, monkeypatch):
     assert M.camera_move_clip(one, move="zoom_in")["status"] == "NOT_RUN"
 
 
-def test_missing_sourced_threshold_is_not_run_never_a_pass(tmp_path, monkeypatch):
-    if not HAVE:
-        pytest.skip("needs cv2 + ffmpeg")
-    clip = make_clip(tmp_path, "z", zoom_pct=10)
-    empty = tmp_path / "empty.json"; empty.write_text('{"rules": []}')
-    monkeypatch.setenv("CAMERA_MOVE_SOURCED_RULES", str(empty))
-    assert M.camera_move_clip(clip, move="zoom_in")["status"] == "NOT_RUN"
+@clip_only
+def test_open_floors_make_the_floor_checks_not_run_never_a_pass(tmp_path, monkeypatch):
+    """zoom_min_pct and still_drift_min_pct are OPEN (null in the shipped tolerances): CM-15 and the zoom size are NOT_RUN."""
+    monkeypatch.delenv("CAMERA_MOVE_TOLERANCES")
+    good = M.camera_move_clip(make_clip(tmp_path, "z", zoom_pct=10), move="zoom_in")
+    assert good["status"] == "NOT_RUN" and "CM-15" in good["detail"] and not good["findings"]
+    assert M.camera_move_clip(make_clip(tmp_path, "z2", zoom_pct=-10), move="zoom_in")["status"] == "FAIL"  # direction still checked
+    assert M.camera_move_clip(make_clip(tmp_path, "r", zoom_pct=10, rot_deg=6), move="zoom_in")["status"] == "FAIL"  # rotation too
+    assert M.camera_move_clip(make_clip(tmp_path, "t", tx_pct=8), move="truck_l")["status"] == "NOT_RUN"
+
+
+def test_shipped_tolerances_have_the_two_floors_open():
+    d = json.loads((Path(M.__file__).with_name("camera_move_tolerances.json")).read_text(encoding="utf-8"))
+    assert d["zoom_min_pct"]["value"] is None and d["still_drift_min_pct"]["value"] is None
+    assert "BP-181" not in Path(M.__file__).read_text(encoding="utf-8")
 
 
 @clip_only
@@ -270,13 +278,3 @@ def test_sign_convention_is_one_constant(tmp_path, monkeypatch):
     monkeypatch.setattr(M, "TRUCK_L_PAN_SIGN", -1.0)
     assert M.camera_move_clip(clip, move="truck_l")["status"] == "FAIL"
     assert M.camera_move_clip(clip, move="truck_r")["status"] == "PASS"
-
-
-@clip_only
-def test_repo_registry_without_bp181_bp215_is_not_run(tmp_path, monkeypatch):
-    """BP-181/BP-215 are not in the default branch registry yet: the clip check is NOT_RUN, never a pass."""
-    monkeypatch.delenv("CAMERA_MOVE_SOURCED_RULES")
-    from explainer_engine.standards import sourced_rules as SR
-    if any(r["id"] in ("BP-181", "BP-215") for r in SR.rules()):
-        pytest.skip("registry has the rules now")
-    assert M.camera_move_clip(make_clip(tmp_path, "z", zoom_pct=10), move="zoom_in")["status"] == "NOT_RUN"

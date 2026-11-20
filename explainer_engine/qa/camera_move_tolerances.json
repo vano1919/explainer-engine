@@ -1,5 +1,5 @@
 {
-  "_about": "Numbers of TASK_VAL_CAMERA_MOVE section 6; none is law (OR-22, D-59). zoom_min_pct comes from BP-181 still_move_min and the still-drift floor from BP-215 via SR.T, never from this file.",
+  "_about": "Numbers of TASK_VAL_CAMERA_MOVE section 6; none is law (OR-22, D-59). The two floors below are OPEN (PROPOSED-CAM-1, validator_inputs_g4/camera_move/PROPOSAL_STILL_CAMERA_FLOORS_2026-11-20.md): null = the check that needs it is NOT_RUN, never a pass.",
   "rotation_max_deg": {
     "value": 0.5,
     "kind": "hypothesis",
@@ -79,5 +79,15 @@
         ]
       }
     }
+  },
+  "zoom_min_pct": {
+    "value": null,
+    "kind": "hypothesis",
+    "status": "OPEN (PROPOSED-CAM-1): no source and no number yet"
+  },
+  "still_drift_min_pct": {
+    "value": null,
+    "kind": "hypothesis",
+    "status": "OPEN (PROPOSED-CAM-1): no source and no number yet"
   }
 }

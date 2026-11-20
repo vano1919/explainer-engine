@@ -13,10 +13,9 @@ Validates:
    pan %, near-zero rotation, continuous motion, and synchronized easing for
    combined truck+zoom moves.
 
-Note on sourced rules (`SR.T`):
-Numeric thresholds from `BP-109`, `BP-181`, and `BP-215` are loaded dynamically
-from `sourced_rules.json` (and module hypothesis tolerances from
-`camera_move_tolerances.json`) rather than hardcoded in source logic.
+Numbers: every threshold lives in `camera_move_tolerances.json` (hypotheses, none is law). The two floors "the camera
+never stops" (`still_drift_min_pct`) and "zoom size" (`zoom_min_pct`) are OPEN (`value: null`, PROPOSED-CAM-1): the checks
+that need them return NOT_RUN, never PASS; every other check (enum, signs, no rotation, channels, easing) runs.
 """
 
 from __future__ import annotations
@@ -85,7 +84,10 @@ PROPOSAL_TABLE: dict[str, dict[str, Any]] = {
 
 # Fallback tolerance values used ONLY if `camera_move_tolerances.json` is absent.
 # Every entry carries `kind` and `status` metadata matching the spec.
+_OPEN = "OPEN (PROPOSED-CAM-1): no source and no number yet; the check that needs it is NOT_RUN"
 _DEFAULT_TOLERANCES: dict[str, dict[str, Any]] = {
+    "zoom_min_pct": {"value": None, "kind": "hypothesis", "status": _OPEN},
+    "still_drift_min_pct": {"value": None, "kind": "hypothesis", "status": _OPEN},
     "rotation_max_deg": {
         "value": 0.5,
         "kind": "deg",
@@ -119,87 +121,8 @@ _DEFAULT_TOLERANCES: dict[str, dict[str, Any]] = {
 }
 
 # ---------------------------------------------------------------------------
-# Sourced rules (SR.T) & tolerance configuration loaders
+# Tolerance configuration loader
 # ---------------------------------------------------------------------------
-
-
-class SourcedRuleTable:
-    """Lightweight reader (`SR.T`) for `sourced_rules.json`."""
-
-    def __init__(self, rules: Mapping[str, Any]) -> None:
-        self._rules = dict(rules)
-
-    @classmethod
-    def load(cls, search_dirs: Sequence[Path] | None = None) -> "SourcedRuleTable":
-        if search_dirs is None and not os.environ.get("CAMERA_MOVE_SOURCED_RULES"):
-            try:  # the repo's own registry reader (SR.T) is the source of truth
-                from explainer_engine.standards import sourced_rules as _SR  # type: ignore
-
-                return cls(cls._normalize({"rules": _SR.rules()}))
-            except Exception:
-                pass
-        env_path = os.environ.get("CAMERA_MOVE_SOURCED_RULES")
-        candidates: list[Path] = []
-        if env_path:
-            candidates.append(Path(env_path))
-
-        here = Path(__file__).resolve().parent
-        bases = list(search_dirs) if search_dirs else [
-            here,
-            here.parent,
-            here.parent.parent,
-            Path.cwd(),
-            Path.cwd() / "camera_move",
-            Path.cwd() / "validator_inputs_g4" / "camera_move",
-        ]
-        for base in bases:
-            candidates.append(base / "sourced_rules.json")
-
-        for path in candidates:
-            if path.is_file():
-                raw = json.loads(path.read_text(encoding="utf-8"))
-                return cls(cls._normalize(raw))
-
-        raise FileNotFoundError(
-            "sourced_rules.json not found; required for BP-109, BP-181, and BP-215 thresholds."
-        )
-
-    @staticmethod
-    def _normalize(raw: Any) -> dict[str, dict[str, Any]]:
-        """Normalize either dict-keyed or list-of-rules JSON schemas."""
-        out: dict[str, dict[str, Any]] = {}
-        if isinstance(raw, Mapping):
-            container = raw.get("rules", raw) if "rules" in raw and isinstance(raw["rules"], (Mapping, list)) else raw
-            if isinstance(container, Mapping):
-                for k, v in container.items():
-                    if isinstance(v, Mapping):
-                        out[str(k)] = dict(v)
-            elif isinstance(container, list):
-                for item in container:
-                    if isinstance(item, Mapping):
-                        rule_id = item.get("id") or item.get("rule_id") or item.get("code")
-                        if rule_id:
-                            out[str(rule_id)] = dict(item)
-        elif isinstance(raw, list):
-            for item in raw:
-                if isinstance(item, Mapping):
-                    rule_id = item.get("id") or item.get("rule_id") or item.get("code")
-                    if rule_id:
-                        out[str(rule_id)] = dict(item)
-        return out
-
-    def get_number(self, rule_id: str, field: str) -> float:
-        rule = self._rules.get(rule_id)
-        if rule is None:
-            raise KeyError(f"Sourced rule {rule_id!r} missing from sourced_rules.json")
-        if field in rule and isinstance(rule[field], (int, float)):
-            return float(rule[field])
-        # Support nested `values` / `params` / `thresholds` dictionaries
-        for subkey in ("values", "params", "thresholds", "numbers"):
-            sub = rule.get(subkey)
-            if isinstance(sub, Mapping) and field in sub and isinstance(sub[field], (int, float)):
-                return float(sub[field])
-        raise KeyError(f"Field {field!r} missing from sourced rule {rule_id!r}")
 
 
 def _load_tolerances(tolerances_path: Path | None = None) -> dict[str, dict[str, Any]]:
@@ -229,6 +152,12 @@ def _load_tolerances(tolerances_path: Path | None = None) -> dict[str, dict[str,
 
 def _tol_val(tolerances: Mapping[str, Mapping[str, Any]], key: str) -> float:
     return float(tolerances[key]["value"])
+
+
+def _tol_opt(tolerances: Mapping[str, Mapping[str, Any]], key: str) -> float | None:
+    """An OPEN number is None (its check is NOT_RUN)."""
+    v = tolerances.get(key, {}).get("value")
+    return None if v is None else float(v)
 
 
 # ---------------------------------------------------------------------------
@@ -882,7 +811,6 @@ def camera_move_clip(
     *,
     fps: int = DEFAULT_FPS,
     tolerances_path: Path | None = None,
-    sourced_rules_dirs: Sequence[Path] | None = None,
 ) -> dict[str, Any]:
     """Validate camera motion in a rendered video clip against its declared move.
 
@@ -892,7 +820,6 @@ def camera_move_clip(
             `<clip>.camera.json`. If neither supplies a move, returns `NOT_RUN`.
         fps: Frame sampling rate for optical-flow / similarity tracking.
         tolerances_path: Optional override path for `camera_move_tolerances.json`.
-        sourced_rules_dirs: Optional search directories for `sourced_rules.json`.
 
     Returns:
         Result dictionary with `status` (`PASS`, `REVIEW`, `FAIL`, `NOT_RUN`),
@@ -968,19 +895,14 @@ def camera_move_clip(
 
     # Load hypothesis tolerances and sourced rules (SR.T)
     tolerances = _load_tolerances(tolerances_path)
-    try:
-        sr = SourcedRuleTable.load(sourced_rules_dirs)
-        zoom_min_pct = sr.get_number("BP-181", "still_move_min")
-        still_drift_min_pct = sr.get_number("BP-215", "still_drift_min_pct")
-    except (FileNotFoundError, KeyError) as exc:
-        return {
-            "status": "NOT_RUN",
-            "value": None,
-            "reason": "sourced_threshold_missing",
-            "declared_move": declared_move,
-            "detail": f"NOT_RUN (never a pass): {exc}",
-            "findings": [],
-        }
+    zoom_min_pct = _tol_opt(tolerances, "zoom_min_pct")  # OPEN -> None
+    still_drift_min_pct = _tol_opt(tolerances, "still_drift_min_pct")  # OPEN -> None
+    not_run: list[str] = []
+    if zoom_min_pct is None:
+        not_run.append("zoom size floor (zoom_min_pct)")
+    if still_drift_min_pct is None:
+        not_run.append("camera-never-stops floor (still_drift_min_pct, CM-15)")
+    zoom_gate = zoom_min_pct if zoom_min_pct is not None else _tol_val(tolerances, "zoom_none_pct")  # direction only
 
     rotation_max_deg = _tol_val(tolerances, "rotation_max_deg")
     pan_min_pct = _tol_val(tolerances, "pan_min_pct")
@@ -1010,35 +932,36 @@ def camera_move_clip(
             }
         )
 
-    # CM-15: the camera never stops: total change under BP-215 still_drift_min_pct -> FAIL
-    duration_s = max((int(measured["frame_count"]) - 1) / float(effective_fps or fps), 1e-6)
-    change_5s = total_change_pct * (5.0 / duration_s)  # whole clip scaled to 5 s (brief CM-15)
-    if change_5s < still_drift_min_pct:
-        findings.append(
-            {
-                "rule": "CM-15",
-                "severity": "FAIL",
-                "where": clip_path.name,
-                "message": (
-                    f"camera stopped or static: declared {declared_move}, "
-                    f"measured total_change={total_change_pct:.3f}% ({change_5s:.3f}% per 5 s) < BP-215 "
-                    f"still_drift_min_pct={still_drift_min_pct}%: the camera stands still, static is not allowed "
-                    "(owner 18:10, OR-V24)"
-                ),
-            }
-        )
+    # CM-15: the camera never stops: total change under still_drift_min_pct -> FAIL
+    if still_drift_min_pct is not None:
+        duration_s = max((int(measured["frame_count"]) - 1) / float(effective_fps or fps), 1e-6)
+        change_5s = total_change_pct * (5.0 / duration_s)  # whole clip scaled to 5 s (brief CM-15)
+        if change_5s < still_drift_min_pct:
+            findings.append(
+                {
+                    "rule": "CM-15",
+                    "severity": "FAIL",
+                    "where": clip_path.name,
+                    "message": (
+                        f"camera stopped or static: declared {declared_move}, "
+                        f"measured total_change={total_change_pct:.3f}% ({change_5s:.3f}% per 5 s) < "
+                        f"still_drift_min_pct={still_drift_min_pct}%: the camera stands still, static is not allowed "
+                        "(owner 18:10, OR-V24)"
+                    ),
+                }
+            )
 
     expected_pan_sign = TRUCK_L_PAN_SIGN if declared_move in ("truck_l", "truck_zoom_in", "truck_zoom_out") else -TRUCK_L_PAN_SIGN
 
     # CM-11: zoom_in / zoom_out
     if declared_move == "zoom_in":
-        if zoom_pct < zoom_min_pct:
+        if zoom_pct < zoom_gate:
             findings.append(
                 {
                     "rule": "CM-11",
                     "severity": "FAIL",
                     "message": (
-                        f"declared {declared_move} (expected zoom >= +{zoom_min_pct:.2f}%), "
+                        f"declared {declared_move} (expected zoom >= +{zoom_gate:.2f}%), "
                         f"measured zoom={zoom_pct:+.2f}%, pan_x={pan_x_pct:+.2f}%"
                     ),
                 }
@@ -1056,13 +979,13 @@ def camera_move_clip(
             )
 
     elif declared_move == "zoom_out":
-        if zoom_pct > -zoom_min_pct:
+        if zoom_pct > -zoom_gate:
             findings.append(
                 {
                     "rule": "CM-11",
                     "severity": "FAIL",
                     "message": (
-                        f"declared {declared_move} (expected zoom <= -{zoom_min_pct:.2f}%), "
+                        f"declared {declared_move} (expected zoom <= -{zoom_gate:.2f}%), "
                         f"measured zoom={zoom_pct:+.2f}%, pan_x={pan_x_pct:+.2f}%"
                     ),
                 }
@@ -1109,10 +1032,10 @@ def camera_move_clip(
     # CM-13 & CM-14: truck_zoom_in / truck_zoom_out
     elif declared_move in ("truck_zoom_in", "truck_zoom_out"):
         # the enum has no left/right form for the combined moves: either direction of pan is a truck
-        zoom_ok = zoom_pct >= zoom_min_pct if declared_move == "truck_zoom_in" else zoom_pct <= -zoom_min_pct
+        zoom_ok = zoom_pct >= zoom_gate if declared_move == "truck_zoom_in" else zoom_pct <= -zoom_gate
         pan_ok = abs(pan_x_pct) >= pan_min_pct
         if not (zoom_ok and pan_ok):
-            expected_zoom_str = f">= +{zoom_min_pct:.2f}%" if declared_move == "truck_zoom_in" else f"<= -{zoom_min_pct:.2f}%"
+            expected_zoom_str = f">= +{zoom_gate:.2f}%" if declared_move == "truck_zoom_in" else f"<= -{zoom_gate:.2f}%"
             findings.append(
                 {
                     "rule": "CM-13",
@@ -1142,12 +1065,13 @@ def camera_move_clip(
         f["where"] = clip_path.name
     has_fail = any(f["severity"] == "FAIL" for f in findings)
     has_review = any(f["severity"] == "REVIEW" for f in findings)
-    status = "FAIL" if has_fail else ("REVIEW" if has_review else "PASS")
+    status = "FAIL" if has_fail else ("NOT_RUN" if not_run else ("REVIEW" if has_review else "PASS"))
+    not_run_text = ("; not run (floor OPEN, PROPOSED-CAM-1): " + ", ".join(not_run)) if not_run else ""
 
     detail = (
         f"declared={declared_move}; measured zoom={zoom_pct:+.2f}%, pan_x={pan_x_pct:+.2f}%, "
         f"max_abs_rot={max_abs_rot:.3f}deg, ease_diff={ease_diff:.3f}. "
-        "global camera fit, depth parallax not measured."
+        "global camera fit, depth parallax not measured." + not_run_text
     )
 
     return {

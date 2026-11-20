@@ -3756,7 +3756,7 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 - Bugs found in the Gemini originals and fixed: `story_lint.overlap` takes sets (strings crashed), narrator = line without `speaker`, SL-03 keyed per segment,
   STH-00 must be NOT_RUN, findings shape `{rule, severity, where, detail}`, claim_ledger exit code read `sev`, CL-08 used the id prefix, camera cards returned a dict.
 - All numbers are hypotheses (REVIEW-level, not binding until the owner has seen them). Not wired into any registry row or CLI list (never-list: done by the lead).
-- Open: `camera_move` reads BP-181 and BP-215, which the default-branch registry does not have yet: the clip check is NOT_RUN (never a pass) until they exist, so
-  `test_every_bp_id_cited_in_code_or_claude_exists` fails on this branch for exactly those two ids (it passes once they are registered; the test was not weakened).
-  Tests of the clip check use a placeholder registry fixture (`tests/fixtures/camera_move/sourced_rules_TESTONLY.json`, not repo numbers).
+- Open: the two camera floors (`zoom_min_pct`, `still_drift_min_pct`) have no source yet (BP-181/BP-215 are not in the registry; the lead removed them from the brief,
+  PROPOSED-CAM-1): they are `value: null, status: OPEN` in `qa/camera_move_tolerances.json`, so CM-15 and the zoom-size part of the clip check are NOT_RUN (never a pass);
+  enum, signs, rotation, truck/zoom channels and easing still run. Clip tests use placeholder floors (`tests/fixtures/camera_move/tolerances_TESTONLY.json`, not repo numbers).
 - Cost: $0.00.
