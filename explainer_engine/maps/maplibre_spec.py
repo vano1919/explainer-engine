@@ -151,8 +151,10 @@ def validate_shot_spec(spec: Any) -> list[str]:
             problems.append("line_t must be a 2-element sequence [t0, t1] of numbers with t0 < t1")
     if "counter" in spec:
         counter = spec["counter"]
-        if not isinstance(counter, dict):
-            problems.append("counter must be a dict")
+        if counter is None:
+            pass  # explicit "no counter" (the key stays required so a forgotten counter is still reported)
+        elif not isinstance(counter, dict):
+            problems.append("counter must be a dict or null")
         else:
             required_counter_keys = ("from", "to", "t0", "t1", "label")
             missing_counter = [k for k in required_counter_keys if k not in counter]
@@ -277,14 +279,16 @@ def schedule(spec: dict[str, Any], frame: int) -> dict[str, Any]:
     line_t0, line_t1 = float(spec["line_t"][0]), float(spec["line_t"][1])
     raw_line_u = (t - line_t0) / (line_t1 - line_t0)
     line_u = ease_smoothstep(raw_line_u)
+    counter_val: int | None = None  # "counter": null = no counter shown (a shot may have no sourced number)
     counter_spec = spec["counter"]
-    c_from = float(counter_spec["from"])
-    c_to = float(counter_spec["to"])
-    c_t0 = float(counter_spec["t0"])
-    c_t1 = float(counter_spec["t1"])
-    raw_counter_u = (t - c_t0) / (c_t1 - c_t0)
-    eased_counter_u = ease_smoothstep(raw_counter_u)
-    counter_val = int(round(c_from + (c_to - c_from) * eased_counter_u))
+    if counter_spec is not None:
+        c_from = float(counter_spec["from"])
+        c_to = float(counter_spec["to"])
+        c_t0 = float(counter_spec["t0"])
+        c_t1 = float(counter_spec["t1"])
+        raw_counter_u = (t - c_t0) / (c_t1 - c_t0)
+        eased_counter_u = ease_smoothstep(raw_counter_u)
+        counter_val = int(round(c_from + (c_to - c_from) * eased_counter_u))
     current_date = ""
     for chip in sorted(spec["date_chip"], key=lambda c: float(c["t"])):
         if float(chip["t"]) <= t:
