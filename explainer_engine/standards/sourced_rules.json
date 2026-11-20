@@ -4592,7 +4592,8 @@
     "explainer_engine/scripting/variant_plan.py:checks",
     "explainer_engine/edit/dramatic_still.py",
     "explainer_engine/blender/j5_montage.py:lint_montage",
-    "explainer_engine/episode/router.py:mix_gate_rows"
+    "explainer_engine/episode/router.py:mix_gate_rows",
+    "explainer_engine/qa/send_validators.py:still_shot_drift"
    ],
    "supersedes": [
     "the critic's plan review 2026-10-23: 40 % still + camera",
@@ -7533,7 +7534,8 @@
    ],
    "enforced_by": [
     "explainer_engine/blender/j5_montage.py:lint_montage",
-    "explainer_engine/production/layers25d.py:LAYERS_MIN"
+    "explainer_engine/production/layers25d.py:LAYERS_MIN",
+    "explainer_engine/qa/send_validators.py:still_shot_drift"
    ],
    "supersedes": []
   },
