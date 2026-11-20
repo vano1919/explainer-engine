@@ -3928,8 +3928,19 @@ No number is written in any of them; tests `test_first_shot.py`, `test_opening_d
   `qa/plume_zones.py` on `Shot.plume_a` and `Shot.pmask_f`.
 - Tests: `tests/unit/test_fx25d_living.py` (inputs required, no machine paths, a frame is a pure function of its number, synthetic person next to the
   source: without avoidance the plume share on the person FAILs, with it PASSes while a plume remains, only the S07_SH008 plume has the new keys).
+- `Shot(person_mask=...)` / `--person-mask`: extra person zones for the measurement (image, non-zero = person), unioned with silhouettes and faces; it never changes the picture. Run metrics come from `qa/plume_zones.py` (NOT_RUN without a person mask).
 - Not run: the real S07_SH008 photo through the CLI (inputs are on HF), the other three photos, any gate wiring.
 
+
+## 2026-11-20 — Boundary tests that kill the ten surviving mutants of seven validators; `audio_present` gets its own test file
+
+A mutation spot-check (three hand-made mutations per module: `shift_line_id`, `stated_theme`, `claim_ledger`, `camera_move`, `lipsync`,
+`trim_record`, `audio_present`) left ten mutants alive: the boundary at the minimum overlap of SL-06, CL-07b and STH-01, the CL-06 date
+of today, the CM-06 final run and CM-10 rotation limit, the LS-03 confidence boundary, LS-04's worst offset by magnitude, SL-01 under
+`strict`, and `audio_present`'s stream count. Tests only, no validator logic changed; each boundary uses an injected rules file or
+tolerance so the score is exact. After them all 21 mutations are caught (run with bytecode off and `__pycache__` deleted: an earlier
+run reused stale bytecode and listed an eleventh survivor wrongly). New file `tests/unit/test_audio_present.py` (stream count of
+one and two, video-only, unreadable file, missing ffprobe, the `-select_streams a` call, exit codes).
 ## 2026-11-20 — publish auth hygiene (L32)
 - `auth` / `auth-finish` write `tools/youtube/token.b64.txt` only with `--export-env` (the printed text names it only then); `load_token` logs one line naming the source (session file or `YOUTUBE_TOKEN_B64`), never the token; the env variable and its code path stay (owner card 2026-11-20 21:01).
 - Tests: `tests/unit/test_youtube_auth_hygiene.py` (flag on/off, source logged, no tracked `tools/` token or `pending.json`, `.gitignore` covers `tools/youtube/`).

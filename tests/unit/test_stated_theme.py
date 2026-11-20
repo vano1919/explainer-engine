@@ -113,3 +113,18 @@ def test_exempt_cold_open_and_shorts():
     assert not by(M.check(doc(seg("S01", [C(HERO, "Ann")], type="cold_open"))), "STH-01")
     d = doc(seg("S01", [C(HERO, "Ann")])); d["format"] = "short"
     assert M.check(d) == []
+
+
+# ---- boundary test (2026-11-20 mutation spot-check: `>=` to `>` survived) ----
+
+def test_sth01_fires_when_the_overlap_equals_theme_cover_min_exactly(tmp_path):
+    theme = "courage persists"                                    # two content words
+    line = "Courage rarely arrives when marching through winter storms"   # contains "courage" only: overlap 1/2
+    assert len(M.content_words(line)) >= 6 and M.content_words(theme) & M.content_words(line) == {"courage"}
+    assert len(M.content_words(theme)) == 2
+    rules_file = tmp_path / "r.json"
+    rules_file.write_text(json.dumps({"theme_cover_min": 0.5, "min_line_words": 6, "moral_phrases": []}))
+    d = doc(seg("S01", [C(line, "Ann"), C("Bob answers back loudly now", "Bob")], SCENE), theme=theme)
+    assert by(M.check(d, rules_path=rules_file), "STH-01")                        # exactly at the minimum: it states the theme
+    rules_file.write_text(json.dumps({"theme_cover_min": 0.51, "min_line_words": 6, "moral_phrases": []}))
+    assert not by(M.check(d, rules_path=rules_file), "STH-01")                    # just above the overlap: it does not
