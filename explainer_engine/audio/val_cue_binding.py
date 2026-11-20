@@ -1,6 +1,10 @@
 """Audio validator V-07: cue-to-event binding, coverage, timing tolerance, and sample reuse.
 
 Requirement IDs: OR-S26, OR-A27, OR-V30c.
+
+Registry wiring (D-59): the asymmetric sync window of BIND-03 is BP-54's (early_max_ms, late_max_ms; FAIL), the severity of a
+repeated sample (BIND-04) is BP-57's. The one-frame tolerance stays the clean zone; a cue outside it is BIND-03 at the limits'
+severity, and at BP-54's severity when it is also outside the sourced window.
 """
 
 from __future__ import annotations
@@ -9,6 +13,8 @@ import math
 from dataclasses import dataclass
 from typing import Any
 
+from explainer_engine.standards import sourced_rules as SR
+
 
 @dataclass(frozen=True)
 class Limits:
@@ -16,6 +22,10 @@ class Limits:
     tol_frames: float = 1.0
     must_sound: frozenset[str] = frozenset({"object_in", "text_in", "map_move", "chart_move", "counter"})
     severity: str = "REVIEW"
+    early_fail_s: float = SR.T("BP-54", "early_max_ms") / 1000  # a cue earlier than this leads its event too far (BP-54)
+    late_fail_s: float = SR.T("BP-54", "late_max_ms") / 1000  # a cue later than this trails its event too far (BP-54)
+    window_severity: str = SR.severity("BP-54")  # severity of BIND-03 outside the sourced window
+    repeat_severity: str = SR.severity("BP-57")  # severity of BIND-04 (the same sample twice in a row)
 
 
 def _is_number(val: Any) -> bool:
@@ -35,6 +45,12 @@ def _validate_limits(limits: Limits) -> None:
         raise ValueError("limits.must_sound must be a set or frozenset of strings")
     if not isinstance(limits.severity, str) or not limits.severity.strip():
         raise ValueError("limits.severity must be a non-empty string")
+    for name in ("early_fail_s", "late_fail_s"):
+        if not _is_number(getattr(limits, name)) or getattr(limits, name) < 0:
+            raise ValueError(f"limits.{name} must be a non-negative finite number")
+    for name in ("window_severity", "repeat_severity"):
+        if not isinstance(getattr(limits, name), str) or not getattr(limits, name).strip():
+            raise ValueError(f"limits.{name} must be a non-empty string")
 
 
 def _validate_events(events: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
@@ -123,6 +139,7 @@ def check(events: list[dict[str, Any]], cues: list[dict[str, Any]], limits: Limi
     tol_sec = limits.tol_frames / limits.fps
     bound_event_ids: set[str] = set()
     raw_findings: list[tuple[float, str, str, str]] = []
+    sev: dict[tuple[str, str], str] = {}
 
     # BIND-02 (orphan cues) and BIND-03 (timing offset beyond tolerance)
     for cue in norm_cues:
@@ -143,6 +160,9 @@ def check(events: list[dict[str, Any]], cues: list[dict[str, Any]], limits: Limi
         ev = events_by_id[ev_id]
         diff = abs(cue["t"] - ev["t"])
         if round(diff, 6) > round(tol_sec, 6):
+            signed = cue["t"] - ev["t"]
+            if round(-signed, 6) > round(limits.early_fail_s, 6) or round(signed, 6) > round(limits.late_fail_s, 6):
+                sev[("BIND-03", cue["id"])] = limits.window_severity
             raw_findings.append(
                 (
                     cue["t"],
@@ -180,6 +200,7 @@ def check(events: list[dict[str, Any]], cues: list[dict[str, Any]], limits: Limi
             if not (prev_cue["repeat_ok"] and curr_cue["repeat_ok"]):
                 pair_ids = sorted((prev_cue["id"], curr_cue["id"]))
                 where = f"{pair_ids[0]}|{pair_ids[1]}"
+                sev[("BIND-04", where)] = limits.repeat_severity
                 raw_findings.append(
                     (
                         curr_cue["t"],
@@ -197,7 +218,7 @@ def check(events: list[dict[str, Any]], cues: list[dict[str, Any]], limits: Limi
     return [
         {
             "rule": rule,
-            "severity": limits.severity,
+            "severity": sev.get((rule, where), limits.severity),
             "where": where,
             "detail": detail,
         }
