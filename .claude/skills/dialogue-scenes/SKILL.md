@@ -1,210 +1,150 @@
 ---
 name: dialogue-scenes
-description: Write or fix any scene where characters talk - the scene header, opposing wants, turn-taking, subtext, exposition as ammunition. Use for every dialogue segment of a production_script/3 and whenever dialogue reads as isolated quips.
+description: Our scene contract for every segment where people talk in a docudrama episode - the scene header filled before any line, the narrator-scene-narrator hand-off, opposing wants, turn-taking, deflection, subtext, exposition as ammunition, real-person rules, and the v4.3 rule that each hero line lives in one video clip. Use for every dialogue segment and whenever dialogue reads as a row of isolated quips.
 ---
 
-# Dialogue scenes: a unit that turns, not a row of quips
+# Dialogue scenes: the contract (layer L3, stage 2)
 
-## Vendored methods (W8 phase B): when to load which
+Rewritten 2026-11-20 under RW-50 ([docs/SKILL_LAYERS.md](../../../docs/SKILL_LAYERS.md)). Craft comes from the vendored
+`v-sw-scene-craft` (the scene: value turn, beats, place, prop) and `v-sw-dialogue` (the line: action under words, said and
+unsaid, period voice); this page is the contract the code checks. Rule text: SC-01..SC-12 and DW-01..DW-13 in
+[STORY_ENGINE](../../../docs/STORY_ENGINE.md), wired as PV-48 in `scripting/scene_lint.py`. Evidence:
+`docs/research/STORYTELLING_EDITING_2026-10-19.md`.
 
-Load `v-sw-dialogue` for the line (action and reaction beats, said/unsaid, exposition as ammunition, a distinct voice per
-character, cutting speeches) and `v-sw-scene-craft` for the scene (value turn, enter late and leave early, suspense and
-delay, props and details, five-step scene analysis). Read each whole, use the method, paste nothing of it. The sections
-below are ours and win on any conflict.
+## The scene in one sentence
 
-**What stays ours (not replaced):** the scene header SC-01 and its fields; the narrator to scene to narrator hand-off unit;
-Johnston's eight planning questions; Stein's five deflection moves (DW-12); conflict modes; the v4.3 rule that a hero line
-lives inside a `video` shot, one line per clip; real-person rules (D-63). A vendored beat that needs a screenplay format,
-a phone or a car scene, or a page count does not apply: the picture task and the clip length decide.
+Someone present wants something now, someone present opposes it, something unexpected turns it, a value flips its charge,
+and the scene exits on a new problem. The narrator and the heroes stand on opposite sides of the fourth wall: a hero never
+answers the narrator (SC-04).
 
-**Checked by:** `scripting/scene_lint.py` (SC-01..SC-10, DW rules, PV-48), `episode/router.talking_check` (G1) for the route,
-`scripting/stage_guard.py` (words frozen after stage 2). Judgement stays with the writer and the critic (SK-2); no number is
-copied from upstream.
+## Production facts the writer must respect (v4.3, D-131, D-132, D-137)
 
-`sw-*` skills link to `../sw-workflow/terms.md`; that file is `.claude/skills/v-sw-workflow/terms.md` here (vendored text is not edited).
+- Every hero line belongs to a shot routed `video` and is spoken by the clip itself; the runner's G1
+  (`episode/router.talking_check`) fails a speaking shot on any other route.
+- **One line per clip** (VL-02), no speaking close-up; a line longer than one clip is split (VL-06, G1
+  `video_shots_fit_the_model`), and every line ends inside its clip with BP-187's tail.
+- A scene is one segment in one place ([VIDEO_LANE](../../../docs/VIDEO_LANE.md)).
+- So: short lines, physical tasks while talking, reactions and silences as beats. A scene of eight speaking faces in a row
+  is the most expensive and the most fragile thing we can ask for; more than three character lines in a row without a
+  reaction or insert is a REVIEW (VL-08, KP-43 with BP-113's count).
 
-**v4.3 episode-first (2026-11-12, D-131):** the dialogue lives inside the scenes, and every hero line belongs to a shot routed `video` (LTX-2.5 distilled speaks it in the clip, D-132; the old name `wan` reads as `video`); the runner's G1 (`episode/router.talking_check`) FAILs a speaker shot on another route. One line per clip (VL-02), the line ends inside its clip with BP-187's tail, a line longer than one clip is split (VL-06, G1 `video_shots_fit_the_model`); a scene is one segment in one place (docs/VIDEO_LANE.md). The scene rules below apply unchanged.
+## The header, before any line (SC-01)
 
-Rules by id: SC-01..SC-10 and DW-01..DW-13 in `docs/STORY_ENGINE.md` (wired as PV-48, `scripting/scene_lint.py`).
-Evidence for every rule and number: `docs/research/STORYTELLING_EDITING_2026-10-19.md`. A scene is not a location or a
-block of lines: someone present wants something now, someone present opposes it, something unexpected turns it, and a
-value flips its charge. The narrator and the cast live on opposite sides of the fourth wall (SC-04): a hero never
-answers the narrator.
-
-## The scene header (fill it BEFORE any line; SC-01)
-
-| Field | One-line guidance |
+| Field | What to write |
 |---|---|
-| `place` | One concrete room or spot the renderer can paint ("the back room of Capone's club"), never "a city". |
-| `time` | When, inside the story's clock ("night, the day the clip lands"). |
-| `present` | Cast ids physically here. Everyone listed speaks or reacts; nobody else may be addressed (SC-05). |
-| `why_now` | What just changed that forces this talk NOW. If nothing did, the scene starts too early. |
-| `pov` | Whose scene it is (one cast id); write the scene from their side. |
-| `want` | The pov's short-term, concrete goal in THIS scene — winnable or losable inside it. |
-| `obstacle_want` | What the opposing present character wants instead; must differ from `want` (SC-03). |
-| `value` | The one value at stake (control, trust, safety, pride...). |
-| `open_charge` / `close_charge` | + or - on that value at the first and last line; they MUST differ (SC-02). |
-| `turn` | The beat where the charge flips — name it, don't hope for it. |
-| `exit` | `fail_new_goal`, `succeed_complication` or `interrupted`. Never "resolved and calm". |
-| `surface_topic` | What they literally argue about (the clip, the shipment, the map). |
-| `real_subject` | What the fight is really about (status, fear, trust). No line ever states it verbatim (SC-10). |
+| `place` | one concrete spot the pictures can hold ("the British fire trench opposite Frelinghien, at the sap head") |
+| `time` | inside the story clock ("dusk, 24 December 1914") |
+| `present` | cast ids physically here; each speaks or visibly reacts, nobody else is addressed (SC-05) |
+| `why_now` | what just changed that forces the talk now; if nothing did, the scene starts too early |
+| `pov` | whose scene it is |
+| `want` | the pov's concrete goal, winnable or losable in this scene |
+| `obstacle_want` | what an opposing present character wants instead; differs from `want` (SC-03) |
+| `value` | the one value at stake (safety, duty, trust, pride) |
+| `open_charge` / `close_charge` | + or - at the first and the last line; they differ (SC-02) |
+| `turn` | the beat where the charge flips, named in advance, with the conflict mode |
+| `exit` | `fail_new_goal`, `succeed_complication` or `interrupted` |
+| `surface_topic` | what they literally talk about |
+| `real_subject` | what the scene is really about; no line ever says it (SC-10) |
 
-## Plan with Johnston's 8 questions, then cut from the top (SC-06)
+## The hand-off unit
 
-1 What does the pov WANT? 2 What's STOPPING them (a present character's opposing goal)? 3 What's the TURN (something
-unexpected)? 4 Could CONTRAST help (a quiet negotiation instead of a shouting match)? 5 What are they THINKING
-(unvoiced worries)? 6 What DON'T they say (make others work for answers)? 7 Could they SAY LESS? 8 What does it SET UP?
+`NARRATOR 2-4 sentences (where, when, why now, ending on the pressure)` then `SCENE 5-12 beats with its turn, exiting on
+the complication` then `NARRATOR 1-2 sentences (the consequence and the next pressure)`. The narrator never restates the
+turn and never quotes a hero inside the scene. The narrator holds BP-105's share of the audible spoken words (ST-19); lines
+marked `voiced: false` do not count. No more than BP-112's seconds stay in one place without cutting to the plan carried
+out, its cost, or the other side moving (KP-42).
 
-Enter late, leave early: no greeting opener, no wrap-up closer. The test: delete the scene's first line and check the
-scene still works; repeat until it doesn't. End within 1-2 lines of the turn, on the exit state, never on a summary.
+## Plan with eight questions, then cut from the top (SC-06)
 
-## The narrator<->scene hand-off unit
-
-`NARRATOR 2-4 sentences (where / when / why-now, ending on the pressure) -> SCENE 5-12 beats with a turn, exiting on
-the complication -> NARRATOR 1-2 sentences (the consequence + the next pressure)`. The narrator NEVER restates the
-scene's turn and never quotes a character. The narrator's share is [BP-105](../../../docs/SOURCED_RULES.md): 70-80 % of audible spoken words (voiced character dialogue is the complementary 20-30 %; target 75/25). Lines marked `voiced: false` do not count. This is independent from the 60/30/10 visual runtime mix. A scene may run 2-4 minutes, but no more than [BP-112](../../../docs/SOURCED_RULES.md)'s
-seconds stay in one place: cut away to the plan carried out, its cost or the other side moving (KP-42), and no more than
-[BP-113](../../../docs/SOURCED_RULES.md)'s lines in a row without a silent reaction, an insert or a cutaway (KP-43).
-
-Short example: N: "By lunch the clip has a million views. In the back room, Enzo is waiting." -> the scene plays and
-exits on Capone's fear -> N: "The order to find the cameraman goes out that night. It comes back without a name."
+What does the pov want; what present person stops them; what unexpected thing turns it; would contrast help (a whisper
+instead of a shout); what do they think and not say; what do they refuse to say; could they say less; what does it set up.
+Then enter late and leave early: no greeting opener, no wrap-up closer; delete the first line until the scene breaks.
 
 ## Turn-taking (SC-09, DW-06)
 
-- Default line 5-15 words. Hard cap 35 words (FAIL). One `speech` turn of 25-60 words per scene, only at its peak.
-- Three rhythm patterns to alternate: **jab-jab-speech** (runs of 3-8-word jabs, then the one longer turn, then jabs);
-  **question-deflect-press** (a direct question, a deflection that reveals attitude, a harder press, a partial truth);
-  **interruption** (line A ends mid-clause on a dash — line B starts with a gap of at most 0.1 s; 0-2 per scene, only
-  at high tension).
-- The scripted silence beat: after the hardest question or on the turn, a stage beat `(beat — no answer)` worth
-  1.5-3 s in the mix (normal inter-line gaps are ~0.4-0.8 s). 1-2 per scene; silence is a reply. This is a scene device,
-  not a narration hold: BP-10's hold limit governs the narrator's pauses (N-15), and a speaker line's
-  `pause_after` is not held to it.
-- Nobody speaks twice in a row unless the other's non-response is itself a scripted beat.
+- Short lines by default; one longer turn per scene at its peak; the caps are BP-72 and BP-73 and the lint holds them.
+- Rhythms to alternate: **jab-jab-speech**; **question-deflect-press** (a question, a deflection that shows attitude, a
+  harder press, a partial truth); **interruption** (line A ends on `--`, line B answers it at once; rare, high tension only).
+- **The scripted silence beat** after the hardest question or on the turn: a stage beat, worth a held moment in the mix;
+  one or two per scene. It is a scene device, not a narration hold (BP-10 governs the narrator's pauses, N-15).
+- Nobody speaks twice in a row unless the other's non-answer is itself the scripted beat.
 
-## Deflection (DW-12): Stein's five moves
+## Deflection (DW-12): five moves
 
-| Move | One-line example |
+| Move | Example in a trench |
 |---|---|
-| Answer with a question | "Did you take it?" — "Why would you even ask me that?" |
-| Change the subject | "Did you take it?" — "Your brother called. Twice." |
-| Silence + action | "Did you take it?" — (she keeps wiping the counter) |
-| Counterattack | "Did you take it?" — "Count your own drawer first." |
-| Partial truth | "Did you take it?" — "I moved it. That's all." |
+| Answer with a question | "Did you go over?" / "Who's asking, the colonel?" |
+| Change the subject | "Did you go over?" / "Your tea's gone cold." |
+| Silence and action | "Did you go over?" / (he keeps scraping mud off his boots) |
+| Counterattack | "Did you go over?" / "You were the one waving the candle." |
+| Partial truth | "Did you go over?" / "Halfway. To fetch the body." |
 
-Never more than 3 clean question->answer pairs in a row (reads as an interview); at least 2 non-direct responses per
-scene. A question may hang unanswered — that is an answer.
+Never more than three clean question-answer pairs in a row; at least two indirect answers per scene. A question left hanging
+is an answer.
 
-## Subtext (SC-10)
+## Subtext and exposition
 
-Declare `surface_topic` and `real_subject`; keep every line on the surface. The moment a character says the real
-subject aloud ("you don't respect me", "I'm scared of losing control"), the scene goes flat and scene_lint FAILs it.
-Mini example: real_subject "Enzo thinks the boss is slipping" — Enzo never says it; he says "The plate. The driver.
-The route." and lets the list say it.
+Declare `surface_topic` and `real_subject` and keep every line on the surface (SC-10). Facts known to both speakers are only
+spoken as weapons or stakes; facts one knows are pried out or blurted; facts neither knows belong to the narrator or a
+discovery beat (DW-13). The press-release register is banned in narration (SC-07, BP-15); dates and numbers live inside a
+scene only as stakes ("Midnight. Then they start shooting again.").
 
-## Exposition as ammunition (DW-13, SC-07)
+## Full immersion and show, don't tell
 
-Knowledge-state table: mark each fact Known/Unknown per speaker.
+The story never stops to say it is invented or uncertain (SC-08, SC-11, BP-88); doubt lives in the heroes, the what-if or the
+"reasoned" label lives in the title, the description and `claim_share`. The narrator never names a hero's trait, rates him,
+or recites his biography (SC-12, BP-87): a trait is a choice on screen.
 
-| State | Where the fact goes |
+| Telling (fails) | Showing |
 |---|---|
-| K/K (both know) | Spoken only as a weapon or stake ("You signed off on this route yourself."), never recited. |
-| K/U (one knows) | Extracted: the other asks, pries, pays — or it is blurted under pressure. |
-| U/U (neither knows) | The narrator's, or a discovery beat. Never a mouth. |
+| "Sergeant Ellis was a brave man." | Ellis lifts the lantern above the parapet and holds it there. |
+| "The Germans wanted peace too." | A voice from the other trench: "You no shoot, we no shoot." |
 
-The test: would they say this with no audience watching? No -> rewrite as an accusation or a question, or give it to
-the narrator. Ration ~1 dialogue-borne fact per 2-3 beats. The press-release register is banned in narration (SC-07);
-dates and specs live only inside a scene as stakes. Three rewrites:
+## Conflict modes (DW-09)
 
-| Bad (press release) | Good (stakes inside the scene) |
-|---|---|
-| "Rockstar's page gives a release date, November 19, 2026." | ENZO: "We've got until November 19. Then every street gets a rulebook." |
-| "The company announced six locations." | CAPONE: "Six towns. Pick the one we can hold." |
-| "The trailer confirms the swamp region." | ENZO: "They showed the swamp. That's OUR swamp." |
-
-Full immersion (SC-08, SC-11, BP-88; the creator 2026-10-20): the story never stops to say it is invented, a
-simulation or a hypothetical, and the narrator never hedges it ("we cannot know for sure"); the title and the description
-carry the what-if. A hero may doubt inside a scene. Show, don't tell (SC-12, BP-87): the narrator never names a hero's
-traits, rates them or recites a biography; a trait is a choice on screen.
-
-| Telling (FAIL on /3) | Showing |
-|---|---|
-| "Trump is a master of perception." | He spends forty of his hundred dollars on a rented jacket before he spends a cent on food. |
-| "Musk takes huge risks." | MUSK (to the seller): "Eighty for the broken one. All of it." The seller: "That's your last eighty." |
-| "This is only a simulation, of course." | (cut: the title says "What if"; the story plays as if it is happening now) |
-
-## Conflict modes (DW-09 softened)
-
-Pick ONE mode per scene and vary it across the episode — never two shouting matches back to back:
-`balanced` (equals clash) · `asymmetric` (boss vs subordinate) · `indirect` (politeness hides the attack) ·
-`comic` (the stakes are real, the tactics absurd) · `minimal` (quiet friction). The learner-corrected scene (the old
-DW-09) is one mode among these, used at most once per episode, not every scene's shape. Record the mode in the scene
-header's `turn`/notes.
+One per scene, varied across the episode: `balanced`, `asymmetric`, `indirect`, `comic`, `minimal`. Never two shouting
+matches back to back. Record the mode with the `turn`.
 
 ## Character voice (DW-03, DW-11)
 
-The voice bible per hero (in `cast.<id>.speech`, extended): register, sentence length, at most 3 signature moves,
-favourite and forbidden words, `attitude_to_each_other_character` (one line per pair — this is where subtext between
-two specific heroes comes from) and `what_they_never_admit` (the pressure under every deflection). The test: cover the
-speaker names and attribute each line; below ~80 % the voices have blurred — regenerate with the bible restated. A
-line "anyone" could say is a rewrite candidate.
+Each hero's `cast.<id>.speech` card: register, sentence length, at most three signature moves, favourite and forbidden
+words, attitude to each other hero (one line per pair: this is where subtext between two people comes from), and what he
+never admits. Test: cover the names; if the speakers cannot be told apart, rewrite with the card restated. Register examples
+and the few-shot pairs live in skill `narration-script`.
 
-## The worked example (the real failure, rewritten)
+## A worked docudrama scene
 
-Old Syndicate Wars S11 — the hero answers the narrator, nobody is present (audit, quoted):
+Header: place "British fire trench, Christmas Eve, the sap head"; present Private Turner and Lance-Corporal Wells; why_now
+"a light has appeared on the German parapet"; pov Turner; want "go and look"; obstacle_want Wells: "keep everyone's head
+down"; value safety, open +, close -; turn "the German voice calls Turner's regiment by name"; mode asymmetric; exit
+`fail_new_goal`; surface_topic "the light"; real_subject "Turner is more afraid of the waiting than of the enemy".
 
-> N: "Someone films him handing out free sandwiches. Millions of views by lunch." / CAPONE: "Millions? For a
-> sandwich? Print more sandwiches!" / N: "Brilliant! Oh, but then someone films the car he arrived in. Then the
-> driver. Then the licence plate." / CAPONE: "Wait. Who filmed my car?"
+> TURNER (to wells, press): "It's a tree. They've put a tree up."
+> WELLS (to turner, decide): "Head down."
+> TURNER (to wells, deflect): "There's candles on it."
+> WELLS (to turner, counterattack): "There's snipers under it."
+> (beat: singing drifts across; neither moves)
+> VOICE ACROSS THE WIRE (to room, reveal): "Royal Warwicks! Merry Christmas!"
+> WELLS (to turner, quieter, question): "...How do they know who we are?"
 
-The fixed form is a SCENE. Header:
+The narrator then carries the consequence: "Nobody sleeps on that stretch of line. By dawn, someone on the other side has
+an answer." The value turns from a safe distance to an exposed one; the narrator never says what Turner feels.
 
-```json
-{"place": "the back room of Capone's club", "time": "night", "present": ["capone", "enzo"],
- "why_now": "the clip hit a million views an hour ago", "pov": "capone",
- "want": "make the clip work for him", "obstacle_want": "enzo: kill the clip before it kills them",
- "value": "control", "open_charge": "+", "close_charge": "-",
- "turn": "the list of what the camera caught lands; mode: asymmetric",
- "exit": "fail_new_goal", "surface_topic": "the sandwich clip", "real_subject": "the boss is slipping"}
-```
+(Illustrative names: a real episode takes its heroes, units and lines from the claim map.)
 
-The scene (8 turns; `to` and `intent` on every line):
+## Real people in a scene (D-63, D-65, D-64)
 
-> CAPONE (to enzo, decide): "Print more sandwiches."
-> ENZO (to capone, press): "They filmed your car, boss."
-> CAPONE (to enzo, deflect): "So?"
-> ENZO (to capone, press): "The plate. The driver. The route."
-> CAPONE (to enzo, banter): "A million views, Enzo. Nobody's reading plates."
-> ENZO (to capone, reveal): "The Northside boys froze the frame. They're reading."
-> (beat — no answer; Capone sets his glass down)
-> CAPONE (to room, quieter, question): "...Who filmed my car?"
+When the speakers are real living people, the narrator tells the exchange in reported speech, short and in the scene's
+rhythm, naming the speaker before his words (ST-15, BP-95) and reporting at most two speakers in one line (ST-16, BP-96);
+the speakers are never voiced (D-62), and at most one bubble stays as an accent (PV-56). A reported exchange still has at
+least BP-70's turns of two named speakers (SC-05). Every exchange is framed: a setup that names who talks and why, the
+exchange, a conclusion that says what came of it (ST-14, BP-90); never two exchanges chained. The establishing shot shows
+the cast (BP-91). Historical people who are not living may speak in a played scene, in lines the record supports.
 
-Why it works: the same fact as before — being filmed is dangerous — now turns a value (control, + to -) through two
-opposing wants, and the narrator never touches it. Zero press-release lines; the turn is Capone's triumph curdling
-into fear, shown by a silence beat and a quieter repeat of his own question.
+## What scene_lint checks (PV-48), in one list
 
-## Closing checklist (what scene_lint will check, PV-48)
-
-- SC-01 the header exists and is complete; pov and present are in the cast.
-- SC-02 open_charge != close_charge and `turn` names the turning beat.
-- SC-03 want != obstacle_want, both concrete.
-- SC-04 every line has `to` (someone present, self or room); no hero line answers the narrator.
-- SC-05 a run of >=4 consecutive character lines (>=2 speakers, no narrator inside); every present hero speaks or reacts.
-- SC-06 no greeting opener, no wrap-up closer.
-- SC-07 no press-release register in narration; dates and specs only inside a scene as stakes.
-- SC-08 no spoken honesty beat (BP-71 is 0); SC-11 no meta disclaimer or hedge on the story (BP-88).
-- SC-12 show, don't tell: no trait statements, ratings or biographies from the narrator, no stat cards (BP-87).
-- SC-09 line lengths (BP-72, BP-73): >35 words FAIL, >15 REVIEW unless the scene's one speech, one >=25-word turn per scene,
-  <=3 "?" runs.
-- SC-10 surface_topic and real_subject declared; no line states the real subject verbatim.
-
-## Real people in a scene (D-63, creator 2026-10-20)
-
-When the speakers are real living people, the narrator tells the exchange in reported speech ("O'Leary asks if he can still build things. Musk says he can build anything."), short and in the scene's rhythm; the speakers are never voiced (D-62) and a scene keeps at most one bubble as an accent (PV-56). Plan the end of each exchange as a held face of the last speaker in its mood, then a slow move to the next shot, never a cut straight into other people's talk.
-
-A reported exchange is a real exchange (SC-05, BP-70, D-65, the creator 2026-10-20 21:14/21:17): at least BP-70's turns of two named speakers told by
-the narrator ("O'Leary asks ... Musk says ..."); name the speaker before his words (ST-15, BP-95) and report at most two
-speakers in one line (ST-16, BP-96). The narrator need not repeat what is written on screen; what matters is that the listener
-follows the story. After the conversation, the picture moves slowly to a new shot.
-
-Frame every exchange (ST-14, BP-90, D-64, the creator 2026-10-20 21:14): a narrator setup that names who talks and what idea or want brings them there, then the exchange, then a narrator conclusion that says what came of it, and only then the next exchange: never two exchanges chained. The narrator gives the context whenever a conversation needs it. The establishing shot of the scene shows its cast (BP-91); a bubble, when the scene keeps one, is a key phrase within BP-84's cap that the narrator has just told.
+SC-01 header complete; SC-02 the charge flips and the turn is named; SC-03 the wants differ; SC-04 every line addressed,
+none to the narrator; SC-05 a real exchange of two or more speakers, everyone present speaks or reacts; SC-06 no greeting
+opener or wrap-up; SC-07 no press-release narration; SC-08 and SC-11 no honesty beat or meta hedge; SC-09 line lengths and
+question runs; SC-10 subtext declared and never spoken; SC-12 show, don't tell. Judgement stays with the writer and the
+critic; numbers stay in the registry.
