@@ -278,6 +278,17 @@ def test_zero_sha_is_taken_only_with_a_matching_sums_file(tmp_path, repo, sha):
     assert run_intake(d, repo, apply=False)["status"] == "accepted_not_applied"          # the driver's sum matches the file
 
 
+def test_a_placeholder_word_instead_of_a_sha_is_taken_only_with_a_matching_sums_file(tmp_path, repo, sha):
+    d = make_task(tmp_path, sha)
+    path = "explainer_engine/fx/new.py"
+    answer(d, [(path, "new", NEW_CODE.encode())], sha_override={path: "computed_at_write_time"})
+    assert codes(run_intake(d, repo, apply=False)) == ["sha_mismatch"]
+    (d / "out" / "SHA256SUMS").write_text(f"{L.sha256_bytes(NEW_CODE.encode())}  ./{path}\n")
+    assert run_intake(d, repo, apply=False)["status"] == "accepted_not_applied"
+    answer(d, [(path, "new", NEW_CODE.encode())], sha_override={path: L.sha256_bytes(b"")})      # a real-looking wrong sha stays a refusal
+    assert codes(run_intake(d, repo, apply=False)) == ["sha_mismatch"]
+
+
 def test_a_short_base_sha_of_the_pinned_commit_is_taken_but_another_is_not(tmp_path, repo, sha):
     d = make_task(tmp_path, sha)
     answer(d, [("explainer_engine/fx/new.py", "new", NEW_CODE.encode())], base_sha=sha[:8])

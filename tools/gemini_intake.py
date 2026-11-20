@@ -72,7 +72,7 @@ def _read_sums(path: Path) -> dict[str, str]:
         for line in path.read_text(encoding="utf-8", errors="replace").splitlines():
             parts = line.split(None, 1)
             if len(parts) == 2 and re.fullmatch(r"[0-9a-f]{64}", parts[0]):
-                sums[parts[1].strip().lstrip("*")] = parts[0]
+                sums[parts[1].strip().lstrip("*").removeprefix("./")] = parts[0]
     return sums
 
 
@@ -135,8 +135,8 @@ def judge(task_dir: Path, repo: Path) -> tuple[dict, list[dict], dict[str, tuple
             continue
         data = f.read_bytes()
         want = entry.get("sha256")
-        if want == ZERO_SHA:                                  # Gemini cannot hash: the driver's SHA256SUMS stands in
-            want = sums.get(path)
+        if not (isinstance(want, str) and re.fullmatch(r"[0-9a-f]{64}", want)) or want == ZERO_SHA:
+            want = sums.get(path)                              # Gemini cannot hash: zeros or a placeholder word, the driver's SHA256SUMS stands in
         if L.sha256_bytes(data) != want:
             _refuse(refusals, "sha_mismatch", path, "sha256 of the file differs from MANIFEST (a cut or edited upload)")
             continue
