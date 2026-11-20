@@ -8,12 +8,12 @@
   "total_usd": 3.5,
   "pictures_usd": 0.0,
   "cpu_checks_usd": 0.2,
-  "note": "the owner's per-run line for the A/B ($3.50); GPU hard bill ~3.17 + CPU staging ~0.16"
+  "note": "the owner's per-run line for the A/B ($3.50); GPU hard bill ~3.17 + CPU staging ~0.16; scene ledger ceiling 4.5 = the creator's modal_ltx line of the night, so that the owner's $3.50 run reservation fits the 80 % rule (owner card answer 'yes, ceiling 4.5', 2026-11-20 06:30 UTC, relayed by the coordinator); the run itself is held at $3.50 by launch caps.run_usd"
  },
  "ledger": {
   "path": "/mnt/project-files/explainer-engine/ledgers/ltx_scene_truce_ab.json",
   "caps": {
-   "modal_ltx": 3.5
+   "modal_ltx": 4.5
   }
  },
  "pictures": {
