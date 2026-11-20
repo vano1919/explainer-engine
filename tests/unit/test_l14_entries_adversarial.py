@@ -538,3 +538,39 @@ def test_judge_entries_name_a_rubric_heading_that_exists_but_are_not_run_by_code
     assert chk["kind"] == "judge" and chk["rubric"].endswith("#" + anchor), chk
     text = (root / chk["rubric"].split("#")[0]).read_text(encoding="utf-8").lower()
     assert anchor in text.replace(" ", "-") or anchor in text, f"{anchor} not found in the rubric file"
+
+
+# ===================================================================================== round 2 (tester, after the developer closed Z1-Z16)
+def parallax_frames(push: float, shift_px: float, sigma: float = 1.5, n: int = N):
+    """A camera-only move over a DEAD picture, the way the layered 2.5D engine makes it: four depth planes (bands, ground nearer at the bottom) scaled and
+    shifted by plane weights 0 / .32 / .68 / 1 (the weights of the analyst's X4 clip); nothing in the world moves."""
+    a = cv2.GaussianBlur(np.random.default_rng(5).normal(128, 50, (H, W)).astype(np.float32), (0, 0), sigma)
+    base = ((a - a.min()) / (a.max() - a.min()) * 200 + 25).astype(np.float32)
+    plane = np.minimum(3, (np.arange(H)[:, None] * 4 // H) * np.ones((1, W), int))
+    out = []
+    for i in range(n):
+        t, comp = i / n, base.copy()
+        for k, w in enumerate((0.0, 0.32, 0.68, 1.0)):
+            m = cv2.getRotationMatrix2D((W / 2, H / 2), 0, 1 + push * w * t)
+            m[0, 2] += shift_px * w * t
+            lay = cv2.warpAffine(base, m, (W, H), flags=cv2.INTER_CUBIC, borderMode=cv2.BORDER_REFLECT)
+            msk = cv2.warpAffine((plane == k).astype(np.float32), m, (W, H), flags=cv2.INTER_LINEAR) > 0.5
+            comp = np.where(msk, lay, comp)
+        out.append(comp)
+    return out
+
+
+@needs_ffmpeg
+@pytest.mark.parametrize("push,shift_px", [(0.12, 0.0), (0.0, 12.0), (0.06, 10.0)])
+@pytest.mark.xfail(strict=True, reason="Z17: a camera-only move with depth PARALLAX (the layered 2.5D engine's own output: four planes at weights 0/.32/.68/1) over a "
+                                       "dead, well-textured picture PASSes (17-24 % 'moving'): a similarity transform cannot remove parallax, so the residual "
+                                       "of the camera itself counts as the world moving. The analyst's real control clip X4_S04_SH008_camera_only (planes 0/.32/.68/1, "
+                                       "push 0.6) PASSes at 17.4 % after the Z3 fix, same as its production twin (HF vault/L14_2p5d/run1/clips)")
+def test_Z17_a_parallax_camera_move_over_a_dead_picture_is_not_a_pass(tmp_path, push, shift_px):
+    assert living(tmp_path, "parallax", parallax_frames(push, shift_px))["status"] != "PASS"
+
+
+@needs_ffmpeg
+@pytest.mark.parametrize("push,shift_px,sigma", [(0.06, 0.0, 6), (0.12, 0.0, 6), (0.12, 0.0, 3), (0.06, 10.0, 3)])
+def test_Z17_guard_parallax_over_smoother_pictures_fails_today(tmp_path, push, shift_px, sigma):
+    assert living(tmp_path, "parallax_smooth", parallax_frames(push, shift_px, sigma))["status"] == "FAIL"
