@@ -3910,6 +3910,10 @@ No number is written in any of them; tests `test_first_shot.py`, `test_opening_d
 - Symptom: `test_real_clips_probe_and_rows` failed on CI runs with an extra `CLIP-05` (audio vs picture length) on a clip meant to be clean; it passed on re-run and always passes locally (40 of 40 builds identical: picture 2.0417 s, audio 2.026 s, tolerance one frame = 41.7 ms).
 - Cause (the most likely one, not reproduced locally even under CPU load): the fixture mixed an endless sine with `-shortest`, so the number of audio packets muxed before the picture ends depends on thread timing; two extra AAC frames (2 x 21 ms) are enough to pass the one-frame tolerance. Fix: the sine is bounded to `frames / fps` itself and `-shortest` is gone; the assertion now prints the findings and both durations, and a new test builds the clip six times and checks audio and picture end within half a frame. No assertion or threshold weakened.
 
+## 2026-11-20 — Truce 1914 map shots: sourced facts, first real shot S05_SH101 with `truce_cold`
+- Of the 5 map shots only the counter (S05_SH101, C-03) and the date labels (C-05, C-06) are tied to claims; the arrow route, the 10 front-line places, the Flanders glow and the 4 pulse places have none (list for the researcher on HF `truce_S05_SH101/`). Only S05_SH101 rendered (6.25 s, 2560x1440, `truce_cold`, HUD OCR 45/45 on 15 frames). Spec + test: `examples/maps/truce_S05_SH101/`, `tests/unit/test_maps_truce_s05_sh101.py` (3).
+
+
 ## 2026-11-20 — Boundary tests that kill the ten surviving mutants of seven validators; `audio_present` gets its own test file
 
 A mutation spot-check (three hand-made mutations per module: `shift_line_id`, `stated_theme`, `claim_ledger`, `camera_move`, `lipsync`,
@@ -3923,3 +3927,7 @@ one and two, video-only, unreadable file, missing ffprobe, the `-select_streams 
 - `auth` / `auth-finish` write `tools/youtube/token.b64.txt` only with `--export-env` (the printed text names it only then); `load_token` logs one line naming the source (session file or `YOUTUBE_TOKEN_B64`), never the token; the env variable and its code path stay (owner card 2026-11-20 21:01).
 - Tests: `tests/unit/test_youtube_auth_hygiene.py` (flag on/off, source logged, no tracked `tools/` token or `pending.json`, `.gitignore` covers `tools/youtube/`).
 - Not done: the registry exception row to OR-P03 (needs the creator's typed word); the real sign-in flow was not run.
+
+## 2026-11-20 — Map spec: `"counter": null`; Truce S05_SH101 with the "Flanders" label; S02_SH102 sourced part
+- `maplibre_spec`: `"counter": null` = no counter (key still required, a forgotten key is still reported); schedule returns None, page hides the box, OCR expects no counter text. `tests/unit/test_maps_counter_null.py` (5).
+- S05_SH101 now shows the region label "Flanders" (C-07). S02_SH102 rendered with only its sourced part (date chip "December 1914" C-06, a straight line between the two sourced end points, no intermediate places, no counter): the straight line is schematic and visibly NOT the real front, so it stays on HF only and is not in the repo.
