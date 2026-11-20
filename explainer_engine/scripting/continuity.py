@@ -328,6 +328,19 @@ def _refs_text(doc: dict, shot: dict) -> list[str]:
     return lines
 
 
+def _identity_clause(identity: dict | None) -> str:
+    """CT-13: the person's identity bible (CT-18) as one clause; empty without it, so old cards keep their exact prompt.
+    ``flexible`` traits are not written: they may change."""
+    if not identity:
+        return ""
+    bits = [f"locked: {', '.join(identity['locked'])}"]
+    if identity.get("anchors"):
+        bits.append(f"anchors: {', '.join(identity['anchors'])}")
+    if identity.get("never"):
+        bits.append(f"avoid: {', '.join(identity['never'])}")
+    return " (" + "; ".join(bits) + ")"
+
+
 def compose_prompt(doc: dict, shot: dict) -> str:
     """CT-13: the keyframe prompt, assembled from the card in a fixed order (research section 4 H)."""
     cast, state = doc["cast"], scene_state(doc, shot)
@@ -342,6 +355,7 @@ def compose_prompt(doc: dict, shot: dict) -> str:
     for p in shot["characters"]:
         who = cast[p["id"]]
         text = f"{who['name'][0].upper()}{who['name'][1:]}, {who['description'].rstrip('.')}"
+        text += _identity_clause(who.get("identity"))
         if p.get("costume"):
             text += f", wearing {who['costumes'][p['costume']]}"
         if p.get("flags"):

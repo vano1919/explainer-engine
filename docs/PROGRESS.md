@@ -3785,3 +3785,9 @@ analyst decision (L10 SQ1, SQ2). No numbers. Checked before writing: no branch o
 Tests: 9 new in `tests/unit/test_continuity.py`. Not done: `compose_prompt` does not yet write the identity text into
 prompts (a prompt contract change, the lead's call); no card in `examples/` uses the new fields; the test pack with the new
 text is still NOT_RUN (needs the owner's Chrome).
+
+## 2026-11-20 — Group 1 T2: identity bible text in the keyframe prompt (prompt contract change, for the owner to see)
+
+`continuity.compose_prompt` now writes a cast member's `identity` as one clause after the verbatim description:
+`(locked: ...; anchors: ...; avoid: ...)`; `flexible` is never written. Cards without `identity` give a byte-identical
+prompt (test pins the sha256 of the example's prompts taken before the change). Test pack with the new text: NOT_RUN.

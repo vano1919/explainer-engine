@@ -262,3 +262,28 @@ def test_geography_inheritance(doc):
     assert "CT-20" not in rules(cc.check(d))                 # known ids not given: not compared
     assert "CT-20" not in rules(cc.check(d, known_geo_ids={"camp"}))
     assert "CT-20" in rules(cc.check(d, known_geo_ids={"hill"}))
+
+
+def test_identity_text_goes_into_the_prompt(doc):
+    d = _with_identity(copy.deepcopy(doc))
+    cid = d["shots"][1]["characters"][0]["id"]
+    d["cast"][cid]["identity"].update({"locked": ["square jaw", "grey eyes"], "anchors": ["scar on left cheek"],
+                                       "flexible": ["hair length"], "never": ["beard"]})
+    prompt = cc.compose_prompt(d, d["shots"][1])
+    assert "(locked: square jaw, grey eyes; anchors: scar on left cheek; avoid: beard)" in prompt
+    assert "hair length" not in prompt
+    assert d["cast"][cid]["description"] in prompt
+
+
+def test_cards_without_identity_give_the_exact_old_prompt(doc):
+    import copy as _c
+    d = _c.deepcopy(doc)
+    d["film_id"] = "owner_film_01"            # film id alone changes nothing in the prompt
+    before = [cc.compose_prompt(doc, s) for s in doc["shots"]]
+    assert [cc.compose_prompt(d, s) for s in d["shots"]] == before
+    assert all("locked:" not in p for p in before)
+    # frozen: sha256 of the example's prompts as assembled before CT-17..CT-20 (byte-identical)
+    import hashlib
+    joined = "\n".join(cc.compose_prompt(doc, s) for s in doc["shots"])
+    assert hashlib.sha256(joined.encode()).hexdigest() == \
+        "7b18c19d8790cf4ce61c865fe8eaa9eadc44a53c74678dcbe02843628941ed8c"
