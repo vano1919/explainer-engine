@@ -1,0 +1,272 @@
+{
+ "schema": "explainer.blender_scene",
+ "version": 2,
+ "scene_id": "t0b_am1",
+ "place": "no_mans_land",
+ "film_style": "1917",
+ "axis": [
+  "private",
+  "german"
+ ],
+ "fps": 24,
+ "clip_frames": 241,
+ "size": [
+  1280,
+  704
+ ],
+ "people": [
+  {
+   "id": "private",
+   "side": "british",
+   "hero_id": "british_private",
+   "track": [
+    {
+     "frame": 0,
+     "pos": [
+      -0.5,
+      6
+     ],
+     "heading": 0,
+     "pose": "stand"
+    },
+    {
+     "frame": 100,
+     "pos": [
+      -0.5,
+      11
+     ],
+     "heading": 0,
+     "pose": "stand"
+    }
+   ]
+  },
+  {
+   "id": "german",
+   "side": "german",
+   "hero_id": "german_soldier",
+   "track": [
+    {
+     "frame": 0,
+     "pos": [
+      0.5,
+      32
+     ],
+     "heading": 180,
+     "pose": "stand"
+    },
+    {
+     "frame": 168,
+     "pos": [
+      0.5,
+      19
+     ],
+     "heading": 180,
+     "pose": "stand"
+    },
+    {
+     "frame": 169,
+     "pos": [
+      0.5,
+      19
+     ],
+     "heading": 180,
+     "pose": "hands_open"
+    }
+   ]
+  }
+ ],
+ "cameras": [
+  {
+   "id": "am_v1",
+   "path": [
+    {
+     "frame": 0,
+     "pos": [
+      0.455,
+      0.584,
+      1.6
+     ],
+     "heading": 351.79,
+     "pitch": 0,
+     "lens": 28,
+     "ease": "linear"
+    },
+    {
+     "frame": 48,
+     "pos": [
+      0.284,
+      1.772,
+      1.6
+     ],
+     "heading": 351.79,
+     "pitch": 0,
+     "lens": 28
+    }
+   ]
+  },
+  {
+   "id": "am_v2",
+   "path": [
+    {
+     "frame": 48,
+     "pos": [
+      4.424,
+      7.532,
+      1.6
+     ],
+     "heading": 292.78,
+     "pitch": 0,
+     "lens": 50,
+     "ease": "linear"
+    },
+    {
+     "frame": 96,
+     "pos": [
+      3.396,
+      8.483,
+      1.6
+     ],
+     "heading": 292.78,
+     "pitch": 0,
+     "lens": 50
+    }
+   ]
+  },
+  {
+   "id": "am_v3",
+   "path": [
+    {
+     "frame": 96,
+     "pos": [
+      6.901,
+      25.7,
+      1.6
+     ],
+     "heading": 244.99,
+     "pitch": 0,
+     "lens": 28,
+     "ease": "linear"
+    },
+    {
+     "frame": 144,
+     "pos": [
+      5.549,
+      26.062,
+      1.6
+     ],
+     "heading": 244.99,
+     "pitch": 0,
+     "lens": 28
+    }
+   ]
+  },
+  {
+   "id": "am_v4",
+   "path": [
+    {
+     "frame": 144,
+     "pos": [
+      7.571,
+      12.431,
+      1.6
+     ],
+     "heading": 312.89,
+     "pitch": 0,
+     "lens": 28,
+     "ease": "linear"
+    },
+    {
+     "frame": 192,
+     "pos": [
+      7.422,
+      13.622,
+      1.6
+     ],
+     "heading": 312.89,
+     "pitch": 0,
+     "lens": 28
+    }
+   ]
+  },
+  {
+   "id": "am_v5",
+   "path": [
+    {
+     "frame": 192,
+     "pos": [
+      5.696,
+      22.0,
+      1.6
+     ],
+     "heading": 240.0,
+     "pitch": 0,
+     "lens": 50,
+     "ease": "out"
+    },
+    {
+     "frame": 222,
+     "pos": [
+      5.327,
+      22.065,
+      1.6
+     ],
+     "heading": 240.0,
+     "pitch": 0,
+     "lens": 50,
+     "ease": "linear"
+    },
+    {
+     "frame": 240,
+     "pos": [
+      5.327,
+      22.065,
+      1.6
+     ],
+     "heading": 240.0,
+     "pitch": 0,
+     "lens": 50
+    }
+   ]
+  }
+ ],
+ "cuts": [
+  {
+   "camera": "am_v1",
+   "frame_in": 0,
+   "frame_out": 48,
+   "focus": [
+    "private"
+   ]
+  },
+  {
+   "camera": "am_v2",
+   "frame_in": 48,
+   "frame_out": 96,
+   "focus": [
+    "private"
+   ]
+  },
+  {
+   "camera": "am_v3",
+   "frame_in": 96,
+   "frame_out": 144,
+   "focus": [
+    "german"
+   ]
+  },
+  {
+   "camera": "am_v4",
+   "frame_in": 144,
+   "frame_out": 192,
+   "focus": []
+  },
+  {
+   "camera": "am_v5",
+   "frame_in": 192,
+   "frame_out": 240,
+   "focus": [
+    "german"
+   ]
+  }
+ ]
+}

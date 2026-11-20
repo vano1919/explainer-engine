@@ -4,49 +4,307 @@
   "title": "Blender layout scene spec (blender_scene/1): one place, people with tracks, cameras, cuts for one 241-frame clip",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema", "version", "scene_id", "place", "fps", "clip_frames", "size", "people", "cameras", "cuts"],
+  "required": [
+    "schema",
+    "version",
+    "scene_id",
+    "place",
+    "fps",
+    "clip_frames",
+    "size",
+    "people",
+    "cameras",
+    "cuts"
+  ],
   "properties": {
-    "schema": {"const": "explainer.blender_scene"},
-    "version": {"const": 1},
-    "scene_id": {"type": "string", "pattern": "^[A-Za-z0-9_]{3,64}$"},
-    "place": {"enum": ["british_trench", "no_mans_land", "german_trench"]},
-    "fps": {"const": 24},
-    "clip_frames": {"type": "integer", "minimum": 9, "maximum": 481},
-    "size": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "integer", "minimum": 64}},
-    "new_photo": {"type": "boolean", "description": "chain (V8): this clip starts from a fresh keyframe, not the previous clip's last view"},
-    "people": {"type": "array", "minItems": 1, "items": {
-      "type": "object", "additionalProperties": false, "required": ["id", "side", "track"],
-      "properties": {
-        "id": {"type": "string", "pattern": "^[a-z][a-z0-9_]{0,31}$"},
-        "side": {"enum": ["british", "german"]},
-        "hero_id": {"type": "string", "minLength": 1},
-        "static": {"type": "boolean"},
-        "track": {"type": "array", "minItems": 1, "items": {
-          "type": "object", "additionalProperties": false, "required": ["frame", "pos", "heading"],
-          "properties": {
-            "frame": {"type": "integer", "minimum": 0},
-            "pos": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "number"}},
-            "heading": {"type": "number"},
-            "z": {"type": "number"},
-            "pose": {"enum": ["stand", "arm_up", "rifle_chest", "hands_open"]}}}}}}},
-    "cameras": {"type": "array", "minItems": 1, "items": {
-      "type": "object", "additionalProperties": false, "required": ["id", "pos", "heading", "pitch", "lens"],
-      "properties": {
-        "id": {"type": "string", "pattern": "^[a-z][a-z0-9_]{0,31}$"},
-        "pos": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}},
-        "heading": {"type": "number"},
-        "pitch": {"type": "number"},
-        "lens": {"type": "number"},
-        "move": {"type": "object", "additionalProperties": false, "description": "linear move to this pose over the cut",
-                 "properties": {
-                   "pos": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}},
-                   "heading": {"type": "number"}, "pitch": {"type": "number"}}}}}},
-    "cuts": {"type": "array", "minItems": 1, "items": {
-      "type": "object", "additionalProperties": false, "required": ["camera", "frame_in", "frame_out", "focus"],
-      "properties": {
-        "camera": {"type": "string"},
-        "frame_in": {"type": "integer", "minimum": 0},
-        "frame_out": {"type": "integer", "minimum": 1},
-        "focus": {"type": "array", "items": {"type": "string"}, "description": "people whose face must read in this view (V1)"}}}}
+    "schema": {
+      "const": "explainer.blender_scene"
+    },
+    "version": {
+      "enum": [
+        1,
+        2
+      ],
+      "description": "2 adds camera paths, film_style, long_take, axis_cross_ok and validators V11/V12; version 1 specs stay valid"
+    },
+    "scene_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_]{3,64}$"
+    },
+    "place": {
+      "enum": [
+        "british_trench",
+        "no_mans_land",
+        "german_trench"
+      ]
+    },
+    "fps": {
+      "const": 24
+    },
+    "clip_frames": {
+      "type": "integer",
+      "minimum": 9,
+      "maximum": 481
+    },
+    "size": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {
+        "type": "integer",
+        "minimum": 64
+      }
+    },
+    "new_photo": {
+      "type": "boolean",
+      "description": "chain (V8): this clip starts from a fresh keyframe, not the previous clip's last view"
+    },
+    "people": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "side",
+          "track"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]{0,31}$"
+          },
+          "side": {
+            "enum": [
+              "british",
+              "german"
+            ]
+          },
+          "hero_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "static": {
+            "type": "boolean"
+          },
+          "track": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "frame",
+                "pos",
+                "heading"
+              ],
+              "properties": {
+                "frame": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "pos": {
+                  "type": "array",
+                  "minItems": 2,
+                  "maxItems": 2,
+                  "items": {
+                    "type": "number"
+                  }
+                },
+                "heading": {
+                  "type": "number"
+                },
+                "z": {
+                  "type": "number"
+                },
+                "pose": {
+                  "enum": [
+                    "stand",
+                    "arm_up",
+                    "rifle_chest",
+                    "hands_open"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "cameras": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]{0,31}$"
+          },
+          "pos": {
+            "type": "array",
+            "minItems": 3,
+            "maxItems": 3,
+            "items": {
+              "type": "number"
+            }
+          },
+          "heading": {
+            "type": "number"
+          },
+          "pitch": {
+            "type": "number"
+          },
+          "lens": {
+            "type": "number"
+          },
+          "move": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "linear move to this pose over the cut",
+            "properties": {
+              "pos": {
+                "type": "array",
+                "minItems": 3,
+                "maxItems": 3,
+                "items": {
+                  "type": "number"
+                }
+              },
+              "heading": {
+                "type": "number"
+              },
+              "pitch": {
+                "type": "number"
+              }
+            }
+          },
+          "path": {
+            "type": "array",
+            "minItems": 2,
+            "description": "version 2: camera pose by clip frame, linear unless the key's ease says otherwise",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "frame",
+                "pos",
+                "heading",
+                "pitch",
+                "lens"
+              ],
+              "properties": {
+                "frame": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "pos": {
+                  "type": "array",
+                  "minItems": 3,
+                  "maxItems": 3,
+                  "items": {
+                    "type": "number"
+                  }
+                },
+                "heading": {
+                  "type": "number"
+                },
+                "pitch": {
+                  "type": "number"
+                },
+                "lens": {
+                  "type": "number"
+                },
+                "ease": {
+                  "enum": [
+                    "linear",
+                    "in_out",
+                    "out",
+                    "in"
+                  ],
+                  "description": "how the segment that starts at this key moves"
+                }
+              }
+            }
+          }
+        },
+        "anyOf": [
+          {
+            "required": [
+              "pos",
+              "heading",
+              "pitch",
+              "lens"
+            ]
+          },
+          {
+            "required": [
+              "path"
+            ]
+          }
+        ]
+      }
+    },
+    "cuts": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "camera",
+          "frame_in",
+          "frame_out",
+          "focus"
+        ],
+        "properties": {
+          "camera": {
+            "type": "string"
+          },
+          "frame_in": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "frame_out": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "focus": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "people whose face must read in this view (V1)"
+          },
+          "long_take": {
+            "type": "boolean",
+            "description": "declared single long shot: allowed past the 2.0 s view limit, V3 then asks the creator to look (REVIEW)"
+          },
+          "axis_cross_ok": {
+            "type": "boolean",
+            "description": "V12: this cut may switch to the other side of the 180-degree line"
+          }
+        }
+      }
+    },
+    "film_style": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_]{1,40}$",
+      "description": "name of lab/film_styles/<name>.json (camera language only: lens list, height, rhythm, V11 thresholds)"
+    },
+    "axis": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {
+        "type": "string"
+      },
+      "description": "the two people whose line is the 180-degree axis for V12 (default: the first two)"
+    }
   }
 }

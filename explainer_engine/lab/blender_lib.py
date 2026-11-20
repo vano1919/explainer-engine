@@ -92,35 +92,52 @@ def _constant_for_hides(groups: dict) -> None:
                             kp.interpolation = "CONSTANT"
 
 
+PATH_STEP = 4      # a path camera is keyed every 4 frames from the pure-Python path, so Blender == scene_spec exactly
+
+
 def add_cameras(spec: dict):
-    """One camera object per spec camera; a timeline marker bound to it switches cameras at every cut."""
+    """One camera object per spec camera; a timeline marker bound to it switches cameras at every cut.
+    A camera with a ``path`` (version 2) is keyed along that path (position, heading, pitch and lens)."""
     bpy = bb._bpy()
     sc = bpy.context.scene
     objs = {}
     for cam in spec["cameras"]:
         data = bpy.data.cameras.new(cam["id"])
-        data.lens = cam["lens"]
+        data.lens = ss.cam_start(cam)["lens"]
         data.sensor_width = ss.SENSOR_WIDTH_MM
         data.sensor_fit = "HORIZONTAL"
         obj = bpy.data.objects.new(cam["id"], data)
         sc.collection.objects.link(obj)
         objs[cam["id"]] = obj
+
+    def key(obj, st, fr, lens=False):
+        obj.location = st["pos"]
+        obj.rotation_euler = (math.radians(90 + st["pitch"]), 0, math.radians(-st["heading"]))
+        obj.keyframe_insert("location", frame=fr)
+        obj.keyframe_insert("rotation_euler", frame=fr)
+        if lens:
+            obj.data.lens = st["lens"]
+            obj.data.keyframe_insert("lens", frame=fr)
+
+    for cam in spec["cameras"]:
+        if cam.get("path"):
+            keys = sorted(k["frame"] for k in cam["path"])
+            frames = set(range(keys[0], keys[-1] + 1, PATH_STEP)) | set(keys)
+            for fr in sorted(frames):
+                key(objs[cam["id"]], ss.path_state(cam, fr), fr, lens=True)
     for cut in spec["cuts"]:
         obj = objs[cut["camera"]]
-        for fr in (cut["frame_in"], cut["frame_out"]):
-            st = ss.camera_state(spec, cut, fr)
-            obj.location = st["pos"]
-            obj.rotation_euler = (math.radians(90 + st["pitch"]), 0, math.radians(-st["heading"]))
-            obj.keyframe_insert("location", frame=fr)
-            obj.keyframe_insert("rotation_euler", frame=fr)
+        if not ss.camera_by_id(spec, cut["camera"]).get("path"):
+            for fr in (cut["frame_in"], cut["frame_out"]):
+                key(obj, ss.camera_state(spec, cut, fr), fr)
         marker = sc.timeline_markers.new(f"cut_{cut['frame_in']}", frame=cut["frame_in"])
         marker.camera = obj
     for obj in objs.values():
-        ad = obj.animation_data
-        if ad and ad.action:
-            for fc in ad.action.fcurves:
-                for kp in fc.keyframe_points:
-                    kp.interpolation = "LINEAR"
+        for ad in (obj.animation_data, obj.data.animation_data):
+            if ad and ad.action:
+                for fc in ad.action.fcurves:
+                    for kp in fc.keyframe_points:
+                        kp.interpolation = "LINEAR"
     sc.camera = objs[spec["cuts"][0]["camera"]]
     return objs
 

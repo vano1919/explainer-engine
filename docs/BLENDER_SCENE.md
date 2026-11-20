@@ -14,6 +14,8 @@ may follow; that step needs its own OR-23 plan, OR-34 audit and the creator's re
 | `explainer_engine/lab/scene_render.py` | spec -> frames -> `layout.mp4`, one PNG per view, `plan.png`, `report.json` (starts Blender itself) |
 | `explainer_engine/lab/scene_sheet.py` | one contact sheet over all clips |
 | `explainer_engine/lab/specs/t0/` | test T0: scene A (no man's land) and scene B (German trench), three chained clips each |
+| `explainer_engine/lab/film_styles/1917.json` | version 2: film style card (DRAFT, camera language only: lenses, camera height, move types, V11/V12 thresholds; no colour or light field) |
+| `explainer_engine/lab/specs/t0b/` | test T0b: `t0b_c1` (one continuous follow shot) and `t0b_am1` (5 views, each with a slow move) |
 
 ## Spec rules
 
@@ -52,3 +54,31 @@ python -m explainer_engine.lab.scene_sheet explainer_engine/lab/specs/t0 <render
 `--frames A:B` renders a chunk and skips frames that exist (RULE-R1: a long render runs in chunks and resumes). Blender 4.2 is found
 through `--blender`, `$BLENDER` or `PATH`. No GPU or GL is needed (Cycles CPU, OIDN fast denoise, 2 samples: about 2 s a frame at 1280x704
 on 4 cores).
+
+
+## Version 2: moving camera (T0b)
+
+`version: 2` adds, and version 1 specs stay valid and unchanged (they report V11/V12 as `N/A` with what the check would have said):
+
+- `cameras[].path = [{frame, pos, heading, pitch, lens, ease?}]`: pose by clip frame, linear between keys unless the key a segment
+  starts at says `ease`: `in_out`, `out` (comes to rest, the way a camera stops), `in`. Before the first key and after the last the
+  camera holds. Blender keys the camera every 4 frames from the same Python path (`PROJ` still compares it against Blender's own camera).
+- `film_style`: name of a card in `lab/film_styles/`. V5 then reads the lens list and the camera-height range from it. The card is a
+  `draft` (not source-checked, brief 2026-11-20): while `draft` is true a broken number is `REVIEW`, never silently passed; a card with
+  `draft: false` makes V11/V12 and the height range block (`FAIL`). The card has no colour or light field (a card with one is refused).
+- cut `long_take: true`: a declared single shot past the 2.0 s view limit. V3 then reports `REVIEW` (the creator's rule is broken on
+  purpose and he must look); without the declaration a long view is still `FAIL`.
+- cut `axis_cross_ok: true`, top-level `axis: [person, person]` (default: the first two people): the 180-degree line for V12.
+
+| ID | Checks (version 2 only) | Status when it breaks |
+|---|---|---|
+| V11 | at each cut, the camera's angle change around the subject (focus person) and the size class change (close/medium/wide from the subject's height share of the frame). A jump = angle below the card's `min_angle_deg` (30, the general rule, unchecked for 1917) AND no size step | card draft: REVIEW, verified card: FAIL |
+| V12a | the camera stays on one side of the line person 1 -> person 2 (within `axis_neutral_m` of the line counts as neutral) unless the incoming cut has `axis_cross_ok` | FAIL |
+| V12b | movement handover: when the leaving and the entering camera both move (> `still_speed_mps`), their velocity directions in the camera's own frame differ by at most `handoff_max_direction_deg` and the speeds by at most `handoff_max_speed_ratio`; still to moving is not a handover | card draft: REVIEW, verified card: FAIL |
+
+`report.json` gets `transitions`: per cut-to-cut transition the subject, angle change (deg), size class from/to, side of the line
+from/to, camera speed and direction leaving and entering. `plan.png` draws every camera path with an arrow and the view wedge at the
+first and last frame of the cut. V1/V2 sample every 12 frames while a camera moves.
+
+All numbers on the card other than the three in the brief (eye height 1.5-1.7 m, the T0 lens list, the 30-degree rule) are the
+engineer's placeholders so V11/V12 can run; the card's `unverified` list names each, and the creator confirms or replaces them.
