@@ -10,7 +10,7 @@ DIR = Path(__file__).resolve().parents[2] / "examples" / "maps" / "truce_labels"
 SHOTS = ["S02_SH101", "S02_SH103", "S05_SH001"]
 ALLOWED_TEXT = {
     "S02_SH101": {"August 1914"},
-    "S02_SH103": {"Flanders: lines 50 to 300 yards apart"},
+    "S02_SH103": {"Flanders: in places about 50 yards apart, elsewhere up to about 300"},
     "S05_SH001": {"Christmas 1914", "Unofficial truce, in patches"},
 }
 
