@@ -1,5 +1,5 @@
 
-"""CLI: ok | start | attempt | status | log | check | backup | backup-if-over."""
+"""CLI: ok | start | attempt | status | log | check | layers | backup | backup-if-over."""
 from __future__ import annotations
 
 import argparse
@@ -8,7 +8,7 @@ import sys
 import time
 
 from explainer_engine.core.errors import NeedsReview
-from explainer_engine.governance import load, records, status, usage
+from explainer_engine.governance import layer_gate, load, records, status, usage
 from explainer_engine.core.store import write_json_atomic
 from explainer_engine.governance import root_dir
 
@@ -34,7 +34,10 @@ def main(argv=None) -> int:
         lg.add_argument(k)
     lg.add_argument("--thread", default="")
     lg.add_argument("--note", default="")
-    sub.add_parser("check", help="all validators (config, phases, cards, log, STATUS)")
+    sub.add_parser("check", help="all validators (config, phases, cards, log, STATUS, final layer records)")
+    ly = sub.add_parser("layers", help="MS-6 layer gate: check docs/layers/<layer>.json (exit 0 PASS, 1 BLOCK, 2 NOT_RUN)")
+    ly.add_argument("--layer", help="one layer, e.g. L9; default every record")
+    ly.add_argument("--strict", action="store_true", help="refuse validator_planned targets (the wave-2 gate)")
     b = sub.add_parser("backup")
     b.add_argument("--reason", default="manual")
     b.add_argument("--no-push", action="store_true")
@@ -66,9 +69,18 @@ def main(argv=None) -> int:
                            "level": args.level, "model": args.model, "effort": args.effort, "result": args.result, "note": args.note})
     elif args.cmd == "check":
         load()
-        errs = status.check_all()
+        errs = status.check_all() + layer_gate.problems(layer_gate.check_all(root=root))
         print("\n".join(errs) or "ok")
         return 1 if errs else 0
+    elif args.cmd == "layers":
+        results = [layer_gate.check_layer(args.layer, root=root, strict=args.strict)] if args.layer \
+            else layer_gate.check_all(root=root, strict=args.strict)
+        for r in results:
+            print(f"{r.layer}: {r.status} ({r.state})")
+            for line in [*r.errors, *(f"NOT_RUN {n}" for n in r.not_run), *(f"planned {n}" for n in r.planned)]:
+                print(f"  {line}")
+        worst = layer_gate.S.rollup(r.status for r in results)
+        return {layer_gate.S.PASS: 0, layer_gate.S.NOT_RUN: 2}.get(worst, 1)
     elif args.cmd == "backup":
         print(json.dumps(usage.backup(args.reason, push=not args.no_push), ensure_ascii=False))
     elif args.cmd == "backup-if-over":

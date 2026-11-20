@@ -1,0 +1,361 @@
+"""MS-6 of the skills team plan (2026-11-20): a layer's record is checked in code, so no mandatory step can be skipped.
+
+``docs/layers/<layer>.json`` (schema ``layer_record/1``, home: docs/LAYER_GATE.md) holds, for one layer of the film pipeline:
+MS-1 the owner's requirements (each with its source) and the capabilities of every tool in the layer (each used or not, with why);
+MS-2 at least three public candidates per sub-question (url, author, stars, pinned commit, licence, monetised-channel flag);
+MS-3 the trials, each looked at, each output with a line on what was seen; MS-4 one decision per sub-question ("keep ours" only
+with a run trial that beats every candidate); MS-5 the mapping of every requirement and every used capability to a skill line or a
+rule. :func:`check_record` returns a :class:`GateResult`: BLOCK when a part is missing or wrong, NOT_RUN when the record is complete
+but a sub-question has only trials that were not run (never a pass), PASS otherwise. A ``draft`` record is reported only; a
+``final`` one carries the team lead's signature and a BLOCK in it fails ``governance check``. stdlib only."""
+from __future__ import annotations
+
+import json
+import re
+from dataclasses import dataclass, field
+from pathlib import Path
+
+from explainer_engine.core.errors import ContractError, NeedsReview
+from explainer_engine.governance import root_dir
+from explainer_engine.qa import status as S
+
+SCHEMA = "layer_record/1"
+LAYERS_DIR = Path("docs") / "layers"
+DECISION_LOG = Path("docs") / "DECISIONS_AND_OPEN_QUESTIONS.md"
+STATES = ("draft", "final")
+SOURCE_KINDS = ("message", "decision", "memory", "rule")
+USES = ("used", "not_used")
+CHOICES = ("adopt", "enrich", "keep_ours", "idea_only")
+TRIAL_STATUS = ("RUN", "NOT_RUN")
+TARGET_KINDS = ("skill_line", "validator", "validator_planned", "sourced_rule")
+MIN_CANDIDATES = 3
+
+_MSG = re.compile(r"cmsg_[A-Za-z0-9]+")
+_DEC = re.compile(r"D-\d+")
+_SHA256 = re.compile(r"[0-9a-f]{64}")
+_COMMIT = re.compile(r"[0-9a-f]{7,40}")
+_DATE = re.compile(r"\d{4}-\d{2}-\d{2}")
+
+
+@dataclass
+class GateResult:
+    layer: str
+    status: str
+    errors: list[str] = field(default_factory=list)      # "CODE: what is wrong" - the codes are listed in docs/LAYER_GATE.md
+    not_run: list[str] = field(default_factory=list)     # sub-questions without a trial that ran
+    planned: list[str] = field(default_factory=list)     # validators that are mapped but not built yet (wave 2)
+    state: str = "draft"
+
+    def to_dict(self) -> dict:
+        return {"layer": self.layer, "status": self.status, "state": self.state, "errors": self.errors,
+                "not_run": self.not_run, "planned": self.planned}
+
+
+def _text(v) -> bool:
+    return isinstance(v, str) and bool(v.strip())
+
+
+def _ids(rows, errs: list[str], what: str) -> set[str]:
+    seen: set[str] = set()
+    for r in rows:
+        i = r.get("id") if isinstance(r, dict) else None
+        if not _text(i):
+            errs.append(f"LG-DUP: a {what} has no id")
+        elif i in seen:
+            errs.append(f"LG-DUP: {what} id {i} is used twice")
+        else:
+            seen.add(i)
+    return seen
+
+
+def _rows(rec: dict, key: str) -> list[dict]:
+    v = rec.get(key)
+    return [r for r in v if isinstance(r, dict)] if isinstance(v, list) else []
+
+
+def _decision_ids(root: Path) -> set[str] | None:
+    path = root / DECISION_LOG
+    return set(_DEC.findall(path.read_text(encoding="utf-8"))) if path.exists() else None
+
+
+def _check_requirements(rec, root, errs) -> set[str]:
+    rows = _rows(rec, "requirements")
+    if not rows:
+        errs.append("MS1-REQ-NONE: the layer lists no requirement of the owner")
+    ids = _ids(rows, errs, "requirement")
+    known = _decision_ids(root)
+    for r in rows:
+        who = r.get("id", "?")
+        if not _text(r.get("text")):
+            errs.append(f"MS1-REQ-FIELD: requirement {who} has no text")
+        src = r.get("source")
+        kind, ref = (src.get("kind"), src.get("ref")) if isinstance(src, dict) else (None, None)
+        if kind not in SOURCE_KINDS or not _text(ref):
+            errs.append(f"MS1-REQ-SOURCE: requirement {who} needs a source {{kind: {'|'.join(SOURCE_KINDS)}, ref}}")
+        elif kind == "message" and not _MSG.fullmatch(ref):
+            errs.append(f"MS1-REQ-SOURCE: requirement {who}: a message source is a cmsg_ id, not {ref!r}")
+        elif kind == "decision" and not _DEC.fullmatch(ref):
+            errs.append(f"MS1-REQ-SOURCE: requirement {who}: a decision source is a D-nn id, not {ref!r}")
+        elif kind == "decision" and known is not None and ref not in known:
+            errs.append(f"MS1-REQ-SOURCE: requirement {who}: {ref} is not in the decision log")
+    return ids
+
+
+def _check_capabilities(rec, errs) -> set[str]:
+    rows = _rows(rec, "tool_capabilities")
+    if not rows:
+        errs.append("MS1-CAP-NONE: the layer lists no capability of its tools")
+    ids = _ids(rows, errs, "capability")
+    for r in rows:
+        who = r.get("id", "?")
+        if r.get("use") not in USES or not _text(r.get("reason")) or not _text(r.get("tool")) or not _text(r.get("capability")):
+            errs.append(f"MS1-CAP-FIELD: capability {who} needs tool, capability, use ({'|'.join(USES)}) and a reason")
+    return ids
+
+
+def _check_candidates(rec, sqs: dict[str, dict], errs) -> dict[str, dict]:
+    rows = _rows(rec, "candidates")
+    _ids(rows, errs, "candidate")
+    if len(rows) < MIN_CANDIDATES:
+        errs.append(f"MS2-CAND-MIN: {len(rows)} candidates in the layer, at least {MIN_CANDIDATES} are needed")
+    out: dict[str, dict] = {}
+    per: dict[str, int] = {}
+    for c in rows:
+        who = c.get("id", "?")
+        bad = []
+        url = c.get("url")
+        if not (isinstance(url, str) and url.startswith("https://")):
+            bad.append("an https url")
+        if not _text(c.get("author")):
+            bad.append("author")
+        if not _text(c.get("licence")):
+            bad.append("licence")
+        if not isinstance(c.get("monetised_ok"), bool):
+            bad.append("monetised_ok (true or false)")
+        if not _text(c.get("teaches")):
+            bad.append("teaches")
+        if not (isinstance(c.get("fit"), int) and not isinstance(c.get("fit"), bool) and 1 <= c["fit"] <= 5):
+            bad.append("fit 1-5")
+        kind = c.get("kind")
+        if kind == "repo":
+            if not (isinstance(c.get("stars"), int) and not isinstance(c.get("stars"), bool) and c["stars"] >= 0):
+                bad.append("stars")
+            if not (isinstance(c.get("commit"), str) and _COMMIT.fullmatch(c["commit"])):
+                bad.append("a pinned commit hash")
+        elif kind == "doc":
+            if not (isinstance(c.get("retrieved"), str) and _DATE.fullmatch(c["retrieved"])):
+                bad.append("retrieved date YYYY-MM-DD")
+        else:
+            bad.append("kind (repo|doc)")
+        if c.get("sub_question") not in sqs:
+            bad.append("a sub_question of the layer")
+        else:
+            per[c["sub_question"]] = per.get(c["sub_question"], 0) + 1
+        if bad:
+            errs.append(f"MS2-CAND-FIELD: candidate {who} lacks {', '.join(bad)}")
+        if _text(c.get("id")):
+            out.setdefault(c["id"], c)
+    for sid, sq in sqs.items():
+        if per.get(sid, 0) < MIN_CANDIDATES and not _text(sq.get("few_candidates_reason")):
+            errs.append(f"MS2-CAND-MIN: sub-question {sid} has {per.get(sid, 0)} candidates (at least {MIN_CANDIDATES}, "
+                        f"or a few_candidates_reason)")
+    return out
+
+
+def _check_trials(rec, sqs, errs, res: GateResult) -> dict[str, dict]:
+    rows = _rows(rec, "trials")
+    _ids(rows, errs, "trial")
+    by_id: dict[str, dict] = {}
+    ran: dict[str, int] = {}
+    seen_sq: set[str] = set()
+    for t in rows:
+        who = t.get("id", "?")
+        if _text(t.get("id")):
+            by_id.setdefault(t["id"], t)
+        sq = t.get("sub_question")
+        if sq in sqs:
+            seen_sq.add(sq)
+        st = t.get("status")
+        if st not in TRIAL_STATUS or sq not in sqs:
+            errs.append(f"MS3-TRIAL-FIELD: trial {who} needs status {'|'.join(TRIAL_STATUS)} and a sub_question of the layer")
+            continue
+        if st == "NOT_RUN":
+            if not _text(t.get("not_run_reason")):
+                errs.append(f"MS3-TRIAL-FIELD: trial {who} was not run and gives no not_run_reason")
+            continue
+        ran[sq] = ran.get(sq, 0) + 1
+        if not _text(t.get("looked_at_by")) or not _text(t.get("observation")):
+            errs.append(f"MS3-TRIAL-FIELD: trial {who} needs looked_at_by and an observation (every output is looked at)")
+        links = t.get("links")
+        if not isinstance(links, list) or not links:
+            errs.append(f"MS3-TRIAL-FIELD: trial {who} has no output links")
+            continue
+        for i, link in enumerate(links):
+            link = link if isinstance(link, dict) else {}
+            if not _text(link.get("ref")) or not _text(link.get("seen")):
+                errs.append(f"MS3-TRIAL-FIELD: trial {who} link {i} needs ref and a seen line")
+            if link.get("kind", "file") == "file" and not (isinstance(link.get("sha256"), str) and _SHA256.fullmatch(link["sha256"])):
+                errs.append(f"MS3-TRIAL-FIELD: trial {who} link {i} is a file and needs its sha256")
+    for sid in sqs:
+        if sid not in seen_sq:
+            errs.append(f"MS3-TRIAL-NONE: sub-question {sid} has no trial record (a trial run, or one with its not_run_reason)")
+        elif not ran.get(sid):
+            res.not_run.append(f"{sid}: no trial has run")
+    return by_id
+
+
+def _check_decisions(rec, sqs, cands, trials, errs) -> None:
+    rows = _rows(rec, "decisions")
+    made: dict[str, int] = {}
+    for d in rows:
+        sid = d.get("sub_question")
+        made[sid] = made.get(sid, 0) + 1
+    for sid in sqs:
+        if not made.get(sid):
+            errs.append(f"MS4-DEC-MISSING: sub-question {sid} has no decision")
+    for d in rows:
+        sid, choice = d.get("sub_question"), d.get("choice")
+        who = f"decision for {sid}"
+        if sid not in sqs or made[sid] > 1:
+            errs.append(f"MS4-DEC-FIELD: {who}: the sub-question is unknown or decided twice")
+            continue
+        if choice not in CHOICES or not _text(d.get("reason")):
+            errs.append(f"MS4-DEC-FIELD: {who} needs a choice ({'|'.join(CHOICES)}) and a reason")
+            continue
+        ev = d.get("evidence") or []
+        for tid in ev:
+            if tid not in trials:
+                errs.append(f"MS4-DEC-FIELD: {who}: evidence {tid} names no trial")
+        if choice == "keep_ours":
+            mine = {c for c, row in cands.items() if row.get("sub_question") == sid}
+            ran = [tid for tid in ev if tid in trials and trials[tid].get("status") == "RUN" and trials[tid].get("sub_question") == sid]
+            if not ran or not mine <= set(d.get("beats") or []):
+                errs.append(f"MS4-KEEP-EVIDENCE: {who}: keeping ours needs a run trial of this sub-question as evidence and "
+                            f"beats listing every candidate ({', '.join(sorted(mine))})")
+            continue
+        picked = d.get("candidate_ids") or []
+        if not picked or any(c not in cands or cands[c].get("sub_question") != sid for c in picked):
+            errs.append(f"MS4-DEC-FIELD: {who}: {choice} names candidates of this sub-question that exist")
+            continue
+        want = choice == "idea_only"
+        if any(cands[c].get("monetised_ok") is want for c in picked):
+            errs.append(f"MS4-LICENCE: {who}: {choice} {'needs a candidate whose licence does not allow a monetised channel' if want else 'copies a candidate whose licence does not allow a monetised channel (idea_only is the choice for it)'}")
+
+
+def _check_target(t, root: Path, res: GateResult, strict: bool) -> str | None:
+    """None when the mapping target is good, else what is wrong."""
+    t = t if isinstance(t, dict) else {}
+    kind, ref = t.get("kind"), t.get("ref")
+    if kind not in TARGET_KINDS or not _text(ref):
+        return f"target needs kind ({'|'.join(TARGET_KINDS)}) and ref"
+    if kind == "skill_line":
+        path, _, line = ref.rpartition(":")
+        if not path or not line.isdigit() or int(line) < 1:
+            return f"skill_line {ref!r} must be path:line"
+        file = (root / path).resolve()
+        if root.resolve() not in file.parents or not file.is_file():
+            return f"skill_line {ref!r}: the file is not inside the repo"
+        lines = file.read_text(encoding="utf-8").splitlines()
+        if int(line) > len(lines) or not lines[int(line) - 1].strip():
+            return f"skill_line {ref!r}: line {line} does not exist or is blank"
+    elif kind == "validator":
+        from explainer_engine import validators
+        if ref not in validators.rule_index():
+            return f"validator {ref!r} is in no validators/ module RULE_IDS"
+    elif kind == "validator_planned":
+        if strict:
+            return f"validator_planned {ref!r} is refused in strict mode (build it first)"
+        if not isinstance(t.get("wave"), int):
+            return f"validator_planned {ref!r} needs the wave that builds it"
+        res.planned.append(f"{ref} (wave {t['wave']})")
+    elif kind == "sourced_rule":
+        from explainer_engine.standards import sourced_rules as SR
+        try:
+            SR.rule(ref)
+        except KeyError:
+            return f"sourced rule {ref!r} is not in standards/sourced_rules.json"
+    return None
+
+
+def _check_mapping(rec, req_ids, cap_rows, root, errs, res, strict) -> None:
+    rows = _rows(rec, "mapping")
+    need = set(req_ids) | {c["id"] for c in cap_rows if c.get("use") == "used" and _text(c.get("id"))}
+    known, mapped = need, set()
+    for m in rows:
+        who = m.get("requirement")
+        if who not in known:
+            errs.append(f"MS5-MAP-TARGET: mapping names {who!r}, which is no requirement or used capability of the layer")
+            continue
+        bad = _check_target(m.get("target"), root, res, strict)
+        if bad:
+            errs.append(f"MS5-MAP-TARGET: {who}: {bad}")
+        else:
+            mapped.add(who)
+    for who in sorted(need - mapped):
+        errs.append(f"MS5-MAP-MISSING: {who} is not mapped to a skill line or a rule")
+
+
+def check_record(rec, *, root=None, strict: bool = False, layer: str | None = None) -> GateResult:
+    """Check one record dict. ``strict`` also refuses ``validator_planned`` targets (the wave-2 gate)."""
+    root = root_dir(root)
+    errs: list[str] = []
+    res = GateResult(layer or str(rec.get("layer") if isinstance(rec, dict) else "?"), S.BLOCK)
+    if not isinstance(rec, dict):
+        res.errors = ["LG-SCHEMA: the record is not an object"]
+        return res
+    res.state = rec.get("state") if rec.get("state") in STATES else "draft"
+    if rec.get("schema") != SCHEMA or not _text(rec.get("layer")) or not _text(rec.get("name")) or rec.get("state") not in STATES \
+            or not (isinstance(rec.get("group"), int) and 1 <= rec["group"] <= 10):
+        errs.append(f"LG-SCHEMA: needs schema {SCHEMA}, layer, name, group 1-10 and state {'|'.join(STATES)}")
+    if layer and rec.get("layer") != layer:
+        errs.append(f"LG-SCHEMA: the file is for {layer} but the record says {rec.get('layer')!r}")
+    if rec.get("state") == "final" and not (_text(rec.get("signed_by")) and _text(rec.get("signed_at"))):
+        errs.append("LG-SIGN: a final record carries the team lead's signed_by and signed_at")
+    sq_rows = _rows(rec, "sub_questions")
+    sq_ids = _ids(sq_rows, errs, "sub-question")
+    if not sq_ids or any(not _text(s.get("text")) for s in sq_rows):
+        errs.append("MS2-SUBQ: the layer names its sub-questions, each with an id and text")
+    sqs = {s["id"]: s for s in sq_rows if _text(s.get("id"))}
+    req_ids = _check_requirements(rec, root, errs)
+    _check_capabilities(rec, errs)
+    cands = _check_candidates(rec, sqs, errs)
+    trials = _check_trials(rec, sqs, errs, res)
+    _check_decisions(rec, sqs, cands, trials, errs)
+    _check_mapping(rec, req_ids, _rows(rec, "tool_capabilities"), root, errs, res, strict)
+    res.errors = errs
+    res.status = S.BLOCK if errs else (S.NOT_RUN if res.not_run else S.PASS)
+    return res
+
+
+def check_layer(layer: str, *, root=None, strict: bool = False) -> GateResult:
+    path = root_dir(root) / LAYERS_DIR / f"{layer}.json"
+    if not path.is_file():
+        return GateResult(layer, S.BLOCK, [f"LG-SCHEMA: there is no record {LAYERS_DIR / (layer + '.json')}"])
+    try:
+        rec = json.loads(path.read_text(encoding="utf-8"))
+    except ValueError as e:
+        return GateResult(layer, S.BLOCK, [f"LG-SCHEMA: {path.name} is not JSON ({e})"])
+    return check_record(rec, root=root, strict=strict, layer=layer)
+
+
+def check_all(*, root=None, strict: bool = False) -> list[GateResult]:
+    folder = root_dir(root) / LAYERS_DIR
+    return [check_layer(p.stem, root=root, strict=strict) for p in sorted(folder.glob("*.json"))] if folder.is_dir() else []
+
+
+def problems(results: list[GateResult]) -> list[str]:
+    """What fails ``governance check``: the BLOCKs of final records. Drafts and NOT_RUN are reported, not failing."""
+    return [f"layer {r.layer}: {e}" for r in results if r.state == "final" and r.status == S.BLOCK for e in r.errors]
+
+
+def require_pass(layer: str, *, root=None, strict: bool = False) -> GateResult:
+    """The step before a layer is vendored or run (MS-5): only a final, signed, PASS record goes on. A BLOCK raises ContractError,
+    a draft raises ContractError, a NOT_RUN raises NeedsReview (a trial still has to run)."""
+    res = check_layer(layer, root=root, strict=strict)
+    if res.status == S.BLOCK:
+        raise ContractError(f"layer {layer} is BLOCK: " + "; ".join(res.errors))
+    if res.state != "final":
+        raise ContractError(f"layer {layer} is a draft: the team lead signs it final first")
+    if res.status != S.PASS:
+        raise NeedsReview(f"layer {layer} is {res.status}: " + "; ".join(res.not_run))
+    return res
