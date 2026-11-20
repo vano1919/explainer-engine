@@ -30,7 +30,9 @@ def _norm(text: str) -> str:
 def expected_items(spec: dict[str, Any], frame: int) -> dict[str, str]:
     """Text the shot shows at `frame`, by item name."""
     state = schedule(spec, frame)
-    items = {"counter": _norm(f"{state['counter']:,}"), "label": _norm(spec["counter"]["label"])}
+    items: dict[str, str] = {}
+    if state["counter"] is not None:
+        items = {"counter": _norm(f"{state['counter']:,}"), "label": _norm(spec["counter"]["label"])}
     if state["date"]:
         items["date"] = _norm(state["date"])
     for town in state["towns_visible"]:

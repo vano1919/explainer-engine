@@ -3914,6 +3914,9 @@ No number is written in any of them; tests `test_first_shot.py`, `test_opening_d
 - HF `episode1/out/narration.wav` (1184.7 s) and `read.wav` (1159.2 s), ffmpeg `ebur128`: narration raw 7.8 LU (over BP-59's 7.0), after `level_voice` 4.4 LU; read raw 7.7, levelled 4.3. Integrated -30.2 -> -29.7 and -30.1 -> -29.6 LUFS. So the 7.8 -> 4.4 claim holds on both tracks that episode1 has; no other narration track was found. The shipped mix uses the levelled stem (`production/assemble.py` calls `level_voice` in `build_audio`). Not measured: the stem inside the finished mix (BP-51) and the filtered `voice` after `acoustics.highpass`.
 - New `tests/unit/test_level_lra.py`: a seeded synthetic swinging read is over the limit raw (FAIL by `stem_lra_verdict`) and under it after `level_voice` (PASS); this check was missing (only the verdict function and the loudnorm string were tested). No code changed. Cost $0.
 
+## 2026-11-20 — Truce 1914 map shots: sourced facts, first real shot S05_SH101 with `truce_cold`
+- Of the 5 map shots only the counter (S05_SH101, C-03) and the date labels (C-05, C-06) are tied to claims; the arrow route, the 10 front-line places, the Flanders glow and the 4 pulse places have none (list for the researcher on HF `truce_S05_SH101/`). Only S05_SH101 rendered (6.25 s, 2560x1440, `truce_cold`, HUD OCR 45/45 on 15 frames). Spec + test: `examples/maps/truce_S05_SH101/`, `tests/unit/test_maps_truce_s05_sh101.py` (3).
+
 
 ## 2026-11-20 — Boundary tests that kill the ten surviving mutants of seven validators; `audio_present` gets its own test file
 
@@ -3928,3 +3931,15 @@ one and two, video-only, unreadable file, missing ffprobe, the `-select_streams 
 - `auth` / `auth-finish` write `tools/youtube/token.b64.txt` only with `--export-env` (the printed text names it only then); `load_token` logs one line naming the source (session file or `YOUTUBE_TOKEN_B64`), never the token; the env variable and its code path stay (owner card 2026-11-20 21:01).
 - Tests: `tests/unit/test_youtube_auth_hygiene.py` (flag on/off, source logged, no tracked `tools/` token or `pending.json`, `.gitignore` covers `tools/youtube/`).
 - Not done: the registry exception row to OR-P03 (needs the creator's typed word); the real sign-in flow was not run.
+
+## 2026-11-20 — G-01 breath and embers: module (Gemini, intake) and its tests by a separate chat
+
+`production/fx25d/breath_embers.py` (breath vapour and rising embers for the 2.5D lane, written by Gemini, taken in by the intake tool) with
+`tests/unit/test_breath_embers.py`: 42 tests written from the rules of the G-01 TASK (interface, limits, puff timing, smoothness, ember life,
+occlusion, far pixels, determinism, wind, composite, speed on 1280x704) by a separate chat before the module's text was read. A mutation
+spot-check of 24 hand-made mutations: 23 caught, 1 equivalent survivor (the breath clip at 0.35 is redundant, the union formula already
+caps it). Two edge notes, not defects at the pipeline's 1280x704 frame: the ember size is in pixels (a quarter-size frame exceeds the 2 %
+cover rule), and the plume has an 8 px floor (`max(8.0, size_share * width)`).
+## 2026-11-20 — Map spec: `"counter": null`; Truce S05_SH101 with the "Flanders" label; S02_SH102 sourced part
+- `maplibre_spec`: `"counter": null` = no counter (key still required, a forgotten key is still reported); schedule returns None, page hides the box, OCR expects no counter text. `tests/unit/test_maps_counter_null.py` (5).
+- S05_SH101 now shows the region label "Flanders" (C-07). S02_SH102 rendered with only its sourced part (date chip "December 1914" C-06, a straight line between the two sourced end points, no intermediate places, no counter): the straight line is schematic and visibly NOT the real front, so it stays on HF only and is not in the repo.
