@@ -250,12 +250,12 @@ def test_far_flakes_drawn_over_the_soldiers_fail(tmp_path):
     assert r["status"] == "FAIL" and "does not hide them" in r["detail"] and r["value"] > V.FAR_OVER_FG_MAX, r
 
 
-def test_a_declared_particle_layer_without_its_depth_map_is_not_proven(tmp_path):
+def test_a_declared_particle_layer_without_its_depth_map_fails(tmp_path):                    # lead's ruling 2026-11-20: declaring nothing true is a FAIL, never a NOT_RUN
     p = alive_world_clip(tmp_path / "nodepth.mp4")
     zones_json(tmp_path, "nodepth", ZONES, {"particles": {"far": "far.mp4"}})
     clip(tmp_path / "far.mp4", far_flakes(3.0, False))
     r = V.living_motion(p)
-    assert r["status"] == "NOT_RUN" and "occlusion not proven" in r["detail"], r
+    assert r["status"] == "FAIL" and "depth map is missing" in r["detail"], r
 
 
 def test_the_thresholds_are_read_from_bp_215():
@@ -416,3 +416,336 @@ def test_the_pair_file_adapter(tmp_path, monkeypatch):
 def test_the_floor_is_read_from_sourced_rules():
     from explainer_engine.standards import sourced_rules as SR
     assert V.FACE_IOU_MIN == SR.T("BP-214", "face_iou_min") == 0.85 and SR.rule("BP-214")["status"] == "hypothesis"
+
+
+# ---- OR-V20: the living inventory of a shot-direction file (G-INV, G-BAL, G-WX) --------------------------------------------------------
+
+def _direction(tmp_path, d, name="shot.json"):
+    p = tmp_path / name
+    p.write_text(json.dumps(d), encoding="utf-8")
+    return p
+
+
+def _base_direction(duration_s=263 / 24):
+    import copy
+    from test_direction import BASE
+    return dict(copy.deepcopy(BASE), duration_s=duration_s)
+
+
+def test_a_compliant_shot_direction_passes_the_living_inventory(tmp_path):
+    r = V.living_inventory(_direction(tmp_path, _base_direction()))
+    assert r["status"] == "PASS" and r["value"] == 0 and "balance" in r["detail"], r
+
+
+def test_an_inventory_with_an_element_left_frozen_without_a_reason_fails(tmp_path):     # the negative test of OR-V20
+    d = _base_direction()
+    d["seen"]["living"][1].update(decision="skip", effects=[])                          # the smoke is left frozen, no reason
+    r = V.living_inventory(_direction(tmp_path, d))
+    assert r["status"] == "FAIL" and "without a reason" in r["detail"], r
+
+
+def test_a_missing_inventory_and_snow_without_the_scene_fail_and_a_thin_balance_is_only_listed(tmp_path):
+    d = _base_direction()
+    del d["seen"]["living"]
+    assert V.living_inventory(_direction(tmp_path, d, "a.json"))["status"] == "FAIL"
+    d = _base_direction()
+    d["tracks"].append({"track": "atmosphere", "op": "snow", "renderer": "directed25d", "params": {}, "id": "fx_snow"})
+    r = V.living_inventory(_direction(tmp_path, d, "b.json"))
+    assert r["status"] == "FAIL" and "scene's weather" in r["detail"], r
+    d = _base_direction()
+    d["seen"]["living"] = d["seen"]["living"][:2]                                         # only the flame and its smoke live
+    d["tracks"] = [t for t in d["tracks"] if t.get("id") not in ("fx_mist", "fx_sky")]
+    r = V.living_inventory(_direction(tmp_path, d, "c.json"))                           # since the owner's 2026-11-15 Decision 2 the floor is a REVIEW
+    assert r["status"] == "PASS" and "REVIEW: LP-08" in r["detail"], r                    # hint, never a FAIL: it is listed, not failed
+
+
+def test_a_balance_that_cannot_be_measured_is_not_run_and_a_foreign_file_is_not_run(tmp_path):
+    d = _base_direction()
+    del d["duration_s"]
+    r = V.living_inventory(_direction(tmp_path, d, "nodur.json"))
+    assert r["status"] == "NOT_RUN" and "duration_s" in r["detail"], r
+    assert V.living_inventory(_direction(tmp_path, {"zones": []}, "zones.json"))["status"] == "NOT_RUN"
+    bad = tmp_path / "broken.json"
+    bad.write_text("{not json", encoding="utf-8")
+    with pytest.raises(ValueError):
+        V.living_inventory(bad)
+
+
+def test_the_living_inventory_declares_its_kind_and_the_command_line_runs_it(tmp_path, capsys):
+    assert V.living_inventory.kinds == (".json",)
+    p = _direction(tmp_path, _base_direction())
+    assert V.main(["living_inventory", str(p)]) == 0
+    assert "PASS" in capsys.readouterr().out
+
+
+# ---- OR-V26: frame change per second against the reference (3.6-12.2 %/s) --------------------------------------------------------------
+
+def test_a_moving_world_changes_the_frame_within_the_reference_and_passes(tmp_path):
+    r = V.change_per_second(smoke_clip(tmp_path / "ok.mp4"))
+    assert r["status"] == "PASS" and r["value"] >= LV.CHANGE_FLOOR and "reference 3.6-12.2" in r["detail"], r
+
+
+def test_a_nearly_still_photo_changes_under_the_floor_and_fails(tmp_path):                  # the negative test of OR-V26
+    r = V.change_per_second(fire_only_clip(tmp_path / "bad.mp4"))
+    assert r["status"] == "FAIL" and r["value"] < LV.CHANGE_FLOOR and "floor 3.6" in r["detail"], r
+
+
+def test_the_reference_change_needs_opencv_and_a_second_of_frames(tmp_path, monkeypatch):
+    assert V.change_per_second(smoke_clip(tmp_path / "short.mp4", n=0.5))["status"] == "NOT_RUN"
+    monkeypatch.setattr(V, "_cv2", lambda: None)
+    assert V.change_per_second(smoke_clip(tmp_path / "nocv.mp4"))["status"] == "NOT_RUN"
+    assert V.change_per_second.kinds == V.living_motion.kinds
+
+
+# ---- OR-V21: a visible flame is never frozen (flow in the fire zone, every one-second window) ------------------------------------------
+
+def flame_stops_clip(path, n=4.0, stop_s=2.0):
+    """The violation: smoke and clouds move all the time, the flame moves for ``stop_s`` seconds and then stands (a world that is alive around it)."""
+    bg, tex = np.tile(background(), (1, 2)), wide_texture(2)
+    sky, smoke, fire = (slice(0, 40), slice(0, W)), (slice(60, 200), slice(60, 260)), (slice(200, 260), slice(300, 400))
+    frames = []
+    for i in range(seconds(n)):
+        f = bg[:, :W].copy()
+        for area, speed in ((sky, 0.5), (smoke, 0.7), (fire, 1.5)):
+            sh = int(round(speed * (min(i, seconds(stop_s)) if area is fire else i))) % 300
+            f[area] = tex[area[0], area[1].start + sh:area[1].stop + sh]
+        frames.append(f)
+    return clip(path, frames)
+
+
+def test_a_flame_that_moves_in_every_second_passes_with_its_quietest_window(tmp_path):
+    zones_json(tmp_path, "ok", ZONES)
+    r = V.flame_never_frozen(alive_world_clip(tmp_path / "ok.mp4"))
+    assert r["status"] == "PASS" and r["value"] >= V.FIRE_WINDOW_MIN and "quietest window" in r["detail"], r
+
+
+def test_a_flame_that_stands_for_a_second_fails_by_zone_and_second(tmp_path):                 # the negative test of OR-V21
+    zones_json(tmp_path, "bad", ZONES)
+    clip_path = flame_stops_clip(tmp_path / "bad.mp4")
+    r = V.flame_never_frozen(clip_path)
+    assert r["status"] == "FAIL" and "fire from 2 s" in r["detail"], r
+    assert V.living_motion(clip_path)["status"] == "PASS"                                  # the whole-clip median cannot see it: that is why this check exists
+
+
+def test_a_flame_that_is_not_located_or_not_measurable_is_not_run(tmp_path, monkeypatch):
+    zones_json(tmp_path, "nofire", [z for z in ZONES if z[1] != "fire"])
+    r = V.flame_never_frozen(alive_world_clip(tmp_path / "nofire.mp4"))
+    assert r["status"] == "NOT_RUN" and "no zone of kind fire" in r["detail"], r
+    zones_json(tmp_path, "short", ZONES)
+    assert V.flame_never_frozen(alive_world_clip(tmp_path / "short.mp4", n=0.5))["status"] == "NOT_RUN"
+    monkeypatch.setattr(V, "_cv2", lambda: None)
+    assert V.flame_never_frozen(alive_world_clip(tmp_path / "nofire.mp4"))["status"] == "NOT_RUN"
+    assert V.flame_never_frozen.kinds == V.living_motion.kinds and V.FIRE_WINDOW_MIN == 5.0
+
+
+# ---- OR-V29 / OR-V51: every choice of the director carries a reason, no effect is typed by hand ----------------------------------------
+
+def _reasoned_direction():
+    d = _base_direction()
+    for e in d["seen"]["living"]:
+        e["why"] = "P1: the words name it and it is not a dot"
+    return d
+
+
+def test_a_direction_where_every_choice_carries_a_reason_passes(tmp_path):
+    r = V.director_reasons(_direction(tmp_path, _reasoned_direction()))
+    assert r["status"] == "PASS" and r["value"] == 0 and "carry a reason" in r["detail"], r
+
+
+def test_a_choice_without_a_reason_or_an_effect_typed_by_hand_fails(tmp_path):              # the negative test of OR-V29 / OR-V51
+    d = _reasoned_direction()
+    d["seen"]["living"][0]["why"] = " "
+    r = V.director_reasons(_direction(tmp_path, d, "a.json"))
+    assert r["status"] == "FAIL" and "living brazier" in r["detail"] and "no why" in r["detail"], r
+    d = _reasoned_direction()
+    d["tracks"].append({"track": "atmosphere", "op": "dust", "renderer": "directed25d", "params": {}, "id": "fx_typed"})
+    r = V.director_reasons(_direction(tmp_path, d, "b.json"))
+    assert r["status"] == "FAIL" and "fx_typed" in r["detail"] and "typed by hand" in r["detail"], r
+    d = _reasoned_direction()
+    d["sound"] = {"events": [{"class": "fire_crackle", "why": ""}]}
+    assert V.director_reasons(_direction(tmp_path, d, "c.json"))["status"] == "FAIL"
+
+
+def test_the_reason_check_says_not_run_for_a_foreign_file_and_fails_effects_without_an_inventory(tmp_path):
+    assert V.director_reasons(_direction(tmp_path, {"zones": []}, "z.json"))["status"] == "NOT_RUN"
+    d = _reasoned_direction()
+    del d["seen"]["living"]
+    assert V.director_reasons(_direction(tmp_path, d, "n.json"))["status"] == "FAIL"
+    d["tracks"] = [t for t in d["tracks"] if t.get("track") in ("camera", "audio")]
+    assert V.director_reasons(_direction(tmp_path, d, "m.json"))["status"] == "NOT_RUN"
+    assert V.director_reasons.kinds == (".json",)
+
+
+def test_a_file_written_by_the_directors_own_code_passes_the_reason_check_and_the_inventory(tmp_path):
+    from test_living_director import FACES_PX, SEEN, SPINE, _dark
+    from explainer_engine.production import living_director as LD
+    d = LD.direct(SEEN, SPINE, 72, 24.0, _dark(), FACES_PX)
+    d["duration_s"] = 72 / 24.0
+    p = _direction(tmp_path, d, "directed.json")
+    r = V.director_reasons(p)
+    assert r["status"] == "PASS", r                                                         # the claim of the docstring: the director's writer passes it
+    assert V.living_inventory(p)["status"] in ("PASS", "NOT_RUN"), V.living_inventory(p)
+
+
+# ---- OR-V23: the weather is decided by the director, once, with a written reason ---------------------------------------------------
+
+def _snowy_direction(why):
+    d = _base_direction()
+    d["scene"] = {"weather": ["snow"], "surroundings": "a muddy trench"}
+    d["weather"] = [{"weather": "snow", "in": False, "decided_by": "1 open_sky", "why": why}]
+    return d
+
+
+def test_a_scene_weather_the_director_decided_with_a_reason_passes_the_inventory(tmp_path):
+    r = V.living_inventory(_direction(tmp_path, _snowy_direction("inside the dugout, the sky is shut"), "w1.json"))
+    assert r["status"] == "PASS", r
+
+
+def test_a_scene_weather_left_for_someone_to_ask_without_a_decision_or_reason_fails_the_inventory(tmp_path):   # the negative test of OR-V23
+    r = V.living_inventory(_direction(tmp_path, _snowy_direction(""), "w2.json"))
+    assert r["status"] == "FAIL" and "without a reason" in r["detail"], r
+    d = _snowy_direction("x")
+    d["weather"][0]["decided_by"] = "ask the owner"
+    r = V.living_inventory(_direction(tmp_path, d, "w3.json"))
+    assert r["status"] == "FAIL" and "decided_by" in r["detail"], r
+
+
+# ---- OR-V72: what the photo and the words name must be in the inventory with an effect or a reason -------------------------------------
+
+def test_every_named_element_is_in_the_inventory_with_an_effect_or_a_reason_and_passes(tmp_path):
+    d = _base_direction()
+    d["seen"]["what"] += ", barbed wire along the parapet"
+    d["seen"]["living"].append({"id": "wire", "kind": "wire", "where": [0.1, 0.4], "decision": "skip", "why": "a thin wire, the cut-out would smear it",
+                                "area_pct": 1, "text": 0, "focus": 0, "quality": 0, "cost": 2})
+    r = V.living_inventory(_direction(tmp_path, d, "v72a.json"))
+    assert r["status"] == "PASS", r
+
+
+def test_a_named_element_missing_from_the_inventory_fails_it(tmp_path):                       # the negative test of OR-V72
+    d = _base_direction()
+    d["seen"]["what"] += ", barbed wire along the parapet"                                    # the photo shows wire, the inventory has none
+    r = V.living_inventory(_direction(tmp_path, d, "v72b.json"))
+    assert r["status"] == "FAIL" and "names wire" in r["detail"], r
+
+
+# ---- OR-V25: body motion is LTX's, not 2.5D's (LP-02) ----------------------------------------------------------------------------------
+
+def test_a_plan_that_leaves_the_bodies_to_ltx_passes_the_body_motion_check(tmp_path):
+    d = _base_direction()
+    d["seen"]["living"].append({"id": "lips", "kind": "body", "where": [0.4, 0.3], "decision": "skip", "why": "LP-02: the words need the lips to move: LTX",
+                                "body_motion": True, "area_pct": 1, "text": 2, "focus": 2, "quality": 2, "cost": 2})
+    r = V.no_body_motion_in_25d(_direction(tmp_path, d, "ok.json"))
+    assert r["status"] == "PASS" and "left to LTX: lips" in r["detail"], r
+    assert V.no_body_motion_in_25d(_direction(tmp_path, _base_direction(), "plain.json"))["status"] == "PASS"
+
+
+def test_a_body_swayed_or_animated_in_2_5d_fails_the_body_motion_check(tmp_path):            # the negative test of OR-V25
+    d = _base_direction()
+    d["tracks"].append({"track": "subject", "op": "subject_sway", "renderer": "directed25d", "params": {}, "id": "fx_sway"})
+    r = V.no_body_motion_in_25d(_direction(tmp_path, d, "a.json"))
+    assert r["status"] == "FAIL" and "sways the subject" in r["detail"], r
+    d = _base_direction()
+    d["seen"]["living"].append({"id": "hands", "kind": "body", "where": [0.5, 0.5], "decision": "animate", "effects": ["fx_fire"], "body_motion": True})
+    r = V.no_body_motion_in_25d(_direction(tmp_path, d, "b.json"))
+    assert r["status"] == "FAIL" and "hands" in r["detail"], r
+    assert V.no_body_motion_in_25d(_direction(tmp_path, {"zones": []}, "z.json"))["status"] == "NOT_RUN" and V.no_body_motion_in_25d.kinds == (".json",)
+
+
+# ---- OR-V19b: wind moves cloth, hair and grass (zone kind "wind") -------------------------------------------------------------------
+
+def grass_clip(path, sways=True, n=3.0):
+    """A still camera; smoke drifts (the world is alive elsewhere); a band of grass along the bottom sways sideways, or stands dead."""
+    bg, tex = np.tile(background(), (1, 2)), wide_texture(2)
+    smoke = (slice(60, 160), slice(60, 260))
+    frames = []
+    for i in range(seconds(n)):
+        f = bg[:, :W].copy()
+        sh = int(round(0.7 * i)) % 300
+        f[smoke] = tex[smoke[0], smoke[1].start + sh:smoke[1].stop + sh]
+        if sways:
+            for r in range(200, H):
+                f[r] = np.roll(bg[r, :W], int(4 * np.sin(2 * np.pi * (i / FPS * 1.5 + r / 20))))
+        frames.append(f)
+    return clip(path, frames)
+
+
+GRASS = [("grass", "wind", (0, 200, 480, 270))]
+
+
+def test_wind_that_sways_a_band_of_grass_in_its_wind_zone_passes(tmp_path):
+    zones_json(tmp_path, "sway", GRASS)
+    r = V.living_motion(grass_clip(tmp_path / "sway.mp4"))
+    assert r["status"] == "PASS" and "grass " in r["detail"] and r["value"] >= V.ZONE_COVER_MIN, r
+
+
+def test_a_wind_zone_over_grass_that_stands_dead_fails_by_name(tmp_path):                    # the negative test of OR-V19b
+    zones_json(tmp_path, "dead", GRASS)
+    r = V.living_motion(grass_clip(tmp_path / "dead.mp4", sways=False))
+    assert r["status"] == "FAIL" and "grass zone" in r["detail"] and "G-LIVE-3" in r["detail"], r
+    assert V.ZONE_SPEED["wind"] == 2.0
+
+
+# ---- OR-V19c: snow falls with depth, near flakes larger and faster than far ones -------------------------------------------------------
+
+def band_matte(n, flakes, size, px_per_s, seed, x_lo=W // 2):
+    rng = np.random.default_rng(seed)
+    x0, y0 = rng.integers(x_lo, W - size, flakes), rng.integers(0, H, flakes)
+    out = []
+    for i in range(seconds(n)):
+        m = np.zeros((H, W), np.float32)
+        for x, y in zip(x0, (y0 + px_per_s * i / FPS) % (H - size)):
+            m[int(y):int(y) + size, x:x + size] = 255
+        out.append(m)
+    return out
+
+
+def depth_case(tmp_path, near_size, near_speed):
+    """The alive world with a far band (2 px flakes, 20 px/s) and a near band over the far half; the soldiers' half is the depth map's foreground."""
+    p = alive_world_clip(tmp_path / "snow.mp4")
+    clip(tmp_path / "far.mp4", band_matte(3.0, 160, 2, 20, 5))
+    clip(tmp_path / "near.mp4", band_matte(3.0, 60, near_size, near_speed, 6))
+    depth = np.zeros((H, W), np.uint8)
+    depth[:, :W // 2], depth[:, W // 2:] = 230, 40
+    Image.fromarray(depth).save(tmp_path / "depth.png")
+    zones_json(tmp_path, "snow", ZONES, {"particles": {"far": "far.mp4", "near": "near.mp4"}, "depth": "depth.png"})
+    return p
+
+
+def test_near_flakes_larger_and_faster_than_far_ones_pass_with_their_ratios(tmp_path):
+    r = V.living_motion(depth_case(tmp_path, near_size=5, near_speed=90))
+    assert r["status"] == "PASS" and "near flakes" in r["detail"] and "x the size" in r["detail"], r
+
+
+def test_snow_whose_near_and_far_flakes_are_alike_has_no_depth_and_fails(tmp_path):         # the negative test of OR-V19c
+    r = V.living_motion(depth_case(tmp_path, near_size=2, near_speed=20))
+    assert r["status"] == "FAIL" and "snow has no depth" in r["detail"], r
+    assert V.NEAR_FAR_MIN == 1.2
+
+
+def test_snow_with_a_dense_layer_and_no_zones_is_a_fail_not_a_not_run(tmp_path):
+    snow, _ = snow_frames(3.0)
+    r = V.living_motion(clip(tmp_path / "snowonly.mp4", snow))
+    assert r["status"] == "FAIL", r                                                           # lead's ruling 2026-11-20: a lazy generator picks that route
+
+
+# ---- OR-V19e: a camera move alone is not alive (the cheap whole-frame row, on the delivered clip) ---------------------------------------
+
+def test_a_drifting_camera_over_a_living_world_stays_alive_beyond_the_camera(tmp_path):
+    r = V.alive_beyond_camera(alive_world_clip(tmp_path / "alive.mp4", camera_px=1))
+    assert r["status"] == "PASS" and r["value"] >= LV.LOCAL_FLOOR, r
+
+
+def test_a_camera_move_over_a_dead_picture_fails_alive_beyond_the_camera(tmp_path):         # the negative test of OR-V19e
+    r = V.alive_beyond_camera(camera_move_clip(tmp_path / "pan.mp4"))
+    assert r["status"] == "FAIL" and "camera move alone" in r["detail"], r
+
+
+def test_a_fade_and_grain_are_not_a_living_world_for_alive_beyond_the_camera(tmp_path, monkeypatch):
+    bg = background()
+    fade = [bg * (0.4 + 0.6 * i / seconds(3)) for i in range(seconds(3))]
+    assert V.alive_beyond_camera(clip(tmp_path / "fade.mp4", fade))["status"] == "FAIL"
+    rng = np.random.default_rng(7)
+    assert V.alive_beyond_camera(clip(tmp_path / "grain.mp4", [bg + rng.normal(0, 25, bg.shape) for _ in range(seconds(3))]))["status"] == "FAIL"
+    assert V.alive_beyond_camera(smoke_clip(tmp_path / "short.mp4", n=0.5))["status"] == "NOT_RUN"
+    monkeypatch.setattr(V, "_cv2", lambda: None)
+    assert V.alive_beyond_camera(smoke_clip(tmp_path / "nocv.mp4"))["status"] == "NOT_RUN" and V.alive_beyond_camera.kinds == V.living_motion.kinds

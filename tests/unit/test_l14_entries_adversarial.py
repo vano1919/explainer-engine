@@ -329,65 +329,48 @@ def test_V19_the_registry_binds_all_three_to_the_one_function():
 # ---- defects: each is a way the check is passed (or skipped) by a clip the owner's words reject
 @needs_ffmpeg
 @pytest.mark.parametrize("zone,box,sigma", [(ZONE_SMOKE, (60, 60, 260, 200), 25), (ZONE_SMOKE, (60, 60, 260, 200), 15), (ZONE_SKY, (0, 0, 480, 40), 40)])
-@pytest.mark.xfail(strict=True, reason="V19a/Z1 (gaming): per-frame random noise inside the declared zone is read by Farneback as 46-87 % of the zone 'moving' "
-                                       "(BP-215 needs 25 %): a lazy generator declares a zone and flickers noise in it; nothing moves coherently")
 def test_Z1_noise_flickering_inside_a_declared_zone_is_not_a_pass(tmp_path, zone, box, sigma):
     assert with_zones(tmp_path, "noisezone", noise_patch_frames(box, sigma), [zone])["status"] != "PASS"
 
 
 @needs_ffmpeg
 @pytest.mark.parametrize("hz", [0.5, 1.3])
-@pytest.mark.xfail(strict=True, reason="V19/Z2 (gaming): a global brightness pulse (25 % amplitude) PASSes with no zones and measures 32-68 % 'moving'; "
-                                       "a pulse of the whole picture is not motion (a monotone fade fails, a sinusoid does not)")
 def test_Z2_a_global_brightness_pulse_is_not_a_pass(tmp_path, hz):
     assert living(tmp_path, "pulse", pulse_frames(0.25, hz))["status"] != "PASS"
 
 
 @needs_ffmpeg
-@pytest.mark.xfail(strict=True, reason="V19/Z2b (gaming): the same pulse with a smoke zone declared over it PASSes too (32 % of the zone 'moves')")
 def test_Z2b_a_global_pulse_with_a_declared_zone_is_not_a_pass(tmp_path):
     assert with_zones(tmp_path, "pulsezone", pulse_frames(0.25, 1.3), [ZONE_SMOKE])["status"] != "PASS"
 
 
 @needs_ffmpeg
-@pytest.mark.xfail(strict=True, reason="V19e/Z3: a 20 px/s pan of a very smooth (blur sigma 6, fog/sky-like) picture PASSes: the similarity fit leaves 28-37 % of "
-                                       "the frame 'moving' once the camera is out; on any texture with sigma <= 3 the same pan FAILs correctly (guards above)")
 def test_Z3_a_camera_pan_of_a_low_texture_picture_is_not_a_pass(tmp_path):
     assert living(tmp_path, "smoothpan", smooth_pan_frames(20, 6))["status"] != "PASS"
 
 
 @needs_ffmpeg
 @pytest.mark.parametrize("flakes", [800, 1500])
-@pytest.mark.xfail(strict=True, reason="V19c/Z4: a snow-only clip (still camera, dead picture) is NOT_RUN ('camera could not be separated', 5-11 % inliers), "
-                                       "not FAIL; BP-215 says snow alone cannot pass, and NOT_RUN is what the send gate releases today (S1, lead's open decision)")
 def test_Z4_a_snow_only_clip_is_a_fail_not_a_not_run(tmp_path, flakes):
     assert living(tmp_path, f"snow{flakes}", snow_frames(flakes))["status"] == "FAIL"
 
 
 @needs_ffmpeg
-@pytest.mark.xfail(strict=True, reason="V19c/Z5: the far-particle matte is declared by the sidecar, never compared with the delivered clip: flakes drawn over "
-                                       "the soldiers while the matte lists only right-half flakes PASS ('far particles over the foreground 0.00 %')")
 def test_Z5_flakes_drawn_over_the_soldiers_with_a_matte_that_says_otherwise_do_not_pass(tmp_path):
     assert occlusion(tmp_path, drawn_left=True, declared_left=False)["status"] != "PASS"
 
 
 @needs_ffmpeg
-@pytest.mark.xfail(strict=True, reason="V19c/Z6: a flat depth map (nothing is foreground) makes 'over the foreground' 0 % for any flake; the check passes "
-                                       "flakes drawn over the soldiers with an honest matte")
 def test_Z6_a_flat_depth_map_does_not_prove_the_occlusion(tmp_path):
     assert occlusion(tmp_path, drawn_left=True, declared_left=True, flat_depth=True)["status"] != "PASS"
 
 
 @needs_ffmpeg
-@pytest.mark.xfail(strict=True, reason="V19c/Z7: no `particles` block in the sidecar is 'no particle layer declared' = PASS; flakes drawn over the soldiers and not "
-                                       "declared are never looked at (design question for the lead: undeclared snow should be NOT_RUN, not PASS)")
 def test_Z7_snow_drawn_over_the_soldiers_without_a_declared_layer_is_not_a_pass(tmp_path):
     assert occlusion(tmp_path, drawn_left=True, declared_left=True, declare=False)["status"] != "PASS"
 
 
 @needs_ffmpeg
-@pytest.mark.xfail(strict=True, reason="V19b: wind has no measure of its own: the registered compliant and negative tests of V19a, V19b and V19c are the same two "
-                                       "nodes, so nothing in the registered proof is about wind (V19b) or snow depth (V19c)")
 def test_Z8_each_of_v19a_v19b_v19c_has_its_own_compliant_and_negative_test():
     reg = json.loads((Path(__file__).resolve().parents[2] / "explainer_engine/governance/owner_requirements.json").read_text(encoding="utf-8"))
     by = {e["id"]: e["check"] for e in reg["requirements"]}
@@ -423,19 +406,14 @@ def test_V19e_the_rows_are_review_not_fail_so_they_wait_for_the_director_never_b
     assert "FAIL" not in out["rows"].values()
 
 
-@pytest.mark.xfail(strict=True, reason="V19e/Z9: the camera is taken out by a similarity warp, but a brightness fade is not a camera: a fade alone measures "
-                                       "10 % local change and PASSes alive_beyond_camera")
 def test_Z9_a_fade_is_not_alive_beyond_the_camera():
     assert rows_of(fade_frames())["rows"]["alive_beyond_camera"] != "PASS"
 
 
-@pytest.mark.xfail(strict=True, reason="V19e/Z10: per-frame grain passes alive_beyond_camera (2.7 %/s local change)")
 def test_Z10_grain_is_not_alive_beyond_the_camera():
     assert rows_of(grain_frames())["rows"]["alive_beyond_camera"] != "PASS"
 
 
-@pytest.mark.xfail(strict=True, reason="V19e has no send_ref and liveliness_rows takes decoded frames, not a path: the send gate cannot run it, so a clip "
-                                       "that is only a zoom reaches the owner with living_motion NOT_RUN and V19e never measured")
 def test_Z11_the_camera_only_check_is_wired_to_the_send_gate():
     reg = json.loads((Path(__file__).resolve().parents[2] / "explainer_engine/governance/owner_requirements.json").read_text(encoding="utf-8"))
     chk = {e["id"]: e["check"] for e in reg["requirements"]}["OR-V19e"]
@@ -493,24 +471,17 @@ def test_V27b_digital_silence_between_lines_fails():
     assert "FAIL" in {r["status"] for r in rep["rows"] if r["gate"] in ("no_dropout", "dialogue_never_dead")}
 
 
-@pytest.mark.xfail(strict=True, reason="V27b/Z12: the same white hiss at three different levels under three places is still ONE stand-in noise, but the row says "
-                                       "NOT_RUN (the level differences make other rows fail first) instead of FAIL")
 def test_Z12_the_same_hiss_at_different_levels_is_still_one_noise():
     x, tl = hiss_places((-30, -38, -45))
     assert srow(SRZ.measure(Path("synthetic"), tl, x=x), "not_one_noise_everywhere") == "FAIL"
 
 
-@pytest.mark.xfail(strict=True, reason="V27b/Z13: the registry text says no stand-in sound AND no stand-in camera move; only the sound half has a validator "
-                                       "(the entry's own note: 'camera half stays unmapped'); there is no field for a second check, so the camera half is "
-                                       "invisible to the registry and to CI")
 def test_Z13_the_camera_half_of_v27b_has_a_check_of_its_own():
     reg = json.loads((Path(__file__).resolve().parents[2] / "explainer_engine/governance/owner_requirements.json").read_text(encoding="utf-8"))
     e = {x["id"]: x for x in reg["requirements"]}["OR-V27b"]
     assert "camera half stays unmapped" not in json.dumps(e["check"]), e["check"]
 
 
-@pytest.mark.xfail(strict=True, reason="V27b has no negative_test field (REQ-NONEGATIVE in ci_check, soft mode hides it) and no send_ref: measure() takes samples "
-                                       "or a path plus a timeline the director supplies, so the send gate cannot run it on a candidate")
 def test_Z14_v27b_names_a_negative_test():
     reg = json.loads((Path(__file__).resolve().parents[2] / "explainer_engine/governance/owner_requirements.json").read_text(encoding="utf-8"))
     assert {x["id"]: x for x in reg["requirements"]}["OR-V27b"]["check"].get("negative_test")
@@ -542,20 +513,15 @@ def test_V30a_other_routes_are_not_applicable(route):
 
 
 @pytest.mark.parametrize("route", ["video", "wan"])
-@pytest.mark.xfail(strict=True, reason="V30a/Z15: ov01 and ov03 test `route != 'ltx'`; since D-132/D-137 a v4.3 shot's route is `video` (the D-131 name `wan` "
-                                       "reads as `video`, `episode/router.LEGACY_ROUTES`), so an overlay on a v4.3 video shot is NOT_APPLICABLE and the owner's "
-                                       "rule 'forbidden in video scenes' never fires on a shot the current router produces")
 def test_Z15_an_overlay_on_a_v43_video_shot_fails(route):
     assert OVR.ov01(ov_ctx(route, items=[ITEM]))["status"] == OVR.FAIL
 
 
 @pytest.mark.parametrize("route", ["video", "wan"])
-@pytest.mark.xfail(strict=True, reason="V30a/Z15: the same blind spot in ov03 (overlay_reason on a video shot)")
 def test_Z15_an_overlay_reason_on_a_v43_video_shot_fails(route):
     assert OVR.ov03(ov_ctx(route, reason="mood"))["status"] == OVR.FAIL
 
 
-@pytest.mark.xfail(strict=True, reason="V30a: the registered test names no `ov01` (REQ-NOTEST in ci_check, hidden by the soft mode) and the entry has no negative_test")
 def test_Z16_v30a_names_a_test_that_calls_ov01_and_a_negative_test():
     reg = json.loads((Path(__file__).resolve().parents[2] / "explainer_engine/governance/owner_requirements.json").read_text(encoding="utf-8"))
     chk = {x["id"]: x for x in reg["requirements"]}["OR-V30a"]["check"]

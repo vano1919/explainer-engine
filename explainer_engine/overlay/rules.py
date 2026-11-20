@@ -77,7 +77,8 @@ def motion_items(c: Ctx) -> list[dict]:
 
 
 # ------------------------------------------------------------------------------------------------ section 2: where the overlay is allowed
-def ov01(c): return r(NA) if c.route != "ltx" else (r(FAIL, f"{len(c.items)} items, {len(c.panels)} panels on an ltx shot") if (c.items or c.panels) else r(PASS, "no overlay element, no chip, no inset"))
+VIDEO_ROUTES = ("ltx", "video", "wan")      # tester Z15: the v4.3 router names the video route `video` (D-132), D-131 named it `wan`, the demo says `ltx`
+def ov01(c): return r(NA) if c.route not in VIDEO_ROUTES else (r(FAIL, f"{len(c.items)} items, {len(c.panels)} panels on a {c.route} shot") if (c.items or c.panels) else r(PASS, "no overlay element, no chip, no inset"))
 def ov02(c):
     if not c.panels: return r(NA)
     lo, hi = HOUSE["OV-02 first frame"], c.n - HOUSE["OV-02 exit margin frames"]
@@ -85,7 +86,7 @@ def ov02(c):
     bad += [f"{i['id']} start {i['start']}" for i in c.items if i["start"] < lo]
     bad += [f"{i['id']} end {i['end']}" for i in c.items if i["end"] is not None and i["end"] > hi]
     return r(FAIL, "; ".join(bad)) if bad else r(PASS, f"every element starts at frame >= {lo} and ends at frame <= {hi} of {c.n}")
-def ov03(c): return r(NA) if c.route != "ltx" else (r(FAIL, "an ltx shot carries an overlay_reason") if c.spec.get("overlay_reason") else r(PASS, "an ltx shot has no overlay_reason"))
+def ov03(c): return r(NA) if c.route not in VIDEO_ROUTES else (r(FAIL, f"a {c.route} shot carries an overlay_reason") if c.spec.get("overlay_reason") else r(PASS, f"a {c.route} shot has no overlay_reason"))
 def ov04(c): return r(NA) if c.spec.get("mode") != "full" else (r(PASS, "full on a map_action shot") if c.route == "map_action" else r(FAIL, f"full on a {c.route} shot"))
 def ov05(c): return r(NA) if c.route != "still_25d" or not c.items else (r(PASS, "accent only") if c.spec.get("mode") == "accent" else r(FAIL, f"mode {c.spec.get('mode')} on a still_25d shot"))
 def ov06(c): return r(PASS, f"route {c.spec['route']} unchanged by the overlay") if c.spec["route"] == c.shot["route"] else r(FAIL, f"route {c.shot['route']} -> {c.spec['route']}")
@@ -209,6 +210,18 @@ def ov21(c):
     if not ma: return r(NOT_RUN, "spec in range; the rendered alpha was not measured")
     off = {k: v for k, v in ma.items() if not 115 <= v <= 179}
     return r(FAIL, f"rendered alpha outside 115-179: {off}") if off else r(PASS, f"alpha {p['alpha']}, blur {p['blur_px']} px, rendered centre alpha {ma}")
+def lane30_glass(c):
+    """OR-V30e (the owner: "transparent styles matter in places, most of all in the 30 % lane"): OV-20 (a still_25d shot carries glass or bare text,
+    never a solid panel) and OV-21 (every glass panel inside the house alpha and blur range, an allowed colour, and its rendered centre alpha
+    inside 115-179 when measured). Any FAIL fails; a NOT_RUN of OV-21 (rendered alpha not measured) keeps NOT_RUN. What this does not check: that
+    most 30 % shots use glass at all ("where the plan says so" is the plan's call; an episode-level share is not measured here)."""
+    rows = {k: f(c) for k, f in (("OV-20", ov20), ("OV-21", ov21))}
+    bad = [f"{k}: {v['detail']}" for k, v in rows.items() if v["status"] == FAIL]
+    if bad: return r(FAIL, "; ".join(bad))
+    nr = [f"{k}: {v['detail']}" for k, v in rows.items() if v["status"] == NOT_RUN]
+    if nr: return r(NOT_RUN, "; ".join(nr))
+    if all(v["status"] == NA for v in rows.values()): return r(NA)
+    return r(PASS, "; ".join(f"{k}: {v['detail']}" for k, v in rows.items() if v["status"] == PASS))
 def ov22(c):
     bare = [p for p in c.panels if p["surface"] == "bare"]
     if not bare: return r(NA)
@@ -288,6 +301,19 @@ def ov34(c):
                 if PL.hits((x, y, x + w, y + h), pf): hit += 1; break
             if not PL.inside_margin((p["box"][0], p["box"][1], p["box"][0] + p["box"][2], p["box"][1] + p["box"][3])): margin += 1
     return r(FAIL, f"{hit} frames touch a face or the subject, {margin} outside the 5 % margin (of {checked})") if hit or margin else r(PASS, f"0 intersections on {checked} frames (face box + 10 %, subject box, 5 % margin)")
+def lane30_overlay(c):
+    """OR-V30b (the owner's 30 % lane: "implementation needs strict rules, only where there is a need, and it must not spoil the main frame"):
+    the three rules that carry those words, read together on one shot - OV-30 (a registered need and every word is in the line), OV-33 (the overlay
+    area share of the frame) and OV-34 (no frame touches a face or the subject, 5 % margin). Any FAIL fails; a NOT_RUN of one of them keeps the
+    result NOT_RUN (the protected boxes were not measured); N/A when none has anything to judge. The registry entry's "occlusion of the focus
+    region = 0" is OV-34's measure; OV-18 (label on a line) is another rule and not part of this one."""
+    rows = {k: f(c) for k, f in (("OV-30", ov30), ("OV-33", ov33), ("OV-34", ov34))}
+    bad = [f"{k}: {v['detail']}" for k, v in rows.items() if v["status"] == FAIL]
+    if bad: return r(FAIL, "; ".join(bad))
+    nr = [f"{k}: {v['detail']}" for k, v in rows.items() if v["status"] == NOT_RUN]
+    if nr: return r(NOT_RUN, "; ".join(nr))
+    if all(v["status"] == NA for v in rows.values()): return r(NA)
+    return r(PASS, "; ".join(f"{k}: {v['detail']}" for k, v in rows.items() if v["status"] == PASS))
 def ov35(c):
     if not c.items: return r(NA)
     bad = []

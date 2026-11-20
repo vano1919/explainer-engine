@@ -672,7 +672,7 @@
    "repeat_evidence": "11-14, 11-14 12:38, 11-20 08:33",
    "parent": "OR-V19",
    "words_partial": true,
-   "note": "send gate: living_motion measures pixel change, not optical flow (G-LIVE-1 every second of the clip changes at least frozen_change_pct; G-LIVE-3 a <clip>.zones.json zone named for the fire or smoke mask changes at least zone_min_pct of its pixels in the median second, camera still); a moving camera is NOT_RUN; no flow threshold is sourced, none was invented"
+   "note": "send gate: living_motion measures pixel change, not optical flow (G-LIVE-1 every second of the clip changes at least frozen_change_pct; G-LIVE-3 a <clip>.zones.json zone named for the fire or smoke mask changes at least zone_min_pct of its pixels in the median second, camera still); a moving camera is NOT_RUN; no flow threshold is sourced, none was invented | update 2026-11-20 (tester Z1-Z7): living_motion v2 measures Farneback flow per zone with the camera and the particle layer out (BP-215), counting a zone as moving only where the flow explains the next frame (noise and brightness pulses do not count); the older 'pixel change, not optical flow' note is stale. A flame that stands for a second is OR-V21's flame_never_frozen."
   },
   {
    "id": "OR-V19b",
@@ -694,15 +694,15 @@
     "kind": "validator",
     "ref": "explainer_engine.qa.send_validators:living_motion",
     "send_ref": "explainer_engine.qa.send_validators:living_motion",
-    "test": "tests/unit/test_send_validators.py::test_a_still_camera_with_moving_smoke_passes_with_its_number",
-    "negative_test": "tests/unit/test_send_validators.py::test_only_the_fire_moves_fails"
+    "test": "tests/unit/test_send_validators.py::test_wind_that_sways_a_band_of_grass_in_its_wind_zone_passes",
+    "negative_test": "tests/unit/test_send_validators.py::test_a_wind_zone_over_grass_that_stands_dead_fails_by_name"
    },
    "measures": "optical flow inside cloth, hair and grass masks above a threshold; one wind vector shared by all effect masks of the shot (LP-09)",
    "repeats": 1,
    "repeat_evidence": "",
    "parent": "OR-V19",
    "words_partial": true,
-   "note": "send gate: living_motion measures pixel change in the zones named for cloth, hair and grass (G-LIVE-3, zones.json) and in every second (G-LIVE-1), not optical flow; the shared wind vector (LP-09) is not measured"
+   "note": "send gate: living_motion measures pixel change in the zones named for cloth, hair and grass (G-LIVE-3, zones.json) and in every second (G-LIVE-1), not optical flow; the shared wind vector (LP-09) is not measured | update 2026-11-20: a zone of kind wind (cloth, hair, grass) needs wind_min_px_s of flow like fire, smoke and sky. The shared wind vector (LP-09) is still not measured: no check compares the directions of the effects; that half stays open (the director's plan carries one scene.wind)."
   },
   {
    "id": "OR-V19c",
@@ -724,15 +724,15 @@
     "kind": "validator",
     "ref": "explainer_engine.qa.send_validators:living_motion",
     "send_ref": "explainer_engine.qa.send_validators:living_motion",
-    "test": "tests/unit/test_send_validators.py::test_a_still_camera_with_moving_smoke_passes_with_its_number",
-    "negative_test": "tests/unit/test_send_validators.py::test_only_the_fire_moves_fails"
+    "test": "tests/unit/test_send_validators.py::test_near_flakes_larger_and_faster_than_far_ones_pass_with_their_ratios",
+    "negative_test": "tests/unit/test_send_validators.py::test_snow_whose_near_and_far_flakes_are_alike_has_no_depth_and_fails"
    },
    "measures": "particle speed and size differ by depth layer (near/far ratio > 1) and flow inside the snow mask; weather set once per scene by the director",
    "repeats": 1,
    "repeat_evidence": "",
    "parent": "OR-V19",
    "words_partial": true,
-   "note": "send gate: living_motion measures pixel change in the snow zone (G-LIVE-3) and in every second (G-LIVE-1); the near/far particle speed and size ratio by depth is NOT measured and stays for the judge step"
+   "note": "send gate: living_motion measures pixel change in the snow zone (G-LIVE-3) and in every second (G-LIVE-1); the near/far particle speed and size ratio by depth is NOT measured and stays for the judge step | update 2026-11-20: when the sidecar names both bands (particles.near and particles.far) living_motion requires the near flakes at least near_far_ratio_min (1.2, BP-215, engineering default; the owner's text says ratio > 1) times the far ones in size and in speed; a layer with one band is not ratio-checked. Snow with no zone, snow only, a declared layer without its far band or depth map, specks outside the declared matte and a flat depth map all FAIL (lead's ruling 2026-11-20); the foreground hiding the far flakes is the depth check."
   },
   {
    "id": "OR-V19d",
@@ -777,19 +777,17 @@
    "status": "active",
    "check": {
     "kind": "validator",
-    "ref": "explainer_engine.qa.liveliness:liveliness_rows",
-    "test": "tests/unit/test_liveliness.py::test_a_camera_move_alone_is_not_alive_beyond_the_camera",
-    "note": "whole-frame test only; masked fire/smoke/snow flow is NOT covered, those are 19a-c",
-    "verified": {
-     "ref_and_test_exist": true,
-     "tests_run_by_analyst": false
-    }
+    "ref": "explainer_engine.qa.send_validators:alive_beyond_camera",
+    "send_ref": "explainer_engine.qa.send_validators:alive_beyond_camera",
+    "test": "tests/unit/test_send_validators.py::test_a_drifting_camera_over_a_living_world_stays_alive_beyond_the_camera",
+    "negative_test": "tests/unit/test_send_validators.py::test_a_camera_move_over_a_dead_picture_fails_alive_beyond_the_camera"
    },
    "measures": "camera-only clip fails; residual motion after camera removal above threshold",
    "repeats": 1,
    "repeat_evidence": "",
    "parent": "OR-V19",
-   "words_partial": true
+   "words_partial": true,
+   "note": "update 2026-11-20: now wired to the send gate as send_validators.alive_beyond_camera (the whole-frame row of liveliness.local_change_per_s on the delivered clip, FAIL under BP-194 local_floor_pct_s); brightness fades and per-frame grain are removed before the difference (tester Z9, Z10). liveliness_rows keeps its REVIEW rows for the director. Where the world moves is living_motion's."
   },
   {
    "id": "OR-V20",
@@ -808,12 +806,16 @@
    ],
    "status": "active",
    "check": {
-    "kind": "unmapped"
+    "kind": "validator",
+    "ref": "explainer_engine.qa.send_validators:living_inventory",
+    "send_ref": "explainer_engine.qa.send_validators:living_inventory",
+    "test": "tests/unit/test_send_validators.py::test_a_compliant_shot_direction_passes_the_living_inventory",
+    "negative_test": "tests/unit/test_send_validators.py::test_an_inventory_with_an_element_left_frozen_without_a_reason_fails"
    },
    "measures": "run living_photo_rules.py gates on every 2.5D plan and on the final mp4 (gates exist as a script, no test in tests/unit located)",
    "repeats": 2,
    "repeat_evidence": "",
-   "note": "LP rules are the team's proposals until the owner confirms; marked unmapped, not confirmed"
+   "note": "LP rules are the team's proposals until the owner confirms; marked unmapped, not confirmed | send gate: living_inventory wraps the repo gates direction._living / _weather / _balance (BP-196, BP-200, LP-01..LP-08) on a shot's direction; the mp4 gates G-LIVE-* are living_motion's (OR-V19a..c). The earlier line 'no test in tests/unit located' is stale: tests/unit/test_direction.py covers the gates. LP-08 floor is REVIEW only (owner 2026-11-15 Decision 2), so the negative test uses an element left frozen without a reason. LP-09..LP-12 are not checked here."
   },
   {
    "id": "OR-V21",
@@ -832,12 +834,16 @@
    ],
    "status": "active",
    "check": {
-    "kind": "unmapped"
+    "kind": "validator",
+    "ref": "explainer_engine.qa.send_validators:flame_never_frozen",
+    "send_ref": "explainer_engine.qa.send_validators:flame_never_frozen",
+    "test": "tests/unit/test_send_validators.py::test_a_flame_that_moves_in_every_second_passes_with_its_quietest_window",
+    "negative_test": "tests/unit/test_send_validators.py::test_a_flame_that_stands_for_a_second_fails_by_zone_and_second"
    },
    "measures": "flow inside the flame mask > 0 in every 1 s window",
    "repeats": 2,
    "repeat_evidence": "",
-   "note": "overlaps OR-V19a (kept: distinct validator = per-second window at zero, not a threshold on the whole shot)"
+   "note": "overlaps OR-V19a (kept: distinct validator = per-second window at zero, not a threshold on the whole shot) | send gate: flame_never_frozen reads the living_motion flow (camera and particles out) per one-second window on every fire zone of the clip's .zones.json: a window with under fire_window_min_pct (5 %, BP-215, an engineering default; the entry says '> 0', but noise is above zero) of the zone moving fails by zone and second. The whole-clip median of living_motion cannot see a flame that stands for a second (the negative test shows living_motion passing it). NOT_RUN without a fire zone, OpenCV or a separable camera."
   },
   {
    "id": "OR-V22",
@@ -880,11 +886,16 @@
    ],
    "status": "active",
    "check": {
-    "kind": "unmapped"
+    "kind": "validator",
+    "ref": "explainer_engine.qa.send_validators:living_inventory",
+    "send_ref": "explainer_engine.qa.send_validators:living_inventory",
+    "test": "tests/unit/test_send_validators.py::test_a_scene_weather_the_director_decided_with_a_reason_passes_the_inventory",
+    "negative_test": "tests/unit/test_send_validators.py::test_a_scene_weather_left_for_someone_to_ask_without_a_decision_or_reason_fails_the_inventory"
    },
    "measures": "weather set once per scene by the director with a written reason; one wind for all effects in a shot (LP-09)",
    "repeats": 2,
-   "repeat_evidence": "11-14 12:38, 11-14 (LP-09)"
+   "repeat_evidence": "11-14 12:38, 11-14 (LP-09)",
+   "note": "validator: living_inventory runs direction._weather: every weather the scene names has a record decided by one of the five criteria (living_director.CRITERIA) with a written reason, or a living element; a weather left without it fails. Not checked: 'one wind for all effects' (the director's plan carries scene.wind as one vector; no validator compares the effects' own directions); that is still OR-V19b's open half."
   },
   {
    "id": "OR-V24",
@@ -907,7 +918,18 @@
    },
    "measures": "duration <= 5 s; camera never fully static on a still",
    "repeats": 1,
-   "repeat_evidence": ""
+   "repeat_evidence": "",
+   "evidence_added": [
+    {
+     "ref": "architecture_2026-11-14/RULES_RECONCILIATION_JOURNAL.md R-13 and R-14",
+     "text": "his card answers of 2026-11-14 12:37 UTC: Q2 '5 s stays' (a 2.5D shot is at most 5 s, longer is split or goes to LTX) and Q3 'slow drift' (the camera never fully stops; still_by_design keeps a slow drift or breath)"
+    },
+    {
+     "ref": "memory audit-25d-liveliness-2026-11-14",
+     "text": "records the same two supersessions (12:37-12:40 UTC cards)"
+    }
+   ],
+   "source_ref_note": "the live decision log D-139 (docs/DECISIONS_AND_OPEN_QUESTIONS.md @ origin/claude/project-thread-2vxd8y) is the V4.1 Step 0/1 decision of 2026-11-19, not this rule; 'D-139' for the 11-14 rule is the client/skills-team label for R-13/R-14"
   },
   {
    "id": "OR-V25",
@@ -927,11 +949,16 @@
    ],
    "status": "active",
    "check": {
-    "kind": "unmapped"
+    "kind": "validator",
+    "ref": "explainer_engine.qa.send_validators:no_body_motion_in_25d",
+    "send_ref": "explainer_engine.qa.send_validators:no_body_motion_in_25d",
+    "test": "tests/unit/test_send_validators.py::test_a_plan_that_leaves_the_bodies_to_ltx_passes_the_body_motion_check",
+    "negative_test": "tests/unit/test_send_validators.py::test_a_body_swayed_or_animated_in_2_5d_fails_the_body_motion_check"
    },
    "measures": "the 2.5D plan contains no body-motion effect",
    "repeats": 1,
-   "repeat_evidence": ""
+   "repeat_evidence": "",
+   "note": "validator: no_body_motion_in_25d fails a subject_sway track on a 2.5D renderer and a body-kind or body_motion element that is animated or added; a body left to LTX (skip with a reason) passes and is listed. The repo's own direction.LIVING_KINDS still lets kind body take subject_sway, so direction.check accepts what this fails (reported to the lead). Mouth, hand and head motion inside an LTX clip is not judged here."
   },
   {
    "id": "OR-V26",
@@ -951,11 +978,16 @@
    ],
    "status": "active",
    "check": {
-    "kind": "unmapped"
+    "kind": "validator",
+    "ref": "explainer_engine.qa.send_validators:change_per_second",
+    "send_ref": "explainer_engine.qa.send_validators:change_per_second",
+    "test": "tests/unit/test_send_validators.py::test_a_moving_world_changes_the_frame_within_the_reference_and_passes",
+    "negative_test": "tests/unit/test_send_validators.py::test_a_nearly_still_photo_changes_under_the_floor_and_fails"
    },
    "measures": "G-LIVE: % change per second on the final mp4 printed next to the 3.6-12.2 reference; < 5 %/s fails. Candidate (whole-frame only): qa.liveliness:change_per_s",
    "repeats": 2,
-   "repeat_evidence": "11-12 21:44, 11-14 (living-photo gates)"
+   "repeat_evidence": "11-12 21:44, 11-14 (living-photo gates)",
+   "note": "send gate: change_per_second measures the whole-frame change per second (liveliness.change_per_s, 128x72 grey, frames one second apart) on the delivered clip, prints it next to the 3.6-12.2 reference, FAIL under BP-194's floor 3.6; NOT_RUN without OpenCV. The measures text says '<5 %/s fails': 5 % is G-LIVE-1's deadest-window floor (living_motion), 3.6 is the change floor here; reported to the lead. Camera movement counts in this reference number; the camera is taken out by living_motion, not here."
   },
   {
    "id": "OR-V27",
@@ -983,7 +1015,7 @@
    "check": {
     "kind": "unmapped"
    },
-   "measures": "parent: covered when OR-V27a and OR-V27b are covered",
+   "measures": "parent: covered when OR-V27a, OR-V27b and OR-V27c are covered",
    "repeats": 2,
    "repeat_evidence": "11-12 21:44, 11-20 08:33 ('pointless renders')",
    "note": "children carry the checks"
@@ -1045,17 +1077,14 @@
    "check": {
     "kind": "validator",
     "ref": "explainer_engine.qa.sound_realism:measure",
-    "test": "tests/unit/test_sound_realism.py::test_one_noise_under_every_place_fails",
-    "note": "sound half only; camera half stays unmapped",
-    "verified": {
-     "ref_and_test_exist": true,
-     "tests_run_by_analyst": false
-    }
+    "test": "tests/unit/test_sound_realism.py::test_distinct_beds_under_every_place_pass_the_one_noise_row",
+    "negative_test": "tests/unit/test_sound_realism.py::test_the_same_hiss_at_three_levels_under_three_places_fails_the_one_noise_row"
    },
    "measures": "sound: one noise under every place fails; camera: camera path comes from the director's plan",
    "repeats": 1,
    "repeat_evidence": "",
-   "parent": "OR-V27"
+   "parent": "OR-V27",
+   "note": "update 2026-11-20 (tester Z12, Z14): the sound half only; the same stand-in hiss at three levels under three places is a FAIL now (a steady noise of a second or more is no longer taken for speech in the bed analysis). measure() takes samples or a path plus the director's place timeline, so it has no send_ref. The camera half is OR-V27c."
   },
   {
    "id": "OR-V28",
@@ -1101,11 +1130,16 @@
    ],
    "status": "active",
    "check": {
-    "kind": "unmapped"
+    "kind": "validator",
+    "ref": "explainer_engine.qa.send_validators:director_reasons",
+    "send_ref": "explainer_engine.qa.send_validators:director_reasons",
+    "test": "tests/unit/test_send_validators.py::test_a_direction_where_every_choice_carries_a_reason_passes",
+    "negative_test": "tests/unit/test_send_validators.py::test_a_choice_without_a_reason_or_an_effect_typed_by_hand_fails"
    },
    "measures": "every effect and every sound cue carries a reason field from the director stage; no hand-written lists",
    "repeats": 3,
-   "repeat_evidence": "11-14 12:38, 11-14 13:13, 11-12 21:44"
+   "repeat_evidence": "11-14 12:38, 11-14 13:13, 11-12 21:44",
+   "note": "duplicate of OR-V23: identical words, date, source message and layer; kept, not removed | validator: director_reasons: every living element, weather record, audio track and sound event carries a non-empty why, and every effect track is named by an inventory element (a track no element names was typed by hand). A file written by living_director passes (test). Identical words to OR-V23 (a duplicate kept in the registry); this entry's measures line is the reason-field half."
   },
   {
    "id": "OR-V30",
@@ -1152,17 +1186,14 @@
    "check": {
     "kind": "validator",
     "ref": "explainer_engine.overlay.rules:ov01",
-    "test": "tests/unit/test_overlay_rules.py::test_each_rule_fails_on_its_bad_input",
-    "note": "ov01 and ov03 return FAIL for an ltx shot that carries an overlay; analyst did not run the test",
-    "verified": {
-     "ref_and_test_exist": true,
-     "tests_run_by_analyst": false
-    }
+    "test": "tests/unit/test_overlay_rules.py::test_a_clean_video_shot_has_no_overlay_and_passes_ov01_and_ov03",
+    "negative_test": "tests/unit/test_overlay_rules.py::test_an_overlay_on_a_video_shot_fails_ov01_and_ov03_whatever_the_route_is_called"
    },
    "measures": "an overlay on a video (ltx) shot fails",
    "repeats": 1,
    "repeat_evidence": "",
-   "parent": "OR-V30"
+   "parent": "OR-V30",
+   "note": "update 2026-11-20 (tester Z15, Z16): ov01 and ov03 now treat the routes video (D-132), wan (D-131) and ltx (the demo) as the video route; before, a v4.3 video shot was N/A. The rule has no send_ref: an overlay spec is judged with its shot plan, not as a file."
   },
   {
    "id": "OR-V30b",
@@ -1182,12 +1213,16 @@
    ],
    "status": "active",
    "check": {
-    "kind": "unmapped"
+    "kind": "validator",
+    "ref": "explainer_engine.overlay.rules:lane30_overlay",
+    "test": "tests/unit/test_overlay_rules.py::test_the_30_percent_lane_overlay_with_a_need_and_clear_faces_passes",
+    "negative_test": "tests/unit/test_overlay_rules.py::test_an_overlay_over_the_subject_or_without_a_registered_need_fails_the_30_percent_lane"
    },
    "measures": "in the 30 % lane an overlay exists only if a registered need says so, and never covers the main frame (occlusion of the focus region = 0). Candidate: overlay.rules ov33/ov18 occlusion rules",
    "repeats": 1,
    "repeat_evidence": "",
-   "parent": "OR-V30"
+   "parent": "OR-V30",
+   "note": "validator: lane30_overlay reads OV-30 (registered need, every at_word is in the line), OV-33 (overlay area share) and OV-34 (no frame touches a face or the subject, 5 % margin) together; the entry's 'occlusion of the focus region = 0' is OV-34's measure. OV-34 NOT_RUN when the spec has no protected boxes. Thresholds are the house numbers of rules.py HOUSE (the creator confirms them after the demo)."
   },
   {
    "id": "OR-V30c",
@@ -1261,12 +1296,16 @@
    ],
    "status": "active",
    "check": {
-    "kind": "unmapped"
+    "kind": "validator",
+    "ref": "explainer_engine.overlay.rules:lane30_glass",
+    "test": "tests/unit/test_overlay_rules.py::test_glass_in_range_with_a_measured_alpha_passes_and_an_unmeasured_one_says_not_run",
+    "negative_test": "tests/unit/test_overlay_rules.py::test_a_solid_or_too_opaque_panel_in_the_30_percent_lane_fails_the_glass_rule"
    },
    "measures": "transparent (glass) surfaces used where the plan says so, most in the 30 % lane. Candidate: overlay.rules ov21 (glass)",
    "repeats": 1,
    "repeat_evidence": "",
-   "parent": "OR-V30"
+   "parent": "OR-V30",
+   "note": "validator: lane30_glass reads OV-20 (a still_25d shot carries glass or bare text, never solid) and OV-21 (glass alpha, blur and colour in range, rendered alpha 115-179 when measured; NOT_RUN when not measured). Not checked: that most 30 % shots use glass; 'where the plan says so' is the plan's call and no episode-level share is measured."
   },
   {
    "id": "OR-V31",
@@ -3650,12 +3689,16 @@
    ],
    "status": "active",
    "check": {
-    "kind": "unmapped"
+    "kind": "validator",
+    "ref": "explainer_engine.qa.send_validators:director_reasons",
+    "send_ref": "explainer_engine.qa.send_validators:director_reasons",
+    "test": "tests/unit/test_send_validators.py::test_a_direction_where_every_choice_carries_a_reason_passes",
+    "negative_test": "tests/unit/test_send_validators.py::test_a_choice_without_a_reason_or_an_effect_typed_by_hand_fails"
    },
    "measures": "every effect in a 2.5D plan carries a director reason; a hand-typed per-shot effect list is refused; reproduce the plan from photo + words alone",
    "repeats": 2,
    "repeat_evidence": "11-14 12:38-12:42 (memory update block), 11-14 15:38 ('a director that cannot read it from the photo is a bad agent')",
-   "note": "memory gives the 12:40 content in English only; the Georgian he wrote at 15:38 is the OR-V19/V41 text"
+   "note": "memory gives the 12:40 content in English only; the Georgian he wrote at 15:38 is the OR-V19/V41 text | validator: director_reasons covers 'a short reason per pick' and 'effects never typed by hand' (a track no inventory element names fails). Not checked: 'reproduce the plan from photo + words alone' needs the director run again on the same inputs."
   },
   {
    "id": "OR-V52",
@@ -5131,6 +5174,124 @@
      "source": "{\"kind\": \"chat\", \"ref\": \"cmsg_01Hnu5zB86sjUj5GtTgaUkPW7XLMto2qf2FBPYsqzyqvaU\"}"
     }
    ]
+  },
+  {
+   "id": "OR-V72",
+   "kind": "requirement",
+   "status": "active",
+   "words": "მზე ციმციმებს და სხივები სივრცულობას ქმნის, ქარი, ხეების/მავთულის რხევა, თოვლი მოდის",
+   "words_origin": "memory_summary (the memory's Georgian rendering of his 11-14 15:38 Tbilisi words; not his typed message)",
+   "words_verbatim": false,
+   "words_partial": true,
+   "gloss": "Bringing a photo to life means every natural motion of the environment: sun shimmer and god rays that make space, wind in trees, grass, cloth and wire, falling snow, together with the fire.",
+   "date": "2026-11-14T11:38:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-photo-animation-2026-11-14; audit-25d-liveliness-2026-11-14"
+   },
+   "layers": [
+    "L14"
+   ],
+   "check": {
+    "kind": "validator",
+    "ref": "explainer_engine.qa.send_validators:living_inventory",
+    "send_ref": "explainer_engine.qa.send_validators:living_inventory",
+    "test": "tests/unit/test_send_validators.py::test_every_named_element_is_in_the_inventory_with_an_effect_or_a_reason_and_passes",
+    "negative_test": "tests/unit/test_send_validators.py::test_a_named_element_missing_from_the_inventory_fails_it"
+   },
+   "measures": "per-photo living-element inventory covers sun/sky light, foliage and wire sway, precipitation, wind, steam and fire; each has an effect or a written reason for none",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "Widens OR-V19a-c (fire, smoke, wind, snow). NEW parts: sun shimmer and god rays, sway of trees and wire. His own typed words are not available to me, only the memory's rendering; date from the memory (15:38 Tbilisi = 11:38 UTC). | validator: living_inventory (direction._living, BP-196): every living kind that seen.what, the scene's weather and surroundings or the shot's words name has an inventory element with an effect or a written reason (kinds: sun, sky, cloud, mist, snow, rain, wind, plants, cloth, wire, water, ice, fire, candle, smoke, steam, breath, stars, glint, dust, heat, body). Not checked: an element the photo shows that nobody named; seeing it is the vision pass and the owner's eye. Sun shimmer and god rays: the sun kind maps to sun_shaft, sun_glint, glow, light_fade.",
+   "date_basis": "memory: 15:38-15:43 Tbilisi time on 2026-11-14"
+  },
+  {
+   "id": "OR-V73",
+   "kind": "requirement",
+   "status": "active",
+   "words": "Mandatory inventory stage: the director lists the living elements of the photo and assigns an effect to each; a gate punishes stillness.",
+   "words_origin": "memory_summary (audit-25d-liveliness memory, 'His directives')",
+   "words_verbatim": false,
+   "words_partial": true,
+   "gloss": "Two linked demands from his 11-14 rejection of the round-2 clips ('just fire'): the director must read the living elements out of the photo itself (a director that cannot is 'a bad agent'), and a gate must punish stillness instead of rewarding it.",
+   "date": "2026-11-14T11:40:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "audit-25d-liveliness-2026-11-14; feedback-photo-animation-2026-11-14"
+   },
+   "layers": [
+    "L14"
+   ],
+   "check": {
+    "kind": "validator",
+    "ref": "explainer_engine.qa.send_validators:living_inventory",
+    "send_ref": "explainer_engine.qa.send_validators:living_inventory",
+    "test": "tests/unit/test_send_validators.py::test_a_compliant_shot_direction_passes_the_living_inventory",
+    "negative_test": "tests/unit/test_send_validators.py::test_an_inventory_with_an_element_left_frozen_without_a_reason_fails"
+   },
+   "measures": "G-INV (inventory present, every element decided) and G-LIVE (no 1-second stretch under the floor, change per second inside the reference band) run on every 2.5D plan and on the final mp4",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "OWNER ROOT of OR-V20 (whose words are the roadmap thread's LIVING_PHOTO_RULES doc, not his) and of the G-LIVE gate it names. Related: OR-V51 (director chooses and records a reason), OR-V41. | validator, plan half: living_inventory is G-INV (inventory present, every element decided, a frozen one needs a reason). The mp4 half, G-LIVE (no one-second stretch under the floor, change per second inside the reference), is living_motion (OR-V19a..c), change_per_second (OR-V26) and flame_never_frozen (OR-V21); one entry can name one validator, so those carry their own entries.",
+   "date_basis": "memory: ~11:38-11:52 UTC on 2026-11-14"
+  },
+  {
+   "id": "OR-V74",
+   "kind": "requirement",
+   "status": "active",
+   "words": "(11:52 UTC) Make the inventory list as long as possible, but the director decides by priority: what matters for the narration text in this photo, how the photo looks, its quality, the scale of the element (a dot is not worth animating). No endless work: balance, with rules and tests.",
+   "words_origin": "memory_summary (audit-25d-liveliness memory, 'His directives', 11:52 UTC line)",
+   "words_verbatim": false,
+   "words_partial": true,
+   "gloss": "The inventory is long, the choice is by priority (narration relevance, look, quality, element scale), and the work is bounded by balance rules with tests, never by hand-tuning.",
+   "date": "2026-11-14T11:52:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "audit-25d-liveliness-2026-11-14"
+   },
+   "layers": [
+    "L14"
+   ],
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "per element: narration relevance, scale, quality recorded; elements under the point-size rule (LP-03) are grouped or skipped with a reason; an upper and lower effect count per shot (LP-07, LP-08)",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "His criteria behind OR-V20's score and LP-03/LP-04/LP-07/LP-08. The numbers there are the roadmap thread's proposals, not his; he asked only for priority and balance. Narrower than OR-V09 (general logic). 'The roadmap thread writes the rules and the tests' is an assignment, not a requirement.",
+   "date_basis": "memory: 11:52 UTC on 2026-11-14"
+  },
+  {
+   "id": "OR-V27c",
+   "kind": "requirement",
+   "words": "no stand-in camera move in a shown render (the camera half of OR-V27b)",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "",
+   "date": "2026-11-12T21:44:18Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-realism-audit-2026-11-12"
+   },
+   "layers": [
+    "L9",
+    "L10",
+    "L11",
+    "L12",
+    "L13",
+    "L14",
+    "L15",
+    "L16"
+   ],
+   "status": "active",
+   "parent": "OR-V27",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "the camera path of a shown render comes from the director's plan: the render's measured zoom and pan (liveliness.camera_curve) against the plan's camera tracks, within a tolerance the owner has not set",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "split from OR-V27b on 2026-11-20 so the camera half is visible in the coverage table and CI (tester Z13). Unmapped honestly: how a plan's camera strength maps to a measured zoom percentage is not settled (OR-22: no number is guessed)."
   }
  ],
  "process_requirements": [
