@@ -26,7 +26,7 @@ BASE = {
     "size": [1280, 704], "fps": 24, "seconds": 5.0, "center": [2.85, 50.8], "zoom": 9.5,
     "line_geojson": "a.geojson", "line_t": [0.4, 3.6],
     "counter": {"from": 0, "to": 100, "t0": 1.0, "t1": 4.0, "label": "X"},
-    "date_chip": [], "towns": [], "font": "Inter", "footnote": "",
+    "date_chip": [], "towns": [], "font": "preset", "footnote": "",
 }
 CAMS = {
     "truck": {"move": "truck", "center_from": [2.7, 50.8], "center_to": [3.0, 50.8]},

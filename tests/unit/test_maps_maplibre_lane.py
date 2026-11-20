@@ -32,6 +32,15 @@ LINE = {"type": "FeatureCollection", "features": [{"type": "Feature", "propertie
     "type": "LineString", "coordinates": [[2.75, 51.13], [2.885, 50.851], [2.807, 50.534]]}}]}
 
 
+def _film():
+    """An episode film whose map style is the 1917 preset (built from the episode_film fixture)."""
+    film = json.loads((Path(__file__).resolve().parents[1] / "fixtures" / "episode_film" / "valid_film.json").read_text("utf-8"))
+    film["film_id"] = "test_film_1917"
+    film["map"]["style_preset"] = "1917_film"
+    film["counter"]["style_preset"] = "1917_film"
+    return film
+
+
 def make_spec(tmp_path, **over):
     spec = {
         "size": [1280, 704], "fps": 24, "seconds": 5.0, "center": [2.85, 50.8], "zoom": 9.5,
@@ -39,9 +48,10 @@ def make_spec(tmp_path, **over):
         "counter": {"from": 0, "to": 100000, "t0": 1.0, "t1": 4.0, "label": "Men at the front (estimate)"},
         "date_chip": [{"t": 0.0, "text": "NOV 1914"}, {"t": 2.2, "text": "DEC 1914"}],
         "towns": [{"name": "Ypres", "lonlat": [2.885, 50.851], "t": 0.5}],
-        "font": "Inter", "footnote": "Front line illustrative",
+        "font": "preset", "film_file": "episode_film.json", "footnote": "Front line illustrative",
     }
     spec.update(over)
+    (tmp_path / "episode_film.json").write_text(json.dumps(_film()), encoding="utf-8")
     (tmp_path / "line.geojson").write_text(json.dumps(LINE), encoding="utf-8")
     p = tmp_path / "spec.json"
     p.write_text(json.dumps(spec), encoding="utf-8")
@@ -244,13 +254,13 @@ def test_resolve_line_geojson_relative_to_spec(tmp_path):
 
 
 def test_validate_hud_palette_passes():
-    R._validate_hud_palette()
+    R._validate_hud_palette(R.load_style_preset("1917_film"))
 
 
 def test_hud_palette_failure_raises(monkeypatch):
     monkeypatch.setattr(R, "check_palette", lambda *a, **k: ["bad pair"])
     with pytest.raises(ValueError, match="bad pair"):
-        R._validate_hud_palette()
+        R._validate_hud_palette(R.load_style_preset("1917_film"))
 
 
 def test_counter_slot_for_wave1_shot_is_free_of_line_and_towns(tmp_path):
@@ -354,7 +364,8 @@ def test_render_shot_boot_payload_matches_schedule(tmp_path, monkeypatch):
     assert len(boot["frames"]) == 120
     assert boot["frames"][0]["line_u"] == 0.0 and boot["frames"][0]["counter"] == 0
     assert boot["frames"][119] == schedule(spec, 119)
-    assert boot["spec"]["font"] == "Inter"
+    assert boot["spec"]["font"] == "preset"  # the font comes from the film preset, not from the spec
+    assert boot["preset"]["name"] == "1917_film" and "Liberation Serif" in boot["preset"]["font"]
     assert boot["vectorTileUrl"].endswith("/vector/{z}/{x}/{y}.pbf") and boot["vectorTileUrl"].startswith("file://")
     assert boot["demTileUrl"] is None and boot["style"] is None
     cb = boot["hudLayout"]["counter_box"]
@@ -442,7 +453,9 @@ def test_page_exposes_api_and_labels_off():
     assert 'type !== "symbol"' in html
     assert 'type: "symbol"' not in html and "text-field" not in html
     assert "preserveDrawingBuffer: true" in html and "fadeDuration: 0" in html
-    assert "OKABE" not in html and "#d55e00" in html and "#0072b2" in html
+    assert "OKABE" not in html  # colours live in the style presets, the page has none of its own
+    neutral = (LANE / "styles" / "neutral.json").read_text(encoding="utf-8")
+    assert "#d55e00" in neutral and "#0072b2" in neutral
     assert "https://" not in html.replace("https://www.w3.org", "")  # nothing fetched from the net
 
 

@@ -38,8 +38,8 @@ from explainer_engine.maps.maplibre_spec import (
 
 REQUIRED_KEYS = [
     "size", "fps", "seconds", "center", "zoom", "line_geojson", "line_t",
-    "counter", "date_chip", "towns", "font", "footnote",
-]
+    "counter", "date_chip", "towns", "footnote",
+]  # font is no longer required: it comes from the film preset (G-06)
 
 
 def _valid_spec() -> dict:
@@ -61,7 +61,7 @@ def _valid_spec() -> dict:
             {"name": "Ypres", "lonlat": [2.885, 50.851], "t": 2.0},
             {"name": "Armentieres", "lonlat": [2.881, 50.688], "t": 3.5},
         ],
-        "font": "Inter",
+        "font": "preset",
         "footnote": "Front line illustrative",
     }
 
