@@ -7,7 +7,7 @@ suffixes it applies to. Numpy and ffmpeg only (no OpenCV), so it also runs in th
 the world must move, not only the flame. Measured on the delivered frames (480x270 grey, 8 frames a second):
 - the camera is still: the phase-correlation shift between the two ends of every one-second window stays under ``STILL_SHIFT_PX`` of 480
   (else NOT_RUN: with a moving camera the pixel change is the camera, the rule is about a still one; BP-194 says a camera move alone does not count);
-- G-LIVE-1 (BP-194, ``standards/sourced_rules.json``): no one-second window changes less than ``frozen_change_pct`` of the frame (a pixel counts above
+- G-LIVE-1 (BP-194, ``standards/sourced_rules.json``; the 1 px and 25 % are BP-194 thresholds too): no one-second window changes less than ``frozen_change_pct`` of the frame (a pixel counts above
   12 grey levels) - ``value`` is the deadest window's share in %;
 - G-LIVE-3 (LIVING_PHOTO_RULES_2026-11-14): when ``<clip>.zones.json`` names the zones of the effects (``{"zones": [{"name": "smoke", "mask": "smoke.png"}]}``,
   mask paths relative to the json, white = zone) at least ``ZONE_MIN_PCT`` % of every zone's pixels change in the median window; without the file the zone
@@ -22,12 +22,13 @@ from pathlib import Path
 import numpy as np
 
 from explainer_engine.qa import liveliness as LV
+from explainer_engine.standards import sourced_rules as SR
 
 PASS, FAIL, NOT_RUN = "PASS", "FAIL", "NOT_RUN"
 SIZE = LV.FROZEN_SIZE                 # (480, 270)
 ANALYSIS_FPS = 8
-STILL_SHIFT_PX = 1.0                  # of 480: a camera that moves more than this between the two ends of a second is not still
-ZONE_MIN_PCT = 25.0                   # G-LIVE-3 of LIVING_PHOTO_RULES_2026-11-14: a quarter of the zone's pixels change
+STILL_SHIFT_PX = float(SR.T("BP-194", "still_shift_px"))   # of 480: a camera that moves more than this in a second is not still
+ZONE_MIN_PCT = float(SR.T("BP-194", "zone_min_pct"))        # G-LIVE-3: a quarter of the zone's pixels change
 
 
 def decode_grey(path: Path, fps: int = ANALYSIS_FPS) -> list[np.ndarray]:

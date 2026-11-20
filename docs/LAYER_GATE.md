@@ -127,7 +127,7 @@ An open conflict is its own entry: `{"id", "kind": "conflict", "status": "open|r
 `layer_gate.require_layers(layers)` raises `ContractError` unless every layer is `final` and PASS (`require_pass`: the group order included) or carries the owner's recorded
 `layer_waiver`; the registry must exist and be valid even when every layer is waived. `episode/run.py: run_stage` calls `require_stage(stage)` (`STAGE_LAYERS`: script
 L1-L4, L7, L8, L29, L30; sound_plan and sound L18-L20; pictures L9-L11, L16; voice L5, L6, L17; clips L12-L15; assemble L21, L22, L25; qa L23, L24) and refuses the stage
-(`StageRefused`); `training/pods/ltx/scene_run.py main` calls it for L12 and L13 before it reserves or writes anything. **There is no flag.** The only way past is the owner's own
+(`StageRefused`); `training/pods/ltx/scene_run.py main` (the D-132 video route) calls it for L12 and L13 before it reserves or writes anything. **There is no flag.** The only way past is the owner's own
 word in `jobs/creator_ok.jsonl` (the D-84 pattern): `python -m explainer_engine.governance ok layer_waiver <layer> <cmsg id> "<his words>"`, one layer, held a day
 (`WAIVER_MINUTES`), never a wildcard. Until the records of a stage's layers are signed final, the runner therefore stops for that stage unless he waives the layer.
 The unit tests get a gate that passes (`tests/unit/conftest.py`, the `real_layer_gate` opt-in as for the dry run); `tests/unit/test_layer_gate_enforcement.py` runs the real one.

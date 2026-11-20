@@ -30,7 +30,7 @@ def write_layer(root, layer="L9", **kw):
 def test_a_final_pass_record_lets_the_layer_through(root):
     put(root, registry(entry(1)))
     write_layer(root)
-    assert LG.require_layers(("L9",), root=root) == []
+    assert LG.require_layers(("L9",), root=root) == ["layer gate mode: strict"]
 
 
 @pytest.mark.parametrize("what", ["no record", "draft record"])
@@ -54,7 +54,7 @@ def test_a_waiver_is_the_owners_recorded_word_for_one_layer_for_a_day(root):
     put(root, registry(entry(1)))
     records.add("layer_waiver", "L9", MSG, "go on with the pictures", root=root)
     notes = LG.require_layers(("L9",), root=root)
-    assert "L9 waived by the owner" in notes[0] and MSG in notes[0]
+    assert notes[0] == "layer gate mode: strict" and "L9 waived by the owner" in notes[1] and MSG in notes[1]
     with pytest.raises(ContractError, match="L10"):                       # another layer is not covered by it
         LG.require_layers(("L9", "L10"), root=root)
     old = records.add("layer_waiver", "L10", MSG, "yesterday's word", root=root, now=time.time() - 25 * 3600)
@@ -116,3 +116,70 @@ def test_a_trial_script_refuses_before_it_reserves_or_writes(monkeypatch, tmp_pa
 def test_the_committed_repo_refuses_today_because_no_layer_is_final():
     with pytest.raises(ContractError):
         LG.require_stage("pictures", root=ROOT)
+
+
+# ---- the two modes (the lead, 08:57 UTC): strict by default, fail_only only on the owner's recorded word ---------------------------
+
+def mode(root, which, **kw):
+    return records.add("layer_gate_mode", which, MSG, f"the owner picks {which}", root=root, **kw)
+
+
+def test_the_mode_is_strict_without_the_owners_word_and_there_is_no_flag(root):
+    assert LG.gate_mode(root=root) == "strict"
+    assert LG.require_layers.__code__.co_varnames[:1] == ("layers",)                   # no mode argument: only the record picks it
+    assert "mode" not in LG.require_layers.__code__.co_varnames[:LG.require_layers.__code__.co_argcount + LG.require_layers.__code__.co_kwonlyargcount]
+
+
+@pytest.mark.parametrize("target", ["lenient", "off", "*", ""])
+def test_the_mode_record_takes_only_the_two_modes(root, target):
+    with pytest.raises(ValueError):
+        records.add("layer_gate_mode", target, MSG, "words", root=root)
+
+
+def test_fail_only_lists_layers_that_are_not_final_instead_of_stopping(root):
+    put(root, registry(entry(1)))
+    with pytest.raises(ContractError):
+        LG.require_layers(("L9",), root=root)                                          # strict
+    mode(root, "fail_only")
+    notes = LG.require_layers(("L9", "L10"), root=root)
+    assert notes[0] == "layer gate mode: fail_only"
+    assert any(n.startswith("NOT_RUN L9") for n in notes) and any(n.startswith("NOT_RUN L10") for n in notes)
+
+
+def test_fail_only_still_stops_on_a_missing_or_broken_registry_and_on_a_final_block(root):
+    mode(root, "fail_only")
+    with pytest.raises(ContractError, match="REG-MISSING"):
+        LG.require_layers(("L9",), root=root)
+    put(root, registry(entry(1, words="")))
+    with pytest.raises(ContractError, match="REG-FIELDS"):
+        LG.require_layers(("L9",), root=root)
+    put(root, registry(entry(1)))
+    write_layer(root, state="final", requirements_covered=[])                           # final, and the entry is not covered: BLOCK
+    with pytest.raises(ContractError, match="REQ-UNCOVERED"):
+        LG.require_layers(("L9",), root=root)
+
+
+def test_fail_only_lets_a_final_pass_through_silently_and_marks_a_waiver(root):
+    put(root, registry(entry(1)))
+    write_layer(root)
+    mode(root, "fail_only")
+    assert LG.require_layers(("L9",), root=root) == ["layer gate mode: fail_only"]
+    records.add("layer_waiver", "L10", MSG, "go on", root=root)
+    assert any("L10 waived by the owner" in n for n in LG.require_layers(("L9", "L10"), root=root))
+
+
+def test_the_newest_mode_word_wins_and_it_expires_after_thirty_days(root):
+    mode(root, "fail_only", now=time.time() - 60)
+    mode(root, "strict")
+    assert LG.gate_mode(root=root) == "strict"
+    mode(root, "fail_only")
+    assert LG.gate_mode(root=root) == "fail_only"
+    other = root / "other"
+    (other / "jobs").mkdir(parents=True)
+    records.add("layer_gate_mode", "fail_only", MSG, "old", root=other, now=time.time() - 31 * 86400)
+    assert LG.gate_mode(root=other) == "strict"
+
+
+def test_the_stage_record_carries_the_mode_and_the_notes(monkeypatch, tmp_path):
+    src = (ROOT / "explainer_engine" / "episode" / "run.py").read_text(encoding="utf-8")
+    assert '"layer_gate": {"mode": LG.gate_mode(), "notes": list(gate_notes or [])}' in src

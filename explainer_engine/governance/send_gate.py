@@ -29,6 +29,7 @@ from explainer_engine.governance import layer_gate, root_dir
 from explainer_engine.governance import owner_requirements as OR
 
 RECORDS = Path("jobs") / "send_gate" / "records.jsonl"
+QUARANTINE = Path("jobs") / "send_gate" / "quarantine.jsonl"
 PASS, FAIL, NOT_RUN, BLOCK = "PASS", "FAIL", "NOT_RUN", "BLOCK"
 _ORDER = {BLOCK: 3, FAIL: 2, NOT_RUN: 1, PASS: 0}
 _MSG = re.compile(r"cmsg_[A-Za-z0-9]+")
@@ -122,6 +123,13 @@ def run(layer: str, files, *, root=None, owner_asked: str | None = None, now: fl
             rows.append(_measure(e, paths, root))
         if not rows:
             rows.append({"id": "-", "status": NOT_RUN, "value": None, "measures": "", "detail": f"no active requirement binds {layer}"})
+    if not gate and _worst(rows) != PASS:
+        for p in paths:
+            q = quarantined(sha256(p), root=root) if p.is_file() else None
+            if q:
+                rows.append({"id": "QUARANTINE", "status": BLOCK, "value": None, "measures": "", "detail":
+                             f"{p.name} was let go unchecked by the stop hook ({q.get('reason')}) and is quarantined: it can be a candidate only "
+                             "after a send gate run that PASSES"})
     status = _worst(rows)
     failed = sorted(r["id"] for r in rows if r["status"] in (FAIL, BLOCK))
     label = None
@@ -149,6 +157,34 @@ def render(rep: dict) -> str:
     return "\n".join(lines)
 
 
+def quarantine(files, reason: str, *, root=None, now: float | None = None) -> list[dict]:
+    """Quarantine files a stop hook let go unchecked: the send gate and the upload hook refuse them as candidates until a PASS record that is
+    newer than the quarantine exists for the same bytes (a labelled owner-asked record does not lift it)."""
+    root = root_dir(root)
+    path = root / QUARANTINE
+    path.parent.mkdir(parents=True, exist_ok=True)
+    rows = [{"path": str(f), "sha256": sha256(f), "reason": reason, "at": now if now is not None else time.time()}
+            for f in files if Path(f).is_file()]
+    with path.open("a", encoding="utf-8") as fh:
+        for r in rows:
+            fh.write(json.dumps(r, ensure_ascii=False) + "\n")
+    return rows
+
+
+def quarantined(digest: str, *, root=None) -> dict | None:
+    """The newest quarantine row of these bytes (None when there is none)."""
+    log = root_dir(root) / QUARANTINE
+    last = None
+    for line in log.read_text(encoding="utf-8").splitlines() if log.is_file() else []:
+        try:
+            row = json.loads(line)
+        except ValueError:
+            continue
+        if row.get("sha256") == digest:
+            last = row
+    return last
+
+
 def passing_record(path: Path | str, *, root=None) -> dict | None:
     """The newest send record that covers this file's sha256 and lets it go: PASS (or NOT_RUN: nothing measurable failed) or a record
     labelled with the owner's ``owner_asked``; None when there is none (the hooks then refuse)."""
@@ -166,6 +202,9 @@ def passing_record(path: Path | str, *, root=None) -> dict | None:
         if any(f.get("sha256") == digest for f in row.get("files", [])) and \
                 (row.get("status") in (PASS, NOT_RUN) or (row.get("label") or {}).get("owner_asked")):
             best = row
+    q = quarantined(digest, root=root)
+    if best is not None and q is not None and not (best.get("status") == PASS and float(best.get("at", 0)) > float(q.get("at", 0))):
+        return None                                                        # a quarantined file needs a newer PASS, nothing weaker
     return best
 
 

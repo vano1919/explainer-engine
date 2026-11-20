@@ -277,7 +277,7 @@ def run_stage(ep: Episode, stage: str) -> dict:
     if stage not in STAGES:
         raise ConfigError(f"unknown stage {stage!r}: one of {', '.join(STAGES)} or G1..G10")
     try:   # spec section 7.2: a stage starts only when its layers are final and PASS, or the owner's recorded word waives one
-        LG.require_stage(stage)
+        gate_notes = LG.require_stage(stage)
     except ContractError as exc:
         raise StageRefused(str(exc)) from exc
     rehearsal = check_before(ep, stage)
@@ -299,6 +299,7 @@ def run_stage(ep: Episode, stage: str) -> dict:
            "verdict": verdict, "rows": rows, "outputs": outputs, "rehearsal": rehearsal, "fingerprint": fp,
            "not_run": [r["gate"] for r in rows if r["status"] == G.NOT_RUN],   # P-7: an unmeasured row is stored, never dropped
            "awaiting": AWAITING_APPROVAL if verdict["status"] == G.REVIEW else None,
+           "layer_gate": {"mode": LG.gate_mode(), "notes": list(gate_notes or [])},   # the mode and every NOT_RUN or waived layer, in every record
            "elapsed_s": round(time.time() - t0, 2), "at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}
     SS.hook(ep.root, stage, rec, ss_resets, rehearsal)   # W3: reset notes + bind a passing stage's files (shot_state.py)
     write_json_atomic(record_path(ep.root, stage), rec)
