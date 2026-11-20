@@ -71,3 +71,14 @@ def test_only_the_s07_sh008_plume_reads_the_new_keys():
         for sm in inv["smoke"]:
             if k != "S07_SH008":
                 assert "avoid" not in sm and "lean" not in sm, k
+
+
+def test_an_extra_person_mask_is_measurement_only_when_no_plume_avoids_it():
+    inv = _inventory(False); inv["persons"] = []
+    extra = np.zeros((90, 160), np.uint8); extra[:, 60:100] = 255              # a person next to the source, given as an image
+    a = LV.Shot("S07_SH008", 5.0417, False, False, pic=_pic(), depth=_depth(), inventory=copy.deepcopy(inv))
+    b = LV.Shot("S07_SH008", 5.0417, False, False, pic=_pic(), depth=_depth(), inventory=copy.deepcopy(inv), person_mask=extra)
+    assert not a.pmask.any() and b.pmask.any()
+    assert np.array_equal(a.render(FRAME), b.render(FRAME))                    # the picture is untouched
+    assert PZ.plume_in_person_share(a.plume_a, a.pmask_f if a.pmask.any() else None)["status"] == "NOT_RUN"
+    assert PZ.plume_in_person_share(b.plume_a, b.pmask_f)["status"] in ("PASS", "FAIL")

@@ -84,9 +84,10 @@ INV = {
 
 
 class Shot:
-    def __init__(self, frame, seconds=5.0, drift=False, particles=True, pic=None, depth=None, faces=None, mouths=None, inventory=None):
+    def __init__(self, frame, seconds=5.0, drift=False, particles=True, pic=None, depth=None, faces=None, mouths=None, inventory=None, person_mask=None):
         """pic: BGR image array or path; depth: metres, array or .npy path (same picture); faces: [(x0, y0, x1, y1)] in 1280x720 pixels;
-        mouths: [(x, y, score)]; inventory: dict like INV[frame] (default INV[frame])."""
+        mouths: [(x, y, score)]; person_mask: extra person zones for the measurement, an image array or path (non-zero = person; resized to 1280x720), unioned
+        with the inventory silhouettes and the faces; it never changes the picture, only Shot.pmask / pmask_f; inventory: dict like INV[frame] (default INV[frame])."""
         _init_noise()
         self.frame, self.inv, self.drift, self.particles = frame, (inventory if inventory is not None else INV[frame]), drift, particles
         self.n = int(seconds * FPS); self.secs = seconds
@@ -164,6 +165,11 @@ class Shot:
         for poly in self.inv.get("persons", []):
             cv2.fillPoly(self.pmask, [np.array([(x * SX, y * SY) for x, y in poly], np.int32)], 1)
         for (fx0, fy0, fx1, fy1) in self.faces: self.pmask[int(fy0):int(fy1), int(fx0):int(fx1)] = 1
+        if person_mask is not None:
+            pm_in = cv2.imread(str(person_mask), cv2.IMREAD_GRAYSCALE) if isinstance(person_mask, (str, bytes)) or hasattr(person_mask, "__fspath__") else np.asarray(person_mask)
+            if pm_in is None: raise ValueError("person_mask: not readable")
+            if pm_in.ndim == 3: pm_in = pm_in.max(axis=2)
+            self.pmask = np.maximum(self.pmask, (cv2.resize(pm_in.astype(np.uint8), (W, H), interpolation=cv2.INTER_NEAREST) > 0).astype(np.uint8))
         self.pmask_f = self.pmask.astype(np.float32)
         self.phide = np.clip(cv2.GaussianBlur(cv2.dilate(self.pmask, np.ones((7, 7), np.uint8)).astype(np.float32), (0, 0), 2.5) * 1.15, 0, 1)   # nearer person covers the plume (feathered, 3 px grown)
         self.plume_a = np.zeros((H, W), np.float32)
@@ -431,7 +437,7 @@ def run(frame, out_mp4, seconds=5.0, drift=False, particles=True, tel=None, **sh
 
 def main(argv=None):
     ap = argparse.ArgumentParser(); ap.add_argument("frame"); ap.add_argument("out"); ap.add_argument("--pic", required=True); ap.add_argument("--depth", required=True)
-    ap.add_argument("--faces-json", help="json with 'faces' and 'mouths' (the telemetry of an earlier run)"); ap.add_argument("--seconds", type=float, default=5.0)
+    ap.add_argument("--person-mask", help="image, non-zero = person (measurement only)"); ap.add_argument("--faces-json", help="json with 'faces' and 'mouths' (the telemetry of an earlier run)"); ap.add_argument("--seconds", type=float, default=5.0)
     ap.add_argument("--drift", action="store_true"); ap.add_argument("--noparticles", action="store_true"); ap.add_argument("--baseline", action="store_true")
     a = ap.parse_args(argv)
     kw = {}
@@ -439,7 +445,7 @@ def main(argv=None):
         tj = json.load(open(a.faces_json)); kw = dict(faces=tj.get("faces"), mouths=tj.get("mouths"))
     if a.baseline:   # the run2e smoke exactly as it was: source (945, 445), no lean, no person avoidance
         sm = INV["S07_SH008"]["smoke"][0]; sm.update(src=(945, 445), lean=0.0, avoid=False)
-    run(a.frame, a.out, a.seconds, a.drift, not a.noparticles, pic=a.pic, depth=a.depth, **kw)
+    run(a.frame, a.out, a.seconds, a.drift, not a.noparticles, pic=a.pic, depth=a.depth, person_mask=a.person_mask, **kw)
 
 
 if __name__ == "__main__":
