@@ -3,68 +3,116 @@ name: crossover-episode
 description: Research and write a "worlds collide" crossover episode (two fictional or historical worlds meeting) from what the fans of both worlds actually discuss, balanced for casual viewers and hardcore fans, inside the rights rules. Use when the creator names two worlds to cross ("what if Westeros met Middle-earth", "Romans in a fantasy kingdom", "two games in one world") or asks for a crossover script, scenario or topic.
 ---
 
-# Crossover episode: fan research -> scenario -> balanced script -> rights check
+# Two worlds meet: fans, premise, script, rights (layers L29 and L30, stages S1-S3)
 
-**Episode rulebook first (D-51, OR-11):** read `python -m explainer_engine.standards brief <episode>/episode_rules.json --role script` and follow it; legal, licence, likeness and art-direction questions are decided there (docs/EPISODE_STANDARDS.md), never invented in this skill. A conflict goes back to the orchestrator.
+Rewritten 2026-11-20 under RW-50 ([docs/SKILL_LAYERS.md](../../../docs/SKILL_LAYERS.md)) for crossover episodes made
+on the v4.3 routes (D-131). The rights rules are RR-01..RR-16 in `docs/RIGHTS_AND_FAIR_USE.md` (binding, D-26); the
+crossover script rules are `docs/SCRIPTING_SPEC.md` section 7; the limits are P-120..P-125 in
+`docs/VIDEO_PARAMETER_SPEC.md`, with the quote and recap numbers in BP-77. This page links them; it never restates them.
 
-The goal is the scenario fans of both worlds have argued about and never seen done properly, explained so a newcomer
-enjoys it too. Not a generic "who would win", not a recap, not a template with names swapped.
+**Rulebook first (D-51, OR-11):** `python -m explainer_engine.standards brief <episode>/episode_rules.json --role script`.
+Legal, licence, likeness and art direction are decided there (docs/EPISODE_STANDARDS.md); conflicts go to the orchestrator.
 
-Read first: `docs/RIGHTS_AND_FAIR_USE.md` (RR rules, binding), `docs/SCRIPTING_SPEC.md` section 7, P-120..P-125 in
-`docs/VIDEO_PARAMETER_SPEC.md`. Output goes to `jobs/<slug>/research/` (gitignored), never into the repo.
+## What we are making, and what we refuse to make
 
-## 1. Fan research (do this before any idea of your own)
-Work from the sources fans use, for each world:
-- Community discussion: the main subreddits and forums of each world, threads on "crossover", "what if", "who would win",
-  "unpopular opinion", "theory"; sort by top and by controversial, read the comments, not only titles.
-- Fan wikis for canon facts (dates, geography, magic rules, power scaling, economics), with page links.
-- Existing crossovers: YouTube videos, fan fiction indexes (titles and summaries only), forum threads. Note each one's
-  angle so ours is different. Read; never copy wording, structure or art.
-- YouTube comments under the biggest existing crossover videos: what viewers say was missing or wrong. If vidIQ is used
-  (comment insights, 5 credits per call), log the cost in `docs/COST_AND_TIME_MODEL.md` first.
-- Primary sources where they exist (the books, author interviews) for canon rules; quote little (RR-04).
-Record everything in `fan_brief.json` (`explainer_engine/schemas/fan_brief.schema.json`): sources with access dates,
-theories (who proposed them, how popular, canon status), what fans ask for, existing crossovers and their angles, canon
-rules per world, casual on-ramps, deep cuts. Then run:
-`python -m explainer_engine.research.fan_brief jobs/<slug>/research/fan_brief.json` and fix every FAIL.
+The target: the meeting that fans of both worlds have argued about and never seen done well, reasoned from each
+world's own rules so a newcomer enjoys it too. Refused: "who would win" as the frame, a recap with a twist, a fan
+sequel, a template with the names swapped. An episode that only sends characters on a new adventure shares the
+source's purpose and is the weak legal case (RR-14); ours tests the worlds, it does not continue them (RR-01, RR-06).
 
-## 2. Scenarios with maximum imagination
-Generate at least 12 candidate premises before choosing. Push past the obvious: the obvious one is usually the army
-battle every existing video already did. Useful lenses:
-- systems instead of fights: money, food, logistics, travel time, communication, law, religion, medicine, weather;
-- a single rule of one world dropped into the other (one magic law, one political institution, one creature);
-- a small person, not a hero: a merchant, a cook, a messenger crossing over;
-- second-order effects: what changes a year later, ten years later;
-- fan theories as engines: what if the popular theory is true, and the other world exposes it;
-- the reverse direction, and the case where the meeting changes nothing (and why that is interesting).
-Score each premise 1-5 on surprise, fan payoff (does it answer a demand from the brief?), casual clarity, visual drama,
-honesty (can the reasoning be sourced from canon?) and rights safety (RR-01: is it analysis?). Keep the best; record why
-the others lost. Reject a premise that the brief's existing crossovers already cover (P-125).
+## Stage 1: fan research before any idea of ours
 
-## 3. Script (follow SCRIPTING_SPEC section 7)
-- Hook: the collision in one concrete image and one sentence, no greeting, no "who would win".
-- On-ramps for casual viewers inside the story (who these people are, what the rule is) in one or two lines each,
-  never a lecture; deep cuts for fans (named theories with credit, small canon details, a callback the fandom knows).
-- Tag every beat `casual`, `fan` or `both` in `beats.json`; check with `fan_brief.check_balance` (P-123).
-- Play the scenario forward step by step from the canon rules; show the reasoning; label speculation; include the best
-  counter-argument a fan would raise, and answer it.
-- Payoff: a clear, arguable conclusion and the open question fans will debate (that is the comment section, not a
-  "like and subscribe" plea).
-- Recap only what the analysis needs (P-120); quotes short and analysed (P-122).
-- Run `fan_brief.template_flags` over the narration and remove stock phrases unless one is really the best wording.
+Raw research (thread excerpts, comment notes) stays in gitignored `jobs/<slug>/research/`, never in the repository.
+For each world:
+- **Where fans argue:** the main subreddits and forums, threads on crossover, what-if, theory, unpopular opinion;
+  sort by top and by controversial and read the comments, not the titles.
+- **Canon facts:** fan wikis with page links for dates, geography, magic or tech rules, power scaling, economics.
+- **What exists already:** crossover videos, fan-fiction indexes (titles and summaries only), forum takes. Note each
+  angle so ours differs (P-125). Read; never copy wording, structure or art.
+- **What viewers missed:** comments under the biggest existing crossover videos. vidIQ comment insights cost credits:
+  estimate and log them in `docs/COST_AND_TIME_MODEL.md` before the call (invariant 2).
+- **Primary canon:** the books and author interviews, quoted little (RR-04).
 
-## 4. Pictures: simple doodle + dramatic scenes
-Doodle for explanation (the traveller mascot, diagrams, maps we draw, comic beats); a few dramatic establishing scenes for
-the big moments (landscapes, light, scale). All our own drawings; characters are our interpretations from text, never
-the productions' designs, costumes or actors; no generator prompt names a franchise or character (RR-03).
+Record it all in `fan_brief.json` against `explainer_engine/schemas/fan_brief.schema.json` (sources with access dates,
+theories with who proposed them and their canon status, fan demands, existing crossovers, canon rules, on-ramps, deep
+cuts), then run `python -m explainer_engine.research.fan_brief jobs/<slug>/research/fan_brief.json` and fix every
+FAIL (P-124 depth, P-125 originality). Canon facts that the script states also get claim rows (skill
+`science-grounding`): a canon rule is `E` with its wiki or book link; our extrapolation is `R`; a fan theory is
+credited and labelled as a theory (RR-07).
 
-## 5. Rights manifest and check
-Write `rights_manifest.json` (`explainer_engine/schemas/rights_manifest.schema.json`) and run
-`python -m explainer_engine.rights.ip_check jobs/<slug>/rights_manifest.json`. Any FAIL blocks the package; answer each
-REVIEW in writing. Name the manifest in the episode rulebook (`execution.rights_manifest`, ES-17): its gate merges these findings. The description gets the unofficial note (RR-08).
+## Stage 2: premises, wide before narrow
 
-## 6. Stop for the creator (approval #1)
-Hand over: the fan brief summary, the chosen premise and the rejected ones, the script with beat tags, the balance and
-template reports, the rights report. Nothing goes to storyboard or render before the creator approves.
+At least twelve candidates before choosing. The obvious army battle is usually the take that already exists. Lenses
+that open better ones:
+- systems instead of fights: money, food, logistics, travel time, messages, law, faith, medicine, weather;
+- one rule of world A dropped into world B (a single magic law, an institution, a creature);
+- a small person crossing over: a merchant, a cook, a courier;
+- second-order effects a year or ten years on (skill `time-jump-episode` when time is the engine);
+- a popular fan theory taken as true, and the other world exposing it;
+- the reverse direction, and the case where the meeting changes nothing, and why.
 
-**Rights rules added 2026-10-17 (RR-14..RR-16):** state the commentary target first (what the episode says about the source work), never feed official images to a generator, keep parody brands as props only. See `docs/RIGHTS_AND_FAIR_USE.md`.
+Score each 1-5 on surprise, fan payoff (does it answer a demand in the brief), casual clarity, visual drama, honesty
+(can canon carry the reasoning) and rights safety (RR-01, RR-14). Keep the best; write why each other one lost. State
+the commentary target in one full sentence: what the episode says about the source works themselves (RR-14).
+`python -m explainer_engine.research.hypotheses jobs/<slug>/research/story_hypotheses.json` holds the premise
+comparison honest (evidence and entertainment scored apart).
+
+## Stage 3: the script (SCRIPTING_SPEC section 7, on top of sections 1-6)
+
+- **Hook:** the collision in one concrete image and one sentence; no greeting, no "who would win" (BP-03 forms).
+- **Two audiences:** on-ramps for newcomers inside the story, one or two lines each, never a lecture; deep cuts for
+  fans: credited theories, small canon details, a callback the fandom knows. Tag every beat `casual`, `fan` or `both`
+  and check with `fan_brief.check_balance` (P-123).
+- **Reasoned forward:** play the scenario step by step from the canon rules, label speculation, raise the best fan
+  counter-argument and answer it.
+- **Payoff:** an arguable conclusion and the open question fans will fight over in the comments; no subscribe plea.
+- **Limits:** recap only what the analysis needs (P-120, RR-05); quotes short, attributed and analysed (P-122, RR-04).
+- **Stock phrases:** run `fan_brief.template_flags` over the narration and keep a flagged phrase only if it truly is
+  the best wording.
+
+## Pictures and clips under the rights rules
+
+Pictures come from the Gemini chat's image tool as turn packs (`explainer_engine/imagegen/turn_pack.py`, D-131); clips
+follow the video lane (D-132, D-137). On top of the usual picture rules:
+- Our own interpretations from text only: never a production's character designs, costumes, sets, props, actor
+  likenesses or official maps (RR-03). No prompt names the franchise, a character or an actor.
+- Official screenshots, trailer frames and key art are private study only, never an image input or reference upload
+  to any generator (RR-15).
+- Parody brands and the franchise name are narrative props only, never on anything sold (RR-16).
+- Thumbnails: our art only, no actor faces, key art, logos or screenshots (RR-09).
+- Music and effects: own, CC0 or licensed with a record; never a franchise theme or a sound-alike (RR-11).
+
+**Conflict to report, not settle:** rule 20 names the series' era film in every picture prompt; RR-03 forbids naming
+a franchise or "in the style of" one. In a crossover the named film can never be one of the crossed works or its
+adaptations. Whether naming any other film is acceptable in a franchise episode is the creator's call (OR-22): ask
+before the first turn pack, record his answer in the rulebook.
+
+## Stage 4: rights manifest and check
+
+Write `rights_manifest.json` against `explainer_engine/schemas/rights_manifest.schema.json` and run
+`python -m explainer_engine.rights.ip_check jobs/<slug>/rights_manifest.json`. Any FAIL blocks the package; every
+REVIEW gets a written answer. Name the manifest in the rulebook (`execution.rights_manifest`, ES-17) so the rulebook's
+gate merges these findings. The description carries the unofficial note (RR-08). The check lowers risk and proves
+nothing about fair use; the creator carries the decision.
+
+## Stage 5: stop for the creator (approval #1, OR-15)
+
+Hand over the fan brief summary, the chosen premise with the losers and why, the commentary target, the script with
+beat tags, the balance and template reports, the claim map and the rights report. Nothing goes to pictures, reads or
+clips before his approval (`explainer_engine/scripting/script_approval.py`, OR-17).
+
+## Failure modes
+
+| Symptom | Cause | Fix |
+|---|---|---|
+| fans would call it "seen it" | premise picked before the brief | redo stage 2 from the brief's existing takes |
+| newcomers lost in minute one | on-ramps missing or a lecture | one in-story line per new rule, beat tagged `casual` |
+| ip_check FAIL on `art` | a prompt named a character or used a still | rewrite from text, drop the reference image |
+| recap REVIEW | plot summary carrying the episode | cut to what the test needs |
+| a theory stated as canon | label lost | credit the author, label it a theory |
+
+## Real-world crossovers
+
+When one world is real history (Romans in a fantasy kingdom), the historical side follows the claim map like any
+docudrama (skill `science-grounding`), real living people stay unvoiced (D-62), and the RR rules still bind the
+fictional side.
