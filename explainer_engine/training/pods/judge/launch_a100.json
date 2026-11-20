@@ -1,0 +1,254 @@
+{
+ "_doc": "Launch file of modal_judge_jobs.py (P2: Qwen3-VL as an automatic frame judge on A100-80GB; coordinator brief TEST_PAID_PLAN_AND_P2_BRIEF_ka.md, owner's paid-tests word cmsg_01Hnu5zB86sjUj5GtTgaUkPWY3u2yHpBodP5oiGxehoiGX 2026-11-20 08:26 UTC). Separate from ltx/launch.json (protected). Numbers marked estimate are unmeasured until rung L3 measures them. Caps: ledger line 1.2 (coordinator's P2 hard cap); reservations stop at 80 % = 0.96 = smoke 0.15 + run 0.81.",
+ "app_name": "ee-judge-jobs",
+ "gpu": "A100-80GB",
+ "cpu": 4,
+ "memory_gib": 32,
+ "usd_per_h": {
+  "A100-80GB": 2.9428
+ },
+ "prices_date": "2026-11-07",
+ "prices_source": "https://modal.com/pricing via cloud/modal_schedule.py",
+ "scaledown_window_s": 2,
+ "startup_timeout_s": 600,
+ "volume": "ee-weights",
+ "hf_hub_pin": "1.33.0",
+ "image": {
+  "python": "3.12",
+  "torch": "2.8.0",
+  "torch_index": "https://download.pytorch.org/whl/cu128",
+  "transformers": "5.5.0",
+  "torchvision": "0.23.0",
+  "torchvision_why": "Qwen3VLProcessor needs torchvision (found by the free CPU rehearsal: ImportError without it); 0.23.0 is the pair of torch 2.8.0"
+ },
+ "caps": {
+  "smoke_usd": 0.15,
+  "run_usd": 0.81,
+  "ledger_line_usd": 1.2,
+  "cold_start_s": 45,
+  "margin_s": 60
+ },
+ "caps_note": "cold_start_s 45 and margin_s 60 are ESTIMATES (the LTX bake-off measured ~34 s overhead; the end path is small JSON uploads). Smoke window = floor(0.9*(0.15-45*rate/3600)/rate*3600) - margin = about 64 s of work for loading Qwen3-VL-8B and one frame; if L3 shows it too tight the coordinator decides (not raised here).",
+ "hf_out": "explainer-engine/tests_paid_2026-11-20/P2",
+ "models": {
+  "qwen3vl_8b": {
+   "repo": "Qwen/Qwen3-VL-8B-Instruct",
+   "revision": "0c351dd01ed87e9c1b53cbc748cba10e6187ff3b",
+   "dir": "judge/qwen3-vl-8b-instruct",
+   "files": {
+    "chat_template.json": {
+     "size": 5499,
+     "id": "1081bacf1af7c7c6de4a585ce02cd0fd34e382da",
+     "kind": "git_blob"
+    },
+    "config.json": {
+     "size": 1474,
+     "id": "0e2df614c5fe1ad2b6b540c8625bebf2d7ec43ca",
+     "kind": "git_blob"
+    },
+    "generation_config.json": {
+     "size": 269,
+     "id": "e116347d7ef42621c7a5957f82c015c38d939c1f",
+     "kind": "git_blob"
+    },
+    "merges.txt": {
+     "size": 1671839,
+     "id": "20024bfe7c83998e9aeaf98a0cd6a2ce6306c2f0",
+     "kind": "git_blob"
+    },
+    "model-00001-of-00004.safetensors": {
+     "size": 4902275944,
+     "id": "d5d0aef0eb170fc7453a296c43c0849a56f510555d3588e4fd662bb35490aefa",
+     "kind": "sha256"
+    },
+    "model-00002-of-00004.safetensors": {
+     "size": 4915962496,
+     "id": "8be88fb5501e4d5719a6d4cc212e6a13480330e74f3e8c77daa1a68f199106b5",
+     "kind": "sha256"
+    },
+    "model-00003-of-00004.safetensors": {
+     "size": 4999831048,
+     "id": "83de00eafe6e0d57ccd009dbcf71c9974d74df2f016c27afb7e95aafd16b2192",
+     "kind": "sha256"
+    },
+    "model-00004-of-00004.safetensors": {
+     "size": 2716270024,
+     "id": "0a88b98e9f96270973f567e6a2c103ede6ccdf915ca3075e21c755604d0377a5",
+     "kind": "sha256"
+    },
+    "model.safetensors.index.json": {
+     "size": 67759,
+     "id": "5857ec62530eb589b1876034dd5386f1d98131a6",
+     "kind": "git_blob"
+    },
+    "preprocessor_config.json": {
+     "size": 390,
+     "id": "2ea84a437d448ff71b08df68fdd949d5cc4ebb64",
+     "kind": "git_blob"
+    },
+    "tokenizer.json": {
+     "size": 7032403,
+     "id": "c6cc1014128b19d1fc46b1d30a23e3b1d35db421",
+     "kind": "git_blob"
+    },
+    "tokenizer_config.json": {
+     "size": 10868,
+     "id": "d3d3763207692c78780f4bf42d4dadf49a5c8012",
+     "kind": "git_blob"
+    },
+    "video_preprocessor_config.json": {
+     "size": 385,
+     "id": "3ba673a5ad7d4d13f54155ecd38b2a94a6dac8fe",
+     "kind": "git_blob"
+    },
+    "vocab.json": {
+     "size": 2776833,
+     "id": "4783fe10ac3adce15ac8f358ef5462739852c569",
+     "kind": "git_blob"
+    }
+   },
+   "model_cls": "AutoModelForImageTextToText"
+  },
+  "qwen3vl_30b_a3b": {
+   "repo": "Qwen/Qwen3-VL-30B-A3B-Instruct",
+   "revision": "9c4b90e1e4ba969fd3b5378b57d966d725f1b86c",
+   "dir": "judge/qwen3-vl-30b-a3b-instruct",
+   "files": {
+    "chat_template.json": {
+     "size": 5499,
+     "id": "1081bacf1af7c7c6de4a585ce02cd0fd34e382da",
+     "kind": "git_blob"
+    },
+    "config.json": {
+     "size": 1661,
+     "id": "23665bace1ee31b9894a9a0b588ab924a83875d8",
+     "kind": "git_blob"
+    },
+    "generation_config.json": {
+     "size": 269,
+     "id": "7bb37933d2d86e4ceaabcc6540be989658f238e9",
+     "kind": "git_blob"
+    },
+    "merges.txt": {
+     "size": 1671839,
+     "id": "20024bfe7c83998e9aeaf98a0cd6a2ce6306c2f0",
+     "kind": "git_blob"
+    },
+    "model-00001-of-00013.safetensors": {
+     "size": 4399341032,
+     "id": "6b205ea6332a532e5b97fd6281ac700f125a1a5f9a3457a22b797edfd35a5f67",
+     "kind": "sha256"
+    },
+    "model-00002-of-00013.safetensors": {
+     "size": 4984970880,
+     "id": "a739a546e00643e0555bbb6bcd57fa5ba60fb2de24177c8819d2f899f02c2223",
+     "kind": "sha256"
+    },
+    "model-00003-of-00013.safetensors": {
+     "size": 4984970888,
+     "id": "c57ec0f3fd06cae62980851f2661bd2b5e9dcdff37b8f9ece0cf44dea645efc3",
+     "kind": "sha256"
+    },
+    "model-00004-of-00013.safetensors": {
+     "size": 4984970928,
+     "id": "46b07bc82396976dc62f86bccb51c3c585a616b36b8ad8eef700bde75fedf88b",
+     "kind": "sha256"
+    },
+    "model-00005-of-00013.safetensors": {
+     "size": 4984970928,
+     "id": "3fa2fdf4b835d885efcaf0e4f6c7c00905cbaad7e293af988a0cf5408c3078c8",
+     "kind": "sha256"
+    },
+    "model-00006-of-00013.safetensors": {
+     "size": 4984970928,
+     "id": "89a762b82ff9db9351cd38794ecd1ee170bbe87d7fa56110ca837c088158ccfb",
+     "kind": "sha256"
+    },
+    "model-00007-of-00013.safetensors": {
+     "size": 4984970928,
+     "id": "634e437c0a038d8f447fceb44fb4f5230600af6a71d0fbe112711d9e84d6f07a",
+     "kind": "sha256"
+    },
+    "model-00008-of-00013.safetensors": {
+     "size": 4984970928,
+     "id": "4c6f316b27536bd914a6ea09c03ec1b80a9a8d55e3478b1bd5a307f8de8d7fbd",
+     "kind": "sha256"
+    },
+    "model-00009-of-00013.safetensors": {
+     "size": 4984970928,
+     "id": "e2e2a338c724ad75aea2b64211472c1037945fab398a879116cbbbc3112391da",
+     "kind": "sha256"
+    },
+    "model-00010-of-00013.safetensors": {
+     "size": 4984970928,
+     "id": "adca9184b757627840f7fce81e8e4e1203c7551fa2c1bdb469503dc7dfab0583",
+     "kind": "sha256"
+    },
+    "model-00011-of-00013.safetensors": {
+     "size": 4984970928,
+     "id": "71b3d1ff9ddc9358de332aa52b92fc001565edfcfd61f9e3679f96f85c7cbc22",
+     "kind": "sha256"
+    },
+    "model-00012-of-00013.safetensors": {
+     "size": 4984970928,
+     "id": "f4b204bedb467a2cea642dc38d30c2cdd29e48fbd2d7d5ee5cc14ba4b786ef6f",
+     "kind": "sha256"
+    },
+    "model-00013-of-00013.safetensors": {
+     "size": 2907596864,
+     "id": "e167e2806d63c404660b6d609a7eaef2e82bca478688ba6f83155128d8187539",
+     "kind": "sha256"
+    },
+    "model.safetensors.index.json": {
+     "size": 80743,
+     "id": "9b96b32843a831504e0e1bd42486ed220e001e59",
+     "kind": "git_blob"
+    },
+    "preprocessor_config.json": {
+     "size": 390,
+     "id": "2ea84a437d448ff71b08df68fdd949d5cc4ebb64",
+     "kind": "git_blob"
+    },
+    "tokenizer.json": {
+     "size": 7032403,
+     "id": "c6cc1014128b19d1fc46b1d30a23e3b1d35db421",
+     "kind": "git_blob"
+    },
+    "tokenizer_config.json": {
+     "size": 10868,
+     "id": "d3d3763207692c78780f4bf42d4dadf49a5c8012",
+     "kind": "git_blob"
+    },
+    "video_preprocessor_config.json": {
+     "size": 385,
+     "id": "3ba673a5ad7d4d13f54155ecd38b2a94a6dac8fe",
+     "kind": "git_blob"
+    },
+    "vocab.json": {
+     "size": 2776833,
+     "id": "4783fe10ac3adce15ac8f358ef5462739852c569",
+     "kind": "git_blob"
+    }
+   },
+   "model_cls": "AutoModelForImageTextToText",
+   "experts_implementation": "eager"
+  }
+ },
+ "vram_estimate_gib": {
+  "qwen3vl_8b": {
+   "weights": 16.34,
+   "basis": "sum of pinned file sizes"
+  },
+  "qwen3vl_30b_a3b": {
+   "weights": 57.88,
+   "basis": "sum of pinned file sizes; A100-80GB = 80 GiB; 5 images x ~600 tokens, KV cache 98 KB/token (48 layers x 4 kv heads x 128 x 2 x 2 B) so < 1 GiB: FITS BY ESTIMATE, to be MEASURED at L3/L4"
+  }
+ },
+ "verdict": {
+  "review_at": 0.3,
+  "retry_at": 0.7,
+  "provisional": true,
+  "why": "placeholders, NOT a decision: the raw probabilities are the data; thresholds are refitted offline on the owner's PASS/FAIL (compare.py)"
+ },
+ "experts_note": "transformers 5.5 picks grouped_mm for MoE experts by default; torch._grouped_mm on an A100 (sm80) with torch 2.8 is UNVERIFIED (the CPU rehearsal of the default failed: no CPU kernel). eager runs everywhere, slower: estimate ~4 s per question on the 30B (unmeasured). Technical choice for the plan thread to confirm."
+}
