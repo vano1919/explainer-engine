@@ -178,7 +178,7 @@ def world(tmp_path):
 def _body(w, api, spec=None, **kw):
     return M.body(spec or w.spec, w.launch, timeout_s=600, vol_root=w.vol, work=w.work, api=api, download=lambda name, dest: w.tar,
                   load_judge=lambda m: FakeJudge(w.log), vram=lambda: {"max_allocated_gib": 1.0}, free=lambda j: None,
-                  baked=w.vol / "none.json", **kw)
+                  baked=w.vol / "none.json", op_cls=SimpleNamespace, **kw)
 
 
 def test_body_normal_run_uploads_and_reads_back(world):
