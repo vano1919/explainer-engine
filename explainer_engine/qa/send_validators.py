@@ -74,6 +74,7 @@ ZONE_SPEED = {"fire": float(SR.T("BP-215", "fire_min_px_s")), "smoke": float(SR.
               "sky": float(SR.T("BP-215", "sky_min_px_s"))}
 FRAME_MIN_PX_S = float(SR.T("BP-215", "frame_min_px_s"))
 FRAME_COVER_MIN = float(SR.T("BP-215", "frame_cover_min_pct"))
+FIRE_WINDOW_MIN = float(SR.T("BP-215", "fire_window_min_pct"))
 FAR_OVER_FG_MAX = float(SR.T("BP-215", "far_over_foreground_max_pct"))
 STILL_PRIOR_MIN = float(SR.T("BP-215", "still_prior_min_pct"))
 FLOW_CHANGE_MIN = float(SR.T("BP-215", "flow_pixel_change_min"))
@@ -164,23 +165,10 @@ def _depth_check(path: Path, side: dict) -> tuple[str, float | None, str]:
     return PASS, round(over, 2), f"far particles over the foreground {over:.2f} % (at most {FAR_OVER_FG_MAX:g} %)"
 
 
-def living_motion(path) -> dict:
-    path = Path(path)
-    g = decode_grey(path)
-    step = max(1, int(round(ANALYSIS_FPS * LV.FROZEN_WINDOW_S)))
-    if len(g) <= step:
-        return {"status": NOT_RUN, "value": None, "detail": f"too short for a one-second window ({len(g)} frames at {ANALYSIS_FPS} fps)"}
-    # 1. G-LIVE-1: no one-second window may stand (pixel change, kept: it is the cheap guard of the whole frame)
-    fw = LV.frozen_windows_grey(g, ANALYSIS_FPS)
-    low = fw["min_share_pct"]
-    if fw["frozen"]:
-        return {"status": FAIL, "value": low, "detail": f"{fw['frozen']} of {fw['windows']} one-second windows change under {LV.FROZEN_CHANGE:g} % of the "
-                f"frame (deadest {low:.2f} % from {fw['frozen_from_s'][0]:.1f} s): only a small part moves (G-LIVE-1, BP-194)"}
-    # 2. optical flow with the camera taken out (client item 8, BP-215)
-    cv2 = _cv2()
-    if cv2 is None:
-        return {"status": NOT_RUN, "value": low, "detail": "optical flow needs OpenCV (opencv-python-headless): the motion is not measured, "
-                "never passed; the owner's eye judges this clip"}
+def _motion_series(path, g, cv2):
+    """The flow loop of ``living_motion`` and ``flame_never_frozen``: per pair of frames ``gap`` apart, the share (%) of each zone's pixels (outside
+    the particle layer) that move faster than the zone's speed once the camera is taken out, and of the whole frame. Returns None when the clip is
+    too short for a pair, else (zones, cover, frame_cover, inliers, gap)."""
     side = _sidecar(path)
     zones = _zone_masks(path, side)
     parts = side.get("particles") if isinstance(side.get("particles"), dict) else {}
@@ -188,7 +176,7 @@ def living_motion(path) -> dict:
     gap = max(1, int(round(FLOW_GAP_S * ANALYSIS_FPS)))
     flows = _flow_fields(g, gap, cv2)
     if not flows:
-        return {"status": NOT_RUN, "value": low, "detail": f"too short for optical flow ({len(g)} frames, gap {gap})"}
+        return None
     zone_union = np.zeros((SIZE[1], SIZE[0]), bool)
     for _, _, m in zones:
         zone_union |= m
@@ -211,6 +199,31 @@ def living_motion(path) -> dict:
                 cover[name].append(float((speed[valid] >= ZONE_SPEED[kind]).mean() * 100))
         keep = ~parts_i
         frame_cover.append(float((speed[keep] >= FRAME_MIN_PX_S).mean() * 100) if keep.any() else 0.0)
+    return zones, cover, frame_cover, inliers, gap
+
+
+def living_motion(path) -> dict:
+    path = Path(path)
+    g = decode_grey(path)
+    step = max(1, int(round(ANALYSIS_FPS * LV.FROZEN_WINDOW_S)))
+    if len(g) <= step:
+        return {"status": NOT_RUN, "value": None, "detail": f"too short for a one-second window ({len(g)} frames at {ANALYSIS_FPS} fps)"}
+    # 1. G-LIVE-1: no one-second window may stand (pixel change, kept: it is the cheap guard of the whole frame)
+    fw = LV.frozen_windows_grey(g, ANALYSIS_FPS)
+    low = fw["min_share_pct"]
+    if fw["frozen"]:
+        return {"status": FAIL, "value": low, "detail": f"{fw['frozen']} of {fw['windows']} one-second windows change under {LV.FROZEN_CHANGE:g} % of the "
+                f"frame (deadest {low:.2f} % from {fw['frozen_from_s'][0]:.1f} s): only a small part moves (G-LIVE-1, BP-194)"}
+    # 2. optical flow with the camera taken out (client item 8, BP-215)
+    cv2 = _cv2()
+    if cv2 is None:
+        return {"status": NOT_RUN, "value": low, "detail": "optical flow needs OpenCV (opencv-python-headless): the motion is not measured, "
+                "never passed; the owner's eye judges this clip"}
+    side = _sidecar(path)
+    series = _motion_series(path, g, cv2)
+    if series is None:
+        return {"status": NOT_RUN, "value": low, "detail": f"too short for optical flow ({len(g)} frames, gap {max(1, int(round(FLOW_GAP_S * ANALYSIS_FPS)))})"}
+    zones, cover, frame_cover, inliers, gap = series
     cam = float(np.median(inliers)) if inliers else 0.0
     if cam < CAMERA_INLIERS_MIN:
         return {"status": NOT_RUN, "value": round(cam, 1), "detail": f"the camera could not be separated from the motion ({cam:.0f} % inliers, at "
@@ -243,6 +256,182 @@ def living_motion(path) -> dict:
 
 
 living_motion.kinds = (".mp4", ".mov", ".webm", ".mkv")
+
+
+def director_reasons(path) -> dict:
+    """OR-V29 and OR-V51 (the owner: the director decides each effect himself from the words, the photo and the tool list, and records a short reason;
+    every effect and every sound cue carries a reason field from the director stage; no hand-written lists) on a shot-direction file: every
+    ``seen.living`` element (animate, add and skip alike), every ``weather`` record, the audio track and every sound event of ``sound.events`` carries a
+    non-empty ``why``, and every effect track belongs to an inventory element that names it in ``effects`` (a track no element names was typed by hand).
+    The director's own writer (``production/living_director``) emits all of these, so a file it wrote passes. Not checked: that the plan can be
+    reproduced from the photo and the words alone (OR-V51's last clause needs the director run again). A file that is not a shot direction is NOT_RUN."""
+    from explainer_engine.production import direction as DIR
+    d = json.loads(Path(path).read_text(encoding="utf-8"))
+    if not isinstance(d, dict) or d.get("schema") != DIR.SCHEMA:
+        return {"status": NOT_RUN, "value": None, "detail": f"not a shot direction file (schema {DIR.SCHEMA!r}): the reasons are not measured"}
+    living = (d.get("seen") or {}).get("living")
+    effect_tracks = [t for t in d.get("tracks") or [] if t.get("track") not in ("camera", "audio") and t.get("op") in DIR.EFFECT_OPS]
+    if living is None:
+        if effect_tracks:
+            return {"status": FAIL, "value": len(effect_tracks), "detail": f"{len(effect_tracks)} effect track(s) and no seen.living: the effects were typed "
+                    "by hand, not chosen from an inventory (OR-V51)"}
+        return {"status": NOT_RUN, "value": None, "detail": "no seen.living and no effect track: nothing to give a reason"}
+    bad = []
+    for e in living:
+        if not str(e.get("why", "")).strip():
+            bad.append(f"living {e.get('id', '?')} ({e.get('decision')}) has no why")
+    named = {tid for e in living for tid in (e.get("effects") or [])}
+    for t in effect_tracks:
+        if t.get("id") not in named:
+            bad.append(f"effect track {t.get('id', '?')} ({t.get('op')}) is named by no living element: typed by hand")
+    for r in d.get("weather") or []:
+        if not str(r.get("why", "")).strip():
+            bad.append(f"weather {r.get('weather', '?')} has no why")
+    for t in d.get("tracks") or []:
+        if t.get("track") == "audio" and not str(t.get("why", "")).strip():
+            bad.append("the audio track has no why")
+    for ev in ((d.get("sound") or {}).get("events") or []):
+        if not str(ev.get("why", "")).strip():
+            bad.append(f"sound event {ev.get('event_id') or ev.get('class', '?')} has no why")
+    if bad:
+        return {"status": FAIL, "value": len(bad), "detail": f"{len(bad)} choice(s) without the director's reason: {bad[0]}" + (f" (+{len(bad) - 1} more)" if len(bad) > 1 else "")}
+    n = len(living) + len(d.get("weather") or []) + len((d.get("sound") or {}).get("events") or [])
+    return {"status": PASS, "value": 0, "detail": f"{n} choices (living elements, weather, sound events) carry a reason and {len(effect_tracks)} effect track(s) belong to the inventory"}
+
+
+director_reasons.kinds = (".json",)
+
+
+def no_body_motion_in_25d(path) -> dict:
+    """OR-V25 (LP-02 of LIVING_PHOTO_RULES_2026-11-14, the team's rule until the owner confirms it: a body that must move - lips, hands, a turned head -
+    is LTX's work, not 2.5D's) on a shot-direction file: FAIL when a 2.5D track moves a body (``subject_sway`` on ``directed25d`` or ``layers25d``) or
+    an inventory element of kind ``body`` (or flagged ``body_motion``) is animated or added instead of being routed to LTX. A body element that is
+    skipped with a reason (routed to LTX) is listed and passes. NOTE for the lead: ``direction.LIVING_KINDS`` still lets the kind ``body`` take
+    ``subject_sway``, so the repo's own gate accepts what this one fails; the owner's LP-02 wins here. A file that is not a shot direction is NOT_RUN."""
+    from explainer_engine.production import direction as DIR
+    d = json.loads(Path(path).read_text(encoding="utf-8"))
+    if not isinstance(d, dict) or d.get("schema") != DIR.SCHEMA:
+        return {"status": NOT_RUN, "value": None, "detail": f"not a shot direction file (schema {DIR.SCHEMA!r}): body motion is not measured"}
+    bad, routed = [], []
+    for t in d.get("tracks") or []:
+        if t.get("track") not in ("camera", "audio") and t.get("op") == "subject_sway" and t.get("renderer") in ("directed25d", "layers25d"):
+            bad.append(f"track {t.get('id', '?')} sways the subject in 2.5D")
+    for e in (d.get("seen") or {}).get("living") or []:
+        if e.get("kind") == "body" or e.get("body_motion"):
+            if e.get("decision") in ("animate", "add"):
+                bad.append(f"living {e.get('id', '?')} is a body animated in 2.5D")
+            else:
+                routed.append(str(e.get("id", "?")))
+    if bad:
+        return {"status": FAIL, "value": len(bad), "detail": f"body motion in the 2.5D plan: {bad[0]}" + (f" (+{len(bad) - 1} more)" if len(bad) > 1 else "") + " (LP-02: LTX moves bodies)"}
+    tail = f"; {len(routed)} body element(s) left to LTX: {', '.join(routed)}" if routed else ""
+    return {"status": PASS, "value": 0, "detail": "the 2.5D plan moves no body (LP-02)" + tail}
+
+
+no_body_motion_in_25d.kinds = (".json",)
+
+
+def flame_never_frozen(path) -> dict:
+    """OR-V21 (LP-06: a visible flame is never frozen; the entry: flow inside the flame mask above zero in every one-second window): the flow of
+    ``living_motion`` (camera and particle layer out) read per one-second window instead of as a median over the clip. Every zone of kind ``fire`` in
+    the clip's ``.zones.json`` must have, in each full one-second window, at least one pair of frames in which ``fire_window_min_pct`` % (BP-215) of
+    its pixels move faster than the fire speed. A window under that is a FAIL naming the zone and the second it starts. No fire zone declared,
+    no OpenCV, a clip shorter than a second or a camera that cannot be separated is NOT_RUN: a flame that was not looked for is never a pass."""
+    path = Path(path)
+    cv2 = _cv2()
+    if cv2 is None:
+        return {"status": NOT_RUN, "value": None, "detail": "optical flow needs OpenCV (opencv-python-headless): the flame is not measured"}
+    fires = [(n, m) for n, k, m in _zone_masks(path, _sidecar(path)) if k == "fire"]
+    if not fires:
+        return {"status": NOT_RUN, "value": None, "detail": "no zone of kind fire in the clip's .zones.json: the flame is not located, so not measured"}
+    g = decode_grey(path)
+    series = _motion_series(path, g, cv2)
+    if series is None:
+        return {"status": NOT_RUN, "value": None, "detail": f"too short for optical flow ({len(g)} frames)"}
+    _, cover, _, inliers, _ = series
+    cam = float(np.median(inliers)) if inliers else 0.0
+    if cam < CAMERA_INLIERS_MIN:
+        return {"status": NOT_RUN, "value": round(cam, 1), "detail": f"the camera could not be separated from the motion ({cam:.0f} % inliers, at least "
+                f"{CAMERA_INLIERS_MIN:g} %): the flame is not measured"}
+    step = int(round(ANALYSIS_FPS * LV.FROZEN_WINDOW_S))
+    worst, bad = None, []
+    for name, _ in fires:
+        vals = cover.get(name) or []
+        wins = [vals[i:i + step] for i in range(0, len(vals) - step + 1, step)]
+        if not wins:
+            return {"status": NOT_RUN, "value": None, "detail": f"the {name} zone is too small to measure (under 50 pixels) or the clip is under one window"}
+        for w, win in enumerate(wins):
+            best = max(win)
+            worst = best if worst is None else min(worst, best)
+            if best < FIRE_WINDOW_MIN:
+                bad.append(f"{name} from {w * LV.FROZEN_WINDOW_S:.0f} s ({best:.1f} %)")
+    if bad:
+        return {"status": FAIL, "value": round(worst, 2), "detail": f"a visible flame stands still: {len(bad)} one-second window(s) with under "
+                f"{FIRE_WINDOW_MIN:g} % of the fire zone moving over {ZONE_SPEED['fire']:g} px/s, first {bad[0]} (LP-06, BP-215)"}
+    return {"status": PASS, "value": round(worst, 2), "detail": f"every one-second window of {len(fires)} fire zone(s) moves; the quietest window has "
+            f"{worst:.1f} % of the zone moving (floor {FIRE_WINDOW_MIN:g} %, LP-06, BP-215)"}
+
+
+flame_never_frozen.kinds = (".mp4", ".mov", ".webm", ".mkv")
+
+
+def change_per_second(path) -> dict:
+    """OR-V26 (memory feedback-realism-audit 2026-11-12: "motion at least as alive as Gemini's demo, 3.6-12.2 % frame change per second on photos"):
+    the 2026-11-12 reference measurement (``liveliness.change_per_s``: 128x72 grey, frames one second apart, mean absolute difference in % of 255,
+    sampled every half second) on the delivered clip. Under the BP-194 floor ``change_floor_pct_s`` is a FAIL; the number is printed next to the
+    reference range. Whole frame, camera included (the reference method; the camera is taken out by ``living_motion``, not here). Needs OpenCV
+    for the resize (without it NOT_RUN). The registry entry's own text says "< 5 %/s fails": the 5 % there is G-LIVE-1's deadest-window floor,
+    which ``living_motion`` checks; the floor of this check is BP-194's 3.6 %/s, the lower end of the reference."""
+    if _cv2() is None:
+        return {"status": NOT_RUN, "value": None, "detail": "the reference measurement needs OpenCV for its resize: not measured"}
+    g = decode_grey(Path(path))
+    if len(g) <= ANALYSIS_FPS:
+        return {"status": NOT_RUN, "value": None, "detail": f"too short for frames one second apart ({len(g)} frames at {ANALYSIS_FPS} fps)"}
+    ch = LV.change_per_s(g, ANALYSIS_FPS)
+    v = ch["pct_per_s"]
+    lo, hi = LV.CHANGE_REF
+    ref = f"reference {lo:g}-{hi:g} %/s"
+    if v is None:
+        return {"status": NOT_RUN, "value": None, "detail": "no pair of frames one second apart"}
+    if v < LV.CHANGE_FLOOR:
+        return {"status": FAIL, "value": v, "detail": f"the frame changes {v} %/s, under the floor {LV.CHANGE_FLOOR:g} ({ref}; BP-194)"}
+    return {"status": PASS, "value": v, "detail": f"the frame changes {v} %/s (floor {LV.CHANGE_FLOOR:g}, {ref}; BP-194)"}
+
+
+change_per_second.kinds = (".mp4", ".mov", ".webm", ".mkv")
+
+
+def living_inventory(path) -> dict:
+    """OR-V20 (the owner 2026-11-14: the director lists the photo's living elements, gives each an effect by priority, with the balance rules
+    LP-01..LP-12; G-INV, G-BAL, G-WX of LIVING_PHOTO_RULES_2026-11-14) on a shot-direction file (``shot_direction/1``): runs the repo's own
+    gates, the same ones ``production/direction.check`` runs before a render: the living inventory with a decision or a reason for every element
+    (``_living``, BP-196), the scene's weather as a ceiling (``_weather``, LP-09 as amended 12:38 UTC) and the balance of the plan (``living.check``:
+    LP-01..LP-08, the 5-second caps, the floor of moving air; it needs the shot's ``duration_s`` or ``frames`` and ``fps``). A FAIL finding is a FAIL;
+    REVIEW findings are listed in ``detail`` and never fail. A file that is not a shot direction is NOT_RUN; a balance that could not be measured
+    (no duration) is NOT_RUN, never a pass. The mp4 gates G-LIVE-1..4 are ``living_motion``'s (OR-V19, OR-V26), not this one's."""
+    from explainer_engine.production import direction as DIR
+    d = json.loads(Path(path).read_text(encoding="utf-8"))
+    if not isinstance(d, dict) or d.get("schema") != DIR.SCHEMA:
+        return {"status": NOT_RUN, "value": None, "detail": f"not a shot direction file (schema {DIR.SCHEMA!r}): the living inventory is not measured"}
+    findings = DIR._living(d, None) + DIR._weather(d)
+    dur = d.get("duration_s")
+    if dur is None and d.get("frames"):
+        dur = float(d["frames"]) / float(d.get("fps") or 24)
+    if dur:
+        findings += DIR._balance(d, float(dur))
+    fails = [f["what"] for f in findings if f.get("level") == "FAIL"]
+    reviews = [f["what"] for f in findings if f.get("level") != "FAIL"]
+    tail = (f"; REVIEW: {reviews[0]}" + (f" (+{len(reviews) - 1} more)" if len(reviews) > 1 else "")) if reviews else ""
+    if fails:
+        return {"status": FAIL, "value": len(fails), "detail": f"{len(fails)} living-inventory finding(s): {fails[0]}"
+                + (f" (+{len(fails) - 1} more)" if len(fails) > 1 else "") + tail + " (G-INV/G-BAL/G-WX, BP-196, BP-200)"}
+    if not dur:
+        return {"status": NOT_RUN, "value": 0, "detail": "the inventory and the weather pass; the balance (LP-07/LP-08) is not measured: the file has no "
+                "duration_s (or frames) " + tail}
+    return {"status": PASS, "value": 0, "detail": f"the living inventory, the weather ceiling and the balance of a {float(dur):.1f} s shot pass{tail}"}
+
+
+living_inventory.kinds = (".json",)
 
 
 _OPERATOR_MODE = re.compile(r"^(?:MODE:\s*(\w+)|chat mode\s*\**\s*(\w+))", re.I)
@@ -360,17 +549,19 @@ faces_intact.kinds = (".json",)
 
 
 def main(argv=None) -> int:
-    """``python -m explainer_engine.qa.send_validators living_motion|gemini_task_report|faces_intact <file>...``: one line per clip, exit 1 on any FAIL, 2 on an error."""
+    """``python -m explainer_engine.qa.send_validators living_motion|gemini_task_report|faces_intact|living_inventory|change_per_second|flame_never_frozen|director_reasons|no_body_motion_in_25d <file>...``: one line per clip, exit 1 on any FAIL, 2 on an error."""
     import argparse
     import sys
     ap = argparse.ArgumentParser(prog="python -m explainer_engine.qa.send_validators")
-    ap.add_argument("validator", choices=("living_motion", "gemini_task_report", "faces_intact"))
+    ap.add_argument("validator", choices=("living_motion", "gemini_task_report", "faces_intact", "living_inventory", "change_per_second", "flame_never_frozen", "director_reasons", "no_body_motion_in_25d"))
     ap.add_argument("files", nargs="+")
     a = ap.parse_args(argv)
     worst = 0
     for f in a.files:
         try:
-            r = {"living_motion": living_motion, "gemini_task_report": gemini_task_report, "faces_intact": faces_intact}[a.validator](f)
+            r = {"living_motion": living_motion, "gemini_task_report": gemini_task_report, "faces_intact": faces_intact, "living_inventory": living_inventory,
+                 "change_per_second": change_per_second, "flame_never_frozen": flame_never_frozen, "director_reasons": director_reasons,
+                 "no_body_motion_in_25d": no_body_motion_in_25d}[a.validator](f)
         except Exception as exc:                       # an undecodable file is an error, never a pass
             print(f"BLOCK {f}: {type(exc).__name__}: {exc}", file=sys.stderr)
             worst = max(worst, 2)

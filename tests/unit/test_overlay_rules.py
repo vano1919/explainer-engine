@@ -269,3 +269,37 @@ def test_episode_rules_fail_on_bad_input(base):
     odd[1]["style"]["tokens"]["ink"] = "#000001"
     assert R.ep11(odd)["status"] == R.FAIL
     assert R.ep56(False, {"pop_in"})["status"] == R.FAIL       # W1 2026-11-12: the demo's numpy allowance is withdrawn (stricter)
+
+
+# ---- OR-V30b: the 30 % lane overlay has a registered need and does not cover the main frame ------------------------------------------
+
+def test_the_30_percent_lane_overlay_with_a_need_and_clear_faces_passes(base):
+    for no in (3, 6):
+        res = R.lane30_overlay(ctx(base, no))
+        assert res["status"] == R.PASS and "OV-30" in res["detail"] and "OV-34: 0 intersections" in res["detail"], res
+    assert R.lane30_overlay(ctx(base, 8))["status"] == R.NA           # a video shot has no 30 % lane overlay: nothing to judge
+
+
+def test_an_overlay_over_the_subject_or_without_a_registered_need_fails_the_30_percent_lane(base):      # the negative test of OR-V30b
+    over = R.lane30_overlay(ctx(base, 3, lambda sp: sp.update(protected=[[0.0, 0.0, 1.0, 1.0]])))
+    assert over["status"] == R.FAIL and "OV-34" in over["detail"], over
+    mood = R.lane30_overlay(ctx(base, 3, lambda sp: sp.update(overlay_reason="mood")))
+    assert mood["status"] == R.FAIL and "OV-30" in mood["detail"], mood
+    wide = R.lane30_overlay(ctx(base, 6, lambda sp: panel0(sp).update(box=[100, 100, 1800, 1000])))
+    assert wide["status"] == R.FAIL and "OV-33" in wide["detail"], wide
+
+
+# ---- OR-V30e: transparent (glass) surfaces in the 30 % lane stay in range --------------------------------------------------------------
+
+def test_glass_in_range_with_a_measured_alpha_passes_and_an_unmeasured_one_says_not_run(base):
+    ok = R.lane30_glass(ctx(base, 6, meas={"glass_alpha": {"p": 140}}))
+    assert ok["status"] == R.PASS and "OV-21" in ok["detail"], ok
+    assert R.lane30_glass(ctx(base, 6))["status"] == R.NOT_RUN        # the spec is in range, the rendered alpha was not measured
+    assert R.lane30_glass(ctx(base, 2))["status"] == R.NA             # a map_action shot has no 30 % lane surface to judge
+
+
+def test_a_solid_or_too_opaque_panel_in_the_30_percent_lane_fails_the_glass_rule(base):     # the negative test of OR-V30e
+    solid = R.lane30_glass(ctx(base, 3, lambda sp: sp.update(surface="solid")))
+    assert solid["status"] == R.FAIL and "OV-20" in solid["detail"], solid
+    opaque = R.lane30_glass(ctx(base, 6, lambda sp: panel0(sp).update(alpha=0.9)))
+    assert opaque["status"] == R.FAIL and "OV-21" in opaque["detail"], opaque
