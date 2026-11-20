@@ -108,3 +108,25 @@ def test_a_gated_repo_passes_only_when_this_token_may_download_it(monkeypatch):
     assert D.hf_exists("Lightricks/LTX-2.5", "model") == (True, "gated: access proved with this token")
     _fake_hub(monkeypatch, gated=False, auth_raises=True)                      # not gated: no auth probe is needed
     assert D.hf_exists("Qwen/Qwen-Image-2.1", "model") == (True, "")
+
+
+def test_an_unfilled_at_at_pin_is_refused_by_the_dry_run_and_the_create_check():
+    # OR-34 F1: GNU `sha256sum -c` exits 0 on a line it cannot parse, so an open @@PIN@@ must stop before the pod
+    line = "printf '%s  %s\\n' @@BATCH_SHA256@@ \"$JOB/batch.tar.gz\" >> \"$JOB/sha.txt\"\n"
+    assert any("@@BATCH_SHA256@@" in p for p in D.placeholder_problems(line))
+    rec = D.run("#!/bin/bash\n" + line, exists=lambda *a: (True, ""), offline=False)
+    assert rec["ok"] is False and any("unfilled pin: @@BATCH_SHA256@@" in p for p in rec["problems"])
+    filled = line.replace("@@BATCH_SHA256@@", "ab" * 32)
+    assert D.placeholder_problems(filled) == [] and not any("unfilled pin" in p for p in D.run("#!/bin/bash\n" + filled, exists=lambda *a: (True, "")) ["problems"])
+
+
+def test_both_ab_pod_scripts_check_their_shas_strictly(tmp_path):
+    import subprocess
+    from explainer_engine.training.pods.ltx import ab_bundle as B
+    for s in B.SCRIPTS:
+        text = s.read_text(encoding="utf-8")
+        assert 'sha256sum --strict -c "$JOB/sha.txt"' in text and 'sha256sum -c "$JOB/sha.txt"' not in text, s.name
+    (tmp_path / "x").write_text("x")
+    (tmp_path / "sha.txt").write_text("@@BATCH_SHA256@@  batch.tar.gz\n")
+    ok = subprocess.run(["sha256sum", "--strict", "-c", "sha.txt"], cwd=tmp_path, capture_output=True)
+    assert ok.returncode != 0                                                   # the strict flag turns the unparsable line into a failure

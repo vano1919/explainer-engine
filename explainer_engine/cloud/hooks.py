@@ -72,6 +72,7 @@ WAN_WORKER = "explainer_engine/training/pods/wan/modal_wan_jobs.py"
 LTX_WORKER = "explainer_engine/training/pods/ltx/modal_ltx_jobs.py"   # the video route since D-132 (2026-11-12 19:10 UTC)
 BAKEOFF = "explainer_engine/training/pods/bakeoff/modal_bakeoff.py"   # the creator's video bake-off, 2026-11-12 15:01 UTC
 BAKEOFF_ENTRIES = ("check", "stage", "run")
+KLEIN_WORKER = "explainer_engine/training/pods/klein/modal_klein_jobs.py"   # the Klein pictures on Modal (W5, 2026-11-19)
 
 
 def bakeoff_go_sha(root=None, plan_name=None) -> str:
@@ -85,7 +86,7 @@ def bakeoff_go_sha(root=None, plan_name=None) -> str:
     h = lambda p: hashlib.sha256(p.read_bytes()).hexdigest()  # noqa: E731
     plan = w.with_name(Path(str(plan_name or "plan_v43.json")).name)
     return hashlib.sha256((h(plan) + h(w)).encode()).hexdigest()
-FREE_ENTRIES = {WAN_WORKER: ("check", "weights"), LTX_WORKER: ("check", "weights")}   # CPU rungs L1/L2: the entrypoint's own ladder gate holds them
+FREE_ENTRIES = {WAN_WORKER: ("check", "weights"), LTX_WORKER: ("check", "weights"), KLEIN_WORKER: ("check",)}   # CPU rungs L1/L2: the entrypoint's own ladder gate holds them
 
 
 HEREDOC = re.compile(r"(?m)^(?P<head>[^\n]*?<<-?\s*(?P<q>['\"]?)(?P<tag>\w+)(?P=q)[^\n]*)\n(?P<body>.*?)^\s*(?P=tag)\s*$", re.S)
@@ -162,7 +163,7 @@ def modal_refusal(cmd: str, env=None) -> str | None:
     return None
 
 
-WORKER_NAME = re.compile(r"\b(?:modal_ltx_jobs|modal_wan_jobs|modal_bakeoff)\b")
+WORKER_NAME = re.compile(r"\b(?:modal_ltx_jobs|modal_wan_jobs|modal_bakeoff|modal_klein_jobs)\b")
 WORKER_API = re.compile(r"\.(?:remote|spawn|map|starmap|remote_gen|for_each)\s*\(|\bapp\.run\s*\(|\bwith_options\s*\(|\bsubprocess\.\w+\s*\("
                         r"|\bos\.(?:system|exec\w*|spawn\w*|popen)\b|\bPopen\b|\brunpy\b")
 INTERPRETER = re.compile(r"\bpython[\d.]*(?:\.exe)?\b|\buv\s+run\b|\bnode\b|\bipython\b")

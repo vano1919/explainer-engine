@@ -311,6 +311,7 @@ def run(text, *, exists=None, pins=None, offline=False, now=None, folder=None):
     problems += [f"lint: {p}" for p in runpod.lint_pod_script(text)]
     problems += static_problems(text, pins)
     problems += [f"needs: {p}" for p in needs_problems(text)]
+    problems += [f"unfilled pin: {m.group(0)}" for m in UNFILLED_PIN.finditer(_pins_text(text))]
     repos = []
     for rid, kind in all_repo_ids(text, folder):
         if offline:
@@ -334,6 +335,7 @@ def record(rec):
 
 
 PLACEHOLDER = re.compile(r"\bPLACEHOLDER\w*")
+UNFILLED_PIN = re.compile(r"@@\w+@@")   # a pod script's own pin slot (ab_bundle): GNU `sha256sum -c` exits 0 on such a line unless --strict (OR-34 F1)
 DETECTOR = "# dryrun: detector"   # a line that defines the detector word itself (p12b.py UNFILLED) is not a pin
 
 
@@ -347,6 +349,7 @@ def placeholder_problems(text, folder=None):
     folder (not below it) whose name the script mentions: the job files it fetches. A line marked ``# dryrun: detector`` defines
     the detector word itself (the 2026-11-06 self-match on p12b.py) and is not read. Empty = no placeholder left."""
     out = [f"script: {m.group(0)} (a pin that was never filled)" for m in PLACEHOLDER.finditer(_pins_text(text))]
+    out += [f"script: {m.group(0)} (a pin that was never filled)" for m in UNFILLED_PIN.finditer(_pins_text(text))]
     if folder is not None and Path(folder).is_dir():
         for f in sorted(Path(folder).iterdir()):
             if f.is_file() and f.suffix in (".py", ".json", ".sh", ".yaml", ".toml") and f.name in (text or "") and f.read_text(encoding="utf-8", errors="replace") != text:

@@ -632,7 +632,10 @@ class TestCloudProviders(unittest.TestCase):
         caps = json.loads(caps_path.read_text(encoding="utf-8"))
         self.assertIn("runpod", caps)
         self.assertNotIn("hyperstack", caps)
-        self.assertNotIn("modal", caps)
+        # the creator set the Modal line himself (2026-11-19 20:18 UTC, cmsg_01Hnu5zB86sjUj5GtTgaUkPWS3PzAxqNtHbt57o5A2pUPb): $3.50 a run,
+        # no episode line; it is not the RunPod line and not a Hyperstack line
+        self.assertEqual(caps["modal"]["per_run_usd"], 3.5)
+        self.assertNotIn("per_episode_usd", caps["modal"])
 
         fake_pod = {
             "id": "pod-reg-1",

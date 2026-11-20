@@ -38,13 +38,24 @@ def v43_episode_of(path) -> Path | None:
     return None
 
 
-def refuse(tool: str, *paths, env=None, cwd=None) -> None:
+def excepted(tool: str, script) -> bool:
+    """True when ``script`` is the one launcher the creator excepted for ``tool`` (its ``exception.launchers``, matched on the path's
+    tail): the LTX A/B's RunPod pod script and nothing else (decision cmsg_01Hnu5zB86sjUj5GtTgaUkPWYBU8BqKt8DFFsw46f9xMHj)."""
+    if not script:
+        return False
+    posix = Path(script).as_posix()
+    return any(posix == f or posix.endswith("/" + f) for f in ((load()["tools"].get(tool) or {}).get("exception") or {}).get("launchers", []))
+
+
+def refuse(tool: str, *paths, env=None, cwd=None, script=None) -> None:
     """Stop a retired tool inside a v4.3 episode (Q10, D-131); nothing happens outside one, unless the tool is retired
     ``everywhere`` (Qwen and its LoRA: the creator, 2026-11-12 14:01 UTC, final audit C3: the style rounds too)."""
     tools = load()["tools"]
     if tool not in tools:
         raise ValueError(f"unknown retired tool {tool!r}; known: {sorted(tools)}")
     t = tools[tool]
+    if excepted(tool, script):
+        return
     if t.get("everywhere"):
         raise ConfigError(f"{tool} ({t['what']}) is retired everywhere ({t['everywhere']}); use {t['replacement']}. "
                           "Nothing was started.")
@@ -82,7 +93,9 @@ ACTIVE_ROOTS = ("explainer_engine.episode.run", "explainer_engine.aivideo.wan_ad
                 "explainer_engine.training.pods.wan.modal_wan_jobs",
                 # the LTX video path of D-132 / D-137 (Fable audit 2026-11-13, FA-16): config/retired_era.json "video_path"
                 "explainer_engine.videolane.scene", "explainer_engine.training.pods.ltx.scene_run",
-                "explainer_engine.training.pods.ltx.modal_ltx_jobs")
+                "explainer_engine.training.pods.ltx.modal_ltx_jobs",
+                # the RunPod A/B launchers (D-132, W5, OR-34 audit of PR 214): the LTX A/B and the Klein pictures
+                "explainer_engine.training.pods.ltx.runpod_ltx_jobs", "explainer_engine.training.pods.klein.klein_jobs", "explainer_engine.training.pods.klein.modal_klein_jobs")
 
 
 def _module_file(mod: str, root: Path) -> Path | None:

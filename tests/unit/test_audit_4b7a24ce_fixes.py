@@ -69,11 +69,12 @@ def test_b1_inproc_ltx_session_forwards_painterly_negative_prompt_to_stream_chun
     session.close()
 
     assert len(recorded_stream_kwargs) == 1
-    passed_neg = recorded_stream_kwargs[0].get("negative_prompt")
-    assert isinstance(passed_neg, str) and len(passed_neg) > 0
-    assert "extra fingers" in passed_neg.lower()
-    assert "cartoonish" not in passed_neg.lower()
-    assert "3d cgi" not in passed_neg.lower()
+    # The real DistilledPipeline (CFG-free) has no negative prompt: stream_chunks() raised TypeError on it in the L3 smoke
+    # on Modal, 2026-11-19 22:56. The session therefore passes none; the painterly-safe text stays resolved for the run
+    # record (resolve_negative_prompt) and for the guided CLI, which does declare it.
+    assert "negative_prompt" not in recorded_stream_kwargs[0]
+    neg = LTX.resolve_negative_prompt(launch, job).lower()
+    assert "extra fingers" in neg and "cartoonish" not in neg and "3d cgi" not in neg
 
 
 def test_b2a_retime_with_edit_points_uses_ingested_clip_record_as_source_of_truth(tmp_path):

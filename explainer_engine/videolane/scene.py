@@ -375,6 +375,11 @@ def build(root: Path, script: dict, scene_id: str, out: Path, *, budget: dict | 
         if ids:
             ln = lines.get(ids[0]) or {}
             row["line"] = {"speaker": ln.get("speaker_id"), "text": ln.get("text")}
+        hop = (shots[-1].get("hop", 0) + 1) if ep.get("continuity_mode") == "continuation" and shots else 0   # CT-1
+        if hop > P.CT1_MAX_HOP:
+            raise ContractError(f"{sid}: hop {hop} from the master (max {P.CT1_MAX_HOP}, CT-1): cut here and make a fresh "
+                                "keyframe from the untouched vault master")
+        row["hop"], row["ct1_kind"] = hop, P.ct1_kind(s)   # not "kind": the worker reads that
         if ep.get("continuity_mode") == "continuation" and shots:
             row["continue_frame"] = dict({"pick": "best_tail", "window_s": 0.75}, **(ep.get("continue_frame") or {}))
             row["picture_check"] = {"state": "CONTINUATION", "regeneration_required": False, "picture_sha256": None,

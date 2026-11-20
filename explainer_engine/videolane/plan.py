@@ -48,6 +48,8 @@ HEAD_LEAD = SR.T("BP-190", "head_lead_s")
 CUT_TAIL = SR.T("BP-190", "tail_s")
 MIN_CLIP_S = 2.0             # engineering default: LTX needs a few seconds to settle a motion
 DIALOGUE_RUN_MAX = 3         # VL-08: more lines in a row than this without a reaction or insert = REVIEW (ED-14's 2nd-4th line)
+CT1_MAX_HOP = 2              # CT-1 (creator 2026-11-19, reassessment 4.3c, docs/LTX_PIPELINES.md): hop 3 or more is a forced cut
+CT1_CHECK_KEYS = ("face_cosine", "lab_delta_e", "sharpness_ratio")   # the recorded comparison against the untouched master
 
 
 def is_video(shot: dict) -> bool:
@@ -243,7 +245,7 @@ def findings(script: dict, max_s: float = 10.0) -> list[dict]:
     if same_scene_video_pairs >= 2 and continuation_count == 0:
         out.append(_f("VL-14", "episode", G.REVIEW,
                       f"0 continuations planned across {same_scene_video_pairs} consecutive same-scene video shot pair(s) (VL-14)"))
-    return out
+    return out + ct1_findings(script)
 
 
 def anchor_chain_rows(script: dict) -> list[dict]:
@@ -349,6 +351,106 @@ def fit_rows(script: dict, max_s: float, model: str, fps: int) -> list[dict]:
     return [G.row("video_shots_fit_the_model", not long_, f"{len(long_)} of {len(vids)} video shot(s) need more than one clip "
                   f"of the LTX model {model} ({max_s:.2f} s at {fps} fps, VL-06): split the line or the shot in the script",
                   long_[:30])]
+
+
+# ---- CT-1: the last frame is a hop, never a free anchor (final plan P-6, docs/LTX_PIPELINES.md) -----------------------------
+# A clip started from the untouched vault master is hop 0 (a fresh keyframe). A clip started from the last frame of the clip
+# before is one hop further from the master. CT-1: a new shot or a camera change = a fresh keyframe from the master; the same
+# shot may continue at hop 1-2 only with a recorded comparison against the master (face, colour, sharpness), an x2 upscale and
+# a LAB colour lock; hop 3 or more is refused (a forced cut and a fresh keyframe); a long action with a known end pose is made
+# from start+end keyframes (job kind ``keyframes``). The numbers a comparison must meet are NOT invented here: the check must
+# exist and carry its measurements (CT1_CHECK_KEYS); the thresholds are a rule the plan thread registers (open item).
+def _continues(ep: dict) -> bool:
+    return CONTINUITY_SUBMODES.get(ep.get("continuity_mode"), ep.get("continuity_mode")) == "continuation" \
+        or ep.get("anchor_from") == "prev_last_frame"
+
+
+def ct1_hops(script: dict) -> dict[str, int]:
+    """``{shot_id: hop}`` of every video shot: 0 = fresh keyframe from the master, n = n frame hand-overs since the last one."""
+    out: dict[str, int] = {}
+    for scene in scenes(script):
+        prev = None
+        for s in scene:
+            if not is_video(s):
+                continue
+            ep = s.get("edit_plan") or {}
+            out[s["shot_id"]] = out[prev["shot_id"]] + 1 if prev is not None and _continues(ep) else 0
+            prev = s
+    return out
+
+
+def ct1_kind(shot: dict) -> str:
+    """The LTX job kind CT-1 asks for: ``keyframes`` (start+end) for a shot whose script wants an end frame and whose plan
+    names that end picture (``edit_plan.end_keyframe``), else ``clip``."""
+    wants = (shot.get("keyframe_plan") or {}).get("needs_end_frame")
+    return "keyframes" if wants and (shot.get("edit_plan") or {}).get("end_keyframe") else "clip"
+
+
+def _camera_key(s: dict) -> tuple:
+    cam = s.get("camera_spec") or {}
+    return (cam.get("shot_size"), cam.get("horizontal_azimuth_deg"), cam.get("vertical_angle"))
+
+
+def ct1_check_problems(check, hop: int) -> list[str]:
+    """CT-1 at hand-over time (the clip before exists): the recorded comparison against the untouched master must hold its three
+    measurements, the x2 upscale and the LAB colour lock; hop 3 or more is refused whatever the check says."""
+    if hop > CT1_MAX_HOP:
+        return [f"hop {hop} (max {CT1_MAX_HOP}): a forced cut and a fresh keyframe from the vault master"]
+    chk = check or {}
+    out = []
+    miss = [k for k in CT1_CHECK_KEYS if not isinstance(chk.get(k), (int, float)) or isinstance(chk.get(k), bool)]
+    if not chk.get("master"):
+        out.append(f"hop {hop}: the comparison names no master")
+    if miss:
+        out.append(f"hop {hop}: the comparison lacks {', '.join(miss)}")
+    if not (chk.get("upscaled_x2") and chk.get("lab_lock")):
+        out.append(f"hop {hop}: needs the x2 upscale and the LAB colour lock "
+                   f"(upscaled_x2={chk.get('upscaled_x2')}, lab_lock={chk.get('lab_lock')})")
+    return out
+
+
+def ct1_findings(script: dict) -> list[dict]:
+    """CT1-01..CT1-05 of the script's video shots (FAIL blocks a paid clip; REVIEW is listed for the creator)."""
+    out: list[dict] = []
+    hops = ct1_hops(script)
+    for scene in scenes(script):
+        prev = None
+        for s in scene:
+            if not is_video(s):
+                continue
+            sid, ep = s["shot_id"], s.get("edit_plan") or {}
+            hop = hops.get(sid, 0)
+            if _continues(ep) and prev is not None:
+                if hop > CT1_MAX_HOP:
+                    out.append(_f("CT1-01", sid, G.FAIL, f"hop {hop} from the master (max {CT1_MAX_HOP}): a forced cut and a "
+                                  "fresh keyframe from the vault master, not another last frame"))
+                if _camera_key(prev) != _camera_key(s):
+                    out.append(_f("CT1-02", sid, G.FAIL, f"a camera change {_camera_key(prev)} -> {_camera_key(s)} inside a "
+                                  "continuation: a camera change is a fresh keyframe from the master"))
+                chk = ep.get("continuation_check")
+                if chk is None:      # the comparison is recorded when the clip before exists: a plan lists it, never blocks on it
+                    out.append(_f("CT1-03", sid, G.REVIEW, f"hop {hop}: the comparison against the master ("
+                                  f"{', '.join(CT1_CHECK_KEYS)}), the x2 upscale and the LAB lock are still to be recorded "
+                                  "before this clip may start from a last frame (ct1_check_problems)"))
+                else:
+                    out += [_f("CT1-03", sid, G.FAIL, why) for why in ct1_check_problems(chk, hop)]
+            elif ep.get("anchor_from") == "prev_last_frame":
+                pass
+            else:
+                src = ep.get("start_source")
+                if src and src != "vault_master":
+                    out.append(_f("CT1-05", sid, G.FAIL, f"a new shot starts from {src!r}: it is a fresh keyframe from the "
+                                  "untouched vault master"))
+            kp = s.get("keyframe_plan") or {}
+            if kp.get("needs_end_frame"):
+                if not str(s.get("action_end_state") or "").strip():
+                    out.append(_f("CT1-04", sid, G.REVIEW, "needs an end frame but the script names no end pose "
+                                  "(action_end_state)"))
+                elif not ep.get("end_keyframe"):
+                    out.append(_f("CT1-04", sid, G.REVIEW, "a long action with a known end pose is made from start+end "
+                                  "keyframes (job kind keyframes): edit_plan.end_keyframe names no end picture yet"))
+            prev = s
+    return out
 
 
 def rows(script: dict, max_s: float = 10.0) -> list[dict]:

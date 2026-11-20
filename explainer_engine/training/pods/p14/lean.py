@@ -162,13 +162,13 @@ def schedule(*, full: bool = False) -> dict:
             "cards": CARDS, "limits": LIMITS}
 
 
-def bundle(out: Path, ref: str | None = None) -> str:
+def bundle(out: Path, ref: str | None = None, exclude: tuple | None = None) -> str:
     """The byte-stable code tarball (see the module text); returns its sha256."""
     names = subprocess.run(["git", "-C", str(ROOT), "ls-files" if ref is None else "ls-tree", *([] if ref is None else ["-r",
                             "--name-only", ref]), "--", *BUNDLE_DIRS], check=True, capture_output=True, text=True).stdout.split("\n")
     buf = io.BytesIO()
     with tarfile.open(fileobj=buf, mode="w", format=tarfile.USTAR_FORMAT) as tar:
-        for n in sorted(x for x in names if x and x not in EXCLUDE):
+        for n in sorted(x for x in names if x and x not in (EXCLUDE if exclude is None else exclude)):
             if ref is None:
                 p = ROOT / n
                 if not p.is_file():

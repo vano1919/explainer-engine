@@ -204,10 +204,14 @@ def test_a_test_only_line_lets_no_episode_run_spend(picture, tmp_path, monkeypat
     assert be.calls == []
 
 
-def test_the_real_spend_caps_file_has_no_modal_line_yet():
-    """The creator has not set a Modal line: until he does, the Modal backend refuses every paid call."""
-    with pytest.raises(Exception, match="zero approved budget"):
-        WA.service_ceiling("modal_usd")
+def test_the_real_spend_caps_file_carries_the_creators_modal_line():
+    """The creator set the Modal line himself (2026-11-19 20:18 UTC, cmsg_01Hnu5zB86sjUj5GtTgaUkPWS3PzAxqNtHbt57o5A2pUPb): $3.50 a run, no
+    episode line. The Wan adapter reads that same line, but it is not routed since D-132 and `config/retired_era.json` stops it inside
+    a v4.3 episode; an episode's Modal runs still wait for his per_episode_usd."""
+    assert WA.service_ceiling("modal_usd") == 3.5
+    from explainer_engine.core import spend_caps as caps
+    with pytest.raises(Exception, match="per_episode_usd"):
+        caps.modal(episode=True)
 
 
 def test_no_measured_speed_no_price(picture):

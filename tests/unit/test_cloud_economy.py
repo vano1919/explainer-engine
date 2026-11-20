@@ -464,3 +464,43 @@ def test_create_records_a_no_instances_refusal_as_a_placement_try_and_knows_the_
     base = ["--max-usd", "3.4", "--max-hours", "2", "--ledger", "l.json", "--placement-watch", "--placement-watch-reason", "cmsg_x"]
     assert R.create_flag_problems(base) == []
     assert any("needs a value" in p for p in R.create_flag_problems(["--placement-watch-reason"]))
+
+
+# --- the one-time rule exception (the creator's word, bound to his message id; OR-34 follow-up of PR 214) -------------------------
+def test_rule_exceptions_waive_only_rp01_and_rp11_with_a_basis_and_keep_the_refusal_text():
+    found = {"RP-01": ["RP-01: too small"], "RP-11": ["RP-11: no schedule"]}
+    kept, waived, why = B.rule_exceptions("RP-01,RP-11", "cmsg_owner", found)
+    assert kept == [] and why == [] and waived["RP-01"] == {"basis": "cmsg_owner", "refused": ["RP-01: too small"]}
+    assert waived["RP-11"]["refused"] == ["RP-11: no schedule"]                           # the text is kept, not dropped
+    kept, waived, why = B.rule_exceptions("RP-01", "cmsg_owner", found)
+    assert kept == ["RP-11: no schedule"] and list(waived) == ["RP-01"] and why == []      # a rule not named stays a refusal
+    for basis in ("", "   ", None):
+        kept, waived, why = B.rule_exceptions("RP-01", basis, found)
+        assert waived == {} and len(kept) == 2 and "needs --exception-basis" in why[0]      # no basis, no waiver
+    for bad in ("RP-10", "RP-02", "RP-09", "RP-01,RP-99", "ledger"):
+        kept, waived, why = B.rule_exceptions(bad, "cmsg_owner", found)
+        assert waived == {} and len(kept) == 2 and "only RP-01, RP-11 can be waived" in why[0], bad
+    assert B.rule_exceptions("", "cmsg_owner", found)[2]                                    # a basis alone waives nothing and says so
+    assert B.rule_exceptions("", "", found) == (["RP-01: too small", "RP-11: no schedule"], {}, [])
+    assert B.rule_exceptions("RP-01", "cmsg_owner", {"RP-01": []})[1] == {}                  # nothing refused, nothing to record
+
+
+def test_create_waives_rp01_once_with_a_basis_prints_it_and_writes_it_to_the_ledger(env, monkeypatch, capsys):
+    fake, api, tmp = env
+    monkeypatch.delenv("RUNPOD_POD_API_KEY", raising=False)
+    live = FakeLive(age=60)
+    small = ("--work-min", "20", "--setup-min", "10")                                       # RP-01: 20 min is under 3 x 10 min
+    with pytest.raises(SystemExit, match="RP-01: planned work 20 min is under 3 x the fixed setup 10 min"):
+        _create(api, tmp, NEW_SH, *small, "--rule-exception", "RP-01", live=live)           # named but no basis: refused, with the reason
+    with pytest.raises(SystemExit, match="needs --exception-basis"):
+        _create(api, tmp, NEW_SH, *small, "--rule-exception", "RP-01", live=live)
+    with pytest.raises(SystemExit, match="only RP-01, RP-11 can be waived"):
+        _create(api, tmp, NEW_SH, *small, "--rule-exception", "RP-10", "--exception-basis", "cmsg_owner", live=live)
+    assert not fake.pods
+    _create(api, tmp, NEW_SH, *small, "--rule-exception", "RP-01", "--exception-basis", "cmsg_owner", live=live)
+    out = capsys.readouterr().out
+    assert "WAIVED (owner cmsg_owner): RP-01: planned work 20 min is under 3 x the fixed setup 10 min" in out
+    assert len(fake.pods) == 1
+    plans = Run.open(tmp / "run.json").data["items"]["pod_plans"]
+    rec = next(iter(plans.values()))["rule_exceptions"]
+    assert rec["RP-01"]["basis"] == "cmsg_owner" and "under 3 x the fixed setup" in rec["RP-01"]["refused"][0]

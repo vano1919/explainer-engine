@@ -1,0 +1,149 @@
+{
+ "schema": "ltx_scene_test/2",
+ "id": "truce_ab_2026-11-19",
+ "asked": "the owner, 2026-11-19 22:22 UTC (cmsg_01Hnu5zB86sjUj5GtTgaUkPWRH6mLK5MWh685di95VEQAr): run the LTX A/B on Modal tonight; 22:25 UTC (cmsg_01Hnu5zB86sjUj5GtTgaUkPWV6nm3Y6UKXYD2j2e8WKeiw): $10 for all paid work tonight",
+ "method": "3 shots x arms a (start picture only, distilled clip), b (start+end, distilled keyframes), c (start+end, official guided two-stage); same seed, prompt, seconds per shot; every prompt opens with the film name (owner 22:26 UTC, cmsg_01Hnu5zB86sjUj5GtTgaUkPWJbrrvYAFrHJvQSv9JVGfAB)",
+ "sound": "LTX's own, from the prompt",
+ "budget": {
+  "total_usd": 3.5,
+  "pictures_usd": 0.0,
+  "cpu_checks_usd": 0.2,
+  "note": "the owner's per-run line for the A/B ($3.50); GPU hard bill ~3.17 + CPU staging ~0.16; scene ledger ceiling 4.5 = the creator's modal_ltx line of the night, so that the owner's $3.50 run reservation fits the 80 % rule (owner card answer 'yes, ceiling 4.5', 2026-11-20 06:30 UTC, relayed by the coordinator); the run itself is held at $3.50 by launch caps.run_usd"
+ },
+ "ledger": {
+  "path": "/mnt/project-files/explainer-engine/ledgers/ltx_scene_truce_ab.json",
+  "caps": {
+   "modal_ltx": 4.5
+  }
+ },
+ "pictures": {
+  "manifest": "/home/user/ee-data/ltx_ab/pictures_batch2.json",
+  "dir": "/home/user/ee-data/ltx_ab/hf/explainer-engine/demo_truce_1914/film_look_2026-11-19/batch2",
+  "hf": "explainer-engine/demo_truce_1914/film_look_2026-11-19/batch2"
+ },
+ "shots": [
+  {
+   "shot_id": "S07_SH008_b",
+   "picture": "S07_SH008_start",
+   "seconds": 8.25,
+   "seed": 7112,
+   "motion_prompt": "This video is in the style of the film 1917 (2019). A wide, static shot inside a muddy British trench at dawn. Thomas, a young soldier in a muddy greatcoat, climbs down the wooden ladder, bends and picks up his rifle from where it leans against the sandbags, then steps up onto the fire step. The camera does not move. Sound: boots in mud, wood creaking, a rifle sling rattling, a cold wind over the trench, distant muffled artillery.",
+   "arm": "b",
+   "kind": "keyframes",
+   "end": "S07_SH008_end",
+   "end_frame": 200,
+   "engine": "distilled"
+  },
+  {
+   "shot_id": "S07_SH008_a",
+   "picture": "S07_SH008_start",
+   "seconds": 8.25,
+   "seed": 7112,
+   "motion_prompt": "This video is in the style of the film 1917 (2019). A wide, static shot inside a muddy British trench at dawn. Thomas, a young soldier in a muddy greatcoat, climbs down the wooden ladder, bends and picks up his rifle from where it leans against the sandbags, then steps up onto the fire step. The camera does not move. Sound: boots in mud, wood creaking, a rifle sling rattling, a cold wind over the trench, distant muffled artillery.",
+   "arm": "a",
+   "kind": "clip"
+  },
+  {
+   "shot_id": "S04_SH008_a",
+   "picture": "S04_SH008_start",
+   "seconds": 9.0,
+   "seed": 7100,
+   "motion_prompt": "This video is in the style of the film 1917 (2019). A wide tracking shot following a soldier from behind. Thomas, in a muddy greatcoat, walks slowly away from the camera across a frozen field between lines of barbed wire stakes, past frosted shapes on the ground, between the lines of wire toward a distant figure standing in the road, who slowly turns and holds out a hand. The camera follows behind him at walking pace. Sound: frozen ground crunching under boots, a thin wind, wire creaking, his slow breathing.",
+   "arm": "a",
+   "kind": "clip"
+  },
+  {
+   "shot_id": "S07_SH006_a",
+   "picture": "S07_SH006_start",
+   "seconds": 6.0,
+   "seed": 7104,
+   "motion_prompt": "This video is in the style of the film 1917 (2019). A wide static shot of a German trench at dusk with a lit Christmas tree on the parapet. A German captain in a long greatcoat stands on the firing step by the sandbags, looking toward the British line. Three soldiers sit by a fire basket. The captain raises his arm and fires a pistol once into the air, a muzzle flash and a puff of smoke, and the soldiers look up. The camera does not move. Sound: boots on duckboards, a leather glove creaking, a sharp pistol shot echoing over the frozen field, then silence and wind.",
+   "arm": "a",
+   "kind": "clip"
+  },
+  {
+   "shot_id": "S04_SH008_b",
+   "picture": "S04_SH008_start",
+   "seconds": 9.0,
+   "seed": 7100,
+   "motion_prompt": "This video is in the style of the film 1917 (2019). A wide tracking shot following a soldier from behind. Thomas, in a muddy greatcoat, walks slowly away from the camera across a frozen field between lines of barbed wire stakes, past frosted shapes on the ground, between the lines of wire toward a distant figure standing in the road, who slowly turns and holds out a hand. The camera follows behind him at walking pace. Sound: frozen ground crunching under boots, a thin wind, wire creaking, his slow breathing.",
+   "arm": "b",
+   "kind": "keyframes",
+   "end": "S04_SH008_end",
+   "end_frame": 216,
+   "engine": "distilled"
+  },
+  {
+   "shot_id": "S07_SH006_b",
+   "picture": "S07_SH006_start",
+   "seconds": 6.0,
+   "seed": 7104,
+   "motion_prompt": "This video is in the style of the film 1917 (2019). A wide static shot of a German trench at dusk with a lit Christmas tree on the parapet. A German captain in a long greatcoat stands on the firing step by the sandbags, looking toward the British line. Three soldiers sit by a fire basket. The captain raises his arm and fires a pistol once into the air, a muzzle flash and a puff of smoke, and the soldiers look up. The camera does not move. Sound: boots on duckboards, a leather glove creaking, a sharp pistol shot echoing over the frozen field, then silence and wind.",
+   "arm": "b",
+   "kind": "keyframes",
+   "end": "S07_SH006_end",
+   "end_frame": 144,
+   "engine": "distilled"
+  },
+  {
+   "shot_id": "S07_SH008_c",
+   "picture": "S07_SH008_start",
+   "seconds": 8.25,
+   "seed": 7112,
+   "motion_prompt": "This video is in the style of the film 1917 (2019). A wide, static shot inside a muddy British trench at dawn. Thomas, a young soldier in a muddy greatcoat, climbs down the wooden ladder, bends and picks up his rifle from where it leans against the sandbags, then steps up onto the fire step. The camera does not move. Sound: boots in mud, wood creaking, a rifle sling rattling, a cold wind over the trench, distant muffled artillery.",
+   "arm": "c",
+   "kind": "keyframes",
+   "end": "S07_SH008_end",
+   "end_frame": 200,
+   "engine": "guided",
+   "settings": {
+    "num_inference_steps": 40,
+    "video_cfg_guidance_scale": 3.0,
+    "video_stg_guidance_scale": 1.0,
+    "distilled_lora_strength_stage_1": 0.25,
+    "distilled_lora_strength_stage_2": 0.5,
+    "image_strength": 1.0
+   }
+  },
+  {
+   "shot_id": "S04_SH008_c",
+   "picture": "S04_SH008_start",
+   "seconds": 9.0,
+   "seed": 7100,
+   "motion_prompt": "This video is in the style of the film 1917 (2019). A wide tracking shot following a soldier from behind. Thomas, in a muddy greatcoat, walks slowly away from the camera across a frozen field between lines of barbed wire stakes, past frosted shapes on the ground, between the lines of wire toward a distant figure standing in the road, who slowly turns and holds out a hand. The camera follows behind him at walking pace. Sound: frozen ground crunching under boots, a thin wind, wire creaking, his slow breathing.",
+   "arm": "c",
+   "kind": "keyframes",
+   "end": "S04_SH008_end",
+   "end_frame": 216,
+   "engine": "guided",
+   "settings": {
+    "num_inference_steps": 40,
+    "video_cfg_guidance_scale": 3.0,
+    "video_stg_guidance_scale": 1.0,
+    "distilled_lora_strength_stage_1": 0.25,
+    "distilled_lora_strength_stage_2": 0.5,
+    "image_strength": 1.0
+   }
+  },
+  {
+   "shot_id": "S07_SH006_c",
+   "picture": "S07_SH006_start",
+   "seconds": 6.0,
+   "seed": 7104,
+   "motion_prompt": "This video is in the style of the film 1917 (2019). A wide static shot of a German trench at dusk with a lit Christmas tree on the parapet. A German captain in a long greatcoat stands on the firing step by the sandbags, looking toward the British line. Three soldiers sit by a fire basket. The captain raises his arm and fires a pistol once into the air, a muzzle flash and a puff of smoke, and the soldiers look up. The camera does not move. Sound: boots on duckboards, a leather glove creaking, a sharp pistol shot echoing over the frozen field, then silence and wind.",
+   "arm": "c",
+   "kind": "keyframes",
+   "end": "S07_SH006_end",
+   "end_frame": 144,
+   "engine": "guided",
+   "settings": {
+    "num_inference_steps": 40,
+    "video_cfg_guidance_scale": 3.0,
+    "video_stg_guidance_scale": 1.0,
+    "distilled_lora_strength_stage_1": 0.25,
+    "distilled_lora_strength_stage_2": 0.5,
+    "image_strength": 1.0
+   }
+  }
+ ]
+}

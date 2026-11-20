@@ -56,7 +56,7 @@
   "chain_overlap_why": "BP-188 (research 2026-11-12, the creator 20:07 UTC): LTX makes a clip's picture and sound together, so two chained clips meet at a hard cut with no overlap; the next clip starts from the last frame of the one before, and assembly drops that repeated first frame and gives each side a 30 ms fade. The 12-frame overlap of audit B3 served a 0.5 s crossfade that BP-188 no longer asks for",
   "caps": {
     "smoke_usd": 0.5,
-    "run_usd": 0.97,
+    "run_usd": 3.5,
     "cold_start_s": 120
   },
   "decided": {
@@ -66,5 +66,99 @@
     "at": "2026-11-12T19:10:06Z",
     "money": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWWqRxqiE28kSDxnNPn41fng ($1 per test run, 19:20 UTC)"
   },
-  "caps_why": "run_usd 0.97 for the battle scene (the creator 2026-11-12 20:44 UTC: $1 in total; card cmsg_01Hnu5zB86sjUj5GtTgaUkPWFqZzbAMMDCTETvK3bpDNzd, 20:59 UTC: '4 clips, $1.1'): the run timeout 509 s less the 75 s end path leaves 434 s for four cuts (~380 s at the love run's speed, a cold clip at the bake-off's 147 s still fits); the hard bill (run timeout + cold start) is $0.890 and the scene's budget adds the pictures and the CPU rungs (scene_run.budget_problems). Was 1.2 for the love scene"
+  "caps_why": "2026-11-19 night: run_usd 0.97 -> 3.5 for the LTX A/B (one scene, one launch, all clips): the owner's $3.50 for one Modal run (cmsg_01Hnu5zB86sjUj5GtTgaUkPWS3PzAxqNtHbt57o5A2pUPb, 20:18 UTC) inside the night's $10 (cmsg_01Hnu5zB86sjUj5GtTgaUkPWV6nm3Y6UKXYD2j2e8WKeiw, 22:25 UTC); the run timeout comes from it (about 2118 s, the hard bill with the cold start about $3.17); the older text follows. Before: run_usd 0.97 for the battle scene (the creator 2026-11-12 20:44 UTC: $1 in total; card cmsg_01Hnu5zB86sjUj5GtTgaUkPWFqZzbAMMDCTETvK3bpDNzd, 20:59 UTC: '4 clips, $1.1'): the run timeout 509 s less the 75 s end path leaves 434 s for four cuts (~380 s at the love run's speed, a cold clip at the bake-off's 147 s still fits); the hard bill (run timeout + cold start) is $0.890 and the scene's budget adds the pictures and the CPU rungs (scene_run.budget_problems). Was 1.2 for the love scene",
+  "kind_model_files": {
+    "diffusion_models/ltx-2.5-22b-dev-transformer-bf16.safetensors": "792a2bad501ca03262c0bc2ce7a2949e85b142ce18e30894aad5bc849c8e7584",
+    "loras/ltx-2.5-22b-distilled-lora-450-bf16.safetensors": "86370bbf79a9eb4edaa158907e2b48a5188fe4c5dc8ce30c7eb8f2f131a9bbf5"
+  },
+  "kind_uses": {
+    "dev_transformer": "diffusion_models/ltx-2.5-22b-dev-transformer-bf16.safetensors",
+    "distilled_lora": "loras/ltx-2.5-22b-distilled-lora-450-bf16.safetensors"
+  },
+  "kind_defaults": {
+    "num_inference_steps": 40,
+    "video_cfg_guidance_scale": 3.0,
+    "video_stg_guidance_scale": 1.0,
+    "distilled_lora_strength_stage_1": 0.25,
+    "distilled_lora_strength_stage_2": 0.5,
+    "image_strength": 1.0,
+    "source": "ltx_pipelines.utils.constants and utils.args at LTX-2 e98f6d9 (the CLI's own defaults, written out so the run record holds every setting)"
+  },
+  "kind_why": "W5 (final plan 2026-11-19, P-6/CT-2): job kinds keyframes / upscale_x2 / retake / a2v. The guided two-stage pipelines (keyframes, upscale_x2, a2v) need the DEV transformer and the distilled LoRA of the same pinned revision (README at e98f6d9: 'the full model; used by the guided two-stage pipelines'); both are pinned by sha256 here and equal config/cloud_pins.json models.video_ltx.sha256_files (a test keeps them together). They are NOT on the Volume yet: staging them is a paid CPU step of the A/B plan.",
+  "runpod": {
+    "_doc": "The RunPod path of the LTX A/B (W5, plan RUNPOD_AB_PLAN.md section 3; the creator chose the platform only, decision cmsg_01Hnu5zB86sjUj5GtTgaUkPWYBU8BqKt8DFFsw46f9xMHj, no spend approved). Prices read 2026-11-19 ~17:50 UTC from the live catalog: estimates, not measured. Minutes are [min, expected, max].",
+    "launcher": "explainer_engine/training/pods/ltx/runpod_ltx_pod.sh",
+    "cards": [
+      {
+        "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+        "vram_gb": 96,
+        "usd_per_h": {
+          "COMMUNITY": 1.69,
+          "SECURE": 2.69
+        },
+        "note": "in stock (LOW) 2026-11-19; the pinned image and LTX commit were only proven on Modal H100, sm_120 needs a CUDA 12.8+ torch build: L3 decides"
+      },
+      {
+        "gpu": "NVIDIA H100 PCIe",
+        "vram_gb": 80,
+        "usd_per_h": {
+          "COMMUNITY": 1.99,
+          "SECURE": 2.89
+        },
+        "note": "no stock 2026-11-19"
+      },
+      {
+        "gpu": "NVIDIA A100 80GB PCIe",
+        "vram_gb": 80,
+        "usd_per_h": {
+          "COMMUNITY": 1.19,
+          "SECURE": 2.19
+        },
+        "note": "no stock 2026-11-19"
+      }
+    ],
+    "image": "ghcr.io/vano1919/tmr-pod@sha256:6852f3d9e49de298606baf19fada5ee57a32cc74f3bef8b8f88ed35e890b68c0",
+    "image_why": "the pinned tmr_pod digest of config/cloud_pins.json (the Modal LTX base_image too). Evidence read by the plan thread from its ghcr config 2026-11-19 ~18:18 UTC (not read here): CUDA_VERSION 12.8.1, cuDNN 9.8, NVIDIA_REQUIRE_CUDA cuda>=12.8, Ubuntu 24.04, python 3.12. cloud_pins keeps smoke_verified false: the L3 smoke on the card decides; if it fails on Blackwell the pod stops after setup and that cost is inside the cap",
+    "container_disk_gb": 220,
+    "container_disk_why": "~120 GB of bf16 weights (an estimate, not measured) plus clips and the code bundle; a network volume is never used (it bills while stopped)",
+    "min_cuda": "12.8",
+    "weights_dir": "/workspace/dl",
+    "recommended_cap_usd": 3.5,
+    "cap_usd": 3.5,
+    "cap_why": "the creator's answer to the cap card, 2026-11-19 17:54 UTC, decision cmsg_01Hnu5zB86sjUj5GtTgaUkPWGUyHxz8RE3yqtyNBBTRw4z: $3.50 for all 3 shots in one pod. `create --max-usd` must be this same number; the guard stops at it, PROBLEM at 80 % ($2.80). A ceiling, not a target.",
+    "problem_at": 0.8,
+    "minutes": {
+      "boot": [
+        5,
+        10,
+        15
+      ],
+      "download": [
+        10,
+        20,
+        35
+      ],
+      "load": [
+        3,
+        5,
+        8
+      ],
+      "smoke": [
+        2,
+        3,
+        5
+      ],
+      "run_distilled": [
+        1.5,
+        2.5,
+        4
+      ],
+      "run_guided": [
+        4,
+        7,
+        12
+      ],
+      "source": "RUNPOD_AB_PLAN.md section 2 (arm minutes per run: distilled 8 runs 12/20/32, guided 3 runs 12/21/36); the card speed is SPEED 1.3 in cloud/runpod.py, not measured for LTX"
+    }
+  }
 }

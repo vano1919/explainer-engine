@@ -50,6 +50,33 @@ def scene_pictures(scene: dict) -> dict:
     return out
 
 
+def scene_ends(scene: dict) -> dict:
+    """{shot_id: {path, sha256}} for the shots that name an end keyframe (``end``: a key of the pictures manifest), the keyframes
+    arms of the A/B scene (W5, 2026-11-19); the same manifest as the start pictures, the same sha256 pin."""
+    want = {s["shot_id"]: s["end"] for s in scene["shots"] if s.get("end")}
+    if not want:
+        return {}
+    man = json.loads(Path(scene["pictures"]["manifest"]).read_text(encoding="utf-8"))
+    out = {}
+    for sid, key in want.items():
+        pic = (man.get("shots") or {}).get(key)
+        if not pic:
+            raise SystemExit(f"{sid}: no end picture {key!r} in the pictures manifest; make it first")
+        out[sid] = pic
+    return out
+
+
+def _with_ends(shot: dict, ends: dict) -> dict:
+    """The shot with its end picture and the pin next to the start's (``extra`` keeps both)."""
+    e = ends.get(shot["shot_id"])
+    if not e:
+        return shot
+    have = hashlib.sha256(Path(e["path"]).read_bytes()).hexdigest()
+    if have != e["sha256"]:
+        raise SystemExit(f"the end picture {e['path']} of {shot['shot_id']} is not the one the scene pins")
+    return dict(shot, end_picture=e["path"], extra=dict(shot.get("extra") or {}, end_sha256=e["sha256"]))
+
+
 def worst_gpu_usd(launch: dict) -> float:
     """The most one launch can bill: the GPU function's hard timeout plus the cold start (startup timeout), at the rate."""
     t = L.timeouts(launch)
@@ -93,14 +120,15 @@ def job_spec(scene_path, launch=None) -> dict:
     secs = {float(s["seconds"]) for s in shots}
     nat = L.native_spec(launch, max(secs))
     sha = plan_sha(scene_path)
+    ends = scene_ends(scene)
     chain = []
     for s in shots[1:]:
         c = dict(s)
         if s["shot_id"] in pics:
             c.update(start_picture=pics[s["shot_id"]]["path"], extra={"start_sha256": pics[s["shot_id"]]["sha256"]})
-        chain.append(c)
+        chain.append(_with_ends(c, ends))
     pic = pics[shots[0]["shot_id"]]
-    first = dict(shots[0], start_picture=pic["path"], extra={"start_sha256": pic["sha256"]}, plan_sha256=sha,
+    first = dict(_with_ends(dict(shots[0], extra={"start_sha256": pic["sha256"]}), ends), start_picture=pic["path"], plan_sha256=sha,
                  run_id=L.run_id(sha, launch), launch_sha=L.launch_sha(launch), fps=nat["fps"], width=nat["width"],
                  height=nat["height"], chain=chain)
     path = (scene.get("ledger") or {}).get("path") or str(LEDGER)

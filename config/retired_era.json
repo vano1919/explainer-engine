@@ -39,7 +39,14 @@
         "explainer_engine/training/pods/p15/modal_ltx_jobs_v1.py"
       ],
       "replacement": "route video: LTX-2.5 distilled on Modal through the video lane videolane/scene (the scene file and its prompt composer) + training/pods/ltx/scene_run (job spec and ledger) and the worker training/pods/ltx/modal_ltx_jobs.py (D-132, D-137); the planned aivideo/ltx_modal adapter was never built (Fable audit FA-16)",
-      "returned": "the creator, 2026-11-12 19:10 UTC (D-132, msg cmsg_01Hnu5zB86sjUj5GtTgaUkPW8KsicnVNwnnwMXbRDMPsji): LTX-2.5 distilled is back for the v4.3 Modal path only (training/pods/ltx/modal_ltx_jobs.py, not an entry here); everything else of the old LTX era stays retired"
+      "returned": "the creator, 2026-11-12 19:10 UTC (D-132, msg cmsg_01Hnu5zB86sjUj5GtTgaUkPW8KsicnVNwnnwMXbRDMPsji): LTX-2.5 distilled is back for the v4.3 Modal path only (training/pods/ltx/modal_ltx_jobs.py, not an entry here); everything else of the old LTX era stays retired",
+      "exception": {
+        "launchers": [
+          "explainer_engine/training/pods/ltx/runpod_ltx_pod.sh"
+        ],
+        "scope": "the LTX A/B only: the RunPod LTX pod of training/pods/ltx/runpod_ltx_pod.sh; the p15 launcher and the old LTX routes stay retired",
+        "decided": "the creator, 2026-11-19, card decision cmsg_01Hnu5zB86sjUj5GtTgaUkPWYBU8BqKt8DFFsw46f9xMHj ('LTX A/B RunPod-ზე'): the platform only, no spend; the cap answer, the OR-34 audit and the ladder still gate every paid minute"
+      }
     },
     "blender_scene": {
       "what": "Blender scenes, J5 shots, layout passes (D-113, D-116)",
@@ -54,7 +61,15 @@
       "entry": [
         "explainer_engine/cloud/runpod.py"
       ],
-      "replacement": "Modal for the video route (training/pods/ltx/modal_ltx_jobs.py, D-132; the Wan worker stays, not routed)"
+      "replacement": "Modal for the video route (training/pods/ltx/modal_ltx_jobs.py, D-132; the Wan worker stays, not routed)",
+      "exception": {
+        "launchers": [
+          "explainer_engine/training/pods/ltx/runpod_ltx_pod.sh",
+          "explainer_engine/training/pods/klein/klein_pod.sh"
+        ],
+        "scope": "the LTX A/B only (W5): the LTX pod launcher and the Klein picture pod launcher of the same A/B may create a RunPod pod inside a v4.3 episode; every other RunPod launcher stays refused",
+        "decided": "the creator, 2026-11-19, card decision cmsg_01Hnu5zB86sjUj5GtTgaUkPWYBU8BqKt8DFFsw46f9xMHj ('LTX A/B RunPod-ზე'): the platform only, no spend; the cap answer, the OR-34 audit and the ladder still gate every paid minute ; the Klein picture pod launcher: the creator's word cmsg_01Hnu5zB86sjUj5GtTgaUkPWU9kS1kT1CnB6HveYkz5rfQ, card cmsg_01Hnu5zB86sjUj5GtTgaUkPWSwoXZ54YzeRW8d48Sfsewv, and his own confirmation cmsg_01Hnu5zB86sjUj5GtTgaUkPWSuqhe7svtHM5ptNMiw84V4 (2026-11-19 18:13 UTC)"
+      }
     },
     "legacy_paint": {
       "what": "the legacy still-picture route's paint plans (production/paint.py run)",

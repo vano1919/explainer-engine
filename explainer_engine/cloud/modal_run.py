@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import re
+from pathlib import Path
 
 LADDER = ("L0", "L1", "L2", "L3", "L4")   # L0 local tests, L1 CPU imports/shas/--list/token, L2 CPU model+LoRA keys, L3 GPU tiny, L4 full
 APP_ID = re.compile(r"\bap-[A-Za-z0-9]{10,}\b")
@@ -111,6 +112,34 @@ def record_rung(path, rung: str, ok: bool, **info) -> dict:
     return lad
 
 
+def reset(path, worker_sha: str, launch_sha: str | None = None, why: str = "", stamp: str | None = None) -> dict:
+    """Start a fresh ladder after a red rung was FIXED (plan thread, 2026-11-19 22:59 UTC): allowed only when the worker's sha now
+    differs from the red rung's own (a fix, never a retry of the same bytes). The red file is copied to
+    ``<name>.red-<stamp>.json`` first (nothing is deleted) and the new file keeps a ``reset_from`` note; every rung runs again."""
+    import shutil
+    import time
+    from explainer_engine.core.store import write_json_atomic
+    lad = load_ladder(path)
+    red = lad.get("red")
+    if not red:
+        raise SystemExit("no rung is red: nothing to reset")
+    r = (lad.get("rungs") or {}).get(red) or {}
+    if not r.get("worker_sha"):
+        raise SystemExit(f"the red rung {red} recorded no worker sha: it cannot be shown that the worker was fixed")
+    if r["worker_sha"] == worker_sha:
+        raise SystemExit(f"rung {red} is red on this very worker ({worker_sha[:12]}): a retry of the same bytes is not a fix")
+    p = Path(path)
+    stamp = stamp or time.strftime("%Y-%m-%dT%H%MZ", time.gmtime())
+    arch = p.with_name(f"{p.stem}.red-{stamp}{p.suffix}")
+    shutil.copyfile(p, arch)
+    fresh = {"done": [], "red": None, "measured": {}, "rungs": {},
+             "reset_from": {"archive": arch.name, "red_rung": red, "red_worker_sha": r["worker_sha"],
+                            "new_worker_sha": worker_sha, "launch_sha": launch_sha, "why": why,
+                            "at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}}
+    write_json_atomic(p, fresh)
+    return fresh
+
+
 L0_TESTS = ("tests/unit/test_v43_wan_adapter.py", "tests/unit/test_v43_wan_worker.py", "tests/unit/test_v43_retired.py",
             "tests/unit/test_cloud_hooks_modal.py")
 
@@ -150,12 +179,20 @@ def main(argv=None) -> int:
     r.add_argument("ladder")
     r.add_argument("rung", choices=LADDER)
     r.add_argument("--note", default="")
+    rs = sub.add_parser("reset")
+    rs.add_argument("ladder")
+    rs.add_argument("--worker-sha", required=True)
+    rs.add_argument("--why", default="")
     sh = sub.add_parser("show")
     sh.add_argument("ladder")
     a = ap.parse_args(argv)
     if a.cmd == "show":
         lad = load_ladder(a.ladder)
         print(json.dumps(dict(lad, next=next_rung(lad.get("done") or [], lad.get("red"))), indent=1))
+        return 0
+    if a.cmd == "reset":
+        lad = reset(a.ladder, a.worker_sha, why=a.why)
+        print(json.dumps({"done": lad["done"], "red": lad["red"], "reset_from": lad["reset_from"]["archive"]}))
         return 0
     lad = l0(a.ladder) if a.cmd == "l0" else record_rung(a.ladder, a.rung, False, note=a.note)
     print(json.dumps({"done": lad["done"], "red": lad["red"], "next": next_rung(lad["done"], lad["red"])}))

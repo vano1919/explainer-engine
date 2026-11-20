@@ -1,0 +1,158 @@
+{
+  "_doc": "The Klein picture pod of the LTX A/B (W5, plan RUNPOD_AB_PLAN.md section 5, the creator's word cmsg_01Hnu5zB86sjUj5GtTgaUkPWU9kS1kT1CnB6HveYkz5rfQ): open-weights FLUX Klein on a small RunPod pod instead of the BFL API (level 3 of picture_route.json). Every value marked null is an OPEN pin (OR-22): the runner and `plan` refuse until it is recorded; nothing here is guessed.",
+  "launcher": "explainer_engine/training/pods/klein/klein_pod.sh",
+  "model": "flux-3-image-klein",
+  "models": {
+    "flux-3-image-klein": {
+      "repo": "black-forest-labs/flux-3-image-klein",
+      "revision": "3b767ff9b5261d71645e2ec49d87d298d955238d",
+      "layout": "diffusers modular pipeline (modular_model_index.json; transformer, text_encoder, vae); the prompt_upsampler block is popped, as the model card shows (the plan thread writes the full captions)",
+      "gated": true,
+      "files": {
+        "modular_model_index.json": "b0ce87edf5923b7ea2dbde5bf182a69c90d522a5",
+        "transformer/config.json": "84626bbb88a60c8904542727b500b6cdce2b918c",
+        "transformer/diffusion_pytorch_model.safetensors.index.json": "8f2daa0415e6bea35c8f7fb643058554050b3ed0",
+        "transformer/diffusion_pytorch_model-00001-of-00002.safetensors": "4f01de41470090586d7a25aa4aec93987724eae45db45b68de2b3f566f438a8b",
+        "transformer/diffusion_pytorch_model-00002-of-00002.safetensors": "6f6217ab2c7ce5ef177ec202f79d4c2ddab78111c4645030c8828ec615d5f02c",
+        "vae/config.json": "2410d0e0a4b381022ad7ab0ac3007c3c8a5d010c",
+        "vae/diffusion_pytorch_model.safetensors": "d64f3a68e1cc4f9f4e29b6e0da38a0204fe9a49f2d4053f0ec1fa1ca02f9c4b5",
+        "text_encoder/config.json": "22be8bb79043d39840ca5e70d7a2dab80311602c",
+        "text_encoder/generation_config.json": "e116347d7ef42621c7a5957f82c015c38d939c1f",
+        "text_encoder/chat_template.json": "e49e75bdda104c8de941eb20e0b3765184fb27bc",
+        "text_encoder/merges.txt": "20024bfe7c83998e9aeaf98a0cd6a2ce6306c2f0",
+        "text_encoder/model-00001-of-00002.safetensors": "30a01a0556622645a3cce87b655bbbbbc1f170c196099f1b666c93202c3339a9",
+        "text_encoder/model-00002-of-00002.safetensors": "046296a2a387efb43b0c997d5833c789604d168834f6e0d3064bf7bb13d002a6",
+        "text_encoder/model.safetensors.index.json": "3b52de97496e2f4501dfa92a87642f60db3e22a1",
+        "text_encoder/preprocessor_config.json": "2ea84a437d448ff71b08df68fdd949d5cc4ebb64",
+        "text_encoder/tokenizer.json": "c6cc1014128b19d1fc46b1d30a23e3b1d35db421",
+        "text_encoder/tokenizer_config.json": "d3d3763207692c78780f4bf42d4dadf49a5c8012",
+        "text_encoder/video_preprocessor_config.json": "3ba673a5ad7d4d13f54155ecd38b2a94a6dac8fe",
+        "text_encoder/vocab.json": "4783fe10ac3adce15ac8f358ef5462739852c569"
+      },
+      "files_why": "read 2026-11-19 ~18:25 UTC from the repo at the pinned revision with the project token (resolve headers): a 64-hex value is the LFS sha256 (X-Linked-ETag), a 40-hex value is the git blob sha1 of a small file (ETag); ~20.3 GB in all: modular_model_index.json, transformer/, text_encoder/ and vae/ only (no ae.safetensors copy, no variants, no prompt upsampler). The pod hashes them again in L2; they were not hashed locally from the bytes.",
+      "sizes": {
+        "modular_model_index.json": 2115,
+        "transformer/config.json": 436,
+        "transformer/diffusion_pytorch_model.safetensors.index.json": 37951,
+        "transformer/diffusion_pytorch_model-00001-of-00002.safetensors": 9907529352,
+        "transformer/diffusion_pytorch_model-00002-of-00002.safetensors": 1189878064,
+        "vae/config.json": 808,
+        "vae/diffusion_pytorch_model.safetensors": 336213556,
+        "text_encoder/config.json": 1505,
+        "text_encoder/generation_config.json": 269,
+        "text_encoder/chat_template.json": 5502,
+        "text_encoder/merges.txt": 1671839,
+        "text_encoder/model-00001-of-00002.safetensors": 4967229296,
+        "text_encoder/model-00002-of-00002.safetensors": 3908490048,
+        "text_encoder/model.safetensors.index.json": 64742,
+        "text_encoder/preprocessor_config.json": 390,
+        "text_encoder/tokenizer.json": 7032403,
+        "text_encoder/tokenizer_config.json": 10868,
+        "text_encoder/video_preprocessor_config.json": 385,
+        "text_encoder/vocab.json": 2776833
+      }
+    }
+  },
+  "pipeline_class": "ModularPipeline",
+  "diffusers_version": "0.43.0",
+  "pipeline_why": "the model card says `pip install git+https://github.com/huggingface/diffusers.git`; the released diffusers 0.43.0 (PyPI, 2026-11-12) was opened here and contains Flux3DistilledAutoBlocks, Flux3Transformer2DModel, AutoencoderKLFlux2, ModularPipeline and the flux3 prompt_upsampler block, so it is pinned instead of a git main commit (a reviewed choice: the model's own index says 0.41.0.dev0; L3 on the card proves it loads). The runner loads from a scratch copy of the verified files whose index points at the local folder (no hub id, prompt upsampler entries removed) with HF_HUB_OFFLINE=1",
+  "image": "ghcr.io/vano1919/tmr-pod@sha256:6852f3d9e49de298606baf19fada5ee57a32cc74f3bef8b8f88ed35e890b68c0",
+  "image_why": "the pinned tmr_pod digest of config/cloud_pins.json (the Modal LTX base_image too). Evidence read by the plan thread from its ghcr config 2026-11-19 ~18:18 UTC (not read here): CUDA_VERSION 12.8.1, cuDNN 9.8, NVIDIA_REQUIRE_CUDA cuda>=12.8, Ubuntu 24.04, python 3.12. cloud_pins keeps smoke_verified false: the L3 smoke on the card decides; if it fails on Blackwell the pod stops after setup and that cost is inside the cap; the same image as the LTX pod (one CUDA 12.8 proof for both)",
+  "cards": [
+    {
+      "gpu": "NVIDIA L40S",
+      "vram_gb": 48,
+      "cloud": "SECURE",
+      "usd_per_h": 1.09,
+      "note": "the plan thread's card (peak 31 GB BF16, upsampler off, so 32 GB is too tight), 2026-11-19 ~18:13 UTC; price not read here"
+    },
+    {
+      "gpu": "NVIDIA RTX PRO 4500 Blackwell",
+      "vram_gb": 32,
+      "cloud": "SECURE",
+      "usd_per_h": 0.72,
+      "note": "not enough margin for 31 GB peak; listed only as history"
+    }
+  ],
+  "container_disk_gb": 60,
+  "container_disk_why": "~21 GB of diffusers weights (an estimate from the plan, not measured) plus pictures; no network volume",
+  "weights_dir": "/workspace/dl",
+  "cap_usd": 1.0,
+  "cap_why": "RAISED to $1.00 for any card by the creator's own message cmsg_01Hnu5zB86sjUj5GtTgaUkPWB2qsAtWtX3jWU1XUQtHEm7 (2026-11-19 19:40 UTC): one dollar limit, whichever card is ready. Earlier: the creator's card answer, 2026-11-19 18:10 UTC (decision cmsg_01Hnu5zB86sjUj5GtTgaUkPWSwoXZ54YzeRW8d48Sfsewv), confirmed to this thread by his own message cmsg_01Hnu5zB86sjUj5GtTgaUkPWSuqhe7svtHM5ptNMiw84V4 (18:13 UTC): $0.60 for the picture pod with FLUX 3 Klein; guard stop at it, PROBLEM at 80 % ($0.48). `create --max-usd` must be this same number. A ceiling, not a target.",
+  "problem_at": 0.8,
+  "max_pictures": 24,
+  "minutes": {
+    "boot": [
+      5,
+      8,
+      12
+    ],
+    "download": [
+      2,
+      4,
+      8
+    ],
+    "load": [
+      1,
+      2,
+      3
+    ],
+    "seconds_per_picture": [
+      10,
+      20,
+      40
+    ],
+    "source": "RUNPOD_AB_PLAN.md section 5 minutes (made for $0.72/h; at the L40S $1.09/h expected is about $0.36, max about $0.64: a REVIEW line, the guard stops at the cap); estimates, not measured on this card"
+  },
+  "hf_out": "explainer-engine/klein_out",
+  "model_why": "plan thread, 2026-11-19 18:11 UTC: the owner chose FLUX 3 Klein; `models` can hold another id, `model` picks it",
+  "diffusers_wheel_sha256": "8afb8ff1b09d693854de0412d8bdc94fc9e6e6e4efefb2386c616f64a4dc9ac6",
+  "transformers_version": "5.22.2",
+  "transformers_why": "pinned after an import proof, not a load proof: in a clean CPU venv with diffusers 0.43.0, huggingface_hub 1.33.0 and transformers 5.22.2 (PyPI 2026-11-06), ModularPipeline, Flux3Transformer2DModel, AutoencoderKLFlux2, Flux3DistilledAutoBlocks, Qwen3VLForConditionalGeneration and Qwen3VLProcessor import; and with the real modular_model_index.json of the pinned revision rewritten by `local_modular_index`, `ModularPipeline.from_pretrained(local).blocks`, `pop('prompt_upsampler')` and `init_pipeline(local)` build a Flux3DistilledModularPipeline with components text_encoder, tokenizer, image_processor, vae, transformer, scheduler, offline. The weights load is proved only by L3 on the card",
+  "modal": {
+    "why": "The Klein picture batch on Modal (the creator 2026-11-19 20:07 UTC, cmsg_01Hnu5zB86sjUj5GtTgaUkPWPRTkVzj6iaGYmS7QLe7y4K: RunPod dropped, Modal with his second account; cap $1.00, cmsg_01Hnu5zB86sjUj5GtTgaUkPWB2qsAtWtX3jWU1XUQtHEm7). Worker: modal_klein_jobs.py, the same klein_jobs.run as on the pod. Card L40S 48 GB (peak 31 GB BF16, upsampler off); A100-80GB is the fallback, chosen by the --gpu flag. min_containers 0, no warm container.",
+    "app_name": "ee-klein-jobs",
+    "volume": "ee-weights",
+    "gpu": "L40S",
+    "gpu_fallback": "A100-80GB",
+    "cpu": 2,
+    "memory_gib": 24,
+    "scaledown_window_s": 2,
+    "startup_timeout_s": 120,
+    "hf_hub_pin": "1.33.0",
+    "prices_date": "2026-11-07",
+    "prices_source": "cloud/modal_schedule.GPUS + CPU_CORE_S + MEM_GIB_S (modal.com/pricing fetched 2026-11-07); the CH-07 paid offer re-reads today's price before every paid rung",
+    "usd_per_h": {
+      "L40S": 2.2373,
+      "A100-80GB": 2.7845
+    },
+    "cold_start_s": 120,
+    "cold_start_why": "an ESTIMATE (the LTX worker's rounded measured overhead); the L3 smoke measures it and this number is then replaced",
+    "caps": {
+      "smoke_usd": 0.35,
+      "run_usd": 0.65
+    },
+    "caps_why": "the creator's Klein $1 is the TOTAL, smoke included (plan thread audit E1): smoke_usd 0.35 + run_usd 0.65 = cap_usd 1.00; run_usd is the main rung's own cap; each must stay under 80 % of the creator's Modal line (core/ledger STOP_FRACTION)",
+    "minutes": {
+      "boot": [
+        0.5,
+        1,
+        2
+      ],
+      "download": [
+        0,
+        0,
+        0
+      ],
+      "load": [
+        1,
+        2,
+        3
+      ],
+      "source": "ESTIMATES for the Modal run (container start and the model load; the weights are staged on the Volume by the L2 rung, so no download); seconds_per_picture stays the pod table's (same card); L3 measures"
+    },
+    "torch_pin": "2.8.0",
+    "torch_cuda_index": "https://download.pytorch.org/whl/cu128",
+    "torch_pin_why": "torch 2.8.0 / cu128 as the OR-34 audit read it from the image (2026-11-19, not confirmed from the image bytes here); add_python=3.12 gives Modal its own Python that cannot see the image's torch, so torch is installed explicitly and L1 (env_check) returns torch.__version__ and torch.version.cuda and goes red on a different version"
+  }
+}

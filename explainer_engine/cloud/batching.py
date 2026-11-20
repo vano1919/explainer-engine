@@ -57,6 +57,30 @@ def rp09(rows, *, share_max, refused=None):
     return kept
 
 
+RULE_EXCEPTIONS = ("RP-01", "RP-11")   # the rules a create may waive once, on the creator's recorded word; nothing else is ever waived
+
+
+def rule_exceptions(rules, basis, found):
+    """``--rule-exception RP-01,RP-11 --exception-basis <the creator's message id>`` (OR-34 follow-up of PR 214, the creator's one-time
+    exception for the Klein pod). ``found`` maps a rule id to the refusal lines it just computed. Returns ``(kept, waived, problems)``:
+    ``waived`` is ``{rule: {"basis": id, "refused": [...]}}`` for the rules that were named, had a basis and were really refused; the
+    refusal text is never dropped, it is printed and written to the ledger. A missing basis, an unknown rule id or a rule outside
+    ``RULE_EXCEPTIONS`` refuses the whole create. Never waived here: the ledger's 80 % stop, the money caps, the card price, placeholders,
+    the disk, RP-02, RP-10 (RP-09 is applied while the cards are picked, so it is not offered)."""
+    named = [r.strip().upper() for r in (rules or "").split(",") if r.strip()]
+    kept = [line for r, lines in found.items() for line in lines]
+    if not named:
+        return kept, {}, ([f"--exception-basis {basis!r} without --rule-exception waives nothing"] if (basis or "").strip() else [])
+    if not (basis or "").strip():
+        return kept, {}, ["--rule-exception needs --exception-basis (the creator's message id); a rule is not waived without his recorded word"]
+    bad = [r for r in named if r not in RULE_EXCEPTIONS]
+    if bad:
+        return kept, {}, [f"--rule-exception {', '.join(bad)}: only {', '.join(RULE_EXCEPTIONS)} can be waived, once, with his message id"]
+    waived = {r: {"basis": basis.strip(), "refused": list(found.get(r) or [])} for r in named if found.get(r)}
+    kept = [line for r, lines in found.items() if r not in waived for line in lines]
+    return kept, waived, []
+
+
 HW_EXTRA_MAX = 2          # RP-10: at most this many creator-granted extra hardware tries per create command
 PLACEMENT_WATCH_MAX = 60  # RP-10 (amended 2026-11-06 18:28 UTC): placement failures a recorded watch may try; they create no pod and bill $0
 PLACEMENT_MARKERS = ("no longer any instances available", "no instances available")

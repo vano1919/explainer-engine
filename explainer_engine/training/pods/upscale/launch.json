@@ -1,0 +1,27 @@
+{
+  "schema": "modal_launch/1",
+  "id": "upscale_seedvr2_3b",
+  "status": "DRAFT: pins only; no worker yet (OR-22: the inference code revision is not verified, see OR23_UPSCALE.md)",
+  "asked": "the owner, 2026-11-19 22:25 UTC (cmsg_01Hnu5zB86sjUj5GtTgaUkPWV6nm3Y6UKXYD2j2e8WKeiw): upscale tests inside the $10 night total; plan thread 23:00 UTC",
+  "model": {
+    "repo": "ByteDance-Seed/SeedVR2-3B",
+    "revision": "37255ff8cccfb01071b87f635a5948ca8d53117c",
+    "license": "apache-2.0 (model card, read 2026-11-19)",
+    "files": {
+      "seedvr2_ema_3b.pth": "6bcc5ac59447e97b100477480aebb01be2ec724c8340bb83faae21f64848604b",
+      "ema_vae.pth": "c7df8a67e68b7f9aca3d5d2153d2ce8ab4373687741a0f9ce87cb356ace51cac",
+      "pos_emb.pt": "fa07a14844314772266b66c3b95deb0027696d8fe7065721263db5176f45d799",
+      "neg_emb.pt": "6a43e5800ef2354f1c156d27535834da055cbec8248298b8923492bba2076581"
+    },
+    "sizes_bytes": {"seedvr2_ema_3b.pth": 13566090228, "ema_vae.pth": 1002691902, "pos_emb.pt": 595100, "neg_emb.pt": 656540},
+    "source": "HfApi.model_info files_metadata, lfs.sha256, 2026-11-19",
+    "model_card_caveat": "tends to overly generate details on lightly degraded inputs (720p AIGC), oversharpened results occasionally"
+  },
+  "code": {"repo": "ByteDance-Seed/SeedVR", "revision": null, "pinned": false,
+           "why": "GitHub access of this session is limited to the project repository; the inference code and its dependencies (apex, flash-attn) were not opened"},
+  "gpu": {"candidates": {"L40S": 2.2373, "H100": 5.0937}, "price_checked": "launch.json of the Klein and LTX workers, 2026-11-07, list price USD/h", "chosen": null},
+  "caps": {"run_usd": 1.0, "smoke_usd": 0.4, "cold_start_s": 120},
+  "volume": "ee-weights", "secret": "custom-secret", "account": "MODAL1",
+  "inputs": "batch2 starts (3) and batch3 pictures (3), 2752x1536, sha256 pinned by the batch file",
+  "scaledown_window_s": 2, "min_containers": 0, "buffer_containers": 0
+}
