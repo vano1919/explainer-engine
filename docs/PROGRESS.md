@@ -3752,3 +3752,8 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 - Thresholds are hypothesis defaults in each `Limits` dataclass, severity REVIEW; wiring to `sourced_rules.json` BP ids is a later step (D-59).
 - Tests: `tests/unit/test_val_*.py` (124 pass). Full suite: 2442 passed; failures unrelated to this change and present on the base: `test_lora_training.py` (4, cv2 missing in the cloud sandbox) and `test_xworld_v1_score.py::test_identical_frame_beats_a_different_one`.
 - Not done: BP wiring, hooking validators into gates. Next: lead decides wiring.
+
+## 2026-11-20 — V-07 reads BP-54 and BP-57 from the registry; sfx lead traced
+- Trial on episode1 (HF `episode1/out/timed.json`) found all 22 sfx 0.050 s before their anchor word. Cause: that file was built by the old timing code (default offset -0.05 s); `production/timing.py` now defaults to 0 and clamps a scripted `offset_s` to BP-54's window (`SFX_EARLY_MAX`/`SFX_LATE_MAX`, already enforced there), so no placement code changed. Episode 1's timing is stale until it is rebuilt.
+- `audio/val_cue_binding.py`: BIND-03 outside BP-54's window (45 ms early / 125 ms late) now carries BP-54's severity (FAIL), BIND-04 carries BP-57's severity (REVIEW); window and severities are `Limits` defaults read from the registry, the one-frame zone and old tests unchanged. New tests in `test_val_cue_binding.py`, `test_sfx_offset_bp54.py`.
+- BP-57 (same sound never twice in a row) already exists in the registry and is enforced by `layers.repeat_findings`; V-07's BIND-04 now follows it. Open: V-07 BIND-04 flags a repeat per sound_id, layers per effect run; their equivalence on variants (`__v1`/`__v2`) is not tested.
