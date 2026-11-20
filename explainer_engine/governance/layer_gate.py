@@ -260,6 +260,15 @@ def _check_trials(rec, sqs, cands, errs, res: GateResult) -> dict[str, dict]:
             errs.append(f"MS3-TRIAL-NONE: sub-question {sid} has no trial record (a trial run, or one with its not_run_reason)")
         elif not ran.get(sid):
             res.not_run.append(f"{sid}: no trial has run (or every run had a bad configuration)")
+    # F5 (the lead, 2026-11-20 09:43): a candidate the record marks state_of_the_art keeps the layer at NOT_RUN until a RUN trial ran it or a
+    # NOT_RUN trial row names it with its reason (SeedVR: GPU, priced, owner thread, date)
+    ran_ids = {i for t in rows if _effective_run(t) and isinstance(t.get("candidate_ids"), list) for i in t["candidate_ids"] if _text(i)}
+    named = {i for t in rows if t.get("status") == "NOT_RUN" and _text(t.get("not_run_reason")) and isinstance(t.get("candidate_ids"), list)
+             for i in t["candidate_ids"] if _text(i)}
+    for cid, c in sorted(cands.items()):
+        if c.get("state_of_the_art") is True and cid not in ran_ids and cid not in named:
+            res.not_run.append(f"{c.get('sub_question')}: state_of_the_art candidate {cid} was never run and no NOT_RUN trial row names it "
+                               f"with a reason")
     return by_id
 
 
