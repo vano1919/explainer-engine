@@ -70,3 +70,44 @@ not check from the cloud container (it cannot read or change repository settings
   diff. That makes the change visible to the owner in the pull request; it does not prove the word is his (the file is written by the same hands, see `test_W1`, `test_W2`).
 - **Managed settings** (the one Claude Code settings tier a project file cannot switch off, `disableAllHooks`): whether the owner's Claude plan offers it is **UNKNOWN**; nothing here assumes it.
   Until it exists, `.claude/settings.json` is protected only by being listed in the paths above (CI step) and by review.
+
+## Restricted paths (gate files): NOT ENFORCED until you click (developer, 2026-11-20 T2.7, lead's order 09:23 UTC)
+
+**State today: gate-file edits are NOT ENFORCED.** The hook mechanism exists and is tested (`explainer_engine/governance/path_guard.py`, `hooks.pre_write`,
+`hooks.pre_bash`, tests `tests/unit/test_path_guard.py`) but it ships **switched off**: `explainer_engine/governance/gate_files.json` says
+`"enabled": false`. While it is off, a thread can edit every file below without your word, and nothing on GitHub stops a merge that touches them.
+Two things are on regardless of the switch, because they hold your word and the send records: `jobs/creator_ok.jsonl` and `jobs/send_gate/*` are refused for
+any hand write (Write, Edit or a shell command), with no unlocking word.
+
+The restricted paths (exact, the same list as `gate_files.json`):
+
+| Path | What it is |
+|---|---|
+| `.claude/settings.json` | the hooks themselves (`disableAllHooks` lives here) |
+| `explainer_engine/governance/**` | the gate, the send gate, the hooks, the registry `owner_requirements.json`, `gate_files.json` |
+| `docs/layers/**` | the layer records the gate reads |
+| `.github/workflows/owner-requirements.yml` | the CI job |
+
+### Step 1 (local hooks): switch the mechanism on
+Tell Claude "ჩართე gate-file დაცვა" in the thread (your own word, typed there). Claude then sets `"enabled": true` in `gate_files.json`. From that moment a Write, Edit or shell
+command that changes a restricted path is refused until you record your word for that one file (`python -m explainer_engine.governance ok protected_config <path> <message id> "<your words>"`,
+valid 60 minutes, one file per word). A local hook is not a server rule: it stops a thread that obeys it, not a commit made outside it.
+
+### Step 2 (GitHub, the server-side rule): the exact names
+Do the first option that your Settings screen offers; nothing here needs a paid plan, do not buy one.
+1. **Settings > Rules > Rulesets > New ruleset > New push ruleset** (only if "New push ruleset" is listed; GitHub offers it on private and internal repositories, so on this public
+   repository it is probably missing). Name `gate-files`; **Enforcement status** `Active`; leave **Bypass list** empty (no bypass actors, not even you; add yourself only
+   for the minute you edit by hand); rule **Restrict file paths**; add the four paths of the table (for the folder rules type `explainer_engine/governance/**` and `docs/layers/**`).
+2. If step 2.1 is not offered: **Settings > Rules > Rulesets > New ruleset > New branch ruleset**, name `gate-files-review`, **Active**, bypass list empty, target `main` and
+   `claude/skills-rebuild-2026-11-20`, rule **Require a pull request before merging** with **Require review from Code Owners**. Then add the file `.github/CODEOWNERS` with these four lines:
+   ```
+   /.claude/settings.json @vano1919
+   /explainer_engine/governance/ @vano1919
+   /docs/layers/ @vano1919
+   /.github/workflows/owner-requirements.yml @vano1919
+   ``` **Limit, say it as it is:** threads push as you, so GitHub cannot tell your pull request from a thread's, and it never asks a second reviewer
+   for a pull request you authored; this step only marks the pull request and puts it in front of you. It is advice, not a lock, until a second identity exists (see "What GitHub cannot do").
+3. Whatever you click, run the check from "Extra clicks" item 5 once: a draft pull request that changes one line of `explainer_engine/governance/gate_files.json` must show a visible stop
+   or a required review. If the merge button is simply clickable, the rule is not in force: tell Claude, it stays NOT ENFORCED.
+
+Until Step 1 and one of the Step 2 options are done, treat every gate-file change as unprotected and read the diff of any pull request that touches the table above before you merge it.
