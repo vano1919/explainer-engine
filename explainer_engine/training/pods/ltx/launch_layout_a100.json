@@ -1,0 +1,115 @@
+{
+ "_doc": "Launch file of modal_layout_jobs.py: the Layout-To-Render IC-LoRA worker (S3, brief BRIEFS_S3_T0B_AND_T1_CARD_ka.md item 1, 2026-11-20): Blender grey layout.mp4 + ONE Gemini picture on frame 0 + 1-2 sentences -> a 10 s LTX-2.5 clip, `ltx_pipelines.ic_lora` at the pinned LTX-2 commit. A NEW file beside the protected ltx/launch.json (never edited; the LTX pins below are copied from it and a test keeps them equal). Every number marked estimate is unmeasured until rung L3 on the GPU measures it; nothing here has run on a GPU.",
+ "app_name": "ee-layout-jobs",
+ "model_repo": "Lightricks/LTX-2.5",
+ "model_revision": "49b093a39c19169a8a81721dcc541e07e945232f",
+ "model_files": {
+  "diffusion_models/ltx-2.5-22b-distilled-transformer-bf16.safetensors": "31eb3cad89b9e54e99dd3baf286f70825ac4f6c660a70d9184d895be76d7bff4",
+  "latent_upscale_models/ltx-2.5-latent-spatial-upscaler-x2-bf16-1.0.safetensors": "eb5a71fe4068ee87ccdb1c3aa635e547ca76bd2d30ae20ae889f2c325c0677e8",
+  "text_encoders/gemma4-12b-with-proj-ltx-2.5-bf16.safetensors": "ef7243612fdae7a75cb4d5cee9433e81380675fb6c213bd98ae74a9cd16561d1",
+  "vae/ltx-2.5-audio-vae-bf16.safetensors": "c52733d37f6a7fb7949c3dc0fb468c6cb2169e4d836983a73babb9f0d54837a5",
+  "vae/ltx-2.5-video-vae-bf16.safetensors": "847e14ca7f3355debca0cea4eaa24ac0fbcdf0061da054ac89ca638a869ddba3"
+ },
+ "ltx_code": {
+  "repo": "https://github.com/Lightricks/LTX-2.git",
+  "commit": "e98f6d927d83c92ef2be6aec76c8440b19306e39"
+ },
+ "module": "ltx_pipelines.ic_lora",
+ "module_note": "ltx_pipelines/ic_lora.py main() at the pinned commit; its argparse read 2026-11-20 (docs/LTX_LAYOUT_JOBS.md section 2)",
+ "uses": {
+  "transformer": "diffusion_models/ltx-2.5-22b-distilled-transformer-bf16.safetensors",
+  "text_encoder": "text_encoders/gemma4-12b-with-proj-ltx-2.5-bf16.safetensors",
+  "video_vae": "vae/ltx-2.5-video-vae-bf16.safetensors",
+  "audio_vae": "vae/ltx-2.5-audio-vae-bf16.safetensors",
+  "spatial_upsampler": "latent_upscale_models/ltx-2.5-latent-spatial-upscaler-x2-bf16-1.0.safetensors"
+ },
+ "lora": {
+  "repo": "Lightricks/LTX-2.5-22b-IC-LoRA-Layout-To-Render",
+  "revision": "bd765d5592f0ae78457162852a353b6a375cb00f",
+  "file": "ltx-2.5-22b-ic-lora-layout-to-render-1.0.safetensors",
+  "sha256": "77567d81d71b4df558d622dffc0ec218ba1e22c69b2932f6fa12f34772697eae",
+  "size": 1308787439,
+  "dir": "model/Lightricks/LTX-2.5-22b-IC-LoRA-Layout-To-Render",
+  "gated": true,
+  "pins_source": "config/cloud_pins.json models.video_ltx_layout_lora (sha256 read from the Hub API at revision bd765d55 on 2026-11-06); size from the Hub listing 2026-11-20"
+ },
+ "settings": {
+  "lora_strength": 1.0,
+  "video_conditioning_strength": 1.0,
+  "image_strength": 1.0,
+  "first_frame_index": 0,
+  "stage_2_ic_lora": true,
+  "stage_2_ic_lora_why": "the model card's own example command passes --stage-2-ic-lora and says a keyframe is used on both stages; the CLI default runs stage 2 on the bare checkpoint. Followed from the card, NOT measured: it adds the reference to stage 2 (more tokens, more memory); L3 measures it. Open for the plan thread (docs/LTX_LAYOUT_JOBS.md section 7, Q-L2).",
+  "offload": "none",
+  "tile": false,
+  "quantization": null,
+  "first_frame_index_why": "the card writes the first frame at temporal position -1 (the ComfyUI node); at the pinned commit ImageAction/assert_in_clip refuse any frame_idx < 0 and frame 0 is the 'replace' binding, so the CLI takes 0.",
+  "sampler_note": "the card's `euler_ancestral` and CFG 1 are not CLI arguments at the pinned commit (the distilled sigma schedule is fixed: stage 1 8 steps, stage 2 3 steps; no --negative-prompt, no CFG flag); nothing to pass."
+ },
+ "native": {
+  "fps": 24,
+  "max_frames": 241,
+  "sizes": [
+   [
+    1280,
+    704
+   ]
+  ],
+  "use": [
+   1280,
+   704
+  ],
+  "source": "CH-02 / D-133 (1280x704@24); T0 layouts are 241 frames at 24 fps (PR #222 docs/BLENDER_SCENE.md)",
+  "checked": "2026-11-20"
+ },
+ "smoke": {
+  "frames": 9,
+  "why": "the smallest legal 8k+1 clip: with caps.smoke_usd 0.20 the function window is only about 100 s (see caps_note), so the smoke measures weight residency and the first denoise, NOT the peak of a 241-frame clip. A longer smoke needs a higher cap: the coordinator's decision (docs/LTX_LAYOUT_JOBS.md Q-L1)."
+ },
+ "gpu": "A100-80GB",
+ "cpu": 4,
+ "memory_gib": 32,
+ "usd_per_h": {
+  "A100-80GB": 2.9428
+ },
+ "prices_date": "2026-11-07",
+ "prices_source": "cloud/modal_schedule.py (the same card as the P2 judge launch, PR #221); 8 CPU / 64 GiB would be 3.3872 (computed, not chosen)",
+ "host_memory_note": "4 CPU / 32 GiB is the size of the brief's $2.9428/h and of the judge launch. The LTX H100 launch uses 8 CPU / 96 GiB. Whether 32 GiB of host RAM holds the 46 GB transformer load is UNMEASURED: the smoke records the container's peak RSS and the cgroup peak; an OOM kill is a stop-and-write, not a retry on a bigger box.",
+ "base_image": "ghcr.io/vano1919/tmr-pod@sha256:6852f3d9e49de298606baf19fada5ee57a32cc74f3bef8b8f88ed35e890b68c0",
+ "hf_hub_pin": "1.33.0",
+ "stage": {
+  "cpu": 4,
+  "memory_gib": 16,
+  "usd_per_h": 0.3165,
+  "cap_usd": 0.1,
+  "cold_start_s": 30,
+  "why": "L2 on a CPU container (never the GPU): downloads the IC-LoRA (1.3 GB) and checks its sha256; the five base files W5 staged on 2026-11-19 are checked by size and, only with hash_base, by sha256 (a full re-hash of ~46 GB is not inside the brief's $0.10). Its timeout comes from the cap: about 996 s. Estimate, unmeasured."
+ },
+ "hf_out": "explainer-engine/layout_route/out",
+ "scaledown_window_s": 2,
+ "startup_timeout_s": 60,
+ "runner": "cli",
+ "runner_why": "ic_lora has no in-process session in this repo (modal_ltx_jobs.LtxSession wraps the distilled main only); every clip is its own CLI process with the same arguments the docs list. CH-01 (inproc) is an LTX-worker rule on the protected launch; this worker does not call cheapest.launch_problems for it, the coordinator's note on that is docs/LTX_LAYOUT_JOBS.md Q-L3.",
+ "chain": {
+  "max_hop_without_word": 2,
+  "overlap_frames": 0
+ },
+ "caps": {
+  "smoke_usd": 0.2,
+  "run_usd": 1.4,
+  "ledger_line_usd": 2.0,
+  "cold_start_s": 60,
+  "margin_s": 60
+ },
+ "caps_note": "the owner chose '$3 in stages' at 08:56 UTC (card press, recorded by the coordinator, relayed 08:58): this item (Layout-To-Render on A100-80GB) has a ceiling of $2.00 inside the $3.00 total, and at 80 % of the total ($2.40, with the P2/P1 items) everything stops. The ledger line is therefore 2.0 and its 80 % rule (core/ledger STOP_FRACTION) leaves 1.6 to reserve: smoke 0.20 (the brief's own cap, unchanged) + run 1.40 (my arithmetic, the rest of the 1.6; ONE launch is capped at 1.40, the item's launches together at 1.6: coordinator to confirm the split, docs/LTX_LAYOUT_JOBS.md Q-L5). cold_start_s 60 and margin_s 60 are ESTIMATES (the LTX bake-off measured ~34 s overhead; the LTX launch uses 120 / 75). Windows: smoke = floor(0.9*(0.20 - 60 s of cold start)/rate) - margin = about 106 s of work; run = about 1427 s. A clip is ~82 s on an H100 with the CLI runner (cloud/cheapest.json) and an A100 is slower: the smoke window is tight. All unmeasured.",
+ "verdict_fields": [
+  "state",
+  "gen_s",
+  "vram",
+  "host_rss_gib",
+  "sound",
+  "frames_out",
+  "sha256"
+ ],
+ "chain_note": "hand-over pick and window follow modal_ltx_jobs.handover_frame: 'last' unless a job's continue_frame says best_tail (window 1.5 s). max_hop_without_word is CT-1 (W5)."
+}
