@@ -439,6 +439,19 @@ def test_process_requirements_bind_no_layer_but_are_in_the_registry_and_the_repo
     data["process_requirements"][0]["layers"] = ["L9"]
     put(root, data)
     assert "REG-LAYER" in codes(run(rec_for("REQ-001"), root))                           # a process requirement that names a layer is a mistake
+    data["process_requirements"][0]["layers"] = ["L33"]                                    # the dev-process layer is the one exception
+    put(root, data)
+    assert OR.check_registry(OR.load(root)[0], root) == [] and [e["id"] for e in OR.bound(OR.load(root)[0], "L33")] == ["OR-G01"]
+    data["process_requirements"][0]["layers"] = ["L33", "L9"]
+    put(root, data)
+    assert "REG-LAYER" in codes(run(rec_for("REQ-001"), root))
     data["process_requirements"] = "no"
     put(root, data)
     assert "REG-SCHEMA" in codes(run(rec_for("REQ-001"), root))
+
+
+def test_the_coverage_table_counts_validator_judge_and_unmapped_per_layer(root):
+    put(root, registry(entry(1), entry(2, check={"kind": "unmapped"}),
+                       entry(3, check={"kind": "judge", "who": "fresh reviewer", "rubric": "skill/OVERLAY.md#x"})))
+    md = OR.coverage_md(root)
+    assert "| L9 | 3 | 1 | 1 | 1 |" in md and "3 active entries" in md

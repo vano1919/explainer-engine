@@ -661,13 +661,18 @@
    ],
    "status": "active",
    "check": {
-    "kind": "unmapped"
+    "kind": "validator",
+    "ref": "explainer_engine.qa.send_validators:living_motion",
+    "send_ref": "explainer_engine.qa.send_validators:living_motion",
+    "test": "tests/unit/test_send_validators.py::test_a_still_camera_with_moving_smoke_passes_with_its_number",
+    "negative_test": "tests/unit/test_send_validators.py::test_only_the_fire_moves_fails"
    },
    "measures": "optical flow inside the fire and smoke masks above a threshold with the camera move removed, in every second of the shot; flame mask never at zero (LP-06)",
    "repeats": 3,
    "repeat_evidence": "11-14, 11-14 12:38, 11-20 08:33",
    "parent": "OR-V19",
-   "words_partial": true
+   "words_partial": true,
+   "note": "send gate: living_motion measures pixel change, not optical flow (G-LIVE-1 every second of the clip changes at least frozen_change_pct; G-LIVE-3 a <clip>.zones.json zone named for the fire or smoke mask changes at least zone_min_pct of its pixels in the median second, camera still); a moving camera is NOT_RUN; no flow threshold is sourced, none was invented"
   },
   {
    "id": "OR-V19b",
@@ -686,13 +691,18 @@
    ],
    "status": "active",
    "check": {
-    "kind": "unmapped"
+    "kind": "validator",
+    "ref": "explainer_engine.qa.send_validators:living_motion",
+    "send_ref": "explainer_engine.qa.send_validators:living_motion",
+    "test": "tests/unit/test_send_validators.py::test_a_still_camera_with_moving_smoke_passes_with_its_number",
+    "negative_test": "tests/unit/test_send_validators.py::test_only_the_fire_moves_fails"
    },
    "measures": "optical flow inside cloth, hair and grass masks above a threshold; one wind vector shared by all effect masks of the shot (LP-09)",
    "repeats": 1,
    "repeat_evidence": "",
    "parent": "OR-V19",
-   "words_partial": true
+   "words_partial": true,
+   "note": "send gate: living_motion measures pixel change in the zones named for cloth, hair and grass (G-LIVE-3, zones.json) and in every second (G-LIVE-1), not optical flow; the shared wind vector (LP-09) is not measured"
   },
   {
    "id": "OR-V19c",
@@ -711,13 +721,18 @@
    ],
    "status": "active",
    "check": {
-    "kind": "unmapped"
+    "kind": "validator",
+    "ref": "explainer_engine.qa.send_validators:living_motion",
+    "send_ref": "explainer_engine.qa.send_validators:living_motion",
+    "test": "tests/unit/test_send_validators.py::test_a_still_camera_with_moving_smoke_passes_with_its_number",
+    "negative_test": "tests/unit/test_send_validators.py::test_only_the_fire_moves_fails"
    },
    "measures": "particle speed and size differ by depth layer (near/far ratio > 1) and flow inside the snow mask; weather set once per scene by the director",
    "repeats": 1,
    "repeat_evidence": "",
    "parent": "OR-V19",
-   "words_partial": true
+   "words_partial": true,
+   "note": "send gate: living_motion measures pixel change in the snow zone (G-LIVE-3) and in every second (G-LIVE-1); the near/far particle speed and size ratio by depth is NOT measured and stays for the judge step"
   },
   {
    "id": "OR-V19d",
@@ -3540,6 +3555,1582 @@
    "repeats": 2,
    "repeat_evidence": "11-05 14:23, 11-05 14:58",
    "note": "said for the Ink Chronicle era renders; he has not restated it for the era-film look, so it is active but may be superseded by OR-V01"
+  },
+  {
+   "id": "OR-V48",
+   "kind": "requirement",
+   "words": "რაც შეეხება ბლენდერიტ გენერირებას ის აშკარად უკეტესია ჩვენ შეგვიძია მთლიანი სერიის სანამ მიმდინარეობს ყველაფერი მინდა ააწყო ამ ფიგურებით ვიდეო ბლენდერში.  ანუ აძლევ ფოტოს და ვიდეოს რომელიც ბლენდერშია აწყობილი ის კი დაგდააკეთებს ზუსტად იმ ვიდეოთ 2 წამზე მეტი არ უნდა გაგრძელდეს ფრეიმი ანუ რჩება იგივე სცენა თუმცა ხან ახლო ხედია ხან შორი და აშ ამის ვარიანტი აქვს ლტხის. თუმცა თავად ვიდეო გააკეტე თითო ლტხ ვიდეო 10 წამი.  ამის გეგმა ცალკე ოპუს ჰაის დააწერინე",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "Blender builds the whole series from our figures and LTX renders each shot from the Blender photo and video, 10 s per LTX clip; the Opus-high plan thread writes that plan separately.",
+   "date": "2026-11-20T06:42:15Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPW9Hj1NeLJTdDgdZxC1dGtqr",
+    "thread": "plan thread (Opus high)"
+   },
+   "layers": [
+    "L11",
+    "L13"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "series plan has a Blender camera layout for every scene; Blender shot segments <= 2 s; every LTX clip is 10 s and takes the Blender frame/video as input",
+   "repeats": 3,
+   "repeat_evidence": "11-20 06:42 (plan), 07:40 ('scenes planned in Blender, then LTX adds flesh'), 08:20 (Blender = camera only)",
+   "note": "his first sentence says Blender generation 'is clearly better'; read against OR-V14 (07:14, how well does Blender+LTX+photo work) this is the decision, V14 is the test question"
+  },
+  {
+   "id": "OR-V49",
+   "kind": "requirement",
+   "words": "ხო არ ჯობია ქვენ ან რამე სხვა ფოტოს გენერატორი ჩავსვატ ამ მუშაობის ჯაჭვში? აფსკეილსი მაგივრად? ასევე ვიზუალური შემოწმებები როგორ მოხდდება?",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "Instead of a plain upscaler, put a better photo generator or SeedVR2 in the chain; the choice is whatever gives the best quality.",
+   "date": "2026-11-20T07:30:06Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWB7yfYRfCvfFNokxyL3LALS",
+    "thread": "plan thread (Opus high)"
+   },
+   "layers": [
+    "L16"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "L16 record lists every upscale/photo-generator candidate run or priced (incl. SeedVR2 and a photo generator in place of the upscaler) with a blind sheet; winner = best quality",
+   "repeats": 2,
+   "repeat_evidence": "07:30:24 ('ან SeedVR2'), 07:30:32 ('რაც საუკეტესო ხარისხ მოგვცემს'), 07:28 ('აფსკეილს რით ვაკეთებთ?')",
+   "note": "the third sentence of the same message ('how will the visual checks happen?') is OR-Q08"
+  },
+  {
+   "id": "OR-V50",
+   "kind": "requirement",
+   "words": "ესაა ჩვენი ახალი სტილი და არა ძველი",
+   "words_verbatim": true,
+   "words_origin": "memory_quote",
+   "gloss": "The Gemini realism-with-stylised-faces pictures are the new style; old pictures and clips are test fixtures only and all final material is made from scratch in the new style.",
+   "date": "2026-11-19T10:19:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-new-style-2026-11-19"
+   },
+   "layers": [
+    "L9",
+    "L13",
+    "L24"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "asset provenance flag style_epoch=new; an old-style asset (1914 Truce, Ink Chronicle) is refused as a reference or as final material, allowed only as a test fixture",
+   "repeats": 2,
+   "repeat_evidence": "11-19 14:19 (quote 'რეალიზმი სტილიზებული სახეებით'), 11-19 16:59 card via coordinator (old clips and Mac mix are test fixtures; final material from scratch)",
+   "note": "the 'stylised faces' part was overtaken by OR-V01 (22:08 'realistic, simply'); the 'old = fixtures only' part stands. Memory records his two Georgian phrases; the 16:59 card answer is the coordinator's record, not his words."
+  },
+  {
+   "id": "OR-V51",
+   "kind": "requirement",
+   "words": "the director chooses the effects itself, from the words, the photo and the list of tools and effects, and records a short reason per pick; effects are never typed per shot by hand",
+   "words_verbatim": false,
+   "words_origin": "memory_quote",
+   "gloss": "The director agent, not a person, picks each shot's effects and states why.",
+   "date": "2026-11-14T12:40:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-photo-animation-2026-11-14"
+   },
+   "layers": [
+    "L14"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "every effect in a 2.5D plan carries a director reason; a hand-typed per-shot effect list is refused; reproduce the plan from photo + words alone",
+   "repeats": 2,
+   "repeat_evidence": "11-14 12:38-12:42 (memory update block), 11-14 15:38 ('a director that cannot read it from the photo is a bad agent')",
+   "note": "memory gives the 12:40 content in English only; the Georgian he wrote at 15:38 is the OR-V19/V41 text"
+  },
+  {
+   "id": "OR-V52",
+   "kind": "requirement",
+   "words": "ბლენდერის როლი კამერის მოძრაობის და კადრებს შორის კამერის მოძრაობის გადასვლების კუთხეების დაგეგმვაა და არა ფერები და სხვა",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "Blender's role is planning the camera movement and the camera-transition angles between shots, not colours or anything else.",
+   "date": "2026-11-20T08:20:48Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPW9R27ZpgwLtdVwfZ2HJQHVG",
+    "thread": "plan thread (Opus high)"
+   },
+   "layers": [
+    "L11"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "Blender job spec contains camera path and shot-to-shot transition angles only; no colour, light or material work in the Blender stage",
+   "repeats": 2,
+   "repeat_evidence": "11-20 07:40 ('see the camera movement, the frames, then LTX adds flesh'), 08:20",
+   "note": "memory index (11-20) records it as a decision; no registry entry carried it in v3. OR-V28 measures a different thing (Blender in making the 10 % lane)"
+  },
+  {
+   "id": "OR-V53",
+   "kind": "requirement",
+   "words": "მოზრაობას ბლენდერით რო ვაჩვენებთ ლტხ ისაც უნდა ვუთხრათ რო კინემატოგრაფია უნდა მოხდეს ომ ფილმის სტილში რაზეც ვაფუძნებტ კადრებს მაგალიტად რადგან ფოტო და ვიდეო 1917 სტილშია, ბლენდერის რენდერიც ამ სტილში ნდა მოხდეს პლუს ლტხ ისაც უნდა ვუტხრათ რო ამ სტიში უნდა იყოს",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "When Blender shows the motion, tell LTX too that the cinematography must follow the era film the frames are based on (e.g. 1917), and the Blender render must be in that style as well.",
+   "date": "2026-11-20T08:18:41Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWF3dZsRMYaaEqs8JMnrX3ZD",
+    "thread": "plan thread (Opus high)"
+   },
+   "layers": [
+    "L11",
+    "L13"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "Blender render brief and LTX prompt each name the series' era film; string check, same name as the picture prompts (OR-V01)",
+   "repeats": 2,
+   "repeat_evidence": "11-20 07:14 ('the same for video'), 08:18, 08:22 (scope: test only, nothing else changes yet)",
+   "note": "08:22:13 (cmsg ...PgxUQgpqRK5AC5JAmFVnJW): 'I want this rule switched on as a test on LTX generation, nothing else changes yet, I just want to see if it works'. Scope = test; GC-18 unchanged until pack B answers (OR-C01)"
+  },
+  {
+   "id": "OR-V54",
+   "kind": "requirement",
+   "words": "prompt words = 40..150 band, per scene by the needed detail of proportions and setting",
+   "words_verbatim": false,
+   "words_origin": "memory_quote",
+   "gloss": "Qwen-era limit on prompt length: 40 to 150 words, chosen per scene by how much detail it needs.",
+   "date": "2026-11-06T12:27:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-route-decisions-2026-11-06"
+   },
+   "layers": [
+    "L9"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "prompt lint: word count within 40..150; REVIEW above 90 for crowds",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "Qwen-era (D-43/LT-65, msg cmsg_01Hnu5zB86sjUj5GtTgaUkPWQ83nahs7XqJbJiNjko9vuk). Whether it still applies to Gemini chat prompts is the owner's call: ask once"
+  },
+  {
+   "id": "OR-V55",
+   "kind": "requirement",
+   "words": "a code solver computes every combination and takes the cheapest; an agent reviews only the doubtful rows",
+   "words_verbatim": false,
+   "words_origin": "card_press",
+   "gloss": "Reuse of existing pictures is chosen by code (cheapest combination), with an agent checking only the doubtful cases.",
+   "date": "2026-11-06T16:18:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-planning-chain-decisions-2026-11-06"
+   },
+   "layers": [
+    "L9",
+    "L10"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "reuse_plan lists every combination with its cost; REVIEW rows carry an agent verdict",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "card answer Q2 = A (11-06 16:18-16:19, Fable thread), recorded by the coordinator; not his words. Chain era: confirm it survives rule 15 / V4.1"
+  },
+  {
+   "id": "OR-V56",
+   "kind": "requirement",
+   "words": "an LTX clip is the shot rounded up to the next valid length (at most +0.33 s) and trimmed in the edit",
+   "words_verbatim": false,
+   "words_origin": "card_press",
+   "gloss": "Each LTX clip is generated at the next valid length above the shot and trimmed in the edit.",
+   "date": "2026-11-06T16:18:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-planning-chain-decisions-2026-11-06"
+   },
+   "layers": [
+    "L13",
+    "L21"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "clip length table: rounded-up value minus shot length <= 0.33 s; trim recorded in the edit plan",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "card answer Q4 = A (11-06); memory later says 'next 8k+1 frames'. Coordinator's record, not his words"
+  },
+  {
+   "id": "OR-V57",
+   "kind": "requirement",
+   "words": "სანამ გენერაციას დავიწყებთ, სრედი (Opus high) ჯერ რეფერენსებს აანალიზებს და ზუსტ პრომპტებს წერს, რომ ცდები ტყუილად არ დაიხარჯოს.",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "Before any picture generation a thread analyses the references and writes the exact prompts, so that tests are not wasted.",
+   "date": "2026-11-20T00:00:00Z",
+   "source": {
+    "kind": "doc",
+    "ref": "project instructions, rule 19, second sentence"
+   },
+   "layers": [
+    "L9",
+    "L10"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "turn-pack manifest carries a reference-analysis record and the exact prompts; generation refuses without them",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "date_basis": "snapshot: undated rule in the project instructions, read 2026-11-20",
+   "note": "rule 19 is dated 11-20; its first sentence (Task mode, 6 per batch) is OR-V35. Rule text names an Opus-high thread: see conflict OR-C06 (rule 17/21)"
+  },
+  {
+   "id": "OR-V58",
+   "kind": "requirement",
+   "words": "he generated 168 photos in about one hour in the Gemini chat; never estimate days for the chat",
+   "words_verbatim": false,
+   "words_origin": "memory_quote",
+   "gloss": "Estimates for the Gemini chat route must come from the measured throughput of about 168 pictures per hour.",
+   "date": "2026-11-12T20:47:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "project-gemini-168-myth"
+   },
+   "layers": [
+    "L9",
+    "L31"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "schedule estimator for the chat route reads the measured throughput (168 photos/h); an estimate in days for chat pictures is refused",
+   "repeats": 2,
+   "repeat_evidence": "11-12 14:31 ('never claim they were not made'), 11-12 20:47 (throughput fact)"
+  },
+  {
+   "id": "OR-V59",
+   "kind": "requirement",
+   "words": "just maximum realism; this style is an absolute rule (caricatured HUMANS in recognisable historical worlds)",
+   "words_verbatim": false,
+   "words_origin": "memory_quote",
+   "gloss": "Caricatured humans in recognisable historical worlds with maximum realism, 'an absolute rule'.",
+   "date": "2026-11-19T00:00:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-caricature-human-max-realism-2026-11-19"
+   },
+   "layers": [
+    "L9"
+   ],
+   "status": "superseded",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "-",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "superseded_by": "OR-V01",
+   "note": "English relay of his words in memory. Superseded 11-19 22:08 by OR-V01 ('realistic, simply'); memory: 'caricature faces only if he asks again'. id order: the superseding entry V01 has the lower id",
+   "id_order_exception": true
+  },
+  {
+   "id": "OR-V60",
+   "kind": "requirement",
+   "words": "Style target: live-action family adventure films (live-action Asterix, new Jumanji), real faces, a charming warm world, but a distinctive house look, not generic.",
+   "words_verbatim": false,
+   "words_origin": "memory_quote",
+   "gloss": "Style target of 11-12: live-action family adventure films with a distinctive look.",
+   "date": "2026-11-12T10:15:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-gemini-flash-not-pro"
+   },
+   "layers": [
+    "L9"
+   ],
+   "status": "superseded",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "-",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "superseded_by": "OR-V01",
+   "note": "replaced by the per-series era-film rule (11-19 22:08). Same memory file also carries OR-V04 (Flash, not Argon), which is already registered",
+   "id_order_exception": true
+  },
+  {
+   "id": "OR-V61",
+   "kind": "requirement",
+   "words": "ესეთი ოღონდ ნაკლებად 3დ. წარმომედგინა",
+   "words_verbatim": true,
+   "words_origin": "memory_quote",
+   "gloss": "Like this reference (stylised 3D character sheet), only less 3D; this is what I imagined.",
+   "date": "2026-11-05T17:54:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-style-reference-moklet-2026-11-05"
+   },
+   "layers": [
+    "L9"
+   ],
+   "status": "superseded",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "-",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "superseded_by": "OR-V50",
+   "note": "Blender/ink-chronicle era; the 11-19 14:19 'new style, not the old one' replaces it"
+  },
+  {
+   "id": "OR-V62",
+   "kind": "requirement",
+   "words": "a HISTORICAL style with slightly angular shapes; the channel's main character is made by the richness of the surrounding world, even static; find a cheap way to generate battles of thousands",
+   "words_verbatim": false,
+   "words_origin": "memory_quote",
+   "gloss": "Rich, historically grounded, slightly angular worlds; cheap thousand-person battles (Blender-era direction).",
+   "date": "2026-11-05T19:44:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-historical-angular-rich-worlds-2026-11-05"
+   },
+   "layers": [
+    "L9",
+    "L10"
+   ],
+   "status": "superseded",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "-",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "superseded_by": "OR-V50",
+   "note": "Blender-era direction, replaced by the 11-19 new-style statement; the thousand-person battle wish has not been restated since"
+  },
+  {
+   "id": "OR-S19",
+   "kind": "requirement",
+   "words": "შემდეგ იწერება ერთიანი სკრიპტი ყველაფრისთვის (ტექსტი, აუდიო, ფოტოს პრომპტები, მონტაჟი), და მხოლოდ შემდეგ იხარჯება ფასიანი რესურსი.",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "One unified script for everything (text, audio, picture prompts, editing) is written first and only then is paid spend allowed.",
+   "date": "2026-11-20T00:00:00Z",
+   "source": {
+    "kind": "doc",
+    "ref": "project instructions (the owner's standing rules), rule 1"
+   },
+   "layers": [
+    "L2",
+    "L3",
+    "L4",
+    "L7",
+    "L9",
+    "L31"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "production_script.json holds text, audio, picture prompts and edit plan in one file; a paid step refuses a project whose script file lacks any of the four",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "date_basis": "snapshot: undated rule in the project instructions, read 2026-11-20"
+  },
+  {
+   "id": "OR-S20",
+   "kind": "requirement",
+   "words": "the sample's parts are narrated BEFORE the visual script; the rest after the sample is approved",
+   "words_verbatim": false,
+   "words_origin": "card_press",
+   "gloss": "Voice for the two sample parts comes before the visual script; the remaining voice waits for his approval of the sample.",
+   "date": "2026-11-06T16:18:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-planning-chain-decisions-2026-11-06"
+   },
+   "layers": [
+    "L4",
+    "L7",
+    "L21"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "order check in the stage registry: narration of parts 1-2 precedes the visual script; the rest waits for sample approval",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "card answer Q1 = A (11-06); coordinator's record. Related OR-S08 (two-part sample)"
+  },
+  {
+   "id": "OR-S21",
+   "kind": "requirement",
+   "words": "he approves ONE readable page per part (shots, clips, what is in each still) before anything is paid",
+   "words_verbatim": false,
+   "words_origin": "card_press",
+   "gloss": "One readable page per part must be approved by him before any paid step.",
+   "date": "2026-11-06T16:18:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-planning-chain-decisions-2026-11-06"
+   },
+   "layers": [
+    "L7",
+    "L31"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "approval record per part bound to the page hash; paid step refuses without it",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "card answer Q5 = A (11-06); coordinator's record. Overlaps OR-S07 (script approval) but is a separate page"
+  },
+  {
+   "id": "OR-S22",
+   "kind": "requirement",
+   "words": "every hero's lines (text AND delivery) must come from their character (rustic, child-like, noble...)",
+   "words_verbatim": false,
+   "words_origin": "memory_quote",
+   "gloss": "Each hero's words and way of speaking come from who the character is.",
+   "date": "2026-11-07T11:22:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "project-stoneage-pilot-2026-11-07"
+   },
+   "layers": [
+    "L3",
+    "L5"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "speech card per hero (script) and delivery tags consistent with it; judge counts lines that break character",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "OR-A13 covers the voice choice; this is the text and delivery. 11-07 stone-age pilot thread"
+  },
+  {
+   "id": "OR-S23",
+   "kind": "requirement",
+   "words": "სტილის არჩევის პროცესი ყველა სერიისთვის: მე ვაძლევ ისტორიას; Claude მიყვება თავიდან 2-3 ვარიანტს, რაც ტავშია (სცენარის ვარიანტები); მერე მეუბნება, ამ ეპოქაზე რომელი წარმატებული ფილმებია გადაღებული (2-3 ფილმი, მოკლე აღწერით, რეკომენდაციით) და მე ვირჩევ სტილს. არჩეული ფილმის სტილში ვაგენერირებთ რეალისტურ კადრებს. სტილის ძიება/ექსპერიმენტები აღარ ტარდება.",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "Per series: he gives the story, Claude offers 2-3 script variants, then names 2-3 successful era films with a recommendation, he picks; frames are generated in the picked film's style; style experiments stop.",
+   "date": "2026-11-20T00:00:00Z",
+   "source": {
+    "kind": "doc",
+    "ref": "project instructions (the owner's standing rules), rule 20"
+   },
+   "layers": [
+    "L2",
+    "L9",
+    "L30"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "per-series gate: the thread posts 2-3 script variants, then 2-3 era films with a recommendation; the style field is filled only after his choice; no style-search task opened",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "overlaps OR-V01/V42; new here: script variants first, his pick of the film, and the end of style experiments. Open conflict with GC-18 is OR-C01"
+  },
+  {
+   "id": "OR-A14",
+   "kind": "requirement",
+   "words": "the director that looks at the photo must set the audio too, not only the motion, and the same for maps, with the same criteria (text, picture, library); each sound has a reason",
+   "words_verbatim": false,
+   "words_origin": "memory_quote",
+   "gloss": "Sound for photos and maps is chosen by the same director, by written criteria, with a recorded reason.",
+   "date": "2026-11-14T13:13:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-director-decides-map-audio-2026-11-14"
+   },
+   "layers": [
+    "L15",
+    "L18"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "every sound cue in a map or 2.5D plan carries a director reason and a library id; hand-written sound lists refused",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "msg ...X1nj38fCbSqH5mWzZKXzHj (11-14 13:13 UTC), relayed by the coordinator; OR-A05 (rules for enrichment from the frame) is the 11-12 sibling"
+  },
+  {
+   "id": "OR-A15",
+   "kind": "requirement",
+   "words": "audio design is MANDATORY in every plan (music cues, source-placed SFX, ambience, maps too) and needs NO question to him; written per shot from photo+scene+mood, not filler (silence allowed, gaps flagged)",
+   "words_verbatim": false,
+   "words_origin": "memory_quote",
+   "gloss": "Every plan contains per-shot audio design (music, source-placed effects, ambience, maps included), chosen from the shot, never as filler.",
+   "date": "2026-11-15T17:00:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "truce-full-film-plan-2026-11-15"
+   },
+   "layers": [
+    "L15",
+    "L18",
+    "L19",
+    "L20"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "shot_plan.json carries an audio entry per shot; a shot without one, or with a filler bed, is flagged; no card is raised for audio choices",
+   "repeats": 2,
+   "repeat_evidence": "11-15 17:00 and 17:02 UTC (memory), 11-12 21:44 (OR-A03/A04/A05)",
+   "note": "relay in English (17:00/17:02 UTC). Sits beside open conflict OR-C04 (LTX needs no background sound vs beds and action sounds)"
+  },
+  {
+   "id": "OR-P09",
+   "kind": "requirement",
+   "words": "the 10 scripted Shorts were dropped; 5 clip Shorts were cut from the long video itself (opening + one moment + the shared outro); no thumbnail from us",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "Shorts are clips cut from the long video (opening, one moment, shared outro), not separately scripted.",
+   "date": "2026-10-21T18:55:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "titans-qa-loop-state"
+   },
+   "layers": [
+    "L28"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "Shorts job reads only the long video's own footage for the Shorts it builds; no scripted-Short stage runs unless he asks",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "titans-era decision (10-21). Later D-79 adds a 'shorts-writer' stage for up to 10 scripted Shorts; I found no later owner word on it: ask him once whether 10-21 still stands. Memory paraphrases his order, no quote"
+  },
+  {
+   "id": "OR-Q08",
+   "kind": "requirement",
+   "words": "სხვა რამეს ვამმბობ ეს პროცესი ხო ავტომატიზირებულია ფოტო ბლენდერის კადრი მერე ბოლო კადრი აფსკეილი ბლენდერის კადრი. შუააში ამ ფოტოს როგორ შევაფასებთ",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "The chain Blender frame -> photo -> upscaled last frame -> Blender frame is automatic; how is the photo in the middle judged?",
+   "date": "2026-11-20T07:34:15Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPW7jMrknXkUbRNEavS9UxFxE",
+    "thread": "plan thread (Opus high)"
+   },
+   "layers": [
+    "L10",
+    "L16",
+    "L24"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "chain job writes a score for the in-between photo (between Blender frame and upscaled last frame); the chain does not continue below the threshold",
+   "repeats": 3,
+   "repeat_evidence": "07:30:06 ('how will the visual checks happen?'), 07:34, 07:45",
+   "note": "a question that states a requirement: the middle photo needs an automatic judge. Threshold and judge are the team's to propose"
+  },
+  {
+   "id": "OR-Q09",
+   "kind": "requirement",
+   "words": "მინდა რენდერმა მულტი სცენა მულტი შოთ ააწყოს რო გაიტესტოს ბოლო ფოტო პლუს აფსკეილიც პლუს ახლიდან ლტხ . და ტან მინდა რო მოიძიო პოოდში რამე მოდელი ხო არ ცავსვატ უფასო რაც თვალისთვის გამოგვადგება ეს პროცესი რო სრულად გავაავტომატუროთ",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "Test a multi-scene multi-shot render of the last photo + upscale + LTX again, and look for a free model on the pod that can judge by eye so the whole process runs automatically.",
+   "date": "2026-11-20T07:45:57Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWNgoJnPirp1vKMwKUEWEWjn",
+    "thread": "plan thread (Opus high)"
+   },
+   "layers": [
+    "L10",
+    "L16",
+    "L24",
+    "L31"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "pod/chain job lists at least one free eye-judging model with a measured agreement against his eye; run order Blender multi-scene -> last photo -> upscale -> LTX again",
+   "repeats": 3,
+   "repeat_evidence": "07:34, 07:45, 07:58 (asked the Gemini chat for the best eye-judging tool)",
+   "note": "the first sentence ('I want the render to build a multi-scene multi-shot...') is a test design, not a standing rule"
+  },
+  {
+   "id": "OR-Q10",
+   "kind": "requirement",
+   "words": "მოდალზე ხო არ გავაცერებტ მუშაობას მერე გავუშვებთ მერე გავაცერებტ? შუაში უნდა გქვონდეს სანდო აფსკეილი და გაგრძელება რო ავტომატურად მოხდეს პროცესი. სანამ ახლა ცვენ ვმსჯელოტ გაუსვი სონეტ მედიუმით რენდერი",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "Do not stop and restart work on Modal; keep a trusted upscale in the middle so the process continues automatically.",
+   "date": "2026-11-20T07:37:25Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWX1fym3dLzqP2f8PxCUbKM3",
+    "thread": "plan thread (Opus high)"
+   },
+   "layers": [
+    "L16",
+    "L31",
+    "L33"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "chain runner has no manual stop/start between stages; the upscale stage is a trusted step and the next stage starts from its output automatically",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "also asks to launch the render with Sonnet medium while they talk (a task, not a rule)"
+  },
+  {
+   "id": "OR-Q11",
+   "kind": "requirement",
+   "words": "ხშირად დაშვებუკი შეცდომებჯ გამოიკვლიე და წესებში გაწერე რო აღარ დაუშვა",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "Research the often-made mistakes and write them into the rules so they are not made again.",
+   "date": "2026-11-12T21:06:17Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPW7Qh38XtS43gqTX6Bo4kTKz"
+   },
+   "layers": [
+    "L23",
+    "L33"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "every logged mistake class has a lint or test (mistake id -> test id table); a repeat of a logged class fails the gate",
+   "repeats": 3,
+   "repeat_evidence": "11-12 21:06, 11-13 17:02 (OR-V06 text), 11-12 21:09 (OR-Q12)",
+   "note": "the first analyst held this text in its table but registered only the picture-prompt version (OR-V06); this is the general rule, from the HyperFrames overlay message"
+  },
+  {
+   "id": "OR-Q12",
+   "kind": "requirement",
+   "words": "Fable must not audit every video generation. When an audit finds a problem, first decide whether it comes from the code; if it does, write the fix into the code as a gate or a test so the problem cannot happen again",
+   "words_verbatim": false,
+   "words_origin": "memory_quote",
+   "gloss": "No per-run Fable audits; lessons from audits go into code gates and tests.",
+   "date": "2026-11-12T21:09:00Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWQf1FV9st3t9cEVvfgA8qxY"
+   },
+   "layers": [
+    "L23",
+    "L33"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "no audit thread is opened per generation run; every audit finding closes with a gate or test id",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "msg ...PWQf1FV9st3t9cEVvfgA8qxY, 11-12 21:09 UTC (id as recorded in memory feedback-no-fable-audit-per-video-2026-11-12). Memory says it supersedes OR-34 for video generation; OR-I13 is already superseded by OR-I12"
+  },
+  {
+   "id": "OR-I17",
+   "kind": "requirement",
+   "words": "ყოველი ფასიანი გენერაციის წინ ხარჯის შეფასება და დასტური; სურათებზე ყოველ batch-ზე პროვაიდერს მომხმარებელი ირჩევს; ხელახლა გამოიყენე უკვე დაგენერირებული მასალა.",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "Every paid generation needs a cost estimate and his approval first; on pictures he picks the provider for each batch; already generated material is reused.",
+   "date": "2026-11-20T00:00:00Z",
+   "source": {
+    "kind": "doc",
+    "ref": "project instructions (the owner's standing rules), rule 2"
+   },
+   "layers": [
+    "L31"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "paid-call wrapper refuses without an estimate record and a recorded approval; image batches carry the provider chosen by him; the library is searched first",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "date_basis": "snapshot: undated rule in the project instructions, read 2026-11-20"
+  },
+  {
+   "id": "OR-I18",
+   "kind": "requirement",
+   "words": "სამუშაოს ბოლოს ყველა პოდი გათიშე; წაშლა მხოლოდ მომხმარებლის სიტყვიერი თანხმობით.",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "At the end of work every pod is switched off; deleting only with his spoken consent.",
+   "date": "2026-11-20T00:00:00Z",
+   "source": {
+    "kind": "doc",
+    "ref": "project instructions (the owner's standing rules), rule 3"
+   },
+   "layers": [
+    "L31"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "runpod check at session end lists zero running pods; delete only with a recorded verbal yes",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "date_basis": "snapshot: undated rule in the project instructions, read 2026-11-20",
+   "note": "RunPod was dropped on 11-20 (memory), rule 3 still names pods and covers any paid cloud runner"
+  },
+  {
+   "id": "OR-I19",
+   "kind": "requirement",
+   "words": "სამუშაო ბრანჩი: systemic/next-video; ყველა ახალი ცვლილება იქ იყრის თავს, main-ზე მხოლოდ მომხმარებლის თხოვნით.",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "Work branch is systemic/next-video; all new changes gather there; main only at his request.",
+   "date": "2026-11-20T00:00:00Z",
+   "source": {
+    "kind": "doc",
+    "ref": "project instructions (the owner's standing rules), rule 5"
+   },
+   "layers": [
+    "L33"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "git hook: push to main refused without his recorded word; work branch name checked",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "date_basis": "snapshot: undated rule in the project instructions, read 2026-11-20",
+   "note": "DRIFT: every thread now works on claude/project-thread-* branches and PRs (harness setting). Not registered as a conflict because he has not spoken to it again; lead to ask once"
+  },
+  {
+   "id": "OR-I20",
+   "kind": "requirement",
+   "words": "მოდელები: ყოველი დავალება ეტაპებად იყოფა, ყოველ ეტაპს ენიჭება სირთულე S0–S4 და მოდელი წესების მიხედვით (explainer-engine/routing_rules_2026-10-29/MODEL_ROUTING_ka.md). მოდელსა და effort-ს კოორდინატორი სრედის გახსნისას ირჩევს; მცირე ეტაპი სუბაგენტს გადაეცემა თავისი მოდელით. სრედის შიგნით გადართვა ხდება მხოლოდ ჩემი სიტყვით: სრედი მთავაზობს ერთი ხაზით. კოდინგი: ჯერ Sonnet, ძნელზე Opus. Fable (აუდიტზეც) ირთვება მხოლოდ ჩემი წინასწარი თანხმობით, განსაკუთრებული საჭიროებისას; აუდიტი ნაგულისხმევად Opus extra/high-ზე კეთდება. ultracode მხოლოდ ჩემი სიტყვით. ხარჯის დაზოგვის მიზნით აშკარად მარტივი, რუტინული ეტაპები (ფორმატირება, ძებნა, ანგარიში, ტესტების გაშვება, მკაფიოდ აღწერილი მცირე ცვლილება) პირდაპირ Sonnet-ზე გადადის, ცდისა და შეცდომის გარეშე; რთული ეტაპი პირდაპირ Opus-ზე. \"ჯერ Sonnet, მარცხზე Opus\" არ გამოიყენება ორაზროვან რთულ ეტაპებზე.",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "Every task is split into stages with a difficulty S0-S4 and a model by the routing rules; the coordinator picks model and effort at thread opening; switching inside a thread only on his word; code on Sonnet first, hard on Opus; Fable and ultracode only with his word; audits default to Opus extra/high.",
+   "date": "2026-11-20T00:00:00Z",
+   "source": {
+    "kind": "doc",
+    "ref": "project instructions (the owner's standing rules), rule 7"
+   },
+   "layers": [
+    "L33"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "model routing hook: stage difficulty S0-S4 -> model per MODEL_ROUTING_ka.md; an in-thread model switch, Fable or ultracode without his recorded word is refused",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "date_basis": "snapshot: undated rule in the project instructions, read 2026-11-20",
+   "note": "stacked with rules 12, 17, 21 and OR-I12: conflict OR-C06"
+  },
+  {
+   "id": "OR-I21",
+   "kind": "requirement",
+   "words": "ეტაპები სრედებზე მიმდევრობით სრულდება, არასოდეს პარალელურად. ყოველი სრედი ამთავრებს თავის ნაწილს და წერს მოკლე გადაცემის ფაილს (რა გაკეთდა, შედეგი, შემდეგი ნაბიჯის შესასვლელი); კოორდინატორი ამოწმებს, სრედს ხურავს და შემდეგ სრედს მხოლოდ ეს ფაილი და დავალება ეძლევა, რომ ჩატები არ აირიოს.",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "Stages run on threads one after another, never in parallel; each thread writes a short handoff file and the next thread gets only that file and the task.",
+   "date": "2026-11-20T00:00:00Z",
+   "source": {
+    "kind": "doc",
+    "ref": "project instructions (the owner's standing rules), rule 7ა"
+   },
+   "layers": [
+    "L33"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "stage registry: a thread starts only when the previous thread's handoff file exists and the coordinator closed it",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "date_basis": "snapshot: undated rule in the project instructions, read 2026-11-20",
+   "note": "waived by him for Wave 1 (card 11-19 19:10 Tbilisi) and Wave 2 (card 16:39Z), 'later waves: ask again' (memory project-plan-rewrite-2026-11-19); waivers are card presses relayed by the coordinator"
+  },
+  {
+   "id": "OR-I22",
+   "kind": "requirement",
+   "words": "ლიმიტები: ორკესტრატორი და ყოველი სრედი რეგულარულად ამოწმებს 5-საათიან და კვირის გამოყენების ლიმიტს. 95%-ზე ავტომატურად ინახება ყველა დაუსრულებელი სამუშაოს პროგრესი ფაილებში (შედეგები, მდგომარეობა, შემდეგი ნაბიჯი), რომ ლიმიტის ამოწურვამ არაფერი დაკარგოს. შედეგი ყოველთვის დასრულებისთანავე ინახება.",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "The orchestrator and every thread check the 5-hour and weekly limit; at 95 % all unfinished work is saved to files; results are saved at once.",
+   "date": "2026-11-20T00:00:00Z",
+   "source": {
+    "kind": "doc",
+    "ref": "project instructions (the owner's standing rules), rule 8"
+   },
+   "layers": [
+    "L31",
+    "L33"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "usage watcher: at 95 % of the 5-hour or weekly limit unfinished work is saved to files; checked by a test with a fake 95 % reading",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "date_basis": "snapshot: undated rule in the project instructions, read 2026-11-20",
+   "note": "CLAUDE.md OR-30 is the repo copy; cloud threads cannot read the exact percent (memory project-blueprint-plan-2026-10-29)"
+  },
+  {
+   "id": "OR-I23",
+   "kind": "requirement",
+   "words": "ყოველი ფასიანი გაშვება (API, პოდი, გენერაცია) შედეგს ნაბიჯ-ნაბიჯ ინახავს ფაილში მოსვლისთანავე (stream/ნაწილობრივი შენახვა, checkpoint), რომ გაწყვეტამ, ჭერმა ან შეცდომამ გადახდილი არ დაკარგოს. სანამ ეს დაცვა კოდში დამტკიცებული არ არის, ფასიანი გაშვება არ იწყება.",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "Every paid run (API, pod, generation) saves output step by step as it arrives, so an interruption cannot lose paid work; until this protection is proven in code the paid run does not start.",
+   "date": "2026-11-20T00:00:00Z",
+   "source": {
+    "kind": "doc",
+    "ref": "project instructions (the owner's standing rules), rule 10"
+   },
+   "layers": [
+    "L23",
+    "L31"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "paid-run harness test proves an interrupted run leaves its partial output on disk; a paid path without that test does not start",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "date_basis": "snapshot: undated rule in the project instructions, read 2026-11-20",
+   "note": "CLAUDE.md OR-33 is the repo copy; origin 10-30 (memory runpod-money-control: 'upset: $8 = a day's wage')"
+  },
+  {
+   "id": "OR-I24",
+   "kind": "requirement",
+   "words": "ფასიანი სერვისის (API, პოდი, გენერაცია) ყოველ გაშვებას თან ახლავს მყარი ხარჯის ლიმიტი და ცალკე იაფი საკონტროლო სრედი (Haiku, low effort). ის ტაიმერით ამოწმებს ხარჯს და პროცესის მდგომარეობას და ანომალიას მთავარ ჩატში წერს. შემოწმების სიხშირე და წესების სიმკაცრე დავალების ფასსა და რისკს შეესაბამება: რაც უფრო ძვირია, მით უფრო ხშირი და მკაცრი კონტროლი.",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "Every paid run has a hard cost cap and a separate cheap watchdog thread (Haiku, low effort) that checks cost and state on a timer and reports anomalies in the main chat; the dearer the run, the more frequent and strict the checks.",
+   "date": "2026-11-20T00:00:00Z",
+   "source": {
+    "kind": "doc",
+    "ref": "project instructions (the owner's standing rules), rule 11"
+   },
+   "layers": [
+    "L31"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "paid run has a hard cap and a separate watchdog thread (Haiku low) started before it; check interval scales with price and risk",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "date_basis": "snapshot: undated rule in the project instructions, read 2026-11-20",
+   "note": "CLAUDE.md OR-36 is the repo copy"
+  },
+  {
+   "id": "OR-I25",
+   "kind": "requirement",
+   "words": "თუ გამოყენების ლიმიტი (5-საათიანი ან კვირის) 90%-ს გადააჭარბებს, ყველა ახალ სრედს Sonnet medium-ით ვხსნი. თუ Sonnet medium დავალებას ვერ გაართმევს თავს, ჯერ მე გკითხავ და შენ აირჩევ სასურველ მოდელსა და effort-ს.",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "Above 90 % of the 5-hour or weekly limit all new threads open on Sonnet medium; if that is not enough he is asked first.",
+   "date": "2026-11-20T00:00:00Z",
+   "source": {
+    "kind": "doc",
+    "ref": "project instructions (the owner's standing rules), rule 12"
+   },
+   "layers": [
+    "L33"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "model routing: above 90 % usage a new thread opens on Sonnet medium; a step Sonnet medium cannot do is put to him as a card",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "date_basis": "snapshot: undated rule in the project instructions, read 2026-11-20"
+  },
+  {
+   "id": "OR-I26",
+   "kind": "requirement",
+   "words": "თუ პოდის (ან ნებისმიერი ფასიანი გაშვების) სრედს კითხვა აქვს, მკითხავს ბარათით (ვარიანტებით), და კოორდინატორი იმავე კითხვას მთავარ ჩატშიც აჩვენებს, ბარათის სრედის ბმულით.",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "A paid-run thread's question goes to him as a card with options, and the coordinator shows the same question in the main chat with a link to the card thread.",
+   "date": "2026-11-20T00:00:00Z",
+   "source": {
+    "kind": "doc",
+    "ref": "project instructions (the owner's standing rules), rule 13"
+   },
+   "layers": [
+    "L31",
+    "L33"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "paid-run thread question = a decision card with options; the coordinator mirrors it in the main chat with the card thread link",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "date_basis": "snapshot: undated rule in the project instructions, read 2026-11-20",
+   "note": "conflict with the 11-06 'all questions in the Fable thread' (OR-G20): OR-C07"
+  },
+  {
+   "id": "OR-I27",
+   "kind": "requirement",
+   "words": "სკრიპტს (ტექსტს, ფოტოს პრომპტებს, მონტაჟის გეგმას) წერს თავად სრედის Claude (მოდელი წესი 7-ით) და არა Claude API (არ გამოიყენება API-ით სკრიპტის გენერაცია). ბლენდერში ჯერ ყველა სცენა აიწყობა, და მხოლოდ შემდეგ აქცევს Qwen მათ ფოტოებად.",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "The script (text, photo prompts, edit plan) is written by the thread's own Claude, not by the Claude API; in Blender all scenes are assembled first and only then does Qwen turn them into photos.",
+   "date": "2026-11-07T10:57:00Z",
+   "source": {
+    "kind": "doc",
+    "ref": "project instructions (the owner's standing rules), rule 15"
+   },
+   "layers": [
+    "L2",
+    "L7",
+    "L9",
+    "L11"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "script stage runs on the thread's own Claude (no Claude API call in script generation); Blender scene assembly precedes photo generation",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "date from memory project-stoneage-pilot-2026-11-07 ('11-07 10:57 UTC: script by the Claude thread itself, NOT the API (overrides OR-35 for scripts)'). The 'Qwen' half is stale beside OR-V05 (Gemini chat is main) and OR-V07: conflict OR-C05"
+  },
+  {
+   "id": "OR-I28",
+   "kind": "requirement",
+   "words": "ნებისმიერი ახალი სრედი იხსნება მხოლოდ Sonnet medium-ზე ან დაბლა. Sonnet medium-ზე მაღალი მოდელი ან effort მხოლოდ ჩემი წინასწარი თანხმობით, განსაკუთრებულ შემთხვევაში; ამას ეხება წესი 7-ის Opus/high არჩევანიც. კოორდინატორი ჯერ მეკითხება.",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "Any new thread opens only on Sonnet medium or lower; a higher model or effort only with his advance consent in a special case; that covers rule 7's Opus/high choice too; the coordinator asks first.",
+   "date": "2026-11-07T00:00:00Z",
+   "source": {
+    "kind": "doc",
+    "ref": "project instructions (the owner's standing rules), rule 17"
+   },
+   "layers": [
+    "L33"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "model routing hook: a new thread above Sonnet medium needs a recorded advance word from him",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "rule text dates it 11-07 (usage at 90 %). Conflict set OR-C06"
+  },
+  {
+   "id": "OR-I29",
+   "kind": "requirement",
+   "words": "ყოველი start_thread-ის ზარში model და effort აუცილებლად მკაფიოდ უნდა მიეთითოს, ნაგულისხმევზე დაყრდნობა აკრძალულია. ბრაუზერის/დაწკაპუნების/ძიების/რუტინული საქმე: Sonnet medium ან Haiku, არასოდეს Opus. Opus მხოლოდ რთულ ეტაპზე წესი 7-ით და წესი 17-ის დაცვით. ზარის წინ კოორდინატორი ამოწმებს, რომ მოდელი მითითებულია.",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "Every start_thread call must state model and effort explicitly, no default; browser, click, search and routine work on Sonnet medium or Haiku, never Opus; Opus only for a hard stage under rules 7 and 17.",
+   "date": "2026-11-20T00:00:00Z",
+   "source": {
+    "kind": "doc",
+    "ref": "project instructions (the owner's standing rules), rule 21"
+   },
+   "layers": [
+    "L33"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "start_thread call refused unless model and effort are explicit; browser/click/search/routine on Sonnet medium or Haiku, never Opus",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "the coordinator's 08:56 relay words it stronger ('OR-34 audit and every start_thread only Sonnet/Haiku, Opus never'); the rule text is the weaker form. Conflict set OR-C06"
+  },
+  {
+   "id": "OR-I30",
+   "kind": "requirement",
+   "words": "before every important decision the working session (Sonnet) asks a separate thread on a higher model (Opus); that thread takes the main planning decisions and its confirmation of an OR-23 pod plan starts the pod. The coordinator passes it complete information (facts, numbers, files, open items) but no reasoning",
+   "words_verbatim": false,
+   "words_origin": "doc_quote",
+   "gloss": "Important decisions go to a separate higher-model thread that gets facts but no reasoning.",
+   "date": "2026-10-26T00:00:00Z",
+   "source": {
+    "kind": "doc",
+    "ref": "CLAUDE.md OR-24 (creator 2026-10-26)"
+   },
+   "layers": [
+    "L31",
+    "L33"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "decision log row cites the higher-thread id for every pod plan; pod create refuses without it",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "repo wording of his 10-26 words (memory feedback-higher-thread-decides). Tension with rules 17/21 (Opus only with advance consent): OR-C06 lists it"
+  },
+  {
+   "id": "OR-I31",
+   "kind": "requirement",
+   "words": "cross-reviews, audits, research, script variants and document or test-text writing go to the Claude API where quality does not suffer; threads keep code writing and merging",
+   "words_verbatim": false,
+   "words_origin": "doc_quote",
+   "gloss": "Use the Claude API for reviews, audits, research and drafting where quality holds.",
+   "date": "2026-10-30T00:00:00Z",
+   "source": {
+    "kind": "doc",
+    "ref": "CLAUDE.md OR-35 (creator 2026-10-30)"
+   },
+   "layers": [
+    "L33"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "-",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "amended_by": "OR-I27",
+   "note": "kept ACTIVE until the owner confirms the supersession (the lead 2026-11-20 09:23): OR-I32 may supersede it; amended for scripts by the 11-07 'script by the thread, not the API' (OR-I27). Fully superseded only if OR-I32 is read as covering audits and research: the lead should confirm with him (supersession_confirmed false)",
+   "supersession_confirmed": false
+  },
+  {
+   "id": "OR-I32",
+   "kind": "requirement",
+   "words": "Cლაუდე api ar maq",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "I have no Claude API (credit), so it must not be put in the plan.",
+   "date": "2026-11-20T08:13:43Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWEjBegL5aHgvCYQ2ruN65eu",
+    "thread": "plan thread (Opus high)"
+   },
+   "layers": [
+    "L33"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "no plan, brief or script line calls the Claude API; the model-routing check refuses an API-backed step",
+   "repeats": 2,
+   "repeat_evidence": "08:13:43 ('Cლაუდე api ar maq', Latin C kept), 08:13:50 ('არ ჩასვა გეგმაშ`'), memory 11-19 'Claude API credit out (top-up or threads)'",
+   "note": "ambiguous scope: 'it' may be one plan line the plan thread proposed. Registered as the broader reading because memory (11-19) already lists the credit as out; lead to confirm"
+  },
+  {
+   "id": "OR-I33",
+   "kind": "requirement",
+   "words": "tokens run out fast on high; take the limit into account and set it large",
+   "words_verbatim": false,
+   "words_origin": "memory_quote",
+   "gloss": "Set API max_tokens large enough that a paid job is never cut off.",
+   "date": "2026-10-30T00:00:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-api-max-tokens-large"
+   },
+   "layers": [
+    "L33"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "claude_api client: code jobs max_tokens >= 64000, plans >= 40000, at most 3 files per task",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "moot while OR-I32 stands (no Claude API); kept active so it returns with the credit"
+  },
+  {
+   "id": "OR-I34",
+   "kind": "requirement",
+   "words": "we tried many times and it does not stabilise; I think you make hasty decisions.",
+   "words_verbatim": false,
+   "words_origin": "memory_quote",
+   "gloss": "When a quality problem repeats, do a free full analysis from the records first, show it, decide together, then at most one controlled paid test.",
+   "date": "2026-10-25T00:00:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-no-rushed-hypotheses"
+   },
+   "layers": [
+    "L31",
+    "L33"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "a paid test record cites the free analysis (sources per claim) that preceded it; one controlled test only when the analysis cannot answer",
+   "repeats": 2,
+   "repeat_evidence": "10-24..25 four paid tests; 10-25 17:37 one-goal rule (OR-G17)"
+  },
+  {
+   "id": "OR-I35",
+   "kind": "requirement",
+   "words": "if the limit was not enough you did not even ask",
+   "words_verbatim": false,
+   "words_origin": "memory_quote",
+   "gloss": "When a cap would stop a run before it reaches the quality goal, ask by card at once; never shrink the run silently.",
+   "date": "2026-10-23T00:00:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-ask-when-cap-blocks-quality"
+   },
+   "layers": [
+    "L31"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "pod/run planner compares steps x s/step x $/h with every cap; a cap that cuts the run raises a decision card in the same turn",
+   "repeats": 1,
+   "repeat_evidence": ""
+  },
+  {
+   "id": "OR-I36",
+   "kind": "requirement",
+   "words": "no paid Modal option is offered before a paid_offer/1 file passes `python -m explainer_engine.cloud.paid_offer fetch|price|check` (free credit first)",
+   "words_verbatim": false,
+   "words_origin": "memory_quote",
+   "gloss": "Free credit is checked first and no paid option is offered until the paid-offer file passes.",
+   "date": "2026-11-13T14:37:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-cheapest-hook-2026-11-13"
+   },
+   "layers": [
+    "L31"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "cloud/paid_offer.py check on a paid_offer file; hook refuses a paid-looking Modal command without it",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "CH-07 (his 11-13 14:37 words + card 14:47, PR #179). Module named in memory; NOT verified here (checkout 073eb25 predates it). OR-I01 is the CH-01..06 sibling"
+  },
+  {
+   "id": "OR-I37",
+   "kind": "requirement",
+   "words": "for two days I've been saying our skills are no good, we can't assemble videos, the internet is full of skills by known developers, we'll find many solutions there; you again leave them untouched",
+   "words_verbatim": false,
+   "words_origin": "memory_quote",
+   "gloss": "Replace our craft skills (picture, edit, sound, LTX, colour) with proven public skills taken whole; keep ours only where no credible public one exists.",
+   "date": "2026-11-19T14:39:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-replace-skills-with-public-2026-11-19"
+   },
+   "layers": [
+    "L33"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "skill manifest marks vendored (upstream SKILL.md whole, attribution) vs ours; archived, not deleted",
+   "repeats": 3,
+   "repeat_evidence": "11-19 18:39, 18:50, 18:57; 11-20 06:52"
+  },
+  {
+   "id": "OR-I38",
+   "kind": "requirement",
+   "words": "one mandatory rule: every existing skill we keep must be checked in detail and a better version found on the internet, to enrich or replace it",
+   "words_verbatim": false,
+   "words_origin": "memory_quote",
+   "gloss": "Every skill we keep is read in full, compared with at least three public alternatives, and then replaced, enriched or kept with a reason.",
+   "date": "2026-11-19T14:50:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-skill-audit-rule-sk1-2026-11-19"
+   },
+   "layers": [
+    "L33"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "per kept skill: full read, >= 3 public alternatives with SKILL.md opened, a decision with reason; 'keep' without it is refused",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "memory carries the Georgian only in part; SK-1/SK-2 wording is the team's. 11-20 06:48: he asked why S10 said 'keep' with no SK-1 run"
+  },
+  {
+   "id": "OR-I39",
+   "kind": "requirement",
+   "words": "write a final ambitious, detailed plan based only on highly rated skills and repos by known developers; the project is rebuilt as a composition of professional code and skill solutions",
+   "words_verbatim": false,
+   "words_origin": "memory_quote",
+   "gloss": "The rebuilt project is a composition of highly rated public skills and repos.",
+   "date": "2026-11-19T14:57:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "project-plan-rewrite-2026-11-19"
+   },
+   "layers": [
+    "L33"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "plan lists each component with its public source and rating",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "memory gives it in English; the plan-rewrite thread"
+  },
+  {
+   "id": "OR-I40",
+   "kind": "requirement",
+   "words": "ყველა თულს უნდა ქონდეს თავისი სქილი მოძებნილი ყველა ფენას (რეჟისორული, სცენარული, ხმის სცენარული...)",
+   "words_verbatim": true,
+   "words_origin": "memory_quote",
+   "gloss": "Every tool, and every layer (director, script, sound script...), has its own skill, found by search.",
+   "date": "2026-11-20T06:52:23Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWNNvx3o1PK2FXoWi85XNDV9"
+   },
+   "layers": [
+    "L33"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "tool inventory (Gemini, LTX, ElevenLabs, FFmpeg, Blender, Modal, upscalers, map libraries, vidIQ, YouTube API) each maps to a skill file with a found source",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "words_partial": true,
+   "note": "same message as OR-G09 (06:52:23Z); memory feedback-skills-rewrite-50-2026-11-20 quotes this continuation, the chat text I fetched shows only the first sentence"
+  },
+  {
+   "id": "OR-I41",
+   "kind": "requirement",
+   "words": "the plan thread is the delivery manager: it checks every thread of this plan against the goal and accepts no excuses for skipped work ('do it, done')",
+   "words_verbatim": false,
+   "words_origin": "memory_quote",
+   "gloss": "The plan thread manages delivery and does not accept skipped work.",
+   "date": "2026-11-20T08:52:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-skills-rewrite-50-2026-11-20"
+   },
+   "layers": [
+    "L33"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "plan thread holds a per-thread status table keyed to the goal; a skipped step is reopened, not closed",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "'12:52 Georgia (owner)' = 08:52Z"
+  },
+  {
+   "id": "OR-I42",
+   "kind": "requirement",
+   "words": "if saving 10-20 generations makes the system more complicated, prefer quality and stability",
+   "words_verbatim": false,
+   "words_origin": "memory_quote",
+   "gloss": "Prefer quality and stability over saving a few generations; reuse stays optional and simple.",
+   "date": "2026-11-01T00:00:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-quality-over-saving"
+   },
+   "layers": [
+    "L31",
+    "L33"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "reuse features are only the simple version; a complexity review blocks extra compositing for saving",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "date: MrBeast-roadmap work (11-01 era), day not stated in the memory; 15:25 UTC correction: he did NOT say exclude reuse. Tension with OR-I16 ('cheapest workable'), not a hard conflict because both say workable/simple"
+  },
+  {
+   "id": "OR-I43",
+   "kind": "requirement",
+   "words": "every technical question goes to Fable through the API and its answer stands in his place, rule changes included; he approves only financial limits, in advance",
+   "words_verbatim": false,
+   "words_origin": "memory_quote",
+   "gloss": "Technical questions are answered by Fable via the API, not by him.",
+   "date": "2026-10-30T20:46:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-fable-api-answers-technical"
+   },
+   "layers": [
+    "L33"
+   ],
+   "status": "superseded",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "-",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "superseded_by": "OR-I12",
+   "note": "superseded by 11-14 13:52 (no Fable), 11-19 18:17/18:22 (OR-I12), 11-20 08:13 (OR-I32, no API); memory also holds the 10-30 line budget (final_review 8, change_plan 8...) which is spent history",
+   "id_order_exception": true
+  },
+  {
+   "id": "OR-C05",
+   "kind": "conflict",
+   "title": "Rule 15 (Blender first, then Qwen makes the photos) vs the Gemini-chat photo route",
+   "words": "",
+   "words_verbatim": false,
+   "words_origin": "none: conflict entry, both sides in `sides`",
+   "gloss": "Rule 15 says Blender assembles all scenes first and Qwen then turns them into photos; his 11-13 route order makes the Gemini chat the main picture route (Qwen not in it) and on 11-20 07:02 he tested Blender, then Gemini, which keeps the environment well. Which engine makes the photos from the Blender frames?",
+   "summary": "Rule 15 says Blender assembles all scenes first and Qwen then turns them into photos; his 11-13 route order makes the Gemini chat the main picture route (Qwen not in it) and on 11-20 07:02 he tested Blender, then Gemini, which keeps the environment well. Which engine makes the photos from the Blender frames?",
+   "date": "2026-11-20T00:00:00Z",
+   "source": {
+    "kind": "doc",
+    "ref": "second analyst, 2026-11-20; sides cite their own sources"
+   },
+   "layers": [
+    "L9",
+    "L11"
+   ],
+   "status": "open",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "owner answers; the gate BLOCKs the bound layers until then (REQ-CONFLICT-OPEN)",
+   "repeats": 0,
+   "repeat_evidence": "",
+   "conflicts": [
+    "OR-I27",
+    "OR-V05",
+    "OR-V07"
+   ],
+   "sides": [
+    {
+     "id": "OR-I27",
+     "text": "სკრიპტს (ტექსტს, ფოტოს პრომპტებს, მონტაჟის გეგმას) წერს თავად სრედის Claude (მოდელი წესი 7-ით) და არა Claude API (არ გამოიყენება API-ით სკრიპტის გენერაცია). ბლენდერში ჯერ ყველა სცენა აიწყობა, და მხოლოდ შემდეგ აქცევს Qwen მათ ფოტოებად.",
+     "source": "{\"kind\": \"doc\", \"ref\": \"project instructions (the owner's standing rules), rule 15\"}"
+    },
+    {
+     "id": "OR-V05",
+     "text": "შეინახე სამუდამოდ ძირითადი გზა ჯემინაის ჩატი , სათადარიგო ჯემინაის აპი, სათადარიგოს სათადარიგო , ბფლ",
+     "source": "{\"kind\": \"chat\", \"ref\": \"cmsg_01Hnu5zB86sjUj5GtTgaUkPW7XLMto2qf2FBPYsqzyqvaU\"}"
+    },
+    {
+     "id": "OR-V07",
+     "text": "მაგალტად ახლა დავტესტე ბლენდერით მერე ჯემინაი კარგად ინარჩუნებს გარემოს",
+     "source": "{\"kind\": \"chat\", \"ref\": \"cmsg_01Hnu5zB86sjUj5GtTgaUkPWW8G4AXJG77L6sCBVFxaLJEW\"}"
+    }
+   ]
+  },
+  {
+   "id": "OR-C06",
+   "kind": "conflict",
+   "title": "Model routing: audits and plans on Opus (rules 7, OR-24, OR-I12) vs Sonnet medium or lower unless he agrees in advance (rules 17, 21)",
+   "words": "",
+   "words_verbatim": false,
+   "words_origin": "none: conflict entry, both sides in `sides`",
+   "gloss": "Rule 7 and his 11-19 18:22 message let audits run on Opus extra/high/medium and plans on an Opus thread; rule 17 allows nothing above Sonnet medium without his advance consent, and rule 21 says Opus never for routine and only for hard stages. The coordinator's 08:56 relay reads rule 21 as 'Opus never'. Is a standing consent for the plan thread, the skills lead and audits recorded, or does each one need his word?",
+   "summary": "Rule 7 and his 11-19 18:22 message let audits run on Opus extra/high/medium and plans on an Opus thread; rule 17 allows nothing above Sonnet medium without his advance consent, and rule 21 says Opus never for routine and only for hard stages. The coordinator's 08:56 relay reads rule 21 as 'Opus never'. Is a standing consent for the plan thread, the skills lead and audits recorded, or does each one need his word?",
+   "date": "2026-11-20T00:00:00Z",
+   "source": {
+    "kind": "doc",
+    "ref": "second analyst, 2026-11-20; sides cite their own sources"
+   },
+   "layers": [
+    "L33"
+   ],
+   "status": "open",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "owner answers; the gate BLOCKs the bound layers until then (REQ-CONFLICT-OPEN)",
+   "repeats": 0,
+   "repeat_evidence": "",
+   "conflicts": [
+    "OR-I12",
+    "OR-I20",
+    "OR-I28",
+    "OR-I29",
+    "OR-I30"
+   ],
+   "sides": [
+    {
+     "id": "OR-I12",
+     "text": "Audits run on Opus (xhigh/high/medium) or Sonnet by complexity, never Haiku; Fable only when he asks for it specially.",
+     "source": "{\"kind\": \"chat\", \"ref\": \"cmsg_01Hnu5zB86sjUj5GtTgaUkPW1a92KaiMwuj36b1j7MXsgT\"}"
+    },
+    {
+     "id": "OR-I20",
+     "text": "მოდელები: ყოველი დავალება ეტაპებად იყოფა, ყოველ ეტაპს ენიჭება სირთულე S0–S4 და მოდელი წესების მიხედვით (explainer-engine/routing_rules_2026-10-29/MODEL_ROUTING_ka.md). მოდელსა და effort-ს კოორდინატორი სრედის გახსნისას ირჩევს; მცირე ეტაპი სუბაგენტს გადაეცემა თავისი მოდელით. სრედის შიგნით გადართვა ხდება მხოლოდ ჩემი სიტყვით: სრედი მთავაზობს ერთი ხაზით. კოდინგი: ჯერ Sonnet, ძნელზე Opus. Fable (აუდიტზეც) ირთვება მხოლოდ ჩემი წინასწარი თანხმობით, განსაკუთრებული საჭიროებისას; აუდიტი ნაგულისხმევად Opus extra/high-ზე კეთდება. ultracode მხოლოდ ჩემი სიტყვით. ხარჯის დაზოგვის მიზნით აშკარად მარტივი, რუტინული ეტაპები (ფორმატირება, ძებნა, ანგარიში, ტესტების გაშვება, მკაფიოდ აღწერილი მცირე ცვლილება) პირდაპირ Sonnet-ზე გადადის, ცდისა და შეცდომის გარეშე; რთული ეტაპი პირდაპირ Opus-ზე. \"ჯერ Sonnet, მარცხზე Opus\" არ გამოიყენება ორაზროვან რთულ ეტაპებზე.",
+     "source": "{\"kind\": \"doc\", \"ref\": \"project instructions (the owner's standing rules), rule 7\"}"
+    },
+    {
+     "id": "OR-I28",
+     "text": "ნებისმიერი ახალი სრედი იხსნება მხოლოდ Sonnet medium-ზე ან დაბლა. Sonnet medium-ზე მაღალი მოდელი ან effort მხოლოდ ჩემი წინასწარი თანხმობით, განსაკუთრებულ შემთხვევაში; ამას ეხება წესი 7-ის Opus/high არჩევანიც. კოორდინატორი ჯერ მეკითხება.",
+     "source": "{\"kind\": \"doc\", \"ref\": \"project instructions (the owner's standing rules), rule 17\"}"
+    },
+    {
+     "id": "OR-I29",
+     "text": "ყოველი start_thread-ის ზარში model და effort აუცილებლად მკაფიოდ უნდა მიეთითოს, ნაგულისხმევზე დაყრდნობა აკრძალულია. ბრაუზერის/დაწკაპუნების/ძიების/რუტინული საქმე: Sonnet medium ან Haiku, არასოდეს Opus. Opus მხოლოდ რთულ ეტაპზე წესი 7-ით და წესი 17-ის დაცვით. ზარის წინ კოორდინატორი ამოწმებს, რომ მოდელი მითითებულია.",
+     "source": "{\"kind\": \"doc\", \"ref\": \"project instructions (the owner's standing rules), rule 21\"}"
+    },
+    {
+     "id": "OR-I30",
+     "text": "before every important decision the working session (Sonnet) asks a separate thread on a higher model (Opus); that thread takes the main planning decisions and its confirmation of an OR-23 pod plan starts the pod. The coordinator passes it complete information (facts, numbers, files, open items) but no reasoning",
+     "source": "{\"kind\": \"doc\", \"ref\": \"CLAUDE.md OR-24 (creator 2026-10-26)\"}"
+    }
+   ]
+  },
+  {
+   "id": "OR-C07",
+   "kind": "conflict",
+   "title": "Where questions go: the Fable thread with 4 options (11-06) vs the asking thread's own card plus a mirror in the main chat (rule 13)",
+   "words": "",
+   "words_verbatim": false,
+   "words_origin": "none: conflict entry, both sides in `sides`",
+   "gloss": "On 11-06 he said every question is decided in the Fable thread; rule 13 (date not recorded) has the paid-run thread ask him by card itself with the coordinator mirroring it in the main chat. The Fable threads have since been retired.",
+   "summary": "On 11-06 he said every question is decided in the Fable thread; rule 13 (date not recorded) has the paid-run thread ask him by card itself with the coordinator mirroring it in the main chat. The Fable threads have since been retired.",
+   "date": "2026-11-20T00:00:00Z",
+   "source": {
+    "kind": "doc",
+    "ref": "second analyst, 2026-11-20; sides cite their own sources"
+   },
+   "layers": [
+    "L33"
+   ],
+   "status": "open",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "owner answers; the gate BLOCKs the bound layers until then (REQ-CONFLICT-OPEN)",
+   "repeats": 0,
+   "repeat_evidence": "",
+   "conflicts": [
+    "OR-G20",
+    "OR-I26"
+   ],
+   "sides": [
+    {
+     "id": "OR-G20",
+     "text": "სად ელოდება? მე ხო გითხარი ყველა კითხვა ამ ჩატში უნდა გადაწყდეს 4 სავარაუდო პასუხით",
+     "source": "{\"kind\": \"chat\", \"ref\": \"cmsg_01Hnu5zB86sjUj5GtTgaUkPWSDJ6dN9sdcVPJPP6ZJszpc\"}"
+    },
+    {
+     "id": "OR-I26",
+     "text": "თუ პოდის (ან ნებისმიერი ფასიანი გაშვების) სრედს კითხვა აქვს, მკითხავს ბარათით (ვარიანტებით), და კოორდინატორი იმავე კითხვას მთავარ ჩატშიც აჩვენებს, ბარათის სრედის ბმულით.",
+     "source": "{\"kind\": \"doc\", \"ref\": \"project instructions (the owner's standing rules), rule 13\"}"
+    }
+   ]
+  },
+  {
+   "id": "OR-C08",
+   "kind": "conflict",
+   "title": "Rule 2 (he picks the picture provider for every batch) vs the saved picture route order (11-13 'save forever')",
+   "words": "",
+   "words_verbatim": false,
+   "words_origin": "none: conflict entry, both sides in `sides`",
+   "gloss": "Rule 2 and CLAUDE.md D-50 make the provider his choice per batch; his 11-13 07:28 message saves a fixed order (Gemini chat, Gemini API batch, BFL) with the next level only when the previous is blocked. Does the saved order replace the per-batch choice, or is the order the default he overrides per batch?",
+   "summary": "Rule 2 and CLAUDE.md D-50 make the provider his choice per batch; his 11-13 07:28 message saves a fixed order (Gemini chat, Gemini API batch, BFL) with the next level only when the previous is blocked. Does the saved order replace the per-batch choice, or is the order the default he overrides per batch?",
+   "date": "2026-11-20T00:00:00Z",
+   "source": {
+    "kind": "doc",
+    "ref": "second analyst, 2026-11-20; sides cite their own sources"
+   },
+   "layers": [
+    "L9",
+    "L31"
+   ],
+   "status": "open",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "owner answers; the gate BLOCKs the bound layers until then (REQ-CONFLICT-OPEN)",
+   "repeats": 0,
+   "repeat_evidence": "",
+   "conflicts": [
+    "OR-I17",
+    "OR-V05"
+   ],
+   "sides": [
+    {
+     "id": "OR-I17",
+     "text": "ყოველი ფასიანი გენერაციის წინ ხარჯის შეფასება და დასტური; სურათებზე ყოველ batch-ზე პროვაიდერს მომხმარებელი ირჩევს; ხელახლა გამოიყენე უკვე დაგენერირებული მასალა.",
+     "source": "{\"kind\": \"doc\", \"ref\": \"project instructions (the owner's standing rules), rule 2\"}"
+    },
+    {
+     "id": "OR-V05",
+     "text": "შეინახე სამუდამოდ ძირითადი გზა ჯემინაის ჩატი , სათადარიგო ჯემინაის აპი, სათადარიგოს სათადარიგო , ბფლ",
+     "source": "{\"kind\": \"chat\", \"ref\": \"cmsg_01Hnu5zB86sjUj5GtTgaUkPW7XLMto2qf2FBPYsqzyqvaU\"}"
+    }
+   ]
   }
  ],
  "process_requirements": [
@@ -3682,6 +5273,297 @@
    "measures": "every new owner rule has a registry entry and a test (this registry)",
    "repeats": 2,
    "repeat_evidence": ""
+  },
+  {
+   "id": "OR-G08",
+   "kind": "requirement",
+   "words": "უმთავრესი წესი: წესები Claude-სთვისაა და არა ჩემთვის. თუ ჩემი სიტყვა რომელიმე წესს ეწინააღმდეგება, Claude ჯერ მეუბნება: \"ამით წესს N დროებით არღვევ, მხოლოდ ამ გაშვებისთვის. გავაკეთო?\" ჩემი \"კი\"/\"ok\"-ის შემდეგ ნებისმიერი წესი ამ ერთი გაშვებისთვის ირღვევა და ისე კეთდება.",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "The rules are for Claude, not for him: when his word contradicts a rule, Claude says which rule N is broken for this one run and asks; after his 'yes/ok' any rule is broken for that single run.",
+   "date": "2026-11-20T00:00:00Z",
+   "source": {
+    "kind": "doc",
+    "ref": "project instructions, 'უმთავრესი წესი'"
+   },
+   "layers": [],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "every machine gate has a waiver path that needs his recorded yes (governance ok ...); a gate that refuses even with his recorded yes is itself a defect",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "date_basis": "snapshot: undated rule in the project instructions, read 2026-11-20",
+   "note": "governs every other entry: no hard gate may be built without this waiver path (OR-Q01/Q02 enforcement stays, but it stops at his recorded word)"
+  },
+  {
+   "id": "OR-G09",
+   "kind": "requirement",
+   "words": "სავცალდებულო წესი! ყვლელა სქილი სავალდებულოდ უნდა გადაიწეროს მინიმუ 50% ით. მინიმუმ!",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "Mandatory rule: every skill must be rewritten by at least 50 %. At least.",
+   "date": "2026-11-20T06:52:23Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWNNvx3o1PK2FXoWi85XNDV9"
+   },
+   "layers": [
+    "L33"
+   ],
+   "status": "superseded",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "-",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "superseded_by": "OR-G10",
+   "note": "first analyst held this text (key '0652') but registered no entry. Refined at 07:14: '50 %' was his measure of how much we ignored his asks, not a target"
+  },
+  {
+   "id": "OR-G10",
+   "kind": "requirement",
+   "words": "'50 %' was his measure of how much we ignored his asks, not a target; hand it on as mandatory steps nobody can skip: MS-1 requirements (his asks and all tool capabilities, e.g. LTX multi-shot), MS-2 3+ public candidates ...",
+   "words_verbatim": false,
+   "words_origin": "memory_quote",
+   "gloss": "Skill work is gated by mandatory steps MS-1..MS-7 per layer; the 50 % number is an information report only (SKR-50).",
+   "date": "2026-11-20T07:14:55Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWW6JyJD8JFB16BP7oNRafo4o"
+   },
+   "layers": [
+    "L33"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "governance/layer_gate.py blocks a layer whose MS-1..MS-7 record is missing a step (PR #219)",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "English memory relay of the 07:14 message; the owner's Georgian text of that message is in OR-V14/V17/V28/V41"
+  },
+  {
+   "id": "OR-G11",
+   "kind": "requirement",
+   "words": "თუ სხვა რამე კითხვა გაქვს, პასუხი საერთო გეგმაში უნდა იპოვო ან იმის ლოგიკიდან გამომდინარეობდეს",
+   "words_verbatim": true,
+   "words_origin": "memory_quote",
+   "gloss": "Before asking, find the answer in the approved overall plan or derive it from its logic; ask only what is his by rule.",
+   "date": "2026-11-19T13:01:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-answer-from-the-plan"
+   },
+   "layers": [],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "a question to him cites the plan section it checked and why the plan cannot settle it; questions the plan settles are refused by the card builder",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "date_basis": "17:01 Georgia time, 11-19 (plan thread)"
+  },
+  {
+   "id": "OR-G12",
+   "kind": "requirement",
+   "words": "ნებართვებს გადახედე შეცვალე ისე რო ავტოპილოტსი ვიმოქმედოთ",
+   "words_verbatim": true,
+   "words_origin": "memory_quote",
+   "gloss": "Review the permissions so work flows on autopilot; the plan-owner thread approves technical paths, never money, merges or model values.",
+   "date": "2026-11-19T10:29:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-autopilot-plan-owner-approves-2026-11-19"
+   },
+   "layers": [],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "permission list lives in .claude/settings.json; never auto-approved: spend_caps.json, model_routing.json values, merges, force push / branch -D, anything that bills",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "date_basis": "14:29 Georgia time, 11-19"
+  },
+  {
+   "id": "OR-G13",
+   "kind": "requirement",
+   "words": "first carry out the plans we have and test along the way",
+   "words_verbatim": false,
+   "words_origin": "memory_quote",
+   "gloss": "Add to the approved plan, do not replace it; a change needs evidence plus one card.",
+   "date": "2026-11-19T13:55:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-do-not-rewrite-approved-plan"
+   },
+   "layers": [],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "every proposal names the approved step/MA/C-condition it touches; a plan file is never superseded silently",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "17:55 in the memory, timezone not stated; read as Georgia time like its sibling messages"
+  },
+  {
+   "id": "OR-G14",
+   "kind": "requirement",
+   "words": "did you read the earlier Gemini versions 4.0, 3.0, 2.0, or did you lie again?",
+   "words_verbatim": false,
+   "words_origin": "memory_quote",
+   "gloss": "Read every document a review, history or plan names in full; if only part, say so in the first line.",
+   "date": "2026-11-19T00:00:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-read-all-sources-before-history-2026-11-19"
+   },
+   "layers": [],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "a report/plan states in its first line which named documents were read in full and which were not",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "18:43 Tbilisi. This analyst's own report follows it: see the 'could not read' section"
+  },
+  {
+   "id": "OR-G15",
+   "kind": "requirement",
+   "words": "you said for two days keep 21 skills, now after one word from me you say delete them all; is this how you work? I pay $118 for this; why is one decent plan so hard?",
+   "words_verbatim": false,
+   "words_origin": "memory_quote",
+   "gloss": "Hold the evidence-based position; change only for a new fact and name it; never answer a one-word reply with a menu of cards.",
+   "date": "2026-11-19T00:00:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-hold-evidence-position-2026-11-19"
+   },
+   "layers": [],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "judge: position changes cite the new fact",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "18:41 Tbilisi. 'one precise question at most' interacts with OR-G02 (cards with descriptions): not a conflict, both say precise"
+  },
+  {
+   "id": "OR-G16",
+   "kind": "requirement",
+   "words": "an evaluation is direct, with the evidence; a plan starts from the goal, lists every path to it and grounds each in known training methods and the project's goals, not only the next step",
+   "words_verbatim": false,
+   "words_origin": "doc_quote",
+   "gloss": "Evaluations are direct; plans are full-scale.",
+   "date": "2026-10-26T00:00:00Z",
+   "source": {
+    "kind": "doc",
+    "ref": "CLAUDE.md OR-25 (creator 2026-10-26); memory feedback-direct-and-wide-planning"
+   },
+   "layers": [],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "plan template has: goal, all paths, known method per path, choice with reason, price",
+   "repeats": 1,
+   "repeat_evidence": ""
+  },
+  {
+   "id": "OR-G17",
+   "kind": "requirement",
+   "words": "The goal is one, the one we know. For anything that fails, investigate why: was the prompt weak, the photo we fed in, the check, or the system; then decide retry, small change or a strategy change. Every decision must serve the one goal.",
+   "words_verbatim": false,
+   "words_origin": "memory_quote",
+   "gloss": "Failures are triaged by cause class (prompt, input, check, system) before any decision.",
+   "date": "2026-10-25T00:00:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-one-goal-failure-triage"
+   },
+   "layers": [],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "each FAIL record carries a cause class with evidence",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "the same memory holds one-off pod orders of 10-25 (keep the pod running; notify on every news item); those are not registered"
+  },
+  {
+   "id": "OR-G18",
+   "kind": "requirement",
+   "words": "rules need not be perfect now, but EVERY thread must fill the incident journal (sentence cut in the memory excerpt)",
+   "words_verbatim": false,
+   "words_origin": "paraphrase",
+   "gloss": "Every thread appends its incidents to INCIDENT_JOURNAL_2026-11-14.md (append only).",
+   "date": "2026-11-14T12:42:00Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWQRdQSXsmthGFV2UnovkTHZ"
+   },
+   "layers": [],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "incident journal is append-only (hash chain or size check) and a thread's final report cites its entries",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "12:42 UTC; memory incident-journal-2026-11-14 / feedback-photo-animation-2026-11-14; the quoted sentence is cut in the memory text, so this is a paraphrase"
+  },
+  {
+   "id": "OR-G19",
+   "kind": "requirement",
+   "words": "assume yes on everything up to paid modes; set up every structure tonight; limits will run out and after renewal work must continue automatically; always ask yourself whether some work the limit stopped should continue",
+   "words_verbatim": false,
+   "words_origin": "memory_quote",
+   "gloss": "After a usage-limit reset, stopped work continues automatically; paid steps still need his word.",
+   "date": "2026-10-29T18:30:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-overnight-autonomy-limits"
+   },
+   "layers": [],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "limit-reset wake-ups (send_later ~5 h) list stopped/failed/blocked threads and relaunch them",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "the durable half only; the night's blanket 'assume yes' was one night and is not registered"
+  },
+  {
+   "id": "OR-G20",
+   "kind": "requirement",
+   "words": "სად ელოდება? მე ხო გითხარი ყველა კითხვა ამ ჩატში უნდა გადაწყდეს 4 სავარაუდო პასუხით",
+   "words_verbatim": true,
+   "words_origin": "memory_quote",
+   "gloss": "Every question is decided in the Fable thread with four suggested answers; workers never ask him directly and never wait silently.",
+   "date": "2026-11-06T11:06:00Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWSDJ6dN9sdcVPJPP6ZJszpc"
+   },
+   "layers": [],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "worker threads send questions to the Fable thread (message_thread), 4 options + recommendation",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "msg id given in memory is the Fable thread root (...SDJ6dN9sdcVPJPP6ZJszpc), not the message itself. The Fable threads were later retired; conflict OR-C07 with rule 13"
   }
  ]
 }

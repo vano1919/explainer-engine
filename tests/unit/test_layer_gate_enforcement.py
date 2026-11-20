@@ -204,3 +204,24 @@ def test_the_runner_records_a_failed_validator_as_a_failed_row_and_the_notes(mon
     monkeypatch.setattr(RUN.SG, "stage_check", lambda layers, files, **kw: {"failed": [], "passed": [], "not_run": ["L1 REQ-002: unmapped"], "waived": []})
     rec = RUN.run_stage(ep, "script")
     assert rec["verdict"]["status"] == G.PASS and not any(r["gate"] == "owner_requirements" for r in rec["rows"])   # listed, not a stop
+
+
+# ---- OR-G08, the owner's top rule: a gate is lifted only by his own recorded word ------------------------------------------------------
+
+def test_or_g08_a_failed_validator_is_lifted_only_by_a_record_with_his_message_id(vroot):
+    root, _, bad = vroot
+    put(root, registry(entry(1)))
+    assert len(SG.stage_check(("L9",), [bad], root=root)["failed"]) == 1                 # no word: the gate holds
+    ok = root / "jobs" / "creator_ok.jsonl"
+    ok.parent.mkdir(parents=True, exist_ok=True)
+    ok.write_text(json.dumps({"action": "layer_waiver", "target": "L9", "message_id": "x", "by": "creator", "quote": "q", "at": time.time()}) + "\n")
+    assert len(SG.stage_check(("L9",), [bad], root=root)["failed"]) == 1                 # a line without a message id is no word
+    with pytest.raises(ValueError):
+        records.add("layer_waiver", "L9", "x", "q", root=root)                           # and records.add refuses it
+    with pytest.raises(ValueError):
+        records.add("layer_waiver", "*", MSG, "all", root=root)                          # no wildcard lifts every gate
+    records.add("layer_waiver", "L10", MSG, "another layer", root=root)
+    assert len(SG.stage_check(("L9",), [bad], root=root)["failed"]) == 1                 # his word for L10 does not lift L9
+    records.add("layer_waiver", "L9", MSG, "I accept this failure", root=root)
+    rep = SG.stage_check(("L9",), [bad], root=root)
+    assert rep["failed"] == [] and len(rep["waived"]) == 1                               # only his recorded word lifts it
