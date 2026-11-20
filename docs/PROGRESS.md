@@ -3810,3 +3810,13 @@ ordered by fewest failed FAIL rows, then fewest failed REVIEW rows (then attempt
 20:43 UTC) the final choice is his eye: nothing is picked, no weights, no thresholds. Tests: `tests/unit/test_attempt_ranking.py`
 (15). Not yet called from the retry router or the shot-state `decide` of the open episode PR: the caller passes the attempts'
 qa reports.
+
+## 2026-11-20 — One registry and one gate row for the new validators (`qa/validator_gate.py`, production gate row `V`)
+
+The group-4 validators, the film-id and prompt lint, the continuity identity rules, the Georgian-script check, the master
+size check and the attempt ranking now run from `explainer_engine/qa/validator_gate.py` (`python -m explainer_engine.qa.validator_gate
+<episode folder>`), and `production_gate.script_gates` has a row `V`. NOT_RUN is never a pass: a missing input, a missing tool or
+a crash is NOT_RUN with the reason; any FAIL is BLOCKED, any NOT_RUN is WAIT, PASS only when all ten ran without a FAIL. The
+file names each validator reads from the episode folder are this module's proposal (listed in its docstring) for the lead to
+confirm. Tests: `tests/unit/test_validator_gate.py` (14): each validator is called from the gate, empty folder is WAIT, a crash is
+NOT_RUN, FAIL/REVIEW/NOT_RUN fold as above. The animated route's gate list is not changed.
