@@ -61,7 +61,8 @@ FAKE_IC_LORA = textwrap.dedent('''\
             for i in range(n):
                 wr.append_data(frame(i))
             wr.close()
-        except ImportError:                    # ... else ffmpeg on raw frames (the CI box has ffmpeg, not imageio); same suffix rule
+        except Exception:                      # ... else ffmpeg on raw frames (CI has imageio WITHOUT its ffmpeg plugin, so the writer raises
+                                               # a plain error, not ImportError); same suffix rule
             ff = subprocess.Popen(["ffmpeg", "-y", "-loglevel", "error", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{w}x{h}",
                                    "-r", str(a.frame_rate), "-i", "-", "-c:v", "libx264", "-pix_fmt", "yuv420p", a.output_path],
                                   stdin=subprocess.PIPE)
