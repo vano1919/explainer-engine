@@ -1,0 +1,22 @@
+{
+  "kind": "hypothesis",
+  "owner_requirement": "OR-S04",
+  "theme_cover_min": 0.5,
+  "min_line_words": 6,
+  "moral_phrases": [
+    "the lesson is",
+    "what really matters is",
+    "we learned that",
+    "the truth is that",
+    "at the end of the day",
+    "the real moral is",
+    "what this teaches us is",
+    "the point of all this is",
+    "that is why we must",
+    "true strength comes from",
+    "that's what it means to",
+    "in the end, all that matters",
+    "this is what the whole thing is all about"
+  ],
+  "phrases_note": "first ten: Gemini's proposal; last three: from the brief's proposal list (the pattern 'this is what ... is all about' needs a regex, a literal stand-in is used). OPEN, hypothesis."
+}

@@ -115,8 +115,10 @@ def make(tmp_path, name, *, fps=24, frames=49, audio=True, size="320x192"):
     out = tmp_path / name
     cmd = ["ffmpeg", "-v", "error", "-y", "-f", "lavfi", "-i", f"testsrc2=size={size}:rate={fps}"]
     if audio:
-        cmd += ["-f", "lavfi", "-i", "sine=frequency=440:sample_rate=48000"]
-    cmd += ["-frames:v", str(frames), "-c:v", "mpeg4", "-pix_fmt", "yuv420p"] + (["-c:a", "aac", "-shortest"] if audio else ["-an"]) + [str(out)]
+        # the sine is bounded to the picture's length itself: with an endless sine and `-shortest`, how many audio packets get
+        # muxed before the picture ends depends on thread timing, and a slow CI runner gave CLIP-05 on a clip meant to be clean
+        cmd += ["-f", "lavfi", "-i", f"sine=frequency=440:sample_rate=48000:duration={frames / fps:.6f}"]
+    cmd += ["-frames:v", str(frames), "-c:v", "mpeg4", "-pix_fmt", "yuv420p"] + (["-c:a", "aac"] if audio else ["-an"]) + [str(out)]
     subprocess.run(cmd, check=True)
     return out
 
@@ -127,12 +129,22 @@ def test_real_clips_probe_and_rows(tmp_path):
     p = V.probe_container(ok)
     assert (p["fps"], p["frames"], p["width"], p["height"], p["has_audio"]) == (Fraction(24), 49, 320, 192, True)
     m, found = V.clip_findings(ok, fps="24", expect_speech=False, transcript=[])
-    assert [f["rule"] for f in found] == [] and m["audio"]["true_peak"] < targets.PROFILES["long"]["true_peak_max"]
+    assert [f["rule"] for f in found] == [], (found, p["video_duration"], p["audio_duration"])
+    assert m["audio"]["true_peak"] < targets.PROFILES["long"]["true_peak_max"]
     assert rules(V.clip_findings(make(tmp_path, "slow.mp4", fps=30), fps="24", expect_speech=False, transcript=[])[1])["CLIP-01"] == "FAIL"
     mute = make(tmp_path, "mute.mp4", audio=False)
     assert V.probe_container(mute)["has_audio"] is False
     assert rules(V.clip_findings(mute, fps="24", dialogue="the king rode north", transcript=[])[1])["CLIP-04"] == "FAIL"
     assert rules(V.clip_findings(make(tmp_path, "f48.mp4", frames=48), fps="24", expect_speech=False, transcript=[])[1])["CLIP-02"] == "REVIEW"
+
+
+@pytest.mark.skipif(not FFMPEG, reason="ffmpeg absent")
+def test_the_fixture_clip_has_audio_and_picture_of_the_same_length(tmp_path):
+    """The clean test clip must not depend on muxing timing: audio and picture end within half a frame of each other,
+    every time it is built (CLIP-05 flaked on a CI runner when the audio was cut by `-shortest`)."""
+    for i in range(6):
+        p = V.probe_container(make(tmp_path, f"len{i}.mp4"))
+        assert abs(p["audio_duration"] - p["video_duration"]) < 0.5 / 24, (i, p["audio_duration"], p["video_duration"])
 
 
 @pytest.mark.skipif(not FFMPEG, reason="ffmpeg absent")

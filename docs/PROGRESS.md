@@ -3747,6 +3747,80 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 ## 2026-11-01 — `runpod create --datacenters` (v2 `dataCenterIds`)
 - From the live v2 OpenAPI (`api.runpod.io/v2/openapi.json`): `CreatePodRequest.dataCenterIds` = preferred sites; v2 has one `gpu.id` per request and no priority fields. New flag `--datacenters A,B,...` sets it. P12b measurement pod tried on RTX 4090 SECURE in EU-RO-1, EU-CZ-1, US-IL-1, EUR-IS-1/2 with CUDA floor 12.4: still "no instances available". Costs $0.
 
+## 2026-11-20 — Group 4 validators: shift_line_id, stated_theme, claim_ledger, camera_move (draft PR, free work)
+- Gemini wrote the four modules (lane: Gemini-first coding); this thread cleaned, reviewed and patched them against the real repo
+  files (`story_lint`, `scene_lint`, `claims`) and tested from the briefs' section 7 (`TASK_VAL_*`, HF `skills_team_2026-11-20/validator_code_group4/`, `REPORT_GROUP4_2026-11-20.md`).
+- New: `scripting/shift_line_id.py` (SL-01..06), `scripting/stated_theme.py` (STH-00..03, REVIEW only), `scripting/claim_ledger.py`
+  (CL-01..08 on top of PV-37), `qa/camera_move.py` (CM-01..06 cards, CM-10..15 clips; 5 moves, no static, no orbit/rotation) + their rules/tolerances JSON.
+  Tests: `tests/unit/test_shift_line_id.py` (21), `test_stated_theme.py` (15), `test_claim_ledger.py` (28), `test_camera_move.py` (44, real cv2 + ffmpeg synthetic clips; skipped without them).
+- Bugs found in the Gemini originals and fixed: `story_lint.overlap` takes sets (strings crashed), narrator = line without `speaker`, SL-03 keyed per segment,
+  STH-00 must be NOT_RUN, findings shape `{rule, severity, where, detail}`, claim_ledger exit code read `sev`, CL-08 used the id prefix, camera cards returned a dict.
+- All numbers are hypotheses (REVIEW-level, not binding until the owner has seen them). Not wired into any registry row or CLI list (never-list: done by the lead).
+- Open: the two camera floors (`zoom_min_pct`, `still_drift_min_pct`) have no source yet (the two sourced-rule ids the brief cited are not in the registry; the lead removed them from the brief,
+  PROPOSED-CAM-1): they are `value: null, status: OPEN` in `qa/camera_move_tolerances.json`, so CM-15 and the zoom-size part of the clip check are NOT_RUN (never a pass);
+  enum, signs, rotation, truck/zoom channels and easing still run. Clip tests use placeholder floors (`tests/fixtures/camera_move/tolerances_TESTONLY.json`, not repo numbers).
+- Cost: $0.00.
+
+## 2026-11-20 — G-05 `episode_film.py`: one film source for every layer (same draft PR, separate commit, free work)
+- Gemini wrote `explainer_engine/episode_film.py` (schema `episode_film/1`: `load_episode_film`, `validate_episode_film`, `block`, `film_id`, `check_film_ids`) and a separate tester chat wrote
+  `tests/unit/test_episode_film.py` + `tests/fixtures/episode_film/` from the acceptance list (neither saw the other). Review: one bug in the module (an empty string was counted twice as a problem,
+  the brief asks for exactly one); patched; 5 tests added by the reviewing thread (the original 20 are untouched). 25 tests pass; the original module failed 2 of the 25.
+- No default film, preset or fallback anywhere; stdlib only; nothing written to disk. Not yet read by any layer (wiring is the lead's step). Cost: $0.00.
+
+## 2026-11-20 — G-07 LTX prompt lint (Claude wrote it; Gemini's two rounds were red)
+
+`explainer_engine/qa/ltx_prompt_lint.py` + `ltx_prompt_tolerances.json` (`ltx_prompt_tolerances/1`): rules LP-00..LP-06
+(empty, line break, word count, non-action opener, forbidden camera phrases with character offset, hero not named,
+film id mismatch) plus `check_prompt_film` (PASS/FAIL/NOT_RUN). The only number is `max_words` 200, kind hypothesis,
+status OPEN (one source type, not binding until the owner has seen it). Tests: `tests/unit/test_ltx_prompt_lint.py` (33).
+Gemini's test files for G-07 were not on disk, so the tests were written from the brief's acceptance list.
+
+## 2026-11-20 — Group 1 T2: continuity_card identity bible, geography ids, film id (CT-17..CT-20)
+
+Optional new fields in `continuity_card/1` and `/2` (no new schema version, old cards pass unchanged): card-level `film_id`
+(the G-05 episode film id), `location.geo_id` and `location.inherits_from`, and per cast member `identity`
+(`canon_frame`, `locked` required; `anchors`, `flexible`, `never` optional). Validator `continuity.identity_findings`, run by
+`continuity.check(doc, film_id=None, known_geo_ids=None)`; rules in [SHOT_CONTINUITY](SHOT_CONTINUITY.md). Source: the G1
+analyst decision (L10 SQ1, SQ2). No numbers. Checked before writing: no branch or open PR on the repo had these fields.
+Tests: 9 new in `tests/unit/test_continuity.py`. Not done: `compose_prompt` does not yet write the identity text into
+prompts (a prompt contract change, the lead's call); no card in `examples/` uses the new fields; the test pack with the new
+text is still NOT_RUN (needs the owner's Chrome).
+
+## 2026-11-20 — Group 1 T2: identity bible text in the keyframe prompt (prompt contract change, for the owner to see)
+
+`continuity.compose_prompt` now writes a cast member's `identity` as one clause after the verbatim description:
+`(locked: ...; anchors: ...; avoid: ...)`; `flexible` is never written. Cards without `identity` give a byte-identical
+prompt (test pins the sha256 of the example's prompts taken before the change). Test pack with the new text: NOT_RUN.
+
+## 2026-11-20 — Coverage gaps from the G11/G12 sample: Georgian-script check and master size (Claude, Gemini was at its limit)
+
+`explainer_engine/qa/language_check.py`: any character of the three Georgian blocks (ranges checked against `unicodedata`,
+Unicode 15.1) in the viewer-facing text files fails with the count and the first three places (`file:line:col`; a `.json`
+file is read as JSON so an escaped letter counts); an unreadable file is NOT_RUN; zero is zero, no threshold.
+`explainer_engine/qa/master_size.py`: ffprobe size of the master equals the declared size, default the delivery frame
+(BP-167 through `core/delivery.size()`; a job that names its size keeps it); mismatch FAIL, no file / no video stream NOT_RUN.
+Tests: `tests/unit/test_language_check.py` (9), `tests/unit/test_master_size.py` (6). Neither is wired into a gate or the
+registry yet.
+
+## 2026-11-20 — Attempts at the retry cap, sorted by defects, never chosen (coverage gap, OR-Q03)
+
+`explainer_engine/qa/attempt_ranking.py`: `rank_attempts` takes each attempt's `qa_report/1` checks and returns every attempt
+ordered by fewest failed FAIL rows, then fewest failed REVIEW rows (then attempt number, only for a stable order);
+`format_for_creator` prints the list and says it is a sort, not a choice. Per the creator's card answer (relayed 2026-11-20
+20:43 UTC) the final choice is his eye: nothing is picked, no weights, no thresholds. Tests: `tests/unit/test_attempt_ranking.py`
+(15). Not yet called from the retry router or the shot-state `decide` of the open episode PR: the caller passes the attempts'
+qa reports.
+
+## 2026-11-20 — One registry and one gate row for the new validators (`qa/validator_gate.py`, production gate row `V`)
+
+The group-4 validators, the film-id and prompt lint, the continuity identity rules, the Georgian-script check, the master
+size check and the attempt ranking now run from `explainer_engine/qa/validator_gate.py` (`python -m explainer_engine.qa.validator_gate
+<episode folder>`), and `production_gate.script_gates` has a row `V`. NOT_RUN is never a pass: a missing input, a missing tool or
+a crash is NOT_RUN with the reason; any FAIL is BLOCKED, any NOT_RUN is WAIT, PASS only when all ten ran without a FAIL. The
+validators read only files the pipeline already writes (listed in the module docstring): `production_script.json` or
+`story/production_script.json`, `claim_map.md`, `narration*.txt`, `metadata.md`, `publish.json` (viewer fields only), `prompts.json`,
+continuity cards found by their `schema`, `video.mp4`, `attempts.json`. Tests: `tests/unit/test_validator_gate.py` (14): each validator is called from the gate, empty folder is WAIT, a crash is
+NOT_RUN, FAIL/REVIEW/NOT_RUN fold as above. The animated route's gate list is not changed.
 ## 2026-11-20 — MapLibre lane (G-04, group 3 maps): offline shots with the five camera moves and per-episode map styles
 - New: `explainer_engine/maps/maplibre_spec.py` (shot spec, camera state, schedule), `hud_layout.py` (HUD placement, colour-blind contrast), `maplibre_lane/` (`render.py`, `fetch_tiles.py`, `page.html`, `styles/`, README). Camera: truck, zoom_in, zoom_out, truck_zoom_in, truck_zoom_out only; static and orbit are refused by the spec check.
 - First real render ($0, sandbox Chromium + software GL): two 6 s clips at 2560x1440 / 24 fps, truck_zoom_in and zoom_out, plain and `1917_film`, HF `explainer-engine/comparisons/L15/g3_maps_wave2_render_2026-11-20/`. Frames not empty, camera moves on every frame, HUD clear of the line.
@@ -3797,6 +3871,27 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 - Tests: `tests/unit/test_publish_check.py` (4900 ASCII passes, 2600 em dashes fails, 5000 bytes passes, 5001 fails, `<` in the
   description fails, `>` in the title fails, title 100 passes / 101 fails). Doc: `docs/QA_SPECIFICATION.md` PC-06.
 
+## 2026-11-20 — claim_ledger: a '|' inside a claim no longer shifts the ledger columns
+
+The G-12 dry run on `examples/syndicate_wars_ep1` showed CL-02 FAIL "invalid type 'official'" on claim C-01. 'official' is a
+label of that claim map, not a type: the claim text holds an unescaped `|` (Xbox Series X|S), the row had one cell more than
+the header, and the positional fallback read a shifted cell as the type (and another as the verdict). A row with more cells
+than the header now keeps its ledger fields empty. Test: `test_a_pipe_inside_a_cell_does_not_shift_the_ledger_columns`. The
+ledger's type list (factual, implied, opinion, prediction, statistical) is unchanged; the repo also documents two other claim
+vocabularies (script editorial claim `type` fact / estimate / interpretation / allegation / speculation; claim-map `label`), which are
+different fields.
+
+## 2026-11-20 — Three opening checks on the timed script, wired to the validator gate
+
+The creator's card answers of 20:58 UTC, written as three separate modules and commits, each read from `timed.json` and each
+a row of `qa/validator_gate.py` (production gate row `V`; NOT_RUN without a `timed.json`, never a pass):
+- `qa/first_shot.py`: the first shot lasts at least [BP-85](SOURCED_RULES.md)'s C-shot minimum (`c_shot_s[0]`).
+- `qa/opening_density.py`: inside the opening window ([BP-40](SOURCED_RULES.md) `hook_window_s`, 30 s) nothing stays unchanged
+  longer than BP-40's `hook_max_still_s`; changes are `edit/board.change_times`' (the same events as RHYTHM-3).
+- `qa/dead_air.py`: the creator said "from the registry": a change-free stretch under narration is REVIEW over
+  [BP-36](SOURCED_RULES.md) `gap_review_s` and FAIL over `gap_fail_s` (the /3 line of VB-01).
+No number is written in any of them; tests `test_first_shot.py`, `test_opening_density.py`, `test_dead_air.py`,
+`test_validator_gate.py` (the gate tests now count the registry instead of a literal).
 ## 2026-11-20 — Map style `truce_cold` (creator chose "C cold")
 - `maplibre_lane/styles/truce_cold.json`: the batch2-derived palette (no longer a draft), font from the episode film (creator card "film font"); test in `test_maps_style_presets.py`. Test clip and frame 143 comparison on HF `.../draft_preset_tool/`.
 
@@ -3820,3 +3915,7 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
   the lead's numbers for the smoke clips, REVIEW-level default, not binding until the owner has seen it. Nothing is registered in `sourced_rules.json`.
 - Tests: `tests/unit/test_plume_zones.py` (synthetic arrays only: outside = 0 PASS, half inside = 50 % FAIL, empty plume / no mask / empty mask /
   shape mismatch / bad alpha NOT_RUN, under 2 % flagged). Not run: on real renders (the S07_SH008 clips are not in the repo), not wired into any gate or renderer.
+
+## 2026-11-20 — test_video_qa_clip_rows: the clean test clip no longer depends on muxing timing
+- Symptom: `test_real_clips_probe_and_rows` failed on CI runs with an extra `CLIP-05` (audio vs picture length) on a clip meant to be clean; it passed on re-run and always passes locally (40 of 40 builds identical: picture 2.0417 s, audio 2.026 s, tolerance one frame = 41.7 ms).
+- Cause (the most likely one, not reproduced locally even under CPU load): the fixture mixed an endless sine with `-shortest`, so the number of audio packets muxed before the picture ends depends on thread timing; two extra AAC frames (2 x 21 ms) are enough to pass the one-frame tolerance. Fix: the sine is bounded to `frames / fps` itself and `-shortest` is gone; the assertion now prints the findings and both durations, and a new test builds the clip six times and checks audio and picture end within half a frame. No assertion or threshold weakened.

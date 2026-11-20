@@ -1,0 +1,13 @@
+{
+  "_about": "TEST-ONLY placeholders so the clip tests can exercise the floors; NOT repo numbers (the real floors are OPEN)",
+  "zoom_min_pct": {
+    "value": 4.0,
+    "kind": "test",
+    "status": "TEST ONLY"
+  },
+  "still_drift_min_pct": {
+    "value": 1.0,
+    "kind": "test",
+    "status": "TEST ONLY"
+  }
+}

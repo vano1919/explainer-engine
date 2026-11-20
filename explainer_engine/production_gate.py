@@ -142,6 +142,8 @@ def script_gates(day: Path, run_path: Path | None = None) -> list[dict]:
     add(6.5, "two-part sample", *SMP.gate_row(day))
     add(7, "animatic and render", "WAIT", "production run, after gates 0-6 and the sample approval (6.5)")
     add(8, "QA", *qa_state(day))
+    from .qa import validator_gate as _vg   # the registry of the 2026-11-20 validators; NOT_RUN is a WAIT, never a PASS
+    add("V", "validators", *_vg.gate_row(day))
     add(9, "approval #2", *approval_state(day))
     return out
 
