@@ -3758,6 +3758,7 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 - `audio/val_cue_binding.py`: BIND-03 outside BP-54's window (45 ms early / 125 ms late) now carries BP-54's severity (FAIL), BIND-04 carries BP-57's severity (REVIEW); window and severities are `Limits` defaults read from the registry, the one-frame zone and old tests unchanged. New tests in `test_val_cue_binding.py`, `test_sfx_offset_bp54.py`.
 - BP-57 (same sound never twice in a row) already exists in the registry and is enforced by `layers.repeat_findings`; V-07's BIND-04 now follows it. Open: V-07 BIND-04 flags a repeat per sound_id, layers per effect run; their equivalence on variants (`__v1`/`__v2`) is not tested.
 
+
 ## 2026-11-20 — L27: PC-06 counts the description in bytes and forbids `<` `>`
 - Fix: `qa/publish_check.py` PC-06 compared the description in characters; YouTube Data API limits it to 5000 bytes
   (an em dash is 3 bytes, so 2600 of them pass a character check and fail the upload). Now `DESCRIPTION_MAX_BYTES` is compared
