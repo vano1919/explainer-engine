@@ -123,9 +123,28 @@ def test_kinds():
     assert ".mp4" in LS.lipsync_clip.kinds
 
 
-@pytest.mark.skipif(not os.environ.get("SYNCNET_DIR") or not (Path(os.environ.get("SYNCNET_DIR", "")) / "data" / "example.avi").is_file(),
-                    reason="no SyncNet checkout with data/example.avi")
+def _example():
+    d = os.environ.get("SYNCNET_DIR")
+    ex = Path(d or "") / "data" / "example.avi"
+    return ex if d and ex.is_file() and (Path(d) / "data" / "syncnet_v2.model").is_file() else None
+
+
+needs_install = pytest.mark.skipif(_example() is None, reason="no SyncNet checkout with weights and data/example.avi (set SYNCNET_DIR)")
+
+
+@needs_install
 def test_real_install_readme_example():
-    ex = Path(os.environ["SYNCNET_DIR"]) / "data" / "example.avi"
-    res = LS.measure_lipsync(ex)
+    res = LS.measure_lipsync(_example())
     assert res["tracks"] and abs(res["tracks"][0]["offset_frames"] - 3) <= 1   # README: offset 3, "approximately"
+
+
+@needs_install
+def test_real_install_sign_with_known_shifts(tmp_path):
+    """Sound delayed by 3 frames (120 ms) lowers the offset by 3; sound advanced by 3 raises it by 3: positive = sound before picture."""
+    import subprocess
+    ex = _example()
+    base = LS.measure_lipsync(ex)["tracks"][0]["offset_frames"]
+    for name, af, delta in (("late.avi", "adelay=120:all=1", -3), ("early.avi", "atrim=start=0.12,asetpts=PTS-STARTPTS", 3)):
+        out = tmp_path / name
+        subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(ex), "-i", str(ex), "-map", "0:v", "-map", "1:a", "-af", af, "-c:v", "copy", str(out)], check=True)
+        assert LS.measure_lipsync(out)["tracks"][0]["offset_frames"] == base + delta

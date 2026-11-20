@@ -15,8 +15,9 @@ Codes (each has a test that triggers exactly it):
 - LS-03 confidence below ``conf_min`` (or ``conf_min`` still null): NOT_RUN, never a pass and never a fail.
 - LS-04 several tracks: all are listed; the verdict uses the worst offset among the tracks with ``conf >= conf_min``.
 
-``value`` is SyncNet's signed offset of the most confident trusted track, in ms; its direction is SyncNet's own sign (``offset = vshift -
-argmin``) and has NOT been checked against the README example on an install here: the detail says so.
+``value`` is SyncNet's signed offset of the most confident trusted track, in ms. SIGN, measured 2026-11-20 on the SyncNet example clip: delaying the
+sound by 3 frames lowered the offset by exactly 3 and advancing it by 3 raised it by exactly 3, so a POSITIVE offset means the sound comes BEFORE
+the picture (audio early), a negative one that it comes after (audio late).
 """
 from __future__ import annotations
 
@@ -37,7 +38,7 @@ FRAME_MS = 1000 // FPS                  # one offset step: 40 ms
 ROOT = Path(__file__).resolve().parents[2]
 TOLERANCES = Path(__file__).with_name("lipsync_tolerances.json")
 HYPOTHESIS = "BP-133 hypothesis (the 80 ms limit has no found source), REVIEW-level, not binding until the owner has seen it"
-STEP_NOTE = f"offset measured in whole frames of {FRAME_MS} ms at {FPS} fps; sign as SyncNet reports it, direction not verified"
+STEP_NOTE = f"offset measured in whole frames of {FRAME_MS} ms at {FPS} fps; positive = sound before the picture (measured on SyncNet's example clip with known shifts)"
 
 
 class LipsyncUnavailable(RuntimeError):
@@ -69,24 +70,22 @@ def _checkout() -> Path:
     return d
 
 
-def _convert(src: Path, out_dir: Path) -> tuple[Path, Path]:
-    """A 25 fps copy of the video and a 16 kHz mono wav of the sound; the original is never touched."""
-    video, wav = out_dir / "clip25.avi", out_dir / "clip16k.wav"
+def _convert(src: Path, out_dir: Path) -> Path:
+    """One 25 fps copy of the clip with its sound as 16 kHz mono (run_pipeline.py takes the sound from the same file); the original is never touched."""
+    out = out_dir / "clip25.avi"
+    cmd = ["ffmpeg", "-y", "-v", "error", "-i", str(src), "-r", str(FPS), "-ac", "1", "-ar", str(AUDIO_HZ), str(out)]
     try:
-        for cmd in (["ffmpeg", "-y", "-v", "error", "-i", str(src), "-r", str(FPS), "-an", str(video)],
-                    ["ffmpeg", "-y", "-v", "error", "-i", str(src), "-vn", "-ac", "1", "-ar", str(AUDIO_HZ), str(wav)]):
-            r = subprocess.run(cmd, capture_output=True, timeout=1800)
-            if r.returncode != 0:
-                raise LipsyncUnavailable("ffmpeg could not convert the clip: " + r.stderr.decode("utf-8", "replace")[-200:])
+        r = subprocess.run(cmd, capture_output=True, timeout=1800)
     except FileNotFoundError as exc:
         raise LipsyncUnavailable("ffmpeg is missing") from exc
-    return video, wav
+    if r.returncode != 0:
+        raise LipsyncUnavailable("ffmpeg could not convert the clip: " + r.stderr.decode("utf-8", "replace")[-200:])
+    return out
 
 
 def syncnet_runner(path: Path, min_track_frames: int | None = None) -> dict | None:
     """The real measurer: face detection and tracking (``run_pipeline.py``) and ``SyncNetInstance.evaluate`` on every face track of a copy of ``path``
-    converted to 25 fps and 16 kHz. Written from the files read on the SyncNet master (``run_pipeline.py``, ``run_syncnet.py``); NOT yet run on an install
-    (the real-install test is skipped until a checkout exists). Raises ``LipsyncUnavailable`` when it cannot run here."""
+    converted to 25 fps and 16 kHz. Written from the files read on the SyncNet master (``run_pipeline.py``, ``run_syncnet.py``); run on an install on 2026-11-20 (CPU, example clip: offset 4 frames, 3 on the README's own demo). Raises ``LipsyncUnavailable`` when it cannot run here."""
     checkout = _checkout()
     try:
         import torch  # noqa: F401  (heavy imports only here)
@@ -95,7 +94,7 @@ def syncnet_runner(path: Path, min_track_frames: int | None = None) -> dict | No
         raise LipsyncUnavailable(f"missing Python package: {exc.name}") from exc
     with tempfile.TemporaryDirectory() as tmp:
         tmp_dir = Path(tmp)
-        video, _wav = _convert(Path(path), tmp_dir)
+        video = _convert(Path(path), tmp_dir)
         cmd = [sys.executable, "run_pipeline.py", "--videofile", str(video), "--reference", "clip", "--data_dir", str(tmp_dir / "work")]
         if min_track_frames:
             cmd += ["--min_track", str(int(min_track_frames))]
