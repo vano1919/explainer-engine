@@ -156,9 +156,123 @@ def _flow_fields(g: list[np.ndarray], gap: int, cv2):
     return [cv2.calcOpticalFlowFarneback(u8[i], u8[i + gap], None, 0.5, 3, 15, 3, 5, 1.2, 0) for i in range(0, len(u8) - gap)]
 
 
+LAYERED = True
+LAYER_MOVING_PX = float(SR.T("BP-215", "layer_moving_px"))          # a flow vector longer than this (px per gap) is a moving sample
+LAYER_EXTENT_MIN = float(SR.T("BP-215", "layer_extent_min_pct"))        # % of the samples outside the zones that must move for a camera to be the cause
+LAYER_QUADRANTS_MIN = int(SR.T("BP-215", "layer_quadrants_min"))        # quadrants of the frame in which at least LAYER_QUAD_MIN % of the samples move
+LAYER_QUAD_MIN = float(SR.T("BP-215", "layer_quadrant_moving_min_pct"))
+LAYER_EXPLAINED_MIN = float(SR.T("BP-215", "layer_explained_min_pct"))     # % of the moving flow energy the banded camera must explain
+LAYER_MEDIAN_CELLS = int(SR.T("BP-215", "layer_median_cells"))
+LAYER_GUARD_PX = int(SR.T("BP-215", "layer_guard_px"))
+LAYER_BORDER_PCT = float(SR.T("BP-215", "layer_border_pct"))         # width of the border strips, % of the frame side
+LAYER_BORDER_MOVING_MIN = float(SR.T("BP-215", "layer_border_moving_min_pct")) # % of a strip's samples that move for the strip to count
+LAYER_BORDERS_MIN = int(SR.T("BP-215", "layer_borders_min"))          # strips (of top, bottom, left, right) that must move
+LAYER_EDGE_S = float(SR.T("BP-215", "layer_edge_share"))
+LAYER_MIN_R_PX = float(SR.T("BP-215", "layer_min_radius_px"))
+
+
+def _layered_camera(flow: np.ndarray, exclude: np.ndarray, cv2):
+    """The camera of a depth-layered move (Z17): every pixel moves as ``s(x)`` times one camera field (push about a centre, or a pan), ``s`` the depth band's
+    weight, smooth in space. Returns (residual, share of the moving energy the camera explains) or None when the flow is not such a camera: too few of
+    the samples outside the declared zones move, or they do not move in most of the frame, or the explained share is low (noise, local life)."""
+    h, w = flow.shape[:2]
+    ys, xs = np.mgrid[6:h - 6:6, 6:w - 6:6]
+    near = cv2.dilate(exclude.astype(np.uint8), np.ones((LAYER_GUARD_PX, LAYER_GUARD_PX), np.uint8)).astype(bool)   # the flow window smears a zone's life over its neighbours
+    use = ~near[ys, xs]
+    if int(use.sum()) < 40:
+        return None
+    fx, fy = flow[ys, xs, 0], flow[ys, xs, 1]
+    mag = np.hypot(fx, fy)
+    mov = (mag >= LAYER_MOVING_PX) & use
+    if float(mov.sum()) * 100.0 / float(use.sum()) < LAYER_EXTENT_MIN:
+        return None
+    quads = 0
+    for qy in (slice(0, ys.shape[0] // 2), slice(ys.shape[0] // 2, None)):
+        for qx in (slice(0, xs.shape[1] // 2), slice(xs.shape[1] // 2, None)):
+            u = use[qy, qx]
+            if u.any() and float(mov[qy, qx].sum()) * 100.0 / float(u.sum()) >= LAYER_QUAD_MIN:
+                quads += 1
+    if quads < LAYER_QUADRANTS_MIN:
+        return None
+    ring = 0                                             # a camera moves the picture up to its border; a region of life (smoke, cloud) stops short of it
+    bw, bh = int(w * LAYER_BORDER_PCT / 100), int(h * LAYER_BORDER_PCT / 100)
+    for strip in (ys < bh, ys >= h - bh, xs < bw, xs >= w - bw):
+        u = use & strip
+        if u.any() and float((mov & strip).sum()) * 100.0 / float(u.sum()) >= LAYER_BORDER_MOVING_MIN:
+            ring += 1
+    if ring < LAYER_BORDERS_MIN:
+        return None
+    m = mov
+    best = None
+    d = np.array([fx[m].mean(), fy[m].mean()])             # candidate 1: a pan, every flow along one direction
+    if np.hypot(*d) > 1e-6:
+        d = d / np.hypot(*d)
+        best = np.stack([np.full((h, w), d[0], np.float32), np.full((h, w), d[1], np.float32)], axis=-1)
+    px_, py_ = xs[m].astype(np.float64), ys[m].astype(np.float64)   # candidate 2: a push, every flow along a line through one centre
+    ux, uy = fx[m] / mag[m], fy[m] / mag[m]
+    wt = np.ones(px_.size)
+    c = np.array([w / 2.0, h / 2.0])
+    for _ in range(3):
+        A = np.stack([uy, -ux], axis=1) * wt[:, None]
+        b = (uy * px_ - ux * py_) * wt
+        c = np.linalg.lstsq(A, b, rcond=None)[0]
+        r = np.abs(ux * (py_ - c[1]) - uy * (px_ - c[0]))
+        wt = 1.0 / np.maximum(r, 5.0)
+    gx, gy = np.meshgrid(np.arange(w, dtype=np.float32), np.arange(h, dtype=np.float32))
+    shape_r = np.stack([gx - c[0], gy - c[1]], axis=-1).astype(np.float32)
+    cands = [shape_r] + ([best] if best is not None else [])
+    out = None
+    for shp in cands:
+        sh = shp[ys, xs]
+        n2 = (sh ** 2).sum(-1)
+        ok = use & ((np.sqrt(n2) >= LAYER_MIN_R_PX) if shp is shape_r else (n2 > 0.5))
+        if int(ok.sum()) < 40:
+            continue
+        s = np.where(ok, (fx * sh[..., 0] + fy * sh[..., 1]) / np.maximum(n2, 1e-9), np.nan)
+        s = np.clip(s, 0.0, None)
+        k = LAYER_MEDIAN_CELLS
+        sp = np.pad(s, k // 2, mode="edge")
+        win = np.lib.stride_tricks.sliding_window_view(sp, (k, k)).reshape(s.shape + (k * k,))
+        with np.errstate(all="ignore"):
+            import warnings
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                sm = np.nanmedian(win, axis=-1)
+        known = np.isfinite(sm)
+        if not known.any():
+            continue
+        observed = sm.copy()
+        if not known.all():
+            _, lab = cv2.distanceTransformWithLabels((~known).astype(np.uint8), cv2.DIST_L2, 3, labelType=cv2.DIST_LABEL_PIXEL)
+            idx = np.zeros(int(lab.max()) + 1)
+            idx[lab[known]] = sm[known]
+            sm = idx[lab]
+        sfull = cv2.resize(sm.astype(np.float32), (w, h), interpolation=cv2.INTER_LINEAR)
+        resid = flow - sfull[..., None] * shp
+        e_f = float((flow[ys, xs][mov] ** 2).sum())
+        e_r = float((resid[ys, xs][mov] ** 2).sum())
+        explained = 100.0 * (1.0 - e_r / max(e_f, 1e-9))
+        # an edge between two bands: the flow there is a blend, not a motion (judged on the cells the flow was read from, never on the filled ones)
+        mx = cv2.dilate(np.where(known, observed, -np.inf).astype(np.float32), np.ones((3, 3), np.uint8))
+        mn = cv2.erode(np.where(known, observed, np.inf).astype(np.float32), np.ones((3, 3), np.uint8))
+        ref = max(float(np.nanpercentile(s[ok], 90)), 1e-9)                     # the band weights are relative to the strongest band
+        fin = (mx > -1e30) & (mn < 1e30)                        # cv2 turns the infinities into the largest floats
+        edge = (fin & (np.where(fin, mx, 0.0) - np.where(fin, mn, 0.0) > LAYER_EDGE_S * ref)).astype(np.uint8)
+        edge = cv2.dilate(cv2.resize(edge, (w, h), interpolation=cv2.INTER_NEAREST), np.ones((9, 9), np.uint8)).astype(bool)
+        resid = np.where(edge[..., None], 0.0, resid).astype(np.float32)
+        if out is None or explained > out[1]:
+            out = (resid, explained)
+    if out is None or out[1] < LAYER_EXPLAINED_MIN:
+        return None
+    return out
+
+
 def _camera_residual(flow: np.ndarray, exclude: np.ndarray, cv2, unchanged: np.ndarray | None = None) -> tuple[np.ndarray, float | None]:
     """The flow minus the camera: a similarity transform fitted by RANSAC to the flow of the pixels outside ``exclude`` (the declared
     zones and the particles), and the share of its inliers (None when no transform could be fitted)."""
+    lay = _layered_camera(flow, exclude, cv2) if LAYERED else None
+    if lay is not None:                                  # a depth-layered camera (Z17): every band moves by its own share of one camera path
+        return lay
     h, w = flow.shape[:2]
     ys, xs = np.mgrid[6:h - 6:6, 6:w - 6:6]
     use = ~exclude[ys, xs]
@@ -312,6 +426,11 @@ def _motion_series(path, g, cv2):
 
 
 def living_motion(path) -> dict:
+    """OR-V19a/b/c (BP-215, a hypothesis until calibrated on the analyst's run2 clip): the clip is alive when the flow, with the camera and the declared
+    particle layer taken out, explains the next frame inside every declared zone (fire, smoke, sky, wind) or, without zones, over the frame; snow alone,
+    noise, a brightness pulse and a camera move do not count. NOT ENFORCED (accepted limit, lead 2026-11-20): a blizzard so dense that its flakes merge
+    into blobs (about 5000 flakes of 3 px at 480x270) is not recognised as particles by the whole-frame rules; only a sidecar that declares the
+    layer (matte, far band, depth map) makes the check hold."""
     path = Path(path)
     g = decode_grey(path)
     step = max(1, int(round(ANALYSIS_FPS * LV.FROZEN_WINDOW_S)))
@@ -430,8 +549,7 @@ def no_body_motion_in_25d(path) -> dict:
     """OR-V25 (LP-02 of LIVING_PHOTO_RULES_2026-11-14, the team's rule until the owner confirms it: a body that must move - lips, hands, a turned head -
     is LTX's work, not 2.5D's) on a shot-direction file: FAIL when a 2.5D track moves a body (``subject_sway`` on ``directed25d`` or ``layers25d``) or
     an inventory element of kind ``body`` (or flagged ``body_motion``) is animated or added instead of being routed to LTX. A body element that is
-    skipped with a reason (routed to LTX) is listed and passes. NOTE for the lead: ``direction.LIVING_KINDS`` still lets the kind ``body`` take
-    ``subject_sway``, so the repo's own gate accepts what this one fails; the owner's LP-02 wins here. A file that is not a shot direction is NOT_RUN."""
+    skipped with a reason (routed to LTX) is listed and passes. ``direction.LIVING_KINDS`` gives the kind ``body`` no effect since the lead's ruling of 2026-11-20 (LP-02 wins), so the repo's own gate refuses it too. A file that is not a shot direction is NOT_RUN."""
     from explainer_engine.production import direction as DIR
     d = json.loads(Path(path).read_text(encoding="utf-8"))
     if not isinstance(d, dict) or d.get("schema") != DIR.SCHEMA:
@@ -453,6 +571,44 @@ def no_body_motion_in_25d(path) -> dict:
 
 
 no_body_motion_in_25d.kinds = (".json",)
+
+
+def still_shot_drift(path) -> dict:
+    """OR-V24 (the owner's cards of 2026-11-14 12:37 UTC, R-13 and R-14 of the reconciliation journal: a 2.5D shot is at most 5 s, BP-109; the camera
+    never stops, a slow drift stays, BP-181 stays in force) on the delivered clip. The clip's whole camera move (zoom, or pan as a share of the width, the
+    first frame against the last, ``liveliness.motion_between``) is scaled to 5 s and must lie in the drift band ``still_drift_min_pct`` to
+    ``still_drift_max_pct`` (BP-215, a hypothesis: the client's 1-3 %, not a quoted owner word). A clip whose ``.zones.json`` says ``"camera": "push"``
+    (a deliberate push the plan declares) is held to BP-181's scale band (4-25 %) instead. A clip over 5 s is a FAIL. Needs OpenCV (else NOT_RUN); a
+    camera that cannot be fitted is NOT_RUN."""
+    path = Path(path)
+    if _cv2() is None:
+        return {"status": NOT_RUN, "value": None, "detail": "the camera fit needs OpenCV (opencv-python-headless): not measured"}
+    g = decode_grey(path)
+    if len(g) < 2:
+        return {"status": NOT_RUN, "value": None, "detail": "too short to measure a camera"}
+    dur = len(g) / ANALYSIS_FPS
+    cap = float(SR.T("BP-109", "still_shot_max_s"))
+    if dur > cap + 0.5 / ANALYSIS_FPS * 4:
+        return {"status": FAIL, "value": round(dur, 2), "detail": f"a 2.5D shot of {dur:.1f} s is over the {cap:g} s cap (BP-109, the owner's card of 2026-11-14): split it or send it to the video route"}
+    mv = LV.motion_between(g[0], g[-1])
+    if mv is None:
+        return {"status": NOT_RUN, "value": None, "detail": "the camera could not be fitted between the first and the last frame: not measured"}
+    amount = max(abs(mv["zoom_pct"]), float(np.hypot(mv["pan_x_pct"], mv["pan_y_pct"]))) * cap / max(dur, 1e-6)
+    push = str(_sidecar(path).get("camera", "")).lower() == "push"
+    if push:
+        lo, hi = (float(SR.T("BP-181", "still_move_min")) - 1) * 100, (float(SR.T("BP-181", "still_move_max")) - 1) * 100
+        what = "a declared push (BP-181)"
+    else:
+        lo, hi = float(SR.T("BP-215", "still_drift_min_pct")), float(SR.T("BP-215", "still_drift_max_pct"))
+        what = "a still shot's slow drift (client reading of the 2026-11-14 cards, not verified)"
+    if amount < lo:
+        return {"status": FAIL, "value": round(amount, 2), "detail": f"the camera moves {amount:.2f} % over {cap:g} s, under {lo:g} %: the camera stands still, and the owner's card says it never stops ({what})"}
+    if amount > hi:
+        return {"status": FAIL, "value": round(amount, 2), "detail": f"the camera moves {amount:.2f} % over {cap:g} s, over {hi:g} %: that is not {what}; declare a push in the plan or slow it down"}
+    return {"status": PASS, "value": round(amount, 2), "detail": f"the camera moves {amount:.2f} % over {cap:g} s, inside {lo:g}-{hi:g} % ({what}); {dur:.1f} s long (cap {cap:g} s)"}
+
+
+still_shot_drift.kinds = (".mp4", ".mov", ".webm", ".mkv")
 
 
 def flame_never_frozen(path) -> dict:
@@ -696,11 +852,11 @@ faces_intact.kinds = (".json",)
 
 
 def main(argv=None) -> int:
-    """``python -m explainer_engine.qa.send_validators living_motion|gemini_task_report|faces_intact|living_inventory|change_per_second|flame_never_frozen|director_reasons|no_body_motion_in_25d|alive_beyond_camera <file>...``: one line per clip, exit 1 on any FAIL, 2 on an error."""
+    """``python -m explainer_engine.qa.send_validators living_motion|gemini_task_report|faces_intact|living_inventory|change_per_second|flame_never_frozen|director_reasons|no_body_motion_in_25d|alive_beyond_camera|still_shot_drift <file>...``: one line per clip, exit 1 on any FAIL, 2 on an error."""
     import argparse
     import sys
     ap = argparse.ArgumentParser(prog="python -m explainer_engine.qa.send_validators")
-    ap.add_argument("validator", choices=("living_motion", "gemini_task_report", "faces_intact", "living_inventory", "change_per_second", "flame_never_frozen", "director_reasons", "no_body_motion_in_25d", "alive_beyond_camera"))
+    ap.add_argument("validator", choices=("living_motion", "gemini_task_report", "faces_intact", "living_inventory", "change_per_second", "flame_never_frozen", "director_reasons", "no_body_motion_in_25d", "alive_beyond_camera", "still_shot_drift"))
     ap.add_argument("files", nargs="+")
     a = ap.parse_args(argv)
     worst = 0
@@ -709,7 +865,7 @@ def main(argv=None) -> int:
             r = {"living_motion": living_motion, "gemini_task_report": gemini_task_report, "faces_intact": faces_intact, "living_inventory": living_inventory,
                  "change_per_second": change_per_second, "flame_never_frozen": flame_never_frozen, "director_reasons": director_reasons,
                  "no_body_motion_in_25d": no_body_motion_in_25d,
-                 "alive_beyond_camera": alive_beyond_camera}[a.validator](f)
+                 "alive_beyond_camera": alive_beyond_camera, "still_shot_drift": still_shot_drift}[a.validator](f)
         except Exception as exc:                       # an undecodable file is an error, never a pass
             print(f"BLOCK {f}: {type(exc).__name__}: {exc}", file=sys.stderr)
             worst = max(worst, 2)

@@ -192,6 +192,55 @@ def test_a_camera_drift_with_parallax_and_a_dead_world_still_fails(tmp_path):
     assert r["status"] == "FAIL" and ("smoke zone" in r["detail"] or "fire zone" in r["detail"]), r
 
 
+def layered_push_frames(life_area=None, life_px=1.0, push=0.4, n=3.0):
+    """The layered 2.5D move (Z17): a push about the centre in which four horizontal depth planes move by the weights 0 / .32 / .68 / 1; optionally
+    a region of real life (drifting texture, painted after the camera) that the camera does not move."""
+    import cv2
+    base = np.clip(cv2.GaussianBlur(np.random.default_rng(5).normal(128, 50, (H, W)).astype(np.float32), (0, 0), 1.5) + 40, 20, 235)
+    plane = np.minimum(3, (np.arange(H)[:, None] * 4 // H) * np.ones((1, W), int))
+    tex, frames, total = wide_texture(9), [], seconds(n)
+    for i in range(total):
+        comp = base.copy()
+        for k, wgt in enumerate((0.0, 0.32, 0.68, 1.0)):
+            m = cv2.getRotationMatrix2D((W / 2, H / 2), 0, 1 + push * wgt * i / total)
+            lay = cv2.warpAffine(base, m, (W, H), flags=cv2.INTER_CUBIC, borderMode=cv2.BORDER_REFLECT)
+            comp = np.where(cv2.warpAffine((plane == k).astype(np.float32), m, (W, H)) > 0.5, lay, comp)
+        if life_area is not None:
+            sh = int(round(life_px * i)) % 300
+            comp[life_area] = tex[life_area[0], life_area[1].start + sh:life_area[1].stop + sh]
+        frames.append(comp)
+    return frames
+
+
+def test_a_layered_camera_over_a_dead_world_fails_with_the_camera_taken_out(tmp_path):
+    """Z17: the planes move by their own share of the camera path; that is the camera, not life (the residual of one global transform is not motion)."""
+    r = V.living_motion(clip(tmp_path / "layered_dead.mp4", layered_push_frames()))
+    assert r["status"] == "FAIL", r
+
+
+def test_a_layered_camera_does_not_hide_a_declared_zone_that_really_moves(tmp_path):
+    """The camera is fitted outside the declared zone (and a guard band around it): a smoke zone that drifts by itself still counts while the
+    planes around it are moved by the camera, and the same zone painted still FAILS by name."""
+    area = (slice(70, 190), slice(150, 330))
+    zones = [("smoke", "smoke", (150, 70, 330, 190))]
+    live = clip(tmp_path / "layered_live.mp4", layered_push_frames(area, 1.0, push=0.15))
+    zones_json(tmp_path, "layered_live", zones)
+    r = V.living_motion(live)
+    assert r["status"] == "PASS", r
+    dead = clip(tmp_path / "layered_still_zone.mp4", layered_push_frames(area, 0.0, push=0.15))
+    zones_json(tmp_path, "layered_still_zone", zones)
+    r = V.living_motion(dead)
+    assert r["status"] == "FAIL" and "smoke zone" in r["detail"], r
+
+
+def test_a_region_of_life_that_stops_short_of_the_border_is_not_taken_for_the_camera(tmp_path):
+    """The layered camera needs the picture to move up to its border: smoke over half of a still frame (no zone declared) keeps its own life."""
+    r = V._layered_camera(np.zeros((H, W, 2), np.float32), np.zeros((H, W), bool), V._cv2())
+    assert r is None
+    p = smoke_clip(tmp_path / "region.mp4")
+    assert V.living_motion(p)["status"] == "PASS"
+
+
 def test_a_dead_zone_in_a_moving_clip_fails_by_name(tmp_path):
     p = alive_world_clip(tmp_path / "dead_fire.mp4")
     zones_json(tmp_path, "dead_fire", ZONES[:2] + [("fire", "fire", (400, 100, 470, 180))])    # the 'fire' mask sits on a static part
@@ -749,3 +798,42 @@ def test_a_fade_and_grain_are_not_a_living_world_for_alive_beyond_the_camera(tmp
     assert V.alive_beyond_camera(smoke_clip(tmp_path / "short.mp4", n=0.5))["status"] == "NOT_RUN"
     monkeypatch.setattr(V, "_cv2", lambda: None)
     assert V.alive_beyond_camera(smoke_clip(tmp_path / "nocv.mp4"))["status"] == "NOT_RUN" and V.alive_beyond_camera.kinds == V.living_motion.kinds
+
+
+# ---- OR-V24: a 2.5D shot is at most 5 s and its camera keeps a slow drift ----------------------------------------------------------------
+
+def zoom_clip(path, z, n=3.0, side=None):
+    import cv2
+    rng = np.random.default_rng(5)
+    pic = cv2.GaussianBlur(rng.normal(128, 50, (H, W)).astype(np.float32), (0, 0), 2.0)
+    pic = (pic - pic.min()) / (pic.max() - pic.min()) * 200 + 25
+    pic[100:170, 150:330] = 230
+    k = seconds(n)
+    clip_path = clip(path, [cv2.warpAffine(pic, cv2.getRotationMatrix2D((W / 2, H / 2), 0, 1 + z * i / k), (W, H), flags=cv2.INTER_CUBIC,
+                                           borderMode=cv2.BORDER_REFLECT) for i in range(k)])
+    if side:
+        path.with_suffix(".zones.json").write_text(json.dumps(side), encoding="utf-8")
+    return clip_path
+
+
+def test_a_slow_drift_inside_the_band_on_a_clip_within_five_seconds_passes(tmp_path):
+    r = V.still_shot_drift(zoom_clip(tmp_path / "ok.mp4", 0.015))
+    assert r["status"] == "PASS" and 1.0 <= r["value"] <= 3.0 and "cap 5 s" in r["detail"], r
+
+
+def test_a_standing_camera_a_push_and_an_over_long_shot_fail_the_drift_rule(tmp_path):      # the negative test of OR-V24
+    still = V.still_shot_drift(zoom_clip(tmp_path / "still.mp4", 0.0))
+    assert still["status"] == "FAIL" and "stands still" in still["detail"], still
+    push = V.still_shot_drift(zoom_clip(tmp_path / "push.mp4", 0.12))
+    assert push["status"] == "FAIL" and "declare a push" in push["detail"], push
+    long = V.still_shot_drift(zoom_clip(tmp_path / "long.mp4", 0.02, n=6.0))
+    assert long["status"] == "FAIL" and "5 s cap" in long["detail"], long
+
+
+def test_a_declared_push_is_held_to_the_bp_181_band_and_opencv_is_needed(tmp_path, monkeypatch):
+    ok = V.still_shot_drift(zoom_clip(tmp_path / "decl.mp4", 0.12, side={"camera": "push"}))
+    assert ok["status"] == "PASS" and "declared push" in ok["detail"], ok                      # 12 % over 3 s is about 19 % over 5 s: inside 4-25 %
+    weak = V.still_shot_drift(zoom_clip(tmp_path / "weak.mp4", 0.015, side={"camera": "push"}))
+    assert weak["status"] == "FAIL" and "under 4 %" in weak["detail"], weak
+    monkeypatch.setattr(V, "_cv2", lambda: None)
+    assert V.still_shot_drift(zoom_clip(tmp_path / "nocv.mp4", 0.015))["status"] == "NOT_RUN" and V.still_shot_drift.kinds == V.living_motion.kinds

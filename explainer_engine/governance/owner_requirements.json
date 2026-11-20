@@ -642,7 +642,7 @@
    "measures": "parent: covered when OR-V19a..e are covered",
    "repeats": 5,
    "repeat_evidence": "11-12 21:44 (nothing moves), 11-14 ('only the fire moves'), 11-14 12:38 (director decides snow), 11-20 07:14 ('2.5D moves terribly'), 11-20 08:33",
-   "note": "children carry the checks; a camera-only clip fails MS-1 (R-LIVING)"
+   "note": "children carry the checks; a camera-only clip fails MS-1 (R-LIVING) | NOT ENFORCED (accepted limit, lead 2026-11-20): a blizzard so dense that its flakes merge into blobs (about 5000 flakes at 480x270) passes the whole-frame rules; only a sidecar declaring the particle layer makes the snow check hold. BP-215 stays a hypothesis until the analyst's run2 clip is fitted."
   },
   {
    "id": "OR-V19a",
@@ -732,7 +732,7 @@
    "repeat_evidence": "",
    "parent": "OR-V19",
    "words_partial": true,
-   "note": "send gate: living_motion measures pixel change in the snow zone (G-LIVE-3) and in every second (G-LIVE-1); the near/far particle speed and size ratio by depth is NOT measured and stays for the judge step | update 2026-11-20: when the sidecar names both bands (particles.near and particles.far) living_motion requires the near flakes at least near_far_ratio_min (1.2, BP-215, engineering default; the owner's text says ratio > 1) times the far ones in size and in speed; a layer with one band is not ratio-checked. Snow with no zone, snow only, a declared layer without its far band or depth map, specks outside the declared matte and a flat depth map all FAIL (lead's ruling 2026-11-20); the foreground hiding the far flakes is the depth check."
+   "note": "send gate: living_motion measures pixel change in the snow zone (G-LIVE-3) and in every second (G-LIVE-1); the near/far particle speed and size ratio by depth is NOT measured and stays for the judge step | update 2026-11-20: when the sidecar names both bands (particles.near and particles.far) living_motion requires the near flakes at least near_far_ratio_min (1.2, BP-215, engineering default; the owner's text says ratio > 1) times the far ones in size and in speed; a layer with one band is not ratio-checked. Snow with no zone, snow only, a declared layer without its far band or depth map, specks outside the declared matte and a flat depth map all FAIL (lead's ruling 2026-11-20); the foreground hiding the far flakes is the depth check. | NOT ENFORCED (accepted limit, lead 2026-11-20): a blizzard so dense that its flakes merge into blobs (about 5000 flakes at 480x270) passes the whole-frame rules; only a sidecar declaring the particle layer makes the snow check hold. BP-215 stays a hypothesis until the analyst's run2 clip is fitted."
   },
   {
    "id": "OR-V19d",
@@ -914,7 +914,11 @@
    ],
    "status": "active",
    "check": {
-    "kind": "unmapped"
+    "kind": "validator",
+    "ref": "explainer_engine.qa.send_validators:still_shot_drift",
+    "send_ref": "explainer_engine.qa.send_validators:still_shot_drift",
+    "test": "tests/unit/test_send_validators.py::test_a_slow_drift_inside_the_band_on_a_clip_within_five_seconds_passes",
+    "negative_test": "tests/unit/test_send_validators.py::test_a_standing_camera_a_push_and_an_over_long_shot_fail_the_drift_rule"
    },
    "measures": "duration <= 5 s; camera never fully static on a still",
    "repeats": 1,
@@ -929,7 +933,8 @@
      "text": "records the same two supersessions (12:37-12:40 UTC cards)"
     }
    ],
-   "source_ref_note": "the live decision log D-139 (docs/DECISIONS_AND_OPEN_QUESTIONS.md @ origin/claude/project-thread-2vxd8y) is the V4.1 Step 0/1 decision of 2026-11-19, not this rule; 'D-139' for the 11-14 rule is the client/skills-team label for R-13/R-14"
+   "source_ref_note": "the live decision log D-139 (docs/DECISIONS_AND_OPEN_QUESTIONS.md @ origin/claude/project-thread-2vxd8y) is the V4.1 Step 0/1 decision of 2026-11-19, not this rule; 'D-139' for the 11-14 rule is the client/skills-team label for R-13/R-14",
+   "note": "validator: still_shot_drift on the delivered clip: at most 5 s (BP-109, the owner's 2026-11-14 12:37 UTC card Q2), and the whole camera move scaled to 5 s inside 1-3 % for a still shot (the client's reading of card Q3; the journal text R-14 names no number, so this band is a hypothesis, BP-215) or inside BP-181's 4-25 % scale for a push the sidecar declares (camera: push). Two numbers, two named cases (lead's ruling 2026-11-20). NOT_RUN without OpenCV or a camera that cannot be fitted."
   },
   {
    "id": "OR-V25",
@@ -958,7 +963,7 @@
    "measures": "the 2.5D plan contains no body-motion effect",
    "repeats": 1,
    "repeat_evidence": "",
-   "note": "validator: no_body_motion_in_25d fails a subject_sway track on a 2.5D renderer and a body-kind or body_motion element that is animated or added; a body left to LTX (skip with a reason) passes and is listed. The repo's own direction.LIVING_KINDS still lets kind body take subject_sway, so direction.check accepts what this fails (reported to the lead). Mouth, hand and head motion inside an LTX clip is not judged here."
+   "note": "validator: no_body_motion_in_25d fails a subject_sway track on a 2.5D renderer and a body-kind or body_motion element that is animated or added; a body left to LTX (skip with a reason) passes and is listed. Since the lead's ruling of 2026-11-20 direction.LIVING_KINDS gives the kind body no effect, so direction.check refuses it too (tests/unit/test_direction.py::test_a_body_is_never_moved_by_a_2_5d_effect_lp02). Mouth, hand and head motion inside an LTX clip is not judged here."
   },
   {
    "id": "OR-V26",

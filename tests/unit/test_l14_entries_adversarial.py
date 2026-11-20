@@ -562,10 +562,6 @@ def parallax_frames(push: float, shift_px: float, sigma: float = 1.5, n: int = N
 
 @needs_ffmpeg
 @pytest.mark.parametrize("push,shift_px", [(0.12, 0.0), (0.0, 12.0), (0.06, 10.0)])
-@pytest.mark.xfail(strict=True, reason="Z17: a camera-only move with depth PARALLAX (the layered 2.5D engine's own output: four planes at weights 0/.32/.68/1) over a "
-                                       "dead, well-textured picture PASSes (17-24 % 'moving'): a similarity transform cannot remove parallax, so the residual "
-                                       "of the camera itself counts as the world moving. The analyst's real control clip X4_S04_SH008_camera_only (planes 0/.32/.68/1, "
-                                       "push 0.6) PASSes at 17.4 % after the Z3 fix, same as its production twin (HF vault/L14_2p5d/run1/clips)")
 def test_Z17_a_parallax_camera_move_over_a_dead_picture_is_not_a_pass(tmp_path, push, shift_px):
     assert living(tmp_path, "parallax", parallax_frames(push, shift_px))["status"] != "PASS"
 
