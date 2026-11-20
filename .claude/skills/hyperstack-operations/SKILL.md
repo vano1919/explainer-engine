@@ -1,37 +1,59 @@
 ---
 name: hyperstack-operations
-description: Read-only inventory, pricebook, total-cost estimation, and safe lifecycle rules for Hyperstack GPU VMs (CANADA-1, NORWAY-1, US-1) via explainer_engine/cloud/providers/hyperstack.py. Enforces OR-22/23/24/34 approval gates and guards against the Hyperstack SHUTOFF billing trap where SHUTOFF continues billing 100% of the GPU rate.
+description: Read Hyperstack safely for this channel - stock, account pricebook and cost estimates only, through the dry-run adapter - and know its billing states (SHUTOFF still bills the GPU, hibernate keeps disk and IP billing, delete is irreversible) so no legacy or proposed Hyperstack resource costs money unseen. Hyperstack is not used for the v4.3 route. Use when the owner asks about Hyperstack, when an audit finds a Hyperstack resource, or when comparing providers on paper.
 ---
 
-> **Route-scoped since D-116 (2026-11-06):** LTX and Qwen are named here only as GPU workloads of the J2/J4 routes and of the Qwen assets of J5 (D-116); provider runs stay dry-run until the creator approves caps in `config/spend_caps.json` (D-56).
+# Hyperstack operations, read-only (layer L31)
 
-# Hyperstack GPU VM Operations (`explainer_engine/cloud/providers/hyperstack.py`)
+Rewritten 2026-11-20 under RW-50 ([docs/SKILL_LAYERS.md](../../../docs/SKILL_LAYERS.md)). Status: a researched candidate,
+never wired into production; the v4.3 route runs its paid GPU work on Modal (D-131, D-132) and the project has a zero
+Hyperstack budget (no line in `config/spend_caps.json`). Provider notes:
+[HYPERSTACK_README](../../../docs/providers/HYPERSTACK_README.md); policy: `.claude/rules/cloud-platforms.md` section 5.
 
-Use this skill when inspecting Hyperstack GPU capacity (`A100-80G-PCIe`, `H100-80G-PCIe`, `H200-141G-SXM5`, `L40`),
-estimating workload cost, or preparing an approved VM run (`docs/providers/HYPERSTACK_README.md`).
+## What you may do
 
-## 1. Non-negotiable billing & safety rules (OR-22..36)
+- Read stock (`GET /core/stocks`) and the account pricebook (`GET /pricebook`, the account `value`, not the public list)
+  through `explainer_engine/cloud/providers/hyperstack.py` in dry-run, or the read-only documentation MCP.
+- Estimate a job on paper: `python -m explainer_engine.cloud.providers --workload <preset>` (presets in
+  `explainer_engine/cloud/providers/base.py`).
+- List every existing VM, volume, snapshot and public IP during a cost audit, and report what bills.
 
-1. **Never use `STOP` / `SHUTOFF` or `shutdown -h now` inside SSH to save money**: on Hyperstack
-   (`https://infrahub-api.nexgencloud.com/v1`), a VM in `SHUTOFF` state continues billing **100% of the full GPU hourly
-   rate** (`$1.35/hr` on `n3-A100x1`, `$2.50/hr` on `n3-H100x1`). Only `HIBERNATE` (`GET /core/virtual-machines/{id}/hibernate` ->
-   `HIBERNATED`, root disk billed at `$0.000096774/GB/hr` + public IP `$0.00672/hr`) or `DELETE` (`DELETE /core/virtual-machines/{id}` ->
-   `$0.00/hr`) stops GPU compute billing.
-2. **Product surface boundary**: use **Hyperstack GPU VMs** only. Hyperstack AI Studio and Dedicated Inference (vLLM wizard)
-   cannot run our custom `Qwen/Qwen-Image-2.1` + `xworld_v2` LoRA or `Lightricks/LTX-2.5` 22B pipelines.
-3. **Zero live spend without OR-22/23/24/34 approval**: `HyperstackAdapter.submit_job(..., dry_run=False)` requires a valid
-   `ApprovalGate` in `explainer_engine/cloud/providers/base.py` with creator confirmation (OR-22), an item-by-item plan (OR-23),
-   an Opus verdict (OR-24), and a Fable readiness audit (OR-34).
-4. **Timeout reconciliation (OR-25)**: if `POST /core/virtual-machines` times out or returns HTTP 5xx, never blind-retry creation.
-   Call `HyperstackAdapter.reconcile_existing(vm_name)` via `GET /core/virtual-machines` first and adopt any matching VM.
+## What you may not do without every gate and the owner's word
 
-## 2. Read-only CLI & adapter inspection
+Create, start, hibernate, restore or delete anything; call the account control-plane MCP for anything but reading; use AI
+Studio or Dedicated Inference for our work. A configured login is not permission.
 
-- Dry-run provider comparison and cost estimate:
-  `python -m explainer_engine.cloud.providers --workload workload_c_j5_minimised_p12_p14`
-- Key implementation modules:
-  - `explainer_engine/cloud/providers/hyperstack.py`
-  - `explainer_engine/cloud/providers/base.py`
-  - `explainer_engine/cloud/jobs.py`
-  - `explainer_engine/cloud/store.py`
-- Companion skills: skill `cloud-provider-selection` and skill `cloud-cost-audit`.
+## The billing states (why this page exists)
+
+| State | Compute | Disk, IP | Note |
+|---|---|---|---|
+| ACTIVE | billed | billed | |
+| SHUTOFF | **still billed at the full GPU rate** | billed | stopping from inside the VM (`shutdown`) lands here; it saves nothing |
+| HIBERNATED | released | root data and a kept public IP still bill | restore can wait for the same card to be in stock |
+| DELETED | none | none | local data gone; only on the owner's explicit word |
+
+Volumes and snapshots bill on their own, attached or not. Object storage there is single-region and is never our vault: the
+vault is HF `vano1919/tmr-artifacts` with hashes.
+
+## Three products, never one
+
+1. **GPU VM**: an ordinary machine for our own containers; the only Hyperstack product that could run our pipeline.
+2. **AI Studio partner API**: token or image-patch priced, served by third parties; no custom adapters assumed, no data
+   residency assumed.
+3. **Dedicated inference**: one open LLM on vLLM, billed per GPU-hour while idle; not a video or image runtime.
+
+Two different credentials: the core and AI Studio APIs take `api_key: <key>`; a dedicated endpoint takes its own bearer key.
+Never log, print or commit either.
+
+## If a create ever times out
+
+Never create again. Reconcile first: list VMs by the unique name (`HyperstackAdapter.reconcile_existing`) and adopt a match;
+a duplicate create double-bills.
+
+## Before Hyperstack could carry real work
+
+The full adapter contract of cloud-platforms section 7 (provider interface, lifecycle mapping, idempotent create, ledger
+and reconciliation, an outside watchdog, verified upload, recovery tests, a live read-only smoke, a priced pilot), the OR-34
+audit, a budget line by the owner, and a measured advantage over Modal for a named job. None exists today.
+
+Companions: skill `cloud-cost-audit`, skill `cloud-provider-selection`.

@@ -31,6 +31,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SKILLS = ROOT / ".claude" / "skills"
+OVERLAY = "OVERLAY.md"  # our rules on top of the byte-pinned upstream SKILL.md (team plan 2026-11-20 rule 4, MS-5); not pinned
 SKIP_DIRS = {".git", ".github", ".claude", "node_modules", "__pycache__", ".pytest_cache"}
 MEDIA_EXT = (".mp4", ".wav", ".mp3", ".flac", ".onnx", ".gguf", ".bin", ".pyc")
 SECRET_NAMES = re.compile(r"(api_key|token[^/]*\.json$|secret|credentials|id_ed25519|\.pem$|^\.env$)", re.I)
@@ -189,7 +190,7 @@ def verify_dir(skill_dir: Path) -> list[str]:
         problems.append(f"{skill_dir.name}: commit is not a full sha")
     if not files:
         problems.append(f"{skill_dir.name}: SOURCE.md lists no files")
-    on_disk = {p.relative_to(skill_dir).as_posix() for p in skill_dir.rglob("*") if p.is_file()} - {"SOURCE.md"}
+    on_disk = {p.relative_to(skill_dir).as_posix() for p in skill_dir.rglob("*") if p.is_file()} - {"SOURCE.md", OVERLAY}
     for rel in sorted(files):
         f = skill_dir / rel
         if not f.is_file():

@@ -1,81 +1,101 @@
 ---
 name: elevenlabs-voice
-description: How to get a natural, consistent ElevenLabs read on the first try and spend as few credits as possible - voice choice, v4 audio tags, punctuation, chunk size, tests before batches, what never to re-read, how to reuse audio for Shorts. Use before every ElevenLabs call (samples, chunks, Shorts, re-reads) and whenever a read sounds flat, drifting or wrong.
+description: Direct and buy the ElevenLabs reads of a docudrama episode - the narrator and the hero lines - right on the first take and at the lowest credit cost - voice choice by ear, v4 tags and punctuation as the only direction, chunking, the sample before the batch, one take per call, checks on arrival, splicing instead of re-reading, and reuse for Shorts. Use before every ElevenLabs call and whenever a read sounds flat, drifting, too slow or wrong.
 ---
 
-# ElevenLabs: right on the first take, cheapest path
+# ElevenLabs reads: performance and credit discipline (layer L5, stage 3 and G6)
 
-**Episode rulebook first (D-51, OR-11):** read `python -m explainer_engine.standards brief <episode>/episode_rules.json --role voice` and follow it; legal, licence, likeness and art-direction questions are decided there (docs/EPISODE_STANDARDS.md), never invented in this skill. A conflict goes back to the orchestrator.
+Rewritten 2026-11-20 under RW-50 ([docs/SKILL_LAYERS.md](../../../docs/SKILL_LAYERS.md)). The API facts come from the official
+`v-elevenlabs-text-to-speech` (rewritten for our connector); what the words say comes from `narration-script`; voice search
+from `voice-search`. This page owns the EL rules and the performance stage's craft.
 
-Facts for this project: model `eleven_v4`, voice `NOpBlnGInO9m6vDvFkFC` (Grandpa Spuds Oxley), 1 credit per character **including
-tags**, concurrency 5, signed result links live 7200 s. Episode 1 used 17,353 credits: 14,778 for the 24 chunks and **2,575 for five
-Shorts whose lines were written new for the Short**. Rules below come from ElevenLabs' own model guide (read through
-`creative_get_model_guide`, 2026-10-17), the public v3 prompting docs, third-party guides (marked 3P, to be tested) and our own reads.
+**Episode rulebook first (D-51, OR-11):** read `python -m explainer_engine.standards brief <episode>/episode_rules.json --role voice` and follow it; likeness and licence questions are decided there (docs/EPISODE_STANDARDS.md).
 
-## What the connector lets you control (v4)
+## The levers we actually have
 
-`creative_get_model_schema` for `eleven_v4` exposes only `voice` and `language_code` (re-read 2026-10-17, MARKET_RESEARCH V-29).
-The generation tools default to `generations_count: 4` (four takes charged): always pass 1; the PreToolUse hook in
-`.claude/settings.json` refuses any other value, any paid call before the episode rulebook's `paid_assets` gate, and any picture or
-video request (pictures: the creator's provider per batch in the approved paint plan, D-50; never through this connector). ElevenLabs is the only audio provider (D-52): music `eleven_music_v2_5`
-(`duration_seconds`, `instrumental`, `lyrics_type`, `lyrics`) and sound effects `eleven_text_to_sound_v2` (`duration_seconds`,
-`prompt_influence`, `loop`) follow the same estimate-then-one-take rule (docs/AUDIO_SYSTEM.md). **There is no stability, similarity, style or
-seed knob and no previous/next-text context.** The levers are therefore: (1) the voice, (2) the text (punctuation, capitals, tags),
-(3) the chunking, (4) the number of takes. The read is not repeatable (3P: same text gives different output), so consistency comes from
-short, similar chunks and from keeping what was already good.
+Through the connector, `eleven_v4` exposes the **voice** and the **language code** only (MARKET_RESEARCH V-29, re-read
+2026-10-17; re-check with `creative_get_model_schema` when a read surprises you). The API itself has stability and
+similarity on v4 and an `audio_effects` block (distance, reverb environment, filter presets such as an old radio), but none
+of that reaches us unless the schema shows it; never assume a knob. So the performance lives in four things:
 
-## Rules (EL-01..EL-13)
+1. **The voice** (cast per episode in `production_script.json`, D-43; registered voices and their timbre baselines in
+   `config/channel_voices.json`).
+2. **The text**: punctuation, the one capital, the few tags (written by the performance stage, words frozen).
+3. **The chunking**: similar sizes, cut at beat ends.
+4. **The number of takes**: one, always. The tools default to four takes charged; pass `generations_count: 1`. The
+   PreToolUse hook in `.claude/settings.json` refuses any other value, any paid call before the rulebook's `paid_assets`
+   gate, and any picture or video request through this connector.
+
+The read is not repeatable (the same text gives a different take), so consistency comes from short, similar chunks and from
+keeping what was already good.
+
+## Performance for a docudrama (the performance-director stage)
+
+The narrator is a storyteller, not an announcer: restrained, close, present. Emotion comes from short lines and timing,
+not volume. Heroes are people under pressure in a period: tired, cold, frightened, polite to officers.
+
+| Moment | What to write | Avoid |
+|---|---|---|
+| Cold open | short sentences, one capital on the surprise, a `[softly]` or `[curious]` at the start | `[dramatically]` on every line |
+| A reveal | a full stop before it, the reveal word last, at most one `...` in the beat | stacked ellipses, a pause before a punch line (BP-10) |
+| A death, a cost | `[softly]`, short lines, a held `pause_after` within BP-10 | sentimental adjectives, a trembling tag on a calm voice |
+| A hero's line in a clip | the line as the character would say it under that pressure, `intent` set, one tag at most | period accents spelled out, theatrical tags |
+| A whisper across the wire | `[whispers]` on the hero line; distance is a sound-stage job, not a tag | `[far away]` (not performed) |
+
+Tags describe how a line is spoken (`[curious]`, `[softly]`, `[whispers]`, `[sighs]`, `[short pause]`), never what the
+speaker does (`[grinning]`, `[standing]`). A tag holds until the next one: one at a delivery change, two stacked at most.
+Every tag costs its characters. No SSML on v4 (BP-14); edit marks sit on the speaker label and are stripped before the
+read. `stage_guard performer` proves no word changed.
+
+## EL rules (credit discipline and quality, EL-01..EL-13)
 
 | ID | Rule |
 |---|---|
-| EL-01 | **Voice first.** The voice's character limits what tags can do (a calm voice cannot reliably shout). Pick it by listening to one sample of the same 300-character text, never by description. Keep one voice per role within an episode and its Shorts (voices are cast per episode, `voice-caster`, D-43). |
-| EL-02 | **Test before the batch.** One chunk (300-900 characters) from the middle of the script, listened to by the creator or by `voice_check`, before 24 chunks are paid. A flat or odd test costs 600 credits; a flat batch costs 15,000. |
-| EL-03 | **Chunk 400-900 characters, at paragraph/beat ends** (a house preference inside BP-14's chunk limit), same size class across chunks (very short prompts under ~250 characters are inconsistent; very long ones drift in the second half; 3P). Never cut mid-sentence. |
-| EL-04 | **Punctuation is the direction.** Comma = breath, period = full stop, `...` = a held thought (use rarely, each one slows the read), `—` = a short beat. No ellipsis inside a question. Over-use of pauses makes the read slow (Episode 1 read at 120 wpm; the target is BP-01's heard pace). |
-| EL-05 | **Tags: few, plain, where delivery changes.** `[curious]`, `[softly]`, `[slowly]`, `[dramatically]`, `[mischievously]`; a tag holds until the next one, so one at a beat start, two stacked at most. Describe how it is spoken, not what the speaker does (`[grinning]` is not performed). Tags cost credits (a tag of 11 characters is 11 credits). |
-| EL-06 | **Capitals sparingly**: one stressed word per sentence, last in the sentence (narration-script N-04). |
-| EL-07 | **Numbers, names, pronunciation.** On v4 keep numbers as written in the script's normal form; for a name the voice will misread, put IPA between slashes in the displayed text (`/ˈɡœbɛkli ˈtɛpɛ/`) and test that one sentence first. |
-| EL-08 | **Do not re-read to fix one word.** Fix a single bad word by re-reading only that sentence (or the chunk if the sentence is the chunk) and splice it in the pauses; never regenerate a 900-character chunk for one word. The splice needs the same loudness (ED-01). |
-| EL-09 | **Do not pay twice for the same words.** A Short's script is written for the Short (SH-02), but any line that already exists in the main read is cut out of it (inside pauses, UR-12; `words.json` gives the times) instead of being read again. PV-28 reports a Short whose new text passes 400 characters (REVIEW). |
-| EL-10 | **Estimate, then call once.** `estimate_only` first, record it in the ledger, then one generation per chunk with `generations_count: 1`. Never repeat a call to "retry" (it charges again). Max 3 failures per chunk (OR-04). |
-| EL-11 | **Download immediately** (links expire, 7200 s) and re-poll the status for fresh links if they did; write each chunk to disk and into the ledger as soon as it is paid (OR-03). |
-| EL-12 | **Check every chunk when it arrives, before the next is paid.** Loudness within 1.5 dB of the others (ED-01, BP-59), no clipped start/end, words match the script (coverage), timbre within the drift check (`audio/voice_check`), reading speed inside the BP-01 band (P-52). A bad first chunk stops the batch. |
-| EL-13 | **A take sounds like the channel's voice.** `audio/voice_check.check_against(take, sr, voice_id)` compares each timbre window of a new take with the baseline the voice has in `config/channel_voices.json` (tilt and centroid, the limits of the read-drift check); a window off the baseline, a voice with no baseline and a voice not registered are REVIEW, listened to before any re-read is bought. A new channel voice needs the creator's word (VC-08). |
+| EL-01 | **Choose the voice by ear, first.** A calm voice cannot reliably shout; tags cannot fix the wrong voice. Listen to one sample of the same text per candidate; keep one voice per role for an episode and its Shorts (VC rules, stage page `voice-caster`). |
+| EL-02 | **Test one chunk before a batch.** A middle chunk of the script, listened to (by the creator or `audio/voice_check.py`), before the rest is paid. A flat test costs one chunk; a flat batch costs the episode. |
+| EL-03 | **Chunk at beat ends, in one size class**, inside BP-14's limit (the house prefers medium chunks: very short ones read unevenly, very long ones drift late). Never cut mid-sentence. |
+| EL-04 | **Punctuation is the direction.** Comma a breath, full stop a stop, dash a short beat, ellipsis a held thought (rare, slows the read), no ellipsis inside a question. Too many pauses make the read slow; the target is BP-01's heard pace. |
+| EL-05 | **Tags few and plain, where delivery changes**; describe speech, not action; they cost credits. |
+| EL-06 | **One capital per sentence, last in it** (narration-script N-04). |
+| EL-07 | **Names and places first.** Decide pronunciation before the read; for a name the voice will miss, write IPA between slashes in the line and test that one sentence first (French and German place names of the Western Front are the usual traps). |
+| EL-08 | **Fix a word by re-reading its sentence and splicing it in the pauses**, at the same loudness (ED-01); never regenerate a whole chunk for one word. |
+| EL-09 | **Never pay twice for the same words.** A Short's line that exists in the main read is cut from it (`words.json` gives the times, UR-12); PV-28 reports a Short whose new text runs long. |
+| EL-10 | **Estimate, record, then call once** with `generations_count: 1`. Never repeat a call to retry (it charges again); at most three failures per chunk (OR-04). |
+| EL-11 | **Save each take the moment it arrives** (signed links expire; OR-33): download, write to disk, record in the ledger, then the next chunk. |
+| EL-12 | **Check each chunk before paying the next**: loudness within BP-59's spread of the others (ED-01), no clipped edges, words match the script, timbre within the drift check, pace inside BP-01 (PV-52). A bad first chunk stops the batch. |
+| EL-13 | **A take must sound like the cast voice**: `audio/voice_check.check_against` compares timbre windows with the baseline in `config/channel_voices.json`; a window off baseline, a voice without baseline, or an unregistered voice is REVIEW and is listened to before any re-read is bought; a new channel voice needs the creator's word (VC-08). |
 
-## Pre-flight (all free, before a paid call)
+## Pre-flight (free, before any paid read)
 
-0. Sample first ([OR-19](../../../docs/ORCHESTRATION.md)): until the creator approves the stitched two-part sample
-   (`python -m explainer_engine.production.sample status <episode>`), only the sample segments' chunks are read — the hook
-   refuses the rest, the Shorts' reads included. Chunk the sample's text so no chunk runs past the sample.
-1. `narration_lint` 0 FAIL on `narration_tts.txt`.
-2. Chunk plan from `tts_chunks` (900-character cap), characters counted with tags.
-3. Cost = characters x 1 credit; compare with the ledger cap (stop at 80%).
-4. Pronunciation list for names and places in this chunk (IPA), decided now, not after the read.
-5. For Shorts: list the lines that already exist in the main read (cut them out, do not pay) and the lines that are new (PV-28 counts them).
+0. **Sample first** (OR-19): until the creator approves the stitched two-part sample
+   (`python -m explainer_engine.production.sample status <episode>`), only the sample segments are read; the hook refuses the
+   rest, Shorts included. No chunk crosses the sample's end.
+1. `narration_lint` 0 FAIL on the TTS text; register lint clean.
+2. The chunk plan, characters counted with tags.
+3. Cost = characters at the account's rate; compare with the ledger and `config/spend_caps.json`; stop at 80 %.
+4. The pronunciation list for this chunk's names and places.
+5. For Shorts: the lines already in the main read (cut, not paid) and the new ones.
 
 ## After the read
 
-Chunk loudness is levelled and the edges faded in `production words` (ED-01); the drift check reports timbre windows. A REVIEW window
-is listened to by a human before any re-read is bought, because most are natural variation in emphasis, not a different voice.
+Chunks are levelled and their edges faded in the words stage (ED-01); Scribe gives word times (`audio/scribe_words.py`,
+skill `v-elevenlabs-speech-to-text`); the clock is built from them (`episode/timing.py`). A REVIEW timbre window is heard
+by a person before any re-read: most are natural emphasis, not a different voice.
 
-## Common waste (do not repeat)
+## Waste we have already paid for (do not repeat)
 
-- Reading whole Shorts as new text (2,575 credits in Episode 1) when part of their lines already existed in the main read.
-- Reading the whole Day 1 twice to replace a drifting voice without first testing one chunk with the new voice settings.
+- Shorts read as new text when their lines already existed in the main read.
+- A whole day's narration re-read to replace a drifting voice before testing one chunk with the new voice.
 - Reading before the script's last edit: change the text first, read once.
-- Heavy tag stacking and long ellipsis chains: slow, unstable, and charged per character.
+- Stacked tags and ellipsis chains: slow, unstable, and charged per character.
+- Four takes charged by a default left in place.
 
-## Voice performance and casting (P3b 2026-10-29)
+## Casting by measurement, choosing by ear
 
-- **Cast by measurement, choose by ear.** Every candidate voice gets one test read and a measured profile (median pitch and
-  range, rate, spectral centroid, pitch variation, emphasis, pauses, drift; `audio/voice_audition.py`); two cast
-  voices differ by at least one of BP-138's margins so VC-04 is checkable; the creator picks from the top three (VC-03).
-- **Pace** is BP-01's band, measured on the finished read. The Blueprint's slower band is conflict 2 of the curriculum;
-  the one opened study (Rodero 2020, advertising) found 180 wpm best of 160/180/200, so neither side is settled.
-- **Delivery is written, then tagged** (performance-director page): one stressed word per sentence, a tag where the
-  delivery changes, no pause before a punch line (BP-10); an animated shot's line carries pace, loudness and colour and a
-  face the lens sees (KP-17, KP-18).
-- **Consistency** across takes is checked against the voice's baseline (EL-13, `audio/voice_check.py`), never assumed.
+Every candidate gets one test read and a measured profile (pitch median and range, rate, spectral centroid, pitch
+variation, pauses, drift; `audio/voice_audition.py`); two cast voices differ by at least one of BP-138's margins (VC-04);
+the creator picks from the top three (VC-03). Pace is measured on the finished read against BP-01. A real person's voice is
+never imitated or cloned (PV-10).
 
 ### CHECKLIST (voice)
 
@@ -110,10 +130,10 @@ there, with its sources, never here.
   knob on v4, so the text sets the pace and any speed-up happens in finishing under BP-02).
 - BP-138: the casting margins between two cast voices (hypothesis, REVIEW; checklist above).
 
-## Vendored skills (W1, P-1/P-2): when to load them
 
-Upstream text lives in the `v-*` folders (pinned in `docs/VENDORED_SKILLS.md`); nothing from it is copied here.
+## Related skills and checks
 
-- Load the official ElevenLabs skills for API usage: `v-elevenlabs-text-to-speech`, `v-elevenlabs-speech-to-text` (Scribe), `v-elevenlabs-sound-effects`, `v-elevenlabs-music`. For local word timing alternatives load `v-transcription-skill`.
-- Do not call any ElevenLabs endpoint straight from the upstream examples: every paid call goes through the connector and the `.claude/settings.json` PreToolUse hook (one take, library first, OR-18). Credit rules and "never re-read" stay in this skill.
-- Validator: `explainer_engine/validators/voice.py` (planned, W2), `explainer_engine/validators/timing.py` (planned, W2), existing `explainer_engine/audio/voice_check.py`.
+API details for the connector calls: `v-elevenlabs-text-to-speech` (reads), `v-elevenlabs-speech-to-text` (Scribe),
+`v-elevenlabs-sound-effects`, `v-elevenlabs-music`; local word timing fallback: `v-transcription-skill`. Never call an
+ElevenLabs endpoint straight from upstream examples: every paid call goes through the connector and its hook (one take,
+library first, OR-18). Validators: `explainer_engine/validators/voice.py` (planned, W2), `explainer_engine/validators/timing.py` (planned, W2), and the existing `explainer_engine/audio/voice_check.py`.

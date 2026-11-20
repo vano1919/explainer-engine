@@ -1,152 +1,130 @@
 ---
 name: story-engine
-description: Run the writers' room for a Crossworld Theories dialogue "what if" episode - story skeleton, scenes with character dialogue, voice performance, edit and sound plan, voice casting and the 10-Short set - as gated Sonnet stages on one production script, each stage owning its own fields. Use for every new episode script, when a script feels dull or misses the viewer, and when the edit plan looks like a slideshow.
+description: Run the writers' room of a docudrama history episode from the creator's story to a frozen production script - two or three story variants, the series film choice, a beat skeleton with stakes and turns, scenes with dialogue inside them, delivery, the edit and sound plan, voices, Shorts and one fresh critic - as gated stages that each own their fields. Use for every new episode script, when a script feels flat, and when a stage needs to know what it may change.
 ---
 
-# Story engine: the writers' room in seven stages
+# Story engine: the writers' room (layer L2, stages S1-S3)
 
-## Vendored methods (W8 phase B): when to load which
+Rewritten 2026-11-20 under RW-50 ([docs/SKILL_LAYERS.md](../../../docs/SKILL_LAYERS.md)). The method behind each stage comes
+from the vendored screenwriting skills (`v-sw-premise-theme`, `v-sw-story-structure`, `v-sw-scene-craft`, `v-sw-dialogue`,
+`v-sw-workflow`, all rewritten for us); this page owns the order, the owners, the gates and the fields. The rule ids live in
+[STORY_ENGINE](../../../docs/STORY_ENGINE.md) (ST story, SC scenes, DW dialogue, PF performance, MO motion, AL sound layers,
+VC casting, SS Shorts); numbers live in the sourced registry ([SOURCED_RULES](../../../docs/SOURCED_RULES.md), BP ids).
 
-The method comes from the vendored `v-*` skills (pins and licences: `docs/VENDORED_SKILLS.md`); this page keeps the
-channel's gates, owners and fields. Load a vendored skill only at the stage named here, read it whole (SK-1), and never
-paste its text into a prompt or a file: name it and give the stage the path.
+## What we are making
 
-| Stage | Load | What stays ours | Checked by |
+An 8-15 minute English docudrama for a US audience: a true historical event told as a story, with the narrator carrying
+about 70 % of the spoken words and the heroes about 30 % inside played scenes (D-99, BP-105). The story is the product;
+hooks, motion and sound only turn the viewer toward it (the creator, 2026-10-20). Every factual sentence maps to a claim
+with a source (invariant 5, skill `science-grounding`); the drama lives in what people do, never in invented facts.
+
+A good episode has a **spine**: one person or small group, one question the viewer can hold in one breath (yes/no,
+ST-01), and a clock ("by Christmas morning", "before the ice breaks"). If the topic has no spine yet, the research is not
+finished.
+
+## The order of work (the creator's rules 0 and 20, then the stages)
+
+| # | Stage (page in `.claude/agents/`) | Writes | Gate (free) |
 |---|---|---|---|
-| 0 premise (before 1) | `v-sw-premise-theme` (premise, controlling idea, logline, subject tests) | one-sentence premise, yes/no dramatic question, promise; the twelve-premise scoring and the creator's card (VP rules) | `scripting/story_lint.py` (ST-00), `scripting/variant_plan.py` |
-| 1 skeleton | `v-sw-story-structure` and its `reference.md` (acts, midpoint, turns, openings and endings) | the three beat templates A/B/C, BUT/THEREFORE joins, every number (midpoint share, turn gap, loop interval) | `scripting/story_lint.py` (ST-02, ST-12, ST-13, ST-05, ST-06) |
-| 1, 2 | `v-sw-workflow` (stage order and story bible as a method only) | our stage table and `stage_guard`; the project state lives in the episode folder, never in a `story-bible.md` | `scripting/stage_guard.py` |
-| 2 scenes | `v-sw-scene-craft`, `v-sw-dialogue` (through our overlay `dialogue-scenes`) | scene header, narrator hand-off unit, one-voice narration | `scripting/scene_lint.py` (SC rules, PV-48) |
-| 3 to 7 | none | performance, edit, voices, Shorts and critic stay our pages in `.claude/agents/` | `stage_guard`, `production.editorial_gate` |
+| 0 | research (orchestrator; skills `science-grounding`, `v-fact-check-workflow`) | claim map C-xx, dossier | every number has a claim, sources graded |
+| 0b | **story variants** (`story-architect` step 1b) | two or three short story variants (half a page each: spine, question, three turns, ending) in `script_variants.json` (`scripting/variant_plan.py`, VP rules) | the creator picks one (project rule 0: the short story is approved before any script) |
+| 0c | **series film** | two or three successful films set in that era, one line each on what they look like, a recommendation | the creator picks the film (rule 20); it becomes the one style lens (skill `v-director-cinematic`) |
+| 1 | `story-architect` | `drama` (premise, yes/no question, promise, loops, set-ups, needs), `cast` with want and flaw, the segment skeleton, the beat template (A/B/C), every dialogue segment's `scene` header | `story_lint` 0 FAIL, headers complete (PV-48) |
+| 2 | `scene-writer`, one segment per call (skill `dialogue-scenes`) | segment `lines`: text, speaker, claims, `to`, `intent` | `stage_guard writer`, PV-12, PV-33, PV-48 |
+| 2b | `beat-writer`, same segment (skill `visual-beats`) | line `visual_beats`; opt-in cues, each with its story `event` | `stage_guard beats`, PV-44 |
+| 3 | `performance-director` (skill `elevenlabs-voice`) | tags, the one stressed word, tone, pauses; words frozen | `stage_guard performer`, PV-12 |
+| 4 | `edit-planner` | shots and routes, motion, the sound bed and events, music, the edit plan per video shot (VL-01) | `stage_guard editor`, `validate` |
+| 5 | `voice-caster` (skill `voice-search`) | `voice`, `cast.<id>.voice` | `stage_guard caster`, PV-10, PV-32 |
+| 6 | `shorts-writer` (skill `shorts-for-video`) | `shorts` | `stage_guard shorts`, PV-28, PV-34 |
+| 7 | `script-critic`, spawned fresh | `editorial_review.json` with findings routed to their owners, and the one-page Georgian `story_page.md` | `production.editorial_gate`; at most two rounds |
+| - | **creator approval of the script** (OR-17, `scripting/script_approval.py`) | | nothing is paid before it |
 
-`sw-*` skills link to `../sw-workflow/terms.md`; that file is `.claude/skills/v-sw-workflow/terms.md` here (vendored text is not edited).
+Each stage starts by reading its page and the files the page names, and records it with `stage_guard start`; `stage_guard
+fresh` flags an output written from memory (OR-32). The main agent runs stages 0-6 itself in order and stops at the first
+failed gate; only the critic is a separate agent with a fresh context (OR-20, D-79). On a v4.3 script the same stages own
+the v4.3 fields (`edit_plan`, `av_contract`, `sound_events`, `intentional_silence`, a segment's `mood` and `music`, a
+place's `ambience_bed`); the owner table is in STORY_ENGINE ("The v4.3 episode script: who owns the new fields").
 
-**Not used:** the upstream hand-off to a novel project, Chinese-opera and series (TV) branches of `v-sw-workflow`, and any
-upstream page-count or screenplay-format rule: a 10-minute explainer has its own measured numbers in the validators.
-**Known gaps (no validator yet, W2 owns them):** on a `schema_version 4.0.0` script `story_lint` runs ST-02, ST-13, ST-14 and
-ST-21 plus the V4 rules only, and `scene_lint` v4 lacks SC-07..SC-09, SC-11 and SC-12. Until W2 closes them, the critic reads
-those rules by hand and says so in its report; do not claim a pass for a rule that did not run.
+## Building the skeleton (stage 1)
 
-Rules: `docs/STORY_ENGINE.md` (ST story, SC scenes, DW dialogue, PF performance, MO motion, AL sound layers, VC casting,
-SS Shorts) plus the existing N, EL, ED, SH, PV rules. Research behind them: `docs/research/STORY_EDIT_VOICE_2026-10-19.md`
-and, for the /3 scene system, `docs/research/STORYTELLING_EDITING_2026-10-19.md`.
-The output is ONE `production_script.json` (D-43): text, voices, pictures and prompts, sounds and the edit, written
-before anything is paid for (project rule 1). New episodes are `production_script/3`; a `/2` keeps its old contract.
+**Premise.** Load `v-sw-premise-theme`. Write the premise as a value plus its cause ("men stop a war for one night because
+the enemy sings the same carol"), the dramatic question as yes/no, and the promise of the title. Test the controlling idea
+against its counter-idea: the episode is strongest when the opposite was also possible (orders, snipers, officers).
 
-For historically grounded docudrama episodes, read `docs/research/DOCUDRAMA_REFERENCE_LIBRARY.md` before story planning. It is an offline-first reference pack with original structural analyses and an original demonstration scene because the runtime may not have external-web access. Use its fully inspected source notes as craft evidence; do not treat partial subtitle listings as analyzed transcripts, do not depend on opening its external URLs, and do not copy full copyrighted scripts into prompts or the repository. Preserve the existing engine and propose the smallest tested change only if the source analysis reveals a real gap.
+**Structure for a 10-minute docudrama.** Load `v-sw-story-structure` for the vocabulary (inciting incident, progressive
+complications, midpoint, crisis, climax, resolution). Our length compresses it:
 
-## Why stages (and why a mid-size model can do it)
+| Part | Share of the runtime (the clock measures; BP-75 holds the midpoint band) | Job |
+|---|---|---|
+| Cold open | first 30 s | the most striking true moment, the question, the promise (BP-03, BP-04) |
+| Setup | to about 15 % | the world, the hero's want, the clock; context only after the tension (BP-05) |
+| Escalation | to the midpoint | each segment a complication; joins are BUT or THEREFORE, never "and then" (ST-02) |
+| Midpoint | mid-story (ST-12) | a revelation that changes what the hero wants or what the viewer believes |
+| Crisis to climax | the last third | the hardest choice, played as the longest scene with dialogue (ST-18) |
+| Resolution and coda | the last tenth | the answer to the question, the real record, the cost, one image that stays |
 
-A single prompt that writes story, dialogue, tags, shots and sounds at once loses the story: the technical layer crowds
-out the plot. Each stage below gets a small, fixed input, writes only its own fields, and passes a free check before the
-next stage starts. `scripting/stage_guard.py` proves a later stage did not rewrite an earlier one (the words are frozen
-after stage 2). Every stage has a page in `.claude/agents/`; the main agent (the orchestrator or the session) runs the stages
-itself in order, following each page, and stops at the first failed gate. Only stage 7, `script-critic`, is spawned
-as a separate agent with a fresh context (OR-20, D-79).
+A turn lands at least every BP-76 gap (ST-13); every segment after the opening names what is lost if it goes wrong (ST-03);
+at least two turning points of different kinds (ST-07); a set-up planted in the first third decides the end (ST-06); loops
+are declared and paid in order (ST-05); at least three human needs are each served by a segment (ST-08).
 
-| # | Stage (agent) | Writes | Gate (free) |
-|---|---|---|---|
-| 0 | research (orchestrator, skill `science-grounding`) | claim map C-xx, dossier | sources graded, every number has a claim |
-| 1b | variant planner (`story-architect` step 1b, OR-31) | `script_variants.json`: two or three priced variants (`scripting/variant_plan.py`, VP rules) | Opus thread + critic score + the creator's card; the pick binds the script (ZI-07, ZI-08) |
-| 1 | `story-architect` | `drama`, `cast`, segment skeleton, the beat-template choice (A/B/C), each dialogue segment's `scene` header | `story_lint` 0 FAIL (ST-00 FAIL on /3), PV-48 headers complete, REVIEWs answered |
-| 2 | `scene-writer` (one segment per call, skill `dialogue-scenes`) | segment `lines` (text, speaker, claims, `to`, `intent`) as the hand-off unit | `stage_guard writer`, PV-12, PV-33, PV-48 (SC-01..SC-10) |
-| 2b | `beat-writer` (same segment, right after the writer) | line `visual_beats`; cues OPT-IN, each with its `event` (skill `visual-beats`) | `stage_guard beats`, PV-44 (/3 semantics) |
-| 3 | `performance-director` | tags, emphasis, tone, emotion, pauses, interjections | `stage_guard performer` (words frozen), PV-12 |
-| 4 | `edit-planner` | shots, motion, accents, bubbles, graphics, beds, sfx, music; ED-14 coverage per scene (establish -> listener reactions -> <=4 A/B alternations, J/L 0.5-2 s, one music per chapter, one planned dropout) | `stage_guard editor`, `validate`: PV-24, PV-35, PV-36 |
-| 5 | `voice-caster` | `voice`, `cast.<id>.voice` (traits, candidates) | `stage_guard caster`, PV-10, PV-32 |
-| 6 | `shorts-writer` | `shorts` (10, at least 6 styles) | `stage_guard shorts`, PV-28, PV-34 |
-| 7 | `script-critic` (fresh context) | findings only, each to its owner stage; writes `editorial_review.json` (`editorial_review/2` on /3: the integrated production-coherence pass, D-60) | SCRIPTING_SPEC gates + `production.editorial_gate` (EG), no "bored" window; at most 2 rounds; a passing review comes with `story_page.md` (Georgian, one page, the whole story and why it is well told, BP-89, EG-23) |
-| - | creator approval #1 | | nothing is paid before it |
+**Beat templates.** A (three-act with seven points, the default), B (Save the Cat compressed), C (mystery ladder for a
+"how did this happen" episode). The choice is recorded in `drama`.
 
-**v4.3 episode (D-131; Fable audit 2026-11-13).** On a `ProductionScriptV4` the same stages own the v4.3 fields
-(`edit_plan`, `av_contract`, `sound_events`, `intentional_silence`, a segment's `mood`/`music`, a character's
-`voice_description`, a place's `ambience_bed`); the table of owners is in [STORY_ENGINE](../../../docs/STORY_ENGINE.md)
-"The v4.3 episode script: who owns the new fields", and `stage_guard` checks it on the v4 keys.
+**Heroes.** Real people from the claim map, named (never "a soldier" when the record has a name). Each speaking hero gets
+a want, a flaw and a speech card (DW-11, skill `narration-script` for the register examples); the lead also a need and a
+change (ST-04). Pair opposites: the officer and the private, the believer and the cynic. A hero's lines are only what the
+record allows him to plausibly say; quotations from the record are short and sourced.
 
-**The re-read rule (OR-32).** Each stage starts by Reading its page and the files the page says to read first, and records it with
-`stage_guard start`; `stage_guard fresh` reports an output with no such record. The reason: the whole writers' room in one
-context squeezes about 135 thousand tokens of rules into a summary, and a stage written from a summary breaks rules its page states.
+**Scenes.** Every segment with dialogue gets its header before a line exists (SC-01; field guide in skill
+`dialogue-scenes`). A docudrama scene is small and concrete: one place, one present moment, two wants that collide.
 
-**Branch switch (A5).** Today (D-79) the main agent runs every stage inline and spawns only the critic. If the creator confirms D-81
-(stage workers), `config/model_routing.json` gains `"stage_mode": "worker"` (a protected edit, his word only) and the orchestrator
-spawns each stage page as a worker with that page's model and effort; the code reads a missing `stage_mode` as `"inline"`.
+## Writing, beats, delivery, edit, voices, Shorts (stages 2-6)
 
-## 1. The skeleton first (story-architect)
-- Twelve premises, scored; the winner gets a one-sentence premise, a yes/no dramatic question and a promise.
-- Heroes: each speaking hero has a want and a flaw (ST-04); the lead also a need and a change. Opposites talk best: the
-  theorist and the hands-on one, the optimist and the cynic.
-- One of the three beat templates of `docs/STORY_ENGINE.md` (A three-act/7-point default, B Save-the-Cat compressed,
-  C mystery reveal ladder), recorded in `drama`; the midpoint in BP-75's word-share band (ST-12), a turn at least every
-  BP-76 gap at BP-01's heard pace (ST-13). Every join is BUT or THEREFORE (ST-02).
-- Every dialogue segment gets its `scene` header (SC-01): place, present, why_now, opposing wants, value and charges,
-  the turn with its conflict mode, the exit, surface_topic and real_subject (skill `dialogue-scenes`).
-- Loops and set-ups are written before lines: L01 the dramatic question, a forward-pointing line or smaller loop at least every BP-42 interval (150 s), a
-  set-up planted in the first third that decides the end (ST-05, ST-06).
-- Needs: pick at least three from curiosity, stakes, humour, wonder, fear, identity, justice, belonging, competence,
-  surprise, and give each a segment (ST-08). Objectivity is labelled per segment (ST-09); on /3 nothing spoken says the
-  story is invented (SC-08, SC-11): the title and the description carry it. Show, don't tell (SC-12): heroes are what
-  they do. When the script is finished, the creator reads and approves it (OR-17) before anything is paid.
+- **Scenes** go one segment per call. The writer gets the whole skeleton (the map) but only its local text (the
+  territory): this segment's header, the cast cards, the last three lines before it, the next beat, its claim ids. It never
+  sees shots or tags. Hand-off unit: narrator in on the pressure, the scene of 5-12 beats, narrator out on the consequence.
+- **Visual beats** follow at once on the same frozen words: something new on screen wherever new information lands, the
+  listener's reaction on the line that lands, cues only where a named event earns one.
+- **Delivery** never changes a word (`stage_guard performer` proves it).
+- **Edit and sound** plan per segment: the route of every shot (D-131 shares, `episode/router.py`), one action and one camera
+  behaviour per video shot (D-132 clips speak their one line, VL-02), the continuous sound bed of each scene and at least
+  three effects tied to visible events, music by chapter, one planned dropout before the biggest reveal, J and L cuts on
+  scene cuts, visual-association bridges between scenes, maps last.
+- **Voices**: traits to library search to three candidates; a real person is never imitated or cloned (PV-10).
+- **Shorts**: up to ten, from the frozen script, styles alternating (SS-01, SS-02).
 
-## 2. Scenes (scene-writer), one segment per call
-Input is small on purpose: the skeleton (one line per segment), this segment's drama AND its `scene` header, the cast
-voice bibles, the last three lines before it, the next beat, its claim ids. The writer never sees shots or tags, so it
-cannot drift into them. It loads the skill `dialogue-scenes` and writes the hand-off unit: narrator in on the pressure,
-a played scene of 5-12 beats where every line carries `to` (and `intent` where it fits), narrator out on the
-consequence. Scene and dialogue rules SC-01..SC-10 and DW-01..DW-13 in `docs/STORY_ENGINE.md`; narration rules N-01..N-10
-in `narration-script`.
+## The critic (stage 7)
 
-## 2b. Visual beats (beat-writer), same segment, before the next one is written
-While the segment's words are fresh, the beat-writer marks a beat wherever NEW information lands (within the still
-limits of BP-40 and VB-01's /3 cadence; skill `visual-beats` has the numbers) and at least one reaction-driven expression change
-per dialogue line — the listener's face on the line that lands. Cues are OPT-IN: silent by default, a cue only with its
-story `event`, density and repetition capped (VB-10/VB-11; skill `visual-beats`). It never changes a word; if the
-writer later rewrites a line, run 2b again for that line (PV-44 finds beats whose phrase is gone).
+Fresh context, reads as a viewer every 30 seconds, then walks the whole script once as one timeline (the integrated
+production-coherence pass, D-60): causality, each hero's entrance, each line against its speaker and the line before, each
+shot and cue against its instant, delivery against meaning, the estimated clock. Each finding goes to the stage that owns
+it. FAILs block the editorial gate, paid narration and paid assets until fixed and re-reviewed; any edit invalidates the
+review by hash. A rule whose check did not run is reported as not run, never as passed (known gaps: on a
+`schema_version 4.0.0` script some ST and SC rules do not run yet; the critic reads them by hand and says so).
 
-## 3. Performance (performance-director)
-Delivery only; words frozen. Tags per speaker temperament, one stressed word, pauses before reveals and after
-punchlines, interjections as reactions. Check with `stage_guard performer`.
+## Briefing a stage (when a stage is delegated)
 
-## 4. Edit and sound (edit-planner)
-Written per segment on the frozen words, with the accent vocabulary of `production/accents.py`: `wobble`, `punch`,
-`shake`, `whip_in`, `flash_in`, `pop_text`, `slam_text`; plus bubbles, data visuals (ED-10), cards (ED-09). Every hard
-accent has an effect (AL-03). On a dialogue scene follow the ED-14 coverage grammar (`docs/EDITING.md`): open on an
-establishing/two-shot 2-4 s, cut to the LISTENER on every 2nd-4th line and on news/insult/revelation, never more than
-4 strict A/B alternations without a pattern break, J/L offsets of 0.5-2 s on about a third of scene cuts, hold-length
-variance (MO-07), one music track per story chapter and ONE planned dropout of 0.5-2 s before the biggest reveal (not BP-62's
-no-music stretch: plan that one as well),
-broken by an intentional sound. Read the PV-35 report: events a minute, kinds per minute, alive share.
+Give it the rule ids and file paths, not pasted text; the exact fields it owns; the whole skeleton and only its local text;
+one segment per call; and ask for a short report table (what changed, which checks ran, what is NOT_RUN). Never ask a stage
+to "improve everything": name the finding and the owner. Script text is written by the thread's own model, never generated
+through the Claude API (project rule 15).
 
-## 5. Voices (voice-caster)
-Traits -> `audio/casting.query` -> ElevenLabs `creative_list_voices` (free) -> `casting.rank` -> three candidates.
-A real person: documented traits only (claim ids), never an imitation, never the famous category, never a clone. The
-creator picks after a one-chunk test read (EL-02).
+## What the vendored methods give and what stays ours
 
-## 6. The Shorts set (shorts-writer)
-Ten moments, ten Shorts, at least six styles from the catalog (SS-01), alternating (SS-02), each with its ending kind.
+| Vendored skill | Use it for | Ours wins on |
+|---|---|---|
+| `v-sw-premise-theme` | premise as value plus cause, controlling idea, logline tests | the yes/no question, the creator's variant card |
+| `v-sw-story-structure` | inciting incident, complications, crisis-climax-resolution, openings and endings | every number (BP ids), the beat templates, BUT/THEREFORE |
+| `v-sw-workflow` | stage discipline, a state that survives sessions | our stage table, `stage_guard`, the episode folder as the state (no `story-bible.md`) |
+| `v-sw-scene-craft`, `v-sw-dialogue` | value turns, beats, subtext, exposition as ammunition | the scene header, the narrator hand-off, one line per clip |
 
-## 7. Critic
-Fresh context, reads as a viewer every 30 seconds, sends each finding to the stage that owns it. Two rounds at most;
-then the creator decides. On a /3 the critic also walks the finished script once as ONE timeline (the integrated
-production-coherence pass, D-60): story causality, each hero's entrance, each line against its speaker and the line
-before, each shot/beat/cue against its instant, delivery against meaning, and the estimated clock — layers judged
-together, since each validator only sees its own. The result is `editorial_review.json` schema `editorial_review/2`
-(contract: `docs/SCRIPTING_SPEC.md` section 5.2; instructions: the agent file): per-layer evidence with an honest basis
-(data / estimate / instructions — never a claim to have seen unrendered media), and machine-routable findings whose
-FAILs block the editorial gate, paid narration and paid assets until fixed and re-reviewed (any edit invalidates the
-review by hash).
+Not used: page counts, screenplay format, TV-series and stage-play branches, any upstream hand-off to a novel.
 
-## Prompts for a Sonnet stage (how to brief it)
-- Give the stage its rules by ID and the file paths, not pasted text; give it the exact fields it owns.
-- Give it the whole skeleton every time (the map), but only the local text it works on (the territory).
-- Ask for one segment per call; ask for a short report table at the end (what changed, which checks ran).
-- Never ask a stage to "improve everything": name the finding and the owner.
+## The /3 inversion still holds
 
-## What changed on /3 (2026-10-19)
+Nothing goes in by default. A scene must turn a value, a cut must have a reason, a sound must name its story event, or it
+is deleted. The evidence behind every number: `docs/research/STORYTELLING_EDITING_2026-10-19.md`; for docudrama episodes
+read `docs/research/DOCUDRAMA_REFERENCE_LIBRARY.md` before story planning (craft evidence only, no copied scripts).
 
-The old contract optimised presence: a cue on every beat, a face every second, a source label on every sentence — and
-Syndicate Wars showed each mandate producing the named anti-pattern (33 cues/min, quips at the narrator, press-release
-narration). The /3 contract inverts it: **nothing is included by default** — a scene must turn a value, a cut must have
-a reason, a sound must name its story event, or it is deleted. Concretely: scene headers and addressed dialogue
-(SC-01..SC-10, PV-48), the three beat templates with ST-12/ST-13, opt-in event-bound cues (VB-08 inverted, VB-10/VB-11),
-reaction-driven faces (VB-02), hold-length variance (MO-07) and the ED-14 dialogue coverage grammar. Sources and the
-hypothesis labels for every number: `docs/research/STORYTELLING_EDITING_2026-10-19.md`.
+Rules: ST-00..ST-24, SC-01..SC-12, DW-01..DW-13 and the N, EL, ED, SH, PV rules. The output is ONE `production_script.json`
+(D-43): text, voices, pictures and prompts, sounds and the edit, written before anything is paid (project rule 1).

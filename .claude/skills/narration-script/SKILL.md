@@ -1,199 +1,127 @@
 ---
 name: narration-script
-description: Write or fix the spoken narration of a Crossworld Theories video so the AI narrator (ElevenLabs v4; the voice is chosen per episode in `production_script.json`, D-43) sounds curious, intriguing and lightly funny instead of slow, monotone and documentary. Use for every new script, every rewrite of a beat, and whenever a read comes back flat, slow, with stress or question intonation on the wrong word, or with no conversational colour.
+description: Write or fix the narrator of a docudrama history episode - the voice that carries about 70 % of the words, writes to the picture instead of describing it, opens on a hook in the first sentence, holds the question open, moves fast for the ear, and hands each scene over to the heroes. Use for every new script, every rewrite of a beat, and whenever an ElevenLabs read comes back flat, slow, lecturing, or stressed on the wrong word.
 ---
 
-# Narration script: write for the ear, then for the voice
+# Narration: the docudrama voice-over (layer L4, stage 2 and 3)
 
-## Vendored methods (W8 phase B): when to load which
+Rewritten 2026-11-20 under RW-50 ([docs/SKILL_LAYERS.md](../../../docs/SKILL_LAYERS.md)). Hook craft comes from the
+vendored `v-hook-writing` and `v-viral-hooks` (both rewritten for our long-form use); the delivery comes from
+`elevenlabs-voice`. This page owns the N rules (N-01..N-17, checked by `scripting/narration_lint.py`), the register rules
+(`scripting/register_lint.py`, RG), and the sourced numbers (BP ids in [SOURCED_RULES](../../../docs/SOURCED_RULES.md));
+a number changes in the registry with its sources, never here.
 
-- **Opening (first 30 seconds):** load `v-hook-writing` for the retention hook and `v-viral-hooks` for hook archetypes and
-  critique. Both are method only: use them to draft three hooks and to diagnose a weak one, then pick by our rules below.
-- **What stays ours:** N-01..N-17 and the sourced numbers (`docs/SOURCED_RULES.md`, BP ids), the one-narrator rule, the
-  70/30 spoken mix, the tag and capital conventions of `narration_tts.txt`, the AI-register rules, and everything about
-  the voice (`elevenlabs-voice`). Upstream advice that conflicts is overridden, for example a sound effect every few
-  seconds against the one continuous bed, or "subscribe" and greeting openers against N-01.
-- **Not used:** `v-viral-hooks` three-layer on-screen-text advice for a Short belongs to `shorts-for-video`
-  (`v-viral-youtube-shorts`); the YouTube-script structure sections of `v-hook-writing` do not replace our beat templates.
-- **Checked by:** `scripting/narration_lint.py` (N-01 hook form, N-06 question floor), `scripting/register_lint.py` (AI-register
-  words), `scripting/rhythm_lint.py`, and `scripting/claims.py` (every factual sentence maps to a claim). A hook is not
-  declared good by a vendored skill: the lint and the creator's listen decide.
+**Episode rulebook first (D-51, OR-11):** read `python -m explainer_engine.standards brief <episode>/episode_rules.json --role script` and follow it; legal, likeness and art-direction questions are decided there (docs/EPISODE_STANDARDS.md), never in this skill.
 
-**Episode rulebook first (D-51, OR-11):** read `python -m explainer_engine.standards brief <episode>/episode_rules.json --role script` and follow it; legal, licence, likeness and art-direction questions are decided there (docs/EPISODE_STANDARDS.md), never invented in this skill. A conflict goes back to the orchestrator.
+## What the narrator is for in a docudrama
 
-Crossworld Theories is entertainment first, real facts second (SCRIPTING_SPEC §8.1): a witty historian telling an
-unbelievable true story over a campfire. The voice reads exactly what is written, so **the script is the
-performance**. Every rule below fixes a defect the creator heard in a real read (2026-10-16) or a pattern measured in
-successful videos. Facts never change to serve the read: every factual sentence still maps to its claim.
+The voice-over is the spine that the reenactments, the living photographs and the maps hang on. It carries time, place,
+numbers, the record and the stakes; the heroes carry the moments. Three consequences:
 
-Files per episode beat: `narration_tts.txt` (what the voice gets: tags, capitals, interjections) and `narration.txt`
-(the same words without tags and stress capitals: captions, claim map, `words.json` alignment;
-`audio/scribe_words.strip_tags`). Run `python -m explainer_engine.scripting.narration_lint narration_tts.txt` before
-any paid read: 0 FAIL, every REVIEW either fixed or answered in one line.
+1. **Write to the picture, not about it.** The viewer already sees the candle on the parapet; the narrator says what the
+   picture cannot: "It is the first light anyone has shown on this line in nine weeks." Describing what is on screen is
+   double exposition (KP-20, ST-21) and the fastest way to sound like a slideshow.
+2. **Hand over, do not compete.** The narrator sets up a scene on its pressure and comes back on its consequence; it never
+   restates the scene's turn and never quotes a hero inside it (skill `dialogue-scenes`).
+3. **The script is the performance.** ElevenLabs reads exactly what is written, so stress, speed and colour are written
+   into the words (one stressed word, short sentences, punctuation, a few tags), never hoped for.
 
-## What the creator heard wrong in the first reads
+The tone: a gripping storyteller who knows the record, telling it as if it is happening now, in present tense where true.
+Entertainment first, facts never bent (SCRIPTING_SPEC section 8.1): every factual sentence maps to its claim, and doubt
+lives in the heroes, never in hedges on the story (SC-11, BP-88).
 
-1. **The hook question did not sound like a question.** "What happens if you drop... into the STONE AGE?" is a
-   wh-question; in English those *fall* at the end. Only yes/no questions rise.
-2. **Stress on the wrong words** and a flat melody: nothing told the voice which word carries the surprise.
-3. **Slow**: ellipses everywhere (each one is a held pause) and long sentences: 140 words a minute.
-4. **No pull to the next beat**: sections ended on a closed fact, so nothing made the viewer wait for what came next.
-5. **No conversational colour**: no "hmm", "oh", "well", no reactions; it sounded recited, like a documentary.
+## The opening (first 30 seconds)
 
-## What successful narrators do (vidIQ transcripts, 2026-10-16)
+Load `v-hook-writing` (the cold-open hook for a long video) and `v-viral-hooks` (archetypes and critique) to draft three
+hooks, then pick by our rules:
+- **N-01**: the first spoken sentence is the hook in one of BP-03's four forms (a question, a cold-open incident line, a
+  claim with a number, a preview of what the viewer will see); never a greeting, the channel name, "today we look at" or
+  "subscribe" (FAIL). A question hook is yes/no so the pitch rises ("Could two armies stop a war for one night?"); a
+  wh-question falls in English and sounds like a statement.
+- **N-11**: inside BP-04's opening words the script confirms the title's promise and opens one named gap; the central answer
+  waits until the last tenth. **BP-05**: no pure background sentence (a date, a definition, a biography) before the gap.
+- The docudrama cold open is usually **the strangest true moment, in present tense, in one or two short sentences**, then the
+  question: "Christmas Eve, 1914. A German soldier climbs out of his trench. He is unarmed. He is singing."
 
-| Video (views) | Pattern worth copying |
-|---|---|
-| Bernard Films, "Could a Modern Scientist Survive in The Stone Age?" (8.5 M, 1 min) | yes/no hook question; "Day one." "Day three." as beat markers; one action per sentence; ironic aside ("The tribe watches you collect useless stones all day."); a twist character (Socrates) and an open ending ("And now they all have questions.") |
-| Quantummysteries, "A Scientist Appears in the Stone Age" (2.4 M, outlier 417x) | short present-tense sentences; a reversal line after every win ("The laughter stops."); fragments for speed ("Shaman uses mud. Useless.") |
-| What If (Underknown), "What If You Lived in the Stone Age?" | spoken openers ("Alright, grab your bone flute and gather around the fire."); question then answer with "Well," ("Why is this still a mystery? Well, that's because..."); one-line reactions ("Yeah, good luck with that."); ends on a tease for another episode |
-| Bright Side, "What If You Had to Live a Day in the Stone Age" (2.5 M) | constant direct address; interjections at real moments ("Oh, finally there's an ember, good job!", "Oh no! It got away."); a question every few sentences ("Need a fork? Way too early for that thing.") |
+## The middle: keep the question open
 
-Common to all four: short sentences, a question every 20-30 seconds (an observation; the checked floor is N-06, BP-17), a reaction after each reveal, and the
-end of every section pointing at the next problem. None of them sounds like a lecture.
+- **N-02**: every beat ends on an open loop (the next danger, question or promise), never a closed fact; pay each loop
+  within the next beat or two (ST-05). Open a smaller loop at the start of a long beat ("Here is the strange part.").
+- **N-06**: a question at least every BP-17 words; a wh-question short and answered at once ("Why? Because...").
+- **Joins**: so, but, then the problem; never "and then" (ST-02, ST-20).
+- **Numbers for the ear (N-13, BP-08)**: one numeral per sentence, rounded unless the exact figure is the point, and every
+  number that matters is also on screen (ED-10).
+- **No press-release lines (N-14, BP-15)**; sources are never spoken, they live in the claim map and the description.
 
-## The rules (N-01..N-17 are checked by `narration_lint`; the numbers live in the sourced rules at the end)
+## Sentences for the ear
 
-### Questions
-- **N-01 The first spoken sentence is the hook, in one of the four forms of BP-03**: a question, a cold-open incident
-  line, a claim with a number, or a preview of what the viewer will see; never a greeting, the channel name, "today we
-  look at" or "subscribe" (FAIL). When the hook is a question, make it a yes/no question so the pitch rises: "Could the
-  greatest minds in history survive the Stone Age?", not "What happens if...". A wh-question is allowed later, short,
-  and usually answered at once ("Why? Well...").
-- **N-11 The 30-second contract (BP-04)**: inside the opening words the script confirms the title's promise and opens
-  one named gap (a question or a "but/until" turn); the central answer waits until the last tenth. **BP-05**: no pure
-  background sentence (a date, a definition, a biography line) before that gap sentence; context comes after the tension.
-- **The stressed word of a question goes last**, right before the "?", so the rise lands on it: "...survive the Stone
-  AGE?" rather than "...SURVIVE the Stone Age?" when the age is the surprise. One capital at most (N-04).
-- **N-10 No ellipsis inside a question**, and no wh-question over BP-18's word cap (12): both flatten the contour.
-- **Answer a question with a reaction word first**: "Two hands go up. Two! Out of a hundred." / "Who takes charge?
-  Oh, you already know who."
-- **N-06 At least one question per 150 words** (BP-17; about one a minute at BP-01's pace); a rhetorical question is the cheapest
-  way to wake a listener up.
+- **N-05**: sentence length within BP-06 (a REVIEW cap, a FAIL cap, a median for the ear); fragments are fast and allowed.
+- **N-12**: contractions always, never the -'ve forms (BP-07: the ear hears "would of"); active voice; "you" to one listener
+  where the format allows it.
+- **N-04**: one capitalised word per sentence, on the word that carries the surprise, never on a function word; put that
+  word at the end of the sentence, where English stresses it: "The order was not to fire. They didn't NEED one."
+- **N-03**: at most one ellipsis per beat (BP-16); each is a held pause, used before the one reveal.
+- **N-10**: no ellipsis inside a question, and a wh-question within BP-18's cap.
+- **The twist lands short**: the sentence that turns the story fits BP-115's estimate (`scripting/syllables.py`); a long twist
+  becomes two sentences with the turn in the second.
+- **Pace**: the heard pace of BP-01; engagement rises with pace (D-49). Pace comes from the text, not from settings.
 
-### Stress and melody
-- **N-04 One capitalised word per sentence, on the word that carries the surprise** ("That's the ONLY magic.",
-  "It's KEEPING it."). Never two; never on a function word; never on a name just because it is a name.
-- Put the important word at the **end of the sentence** (English stresses the end): "Fire was not the problem.
-  Keeping it was." is stronger than "Keeping it was the real problem."
-- **Contrast pairs carry melody**: "Not freezing. Damp." / "The hard part isn't making it. It's keeping it."
+## Conversational colour, docudrama-sized
 
-### Tone of the what-if episodes (creator 2026-10-16)
-- Scientific what-if: mostly drama and curious telling with honest doubt, humour in small doses (SR-07); the density and
-  placement of the jokes follow BP-09 (at most one verbal joke per 60 s, the first inside 45 s, beside the fact). Ground the story in what is established, but never hedge the story itself ("we can only reason", "we cannot know for sure", "this is hypothetical" are SC-11 FAILs, BP-88): the narrator tells it as if it is happening now, and doubt lives in the heroes. Show, don't tell (SC-12, BP-87): never name a hero's trait, rating or biography; narrate what they do. Each period ends on the question that opens the next (SR-03).
+- **N-07**: interjections where a person would really say them, about BP-17's rate, never two in a row, never inside a
+  factual sentence (N-08). A docudrama narrator uses fewer than a comedy narrator: "Well," "Then," "Still," a dry one-line
+  reaction ("Nobody fires.").
+- Humour comes from the situation and from understatement after a big moment (BP-09: beside the fact, the first early,
+  never more than one verbal joke per BP-09 interval); never from a false fact, never at the expense of the dead.
 
-### Pace
-- **N-03 At most one ellipsis per beat** (BP-16: two is a REVIEW, more a FAIL). Each `...` is a held pause; use it only before the one reveal of that beat.
-  For speed use full stops, dashes and fragments. The ellipsis is the emphasis rule of BP-10: emphasis comes from the
-  text (one stressed word, one ellipsis, a tag), never from a held silence, and never a pause before a punch line.
-- **N-05 Sentence length follows BP-06** (a REVIEW cap, a FAIL cap and a median for the ear). Fragments are allowed and
-  fast ("A convex lens. The afternoon sun. One bright point on the grass."); one idea per sentence.
-- **N-12 Contractions always** ("what's", "isn't", "they're"): they speed the read and sound like talk; never the -'ve
-  forms (BP-07: the ear hears "would of"). Active voice, subject first, present tense where it is true, and "you" to
-  one listener regularly (BP-07).
-- **N-13 Numbers for the ear (BP-08)**: one numeral per sentence, rounded unless the exact figure is the point, and
-  every number that matters is also shown on screen (ED-10).
-- **N-14 No press-release lines (BP-15)**: never "comes out on", "is now available", "launches on", "according to the
-  official", "as reported by"; the fact lives in the claim map, the line in the story; sources are never spoken.
-- **N-16 No AI-register word (BP-140, FAIL)**: a word of the tier-1 list, or a sentence-initial Additionally, Moreover or
-  Furthermore, in anything the viewer hears or reads. The list lives in the registry only; `scripting/register_lint.py` reads it.
-- **N-17 Little soft register, no structural tells (BP-114, REVIEW)**: the soft words and phrases and the densities of
-  triplets, "It's not X. It's Y." pivots, participial tails, em dashes and "rather than" chains (RG-02..RG-04).
-- Target pace for this channel: the heard pace of **BP-01** (the first read was 140; the v3 test 168; D-49: engagement
-  rises with pace and recall peaks near the top of the band).
+## Audio tags (ElevenLabs v4)
 
-### Open loops
-- **N-02 Every beat ends on an open loop**: the next question, danger or promise, never a closed fact. Patterns:
-  "But a rule won't keep anyone warm." / "And the sun is already sinking." / "Then the wind changes." /
-  "Which raises a problem nobody saw coming." / last beat: tease the next episode ("And tomorrow? Tomorrow they need a
-  pot.").
-- **Pay every loop off** within the next one or two beats; a loop that never pays off feels like a trick.
-- Open a smaller loop at the start of a long beat ("Here's the strange part.") so the middle does not sag.
+- **N-09**: tags describe how the line is spoken (`[softly]`, `[curious]`, `[dramatically]`, `[whispers]`, `[sighs]`,
+  `[short pause]`), never stage directions (`[standing]`, `[music]`).
+- A tag holds until the next one: place one where the delivery changes (about one per two or three sentences). Match tags
+  to the cast voice's traits (EL-01); a calm, deep voice carries emotion with short lines and `[softly]`, not volume.
+- No SSML on v4 (BP-14). Edit marks (`[DELAY: +Ns]`, `[OVERLAP: ..]`, `[CUT: ..]`) go on the speaker label, left of the colon;
+  the TTS builder strips them.
 
-### Conversational colour (interjections and reactions)
-- **N-07 Use interjections, but where they would really be said**: a reaction to a reveal ("Hmm."), surprise ("Oh."),
-  a turn ("Well,"), moving on ("Right."), trouble ahead ("Uh-oh."), a realisation ("Ah."). About one per 60 words,
-  never two in a row, never inside a factual sentence (N-08: they open a sentence or stand alone).
-- Pair them with the matching tag when the sound matters: `[chuckles]`, `[sighs]`, `[gasps]`, `[clears throat]`.
-- Reactions as short lines are often better than sounds: "Yeah. Good luck with that." / "Somebody write that down."
-- Humour comes from the situation (geniuses as confused tourists), dry understatement after a big moment, and the
-  characters' reactions; never from a false fact (SCRIPTING_SPEC §8.1).
+## Cuts and timing
 
-### Audio tags (ElevenLabs v4)
-- **N-09 Tags describe how the line is spoken**, never stage directions (`[standing]`, `[music]` are not performed).
-  Known delivery tags: `[curious]`, `[excited]`, `[mischievously]`, `[dramatically]`, `[sarcastic]`, `[warmly]`,
-  `[cautiously]`, `[whispers]`, `[softly]`, `[surprised]`, `[nervous]`, `[deadpan]`, `[pause]`, `[short pause]`,
-  plus sounds `[chuckles]`, `[laughs softly]`, `[sighs]`, `[gasps]`, `[exhales]`.
-- A tag holds until the next one: place one where the delivery changes (about one per 2-3 sentences), not on every
-  sentence. Match tags to the episode's cast voice (EL-01, `cast.<id>.voice.traits`): a playful voice takes
-  `[mischievously]`, `[sarcastic]`, `[dramatically]` well, a calm one does not.
-- v4 has no speed or stability control through the connector; pace comes from the text.
+Every place the picture should change needs a written mark (full stop, comma, dash, question mark; UR-12).
+`audio/pause_pad.py` widens punctuated gaps after the read; never rely on a comma alone for a cut in the first 30 seconds.
+A long sentence with no marks leaves the opening with no legal shot layout (UR-02): split it.
 
-### Named heroes and friction (D-40, UR-21)
-- Name the real people. The narration says "Franklin", "Newton", "Nansen", never "one of the scientists"; the pictures show
-  them (skill `shot-visuals`). Anonymous "someone" is for crowds only.
-- Give each hero a line that sounds like their archetype (`look.archetypes`): Newton objects, Einstein improvises, Franklin
-  organises, Nansen says what survival actually takes. Humour is their reaction to the situation, never a false fact.
-- Say what is at stake in each beat in plain words (cold, no fire, bad water, hunger, dusk): the picture will show it, so the
-  line must give it a reason.
+## Files and procedure
 
-### Cuts and timing (the edit depends on it)
-- Every place the picture should change needs a written mark (full stop, comma, dash, question mark) (UR-12).
-  ElevenLabs reads commas and dashes in 0.05-0.1 s, so `audio/pause_pad.py` widens punctuated gaps to 0.26 s after
-  the read; never rely on a comma alone for a cut in the first 30 s.
-- A long sentence with no marks (more than about 4 s) leaves the first 30 s with no legal shot layout (UR-02):
-  split it.
+Lines live in `production_script.json` (D-43, [PRODUCTION_SCRIPT](../../../docs/PRODUCTION_SCRIPT.md)): per line the text,
+tags where delivery changes, the one `emphasis` word, `tone`, `emotion`, `pause_after`; `compile` derives `narration.txt`
+(no tags, normal case: captions, claim map, word alignment via `audio/scribe_words.strip_tags`) and `narration_tts.txt`
+(what the voice gets). The narrator is described in `voice.style` in words only, never "like <a real person>" (PV-10).
 
-## Voice direction lives in the production script (D-43)
-Write each segment's lines in `production_script.json` (`docs/PRODUCTION_SCRIPT.md`), not in loose text files: per line the text, the
-tags where delivery changes, the one capitalised `emphasis` word, `tone`, `emotion` and `pause_after`; `compile` derives `narration.txt`
-and `narration_tts.txt`. The narrator is described in `voice.style` in words only (soft, deep, calm, warm, mature, quietly emotional);
-never "like <a real person>": no imitation, no cloning (PV-10). The creator picks the voice from `voice.candidates` after a short test
-read; with a soft deep voice, carry emotion with short lines, a held `pause_after`, `[softly]`, `[whispers]`, `[sighs]`, not with volume.
+1. Write the beat plainly, facts first, claim ids beside every factual sentence.
+2. Rewrite for the ear: hook form, the gap inside the 30-second contract, short sentences, contractions, one stressed word,
+   a question on the cadence, an open loop at the end of every beat.
+3. Write to the picture: strike every sentence that describes what the shot already shows.
+4. Add tags only at delivery changes.
+5. `python -m explainer_engine.scripting.narration_lint narration_tts.txt` and `python -m explainer_engine.scripting.register_lint <script>`:
+   0 FAIL, every REVIEW fixed or answered in one line.
+6. Read it aloud at BP-01's pace; cut whatever you stumble on.
+7. A paid test read of the first 45-60 s only, estimated and logged first; the creator listens; then the full read.
+8. After the read: Scribe word timings, `pause_pad`, the clock (`episode/timing.py`), and the creator listens again.
 
-## Procedure
+## One narrator tells the dialogue (D-68)
 
-1. Write the beat plainly, facts first (claim ids next to each factual sentence in the working notes).
-2. Rewrite for the ear: the hook in one of the four BP-03 forms (a yes/no question rises best); the gap opened inside
-   the 30-second contract (BP-04) with no context before it (BP-05); short sentences; contractions; one stressed
-   capital per sentence; one question per minute; an open loop at the end of every beat; interjections where a person
-   would say them; the first laugh early and beside the fact (BP-09).
-3. Add tags at delivery changes only; write `narration_tts.txt`; derive `narration.txt` (no tags, normal case).
-4. `narration_lint` → 0 FAIL; fix or answer every REVIEW.
-5. Read it aloud at the BP-01 pace; anything you stumble on, cut.
-6. **Paid test read of the first 45-60 s only** (estimate first, log it); the creator listens; then the full read.
-7. After the read: Scribe → `scribe_words` → `pause_pad` → `build_shots` (0 FAIL) → the creator listens again.
+In a narrated real-person episode the narrator performs every quoted word: name the speaker before the quote ("Haig
+writes, ..."), paraphrase the setup and quote only the strongest words, tell characters apart by attitude never by pitch
+or accent, write the attitude into the words first, and return to the narrator's own tone after the quote. Full-cast
+episodes give each hero a fixed voice instead (D-90).
 
-## Sources
+## AI register: write like a person (N-16, N-17)
 
-ElevenLabs, "Prompting Eleven v3/v4" (capitalisation increases emphasis; ellipses add pauses and weight; dashes give
-short pauses; tags describe delivery; text structure strongly influences v4): https://elevenlabs.io/docs/best-practices/prompting ·
-Intonation of questions: yes/no questions rise, wh-questions fall (Hedberg et al., CLA 2010,
-https://cla-acl.artsci.utoronto.ca/pdfs/actes-2010/CLA2010_Hedberg_et_al.pdf; https://pronuncian.com/yes-no-question-intonation) ·
-Open loops and pattern interrupts in YouTube scripts: https://joyspace.ai/open-loop-technique-force-viewers-watch-end,
-https://www.overseeros.com/blog/youtube-storytelling-techniques-6-ways-keep-viewers-watching-longer ·
-vidIQ transcripts read 2026-10-16: aeKrIhktzqU, BTNUK1SCoo4, vS5BmHsuvvk, agRKo_sEb4I (patterns only; no text copied
-into our scripts).
-
-## AI register: write like a person, not like a model (N-16, N-17; P3b 2026-10-29, P3 2026-10-30)
-
-The creator's point 1 of the blueprint review: lines that read as machine prose break the story. Studies of large text
-corpora show that certain style words rose sharply after language models arrived (arXiv 2404.01268, 2406.07016; the
-abstract pages prove the drift, not our list). The words two or more independent studies flag are a house FAIL by the creator's
-word (BP-140, N-16); the rest and the densities are hypotheses we measure (BP-114, N-17). The lists are in the registry
-only and `python -m explainer_engine.scripting.register_lint <script>` is the check: no copy of them here. What to do:
-
-- **Say the thing.** "Napoleon delves into the map" becomes "Napoleon stares at the map"; "a tapestry of alliances"
-  becomes the alliances by name; "a testament to his nerve" becomes the act that shows the nerve (show, don't tell, BP-87).
-- **Density for the soft tier, a hit for the hard tier.** One soft hit proves nothing (BP-114 counts hits per 300 words); a
-  tier-1 word fails at once. A literal use is allowed through `register_allow.json` next to the script, with a reason and a
-  note (RG-05): a landscape of hills, a journey of 300 miles.
-- **Structural tells** (the critic reads them, CRAFT-SCR-02): three adjectives or clauses stacked for rhythm; a sentence
-  that opens with "Imagine"; a rhetorical question opening every segment; em-dash chains; "not just X, but Y"; "in a world
-  where". Each is a habit, so the fix is the plain sentence the narrator would say at a campfire.
-- **The twist lands short.** The sentence that turns the story is spoken inside BP-115's estimate (`syllables.seconds`, at BP-01's pace); a long twist is two
-  sentences, the turn in the second.
-- **Causal joins.** Beats join with "so" or "but", never "and then" (ST-02).
+**N-16** (BP-140, FAIL): no tier-1 AI-register word and no sentence-initial Additionally, Moreover or Furthermore in
+anything the viewer hears or reads. **N-17** (BP-114, REVIEW): little soft register, few structural tells (stacked triplets,
+"It's not X. It's Y." pivots, participial tails, em-dash chains, "rather than" chains; RG-02..RG-04). The lists live only in
+the registry; the lint reads them. A literal use is allowed through `register_allow.json` beside the script, with a reason
+(RG-05). Fix by saying the thing: "the general stares at the map", not "delves into"; the alliances by name, not "a
+tapestry of alliances".
 
 ### CHECKLIST (screenwriting)
 
@@ -215,56 +143,12 @@ differ). Every row is a hypothesis until a second source type is verified ([CRAF
 
 ## Sourced rules (docs/SOURCED_RULES.md)
 
-The numbers that bind this skill live only in the registry (`explainer_engine/standards/sourced_rules.json`);
-`narration_lint` reads them from there (N-01, N-03, N-05, N-06, N-07, N-10..N-17). A number changes there, with its sources,
-never here.
+The numbers behind this page live only in `explainer_engine/standards/sourced_rules.json`, and `narration_lint` reads them
+from there: BP-01 (pace), BP-03 (hook forms), BP-04 and BP-05 (the 30-second contract), BP-06 (sentence length), BP-07
+(contractions, voice, "you"), BP-08 (numbers), BP-09 (humour), BP-10 (holds), BP-14 (no SSML), BP-15 (press-release
+lexicon), BP-16 (ellipses), BP-17 (questions and interjections), BP-18 (questions), BP-95 and BP-96 (reported speech),
+BP-105 (narrator share), BP-114 and BP-140 (AI register), BP-115 (the twist sentence).
 
-- BP-03: the first spoken sentence is the hook in one of four forms: a question, a cold-open line of at most 14 words, a claim
-  with a number, or a preview of what the viewer will see; never a greeting, the channel name, "today we look at" or
-  "subscribe" (N-01, FAIL).
-- BP-04: within the first 85 words the script confirms the title's promise and opens one named gap (a question or a
-  but/until turn); the central answer is held back until the last tenth (N-11).
-- BP-05: no pure background sentence (a date, a definition, a biography line) inside the first 85 words before the gap sentence.
-- BP-06: sentences at most 20 words (REVIEW) and never over 25 (FAIL); the median at most 12; fragments allowed (N-05).
-- BP-07: contractions, never would've / could've / should've / might've / must've; passive sentences at most 10 %; "you" or
-  "your" at least once per 100 words; present tense where it is true (N-12).
-- BP-08: at most one numeral per sentence, rounded unless the exact figure is the point; every number that matters is also
-  shown on screen (N-13).
-- BP-09: humour sits beside the fact, never inside the example that explains it; the first laugh inside the first 45 s; at
-  most one verbal joke per 60 s.
-- BP-10: no pause before a punch line; emphasis from the text (one stressed word, an ellipsis, a tag), never a hold over
-  its limit (N-04; N-15 checks each narration line's `pause_after`; a dialogue scene's scripted silence is a scene device;
-  the last line before a change of place or time may breathe within BP-10's boundary band, D-65, the creator 2026-10-20 21:14/21:17).
-- Reported speech (D-65, the creator 2026-10-20 21:14/21:17): the speaker's name before his words ("Musk says ...", BP-95), at most two speakers
-  reported in one line (BP-96). The narrator need not repeat what is on screen; the listener must follow the story.
-- BP-16: at most one ellipsis per beat; two is a REVIEW, more than two a FAIL (N-03).
-- BP-17: at least one question per 150 words (N-06) and about one interjection per 60 words, at least one (N-07).
-- BP-18: no ellipsis inside a question, and a wh-question of at most 12 words (N-10).
-- BP-15: no press-release lines ("comes out on", "is coming out on", "will be released on", "is scheduled for release",
-  "releases on", "is now available", "available now", "launches on", "launching on", "officially announced", "according to
-  the official", "the company announced", "press release", "as reported by", "launches worldwide"): the fact lives in the claim map, the line in
-  the story; sources are cited in the claim map and the description, never spoken (N-14, FAIL). The same lexicon also holds
-  the announcement-register patterns of SC-07 ("X's page says", "announced", "release date", "launches worldwide"),
-  checked on narrator lines only: a hero may name a date inside a scene.
-- BP-114: the AI-register lexicon and its density per 300 words (hypothesis, REVIEW; the Blueprint's FAIL needs the
-  creator's dated word); BP-115: the twist sentence's estimated length (hypothesis, REVIEW). Checklist above.
-
-## One narrator tells the dialogue (D-68, creator 2026-10-21)
-
-In a narrated episode nobody speaks in a voice of their own: the narrator performs every character's words. The creator
-wants them "not monotone, the way he would say it". Rules, each with its sources, in
-`/mnt/project-files/explainer-engine/titans_from_zero/qa_loop/research_narrated_dialogue.md`:
-
-1. Name the speaker before the quote ("Musk says, ...", or an action beat: "Musk grips the wheel. ..."): a listener
-   cannot look back. A tag after the quote is fine only when the speaker is already plain.
-2. Paraphrase the setup; quote only the strongest words, short ("Forty dollars. Ten percent. Forever.").
-3. Tell characters apart by attitude, never pitch or accent; never imitate a real living person's voice.
-4. Write the attitude into the words first; a v4 tag before the quote only sharpens it, and its colour carries
-   forward, so go back to the narrator's own tone after the quote (the line's `tone` names each turn).
-5. Keep one attitude per character for the whole video, and at most two speakers in one told exchange.
-
-Story cards (`design/cards.py`): the intro asks the episode's question over the heroes' heads; a recap names where each
-hero stands, then one NEXT line that opens the coming chapter (a hook, never a summary of the end).
 
 ## Speech registers (DW-11, creator 2026-11-07): few-shot for the writer
 Rule: every speaking hero has one `speech` card (register, sentence length, habits, `avoid`). It decides the written words AND the delivery tags. Test every line: if another hero could say it unchanged, rewrite it. Put these pairs in the writer prompt; the pairs are style demonstrations, not lines to reuse.
@@ -278,14 +162,6 @@ Same idea ("I will not help you"), five heroes:
 
 Bad (all heroes sound alike, and sound like a model): "I understand your request, but I must respectfully decline, as it would not be right." Fails RG register and DW-11.
 Delivery follows the card: elder = slow, rough, long pauses; wiseguy = fast, breathy, cracks under stress; child = high, curious; noble = measured, clear consonants. No disclaimers, no stepping outside the story (SC-11).
-
-## Zones, matrix, notation, audit (from docs/research/SPOKEN_STORYTELLING_RESEARCH_2026-11-07.md; hypotheses, not law)
-Source quality: the report mixes books, studies and video transcripts and some of its links are weak; treat every number as a hypothesis (REVIEW) until it has two source types (D-59). Use as writer guidance and test pairs, not as a new FAIL.
-- **Zone ceilings (narrator sentences):** hook 4-9 words, calm middle 10-16, fast finale 3-7; a silence line of 1.5-2.5 s before a 4-8 word deadpan landing.
-- **Never-AI filter:** the register lint already fails the word list (RG-01); also avoid triplets, "not X but Y", "-ing" explanations, summarising closers.
-- **Register matrix (words per turn / contractions):** rustic elder 8-14 / about 60 %; child 4-7 / about 85 %; noble 14-24 / under 5 %; city wiseguy 5-11 / about 90 %; ancient sorcerer 7-13 / 0 %; soldier or hunter 1-6 / about 70 %; scientist 12-20 / about 50 %; teenager 4-10 / over 95 %.
-- **Overlap notation (TTS timing):** `[CUT: -0.25s]` next clip starts 250 ms early over a cut-off tail; `[OVERLAP: -0.45s]`; `[LATCH: -0.08s]`; `<break time="0.7s" />`; spell numbers out.
-- **Pre-render audit:** blackout test (can you tell the speaker without the name), turn-length spread of at least 35 % between a fast and a slow speaker, at least half of the questions not answered straight away, a reversal every 6-10 lines, every narrator sentence matches what moves on screen.
 
 ### Six revision rules learned from the stone-age pilot (creator 2026-11-07, v4.1 -> v4.2)
 1. **No disguised "not X, but Y"** ("He didn't capture him. He called him here."): write the physical action. **Never spoil a later reveal** in the setup narration; plant only the visual mystery (an empty space on the wall).
@@ -304,14 +180,34 @@ GOOD (register lint must pass):
 BAD (register lint must flag):
     Moreover, it is crucial to delve into the tapestry of this pivotal moment.
 
-### Per-line boxes and mechanical traps (Gemini audit 2026-11-07 12:14 UTC, taken where it checks out)
-| Speaker | Words per line | Contractions | Formula |
+
+### Register boxes per speaker (hypotheses, REVIEW only)
+
+These came from `docs/research/SPOKEN_STORYTELLING_RESEARCH_2026-11-07.md` and a 2026-11-07 audit; until a second source
+type confirms them (D-59) they guide the writer and never fail a script.
+
+| Speaker | Words per line | Contractions | Shape |
 |---|---|---|---|
-| Narrator, hook | 3-8 | allowed | noun + active present verb + physical object |
-| Narrator, calm middle | 10-15 | allowed | join two physical actions with and / so / while |
-| Narrator, finale | 3-7 | allowed | staccato subject, verb, object |
-| Hero A (city, fast) | 3-8 (about 6.5 on average) | at least one per line | drop subjects, street nouns, interrupt with `--` |
-| Hero B (ancient, ritual) | 10-16 (about 11 or more) | none | object-fronting or two balanced clauses, period nouns only |
-| Child | 3-6 | allowed | literal physical question |
-Traps: (1) a noun the narrator just named is not repeated by the next speaker (the narrator names the sensory part, the hero names the whole); (2) no "X, but no Y" / "didn't X, he Y" pivot, write two positive actions; (3) before the reveal scene the narrator describes only what is visible, never who it is for; (4) a line before an overlap or cut ends with `--` and the interrupter answers it; (5) edit tags on the label, never SSML; (6) no em dash or `--` in a markdown title (register_lint now reads only the spoken lines of a `.md` script); (7) handprint (positive) and stencil (negative) are never mixed in script and visual script.
-Scope notes: D-68 (one narrator voices everyone) applies to narrated real-person episodes only; animated full-cast episodes use D-90 (each hero a fixed voice). BP-40's picture rate is already scoped to still-picture episodes; animated episodes take BP-107. Open for the creator (not changed here): SC-05 asks for a run of 4 hero lines (BP-70) which a 165 s pilot with 9-12 s segments cannot give; N-06/N-12 count questions and "you" on the narrator alone, wrong for a third-person drama; speech.py checks only that a signature word appears, not contraction rate or turn length.
+| Narrator, opening | short (hook zone) | allowed | noun, present verb, physical object |
+| Narrator, middle | medium | allowed | two physical actions joined by and, so, while |
+| Narrator, finale | short | allowed | staccato subject, verb, object |
+| Officer, educated | medium to long | few | full conditionals, titles, measured |
+| Private, city | short | many | dropped subjects, slang, interruptions with `--` |
+| Farmer, rural | medium | some | concrete images, repeated words, inverted order |
+| Child | very short | allowed | a literal physical question |
+
+Mechanical traps: a noun the narrator just named is not repeated by the next speaker; no "X, but no Y" pivot (write two
+positive actions); before a reveal the narrator describes only what is visible; a line before an overlap ends with `--` and
+the interrupter answers it; edit marks on the label, never SSML; no em dash in a markdown title. Pre-render audit: cover the
+names and identify the speaker; turn lengths differ clearly between a fast and a slow speaker; not every question is
+answered at once; a reversal every few lines; every narrator sentence matches what moves on screen.
+
+## Sources
+
+ElevenLabs, "Prompting Eleven v3/v4" (capitals raise emphasis, ellipses add weight, dashes give short pauses, tags describe
+delivery, text structure drives v4): https://elevenlabs.io/docs/best-practices/prompting. Intonation of questions: yes/no
+questions rise, wh-questions fall (Hedberg et al., CLA 2010,
+https://cla-acl.artsci.utoronto.ca/pdfs/actes-2010/CLA2010_Hedberg_et_al.pdf). Open loops in YouTube scripts:
+https://joyspace.ai/open-loop-technique-force-viewers-watch-end. AI-style word drift: arXiv 2404.01268, 2406.07016 (the
+abstract pages prove the drift, not our list). Writing to picture and avoiding double exposition: our KP-20 and ST-21 with
+the critic's CRAFT-SCR-06.
