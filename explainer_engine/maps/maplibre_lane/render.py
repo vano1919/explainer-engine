@@ -154,6 +154,11 @@ def load_style_preset(name: str) -> dict[str, Any]:
         known = ", ".join(sorted(p.stem for p in STYLES_DIR.glob("*.json")))
         raise FileNotFoundError(f"style preset {name!r} not found in {STYLES_DIR} (known: {known})")
     preset = json.loads(path.read_text(encoding="utf-8"))
+    if preset.get("draft"):
+        raise ValueError(f"style preset {name!r} is a DRAFT (from preset_from_frames): a person must review it, choose "
+                         "the font and remove 'draft' before it can be used")
+    if "font" in preset and not str(preset["font"]).strip():
+        raise ValueError(f"style preset {name!r} has an empty font: a person chooses the font")
     for key in ("map", "line", "hud", "finish", "palette_check"):
         if key not in preset:
             raise ValueError(f"style preset {name!r} is missing the {key!r} block")

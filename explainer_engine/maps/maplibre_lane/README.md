@@ -22,3 +22,10 @@ checks every preset in the folder.
 `python -m explainer_engine.maps.maplibre_lane.hud_ocr <spec.json> <frames_dir> [step]` (needs `pip install rapidocr-onnxruntime`): OCR reads back what the schedule says is on screen
 (counter, label, date, towns). Scene-text OCR cannot read an isolated single glyph (measured: even a plain black "0" or "8" on white), so a
 one-character counter ("0" at the start) is checked as ink in the preset's counter colour, and the report says which method decided each item.
+
+## Draft preset from reference frames
+`python -m explainer_engine.maps.maplibre_lane.preset_from_frames <name> <3-6 frames> [--grid 3x2] --out draft.json [--compare styles/1917_film.json]`
+measures our own approved film_look frames (never film frames) and proposes the map / line / hud / finish colours and the
+palette_check. The result carries `"draft": true` and an EMPTY `font`; `load_style_preset` refuses both, so a draft is never
+used automatically. A person reviews it, picks the font, removes `draft`, and saves it as `styles/<name>.json`.
+`proposal_notes` says which fields were measured, derived or fixed.
