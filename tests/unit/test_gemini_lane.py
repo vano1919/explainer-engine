@@ -124,6 +124,24 @@ def test_red_tests_are_reported_not_hidden(tmp_path, repo, sha):
     assert I.main([str(d), "--repo", str(repo), "--no-apply"]) == 0           # judged only: no branch, exit 0
 
 
+def test_the_testers_files_newer_than_the_pinned_commit_are_run_but_not_committed(tmp_path, repo, sha):
+    (repo / "tests/unit").mkdir(parents=True, exist_ok=True)
+    (repo / "tests/unit/test_acceptance.py").write_text(NEW_TEST)                  # untracked: written after the pin
+    d = make_task(tmp_path, sha, tests=["tests/unit/test_acceptance.py"])
+    answer(d, [("explainer_engine/fx/new.py", "new", NEW_CODE.encode())])
+    rep = run_intake(d, repo)
+    assert rep["status"] == "accepted" and rep["tests"]["ran"] and rep["tests"]["ok"] is True
+    assert rep["tests"]["acceptance_tests"] == {"tests/unit/test_acceptance.py": L.sha256_bytes(NEW_TEST.encode())}
+    assert "test_acceptance" not in git(repo, "ls-tree", "-r", "--name-only", rep["branch"])
+
+
+def test_a_missing_acceptance_test_is_not_a_green_intake(tmp_path, repo, sha):
+    d = make_task(tmp_path, sha, tests=["tests/unit/test_absent.py"])
+    answer(d, [("explainer_engine/fx/new.py", "new", NEW_CODE.encode())])
+    rep = run_intake(d, repo)
+    assert rep["status"] == "accepted_untested" and "not found" in rep["tests"]["detail"]
+
+
 def test_no_apply_judges_only(tmp_path, repo, sha):
     d = make_task(tmp_path, sha)
     answer(d, [("explainer_engine/fx/new.py", "new", NEW_CODE.encode())])

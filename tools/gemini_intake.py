@@ -180,6 +180,22 @@ def judge(task_dir: Path, repo: Path) -> tuple[dict, list[dict], dict[str, tuple
     return task, refusals, accepted
 
 
+def _stage_tests(task: dict, task_dir: Path, repo: Path, wt: Path) -> dict[str, str | None]:
+    """Copy the task's acceptance tests into the worktree (untracked): from ``in/`` as packed, else from the repo's working tree.
+    They are newer than the pinned commit (the tester writes them first), so the worktree does not have them. {path: sha256|None}."""
+    staged: dict[str, str | None] = {}
+    for p in task["tests"]:
+        src = next((c for c in (task_dir / "in" / p, repo / p) if c.is_file() and not c.is_symlink()), None)
+        if src is None:
+            staged[p] = None
+            continue
+        data = src.read_bytes()
+        (wt / p).parent.mkdir(parents=True, exist_ok=True)
+        (wt / p).write_bytes(data)
+        staged[p] = L.sha256_bytes(data)
+    return staged
+
+
 def _run_tests(wt: Path, paths: list[str]) -> dict:
     if not paths:
         return {"ran": False, "ok": None, "detail": "no tests listed in the task"}
@@ -224,10 +240,15 @@ def intake(task_dir: Path, repo: Path, *, apply: bool = True, push: bool = False
                 msg += "\n" + "\n".join(trailers) + "\n"
             L.git(wt, "-c", f"user.name={AUTHOR[0]}", "-c", f"user.email={AUTHOR[1]}", "commit", "-q", "-m", msg)
             commit = L.head_sha(wt)
+            staged = _stage_tests(task, task_dir, repo, wt)          # the tester's files, not part of Gemini's commit
             test_paths = list(dict.fromkeys([p for p in task["tests"] if (wt / p).is_file()] +
                                             [p for p in task["create"] if p.startswith("tests/") and (wt / p).is_file()] +
                                             [s for s in task["suites"] if (wt / s).exists()]))
             tests = _run_tests(wt, test_paths)
+            tests["acceptance_tests"] = staged
+            if any(v is None for v in staged.values()):
+                tests["ok"] = None
+                tests["detail"] = f"acceptance tests not found: {[p for p, v in staged.items() if v is None]}"
         finally:
             L.git(repo, "worktree", "remove", "--force", str(wt), check=False)
     report.update(status="accepted" if tests["ok"] else ("accepted_untested" if tests["ok"] is None else "accepted_red"),
