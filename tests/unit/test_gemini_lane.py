@@ -301,6 +301,20 @@ def test_refuses_a_file_that_is_not_in_the_manifest(tmp_path, repo, sha):
     untouched(repo, sha)
 
 
+def test_export_noise_is_ignored_and_never_applied(tmp_path, repo, sha):
+    d = make_task(tmp_path, sha)
+    answer(d, [("explainer_engine/fx/new.py", "new", NEW_CODE.encode())],
+           extra={"RAW_chat1.txt": b"raw", "SHA256SUMS": b""})
+    (d / "out" / "__pycache__").mkdir(exist_ok=True)
+    (d / "out" / "__pycache__" / "x.cpython-313.pyc").write_bytes(b"\x00")
+    (d / "out" / "pkg").mkdir(exist_ok=True)
+    (d / "out" / "pkg" / "y.pyc").write_bytes(b"\x00")
+    rep = run_intake(d, repo)
+    assert rep["status"] == "accepted" or rep["status"] == "accepted_untested"
+    assert rep["refusals"] == [] and list(rep["files"]) == ["explainer_engine/fx/new.py"]
+    assert git(repo, "ls-tree", "-r", "--name-only", rep["branch"]).count("RAW_") == 0 and "pyc" not in git(repo, "ls-tree", "-r", "--name-only", rep["branch"])
+
+
 def test_refuses_a_listed_file_that_is_absent(tmp_path, repo, sha):
     d = make_task(tmp_path, sha)
     answer(d, [("explainer_engine/fx/new.py", "new", NEW_CODE.encode())])

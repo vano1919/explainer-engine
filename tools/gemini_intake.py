@@ -59,6 +59,12 @@ def _apply_hunks(base: bytes, diff: bytes, path: str) -> tuple[bytes | None, str
         return target.read_bytes(), ""
 
 
+def _transport_noise(rel: str) -> bool:
+    """Files the export leaves beside the answer (RAW_* transport copies, bytecode): ignored, never applied (only MANIFEST paths are)."""
+    parts = rel.split("/")
+    return parts[-1].startswith("RAW_") or "__pycache__" in parts or rel.endswith(".pyc")
+
+
 def _read_sums(path: Path) -> dict[str, str]:
     """``sha256sum`` format (``<hex>  <path>``) written by the driver from the exported files."""
     sums: dict[str, str] = {}
@@ -192,7 +198,7 @@ def judge(task_dir: Path, repo: Path) -> tuple[dict, list[dict], dict[str, tuple
     if out_dir.is_dir():
         for f in sorted(out_dir.rglob("*")):
             rel = f.relative_to(out_dir).as_posix()
-            if f.is_file() and rel not in listed and rel not in OWN_FILES:
+            if f.is_file() and rel not in listed and rel not in OWN_FILES and not _transport_noise(rel):
                 _refuse(refusals, "unlisted_file", rel, "a file in out/ that MANIFEST does not list")
     return task, refusals, accepted
 
