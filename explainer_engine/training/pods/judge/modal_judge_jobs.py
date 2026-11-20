@@ -221,6 +221,30 @@ def preflight(launch: dict, *, paid: bool = True, env=os.environ):
         raise SystemExit("paid preflight FAILED, nothing was started:\n" + "\n".join(bad))
 
 
+def localize(src: str, dst_root="/tmp/model_local", threads: int = 8, chunk: int = 16 * 2 ** 20) -> str:
+    """Copy a model folder from the network Volume to local disk with parallel big reads (safetensors mmap reads from the Volume ran
+    at ~15 MB/s in the first smoke: 750 tensors in ~20 min). Prints the throughput; returns the local path."""
+    import shutil
+    from concurrent.futures import ThreadPoolExecutor
+    src_p, dst = Path(src), Path(dst_root) / Path(src).name
+    dst.mkdir(parents=True, exist_ok=True)
+    t0, total = time.time(), 0
+
+    def one(f: Path):
+        out = dst / f.relative_to(src_p)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        with open(f, "rb") as r, open(out, "wb") as w:
+            shutil.copyfileobj(r, w, chunk)
+        return f.stat().st_size
+
+    files = [f for f in src_p.rglob("*") if f.is_file()]
+    with ThreadPoolExecutor(threads) as ex:
+        total = sum(ex.map(one, files))
+    dt = max(time.time() - t0, 1e-6)
+    print(f"localize {src}: {total / 2 ** 30:.2f} GiB in {dt:.1f} s = {total / 2 ** 20 / dt:.0f} MiB/s", flush=True)
+    return str(dst)
+
+
 def container_gate(launch: dict, baked=BAKED / "launch_a100.json") -> list[str]:
     """The last line inside the container: the launch passed in is the one baked into the image, the scale-down is short."""
     bad = []
@@ -442,6 +466,7 @@ def body(spec: dict, launch: dict, *, timeout_s: int, vol_root=VOL, work=WORK, c
         def load_judge(m):
             import torch
             torch.cuda.reset_peak_memory_stats()
+            m = dict(m, path=localize(m["path"]))
             return J.HFJudge(m["path"], device="cuda", model_cls=m["cls"], experts=m.get("experts"))
     if free is None:
         def free(judge):
@@ -517,6 +542,13 @@ if modal is not None:
             vol.commit()
         return out
 
+    @app.function(memory=(8192, 8192), timeout=900, volumes={VOL: vol}, **CPU_KW)
+    def localize_bench(launch: dict):
+        vol.reload()
+        t0 = time.time()
+        path = localize(str(weights_root(launch, run_models(launch)[0])))
+        return {"path": path, "s": round(time.time() - t0, 1)}
+
     _t_smoke, _t_run = timeouts(LAUNCH)
     _gpu_kw = dict(image=image, gpu=LAUNCH["gpu"], cpu=(float(LAUNCH["cpu"]),) * 2, memory=(LAUNCH["memory_gib"] * 1024,) * 2, retries=0,
                    volumes={VOL: vol}, secrets=secrets, scaledown_window=LAUNCH["scaledown_window_s"],
@@ -557,6 +589,12 @@ if modal is not None:
         res = env_check.remote()
         print("env_check", res["problems"] or "imports ok", {k: v for k, v in res.items() if k != "problems"})
         record("L1", not res["problems"], LAUNCH, missing=res["problems"], versions={k: v for k, v in res.items() if k != "problems"})
+
+    @app.local_entrypoint()
+    def bench():
+        """CPU only (a few cents at most): how fast the Volume copies to local disk."""
+        preflight(LAUNCH, paid=False)
+        print("bench", localize_bench.remote(LAUNCH))
 
     @app.local_entrypoint()
     def weights(plan: str = ""):
