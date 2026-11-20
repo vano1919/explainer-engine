@@ -68,7 +68,7 @@ Free and deterministic; it says what is missing or contradicts a rule, the decis
 | PC-03 | GenAI disclosure (Help 14328491): photoreal pictures, a realistic real person saying or doing what they did not, an altered real event or place, or AI music as the main focus need "disclose"; each trigger is answered true or false (REVIEW); real people with invented lines are flagged from the script |
 | PC-04 | a Short over 60 s uses only our own voice, library or procedural audio: any claim blocks a Short that long (Help 15424877) |
 | PC-05 | a Short is at most 180 s |
-| PC-06 | title at most 100 and description at most 5,000 characters |
+| PC-06 | title at most 100 characters and description at most 5,000 bytes (not characters: an em dash is 3 bytes); no `<` or `>` in either (YouTube Data API field limits) |
 | PC-07 | a source link in the description, the mid-roll decision and the advertiser self-certification recorded (REVIEW) |
 | PC-08 | approval #2 recorded (who, which message); without it nothing is uploaded (FAIL; invariant 4; `publish stage` blocks on it) |
 | PC-09 | the episode's gates have run: the rulebook's `final_qa` stamp passes (`standards gate`) and `scorecard.json` (the seven-point test, `qa/scorecard <folder>`) has no FAIL; missing means not run and blocks (FAIL) |
