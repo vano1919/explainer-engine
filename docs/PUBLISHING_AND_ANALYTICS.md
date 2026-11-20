@@ -25,7 +25,7 @@ obtained per upload session: Claude runs `python -m explainer_engine.publish aut
 creator signs in on a phone as the channel's account (the app may stay in Testing, the account listed as a test user) and
 sends back the `http://127.0.0.1:8765/?...` address, which fails to load by design; `auth-finish '<address>'` exchanges it
 for a token in the gitignored `tools/youtube/token.json` of that session only, along with the channel id, which `stage`
-checks. The desktop route (`auth <client_secret.json>` on a PC) is the same flow. Quota per V-47: an episode of 1 + 10 videos uses 11 of 100 daily uploads and about 65 of 10,000 units.
+checks. The desktop route (`auth <client_secret.json>` on a PC) is the same flow. `token.b64.txt` (the value for `YOUTUBE_TOKEN_B64`) is written only with `--export-env`. Quota per V-47: an episode of 1 + 10 videos uses 11 of 100 daily uploads and about 65 of 10,000 units.
 
 ## Cadence hypothesis (D-06; not competitor frequency)
 One long-form every two weeks and two Shorts a week for the first cycle, from estimated hours

@@ -71,10 +71,12 @@ def http_transport(method: str, url: str, headers: dict, body=None, timeout: flo
 TOKEN_FILE = Path(__file__).resolve().parents[2] / "tools" / "youtube" / "token.json"  # gitignored, one session's sign-in
 
 
-def load_token(env: dict | None = None, file: Path | None = None) -> dict:
+def load_token(env: dict | None = None, file: Path | None = None, log=None) -> dict:
     """The token of this session's sign-in (tools/youtube/token.json, made by ``publish auth-finish``), else YOUTUBE_TOKEN_B64."""
     file = TOKEN_FILE if file is None else file
+    log = print if log is None else log
     if env is None and file.exists():
+        log(f"YouTube token source: session file {file.name}")
         return json.loads(file.read_text(encoding="utf-8"))
     raw = (env if env is not None else os.environ).get(TOKEN_ENV, "")
     if not raw:
@@ -87,6 +89,7 @@ def load_token(env: dict | None = None, file: Path | None = None) -> dict:
     missing = [k for k in ("client_id", "client_secret", "refresh_token") if not tok.get(k)]
     if missing:
         raise YouTubeError(f"{TOKEN_ENV} lacks {missing}")
+    log(f"YouTube token source: environment variable {TOKEN_ENV}")
     return tok
 
 
