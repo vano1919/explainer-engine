@@ -3799,3 +3799,14 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 
 ## 2026-11-20 — Map style `truce_cold` (creator chose "C cold")
 - `maplibre_lane/styles/truce_cold.json`: the batch2-derived palette (no longer a draft), font from the episode film (creator card "film font"); test in `test_maps_style_presets.py`. Test clip and frame 143 comparison on HF `.../draft_preset_tool/`.
+
+## 2026-11-20 — Effect audibility and click measurements (`audio/val_effect_audibility.py`, from earshot's two ideas)
+- New pure module, numpy only: `audibility` (an effect's level over the bed per 1/3-octave band, over its loudest 60 ms) and
+  `click_candidates` (high-frequency bursts and how concentrated they are), `check` for a list of effects. Idea from earshot
+  `real-sound` QA (MIT); re-implemented from the description, no code copied.
+- Rule one / D-59: the registry has no margin and no click rule, and earshot's numbers (6/3/0 dB, 14 kHz, 9x, 6x, 0.8) are one
+  author's norms (one source type). So every judging number in `Limits` is `None` and `check` returns `NOT_RUN` with the measured
+  values, never a PASS; given sourced numbers the same call returns AUD-01/AUD-02/CLK-01 findings.
+- Tests: `tests/unit/test_val_effect_audibility.py` (margin follows the level, window position, silent effect, bad input,
+  NOT_RUN without limits, judged with limits, step click found and clean tone not, long treble burst not concentrated).
+- Not run on episode1: its mix does not exist as a file (only `narration.wav`).
