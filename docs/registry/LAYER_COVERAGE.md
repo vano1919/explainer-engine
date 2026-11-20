@@ -1,6 +1,6 @@
 # Layer coverage of the owner's requirements registry (generated, do not edit)
 
-197 active entries; 8 open conflict(s).
+200 active entries; 8 open conflict(s).
 
 | layer | active | validator | judge | unmapped |
 |---|---|---|---|---|
@@ -17,7 +17,7 @@
 | L11 | 20 | 1 | 2 | 17 |
 | L12 | 16 | 1 | 2 | 13 |
 | L13 | 31 | 4 | 2 | 25 |
-| L14 | 34 | 6 | 3 | 25 |
+| L14 | 37 | 6 | 3 | 28 |
 | L15 | 26 | 2 | 3 | 21 |
 | L16 | 19 | 2 | 2 | 15 |
 | L18 | 10 | 2 | 0 | 8 |

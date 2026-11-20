@@ -907,7 +907,18 @@
    },
    "measures": "duration <= 5 s; camera never fully static on a still",
    "repeats": 1,
-   "repeat_evidence": ""
+   "repeat_evidence": "",
+   "evidence_added": [
+    {
+     "ref": "architecture_2026-11-14/RULES_RECONCILIATION_JOURNAL.md R-13 and R-14",
+     "text": "his card answers of 2026-11-14 12:37 UTC: Q2 '5 s stays' (a 2.5D shot is at most 5 s, longer is split or goes to LTX) and Q3 'slow drift' (the camera never fully stops; still_by_design keeps a slow drift or breath)"
+    },
+    {
+     "ref": "memory audit-25d-liveliness-2026-11-14",
+     "text": "records the same two supersessions (12:37-12:40 UTC cards)"
+    }
+   ],
+   "source_ref_note": "the live decision log D-139 (docs/DECISIONS_AND_OPEN_QUESTIONS.md @ origin/claude/project-thread-2vxd8y) is the V4.1 Step 0/1 decision of 2026-11-19, not this rule; 'D-139' for the 11-14 rule is the client/skills-team label for R-13/R-14"
   },
   {
    "id": "OR-V25",
@@ -1105,7 +1116,8 @@
    },
    "measures": "every effect and every sound cue carries a reason field from the director stage; no hand-written lists",
    "repeats": 3,
-   "repeat_evidence": "11-14 12:38, 11-14 13:13, 11-12 21:44"
+   "repeat_evidence": "11-14 12:38, 11-14 13:13, 11-12 21:44",
+   "note": "duplicate of OR-V23: identical words, date, source message and layer; kept, not removed"
   },
   {
    "id": "OR-V30",
@@ -5131,6 +5143,84 @@
      "source": "{\"kind\": \"chat\", \"ref\": \"cmsg_01Hnu5zB86sjUj5GtTgaUkPW7XLMto2qf2FBPYsqzyqvaU\"}"
     }
    ]
+  },
+  {
+   "id": "OR-V72",
+   "kind": "requirement",
+   "status": "active",
+   "words": "მზე ციმციმებს და სხივები სივრცულობას ქმნის, ქარი, ხეების/მავთულის რხევა, თოვლი მოდის",
+   "words_origin": "memory_summary (the memory's Georgian rendering of his 11-14 15:38 Tbilisi words; not his typed message)",
+   "words_verbatim": false,
+   "words_partial": true,
+   "gloss": "Bringing a photo to life means every natural motion of the environment: sun shimmer and god rays that make space, wind in trees, grass, cloth and wire, falling snow, together with the fire.",
+   "date": "2026-11-14T11:38:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-photo-animation-2026-11-14; audit-25d-liveliness-2026-11-14"
+   },
+   "layers": [
+    "L14"
+   ],
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "per-photo living-element inventory covers sun/sky light, foliage and wire sway, precipitation, wind, steam and fire; each has an effect or a written reason for none",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "Widens OR-V19a-c (fire, smoke, wind, snow). NEW parts: sun shimmer and god rays, sway of trees and wire. His own typed words are not available to me, only the memory's rendering; date from the memory (15:38 Tbilisi = 11:38 UTC).",
+   "date_basis": "memory: 15:38-15:43 Tbilisi time on 2026-11-14"
+  },
+  {
+   "id": "OR-V73",
+   "kind": "requirement",
+   "status": "active",
+   "words": "Mandatory inventory stage: the director lists the living elements of the photo and assigns an effect to each; a gate punishes stillness.",
+   "words_origin": "memory_summary (audit-25d-liveliness memory, 'His directives')",
+   "words_verbatim": false,
+   "words_partial": true,
+   "gloss": "Two linked demands from his 11-14 rejection of the round-2 clips ('just fire'): the director must read the living elements out of the photo itself (a director that cannot is 'a bad agent'), and a gate must punish stillness instead of rewarding it.",
+   "date": "2026-11-14T11:40:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "audit-25d-liveliness-2026-11-14; feedback-photo-animation-2026-11-14"
+   },
+   "layers": [
+    "L14"
+   ],
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "G-INV (inventory present, every element decided) and G-LIVE (no 1-second stretch under the floor, change per second inside the reference band) run on every 2.5D plan and on the final mp4",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "OWNER ROOT of OR-V20 (whose words are the roadmap thread's LIVING_PHOTO_RULES doc, not his) and of the G-LIVE gate it names. Related: OR-V51 (director chooses and records a reason), OR-V41.",
+   "date_basis": "memory: ~11:38-11:52 UTC on 2026-11-14"
+  },
+  {
+   "id": "OR-V74",
+   "kind": "requirement",
+   "status": "active",
+   "words": "(11:52 UTC) Make the inventory list as long as possible, but the director decides by priority: what matters for the narration text in this photo, how the photo looks, its quality, the scale of the element (a dot is not worth animating). No endless work: balance, with rules and tests.",
+   "words_origin": "memory_summary (audit-25d-liveliness memory, 'His directives', 11:52 UTC line)",
+   "words_verbatim": false,
+   "words_partial": true,
+   "gloss": "The inventory is long, the choice is by priority (narration relevance, look, quality, element scale), and the work is bounded by balance rules with tests, never by hand-tuning.",
+   "date": "2026-11-14T11:52:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "audit-25d-liveliness-2026-11-14"
+   },
+   "layers": [
+    "L14"
+   ],
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "per element: narration relevance, scale, quality recorded; elements under the point-size rule (LP-03) are grouped or skipped with a reason; an upper and lower effect count per shot (LP-07, LP-08)",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "His criteria behind OR-V20's score and LP-03/LP-04/LP-07/LP-08. The numbers there are the roadmap thread's proposals, not his; he asked only for priority and balance. Narrower than OR-V09 (general logic). 'The roadmap thread writes the rules and the tests' is an assignment, not a requirement.",
+   "date_basis": "memory: 11:52 UTC on 2026-11-14"
   }
  ],
  "process_requirements": [
