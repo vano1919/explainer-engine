@@ -1,5 +1,7 @@
 # Progress log
 
+**Since 2026-11-20 new entries go to `docs/progress.d/<date>-<branch>.md` (one file per change, see its README); this file is frozen.**
+
 Append one entry per phase boundary: completed work, state, files changed, test results, decisions, blockers,
 cost (estimate/actual), next step, recovery instructions.
 
