@@ -3919,3 +3919,13 @@ No number is written in any of them; tests `test_first_shot.py`, `test_opening_d
 ## 2026-11-20 — test_video_qa_clip_rows: the clean test clip no longer depends on muxing timing
 - Symptom: `test_real_clips_probe_and_rows` failed on CI runs with an extra `CLIP-05` (audio vs picture length) on a clip meant to be clean; it passed on re-run and always passes locally (40 of 40 builds identical: picture 2.0417 s, audio 2.026 s, tolerance one frame = 41.7 ms).
 - Cause (the most likely one, not reproduced locally even under CPU load): the fixture mixed an endless sine with `-shortest`, so the number of audio packets muxed before the picture ends depends on thread timing; two extra AAC frames (2 x 21 ms) are enough to pass the one-frame tolerance. Fix: the sine is bounded to `frames / fps` itself and `-shortest` is gone; the assertion now prints the findings and both durations, and a new test builds the clip six times and checks audio and picture end within half a frame. No assertion or threshold weakened.
+
+## 2026-11-20 — 2.5D renderer with the 2D smoke moved into the repo (`fx25d/living.py`)
+- `explainer_engine/fx25d/living.py` (+ `masks.py`) is the HF script `x6_smoke2d.py` (= x6_living5 / run2e + smoke2d) made reusable: photo, depth (metres, .npy)
+  and faces are arguments, no machine paths, noise textures built on first use, a CLI (`python -m explainer_engine.fx25d.living`). Constants, inventory and
+  look are unchanged (the look is the owner's call); only the S07_SH008 plume reads the new keys `lean` and `avoid` (person silhouette hides the plume).
+- Checked: frames 0, 72 and 120 of S07_SH008 rendered by the module are bit-identical to the HF script (frame and plume alpha). Measure a plume with
+  `qa/plume_zones.py` on `Shot.plume_a` and `Shot.pmask_f`.
+- Tests: `tests/unit/test_fx25d_living.py` (inputs required, no machine paths, a frame is a pure function of its number, synthetic person next to the
+  source: without avoidance the plume share on the person FAILs, with it PASSes while a plume remains, only the S07_SH008 plume has the new keys).
+- Not run: the real S07_SH008 photo through the CLI (inputs are on HF), the other three photos, any gate wiring.
