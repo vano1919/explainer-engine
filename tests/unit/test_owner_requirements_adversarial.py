@@ -197,12 +197,25 @@ def test_the_workflow_exists_and_its_job_is_named_owner_requirements():
     (r"^\s*branches-ignore:", "a branch filter skips the job"),
     (r"continue-on-error", "the job must be able to fail"),
     (r"--no-tests", "the named tests must run in the job"),
-    (r"\|\|\s*true", "a swallowed failure"),
     (r"^\s{4}if:", "a condition on the job itself skips it"),
     (r"\bexit 0\b", "a forced success"),
 ])
 def test_the_workflow_has_no_way_to_skip_or_swallow_the_check(pattern, why):
     assert not re.search(pattern, WORKFLOW.read_text(encoding="utf-8"), re.M), why
+
+
+SOFT_STEPS = ("Install OpenCV and the YuNet face model",)     # an optional install: its absence is NOT_RUN in the validator, never a pass of the check
+
+
+def test_only_an_optional_install_step_may_swallow_a_failure():
+    text = WORKFLOW.read_text(encoding="utf-8")
+    step = None
+    for line in text.splitlines():
+        m = re.match(r"\s*- name: (.*)", line)
+        if m:
+            step = m.group(1)
+        if re.search(r"\|\|\s*true\b", line) and not line.lstrip().startswith("#"):
+            assert step and step.startswith(SOFT_STEPS), f"`|| true` in step {step!r}: a check step must be able to fail"
 
 
 def test_the_workflow_runs_on_every_pull_request_and_compares_with_the_base():

@@ -308,11 +308,8 @@ def test_a_word_about_a_trial_command_is_not_a_trial_command(cmd):
 
 # ============================ defects: the owner's recorded word (D-84) ============================
 
-@pytest.mark.xfail(strict=True, reason="W1: records.add accepts ANY non-empty message id: `x`, `owner said so`, `cmsg` (the gate's own owner_seen check "
-                                       "wants cmsg_<id>); a thread that runs `governance ok layer_waiver L9 x \"ok\"` opens a layer, "
-                                       "`governance ok protected_config <money file>` unlocks the money caps")
 @pytest.mark.parametrize("bad_id", ["x", "owner said so", "cmsg", "cmsg_", "CMSG_abc"])
-def test_W1_a_recorded_word_needs_a_cmsg_shaped_message_id(tmp_path, bad_id):
+def test_a_recorded_word_needs_a_cmsg_shaped_message_id(tmp_path, bad_id):   # was defect W1, fixed in 93cf005..27b850f
     with pytest.raises(ValueError):
         records.add("layer_waiver", "L9", bad_id, "he said ok", root=tmp_path)
 
@@ -322,7 +319,7 @@ def test_W1_a_recorded_word_needs_a_cmsg_shaped_message_id(tmp_path, bad_id):
 def test_W2_a_hand_written_owner_word_is_not_valid(tmp_path):
     f = tmp_path / records.FILE
     f.parent.mkdir(parents=True)
-    f.write_text(json.dumps({"action": "layer_waiver", "target": "L9", "message_id": "cmsg_made_up", "by": "creator", "quote": "ok",
+    f.write_text(json.dumps({"action": "layer_waiver", "target": "L9", "message_id": "cmsg_madeup", "by": "creator", "quote": "ok",
                              "at": time.time()}) + "\n", encoding="utf-8")
     assert not records.valid("layer_waiver", "L9", 60, root=tmp_path, wildcard=False)
 
