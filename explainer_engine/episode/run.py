@@ -32,6 +32,7 @@ from explainer_engine.core.store import write_json_atomic, write_text_atomic
 from explainer_engine.episode import shot_state as SS
 from explainer_engine.episode import timing as TM
 from explainer_engine.qa import gates as G
+from explainer_engine.qa import observe as OBS
 
 STAGES = ("script", "sound_plan", "pictures", "voice", "clips", "sound", "assemble", "qa")
 GATES = {"script": "G1-G3", "sound_plan": "G4", "pictures": "G5", "voice": "G6", "clips": "G7", "sound": "G8",
@@ -280,7 +281,14 @@ def run_stage(ep: Episode, stage: str) -> dict:
     t0 = time.time()
     fp = fingerprint(ep, stage)
     try:
+        try:   # W4 (OB-1): no picture or clip moves on without an observation record of its hash
+            obs_rows = OBS.gate_rows(ep.root, stage)
+        except (ValueError, OSError, KeyError) as exc:   # unreadable records are this stage's recorded FAIL row, never a crash
+            raise ContractError(f"observation gate could not read its records: {type(exc).__name__}: {exc}") from exc
+        if any(r["status"] == G.FAIL for r in obs_rows) and not rehearsal:
+            raise ContractError("observation gate: " + obs_rows[0]["detail"])
         rows, outputs = STAGE_FUNCS[stage](ep, rehearsal)
+        rows = rows + obs_rows
     except ContractError as exc:   # a contract the stage cannot get past is its FAIL row, recorded, never a silent stop
         rows, outputs = [G.row(f"{stage}_ran", False, f"{type(exc).__name__}: {exc}")], {}
     except ConfigError as exc:     # a missing free tool or setting: nothing measured, recorded as NOT_RUN (final audit B3)

@@ -17,6 +17,13 @@ ROOT = Path(__file__).resolve().parents[2]
 TOBA = ROOT / "episodes" / "ep_toba"
 
 
+@pytest.fixture(autouse=True)
+def _runner_tests_isolate_the_observation_gate(monkeypatch):
+    """These tests fake the stage functions, which bind no picture or clip; the OB-1 gate (NOT_RUN with nothing bound) has its own
+    tests in test_observe.py, including one through ``run_stage``. Here the runner's own logic is under test."""
+    monkeypatch.setattr(RUN.OBS, "gate_rows", lambda root, stage: [])
+
+
 # --- the vocabulary ---------------------------------------------------------------------------------------------------
 
 def test_the_vocabulary_is_exactly_five_statuses():

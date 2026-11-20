@@ -114,11 +114,11 @@ The trial task per skill (P-3) is done by the stream that first uses it, before 
 | `v-ffmpeg-skill` | W7 | NOT_RUN |
 | `v-hook-writing` | W8 | NOT_RUN |
 | `v-ltxv2-video` (D-132) | W5 | NOT_RUN |
-| `v-media-analysis-skill` | W4 | NOT_RUN |
+| `v-media-analysis-skill` | W4 | PASS 2026-11-19 (W4): `media-analysis probe` ran offline on a real 1914 clip (container, streams, 4.375 s); not wired into `qa/observers/ffmpeg.py`, which reuses `validators/tech_qa` (BP-211) instead |
 | `v-newsjack-fact-check` | W8 | NOT_RUN |
-| `v-qc-skill` | W4 | NOT_RUN |
+| `v-qc-skill` | W4 | PASS 2026-11-19 (W4): `qc run` (v1.4.4, `expected_frame_rate` rule) completed offline on a real 1914 clip; its checks are not used by the observer (same ffmpeg detectors via `validators/tech_qa`), kept as a second opinion |
 | `v-scenario-consistency` | W9 | NOT_RUN |
-| `v-scenario-quality-gate` | W4 | NOT_RUN |
+| `v-scenario-quality-gate` | W4 | NOT_RUN: it drives the Scenario service (`asset_quality_gate_run`), no account here; not used |
 | `v-scenario-storyboards` | W9 | NOT_RUN |
 | `v-scenario-video-color-grade` | W7 | NOT_RUN |
 | `v-source-verification` | W8 | NOT_RUN |

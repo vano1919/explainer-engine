@@ -16,6 +16,8 @@ FILE = Path("jobs") / "creator_ok.jsonl"
 ACTIONS = ("model_switch", "effort_override", "protected_config", "channel_voice",
            "generator_admit",   # target = "<generator>:<kind>": the word behind an entry of assets/audio/generator_admission.json (BP-162)
            "stage_approval",   # target = "<episode>:<stage>:<input hash>": the word behind a REVIEW stage going on (episode/run.py approve)
+           "observer_calibration",   # target = one observer (ffmpeg|transcript|gemini_api): the creator accepts its calibration report (qa/observe.py accept)
+           "observation_review",   # target = "<episode>:<shot>:<sha256[:12]>": the creator looked at that asset's observation evidence (qa/observe.py review)
            "cheapest_waive")    # target = one rule "CH-xx": his word breaks that cheapest-run rule for one run (D-133)
 
 
@@ -34,6 +36,8 @@ def add(action: str, target: str, message_id: str, quote: str, *, by: str = "cre
         raise ValueError("cheapest_waive names one rule CH-xx; a wildcard would waive every cheapest-run rule")
     if action == "stage_approval" and (target.count(":") < 2 or "*" in target):
         raise ValueError("stage_approval names one <episode>:<stage>:<input hash>; a wildcard would approve every stage")
+    if action in ("observer_calibration", "observation_review") and (not target or "*" in target):
+        raise ValueError(f"{action} names one target; a wildcard would accept every observer or asset")
     if action == "generator_admit" and "*" in target:
         raise ValueError("generator_admit names one <generator>:<kind>; a wildcard can never match an admission")
     row = {"action": action, "target": target, "message_id": message_id, "by": by, "quote": quote[:300],
