@@ -8463,6 +8463,29 @@
     "explainer_engine/validators/story.py"
    ],
    "supersedes": []
+  },
+  {
+   "id": "BP-214",
+   "area": "stills",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Faces stay intact through any picture step (the owner's faces-intact requirement OR-V36; the lead's REVIEW-level engineering default 2026-11-20 09:06, not binding until the owner has seen it): the same number of YuNet faces are found before and after, and every face box of the result overlaps its face box of the original with IoU of at least face_iou_min (boxes in shares of the picture, so a 2x upscale compares). Basis: the skills team analyst's L16 run measured YuNet IoU 0.877 to 0.939 over Lanczos, Real-ESRGAN and ours on 5 faces (faces_report.json in HF group1/L16); a moved or warped face is the failure the check must catch. A picture where no face is found, or a machine without OpenCV or the YuNet model, is NOT_RUN, never PASS.",
+   "thresholds": {
+    "face_iou_min": 0.85
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Skills team analyst L16 run, faces_report.json (HF vano1919/tmr-artifacts, explainer-engine/skills_team_2026-11-20/group1/L16); relayed by the lead, not opened by the developer",
+     "url": "https://huggingface.co/datasets/vano1919/tmr-artifacts",
+     "note": "origin recorded; proves nothing",
+     "verified": false
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/qa/send_validators.py"
+   ],
+   "supersedes": []
   }
  ]
 }
