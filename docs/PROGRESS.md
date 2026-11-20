@@ -6840,3 +6840,11 @@ G-LIVE-1 (whole-frame floor) only when no zone is declared, else per zone plus t
 the second gate was a wrong model for low-contrast smoke and sky: a zone moves when the flow explains the change or the change is structured, a zone pixel counts from `zone_change_min` 2 grey levels, smoke floor 1 px/s; frame and speck gates use the camera-compensated change (a drifting camera changes every edge); the undeclared-speck rule counts specks of at least `speck_min_px_s` outside a matte widened to `matte_dilate_px`; the layered camera was NOT removing zone motion (on/off identical within a few %), the drift clips failed on the 5 px/s fire floor; the sidecar is searched beside the clip, in `zones/` next to it and next to the clip's folder, and a clip without one says "no zone sidecar found, whole frame judged".
 Result: all 12 run2 clips PASS (held-out S04_SH014 too), X1 fire 84-95 % and smoke 39-63 % but X1 still FAILs for undeclared snow and a thin S07_SH008 sky, X4 camera-only and production controls, Z1-Z17, snow-only and dead-world fixtures still FAIL. Table: `skills_team_2026-11-20/L14_CALIBRATION_BEFORE_AFTER_2026-11-20.md`. Tests: `tests/unit/test_living_motion_real_clips.py` (27, skipped without the clips), new fixtures in `test_send_validators.py`. Cost: $0.
 Reported open: X1 vs ruling (4) (PASS) conflicts with the declare-your-particles rule (Z5-Z7), which is kept; a sky whose clouds change without translating fails the 25 % cover; the speck rule cannot tell a very thin snow layer from parallax residual; frame integrity and sky continuity checks go to Gemini (G-02, G-03).
+
+## 2026-11-20 — G-01 breath and embers: tests by a separate chat (`tests/unit/test_breath_embers.py`)
+
+PR #227 held `production/fx25d/breath_embers.py` with no tests. 42 tests written from the rules of the G-01 TASK (interface, limits,
+puff timing, smoothness, ember life, occlusion, far pixels, determinism, wind, composite, speed on 1280x704) before the module's
+text was read; a mutation spot-check of 24 hand-made mutations: 23 caught, 1 equivalent survivor (the breath clip at 0.35 is
+redundant, the union formula already caps it). Two edge notes, not defects at the pipeline's 1280x704 frame: the ember size is in
+pixels (a quarter-size frame exceeds the 2 % cover rule), and the plume has an 8 px floor (`max(8.0, size_share * width)`).
