@@ -3801,3 +3801,12 @@ file is read as JSON so an escaped letter counts); an unreadable file is NOT_RUN
 (BP-167 through `core/delivery.size()`; a job that names its size keeps it); mismatch FAIL, no file / no video stream NOT_RUN.
 Tests: `tests/unit/test_language_check.py` (9), `tests/unit/test_master_size.py` (6). Neither is wired into a gate or the
 registry yet.
+
+## 2026-11-20 — Attempts at the retry cap, sorted by defects, never chosen (coverage gap, OR-Q03)
+
+`explainer_engine/qa/attempt_ranking.py`: `rank_attempts` takes each attempt's `qa_report/1` checks and returns every attempt
+ordered by fewest failed FAIL rows, then fewest failed REVIEW rows (then attempt number, only for a stable order);
+`format_for_creator` prints the list and says it is a sort, not a choice. Per the creator's card answer (relayed 2026-11-20
+20:43 UTC) the final choice is his eye: nothing is picked, no weights, no thresholds. Tests: `tests/unit/test_attempt_ranking.py`
+(15). Not yet called from the retry router or the shot-state `decide` of the open episode PR: the caller passes the attempts'
+qa reports.
