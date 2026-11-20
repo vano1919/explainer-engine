@@ -1,0 +1,57 @@
+# SOURCE: v-thumbnail-skill
+
+repo: https://github.com/kajisho5/thumbnail-skill
+path: .
+commit: 751f21a741559a4e93952096e57562f35c8e57cb
+commit_date: 2026-11-19
+retrieved: 2026-11-19
+author: kajisho5
+licence: MIT (LICENSE)
+stars_seen: not obtainable (GitHub API blocked in the session)
+stage: S18
+tool: tools/vendor_skill.py (byte-for-byte copy; upstream files are never edited)
+name_clash: upstream frontmatter name 'thumbnail-skill' differs from folder 'v-thumbnail-skill'; Claude Code uses the folder name
+excluded:
+  - --exclude brand: 7 files (brand)
+  - --exclude tests: 21 files (tests)
+  - skip-dir: 123 files (.git, .github)
+
+files:
+a3f189ca3756bf63601c6dc4af1a31a6ec0d1cac7a1e732014f75066febf2748  .fetched
+d8125f44b8b8b216a610d9cd1c008c83cfaa44376e85a8f612ec5f616072a5df  .gitattributes
+6ead8d6686963051df4647e603df085581c8dce9e50eb485ea3545cbb9300756  .gitignore
+ab7a36c12f2fbd88f546ff01bd84b4bbc2dd02446c2eec948b36cf8adc887942  CHANGELOG.md
+0bde5a5dfe16218aa8ad3456c853b2c734ee5ca41be4d07e57ae04db656d0f29  ECOSYSTEM_ROADMAP.md
+7522b29e4d6e90f2a8fab15f07d224b1064c70692a872be9996ac1a88cf474e9  LICENSE
+3a0effb85419988fbc508bafc1755e2c072e2f7aaeab8964d82be805522c9855  README.md
+707d8eb512eb25ce37a198fd5ed277a4dd43374dc7e3837c6c32424adb414311  SECURITY.md
+93f152ac6d0e08268cd64fe89118c159229ab3149046d9c50722ca8e6c6e9ec4  SKILL.md
+a2b04eac2b2d3185ac40cbd3becbcaf90da5e535975c46d875efeca2263d4132  contract/contract.json
+0afd0ab889d9776f87222d8eb0179365565d128ea05463294887c0bfc75f4ef3  contract/generate.py
+068e4c632520a9ea91c86a8def5936df2b62809732dfd037059af253e33086b0  docs/architecture.md
+b486659012eee4856ef574a27c5e5bf9e267a71f338176ac6b40627a51d71a7c  docs/decisions.md
+ac55bce306a687fbc86f4de89bef46a6110b0c3d01ce36787ffb2820e11d875a  docs/ffmpeg-skill.md
+348327359a66671fc7908e8b62a2b349e893abc88910ac87f2bbb35e88727223  docs/model.md
+38354055193c3753b4ee1301ac6f6cfb542653fbcce34126aa036a455f75a1d3  docs/security.md
+5c891991e0d8cfd509c4e3abc0bba99fcd3c2461a3c00539f0ce72ed4f360037  docs/testing.md
+38674f62697ae49f1ff8ed3197f29f8494ee8b5d1bf466fa90bb2ba2f1d5a620  pyproject.toml
+3165189bcf5fbb0ad147fbc370ecc0ec0fd107edf541d10a160d5219772ca3bd  src/thumbnail_skill/__init__.py
+a7990bd4fc2044b946631565a3001fbbb75fdb3418d7b74305611b59fed21a8d  src/thumbnail_skill/adapter.py
+25bf31175f3864061e0b9bb3f8f2616a0a7b211de837496810516c6b466dba51  src/thumbnail_skill/background.py
+19c4d4563876d47295bbd4db47684da3ed957a7b8c42179b88418957d6b6c96a  src/thumbnail_skill/batch.py
+64db39ba5c3b411acb948f8567957139e0db27199371c9d3763bf66142d7bd41  src/thumbnail_skill/canonical.py
+1bbad4b4522567a2877d6a862c9feb0784de5073953a1673525d992aea075480  src/thumbnail_skill/cli.py
+ccc5b6aa80bc5b0cc48f1527599f9e2fcef430ae0ed5ed72b8eaeb5eca12a08a  src/thumbnail_skill/contract.py
+0327a4127217cf43723b922dfe39abd794ee4f2e5b3ed08fc72787e1a98a747d  src/thumbnail_skill/doctor.py
+0964c3d89dd51ce28688df730a2b3a4c05b11b01ba89b01512fcea42de7bee0c  src/thumbnail_skill/errors.py
+f8b0cd24e1dba16f6dc32e2c2295525dfd690a4aef94f2dff5f51fe3e8c1b19b  src/thumbnail_skill/executor.py
+6e6e4b0b8f28cebb01e066035b8cde9cb187198dcac35de9c4cebf0dbec8fc17  src/thumbnail_skill/fonts.py
+21fe72c242987ec09457c8143b471113a9185256ddd6d818074cadcddb456d94  src/thumbnail_skill/frames.py
+157427efc049627297a2fe4db5ade7c0719d5f9c47d9552ff4b2b5d68dcac66a  src/thumbnail_skill/kit.py
+2fdc9a13c47669492b094587acf603585dc70251bcd956779ac24239bf6dad59  src/thumbnail_skill/layers.py
+a2202b8703712e4ace4b01b55aa24f4f2f63c97577cf6d12d783c5179d08d62e  src/thumbnail_skill/model.py
+837e68164dc6e617b3c233facfae1668248e3b8a12fc5ea487d5f3e0cff2b161  src/thumbnail_skill/qcskill.py
+b2ff5272f39bdb48f411c4762bec042479eb94bfcccd095fa21a93c46174061f  src/thumbnail_skill/renderer.py
+eb3460c2a9a0ad468d17cd6d71254dace66dd56f7017e130cb6f36a1f19b91fe  src/thumbnail_skill/security.py
+7a0f812ae904aa6e669b8c952291ab8f3b17525950673cd78d8cd04abed55fa2  src/thumbnail_skill/skill.py
+0ef69c9f8e3754452366f50803ff38f652af9935fc2129dc8695271e908165ef  src/thumbnail_skill/variants.py

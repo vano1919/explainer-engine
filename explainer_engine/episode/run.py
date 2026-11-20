@@ -8,7 +8,7 @@ The stages of plan section 4, in order: ``script`` (G1-G3), ``sound_plan`` (G4),
 ``clips`` (G7a maps, G7b 2.5D, G7c Wan), ``sound`` (G8), ``assemble`` (G9), ``qa`` (G10). Each stage writes its record
 ``production/stages/<stage>.json``: its gate rows (``qa/gates``), its verdict, what it made, and the fingerprint of what it
 was made from (the episode, the script, its own inputs and the record of the stage before). A stage refuses to start while
-the record before it is missing, stale (made from other inputs) or not PASS/REVIEW. ``--rehearsal`` lets a stage start
+the record before it is missing, stale (made from other inputs) or not PASS (REVIEW goes on only with a creator approval bound to its input hash, P-7). ``--rehearsal`` lets a stage start
 after a FAIL or an INCOMPLETE record, to rehearse the whole chain on what exists: every later record says ``rehearsal``,
 and the QA stage of a rehearsal never passes.
 
@@ -45,7 +45,12 @@ READ_REL = "audio/narration.wav"            # the episode's real read (ElevenLab
 TRANSCRIPT_REL = "audio/narration.scribe.json"   # its Scribe transcript (words with times)
 TIMING_REL = "audio/timing.json"                 # the G6 persisted authoritative episode clock
 WAN_LEDGER_REL = "logs/wan_ledger.jsonl"
-GO_ON = (G.PASS, G.REVIEW)
+GO_ON = (G.PASS,)   # final plan P-7: REVIEW is never a pass; it goes on only with a bound creator approval (review_approved)
+APPROVALS_REL = "qa/approvals.json"
+APPROVALS_SCHEMA = "stage_approvals/1"
+AWAITING_APPROVAL = "CREATOR_APPROVAL"
+GOVERNANCE_ROOT = None   # where jobs/creator_ok.jsonl lives (None: the repo); tests point it at a temp folder
+STAGE_APPROVAL = "stage_approval"   # the governance record action behind an approvals.json entry
 DEFAULT_SIZE = (1920, 1080)
 
 
@@ -157,6 +162,77 @@ def fingerprint(ep: Episode, stage: str) -> str:
                     "fps": ep.fps})
 
 
+def approvals_path(root: Path) -> Path:
+    return Path(root) / APPROVALS_REL
+
+
+def load_approvals(root: Path) -> list[dict]:
+    """The creator's approvals of REVIEW verdicts (``qa/approvals.json``, schema ``stage_approvals/1``); none when the file is
+    absent. A file that is not that schema is a ContractError: an approval is never guessed from a malformed file."""
+    p = approvals_path(root)
+    if not p.is_file():
+        return []
+    import jsonschema
+    doc = json.loads(p.read_text(encoding="utf-8"))
+    schema = json.loads((Path(__file__).resolve().parents[1] / "schemas" / "stage_approvals.schema.json").read_text(encoding="utf-8"))
+    try:
+        jsonschema.validate(doc, schema)
+    except jsonschema.ValidationError as exc:
+        raise ContractError(f"{p}: not a {APPROVALS_SCHEMA} file: {exc.message}") from exc
+    return doc["approvals"]
+
+
+def approval_target(rec: dict) -> str:
+    """The governance record's target for one stage record: the episode, the stage and the input hash it was made from."""
+    return f"{rec.get('episode_id')}:{rec['stage']}:{rec.get('fingerprint')}"
+
+
+def review_approved(root: Path, rec: dict | None) -> bool:
+    """True when the record's verdict is REVIEW and ``qa/approvals.json`` holds an approval for that stage bound to the record's own
+    input hash (its fingerprint) that carries the creator's chat message id and words, AND the creator's recorded word of the same
+    message id exists in ``jobs/creator_ok.jsonl`` (``governance ok``, action ``stage_approval``). A hand-written entry, an approval
+    of another hash (the inputs changed since) or one without the recorded word does not count."""
+    if not rec or rec["verdict"]["status"] != G.REVIEW:
+        return False
+    from explainer_engine.governance import records
+    for a in load_approvals(root):
+        if a["stage"] == rec["stage"] and a["input_hash"] == rec.get("fingerprint") and \
+                records.find(STAGE_APPROVAL, approval_target(rec), a["message_id"], root=GOVERNANCE_ROOT):
+            return True
+    return False
+
+
+def approve(ep: "Episode", stage: str, message_id: str, words: str) -> dict:
+    """Record the creator's approval of a REVIEW stage record: refused unless the record is REVIEW and fresh and the creator's
+    message id and words are given. Writes the governance record and the ``qa/approvals.json`` entry bound to the fingerprint."""
+    import re
+    from explainer_engine.governance import records
+    stage = ALIASES.get(stage, stage)
+    rec = read_record(ep.root, stage)
+    if rec is None:
+        raise ConfigError(f"{stage} has no record: nothing to approve")
+    if rec["verdict"]["status"] != G.REVIEW:
+        raise ConfigError(f"{stage} ended {rec['verdict']['status']}, not REVIEW: only a REVIEW is approved")
+    if rec.get("fingerprint") != fingerprint(ep, stage):
+        raise ConfigError(f"the record of {stage} is stale (its inputs changed): run it again, look at the new result, then approve")
+    if not re.fullmatch(r"cmsg_[A-Za-z0-9]+", message_id or ""):
+        raise ConfigError("an approval needs the creator's own chat message id (cmsg_...)")
+    if not (words or "").strip():
+        raise ConfigError("an approval needs the creator's quoted words or the card option he chose")
+    records.add(STAGE_APPROVAL, approval_target(rec), message_id, words, root=GOVERNANCE_ROOT)
+    entry = {"stage": stage, "input_hash": rec["fingerprint"], "approved_by": "creator", "approved_at":
+             time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "message_id": message_id, "words": words[:300]}
+    doc = {"schema": APPROVALS_SCHEMA, "approvals": load_approvals(ep.root) + [entry]}
+    write_json_atomic(approvals_path(ep.root), doc)
+    return entry
+
+
+def may_go_on(root: Path, rec: dict | None) -> bool:
+    """A record lets the next stage start: PASS, or REVIEW with a bound creator approval. Nothing else (NOT_RUN, RETRY, FAIL,
+    INCOMPLETE and a missing record never do)."""
+    return bool(rec) and (rec["verdict"]["status"] in GO_ON or review_approved(root, rec))
+
+
 def state(ep: Episode) -> list[dict]:
     """Every stage: its record's verdict, fresh or stale, rehearsal or not."""
     out = []
@@ -164,7 +240,10 @@ def state(ep: Episode) -> list[dict]:
         rec = read_record(ep.root, s)
         out.append({"stage": s, "gate": GATES[s], "status": rec["verdict"]["status"] if rec else None,
                     "fresh": bool(rec) and rec.get("fingerprint") == fingerprint(ep, s),
-                    "rehearsal": bool(rec and rec.get("rehearsal")), "at": rec.get("at") if rec else None})
+                    "rehearsal": bool(rec and rec.get("rehearsal")), "at": rec.get("at") if rec else None,
+                    "not_run": list(rec["verdict"].get("not_run") or []) if rec else [],
+                    "awaiting": (AWAITING_APPROVAL if rec and rec["verdict"]["status"] == G.REVIEW
+                                 and not review_approved(ep.root, rec) else None)})
     return out
 
 
@@ -181,10 +260,15 @@ def check_before(ep: Episode, stage: str) -> bool:
     if rec.get("fingerprint") != fingerprint(ep, prev):
         raise StageRefused(f"the record of {prev} is stale (its inputs changed since it ran); run {prev} again first")
     status = rec["verdict"]["status"]
-    if status not in GO_ON and not ep.rehearsal:
+    go = may_go_on(ep.root, rec)
+    if not go and not ep.rehearsal:
+        if status == G.REVIEW:
+            raise StageRefused(f"{prev} ended REVIEW (awaiting: {AWAITING_APPROVAL}): a person looks, then {APPROVALS_REL} gets an "
+                               f"approval of stage {prev} bound to input hash {rec.get('fingerprint')}; or pass --rehearsal "
+                               f"to rehearse the chain (a rehearsal never ships)")
         raise StageRefused(f"{prev} ended {status} ({', '.join(rec['verdict'].get('failed') or rec['verdict'].get('not_run') or [])}); "
                            f"fix it, or pass --rehearsal to rehearse the chain (a rehearsal never ships)")
-    return bool(rec.get("rehearsal")) or status not in GO_ON
+    return bool(rec.get("rehearsal")) or not go
 
 
 def run_stage(ep: Episode, stage: str) -> dict:
@@ -208,6 +292,8 @@ def run_stage(ep: Episode, stage: str) -> dict:
     verdict.pop("gates", None)
     rec = {"schema": RECORD_SCHEMA, "episode_id": ep.manifest.get("episode_id"), "stage": stage, "gate": GATES[stage],
            "verdict": verdict, "rows": rows, "outputs": outputs, "rehearsal": rehearsal, "fingerprint": fp,
+           "not_run": [r["gate"] for r in rows if r["status"] == G.NOT_RUN],   # P-7: an unmeasured row is stored, never dropped
+           "awaiting": AWAITING_APPROVAL if verdict["status"] == G.REVIEW else None,
            "elapsed_s": round(time.time() - t0, 2), "at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}
     SS.hook(ep.root, stage, rec, ss_resets, rehearsal)   # W3: reset notes + bind a passing stage's files (shot_state.py)
     write_json_atomic(record_path(ep.root, stage), rec)
@@ -225,7 +311,7 @@ def run_to(ep: Episode, last: str) -> list[dict]:
             done.append(dict(rec, reused=True))
         else:
             done.append(run_stage(ep, s))
-        if done[-1]["verdict"]["status"] not in GO_ON and not ep.rehearsal:
+        if not may_go_on(ep.root, done[-1]) and not ep.rehearsal:
             break
     return done
 
@@ -1764,7 +1850,9 @@ def _print_state(ep: Episode) -> None:
     for s in state(ep):
         mark = "-" if s["status"] is None else ("fresh" if s["fresh"] else "STALE")
         print(f"{s['gate']:6} {s['stage']:11} {str(s['status'] or 'not run'):10} {mark:6}"
-              f"{' rehearsal' if s['rehearsal'] else ''}")
+              f"{' rehearsal' if s['rehearsal'] else ''}{' awaiting: ' + s['awaiting'] if s['awaiting'] else ''}")
+        for g in s["not_run"]:   # NOT_RUN is shown, never counted as success (P-7)
+            print(f"         NOT_RUN  {g}")
 
 
 def main(argv=None) -> int:
@@ -1783,12 +1871,25 @@ def main(argv=None) -> int:
     r.add_argument("--chunk-seconds", type=float)
     r.add_argument("--sound-library", type=Path, help="HF-7: the sound library folder (a manifest.json and its categories); "
                    "default assets/audio/library. Its manifest is in the fingerprint of G4 and G8, so give it to every call")
+    ap_ = sub.add_parser("approve", help="record the creator's approval of a stage that ended REVIEW (his chat message id and words)")
+    ap_.add_argument("episode", type=Path)
+    ap_.add_argument("stage")
+    ap_.add_argument("--message-id", required=True)
+    ap_.add_argument("--words", required=True, help="his quoted words, or the card option he chose")
     s = sub.add_parser("status", help="the stages and their records")
     s.add_argument("episode", type=Path)
     s.add_argument("--sound-library", type=Path, help="the same folder the runs used (HF-7)")
     a = ap.parse_args(argv)
     if a.cmd == "status":
         _print_state(Episode(a.episode, sound_library=a.sound_library))
+        return 0
+    if a.cmd == "approve":
+        try:
+            entry = approve(Episode(a.episode), a.stage, a.message_id, a.words)
+        except ConfigError as exc:
+            print(f"refused: {exc}", file=sys.stderr)
+            return 2
+        print(f"approved {entry['stage']} at {entry['input_hash'][:12]} ({entry['message_id']})")
         return 0
     ep = Episode(a.episode, size=a.size, fps=a.fps, rehearsal=a.rehearsal, force=a.force, chunks=a.chunks,
                  chunk_seconds=a.chunk_seconds, sound_library=a.sound_library)
@@ -1804,8 +1905,7 @@ def main(argv=None) -> int:
         for row in rec["rows"]:
             if row["status"] != G.PASS:
                 print(f"         {row['status']:8} {row['gate']}: {row['detail']}")
-    last = recs[-1]["verdict"]["status"]
-    return 0 if last in GO_ON else 1
+    return 0 if may_go_on(ep.root, recs[-1]) else 1
 
 
 if __name__ == "__main__":

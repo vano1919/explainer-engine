@@ -109,3 +109,11 @@ there, with its sources, never here.
   chunks stand in); pauses by tags and punctuation only, no SSML on v3/v4; speed within 0.9-1.1 (the connector has no speed
   knob on v4, so the text sets the pace and any speed-up happens in finishing under BP-02).
 - BP-138: the casting margins between two cast voices (hypothesis, REVIEW; checklist above).
+
+## Vendored skills (W1, P-1/P-2): when to load them
+
+Upstream text lives in the `v-*` folders (pinned in `docs/VENDORED_SKILLS.md`); nothing from it is copied here.
+
+- Load the official ElevenLabs skills for API usage: `v-elevenlabs-text-to-speech`, `v-elevenlabs-speech-to-text` (Scribe), `v-elevenlabs-sound-effects`, `v-elevenlabs-music`. For local word timing alternatives load `v-transcription-skill`.
+- Do not call any ElevenLabs endpoint straight from the upstream examples: every paid call goes through the connector and the `.claude/settings.json` PreToolUse hook (one take, library first, OR-18). Credit rules and "never re-read" stay in this skill.
+- Validator: `explainer_engine/validators/voice.py` (planned, W2), `explainer_engine/validators/timing.py` (planned, W2), existing `explainer_engine/audio/voice_check.py`.

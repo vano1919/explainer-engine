@@ -1,0 +1,421 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/kajisho5/transcription-skill/schemas/transcript.schema.json",
+  "title": "Transcript",
+  "description": "transcription-skill/transcript/0.1. Timestamps are seconds on the asset's own timeline. speaker_id is null unless filled from diarization-skill speaker turns (transcription/speakers or transcribe speaker_turns, ADR-037); recognition alone never sets it. Every word carries index, 0-based and contiguous over the whole transcript (ADR-039); dictionary words (word_segmentation 'dictionary') add timing and pos.",
+  "type": "object",
+  "required": [
+    "schema",
+    "id",
+    "asset_id",
+    "language",
+    "language_source",
+    "language_confidence",
+    "duration",
+    "segments",
+    "source",
+    "engine",
+    "engine_version",
+    "created_at",
+    "provenance",
+    "warnings"
+  ],
+  "properties": {
+    "schema": {
+      "const": "transcription-skill/transcript/0.1"
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "asset_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "language": {
+      "type": "string",
+      "pattern": "^([a-z]{2,3}|unknown)$"
+    },
+    "language_source": {
+      "enum": [
+        "requested",
+        "detected",
+        "unknown"
+      ]
+    },
+    "language_confidence": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 1
+    },
+    "duration": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "segments": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/segment"
+      }
+    },
+    "source": {
+      "$ref": "#/$defs/source"
+    },
+    "engine": {
+      "type": "string",
+      "minLength": 1
+    },
+    "engine_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "created_at": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"
+    },
+    "provenance": {
+      "$ref": "#/$defs/provenance"
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "$defs": {
+    "word": {
+      "type": "object",
+      "required": [
+        "start",
+        "end",
+        "text",
+        "confidence"
+      ],
+      "properties": {
+        "index": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "0-based word number, contiguous over the whole transcript in document order (segments by start, words by start); present on every word of documents written by 0.9.0 and later, absent on older ones (ADR-039)"
+        },
+        "start": {
+          "type": "number",
+          "minimum": 0
+        },
+        "end": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "text": {
+          "type": "string"
+        },
+        "confidence": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "speaker_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "description": "optional; present after a speaker merge (ADR-037): the word's own speaker or null"
+        },
+        "timing": {
+          "enum": [
+            "measured",
+            "interpolated"
+          ],
+          "description": "dictionary words only (word_segmentation 'dictionary', ADR-039): 'measured' when both boundaries are engine word boundaries, 'interpolated' when a boundary was placed inside an engine word by character share. Absent on engine words, whose times are engine-reported"
+        },
+        "pos": {
+          "enum": [
+            "noun",
+            "pronoun",
+            "verb",
+            "adjective",
+            "adverb",
+            "particle",
+            "auxiliary",
+            "conjunction",
+            "interjection",
+            "prefix",
+            "suffix",
+            "symbol",
+            "other"
+          ],
+          "description": "dictionary words only (ADR-039): coarse part of speech from the dictionary, a fixed set"
+        }
+      }
+    },
+    "segment": {
+      "type": "object",
+      "required": [
+        "id",
+        "start",
+        "end",
+        "text",
+        "raw_text",
+        "confidence",
+        "words",
+        "speaker_id"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "start": {
+          "type": "number",
+          "minimum": 0
+        },
+        "end": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "text": {
+          "type": "string",
+          "description": "whitespace/control-normalized engine text"
+        },
+        "raw_text": {
+          "type": "string",
+          "description": "engine text verbatim"
+        },
+        "confidence": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "words": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/$defs/word"
+          }
+        },
+        "speaker_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "description": "anonymous speaker id (SPEAKER_nn) from diarization-skill turns, or null: recognition never sets it; transcription/speakers fills it (ADR-037)"
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "required": [
+        "filename",
+        "fingerprint",
+        "size_bytes",
+        "media_duration"
+      ],
+      "properties": {
+        "filename": {
+          "type": "string",
+          "description": "bare file name, never a path"
+        },
+        "fingerprint": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "size_bytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "media_duration": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "audio_channels": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "sample_rate": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "container": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "has_video": {
+          "type": "boolean"
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "required": [
+        "engine",
+        "engine_version",
+        "execution_mode",
+        "model",
+        "model_version",
+        "parameters",
+        "parameters_hash",
+        "cache_key",
+        "created_at",
+        "processing_seconds",
+        "skill_version",
+        "skill",
+        "tool"
+      ],
+      "properties": {
+        "engine": {
+          "type": "string"
+        },
+        "engine_version": {
+          "type": "string"
+        },
+        "execution_mode": {
+          "enum": [
+            "local",
+            "remote"
+          ],
+          "description": "where recognition ran"
+        },
+        "model": {
+          "type": "string"
+        },
+        "model_version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "parameters": {
+          "type": "object"
+        },
+        "parameters_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "cache_key": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "processing_seconds": {
+          "type": "number",
+          "minimum": 0
+        },
+        "skill_version": {
+          "type": "string"
+        },
+        "language_detection": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "audio_extraction": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "follow": {
+          "description": "Present only on a transcript of a followed recording (transcribe --follow, ADR-043): the window, idle and holdback seconds, how many recognition rounds ran, how many final segments were emitted, and the audio length read.",
+          "type": "object",
+          "required": ["window_seconds", "idle_seconds", "holdback_seconds", "rounds", "finals", "audio_seconds"],
+          "properties": {
+            "window_seconds": {"type": "number", "exclusiveMinimum": 0},
+            "idle_seconds": {"type": "number", "exclusiveMinimum": 0},
+            "holdback_seconds": {"type": "number", "minimum": 0},
+            "rounds": {"type": "integer", "minimum": 0},
+            "finals": {"type": "integer", "minimum": 0},
+            "audio_seconds": {"type": "number", "minimum": 0}
+          }
+        },
+        "chunking": {
+          "description": "Present only on a chunked transcription (request chunk_seconds, ADR-042): how the recording was cut, which chunks came from the per-chunk cache, the device and the realtime factor (wall seconds of this run / media seconds).",
+          "type": "object",
+          "required": ["chunk_seconds", "parallel", "cuts_from", "chunk_count", "chunks_from_cache", "chunks_recognized", "device", "engine_seconds", "wall_seconds", "realtime_factor", "chunks"],
+          "properties": {
+            "chunk_seconds": {"type": "number"},
+            "parallel": {"type": "integer", "minimum": 1},
+            "cuts_from": {"enum": ["speech_regions", "level"]},
+            "chunk_count": {"type": "integer", "minimum": 1},
+            "chunks_from_cache": {"type": "integer", "minimum": 0},
+            "chunks_recognized": {"type": "integer", "minimum": 0},
+            "device": {"type": "string"},
+            "engine_seconds": {"type": "number"},
+            "wall_seconds": {"type": "number"},
+            "realtime_factor": {"type": ["number", "null"]},
+            "chunks": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["index", "start", "end", "cut", "from_cache"],
+                "properties": {
+                  "index": {"type": "integer", "minimum": 0},
+                  "start": {"type": "number"},
+                  "end": {"type": "number"},
+                  "cut": {"type": "object", "required": ["source"], "properties": {"source": {"enum": ["speech_regions", "level", "end"]}}},
+                  "from_cache": {"type": "boolean"},
+                  "engine_seconds": {"type": ["number", "null"]}
+                }
+              }
+            }
+          }
+        },
+        "vocabulary": {
+          "description": "Present only when the request had domain_vocabulary (ADR-047): the terms selected from the caller's programme, slide text, speakers and terms (every one a string of that material), how they reached the engine (initial_prompt, vocabulary, or null when the engine takes neither), which were passed, and the size of each source.",
+          "type": "object",
+          "required": ["terms", "delivered_as", "terms_passed", "japanese", "sources"],
+          "properties": {
+            "terms": {"type": "array", "items": {"type": "string"}},
+            "delivered_as": {"enum": ["initial_prompt", "vocabulary", null]},
+            "terms_passed": {"type": "array", "items": {"type": "string"}},
+            "japanese": {"type": "boolean"},
+            "sources": {"type": "object"}
+          }
+        },
+        "corrections": {
+          "description": "Present only when the request had corrections (ADR-047): the rules in order, and every replacement made in segment text (raw_text keeps the engine's), with the rule index, the text it replaced, the segment and its time: the replaced words' own (timing word) or the segment's (timing segment).",
+          "type": "object",
+          "required": ["rules", "count", "applied"],
+          "properties": {
+            "rules": {"type": "array", "items": {"type": "object", "required": ["from", "to", "match"],
+                      "properties": {"from": {"type": "string"}, "to": {"type": "string"}, "match": {"enum": ["word", "substring"]}}}},
+            "count": {"type": "integer", "minimum": 0},
+            "applied": {"type": "array", "items": {"type": "object", "required": ["rule", "from", "to", "segment_id", "start", "end", "timing"],
+                        "properties": {"rule": {"type": "integer", "minimum": 0}, "from": {"type": "string"}, "to": {"type": "string"},
+                                       "segment_id": {"type": "string"}, "start": {"type": "number"}, "end": {"type": "number"},
+                                       "timing": {"enum": ["word", "segment"]}}}}
+          }
+        },
+        "skill": {
+          "type": "string",
+          "const": "transcription-skill"
+        },
+        "tool": {
+          "type": "string",
+          "pattern": "^transcription/"
+        }
+      }
+    }
+  }
+}

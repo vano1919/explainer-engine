@@ -263,7 +263,7 @@ def test_docs_and_skills_link_the_audio_rules_instead_of_old_numbers():
     assert "at most 4 (AL-01)" not in se and "0.94 / 1.06" not in se and "20-250 ms" not in se
     ed = (ROOT / "docs/EDITING.md").read_text(encoding="utf-8")
     assert "two background layers" not in ed and "1.05, 1.10 and 1.15" not in ed
-    vea = (ROOT / ".claude/skills/video-editing-architect/SKILL.md").read_text(encoding="utf-8")
+    vea = (ROOT / ".claude/skills/_archive/video-editing-architect/SKILL.md").read_text(encoding="utf-8")
     assert "14+ dB" not in vea and "bed 4 dB" not in vea and "-55 to -60 dB under" not in vea
-    assert "attack 20-80 ms" in (ROOT / ".claude/skills/editing-style/SKILL.md").read_text(encoding="utf-8")
+    assert "attack 20-80 ms" in (ROOT / ".claude/skills/_archive/editing-style/SKILL.md").read_text(encoding="utf-8")
     assert "voice-to-music gap >= 10 dB" not in (ROOT / "docs/IMPLEMENTATION_PLAN.md").read_text(encoding="utf-8")

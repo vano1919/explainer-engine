@@ -15,7 +15,8 @@ HISTORY = {"DECISIONS_AND_OPEN_QUESTIONS.md", "PLAN_2026-10-15.md"}
 def _files():
     yield ROOT / "CLAUDE.md"
     yield from sorted((ROOT / "docs").glob("*.md"))
-    yield from sorted((ROOT / ".claude").rglob("*.md"))
+    # vendored upstream skills (`v-*`, W1) are byte-pinned third-party text, guarded by test_vendored_skills.py
+    yield from sorted(p for p in (ROOT / ".claude").rglob("*.md") if not any(x.startswith("v-") for x in p.relative_to(ROOT / ".claude").parts))
 
 
 def _banner(lines):
