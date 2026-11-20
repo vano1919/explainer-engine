@@ -21,6 +21,7 @@ COMMIT = "0123456789abcdef0123456789abcdef01234567"
 def _cand(i: int, sq: str = "SQ1", *, ok: bool = True) -> dict:
     return {"id": f"C{i}", "sub_question": sq, "kind": "repo", "url": f"https://github.com/someone/repo{i}", "author": "someone",
             "stars": 100 * i, "commit": COMMIT, "licence": "MIT" if ok else "none", "monetised_ok": ok,
+            "licence_source": f"https://github.com/someone/repo{i}/blob/{COMMIT}/LICENSE" if ok else "none",
             "teaches": "a structure for prompts", "fit": 4}
 
 
@@ -58,6 +59,14 @@ def root(tmp_path):
     (tmp_path / "docs").mkdir()
     (tmp_path / "docs" / "DECISIONS_AND_OPEN_QUESTIONS.md").write_text("| D-131 | the v4.3 rebuild |\n| D-140 | x |\n", encoding="utf-8")
     return tmp_path
+
+
+def sign(rec, **extra):
+    """Make a record final: the lead's signature and the MS-7 owner check."""
+    rec.update(state="final", signed_by="team lead", signed_at="2026-11-20",
+               owner_check=[{"url": "https://huggingface.co/datasets/x/y/blob/main/page.html", "sha256": SHA}], owner_seen="pending")
+    rec.update(extra)
+    return rec
 
 
 def codes(res) -> set[str]:
@@ -119,6 +128,9 @@ NEGATIVE = [
     ("monetised flag not a bool", mutate(["candidates", 0, "monetised_ok"], "yes"), "MS2-CAND-FIELD"),
     ("candidate fit out of range", mutate(["candidates", 0, "fit"], 9), "MS2-CAND-FIELD"),
     ("candidate for an unknown sub-question", mutate(["candidates", 0, "sub_question"], "SQ9"), "MS2-CAND-FIELD"),
+    ("repo without licence_source", mutate(["candidates", 0, "licence_source"], delete=True), "MS2-CAND-FIELD"),
+    ("licence_source not an https url", mutate(["candidates", 0, "licence_source"], "MIT"), "MS2-CAND-FIELD"),
+    ("licence_source none but monetised_ok true", mutate(["candidates", 0, "licence_source"], "none"), "MS2-CAND-FIELD"),
     ("duplicate candidate id", mutate(["candidates", 1, "id"], "C1"), "LG-DUP"),
     ("doc candidate without retrieved date", lambda r: r["candidates"][0].update(kind="doc", commit=None, stars=None) or r,
      "MS2-CAND-FIELD"),
@@ -269,10 +281,10 @@ def test_a_file_that_is_not_json_is_a_block(root):
 
 
 def test_final_needs_the_leads_signature(root):
-    rec = good()
-    rec["state"] = "final"
+    rec = sign(good())
+    del rec["signed_by"]
     assert "LG-SIGN" in codes(check(rec, root))
-    rec["signed_by"], rec["signed_at"] = "team lead", "2026-11-20"
+    rec["signed_by"] = "team lead"
     assert check(rec, root).status == S.PASS
 
 
@@ -281,7 +293,7 @@ def test_require_pass_refuses_a_draft_a_block_and_a_not_run(root):
     write(root, rec)
     with pytest.raises(ContractError, match="draft"):
         LG.require_pass("L9", root=root)
-    rec["state"], rec["signed_by"], rec["signed_at"] = "final", "team lead", "2026-11-20"
+    sign(rec)
     write(root, rec)
     LG.require_pass("L9", root=root)                                 # a signed, complete record passes
     rec["trials"][0] = {"id": "TR1", "sub_question": "SQ1", "status": "NOT_RUN", "not_run_reason": "no GPU"}
@@ -300,7 +312,8 @@ def test_check_all_fails_for_a_final_block_but_not_for_a_draft(root):
     draft["requirements"] = []
     write(root, draft, "L9")
     final = good()
-    final.update(layer="L10", state="final", signed_by="team lead", signed_at="2026-11-20")
+    final.update(layer="L10")
+    sign(final)
     write(root, final, "L10")
     results = LG.check_all(root=root)
     assert {r.layer: r.status for r in results} == {"L9": S.BLOCK, "L10": S.PASS}
@@ -332,6 +345,139 @@ def test_cli_exit_codes(root, capsys, monkeypatch):
     nr["decisions"][0]["evidence"] = []
     write(root, nr)
     assert cli.main(["layers", "--layer", "L9"]) == 2
+
+
+
+# ---- MS-7 owner check (final records) -----------------------------------------------------------------------------------------
+
+@pytest.mark.parametrize("name,fn,code", [
+    ("no owner_check", lambda r: r.pop("owner_check") and r, "LG-OWNER"),
+    ("empty owner_check", lambda r: r.update(owner_check=[]) or r, "LG-OWNER"),
+    ("owner_check entry with neither url nor sha256", lambda r: r.update(owner_check=[{"note": "x"}]) or r, "LG-OWNER"),
+    ("owner_check url not https", lambda r: r.update(owner_check=[{"url": "ftp://x"}]) or r, "LG-OWNER"),
+    ("owner_check sha256 not hex", lambda r: r.update(owner_check=[{"sha256": "zz"}]) or r, "LG-OWNER"),
+    ("no owner_seen", lambda r: r.pop("owner_seen") and r, "LG-OWNER"),
+    ("owner_seen is neither a message id nor pending", lambda r: r.update(owner_seen="yes") or r, "LG-OWNER"),
+], ids=lambda v: v if isinstance(v, str) and " " in v else None)
+def test_a_final_record_needs_the_owner_check(root, name, fn, code):
+    res = check(fn(sign(good())), root)
+    assert code in codes(res) and res.status == S.BLOCK
+
+
+def test_a_draft_does_not_need_the_owner_check(root):
+    assert check(good(), root).status == S.PASS
+
+
+def test_owner_check_by_url_or_by_sha256_alone_is_enough(root):
+    rec = sign(good())
+    rec["owner_check"] = [{"url": "https://huggingface.co/x"}, {"sha256": SHA}]
+    assert check(rec, root).errors == []
+
+
+def test_pending_owner_seen_is_reported_never_silent(root, capsys, monkeypatch):
+    from explainer_engine.governance import __main__ as cli
+    rec = sign(good())
+    res = check(rec, root)
+    assert res.status == S.PASS and any("owner_seen" in n for n in res.pending)
+    rec["owner_seen"] = "cmsg_01AbCd"
+    assert check(rec, root).pending == []
+    monkeypatch.setenv("CLAUDE_PROJECT_DIR", str(root))
+    (root / "config").mkdir()
+    (root / "config" / "model_routing.json").write_text((ROOT / "config" / "model_routing.json").read_text(encoding="utf-8"), encoding="utf-8")
+    write(root, sign(good()))
+    assert cli.main(["layers", "--layer", "L9"]) == 0
+    assert "pending" in capsys.readouterr().out
+
+
+def test_a_not_used_capability_without_a_reason_blocks(root):
+    rec = good()
+    del rec["tool_capabilities"][1]["reason"]
+    res = check(rec, root)
+    assert "MS1-CAP-FIELD" in codes(res) and res.status == S.BLOCK
+
+
+# ---- group order (team plan section 3) ----------------------------------------------------------------------------------------
+
+def _write_group1(root, *, final_layers):
+    for layer in LG.GROUPS[1]:
+        rec = good()
+        rec["layer"] = layer
+        if layer in final_layers:
+            sign(rec)
+        write(root, rec, layer)
+
+
+def _other(layer, group):
+    rec = sign(good())
+    rec.update(layer=layer, group=group)
+    return rec
+
+
+def test_the_groups_cover_the_33_layers_once():
+    flat = [l for g in LG.GROUPS.values() for l in g]
+    assert sorted(flat, key=lambda x: int(x[1:])) == [f"L{i}" for i in range(1, 34)] and len(set(flat)) == 33
+    assert sorted(LG.GROUPS) == list(range(1, 11))
+
+
+def test_a_record_must_sit_in_its_layers_group(root):
+    rec = good()
+    rec["group"] = 2
+    assert "LG-SCHEMA" in codes(check(rec, root))
+
+
+def test_require_pass_waits_while_a_lower_group_is_not_final(root):
+    _write_group1(root, final_layers={"L9", "L10", "L11"})          # L16 stays a draft
+    write(root, _other("L12", 2), "L12")
+    with pytest.raises(NeedsReview, match="L16"):
+        LG.require_pass("L12", root=root)
+    rec = sign(good())
+    rec["layer"] = "L16"
+    write(root, rec, "L16")
+    LG.require_pass("L12", root=root)
+
+
+def test_a_lower_group_layer_without_a_record_also_holds_the_next_group_back(root):
+    _write_group1(root, final_layers={"L9", "L10", "L11", "L16"})
+    (root / "docs" / "layers" / "L11.json").unlink()
+    write(root, _other("L12", 2), "L12")
+    with pytest.raises(NeedsReview, match="L11"):
+        LG.require_pass("L12", root=root)
+
+
+def test_a_final_block_does_not_open_the_next_group(root):
+    _write_group1(root, final_layers={"L9", "L10", "L11", "L16"})
+    broken = sign(good())
+    broken.update(layer="L9", requirements=[])
+    write(root, broken, "L9")
+    write(root, _other("L12", 2), "L12")
+    with pytest.raises(NeedsReview, match="L9"):
+        LG.require_pass("L12", root=root)
+
+
+def test_group_one_has_no_lower_group_to_wait_for(root):
+    _write_group1(root, final_layers={"L9"})
+    LG.require_pass("L9", root=root)
+
+
+def test_group_report_says_per_group_whether_it_is_open(root, capsys, monkeypatch):
+    from explainer_engine.governance import __main__ as cli
+    _write_group1(root, final_layers={"L9", "L10", "L11"})
+    write(root, _other("L12", 2), "L12")
+    rows = {r["group"]: r for r in LG.group_report(root=root)}
+    assert rows[1]["open"] == ["L16"] and rows[1]["ready"] is False
+    assert rows[2]["waiting_on"] == [1] and "L16" in rows[2]["waiting_layers"]
+    assert rows[3]["waiting_on"] == [1, 2]
+    monkeypatch.setenv("CLAUDE_PROJECT_DIR", str(root))
+    (root / "config").mkdir()
+    (root / "config" / "model_routing.json").write_text((ROOT / "config" / "model_routing.json").read_text(encoding="utf-8"), encoding="utf-8")
+    cli.main(["layers"])
+    out = capsys.readouterr().out
+    assert "group 1:" in out and "L16" in out and "group 2: waiting on group 1" in out
+
+
+def test_the_layers_folder_has_its_readme():
+    text = (ROOT / "docs" / "layers" / "README.md").read_text(encoding="utf-8")
+    assert "LAYER_GATE.md" in text
 
 
 # ---- the committed records ---------------------------------------------------------------------------------------------------

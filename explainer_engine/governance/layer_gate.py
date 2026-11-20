@@ -7,7 +7,9 @@ MS-3 the trials, each looked at, each output with a line on what was seen; MS-4 
 with a run trial that beats every candidate); MS-5 the mapping of every requirement and every used capability to a skill line or a
 rule. :func:`check_record` returns a :class:`GateResult`: BLOCK when a part is missing or wrong, NOT_RUN when the record is complete
 but a sub-question has only trials that were not run (never a pass), PASS otherwise. A ``draft`` record is reported only; a
-``final`` one carries the team lead's signature and a BLOCK in it fails ``governance check``. stdlib only."""
+``final`` one carries the team lead's signature, the MS-7 owner check and a BLOCK in it fails ``governance check``. Layers belong to
+the ten groups of the team plan; a layer of group N waits (``require_pass`` raises NeedsReview) while a layer of a lower group is
+not final. stdlib only."""
 from __future__ import annotations
 
 import json
@@ -29,6 +31,13 @@ CHOICES = ("adopt", "enrich", "keep_ours", "idea_only")
 TRIAL_STATUS = ("RUN", "NOT_RUN")
 TARGET_KINDS = ("skill_line", "validator", "validator_planned", "sourced_rule")
 MIN_CANDIDATES = 3
+# the logical groups of the skills team plan (section 3); a layer's record must carry its group
+GROUPS: dict[int, tuple[str, ...]] = {
+    1: ("L9", "L10", "L11", "L16"), 2: ("L12", "L13", "L14"), 3: ("L15",), 4: ("L1", "L2", "L3", "L7", "L8", "L29", "L30"),
+    5: ("L4", "L5", "L6", "L17"), 6: ("L18", "L19", "L20"), 7: ("L21", "L22", "L25"), 8: ("L23", "L24"),
+    9: ("L26", "L27", "L28", "L32"), 10: ("L31", "L33"),
+}
+GROUP_OF = {layer: g for g, layers in GROUPS.items() for layer in layers}
 
 _MSG = re.compile(r"cmsg_[A-Za-z0-9]+")
 _DEC = re.compile(r"D-\d+")
@@ -44,11 +53,13 @@ class GateResult:
     errors: list[str] = field(default_factory=list)      # "CODE: what is wrong" - the codes are listed in docs/LAYER_GATE.md
     not_run: list[str] = field(default_factory=list)     # sub-questions without a trial that ran
     planned: list[str] = field(default_factory=list)     # validators that are mapped but not built yet (wave 2)
+    pending: list[str] = field(default_factory=list)     # open MS-7 items of a final record (owner_seen "pending")
     state: str = "draft"
+    group: int | None = None
 
     def to_dict(self) -> dict:
         return {"layer": self.layer, "status": self.status, "state": self.state, "errors": self.errors,
-                "not_run": self.not_run, "planned": self.planned}
+                "not_run": self.not_run, "planned": self.planned, "pending": self.pending, "group": self.group}
 
 
 def _text(v) -> bool:
@@ -142,6 +153,11 @@ def _check_candidates(rec, sqs: dict[str, dict], errs) -> dict[str, dict]:
                 bad.append("stars")
             if not (isinstance(c.get("commit"), str) and _COMMIT.fullmatch(c["commit"])):
                 bad.append("a pinned commit hash")
+            src = c.get("licence_source")
+            if not (src == "none" or (isinstance(src, str) and src.startswith("https://"))):
+                bad.append('licence_source (the https url of the LICENSE file at the commit, or "none")')
+            elif src == "none" and c.get("monetised_ok") is True:
+                bad.append('monetised_ok false (licence_source "none" means no licence was found: idea only)')
         elif kind == "doc":
             if not (isinstance(c.get("retrieved"), str) and _DATE.fullmatch(c["retrieved"])):
                 bad.append("retrieved date YYYY-MM-DD")
@@ -242,6 +258,26 @@ def _check_decisions(rec, sqs, cands, trials, errs) -> None:
             errs.append(f"MS4-LICENCE: {who}: {choice} {'needs a candidate whose licence does not allow a monetised channel' if want else 'copies a candidate whose licence does not allow a monetised channel (idea_only is the choice for it)'}")
 
 
+def _check_owner(rec, errs, res: GateResult) -> None:
+    """MS-7: the links the owner can watch, and whether he has seen them (``pending`` is allowed but reported)."""
+    links = rec.get("owner_check")
+    ok = isinstance(links, list) and bool(links)
+    for link in links if ok else []:
+        link = link if isinstance(link, dict) else {}
+        url, sha = link.get("url"), link.get("sha256")
+        good_url = isinstance(url, str) and url.startswith("https://")
+        good_sha = isinstance(sha, str) and bool(_SHA256.fullmatch(sha))
+        if (url is not None and not good_url) or (sha is not None and not good_sha) or not (good_url or good_sha):
+            ok = False
+    if not ok:
+        errs.append("LG-OWNER: a final record lists owner_check links (each an https url and/or a sha256) the owner can watch")
+    seen = rec.get("owner_seen")
+    if seen == "pending":
+        res.pending.append("owner_seen: the owner has not looked at the trial links yet")
+    elif not (isinstance(seen, str) and _MSG.fullmatch(seen)):
+        errs.append('LG-OWNER: owner_seen is a cmsg_ id of the owner\'s message or "pending"')
+
+
 def _check_target(t, root: Path, res: GateResult, strict: bool) -> str | None:
     """None when the mapping target is good, else what is wrong."""
     t = t if isinstance(t, dict) else {}
@@ -311,6 +347,11 @@ def check_record(rec, *, root=None, strict: bool = False, layer: str | None = No
         errs.append(f"LG-SCHEMA: the file is for {layer} but the record says {rec.get('layer')!r}")
     if rec.get("state") == "final" and not (_text(rec.get("signed_by")) and _text(rec.get("signed_at"))):
         errs.append("LG-SIGN: a final record carries the team lead's signed_by and signed_at")
+    res.group = rec.get("group") if isinstance(rec.get("group"), int) else None
+    if rec.get("layer") in GROUP_OF and rec.get("group") != GROUP_OF[rec["layer"]]:
+        errs.append(f"LG-SCHEMA: layer {rec['layer']} belongs to group {GROUP_OF[rec['layer']]}, the record says {rec.get('group')!r}")
+    if rec.get("state") == "final":
+        _check_owner(rec, errs, res)
     sq_rows = _rows(rec, "sub_questions")
     sq_ids = _ids(sq_rows, errs, "sub-question")
     if not sq_ids or any(not _text(s.get("text")) for s in sq_rows):
@@ -348,12 +389,37 @@ def problems(results: list[GateResult]) -> list[str]:
     return [f"layer {r.layer}: {e}" for r in results if r.state == "final" and r.status == S.BLOCK for e in r.errors]
 
 
+def _ready(res: GateResult) -> bool:
+    """A layer lets the next group start when its record is final and not a BLOCK."""
+    return res.state == "final" and res.status != S.BLOCK
+
+
+def _lower_open(layer: str, group: int, root) -> list[str]:
+    return [l for g in range(1, group) for l in GROUPS[g] if not _ready(check_layer(l, root=root))]
+
+
+def group_report(*, root=None) -> list[dict]:
+    """Per group: its layers that are not ready (``open``), whether the group is ready, and which lower groups it waits on."""
+    ready = {l: _ready(check_layer(l, root=root)) for layers in GROUPS.values() for l in layers}
+    rows = []
+    for g, layers in GROUPS.items():
+        open_ = [l for l in layers if not ready[l]]
+        rows.append({"group": g, "layers": list(layers), "open": open_, "ready": not open_,
+                     "waiting_on": [x["group"] for x in rows if not x["ready"]],
+                     "waiting_layers": [l for x in rows for l in x["open"]]})
+    return rows
+
+
 def require_pass(layer: str, *, root=None, strict: bool = False) -> GateResult:
     """The step before a layer is vendored or run (MS-5): only a final, signed, PASS record goes on. A BLOCK raises ContractError,
-    a draft raises ContractError, a NOT_RUN raises NeedsReview (a trial still has to run)."""
+    a layer of a higher group waits (NeedsReview) while any layer of a lower group is not final, a draft raises ContractError,
+    a NOT_RUN raises NeedsReview (a trial still has to run)."""
     res = check_layer(layer, root=root, strict=strict)
     if res.status == S.BLOCK:
         raise ContractError(f"layer {layer} is BLOCK: " + "; ".join(res.errors))
+    waiting = _lower_open(layer, GROUP_OF[layer], root) if layer in GROUP_OF else []
+    if waiting:
+        raise NeedsReview(f"layer {layer} (group {GROUP_OF[layer]}) waits: not final yet in a lower group: {', '.join(waiting)}")
     if res.state != "final":
         raise ContractError(f"layer {layer} is a draft: the team lead signs it final first")
     if res.status != S.PASS:

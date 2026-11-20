@@ -77,8 +77,15 @@ def main(argv=None) -> int:
             else layer_gate.check_all(root=root, strict=args.strict)
         for r in results:
             print(f"{r.layer}: {r.status} ({r.state})")
-            for line in [*r.errors, *(f"NOT_RUN {n}" for n in r.not_run), *(f"planned {n}" for n in r.planned)]:
+            for line in [*r.errors, *(f"NOT_RUN {n}" for n in r.not_run), *(f"planned {n}" for n in r.planned),
+                         *(f"pending {n}" for n in r.pending)]:
                 print(f"  {line}")
+        if not args.layer:
+            for g in layer_gate.group_report(root=root):
+                own = "ready" if g["ready"] else f"open: {', '.join(g['open'])}"
+                waits = (f"waiting on group {', '.join(map(str, g['waiting_on']))} ({', '.join(g['waiting_layers'])}); "
+                         if g["waiting_on"] else "")
+                print(f"group {g['group']}: {waits}{own}")
         worst = layer_gate.S.rollup(r.status for r in results)
         return {layer_gate.S.PASS: 0, layer_gate.S.NOT_RUN: 2}.get(worst, 1)
     elif args.cmd == "backup":
