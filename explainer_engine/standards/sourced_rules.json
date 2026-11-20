@@ -5385,7 +5385,8 @@
    ],
    "enforced_by": [
     "explainer_engine/standards/craft_checklists/animation.json:CRAFT-ANI-15",
-    "explainer_engine/qa/identity.py"
+    "explainer_engine/qa/identity.py",
+    "explainer_engine/qa/lipsync.py"
    ],
    "supersedes": [],
    "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md); the validator exists since P8 2026-10-31 (qa/identity.py, REVIEW only, identity threshold still uncalibrated)"
