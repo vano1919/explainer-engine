@@ -1,0 +1,95 @@
+{
+  "name": "truce_cold",
+  "note": "Cold map style of the Truce 1914 episode: palette proposed from the batch2 film_look frames (preset_from_frames), chosen by the creator 2026-11-20 (card 'C cold'); font from the episode film (creator card 'film font').",
+  "font": "'Liberation Serif', 'Times New Roman', Georgia, serif",
+  "map": {
+    "background": "#dfdedb",
+    "water": "#96a8bc",
+    "waterway": {
+      "color": "#798797",
+      "width": 1.3
+    },
+    "landcover": {
+      "color": "#c3c3c0",
+      "opacity": 0.5
+    },
+    "boundary": {
+      "color": "#2c2d2f",
+      "width": 1.3,
+      "dash": [
+        3,
+        2
+      ]
+    },
+    "roads": {
+      "color": "#9a9b99",
+      "width": 1.0
+    },
+    "hillshade": {
+      "exaggeration": 0.5,
+      "shadow": "#232426",
+      "highlight": "#eaeae8"
+    }
+  },
+  "line": {
+    "stroke": "#cf5900",
+    "stroke_width": 2.8,
+    "casing": "#ededeb",
+    "casing_width": 5.2,
+    "casing_opacity": 0.85
+  },
+  "hud": {
+    "counter_bg": "rgba(227,227,224,0.95)",
+    "counter_border": "#121316",
+    "counter_value": "#3b4854",
+    "counter_label": "#121316",
+    "chip_bg": "#121316",
+    "chip_fg": "#e8e8e6",
+    "dot": "#121316",
+    "dot_border": "#e8e8e6",
+    "town_bg": "rgba(227,227,224,0.92)",
+    "town_border": "rgba(18,19,22,0.5)",
+    "town_text": "#121316",
+    "footnote_text": "#121316",
+    "footnote_bg": "rgba(227,227,224,0.85)"
+  },
+  "finish": {
+    "grain": {
+      "opacity": 0.3,
+      "size": 300
+    },
+    "vignette": 0.0,
+    "tint": {
+      "color": "#7b8590",
+      "opacity": 0.04
+    }
+  },
+  "palette_check": {
+    "foreground": [
+      "line.stroke",
+      "hud.counter_value"
+    ],
+    "background": "map.background"
+  },
+  "proposal_notes": {
+    "measured": [
+      "palette (k-means, 8 clusters in Lab, equal weight per frame)",
+      "finish.grain.opacity (noise of mid tones / 10)",
+      "finish.vignette (centre minus edge lightness)",
+      "finish.tint (mean colour cast)"
+    ],
+    "line_stroke_source": "no warm saturated cluster in the frames: Okabe-Ito vermillion (fixed, colour-blind safe)",
+    "derived": [
+      "map.* and hud.* colours: ink = darkest cluster (L<=28), paper = lightest (L 78-90, chroma x0.6), water = bluest mid cluster (chroma x0.5, L 68), line.stroke = most saturated warm mid-dark cluster (else vermillion), counter_value = bluest dark cluster at L 30; blends of ink/paper for land cover, roads, borders, waterways",
+      "map.hillshade.exaggeration = 0.25 + lightness spread / 100 (0.25-0.5)"
+    ],
+    "fixed": [
+      "line widths, boundary dash, land cover opacity, grain size 300 (not measured)",
+      "font: empty on purpose, a person chooses it"
+    ],
+    "palette_repair": [
+      "before repair: Low contrast for 'line.stroke': 2.87 < 3.00",
+      "repaired: line.stroke L -2, hud.counter_value L +0"
+    ]
+  }
+}

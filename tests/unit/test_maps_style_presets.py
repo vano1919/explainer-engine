@@ -33,3 +33,11 @@ def test_unknown_or_unsafe_name_refused():
 
 def test_style_preset_spec_key_validated():
     assert any("style_preset" in p for p in validate_shot_spec({"style_preset": ""}))
+
+
+def test_truce_cold_preset_is_usable_and_follows_the_film_font():
+    from explainer_engine.maps.maplibre_lane import render
+    cold = render.load_style_preset("truce_cold")
+    assert "draft" not in cold
+    assert cold["font"] == render.load_style_preset("1917_film")["font"]
+    render._validate_hud_palette(cold)

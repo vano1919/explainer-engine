@@ -3775,3 +3775,6 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 - Source kind: platform policy (YouTube Data API field limits for `videos.insert` snippet), not a BP threshold; read 2026-11-20.
 - Tests: `tests/unit/test_publish_check.py` (4900 ASCII passes, 2600 em dashes fails, 5000 bytes passes, 5001 fails, `<` in the
   description fails, `>` in the title fails, title 100 passes / 101 fails). Doc: `docs/QA_SPECIFICATION.md` PC-06.
+
+## 2026-11-20 — Map style `truce_cold` (creator chose "C cold")
+- `maplibre_lane/styles/truce_cold.json`: the batch2-derived palette (no longer a draft), font from the episode film (creator card "film font"); test in `test_maps_style_presets.py`. Test clip and frame 143 comparison on HF `.../draft_preset_tool/`.
