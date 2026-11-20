@@ -171,7 +171,9 @@ def test_a_new_entry_reopens_a_passing_layer_and_removing_its_test_file_blocks_i
     res = run(rec, root)
     assert res.status == S.BLOCK and {"REQ-NOTEST", "REQ-NONEGATIVE"} <= codes(res)
     (root / "tests" / "unit" / "test_living.py").write_text("def test_living_motion():\n    pass\n\ndef test_living_motion_fails():\n    pass\n", encoding="utf-8")
-    assert run(rec, root).status == S.PASS                                  # see R4: the check only proves the names exist
+    assert run(rec, root).status == S.BLOCK                                 # R4 fixed: a test that never names the validator proves nothing
+    (root / "tests" / "unit" / "test_living.py").write_text("def test_living_motion():\n    living_motion = 1\n\ndef test_living_motion_fails():\n    living_motion = 0\n", encoding="utf-8")
+    assert run(rec, root).status == S.PASS
 
 
 def test_a_registry_entry_removed_from_the_file_can_not_open_a_final_layer(root):
@@ -197,25 +199,12 @@ def test_the_workflow_exists_and_its_job_is_named_owner_requirements():
     (r"^\s*branches-ignore:", "a branch filter skips the job"),
     (r"continue-on-error", "the job must be able to fail"),
     (r"--no-tests", "the named tests must run in the job"),
+    (r"\|\|\s*true", "a swallowed failure"),
     (r"^\s{4}if:", "a condition on the job itself skips it"),
     (r"\bexit 0\b", "a forced success"),
 ])
 def test_the_workflow_has_no_way_to_skip_or_swallow_the_check(pattern, why):
     assert not re.search(pattern, WORKFLOW.read_text(encoding="utf-8"), re.M), why
-
-
-SOFT_STEPS = ("Install OpenCV and the YuNet face model",)     # an optional install: its absence is NOT_RUN in the validator, never a pass of the check
-
-
-def test_only_an_optional_install_step_may_swallow_a_failure():
-    text = WORKFLOW.read_text(encoding="utf-8")
-    step = None
-    for line in text.splitlines():
-        m = re.match(r"\s*- name: (.*)", line)
-        if m:
-            step = m.group(1)
-        if re.search(r"\|\|\s*true\b", line) and not line.lstrip().startswith("#"):
-            assert step and step.startswith(SOFT_STEPS), f"`|| true` in step {step!r}: a check step must be able to fail"
 
 
 def test_the_workflow_runs_on_every_pull_request_and_compares_with_the_base():
@@ -238,8 +227,6 @@ def _base_and_now_with(change):
     return base, now
 
 
-@pytest.mark.xfail(strict=True, reason="R1: a thread retires an owner's requirement by adding its own newer entry and marking the old one superseded; "
-                                       "compare_with_base only looks at ids and words, and a new entry needs no owner source it can be checked against")
 def test_R1_superseding_an_owner_entry_needs_the_owners_recorded_word(root):
     def change(now):
         now[0]["status"] = "superseded"
@@ -250,20 +237,17 @@ def test_R1_superseding_an_owner_entry_needs_the_owners_recorded_word(root):
     assert OR.compare_with_base(base, now), "the old entry is gone from every layer and nothing in CI noticed"
 
 
-@pytest.mark.xfail(strict=True, reason="R2: narrowing `layers` of an entry (L10 to L33) unbinds it from the layer it governed; the base comparison ignores layers")
 def test_R2_shrinking_the_layers_of_an_entry_is_refused():
     base, now = _base_and_now_with(lambda n: n[1].update(layers=["L33"]))
     assert OR.compare_with_base(base, now)
 
 
-@pytest.mark.xfail(strict=True, reason="R2: a changed owner `date`, `source` or `parent` is not compared with the base either (the words are, the provenance is not)")
 @pytest.mark.parametrize("field,new", [("date", "2026-01-01T00:00:00Z"), ("source", {"kind": "doc", "ref": "anything"}), ("kind", "process")])
 def test_R2_provenance_fields_are_append_only_too(field, new):
     base, now = _base_and_now_with(lambda n: n[0].update({field: new}))
     assert OR.compare_with_base(base, now)
 
 
-@pytest.mark.xfail(strict=True, reason="R3: base_entries reads only `requirements`; deleting a `process_requirements` row (OR-G..) is invisible to REG-REMOVED")
 def test_R3_removing_a_process_requirement_is_reg_removed(tmp_path, monkeypatch):
     base_doc = registry(entry(1))
     base_doc["process_requirements"] = [entry(7, layers=[], check={"kind": "unmapped"})]
@@ -280,28 +264,23 @@ def test_R3_removing_a_process_requirement_is_reg_removed(tmp_path, monkeypatch)
     assert any("REG-REMOVED" in x and "REQ-007" in x for x in OR.compare_with_base(prior, cur))
 
 
-@pytest.mark.xfail(strict=True, reason="R4: REQ-NOTEST only checks that `def test_name(` exists; a test whose body is `pass` or `assert True` satisfies both the "
-                                       "test and the negative test, so a validator that does nothing is `mapped`")
 def test_R4_a_test_that_never_calls_the_validator_does_not_count(root):
     (root / "tests" / "unit" / "test_living.py").write_text(
         "def test_living_motion():\n    pass\n\ndef test_living_motion_fails():\n    assert True\n", encoding="utf-8")
     assert errs_of(entry(1), root), "neither test mentions living_motion"
 
 
-@pytest.mark.xfail(strict=True, reason="R4: the same node id for the compliant test and the negative test is accepted (one test cannot both pass and fail a validator)")
 def test_R4_the_negative_test_is_a_different_test_from_the_compliant_one(root):
     e = entry(1)
     e["check"]["negative_test"] = e["check"]["test"]
     assert errs_of(e, root)
 
 
-@pytest.mark.xfail(strict=True, reason="R5: a rubric without `#anchor` is any existing file; `README.md` is a rubric")
 def test_R5_a_judge_rubric_must_name_a_heading(root):
     (root / "README.md").write_text("# readme\n", encoding="utf-8")
     assert errs_of(entry(1, check=judge("README.md")), root)
 
 
-@pytest.mark.xfail(strict=True, reason="R5: a rubric path may leave the repository (`../outside.md#x`)")
 def test_R5_a_judge_rubric_stays_inside_the_repo(root, tmp_path_factory):
     outside = tmp_path_factory.mktemp("outside") / "rubric.md"
     outside.write_text("# x\n", encoding="utf-8")
@@ -316,12 +295,3 @@ def test_a_validator_ref_with_an_empty_module_part_is_refused(root, ref):
     assert errs_of(e, root)
 
 
-@pytest.mark.xfail(strict=True, reason="R7: the hook protection list names quality.yml but not the owner-requirements workflow, the registry, the gate or the hook config: "
-                                       "a Write/Edit on them is not refused")
-@pytest.mark.parametrize("path", [".github/workflows/owner-requirements.yml", "explainer_engine/governance/owner_requirements.json",
-                                  "explainer_engine/governance/layer_gate.py", "explainer_engine/governance/send_gate.py",
-                                  "explainer_engine/governance/ci_check.py", ".claude/settings.json"])
-def test_R7_the_enforcement_files_themselves_are_protected(path):
-    from explainer_engine.governance import hooks, load
-    cfg = load()
-    assert path in cfg["protected_files"], path

@@ -365,14 +365,12 @@ CRASH = {
 }
 
 
-@pytest.mark.xfail(strict=True, reason="F1: wrong types raise TypeError (unhashable / not iterable) instead of a BLOCK")
 @pytest.mark.parametrize("name", list(CRASH), ids=list(CRASH))
 def test_F1_a_field_of_the_wrong_type_is_a_block_never_an_exception(root, name):
     res = check(CRASH[name](good()), root)
     assert res.status == S.BLOCK and res.errors
 
 
-@pytest.mark.xfail(strict=True, reason="F1: one malformed record stops check_all and with it `governance check` for every layer")
 def test_F1_one_malformed_record_does_not_hide_the_others(root):
     bad = sign(good())
     bad["decisions"][0]["evidence"] = 5
@@ -386,7 +384,6 @@ def test_F1_one_malformed_record_does_not_hide_the_others(root):
 
 # F2: a layer id outside the 33 is accepted and skips the group order ---------------------------------------------------------
 
-@pytest.mark.xfail(strict=True, reason="F2: unknown layer ids (L99, L0, L34) pass and require_pass skips the lower-group wait")
 @pytest.mark.parametrize("layer", ["L99", "L0", "L34", "X1"])
 def test_F2_a_layer_outside_the_33_is_a_block(root, layer):
     rec = sign(good())
@@ -399,7 +396,6 @@ def test_F2_a_layer_outside_the_33_is_a_block(root, layer):
 
 # F3: three candidates with one url count as three public candidates ----------------------------------------------------------
 
-@pytest.mark.xfail(strict=True, reason="F3: MS-2 asks for three different public candidates; the same url three times passes")
 def test_F3_the_same_url_three_times_is_not_three_candidates(root):
     rec = good()
     for c in rec["candidates"]:
@@ -407,7 +403,6 @@ def test_F3_the_same_url_three_times_is_not_three_candidates(root):
     assert check(rec, root).status == S.BLOCK
 
 
-@pytest.mark.xfail(strict=True, reason="F3: the same url three times also satisfies the 3 run candidates of keep_ours")
 def test_F3_keep_ours_cannot_count_one_repo_three_times(root):
     rec = keep_good()
     for c in rec["candidates"]:
@@ -417,14 +412,12 @@ def test_F3_keep_ours_cannot_count_one_repo_three_times(root):
 
 # F4: a bool is accepted as a number in two more places (group, wave) ---------------------------------------------------------
 
-@pytest.mark.xfail(strict=True, reason="F4: group True is read as group 1 (stars and fit already refuse bools)")
 def test_F4_a_bool_is_not_a_group(root):
     rec = good()
     rec["group"] = True
     assert "LG-SCHEMA" in codes(check(rec, root))
 
 
-@pytest.mark.xfail(strict=True, reason="F4: wave True is read as wave 1")
 def test_F4_a_bool_is_not_a_wave(root):
     rec = good()
     rec["mapping"][0]["target"] = {"kind": "validator_planned", "ref": "VAL-X", "wave": True}
@@ -445,21 +438,18 @@ def test_F5_an_unrun_state_of_the_art_candidate_keeps_the_layer_not_run(root):
 
 # F6 (low): formal checks that accept impossible values ----------------------------------------------------------------------
 
-@pytest.mark.xfail(strict=True, reason="F6: retrieved accepts 2026-99-99 (regex only)")
 def test_F6_a_doc_candidate_needs_a_real_date(root):
     rec = good()
     rec["candidates"][0].update(kind="doc", retrieved="2026-99-99", commit=None, stars=None)
     assert "MS2-CAND-FIELD" in codes(check(rec, root))
 
 
-@pytest.mark.xfail(strict=True, reason="F6: a bare 'https://' is a valid candidate url")
 def test_F6_a_candidate_url_needs_a_host(root):
     rec = good()
     rec["candidates"][0]["url"] = "https://"
     assert "MS2-CAND-FIELD" in codes(check(rec, root))
 
 
-@pytest.mark.xfail(strict=True, reason="F6: any link kind other than 'file' skips the sha256, documented kinds are file | page")
 def test_F6_a_link_kind_must_be_file_or_page(root):
     rec = good()
     rec["trials"][0]["links"][0] = {"kind": "trust-me", "ref": "somewhere", "seen": "yes"}

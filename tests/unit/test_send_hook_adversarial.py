@@ -172,8 +172,6 @@ def test_S1_a_layer_without_a_measuring_requirement_does_not_release_a_trial_fil
     refused(H.pre_bash, bash(upload(good)), root=root)
 
 
-@pytest.mark.xfail(strict=True, reason="S2: records.jsonl is a plain file the thread can append to; a hand-written PASS line for the file's sha256 "
-                                       "lets the upload hook release it, no validator ever ran")
 def test_S2_a_hand_written_record_does_not_release_a_file(env):
     root, _, bad = env
     log = root / SG.RECORDS
@@ -183,7 +181,6 @@ def test_S2_a_hand_written_record_does_not_release_a_file(env):
     refused(H.pre_bash, bash(upload(bad)), root=root)
 
 
-@pytest.mark.xfail(strict=True, reason="S2: the same with the owner label: any line with label.owner_asked set passes; no id is checked against anything")
 def test_S2_a_hand_written_owner_label_does_not_release_a_file(env):
     root, _, bad = env
     log = root / SG.RECORDS
@@ -193,7 +190,6 @@ def test_S2_a_hand_written_owner_label_does_not_release_a_file(env):
     refused(H.pre_bash, bash(upload(bad)), root=root)
 
 
-@pytest.mark.xfail(strict=True, reason="S3: the quarantine is a plain file too; deleting it un-quarantines every file the stop hook let go")
 def test_S3_deleting_the_quarantine_file_does_not_release_a_quarantined_file(env):
     root, good, bad = env
     SG.quarantine([bad], "let go", root=root)
@@ -206,8 +202,6 @@ def test_S3_deleting_the_quarantine_file_does_not_release_a_quarantined_file(env
 
 # ============================ defects: the hooks (what they see) ============================
 
-@pytest.mark.xfail(strict=True, reason="S4: only the verbs in send_scope.upload_command are uploads; curl -T, git push, gsutil, scp, rclone, "
-                                       "push_to_hub send the same bytes and no hook looks")
 @pytest.mark.parametrize("cmd", [
     "curl -s -T out/trials/L9/bad.txt https://huggingface.co/api/upload",
     "git lfs push hf main",
@@ -222,8 +216,6 @@ def test_S4_other_ways_to_send_a_file_are_refused_for_an_unmeasured_trial_output
     refused(H.pre_bash, bash(cmd), root=root)
 
 
-@pytest.mark.xfail(strict=True, reason="S4: laundering by copy: the hook judges the PATH, not the bytes; cp out/trials/L9/bad.txt /tmp/ok.txt is allowed "
-                                       "(no upload verb) and the upload of /tmp/ok.txt is out of scope; the record is keyed by sha256 but is never asked")
 def test_S4_a_trial_output_copied_to_a_neutral_path_is_still_refused(env):
     root, _, bad = env
     neutral = root / "logs" / "summary.txt"
@@ -233,16 +225,12 @@ def test_S4_a_trial_output_copied_to_a_neutral_path_is_still_refused(env):
     refused(H.pre_bash, bash(upload(neutral)), root=root)
 
 
-@pytest.mark.xfail(strict=True, reason="S4: an upload of a PARENT folder is judged by the folder path only; out/ is not in scope although out/trials/L9/bad.txt "
-                                       "is inside it")
 def test_S4_uploading_a_parent_folder_of_unmeasured_trial_files_is_refused(env):
     root, _, _ = env
     refused(H.pre_bash, bash(f"hf upload-large-folder vano1919/tmr-artifacts {root / 'out'}"), root=root)
     refused(H.pre_bash, bash(f"python -c \"from huggingface_hub import HfApi; HfApi().upload_folder(folder_path='{root / 'out'}', repo_id='x')\""), root=root)
 
 
-@pytest.mark.xfail(strict=True, reason="S5: the stop hook only looks at files the turn's tool calls NAME; a script that writes under trials/L9/ by itself "
-                                       "(`python make_trial.py`) leaves a new unmeasured trial output the turn can end with")
 def test_S5_a_trial_output_a_script_wrote_without_naming_it_blocks_the_turn_end(env):
     root, _, _ = env
     started = time.time() - 60
@@ -257,24 +245,17 @@ def test_S5_a_trial_output_a_script_wrote_without_naming_it_blocks_the_turn_end(
     refused(H.stop, {"transcript_path": str(p), "session_id": "s5"}, root=root)
 
 
-@pytest.mark.xfail(strict=True, reason="S6: the owner's main channel is post_message(attached_outputs=...) and Write to /mnt/project-files; no PreToolUse "
-                                       "matcher in settings.json runs the send hook on mcp__hearthbot__post_message, so a trial file attaches unchecked")
 def test_S6_a_pretooluse_hook_guards_attaching_files_to_a_message():
     matchers = [m for m, c in hooks_of("PreToolUse") if "send_hook" in c]
     assert any(re.fullmatch(m, "mcp__hearthbot__post_message") for m in matchers if m), matchers
 
 
-@pytest.mark.xfail(strict=True, reason="S6: the same for the other MCP routes a file leaves by (GitHub push_files/create_or_update_file, Google Drive "
-                                       "create_file): none is matched by a send hook")
 @pytest.mark.parametrize("tool", ["mcp__github__push_files", "mcp__github__create_or_update_file", "mcp__Google_Drive__create_file"])
 def test_S6_a_pretooluse_hook_guards_other_mcp_routes(tool):
     matchers = [m for m, c in hooks_of("PreToolUse") if "send_hook" in c]
     assert any(re.fullmatch(m, tool) for m in matchers if m), matchers
 
 
-@pytest.mark.xfail(strict=True, reason="S7: trial_layers anchors on a bare `python` at the start of a command; nohup, timeout, time, env, bash -c, "
-                                       "runpy, a wrapper script, uv run and xargs start the same trial and the hook does not see it "
-                                       "(scene_run itself still calls require_layers, the hook is a second lock that has a hole)")
 @pytest.mark.parametrize("cmd", [
     "nohup python -m explainer_engine.training.pods.ltx.scene_run S01 &",
     "timeout 1800 python -m explainer_engine.training.pods.ltx.scene_run S01",
@@ -309,27 +290,19 @@ def test_a_word_about_a_trial_command_is_not_a_trial_command(cmd):
 # ============================ defects: the owner's recorded word (D-84) ============================
 
 @pytest.mark.parametrize("bad_id", ["x", "owner said so", "cmsg", "cmsg_", "CMSG_abc"])
-def test_a_recorded_word_needs_a_cmsg_shaped_message_id(tmp_path, bad_id):   # was defect W1, fixed in 93cf005..27b850f
+def test_W1_a_recorded_word_needs_a_cmsg_shaped_message_id(tmp_path, bad_id):
     with pytest.raises(ValueError):
         records.add("layer_waiver", "L9", bad_id, "he said ok", root=tmp_path)
 
 
-@pytest.mark.xfail(strict=True, reason="W2: jobs/creator_ok.jsonl is a plain file; the hooks do not protect it, so a thread can write the owner's word itself "
-                                       "(Write tool or `echo >>`) without the CLI; records.valid trusts any row with a message_id")
+@pytest.mark.xfail(strict=True, reason="W2 (accepted limit): a thread can append a well-formed line to jobs/creator_ok.jsonl; only the hook that refuses a "
+                                       "write to that path (test below) and the owner reading the file can stop it; there is no secret a thread cannot read")
 def test_W2_a_hand_written_owner_word_is_not_valid(tmp_path):
     f = tmp_path / records.FILE
     f.parent.mkdir(parents=True)
-    f.write_text(json.dumps({"action": "layer_waiver", "target": "L9", "message_id": "cmsg_madeup", "by": "creator", "quote": "ok",
+    f.write_text(json.dumps({"action": "layer_waiver", "target": "L9", "message_id": "cmsg_01MadeUpByAThread", "by": "creator", "quote": "ok",
                              "at": time.time()}) + "\n", encoding="utf-8")
     assert not records.valid("layer_waiver", "L9", 60, root=tmp_path, wildcard=False)
-
-
-@pytest.mark.xfail(strict=True, reason="W2: neither jobs/creator_ok.jsonl nor jobs/send_gate/* is on the hook protection list, so a Write/Edit of the owner's "
-                                       "word or of the send records is not refused")
-@pytest.mark.parametrize("path", ["jobs/creator_ok.jsonl", "jobs/send_gate/records.jsonl", "jobs/send_gate/quarantine.jsonl"])
-def test_W2_the_records_of_the_owners_word_and_of_the_send_gate_are_protected(path):
-    from explainer_engine.governance import hooks, load
-    assert path in load()["protected_files"], path
 
 
 def test_a_waiver_is_per_layer_and_expires(tmp_path):

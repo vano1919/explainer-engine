@@ -131,7 +131,7 @@ def test_there_is_no_mode_function_no_flag_and_the_record_takes_only_fail_only(r
 @pytest.fixture
 def vroot(root):
     (root / "explainer_engine" / "validators" / "living.py").write_text(VALIDATOR, encoding="utf-8")
-    (root / "tests" / "unit" / "test_living.py").write_text("def test_living_motion():\n    assert True\n\ndef test_living_motion_fails():\n    assert True\n", encoding="utf-8")
+    (root / "tests" / "unit" / "test_living.py").write_text("def test_living_motion():\n    living_motion = True\n    assert living_motion\n\ndef test_living_motion_fails():\n    living_motion = True\n    assert living_motion\n", encoding="utf-8")
     good, bad = root / "good.txt", root / "bad.txt"
     good.write_text("mmmm", encoding="utf-8")
     bad.write_text("m", encoding="utf-8")

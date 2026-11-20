@@ -11,20 +11,24 @@ for a hook that cannot even start).
                     the send gate and the upload hook refuse them until a newer PASS record) and writes an incident line to
                     ``jobs/send_gate/incidents.jsonl`` so that a stuck loop never hides (``stop_hook_active``)
     subagent-stop   the same for a sub-agent's turn
+    pre-tool        the MCP routes a file leaves by (post_message attached_outputs, GitHub push_files / create_or_update_file, Drive create_file):
+                    the same check as an upload; a GitHub merge needs the owner's recorded merge_approval
     prompt          shows every incident not shown yet at the start of the next turn (fails open: an exit 2 would erase the owner's prompt)
 
 Paths outside the trial pattern (a log, a vault file, a handoff note) pass. stdlib only."""
 from __future__ import annotations
 
 import json
+import os
 import re
 import shlex
+import subprocess
 import sys
 import time
 from datetime import datetime
 from pathlib import Path
 
-from explainer_engine.governance import layer_gate, root_dir, send_gate
+from explainer_engine.governance import layer_gate, records, root_dir, send_gate
 
 SCOPE = Path(__file__).with_name("send_scope.json")
 INCIDENTS = Path("jobs") / "send_gate" / "incidents.jsonl"
@@ -52,7 +56,21 @@ def layer_of(path: str, sc: dict | None = None) -> str | None:
     return m.group(2) if m else None
 
 
-def paths_in(text: str, *, root: Path, sc: dict | None = None, _depth: int = 0) -> list[Path]:
+MAX_FILES = 20000
+SKIP_DIRS = {".git", "node_modules", ".venv", "venv", "__pycache__", ".mypy_cache", ".pytest_cache"}
+
+
+def _files_below(folder: Path, suff: tuple[str, ...]) -> list[Path]:
+    out: list[Path] = []
+    for dirpath, dirs, names in os.walk(folder):
+        dirs[:] = sorted(d for d in dirs if d not in SKIP_DIRS)
+        out += [Path(dirpath) / n for n in sorted(names) if Path(n).suffix.lower() in suff]
+        if len(out) > MAX_FILES:
+            break
+    return out[:MAX_FILES]
+
+
+def paths_in(text: str, *, root: Path, sc: dict | None = None, _depth: int = 0, expand_dirs: bool = False) -> list[Path]:
     """Existing files named in a command or a script text (a directory yields the files under it with a known suffix); a quoted
     script (``python -c "...upload_file('x')..."``) is searched inside, three levels deep."""
     sc = sc or scope()
@@ -61,7 +79,7 @@ def paths_in(text: str, *, root: Path, sc: dict | None = None, _depth: int = 0) 
     for m in _PATHISH.finditer(text):
         tok = next((g for g in m.groups() if g), "")
         if _depth < 3 and re.search(r"[\s'\"]", tok):
-            out.extend(paths_in(tok, root=root, sc=sc, _depth=_depth + 1))
+            out.extend(paths_in(tok, root=root, sc=sc, _depth=_depth + 1, expand_dirs=expand_dirs))
         if "/" not in tok and "." not in tok:
             continue
         p = Path(tok).expanduser()
@@ -69,11 +87,48 @@ def paths_in(text: str, *, root: Path, sc: dict | None = None, _depth: int = 0) 
         try:
             if p.is_file():
                 out.append(p)
-            elif p.is_dir() and in_scope(str(p) + "/", sc):
-                out.extend(sorted(q for q in p.rglob("*") if q.is_file() and q.suffix.lower() in suff))
+            elif p.is_dir() and (expand_dirs or in_scope(str(p) + "/", sc)):   # an upload of a PARENT folder sends what is inside (S4)
+                out.extend(_files_below(p, suff))
         except OSError:
             continue
     return list(dict.fromkeys(out))
+
+
+def outgoing(root: Path, sc: dict, *, since: float | None = None) -> list[Path]:
+    """Trial or comparison files whose path names a layer, that a push would send (git: tracked or not ignored; no git: every file under
+    the root), optionally only those changed since ``since``. Used for commands that name no file (``git push``) and by the stop hook."""
+    suff = tuple(sc["file_suffixes"])
+    names: list[Path] = []
+    if (root / ".git").exists():
+        r = subprocess.run(["git", "-C", str(root), "ls-files", "-co", "--exclude-standard"], capture_output=True, text=True, timeout=60)
+        if r.returncode == 0:
+            names = [root / n for n in r.stdout.splitlines() if n]
+    if not names:
+        names = _files_below(root, suff)
+    out = []
+    for f in names:
+        if f.suffix.lower() in suff and in_scope(str(f), sc) and layer_of(str(f), sc) and f.is_file():
+            if since is None or f.stat().st_mtime >= since:
+                out.append(f)
+    return out
+
+
+def laundered(files: list[Path], *, root: Path, sc: dict) -> list[str]:
+    """Named files outside the trial scope whose BYTES are those of a trial output with no passing record (a copy to a neutral path, S4)."""
+    cands = [f for f in outgoing(root, sc) if send_gate.passing_record(f, root=root) is None]
+    if not cands:
+        return []
+    by_size: dict[int, list[Path]] = {}
+    for c in cands:
+        by_size.setdefault(c.stat().st_size, []).append(c)
+    bad = []
+    for f in files:
+        if in_scope(str(f), sc) or not f.is_file():
+            continue
+        same = by_size.get(f.stat().st_size)
+        if same and send_gate.sha256(f) in {send_gate.sha256(c) for c in same}:
+            bad.append(f"{f}: the same bytes as a trial output with no passing send record ({same[0].name}); run the send gate on the trial file first")
+    return bad
 
 
 def check_files(files: list[Path], *, root: Path, sc: dict | None = None, with_paths: bool = False):
@@ -96,12 +151,17 @@ def pre_bash(event: dict, *, root: Path | None = None) -> None:
     root = root_dir(root)
     sc = scope()
     cmd = ((event.get("tool_input") or {}).get("command")) or ""
+    if not isinstance(cmd, str):
+        cmd = ""
     if re.search(sc["upload_command"], cmd):
-        files = paths_in(cmd, root=root, sc=sc)
+        files = paths_in(cmd, root=root, sc=sc, expand_dirs=True)
         bad = check_files(files, root=root, sc=sc)
+        bad += laundered(files, root=root, sc=sc)
         if not bad and not any(in_scope(str(f), sc) for f in files) and re.search(sc["trial_path"], cmd.replace("\\", "/"), re.I):
             bad = ["an upload names a trial or comparison path that does not resolve to a file here; the send gate cannot check what it "
                    "cannot find (use the real file paths)"]
+        if not bad and re.search(sc["push_command"], cmd):                 # a push names no file: judge what it would send
+            bad = check_files(outgoing(root, sc), root=root, sc=sc)
         if bad:
             raise Refused("send gate (spec 7.1): " + " | ".join(bad))
     layers = trial_layers(cmd, sc)
@@ -112,25 +172,103 @@ def pre_bash(event: dict, *, root: Path | None = None) -> None:
             raise Refused(f"layer gate (spec 7.1): this trial command needs {', '.join(layers)}: {exc}") from exc
 
 
-def trial_layers(cmd: str, sc: dict) -> tuple[str, ...]:
-    # an actual invocation at the start of a command (after ; & | ( or a line break, with env assignments allowed), not a word in a
-    # grep, a commit message or a quoted text
+WRAPPERS = {"nohup", "time", "env", "sudo", "nice", "setsid", "command", "exec", "stdbuf", "ionice", "xargs", "timeout", "uv", "poetry",
+            "pipenv", "conda", "pdm", "hatch", "doas", "chronic", "unbuffer", "caffeinate", "script", "flock", "parallel"}
+
+
+def _unwrap(argv: list[str]) -> list[str]:
+    """The command a wrapper (nohup, timeout 1800, time, env X=1, uv run, xargs -n1 ...) starts: argv from its first python token."""
+    while argv and re.fullmatch(r"\w+=.*", argv[0]):
+        argv = argv[1:]
+    if argv and Path(argv[0]).name in WRAPPERS:
+        k = next((i for i, a in enumerate(argv) if re.fullmatch(r"python[\d.]*", Path(a).name)), None)
+        return _unwrap(argv[k:]) if k is not None else []
+    return argv
+
+
+def _trial_text(text: str, sc: dict) -> tuple[str, ...]:
+    """The layers an actual invocation (python -m scene_run, python scene_run.py, episode run) needs; ``text`` starts with that python."""
     py = r"(?:^|[;&|(\n])\s*(?:\w+=\S*\s+)*(?:cd\s+\S+\s*&&\s*)?\S*python[\d.]*\s+(?:-(?!m\b)\S+\s+)*"
-    if re.search(py + r"(?:-m\s+\S*scene_run\b|\S*scene_run\.py\b)", cmd, re.M):
+    if re.search(py + r"(?:-m\s+\S*scene_run\b|\S*scene_run\.py\b)", text, re.M):
         return tuple(sc["trial_command"]["scene_run"])
-    if re.search(py + r"(?:-m\s+explainer_engine\.episode\s+run\b|\S*episode/run\.py\s+run\b)", cmd, re.M):
-        stages = re.findall(r"--(?:stage|to)\s+(\w+)", cmd)
+    if re.search(py + r"(?:-m\s+explainer_engine\.episode\s+run\b|\S*episode/run\.py\s+run\b)", text, re.M):
+        stages = re.findall(r"--(?:stage|to)\s+(\w+)", text)
         order = layer_gate.STAGE_LAYERS
         wanted: list[str] = []
         names = list(order)
-        for s in stages or [names[-1]]:
-            s = {"G1": "script", "G4": "sound_plan", "G5": "pictures", "G6": "voice", "G7": "clips", "G8": "sound", "G9": "assemble",
-                 "G10": "qa"}.get(s, s)
-            if s in order:
-                upto = names[: names.index(s) + 1] if "--to" in cmd else [s]
-                wanted += [layer for st in upto for layer in order[st]]
+        for st in stages or [names[-1]]:
+            st = {"G1": "script", "G4": "sound_plan", "G5": "pictures", "G6": "voice", "G7": "clips", "G8": "sound", "G9": "assemble",
+                  "G10": "qa"}.get(st, st)
+            if st in order:
+                upto = names[: names.index(st) + 1] if "--to" in text else [st]
+                wanted += [layer for s2 in upto for layer in order[s2]]
         return tuple(dict.fromkeys(wanted))
     return ()
+
+
+def _runpy_layers(text: str, sc: dict) -> tuple[str, ...]:
+    """A ``python -c`` that starts the trial by ``runpy`` / ``import_module`` / ``subprocess`` instead of ``-m``."""
+    if re.search(r"runpy|import_module|__import__|subprocess|os\.system|os\.exec", text):
+        if re.search(r"scene_run", text):
+            return tuple(sc["trial_command"]["scene_run"])
+        if re.search(r"explainer_engine[./]episode", text) and re.search(r"\brun\b", text):
+            return _trial_text("python -m explainer_engine.episode run " + text, sc) or _trial_text(
+                "python -m explainer_engine.episode run --to qa", sc)
+    return ()
+
+
+def _strings(v, depth: int = 0):
+    if isinstance(v, str):
+        yield v
+    elif depth < 6 and isinstance(v, dict):
+        for x in v.values():
+            yield from _strings(x, depth + 1)
+    elif depth < 6 and isinstance(v, (list, tuple)):
+        for x in v:
+            yield from _strings(x, depth + 1)
+
+
+MERGE_TOOLS = re.compile(r"mcp__github__(merge_pull_request|enable_pr_auto_merge)")
+
+
+def pre_tool(event: dict, *, root: Path | None = None) -> None:
+    """PreToolUse on the MCP routes a file leaves by (S6): ``post_message(attached_outputs)``, GitHub ``push_files`` and
+    ``create_or_update_file``, Drive ``create_file``: every local trial or comparison file the call names needs its passing send record, and
+    a GitHub merge needs the owner's recorded ``merge_approval`` word for that pull request (the owner keeps merges)."""
+    root = root_dir(root)
+    sc = scope()
+    name = str(event.get("tool_name") or "")
+    ti = event.get("tool_input")
+    ti = ti if isinstance(ti, dict) else {}
+    if MERGE_TOOLS.fullmatch(name):
+        number = str(ti.get("pullNumber") or ti.get("pull_number") or ti.get("number") or "")
+        if not number or not records.valid("merge_approval", number, 60 * 24, root=root, wildcard=False):
+            raise Refused(f"merge guard (T2.7): {name} on pull request {number or '?'} needs the owner's recorded merge_approval word "
+                          f"(`python -m explainer_engine.governance ok merge_approval {number or '<number>'} <cmsg id> \"<his words>\"`); "
+                          "the owner keeps merges")
+        return
+    files: list[Path] = []
+    for text in _strings(ti):
+        if len(text) < 4096:
+            files += paths_in(text, root=root, sc=sc, expand_dirs=True)
+    bad = check_files(list(dict.fromkeys(files)), root=root, sc=sc) + laundered(files, root=root, sc=sc)
+    if bad:
+        raise Refused(f"send gate (spec 7.1): {name} would send files no validator measured: " + " | ".join(bad))
+
+
+def trial_layers(cmd: str, sc: dict) -> tuple[str, ...]:
+    """The layers a trial command needs. Every simple command of the line is looked at (``bash -c`` and ``eval`` are opened by
+    ``hooks.commands``), wrappers are stripped (S7), a word in a grep, a commit message or a quoted text is not an invocation."""
+    from explainer_engine.governance.hooks import commands
+    found: list[str] = list(_trial_text(cmd, sc))
+    for argv in commands(cmd):
+        argv = _unwrap(argv)
+        if not argv or not re.fullmatch(r"python[\d.]*", Path(argv[0]).name):
+            continue
+        found += _trial_text(" ".join(argv), sc)
+        if "-c" in argv:
+            found += _runpy_layers(argv[argv.index("-c") + 1] if argv.index("-c") + 1 < len(argv) else "", sc)
+    return tuple(dict.fromkeys(found))
 
 
 def _turn_start(lines: list[dict]) -> float:
@@ -165,10 +303,12 @@ def turn_outputs(transcript: Path, *, root: Path, sc: dict | None = None) -> lis
     start = _turn_start(rows)
     seen = [r for r in rows if _after(r, start)]
     texts: list[str] = []
+    ran_code = False
     for row in seen:
         content = (row.get("message") or {}).get("content")
         for c in content if isinstance(content, list) else []:
             if isinstance(c, dict) and c.get("type") == "tool_use":
+                ran_code = ran_code or c.get("name") in ("Bash", "PowerShell", "Task", "Agent")
                 inp = c.get("input") or {}
                 texts += [str(inp.get(k)) for k in ("file_path", "path", "command", "notebook_path") if inp.get(k)]
     found = []
@@ -179,6 +319,8 @@ def turn_outputs(transcript: Path, *, root: Path, sc: dict | None = None) -> lis
                     found.append(p)
             except OSError:
                 continue
+    if start > 0 and ran_code:                      # S5: a script wrote a trial output without naming it: look at what is new on disk
+        found += outgoing(root, sc, since=start - 1)
     return list(dict.fromkeys(found))
 
 
@@ -256,6 +398,8 @@ def main(argv=None) -> int:
         event = json.loads(sys.stdin.read() or "{}")
         if cmd == "pre-bash":
             pre_bash(event)
+        elif cmd == "pre-tool":
+            pre_tool(event)
         elif cmd == "stop":
             stop(event)
         elif cmd == "subagent-stop":

@@ -46,7 +46,7 @@ def root(tmp_path):
     (tmp_path / "docs" / "DECISIONS_AND_OPEN_QUESTIONS.md").write_text("| D-131 | the v4.3 rebuild |\n| D-139 | x |\n", encoding="utf-8")
     (tmp_path / "docs" / "RUBRICS.md").write_text("# Rubrics\n\n## Faces intact\n\nthe judge looks at six frames\n", encoding="utf-8")
     (tmp_path / "tests" / "unit").mkdir(parents=True)
-    (tmp_path / "tests" / "unit" / "test_living.py").write_text("def test_living_motion():\n    assert True\n\ndef test_living_motion_fails():\n    assert True\n", encoding="utf-8")
+    (tmp_path / "tests" / "unit" / "test_living.py").write_text("def test_living_motion():\n    living_motion = True\n    assert living_motion\n\ndef test_living_motion_fails():\n    living_motion = True\n    assert living_motion\n", encoding="utf-8")
     (tmp_path / "explainer_engine" / "validators").mkdir(parents=True)
     (tmp_path / "explainer_engine" / "validators" / "living.py").write_text("def living_motion(path):\n    return {}\n", encoding="utf-8")
     return tmp_path
@@ -206,7 +206,7 @@ def test_a_judge_without_who_and_an_existing_rubric_blocks(root, name, check):
 
 def test_a_judge_with_a_rubric_that_exists_passes(root):
     put(root, registry(entry(1, check={"kind": "judge", "who": "owner at MS-7", "rubric": "docs/RUBRICS.md#faces-intact"}),
-                       entry(2, check={"kind": "judge", "who": "Gemini eye", "rubric": "docs/RUBRICS.md"})))
+                       entry(2, check={"kind": "judge", "who": "Gemini eye", "rubric": "docs/RUBRICS.md#faces-intact"})))
     assert run(rec_for("REQ-001", "REQ-002"), root).status == S.PASS
 
 

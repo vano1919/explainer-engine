@@ -69,8 +69,11 @@ def missing(entries: list[dict] | None) -> list[str]:
 
 
 def compare_with_base(base: list[dict] | None, now: list[dict] | None) -> list[str]:
-    """What the CI job checks against the base branch (append-only): no id removed (``REG-REMOVED``), no owner ``words``
-    (or ``words_verbatim``) changed (``REG-WORDS-CHANGED``); a change of status to superseded is the way to retire an entry."""
+    """What the CI job checks against the base branch (append-only), each its own code: no id removed (``REG-REMOVED``); no owner ``words`` or
+    ``words_verbatim`` changed (``REG-WORDS-CHANGED``); no ``layers`` taken away from an entry (``REG-LAYERS-CHANGED``: an entry that stops
+    binding a layer is retired from it silently); no ``date``, ``source``, ``kind`` or ``parent`` changed (``REG-PROVENANCE-CHANGED``); and an
+    entry that was active and is now ``superseded`` needs a superseding entry whose source is the owner's own message
+    (``REG-SUPERSEDE-UNSOURCED``: a thread must not retire an owner's requirement with an entry of its own)."""
     errs = []
     cur = {e.get("id"): e for e in now or []}
     for old in base or []:
@@ -82,6 +85,18 @@ def compare_with_base(base: list[dict] | None, now: list[dict] | None) -> list[s
         for k in ("words", "words_verbatim"):
             if old.get(k) != new.get(k):
                 errs.append(f"REG-WORDS-CHANGED: {oid}: the owner's {k} differ from the base branch; his words are never edited")
+        lost = sorted(set(old.get("layers") or []) - set(new.get("layers") or []))
+        if lost:
+            errs.append(f"REG-LAYERS-CHANGED: {oid}: {', '.join(lost)} taken away from the entry; a layer binding is never removed, the entry is superseded")
+        for k in ("date", "source", "kind", "parent"):
+            if old.get(k) != new.get(k):
+                errs.append(f"REG-PROVENANCE-CHANGED: {oid}: {k} differs from the base branch; where and when the owner said it is never edited")
+        if old.get("status") != "superseded" and new.get("status") == "superseded":
+            by = cur.get(new.get("superseded_by"))
+            src = by.get("source") if isinstance(by, dict) else None
+            if not (isinstance(src, dict) and src.get("kind") == "chat" and _MSG.fullmatch(str(src.get("ref") or ""))):
+                errs.append(f"REG-SUPERSEDE-UNSOURCED: {oid} became superseded, but its superseding entry {new.get('superseded_by')!r} does not "
+                            "cite the owner's own message (a chat source with his cmsg id)")
     return errs
 
 
@@ -198,10 +213,28 @@ def _anchors(path: Path) -> set[str]:
     return out
 
 
-def _test_exists(ref, root: Path) -> bool:
+def _test_body(ref, root: Path) -> str | None:
+    """The source of the test function ``path.py::name`` (its def line down to the next top-level statement), None when it does not exist."""
     t = _TEST_REF.fullmatch(ref) if isinstance(ref, str) else None
     f = (root / t.group(1)) if t else None
-    return bool(t and f.is_file() and re.search(rf"^\s*(async )?def {re.escape(t.group(2))}\(", f.read_text(encoding="utf-8"), re.M))
+    if not (t and f.is_file()):
+        return None
+    lines = f.read_text(encoding="utf-8").split("\n")
+    start = next((i for i, l in enumerate(lines) if re.match(rf"\s*(async )?def {re.escape(t.group(2))}\(", l)), None)
+    if start is None:
+        return None
+    end = next((i for i in range(start + 1, len(lines)) if lines[i] and not lines[i][0].isspace()), len(lines))
+    return "\n".join(lines[start:end])
+
+
+def _test_exists(ref, root: Path) -> bool:
+    return _test_body(ref, root) is not None
+
+
+def _test_calls(ref, names: list[str], root: Path) -> bool:
+    """R4: the test's body names the validator it is for (a test that is ``pass`` or ``assert True`` proves nothing)."""
+    body = _test_body(ref, root)
+    return body is not None and any(re.search(rf"\b{re.escape(n)}\b", body) for n in names if n)
 
 
 def _check_errs(e: dict, root: Path) -> list[str]:
@@ -222,22 +255,35 @@ def _check_errs(e: dict, root: Path) -> list[str]:
             mod = root / (m.group(1).replace(".", "/") + ".py")
             if not (mod.is_file() and re.search(rf"^def {re.escape(m.group(2))}\(", mod.read_text(encoding="utf-8"), re.M)):
                 errs.append(f"REQ-NOVALIDATOR: {who}: {value} does not exist (no def {m.group(2)} in {mod.relative_to(root).as_posix()})")
+        names = [str(v).partition(":")[2] for v in (check.get("ref"), check.get("send_ref")) if isinstance(v, str)]
         if not _test_exists(check.get("test"), root):
             errs.append(f"REQ-NOTEST: {who}: check.test must be path.py::test_name of an existing test (it passes the validator on a "
                         f"compliant fixture), not {check.get('test')!r}")
+        elif not _test_calls(check.get("test"), names, root):
+            errs.append(f"REQ-NOTEST: {who}: check.test {check.get('test')!r} never names the validator ({', '.join(n for n in names if n)}): "
+                        "a test that does not call it proves nothing")
         if not _test_exists(check.get("negative_test"), root):
             errs.append(f"REQ-NONEGATIVE: {who}: check.negative_test must be path.py::test_name of an existing test (the validator FAILS "
                         f"a known violation fixture), not {check.get('negative_test')!r}")
+        elif check.get("negative_test") == check.get("test"):
+            errs.append(f"REQ-NONEGATIVE: {who}: check.negative_test is the same test as check.test: one test cannot both pass and fail the validator")
+        elif not _test_calls(check.get("negative_test"), names, root):
+            errs.append(f"REQ-NONEGATIVE: {who}: check.negative_test {check.get('negative_test')!r} never names the validator "
+                        f"({', '.join(n for n in names if n)})")
         return errs
     if kind == "judge":
         rubric = check.get("rubric")
         if not _text(check.get("who")) or not _text(rubric):
             return [f"REQ-NOJUDGE: {who}: a judge step needs who and a rubric path#anchor"]
         path, _, anchor = rubric.partition("#")
-        f = root / path
+        f = (root / path).resolve()
+        if root.resolve() not in f.parents:
+            return [f"REQ-NOJUDGE: {who}: the rubric {path!r} is outside the repository"]
         if not f.is_file():
             return [f"REQ-NOJUDGE: {who}: the rubric file {path!r} does not exist"]
-        if anchor and anchor not in _anchors(f):
+        if not anchor:
+            return [f"REQ-NOJUDGE: {who}: the rubric {rubric!r} names no heading (path#anchor): a whole file is no rubric"]
+        if anchor not in _anchors(f):
             return [f"REQ-NOJUDGE: {who}: the rubric {path!r} has no heading #{anchor}"]
         return []
     return [f"REQ-UNMAPPED: {who} has no check yet (\"unmapped\" is honest, and it blocks the layers it binds): "

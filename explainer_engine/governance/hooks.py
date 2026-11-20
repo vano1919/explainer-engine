@@ -192,7 +192,15 @@ def pre_bash(event: dict, root=None) -> int:
         if msg:
             return _deny(msg)
     msg = check_protected_shell(cmd, cfg, root)
-    return _deny(msg) if msg else 0
+    if msg:
+        return _deny(msg)
+    from explainer_engine.governance import path_guard
+    hit = path_guard.refusal_bash(cmd, root)             # T2.7: by the files a command touches, not by its words
+    if hit:
+        kind, what, why = hit
+        if kind == "never" or not records.valid("protected_config", what, cfg["protected_files"].get(what, 60), root=root, wildcard=False):
+            return _deny(why)
+    return 0
 
 
 # ---- PreToolUse Write|Edit -------------------------------------------------------------------------------------------------
@@ -207,6 +215,13 @@ def pre_write(event: dict, root=None) -> int:
     rel = _rel(root, path)
     if rel is None:
         return 0
+    from explainer_engine.governance import path_guard
+    kind = path_guard.protected_edit(root, path)
+    if kind and kind[0] == "never":
+        return _deny(f"refused (T2.7 path guard): {kind[1]} is the owner's recorded word or the send gate's records; they are written "
+                     "only by their own code (governance ok, send_gate), never by hand")
+    if kind and kind[0] == "gate" and not records.valid("protected_config", rel, cfg["protected_files"].get(rel, 60), root=root, wildcard=False):
+        return _deny(f"refused (T2.7 path guard): {rel} is a gate file; it changes only on the creator's recorded word (action protected_config)")
     if rel.split("/")[0] == "engine":
         return _deny("refused (Lock 2): no top-level engine/ folder (Blueprint Phase 1 item 14); the code lives in explainer_engine/")
     if rel in cfg["protected_files"] and not records.valid("protected_config", rel, cfg["protected_files"][rel], root=root, wildcard=False):
@@ -410,6 +425,7 @@ def statusline(event: dict, root=None) -> int:
 
 HOOKS = {"pre-bash": pre_bash, "pre-write": pre_write, "pre-agent": pre_agent, "post-edit": post_edit, "pre-switch": pre_switch,
          "post-switch": post_switch, "prompt": prompt, "stop": stop, "stop-failure": stop_failure, "statusline": statusline}
+CLOSED = {"pre-bash", "pre-write", "pre-agent"}   # T2.7: these three fail CLOSED; every other hook fails open
 DENYING = {"pre-bash", "pre-write", "pre-agent", "pre-switch", "stop", "post-edit"}
 
 
@@ -424,8 +440,11 @@ def main(argv=None) -> int:
         event = {}
     try:
         return HOOKS[what](event)
-    except Exception as e:  # fail open: a broken check must not lock the session
-        print(f"governance hook {what} skipped: {type(e).__name__}: {str(e)[:120]}", file=sys.stderr)
+    except Exception as e:
+        if what in CLOSED:  # T2.7: a check that cannot run must not let a write through (a broken config is repaired by the owner)
+            print(f"governance hook {what} failed closed: {type(e).__name__}: {str(e)[:120]}", file=sys.stderr)
+            return 2
+        print(f"governance hook {what} skipped: {type(e).__name__}: {str(e)[:120]}", file=sys.stderr)  # the rest fail open
         return 0
 
 
