@@ -19,6 +19,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from explainer_engine.core.errors import ContractError, NeedsReview
+from explainer_engine.governance import owner_requirements as OR
 from explainer_engine.governance import root_dir
 from explainer_engine.qa import status as S
 
@@ -433,6 +434,9 @@ def check_record(rec, *, root=None, strict: bool = False, layer: str | None = No
     trials = _check_trials(rec, sqs, cands, errs, res)
     _check_decisions(rec, sqs, cands, trials, errs)
     _check_mapping(rec, req_ids, _rows(rec, "tool_capabilities"), root, errs, res, strict)
+    entries, reg_errs = OR.load(root)                 # the owner's registry: every active entry that binds the layer (spec section 3)
+    errs += reg_errs + OR.check_registry(entries, root)
+    errs += OR.check_cover(rec, str(rec.get("layer")), entries, root)
     res.errors = errs
     res.status = S.BLOCK if errs else (S.NOT_RUN if res.not_run else S.PASS)
     return res
