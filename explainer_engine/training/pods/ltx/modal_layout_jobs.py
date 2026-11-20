@@ -73,8 +73,10 @@ def _ladder_dir() -> Path:
 LADDER_PATH = Path(os.environ.get("EE_LAYOUT_LADDER") or (_ladder_dir() / "ladder_modal_layout.json"))
 
 
-def load_launch(path=LAUNCH_PATH) -> dict:
-    return json.loads(Path(path).read_text(encoding="utf-8"))
+def load_launch(path=None) -> dict:
+    """The launch file beside this worker, else the copy the image baked at ``BAKED`` (in the container only the worker is at /root)."""
+    path = Path(path) if path else (LAUNCH_PATH if LAUNCH_PATH.is_file() else BAKED / "launch_layout_a100.json")
+    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def sha_json(d) -> str:

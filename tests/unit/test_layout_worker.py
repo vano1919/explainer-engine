@@ -687,14 +687,17 @@ def test_the_module_imports_where_it_sits_at_the_container_root(tmp_path):
     import sys
     import tempfile
     shallow = Path(tempfile.mkdtemp(dir="/tmp"))               # /tmp/xyz/file: only three parents, like /root/file in the image
-    for f in M.FILES + ("launch_layout_a100.json",):         # what the image mounts at /root
-        shutil.copy(Path(M.LTX_DIR) / f, shallow / f)
-    src = (shallow / "modal_layout_jobs.py").read_text()      # the container has no /mnt/project-files
-    assert 'SHARED_GATES = Path("/mnt/project-files' in src
-    (shallow / "modal_layout_jobs.py").write_text(src.replace('SHARED_GATES = Path("/mnt/project-files', 'SHARED_GATES = Path("/nonexistent'))
+    (shallow / "layout").mkdir()                              # the image: the worker at /root, the rest at /root/layout (BAKED)
+    shutil.copy(Path(M.LTX_DIR) / "modal_layout_jobs.py", shallow / "modal_layout_jobs.py")
+    for f in ("layout_job.py", "ic_lora_run.py", "launch_layout_a100.json"):
+        shutil.copy(Path(M.LTX_DIR) / f, shallow / "layout" / f)
+    src = (shallow / "modal_layout_jobs.py").read_text()      # the container has no /mnt/project-files and its BAKED is /root/layout
+    assert 'SHARED_GATES = Path("/mnt/project-files' in src and 'BAKED = Path("/root/layout")' in src
+    src = src.replace('SHARED_GATES = Path("/mnt/project-files', 'SHARED_GATES = Path("/nonexistent')
+    (shallow / "modal_layout_jobs.py").write_text(src.replace('BAKED = Path("/root/layout")', f'BAKED = Path("{shallow}/layout")'))
     code = ("import importlib.util, sys\n"
             "s = importlib.util.spec_from_file_location('m', sys.argv[1]); m = importlib.util.module_from_spec(s); s.loader.exec_module(m)\n"
-            "print(m.LADDER_PATH)")
+            "print(m.LADDER_PATH, m.LAUNCH[\"gpu\"])")
     r = subprocess.run([sys.executable, "-c", code, str(shallow / "modal_layout_jobs.py")], capture_output=True, text=True,
                        cwd=str(Path(M.LTX_DIR).parents[3]))
     assert r.returncode == 0, r.stderr[-400:]
