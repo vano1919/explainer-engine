@@ -31,6 +31,7 @@ import gemini_lane as L  # noqa: E402
 AUTHOR = ("vano1919", "122537395+vano1919@users.noreply.github.com")
 OWN_FILES = {"MANIFEST.json", "NOTES.md", "INTAKE.json", "PR_BODY.md", "SHA256SUMS", "RAW_ANSWER.txt"}
 ZERO_SHA = "0" * 64
+PLACEHOLDER_SHAS = {ZERO_SHA, L.sha256_bytes(b"")}   # what a writer that cannot hash types: zeros, or the hash of nothing
 DIFF_FILE = re.compile(r"^(---|\+\+\+) (?:[ab]/)?(\S+)", re.M)
 HUNK = re.compile(r"^@@ -\d+(?:,\d+)? \+\d+(?:,\d+)? @@", re.M)
 
@@ -135,7 +136,7 @@ def judge(task_dir: Path, repo: Path) -> tuple[dict, list[dict], dict[str, tuple
             continue
         data = f.read_bytes()
         want = entry.get("sha256")
-        if not (isinstance(want, str) and re.fullmatch(r"[0-9a-f]{64}", want)) or want == ZERO_SHA:
+        if not (isinstance(want, str) and re.fullmatch(r"[0-9a-f]{64}", want)) or want in PLACEHOLDER_SHAS:
             want = sums.get(path)                              # Gemini cannot hash: zeros or a placeholder word, the driver's SHA256SUMS stands in
         if L.sha256_bytes(data) != want:
             _refuse(refusals, "sha_mismatch", path, "sha256 of the file differs from MANIFEST (a cut or edited upload)")

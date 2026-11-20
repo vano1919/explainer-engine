@@ -285,8 +285,10 @@ def test_a_placeholder_word_instead_of_a_sha_is_taken_only_with_a_matching_sums_
     assert codes(run_intake(d, repo, apply=False)) == ["sha_mismatch"]
     (d / "out" / "SHA256SUMS").write_text(f"{L.sha256_bytes(NEW_CODE.encode())}  ./{path}\n")
     assert run_intake(d, repo, apply=False)["status"] == "accepted_not_applied"
-    answer(d, [(path, "new", NEW_CODE.encode())], sha_override={path: L.sha256_bytes(b"")})      # a real-looking wrong sha stays a refusal
+    answer(d, [(path, "new", NEW_CODE.encode())], sha_override={path: "2" * 64})                # a real-looking wrong sha stays a refusal
     assert codes(run_intake(d, repo, apply=False)) == ["sha_mismatch"]
+    answer(d, [(path, "new", NEW_CODE.encode())], sha_override={path: L.sha256_bytes(b"")})      # the hash of nothing is a writer's placeholder
+    assert run_intake(d, repo, apply=False)["status"] == "accepted_not_applied"
 
 
 def test_a_short_base_sha_of_the_pinned_commit_is_taken_but_another_is_not(tmp_path, repo, sha):
