@@ -7,4 +7,4 @@ same spot, so each merged PR made the next one conflict). `docs/PROGRESS.md` kee
 - First line `## <YYYY-MM-DD> — <title>` (same date as the file name), then the entry exactly as before: done, state, files, tests, decisions,
   cost, next step, recovery. The rule is unchanged (CLAUDE.md invariant 11); only the place moved.
 - Check: `python -m explainer_engine.progress_fragments check`; all fragments in order: `... assemble`.
-- Rules PF-01..PF-06 and the tests: `explainer_engine/progress_fragments.py`, `tests/unit/test_progress_fragments.py`.
+- Rules PRG-01..PRG-06 and the tests: `explainer_engine/progress_fragments.py`, `tests/unit/test_progress_fragments.py`.

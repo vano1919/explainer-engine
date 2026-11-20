@@ -21,13 +21,13 @@ def test_good_fragment_passes(tmp_path):
 
 
 @pytest.mark.parametrize("name,text,code", [
-    ("lipsync.md", OK, "PF-01"),                                              # name lacks the date and branch slug
-    ("2026-11-20-Bad Name.md", OK, "PF-01"),                                  # spaces and capitals
-    ("2026-13-45-x.md", OK.replace("2026-11-20", "2026-13-45"), "PF-01"),                                         # not a date
-    ("2026-11-20-x.md", "no heading\n- text\n", "PF-02"),                     # must start with '## YYYY-MM-DD — '
-    ("2026-11-20-x.md", "## 2026-11-20 — T\n", "PF-03"),                      # heading only, no body
-    ("2026-11-20-x.md", OK + "<<<<<<< HEAD\n", "PF-04"),                      # conflict marker
-    ("2026-11-20-x.md", "## 2026-11-19 — T\n- body\n", "PF-05"),              # heading date differs from the file's date
+    ("lipsync.md", OK, "PRG-01"),                                              # name lacks the date and branch slug
+    ("2026-11-20-Bad Name.md", OK, "PRG-01"),                                  # spaces and capitals
+    ("2026-13-45-x.md", OK.replace("2026-11-20", "2026-13-45"), "PRG-01"),                                         # not a date
+    ("2026-11-20-x.md", "no heading\n- text\n", "PRG-02"),                     # must start with '## YYYY-MM-DD — '
+    ("2026-11-20-x.md", "## 2026-11-20 — T\n", "PRG-03"),                      # heading only, no body
+    ("2026-11-20-x.md", OK + "<<<<<<< HEAD\n", "PRG-04"),                      # conflict marker
+    ("2026-11-20-x.md", "## 2026-11-19 — T\n- body\n", "PRG-05"),              # heading date differs from the file's date
 ])
 def test_each_code_triggers_exactly_once(tmp_path, name, text, code):
     put(tmp_path, name, text)
@@ -36,7 +36,7 @@ def test_each_code_triggers_exactly_once(tmp_path, name, text, code):
 
 def test_non_utf8_is_a_finding_not_a_crash(tmp_path):
     (tmp_path / "2026-11-20-x.md").write_bytes(b"\xff\xfe\x00bad")
-    assert [f["rule"] for f in PF.check(tmp_path)] == ["PF-06"]
+    assert [f["rule"] for f in PF.check(tmp_path)] == ["PRG-06"]
 
 
 def test_readme_and_other_files_are_ignored(tmp_path):
@@ -64,5 +64,5 @@ def test_main_exit_codes(tmp_path, capsys):
     assert PF.main(["check", "--dir", str(tmp_path)]) == 0
     put(tmp_path, "bad.md", OK)
     assert PF.main(["check", "--dir", str(tmp_path)]) == 1
-    assert "PF-01" in capsys.readouterr().out
+    assert "PRG-01" in capsys.readouterr().out
     assert PF.main(["assemble", "--dir", str(tmp_path / "none")]) == 2

@@ -3,9 +3,9 @@
 Every parallel branch appended at the same spot of PROGRESS.md, so each merged PR made the next one conflict. A fragment is a file of its own
 (``<YYYY-MM-DD>-<branch-slug>.md``), so two branches never touch the same file. ``docs/PROGRESS.md`` keeps its old content, frozen.
 
-Codes (each has a test): PF-01 file name is not ``YYYY-MM-DD-<lowercase-slug>.md`` with a real date; PF-02 the first line is not
-``## YYYY-MM-DD — <title>``; PF-03 no body under the heading; PF-04 a merge conflict marker; PF-05 the heading date differs from the file name's;
-PF-06 not UTF-8. ``README.md`` and non-``.md`` files are ignored.
+Codes (each has a test): PRG-01 file name is not ``YYYY-MM-DD-<lowercase-slug>.md`` with a real date; PRG-02 the first line is not
+``## YYYY-MM-DD — <title>``; PRG-03 no body under the heading; PRG-04 a merge conflict marker; PRG-05 the heading date differs from the file name's;
+PRG-06 not UTF-8. ``README.md`` and non-``.md`` files are ignored.
 
     python -m explainer_engine.progress_fragments check [--dir D]      # exit 1 on a finding, 2 on an error
     python -m explainer_engine.progress_fragments assemble [--dir D]   # all fragments in filename order, to stdout
@@ -46,22 +46,22 @@ def check(directory: Path = DIR) -> list[dict]:
     for p in fragments(directory):
         m = NAME.match(p.name)
         if not m or not _valid_date(m.group(1)):
-            out.append(_finding("PF-01", p, "name must be YYYY-MM-DD-<lowercase-slug>.md with a real date"))
+            out.append(_finding("PRG-01", p, "name must be YYYY-MM-DD-<lowercase-slug>.md with a real date"))
         try:
             text = p.read_text(encoding="utf-8")
         except UnicodeDecodeError:
-            out.append(_finding("PF-06", p, "not UTF-8"))
+            out.append(_finding("PRG-06", p, "not UTF-8"))
             continue
         lines = text.splitlines()
         h = HEAD.match(lines[0]) if lines else None
         if not h:
-            out.append(_finding("PF-02", p, "first line must be '## YYYY-MM-DD — <title>'"))
+            out.append(_finding("PRG-02", p, "first line must be '## YYYY-MM-DD — <title>'"))
         elif m and h.group(1) != m.group(1):
-            out.append(_finding("PF-05", p, f"heading date {h.group(1)} differs from the file name's {m.group(1)}"))
+            out.append(_finding("PRG-05", p, f"heading date {h.group(1)} differs from the file name's {m.group(1)}"))
         if h and not any(line.strip() for line in lines[1:]):
-            out.append(_finding("PF-03", p, "heading without a body"))
+            out.append(_finding("PRG-03", p, "heading without a body"))
         if MARKER.search(text):
-            out.append(_finding("PF-04", p, "merge conflict marker in the fragment"))
+            out.append(_finding("PRG-04", p, "merge conflict marker in the fragment"))
     return out
 
 
