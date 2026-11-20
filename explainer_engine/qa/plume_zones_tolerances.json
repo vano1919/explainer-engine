@@ -1,0 +1,9 @@
+{
+  "kind": "hypothesis",
+  "note": "REVIEW-level default, not binding until the owner has seen it",
+  "source": "the lead's numbers for the smoke clips of the 2.5D lane (2026-11-20); not sourced, one author's call",
+  "person_share_max": 0.05,
+  "total_share_min": 0.02,
+  "alpha_visible": 0.05,
+  "person_mask_min": 0.5
+}

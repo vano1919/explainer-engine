@@ -3906,9 +3906,31 @@ No number is written in any of them; tests `test_first_shot.py`, `test_opening_d
   NOT_RUN without limits, judged with limits, step click found and clean tone not, long treble burst not concentrated).
 - Not run on episode1: its mix does not exist as a file (only `narration.wav`).
 
+## 2026-11-20 — Plume zone measurements (`qa/plume_zones.py`), free, hypothesis limits
+- New pure module, numpy only: `plume_in_person_share` (plume alpha on person zones / total plume alpha), `plume_total_share` (share of frame
+  pixels with visible plume) and `check_frames` (worst status wins). Result `{status, value, detail}`; NOT_RUN, never PASS, when the person mask
+  is missing or empty, the shapes differ, the alpha is bad, or the plume has zero total alpha (0/0): a plume cut away by the silhouette must not
+  pass by construction.
+- Limits (person share at most 5 %, total at least 2 %, visible alpha 0.05) are in `qa/plume_zones_tolerances.json` with `kind: hypothesis`:
+  the lead's numbers for the smoke clips, REVIEW-level default, not binding until the owner has seen it. Nothing is registered in `sourced_rules.json`.
+- Tests: `tests/unit/test_plume_zones.py` (synthetic arrays only: outside = 0 PASS, half inside = 50 % FAIL, empty plume / no mask / empty mask /
+  shape mismatch / bad alpha NOT_RUN, under 2 % flagged). Not run: on real renders (the S07_SH008 clips are not in the repo), not wired into any gate or renderer.
+
 ## 2026-11-20 — test_video_qa_clip_rows: the clean test clip no longer depends on muxing timing
 - Symptom: `test_real_clips_probe_and_rows` failed on CI runs with an extra `CLIP-05` (audio vs picture length) on a clip meant to be clean; it passed on re-run and always passes locally (40 of 40 builds identical: picture 2.0417 s, audio 2.026 s, tolerance one frame = 41.7 ms).
 - Cause (the most likely one, not reproduced locally even under CPU load): the fixture mixed an endless sine with `-shortest`, so the number of audio packets muxed before the picture ends depends on thread timing; two extra AAC frames (2 x 21 ms) are enough to pass the one-frame tolerance. Fix: the sine is bounded to `frames / fps` itself and `-shortest` is gone; the assertion now prints the findings and both durations, and a new test builds the clip six times and checks audio and picture end within half a frame. No assertion or threshold weakened.
+
+## 2026-11-20 — 2.5D renderer with the 2D smoke moved into the repo (`fx25d/living.py`)
+- `explainer_engine/fx25d/living.py` (+ `masks.py`) is the HF script `x6_smoke2d.py` (= x6_living5 / run2e + smoke2d) made reusable: photo, depth (metres, .npy)
+  and faces are arguments, no machine paths, noise textures built on first use, a CLI (`python -m explainer_engine.fx25d.living`). Constants, inventory and
+  look are unchanged (the look is the owner's call); only the S07_SH008 plume reads the new keys `lean` and `avoid` (person silhouette hides the plume).
+- Checked: frames 0, 72 and 120 of S07_SH008 rendered by the module are bit-identical to the HF script (frame and plume alpha). Measure a plume with
+  `qa/plume_zones.py` on `Shot.plume_a` and `Shot.pmask_f`.
+- Tests: `tests/unit/test_fx25d_living.py` (inputs required, no machine paths, a frame is a pure function of its number, synthetic person next to the
+  source: without avoidance the plume share on the person FAILs, with it PASSes while a plume remains, only the S07_SH008 plume has the new keys).
+- `Shot(person_mask=...)` / `--person-mask`: extra person zones for the measurement (image, non-zero = person), unioned with silhouettes and faces; it never changes the picture. Run metrics come from `qa/plume_zones.py` (NOT_RUN without a person mask).
+- S07_SH006 plume: `lean` + `avoid` too (a plume with `avoid=True` refuses to render without person zones). On that photo the brazier stands between soldiers, so lean alone does not clear them (person share 12-18 % at every lean tried); avoid brings it to ~0 with the plume still 2.8-3.5 % of the frame. The person mask came from Mask2Former (free, local), not committed.
+- Not run: the real S07_SH008 photo through the CLI (inputs are on HF), the other three photos, any gate wiring.
 
 ## 2026-11-20 — Narration LRA after `level.py` (BP-59), measured on episode1
 - HF `episode1/out/narration.wav` (1184.7 s) and `read.wav` (1159.2 s), ffmpeg `ebur128`: narration raw 7.8 LU (over BP-59's 7.0), after `level_voice` 4.4 LU; read raw 7.7, levelled 4.3. Integrated -30.2 -> -29.7 and -30.1 -> -29.6 LUFS. So the 7.8 -> 4.4 claim holds on both tracks that episode1 has; no other narration track was found. The shipped mix uses the levelled stem (`production/assemble.py` calls `level_voice` in `build_audio`). Not measured: the stem inside the finished mix (BP-51) and the filtered `voice` after `acoustics.highpass`.
