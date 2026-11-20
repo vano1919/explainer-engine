@@ -14,7 +14,7 @@ import sys
 from pathlib import Path
 from typing import Any, Callable
 
-from explainer_engine.maps.maplibre_lane.render import _hex_rgb, load_style_preset
+from explainer_engine.maps.maplibre_lane.render import _hex_rgb, load_style_preset, resolve_style_preset_name
 from explainer_engine.maps.maplibre_spec import load_shot_spec, schedule
 
 OcrFn = Callable[[Any], list[str]]  # image (numpy array) -> recognised text lines
@@ -69,7 +69,8 @@ def check_clip(spec_path: str | Path, frames_dir: str | Path, step: int = 12, oc
     from PIL import Image
 
     spec = load_shot_spec(spec_path)
-    preset = load_style_preset(str(spec.get("style_preset", "neutral")))
+    style_name, _film_id = resolve_style_preset_name(spec, Path(spec_path).resolve().parent)  # the style comes from the film only
+    preset = load_style_preset(style_name)
     colour = _hex_rgb(preset["hud"]["counter_value"])
     if ocr is None:
         from rapidocr_onnxruntime import RapidOCR

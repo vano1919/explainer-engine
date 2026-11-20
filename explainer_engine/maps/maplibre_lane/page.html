@@ -11,8 +11,6 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
-      background: #f0f0eb;
-      font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
       -webkit-font-smoothing: antialiased;
     }
     #stage {
@@ -209,17 +207,11 @@
           }
           return cloned;
         }
-        const P = (cfg.preset && cfg.preset.map) || null;
+        if (!cfg.preset) {
+          throw new Error("no style preset: this page has no look of its own");
+        }
+        const M = cfg.preset.map;
         const KW = cfg.spec.size ? cfg.spec.size[0] / 1280 : 1;
-        const M = {
-          background: P ? P.background : "#f0f0eb",
-          water: P ? P.water : "#cfdce3",
-          waterway: P ? P.waterway : { color: "#b7ccd6", width: 1.2 },
-          landcover: P ? P.landcover : { color: "#e5e6dc", opacity: 0.45 },
-          boundary: P ? P.boundary : { color: "#8c8f87", width: 1.1, dash: [3, 2] },
-          roads: P ? P.roads : { color: "#dcdad0", width: 1.0 },
-          hillshade: P ? P.hillshade : { exaggeration: 0.28, shadow: "#6e736b", highlight: "#ffffff" }
-        };
         const sources = {
           openmaptiles: {
             type: "vector",
@@ -321,14 +313,15 @@
         document.documentElement.style.setProperty("--k", String(width / 1280));
         stage.style.width = width + "px";
         stage.style.height = height + "px";
-        const fontFamily = `"${spec.font || "Inter"}", -apple-system, BlinkMacSystemFont, sans-serif`;
-        document.body.style.fontFamily = (spec.font === "preset" && cfg.preset && cfg.preset.font) ? cfg.preset.font : fontFamily;
-        const hud = (cfg.preset && cfg.preset.hud) || {};
+        document.body.style.fontFamily = cfg.preset.font;
+        document.documentElement.style.background = cfg.preset.map.background;
+        document.body.style.background = cfg.preset.map.background;
+        const hud = cfg.preset.hud;
         const root = document.documentElement.style;
         for (const [key, val] of Object.entries(hud)) {
           root.setProperty("--c-" + key.replace(/_/g, "-"), val);
         }
-        const fin = (cfg.preset && cfg.preset.finish) || {};
+        const fin = cfg.preset.finish;
         finishCfg = fin;
         const tint = fin.tint || { color: "#000", opacity: 0 };
         const tintEl = document.getElementById("fin-tint");
@@ -390,6 +383,9 @@
       }
       window.initScene = async function initScene(configJson) {
         bootConfig = typeof configJson === "string" ? JSON.parse(configJson) : configJson;
+        if (!bootConfig.preset) {
+          throw new Error("no style preset: this page has no look of its own");
+        }
         const spec = bootConfig.spec;
         fullLineCoords = extractLineCoordinates(bootConfig.lineGeojson);
         const { cum, total } = computeCumulativeLengths(fullLineCoords);
@@ -411,7 +407,7 @@
           mapInstance.once("load", resolve);
           mapInstance.once("error", (e) => reject(e && e.error ? e.error : e));
         });
-        const LN = (bootConfig.preset && bootConfig.preset.line) || { stroke: "#d55e00", stroke_width: 2.4, casing: "#f7f6f1", casing_width: 4.5, casing_opacity: 0.9 };
+        const LN = bootConfig.preset.line;
         mapInstance.addSource("front-line", {
           type: "geojson",
           data: {

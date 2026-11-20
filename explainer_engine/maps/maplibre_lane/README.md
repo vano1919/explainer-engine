@@ -8,8 +8,8 @@ Tiles: `python -m explainer_engine.maps.maplibre_lane.fetch_tiles --bbox W S E N
 (repeat with other boxes/zooms: the manifest is merged). Fetch the DEM with a margin around the whole camera path: hillshade exists only
 inside the DEM bounds of the deepest zoom. `EXPLAINER_MAP_DEBUG=1` prints browser console, failed requests and page errors.
 
-## Episode map style (creator 2026-11-20: every episode has its own map style, matching the video's look)
-A shot spec names it: `"style_preset": "<name>"` (default `neutral`), loaded from `styles/<name>.json`; `"font": "preset"` takes the preset's font.
+## Episode map style (creator 2026-11-20: every episode has its own film; the map takes its style only from it, G-06)
+A shot spec names the episode film: `"film_file": "episode_film.json"` (REQUIRED, absolute or next to the spec). The film's `map.style_preset` picks `styles/<name>.json`; there is no default style and the page has no look of its own. `style_preset` in the spec is optional and must equal the film's. The font always comes from the preset (`font` in the spec: absent or `"preset"`).
 A preset sets the map colours (background, water, waterways, land cover, border with dash, roads, hillshade), the front line, the HUD colours,
 the font and the finish (film grain, vignette, tint). `render.py` refuses a preset whose `palette_check` colours fail contrast or
 colour-blind separation against the map background. Presets: `neutral` (the old fixed look), `1917_film` (aged paper, khaki, grey-green water,

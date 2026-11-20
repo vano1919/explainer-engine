@@ -16,7 +16,6 @@ REQUIRED_SPEC_KEYS: tuple[str, ...] = (
     "counter",
     "date_chip",
     "towns",
-    "font",
     "footnote",
 )
 ALLOWED_CAMERA_MOVES: tuple[str, ...] = (
@@ -205,6 +204,8 @@ def validate_shot_spec(spec: Any) -> list[str]:
                     )
     if "style_preset" in spec and (not isinstance(spec["style_preset"], str) or not spec["style_preset"]):
         problems.append("style_preset must be a non-empty string (name of maplibre_lane/styles/<name>.json)")
+    if "film_file" in spec and (not isinstance(spec["film_file"], str) or not spec["film_file"]):
+        problems.append("film_file must be a non-empty string")
     if "font" in spec:
         font = spec["font"]
         if not isinstance(font, str) or not font:

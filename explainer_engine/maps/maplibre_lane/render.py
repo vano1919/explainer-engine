@@ -13,7 +13,9 @@ try:
 except ImportError:  # the module stays importable (tests, spec checks) without Playwright; rendering says what to install
     sync_playwright = None  # type: ignore[assignment]
 from explainer_engine.maps.hud_layout import Box, OKABE_ITO, check_palette, place_counter
+from explainer_engine import episode_film
 from explainer_engine.maps.maplibre_spec import (
+    ShotSpecError,
     camera_state,
     frame_count,
     load_shot_spec,
@@ -136,7 +138,6 @@ def _resolve_line_geojson(spec_path: Path, spec: dict[str, Any]) -> dict[str, An
         target = raw.resolve()
     return json.loads(target.read_text(encoding="utf-8"))
 STYLES_DIR = Path(__file__).resolve().parent / "styles"
-DEFAULT_STYLE_PRESET = "neutral"
 
 
 def _hex_rgb(value: str) -> tuple[int, int, int]:
@@ -166,9 +167,34 @@ def _dig(preset: dict[str, Any], dotted: str) -> Any:
     return node
 
 
-def _validate_hud_palette(preset: dict[str, Any] | None = None) -> None:
+def resolve_style_preset_name(spec: dict[str, Any], spec_dir: Path) -> tuple[str, str]:
+    """Return (style_preset_name, film_id) from the spec's episode film; there is no default map style."""
+    if spec.get("font", "preset") != "preset":
+        raise ShotSpecError("font comes from the film preset: set font to 'preset' or leave it out")
+    film_file = spec.get("film_file")
+    if not film_file:
+        raise ShotSpecError(
+            "film_file is required: there is no default map style (owner rule: every episode has its film)"
+        )
+    path = Path(film_file)
+    if not path.is_absolute():
+        path = Path(spec_dir) / path
+    try:
+        film = episode_film.load_episode_film(path)
+        name = str(episode_film.block(film, "map")["style_preset"])
+    except episode_film.EpisodeFilmError as exc:
+        raise ShotSpecError(str(exc)) from exc
+    if "style_preset" in spec and spec["style_preset"] != name:
+        raise ShotSpecError(
+            f"style_preset {spec['style_preset']!r} in the spec differs from the film's map style_preset {name!r}"
+        )
+    return name, str(film["film_id"])
+
+
+def _validate_hud_palette(preset: dict[str, Any]) -> None:
     """Verify the preset's foreground colours pass contrast and CVD checks against its map background."""
-    preset = preset or load_style_preset(DEFAULT_STYLE_PRESET)
+    if preset is None:
+        raise TypeError("a style preset is required: the map lane has no default look (it comes from the episode film)")
     check = preset["palette_check"]
     palette = {name: _hex_rgb(_dig(preset, name)) for name in check["foreground"]}
     bg = _hex_rgb(_dig(preset, check["background"]))
@@ -181,7 +207,8 @@ def render_shot(spec_path: str, out_mp4: str, tile_dir: str, work_dir: str) -> d
     """Render an offline MapLibre shot to MP4 using headless Playwright and ffmpeg."""
     spec_file = Path(spec_path).resolve()
     spec = load_shot_spec(spec_file)
-    preset = load_style_preset(str(spec.get("style_preset", DEFAULT_STYLE_PRESET)))
+    style_name, film_id = resolve_style_preset_name(spec, spec_file.parent)
+    preset = load_style_preset(style_name)
     _validate_hud_palette(preset)
     width = int(spec["size"][0]) if spec.get("size") else DEFAULT_WIDTH
     height = int(spec["size"][1]) if spec.get("size") else DEFAULT_HEIGHT
@@ -312,5 +339,6 @@ def render_shot(spec_path: str, out_mp4: str, tile_dir: str, work_dir: str) -> d
         "mp4": str(out_video),
         "seconds": seconds,
         "idle_timeouts": idle_timeouts,
+        "film_id": film_id,
         "style_preset": preset["name"],
     }

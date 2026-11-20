@@ -1,0 +1,30 @@
+{
+  "schema": "episode_film/0",
+  "film_id": "Bad Film ID",
+  "film_name": "",
+  "era": "15th Century",
+  "unexpected_extra_key": "not_allowed",
+  "map": {
+    "style_preset": "test_preset_a",
+    "font": "Cinzel"
+  },
+  "counter": {
+    "style_preset": "test_preset_b"
+  },
+  "colour": {
+    "targets": "imperial_purple=#4B2E59"
+  },
+  "subtitles": {
+    "font": "Inter",
+    "colour": "#F5F2EB",
+    "position": "bottom_center"
+  },
+  "direction": {
+    "notes": []
+  },
+  "narration": {
+    "notes": [
+      "Valid narration note."
+    ]
+  }
+}
