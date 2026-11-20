@@ -1,0 +1,83 @@
+{
+  "_about": "Numbers of TASK_VAL_CAMERA_MOVE section 6; none is law (OR-22, D-59). zoom_min_pct comes from BP-181 still_move_min and the still-drift floor from BP-215 via SR.T, never from this file.",
+  "rotation_max_deg": {
+    "value": 0.5,
+    "kind": "hypothesis",
+    "status": "OPEN: hypothesis, not binding until the owner has seen it"
+  },
+  "pan_min_pct": {
+    "value": 2.0,
+    "kind": "hypothesis",
+    "status": "OPEN: hypothesis, not binding until the owner has seen it"
+  },
+  "pan_none_pct": {
+    "value": 1.0,
+    "kind": "hypothesis",
+    "status": "OPEN: hypothesis, not binding until the owner has seen it"
+  },
+  "zoom_none_pct": {
+    "value": 1.0,
+    "kind": "hypothesis",
+    "status": "OPEN: hypothesis, not binding until the owner has seen it"
+  },
+  "ease_tol": {
+    "value": 0.15,
+    "kind": "hypothesis",
+    "status": "OPEN: hypothesis, not binding until the owner has seen it"
+  },
+  "same_move_run_max": {
+    "value": 3,
+    "kind": "hypothesis",
+    "status": "OPEN: hypothesis, not binding until the owner has seen it"
+  },
+  "proposal_table": {
+    "kind": "hypothesis",
+    "status": "the lead's proposal from CAMERA_MOVES_DECISION_2026-11-20.md, not the owner's",
+    "rows": {
+      "truck (extent or travelling)": {
+        "moves": [
+          "truck_l",
+          "truck_r"
+        ],
+        "cues": [
+          "all along",
+          "line of",
+          "row of",
+          "advance",
+          "marches",
+          "walks",
+          "street",
+          "trench",
+          "crowd"
+        ]
+      },
+      "zoom_in (attention, tension)": {
+        "moves": [
+          "zoom_in"
+        ],
+        "cues": [
+          "named",
+          "reveal",
+          "decision",
+          "decides",
+          "clue",
+          "face",
+          "number"
+        ]
+      },
+      "zoom_out (scale, context, aftermath)": {
+        "moves": [
+          "zoom_out"
+        ],
+        "cues": [
+          "all of this",
+          "aftermath",
+          "consequence",
+          "alone",
+          "the end of",
+          "everything"
+        ]
+      }
+    }
+  }
+}

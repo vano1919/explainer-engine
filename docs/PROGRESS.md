@@ -3746,3 +3746,17 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 
 ## 2026-11-01 — `runpod create --datacenters` (v2 `dataCenterIds`)
 - From the live v2 OpenAPI (`api.runpod.io/v2/openapi.json`): `CreatePodRequest.dataCenterIds` = preferred sites; v2 has one `gpu.id` per request and no priority fields. New flag `--datacenters A,B,...` sets it. P12b measurement pod tried on RTX 4090 SECURE in EU-RO-1, EU-CZ-1, US-IL-1, EUR-IS-1/2 with CUDA floor 12.4: still "no instances available". Costs $0.
+
+## 2026-11-20 — Group 4 validators: shift_line_id, stated_theme, claim_ledger, camera_move (draft PR, free work)
+- Gemini wrote the four modules (lane: Gemini-first coding); this thread cleaned, reviewed and patched them against the real repo
+  files (`story_lint`, `scene_lint`, `claims`) and tested from the briefs' section 7 (`TASK_VAL_*`, HF `skills_team_2026-11-20/validator_code_group4/`, `REPORT_GROUP4_2026-11-20.md`).
+- New: `scripting/shift_line_id.py` (SL-01..06), `scripting/stated_theme.py` (STH-00..03, REVIEW only), `scripting/claim_ledger.py`
+  (CL-01..08 on top of PV-37), `qa/camera_move.py` (CM-01..06 cards, CM-10..15 clips; 5 moves, no static, no orbit/rotation) + their rules/tolerances JSON.
+  Tests: `tests/unit/test_shift_line_id.py` (21), `test_stated_theme.py` (15), `test_claim_ledger.py` (28), `test_camera_move.py` (44, real cv2 + ffmpeg synthetic clips; skipped without them).
+- Bugs found in the Gemini originals and fixed: `story_lint.overlap` takes sets (strings crashed), narrator = line without `speaker`, SL-03 keyed per segment,
+  STH-00 must be NOT_RUN, findings shape `{rule, severity, where, detail}`, claim_ledger exit code read `sev`, CL-08 used the id prefix, camera cards returned a dict.
+- All numbers are hypotheses (REVIEW-level, not binding until the owner has seen them). Not wired into any registry row or CLI list (never-list: done by the lead).
+- Open: `camera_move` reads BP-181 and BP-215, which the default-branch registry does not have yet: the clip check is NOT_RUN (never a pass) until they exist, so
+  `test_every_bp_id_cited_in_code_or_claude_exists` fails on this branch for exactly those two ids (it passes once they are registered; the test was not weakened).
+  Tests of the clip check use a placeholder registry fixture (`tests/fixtures/camera_move/sourced_rules_TESTONLY.json`, not repo numbers).
+- Cost: $0.00.

@@ -1,0 +1,6 @@
+{"about": "TEST-ONLY registry: the repo copy given to this thread has no BP-181/BP-215. These numbers are placeholders for the tests (BP-181 band 4-25 % is from the brief; still_drift_min_pct is an invented test value), NOT repo numbers.",
+ "rules": [
+  {"id": "BP-181", "status": "hypothesis", "thresholds": {"still_move_min": 4.0, "still_move_max": 25.0}},
+  {"id": "BP-215", "status": "hypothesis", "thresholds": {"still_drift_min_pct": 1.0, "still_drift_max_pct": 25.0}},
+  {"id": "BP-109", "status": "hypothesis", "thresholds": {"hold_share_max": 0.1}}
+ ]}

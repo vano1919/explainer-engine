@@ -1,0 +1,5 @@
+{
+  "after_overlap_min": 0.2,
+  "neighbour_window": 1,
+  "kind": "hypothesis"
+}
