@@ -9,7 +9,7 @@
  "living": {
   "snow": 0.0,
   "mist": 0.2,
-  "sky_amp": 0.4,
+  "sky_amp": 0.2,
   "fires": [
    {
     "box": [
