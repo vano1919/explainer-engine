@@ -1,5 +1,8 @@
+import shutil
+import subprocess
 from types import SimpleNamespace
 
+import numpy as np
 import pytest
 
 from explainer_engine.qa import technical_gate as tg
@@ -119,3 +122,71 @@ def test_measure_audio_uses_argument_list(monkeypatch):
     cmd, kwargs = calls[0]
     assert isinstance(cmd, list)
     assert kwargs.get("shell") is not True
+
+
+def test_sharpness_flat_gray_is_near_zero():
+    flat = np.full((64, 64), 128, dtype=np.uint8)
+    assert tg.sharpness_from_gray(flat) < 1e-3
+
+
+def test_sharpness_checkerboard_exceeds_flat():
+    flat = np.full((64, 64), 128, dtype=np.uint8)
+    checker = np.zeros((64, 64), dtype=np.uint8)
+    checker[::2, ::2] = 200
+    checker[1::2, 1::2] = 200
+    assert tg.sharpness_from_gray(checker) > tg.sharpness_from_gray(flat)
+
+
+def test_sharpness_invariant_to_unclipped_scaling():
+    base = np.zeros((64, 64), dtype=np.uint8)
+    base[::2, ::2] = 120
+    base[1::2, 1::2] = 60
+    half = (base * 0.5).astype(np.uint8)
+    assert tg.sharpness_from_gray(half) == pytest.approx(tg.sharpness_from_gray(base), rel=1e-4)
+
+
+def test_parse_blackdetect_sums_seconds():
+    text = (
+        "[blackdetect @ 0x1] black_start:1.0 black_end:2.5 black_duration:1.5\n"
+        "[blackdetect @ 0x1] black_start:4.0 black_end:5.0 black_duration:1.0\n"
+    )
+    assert tg._parse_blackdetect(text) == pytest.approx(2.5)
+
+
+def test_parse_freezedetect_sums_seconds():
+    text = (
+        "[freezedetect @ 0x1] lavfi.freezedetect.freeze_start: 0\n"
+        "[freezedetect @ 0x1] lavfi.freezedetect.freeze_duration: 2.0\n"
+        "[freezedetect @ 0x1] lavfi.freezedetect.freeze_end: 2.0\n"
+        "[freezedetect @ 0x1] lavfi.freezedetect.freeze_start: 5.0\n"
+        "[freezedetect @ 0x1] lavfi.freezedetect.freeze_duration: 1.5\n"
+        "[freezedetect @ 0x1] lavfi.freezedetect.freeze_end: 6.5\n"
+    )
+    assert tg._parse_freezedetect(text) == pytest.approx(3.5)
+
+
+def test_check_video_black_half_fails():
+    problems = tg.check_video(_video_metrics(black_frame_ratio=0.5))
+    assert len(problems) == 1
+    assert "black_frame_ratio" in problems[0]
+
+
+def test_check_video_no_black_passes():
+    assert tg.check_video(_video_metrics(black_frame_ratio=0.0)) == []
+
+
+@pytest.mark.skipif(
+    shutil.which("ffmpeg") is None or shutil.which("ffprobe") is None,
+    reason="ffmpeg and ffprobe are required",
+)
+def test_measure_video_fills_filter_keys(tmp_path):
+    video = tmp_path / "tiny.mp4"
+    subprocess.run(
+        ["ffmpeg", "-v", "error", "-f", "lavfi", "-i", "testsrc=size=320x240:rate=24:duration=2",
+         "-pix_fmt", "yuv420p", str(video)],
+        check=True,
+    )
+    metrics = tg.measure_video(str(video))
+    assert metrics["black_frame_ratio"] is not None
+    assert metrics["frozen_frame_ratio"] is not None
+    assert metrics["sharpness"] is not None

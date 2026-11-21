@@ -15,6 +15,7 @@ import math
 import numpy as np
 from PIL import Image
 
+from explainer_engine.maps import bridge_render, bridge_sync, render_presets
 from explainer_engine.maps import camera as CAM
 from explainer_engine.maps import draw as D
 from explainer_engine.maps import geo, paths, plate
@@ -422,10 +423,30 @@ def render_frame(spec: dict, tl: Timeline, clock, f: int, ss: int = D.SS, base_d
                width=max(2.0, c.h * 0.004), radius=size * 0.3)
         c.text((c.w * 0.04 + size / 2, c.h * 0.04 + size * 0.75), chip, size, ink, anchor="lm")
     _scale_bar(c, view, CAM.tier_of(cam.span_km))
+    # bridge captions: the narration's words over the frame, from their own onset to the end of their last word
+    fps = p.get("fps", 24)
+    for item in p.get("bridges", []):
+        if not bridge_render.visible_at(f, item["onset_s"], item["hold_end_s"], fps):
+            continue
+        style = render_presets.get_bridge_style(item.get("style", "card"))
+        colours = {k: tuple(item[k]) for k in ("fill", "ink") if item.get(k)}
+        bridge_render.draw_bridge(c, item["text"], style, frame_h=c.h, **colours)
     img = c.image()
     if cam.pitch_deg > 0:
         img = CAM.tilt_fill(img, cam.pitch_deg)   # no empty corners (v4.3 P4)
     return img.convert("RGB")
+
+
+def bridges_from_words(words: list[dict], items: list[dict], style_default: str = "card") -> list[dict]:
+    """The payload bridges of a map item: ``items`` are {"text", optional "style"}, timed from the Scribe word list."""
+    out: list[dict] = []
+    for item in items:
+        window = bridge_sync.bridge_window(words, item["text"])
+        if not window["ok"]:
+            raise ValueError(f"bridge text {item['text']!r}: {'; '.join(window['problems'])}")
+        out.append({"text": item["text"], "onset_s": window["onset_s"], "hold_end_s": window["hold_end_s"],
+                    "style": item.get("style", style_default)})
+    return out
 
 
 

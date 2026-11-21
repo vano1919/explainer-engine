@@ -1,6 +1,7 @@
 {
   "option": "provisional",
   "video": {
+    "sharpness_unit": "laplacian_var_over_mean_sq_0_1",
     "min_width": 1920,
     "min_height": 1080,
     "fps_min": 23.9,
@@ -19,6 +20,7 @@
     "max_silence_ratio": 0.4
   },
   "photo": {
+    "sharpness_unit": "laplacian_var_over_mean_sq_0_1",
     "min_width": 1920,
     "min_height": 1080,
     "min_sharpness": 0.5

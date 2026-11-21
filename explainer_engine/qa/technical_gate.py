@@ -8,6 +8,9 @@ import shutil
 import subprocess
 from pathlib import Path
 
+import cv2
+import numpy as np
+
 _CONFIG = "technical_gate.json"
 _VIDEO_KEYS = ("width", "height", "fps", "bitrate_kbps", "black_frame_ratio", "frozen_frame_ratio", "sharpness")
 _AUDIO_KEYS = ("lufs", "true_peak_db", "clipped_ratio", "speech_to_noise_db", "silence_ratio")
@@ -94,9 +97,90 @@ def _rate(value: str | None) -> float | None:
         return None
 
 
+def sharpness_from_gray(gray) -> float:
+    """Contrast-normalised sharpness of a grayscale frame: variance of the Laplacian (frame scaled to 0..1) divided by
+    the squared mean intensity plus a small epsilon. Invariant to a global brightness factor while not clipped."""
+    arr = np.asarray(gray, dtype=np.float64)
+    if arr.size == 0:
+        return 0.0
+    norm = arr / 255.0
+    laplacian_var = float(cv2.Laplacian(norm, cv2.CV_64F).var())
+    mean = float(norm.mean())
+    return laplacian_var / (mean * mean + 1e-6)
+
+
+def _parse_blackdetect(text: str) -> float:
+    """Sum the black seconds reported by ffmpeg's blackdetect filter."""
+    total = 0.0
+    for line in text.splitlines():
+        if "black_start:" not in line and "black_duration:" not in line:
+            continue
+        duration = _float_match(r"black_duration:\s*(-?\d+(?:\.\d+)?)", line)
+        if duration is not None:
+            total += duration
+            continue
+        start = _float_match(r"black_start:\s*(-?\d+(?:\.\d+)?)", line)
+        end = _float_match(r"black_end:\s*(-?\d+(?:\.\d+)?)", line)
+        if start is not None and end is not None:
+            total += end - start
+    return total
+
+
+def _parse_freezedetect(text: str) -> float:
+    """Sum the frozen seconds reported by ffmpeg's freezedetect filter."""
+    total = 0.0
+    for line in text.splitlines():
+        if "freeze_duration:" in line:
+            duration = _float_match(r"freeze_duration:\s*(-?\d+(?:\.\d+)?)", line)
+            if duration is not None:
+                total += duration
+        elif "freeze_start:" in line and "freeze_end:" in line:
+            start = _float_match(r"freeze_start:\s*(-?\d+(?:\.\d+)?)", line)
+            end = _float_match(r"freeze_end:\s*(-?\d+(?:\.\d+)?)", line)
+            if start is not None and end is not None:
+                total += end - start
+    return total
+
+
+def _ffmpeg_filter_seconds(path: str, vf: str, parser) -> float:
+    if shutil.which("ffmpeg") is None:
+        raise RuntimeError("ffmpeg not found on PATH")
+    cmd = ["ffmpeg", "-v", "info", "-i", path, "-vf", vf, "-an", "-f", "null", "-"]
+    proc = subprocess.run(cmd, capture_output=True, text=True, check=False)
+    if proc.returncode != 0:
+        raise RuntimeError(f"ffmpeg failed: {proc.stderr.strip()}")
+    return parser(proc.stderr)
+
+
+def measure_video_sharpness(path: str, samples: int = 8) -> float:
+    """Median contrast-normalised sharpness over up to ``samples`` frames sampled evenly across the video."""
+    cap = cv2.VideoCapture(path)
+    try:
+        if not cap.isOpened():
+            raise RuntimeError("cv2 could not open the video")
+        frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        if frame_count > 0:
+            n = min(samples, frame_count)
+            idxs = [int(i * (frame_count - 1) / max(n - 1, 1)) for i in range(n)]
+        else:
+            idxs = list(range(samples))
+        values = []
+        for idx in idxs:
+            cap.set(cv2.CAP_PROP_POS_FRAMES, idx)
+            ok, frame = cap.read()
+            if not ok or frame is None:
+                continue
+            values.append(sharpness_from_gray(cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)))
+    finally:
+        cap.release()
+    if not values:
+        raise RuntimeError("cv2 could not decode any frame for sharpness")
+    return float(np.median(values))
+
+
 def measure_video(path: str) -> dict:
-    """Measure width, height, fps and bitrate with ffprobe. Black/frozen frame ratios and sharpness need ffmpeg filters
-    and stay None, so check_video fails closed unless the caller supplies them."""
+    """Measure width, height, fps and bitrate with ffprobe, black/frozen frame ratios with ffmpeg filters and
+    contrast-normalised sharpness with cv2. Ratios are clamped to [0, 1]."""
     if shutil.which("ffprobe") is None:
         raise RuntimeError("ffprobe not found on PATH")
     cmd = ["ffprobe", "-v", "error", "-print_format", "json", "-show_streams", "-show_format", path]
@@ -107,15 +191,21 @@ def measure_video(path: str) -> dict:
     stream = next((s for s in data.get("streams", []) if s.get("codec_type") == "video"), None)
     if stream is None:
         raise RuntimeError("no video stream found")
+    duration = data.get("format", {}).get("duration")
+    if duration is None:
+        raise RuntimeError("ffprobe did not report a duration")
+    duration = float(duration)
     bit_rate = stream.get("bit_rate") or data.get("format", {}).get("bit_rate")
+    black_seconds = _ffmpeg_filter_seconds(path, "blackdetect=d=0.1:pix_th=0.10", _parse_blackdetect)
+    frozen_seconds = _ffmpeg_filter_seconds(path, "freezedetect=n=0.003:d=0.5", _parse_freezedetect)
     return {
         "width": stream.get("width"),
         "height": stream.get("height"),
         "fps": _rate(stream.get("avg_frame_rate") or stream.get("r_frame_rate")),
         "bitrate_kbps": int(bit_rate) / 1000 if bit_rate else None,
-        "black_frame_ratio": None,
-        "frozen_frame_ratio": None,
-        "sharpness": None,
+        "black_frame_ratio": min(max(black_seconds / duration, 0.0), 1.0),
+        "frozen_frame_ratio": min(max(frozen_seconds / duration, 0.0), 1.0),
+        "sharpness": measure_video_sharpness(path),
     }
 
 

@@ -12,6 +12,8 @@ import numpy as np, cv2
 from explainer_engine.fx25d.masks import sky_mask
 
 W, H, FPS = 1280, 720, 24
+W_OUT, H_OUT = 1920, 1080          # output frames; internal processing stays in the 1280x720 working space
+OUT_SIZE = f"{W_OUT}x{H_OUT}"      # ffmpeg -s argument
 FOCAL = W / (2 * np.tan(np.radians(30)))      # 60 degree horizontal field of view assumed (nothing measured)
 SX, SY = W / 1376, H / 768
 CY0 = 0.04      # zoom pivot (share of the height, near the top edge): head room is never cropped
@@ -71,6 +73,11 @@ def check_camera(camera):
 
 
 def box(b): return (int(b[0] * SX), int(b[1] * SY), int(b[2] * SX), int(b[3] * SY))
+
+
+def output_size_frame(frame):
+    """1280x720 working frame (BGR or mask) -> 1920x1080 output frame, resized only when it is written or encoded."""
+    return cv2.resize(frame, (W_OUT, H_OUT), interpolation=cv2.INTER_LANCZOS4)
 
 
 # the director's living-element inventory of each photo, in 1376x768 picture coordinates (LP-01..LP-12 style)
@@ -415,17 +422,17 @@ class Shot:
 
 def run(frame, out_mp4, seconds=5.0, drift=False, particles=True, tel=None, **shot_kw):
     s = Shot(frame, seconds, drift, particles, **shot_kw)
-    p = subprocess.Popen(["ffmpeg", "-y", "-loglevel", "error", "-f", "rawvideo", "-pix_fmt", "bgr24", "-s", f"{W}x{H}", "-r", str(FPS), "-i", "-",
+    p = subprocess.Popen(["ffmpeg", "-y", "-loglevel", "error", "-f", "rawvideo", "-pix_fmt", "bgr24", "-s", OUT_SIZE, "-r", str(FPS), "-i", "-",
                           "-c:v", "libx264", "-preset", "medium", "-crf", "17", "-pix_fmt", "yuv420p", out_mp4], stdin=subprocess.PIPE)
     stem = out_mp4[:-4]; mw = {}
     if particles:
         for nm in ("matte", "far"):
-            mw[nm] = subprocess.Popen(["ffmpeg", "-y", "-loglevel", "error", "-f", "rawvideo", "-pix_fmt", "gray", "-s", f"{W}x{H}", "-r", str(FPS), "-i", "-",
+            mw[nm] = subprocess.Popen(["ffmpeg", "-y", "-loglevel", "error", "-f", "rawvideo", "-pix_fmt", "gray", "-s", OUT_SIZE, "-r", str(FPS), "-i", "-",
                                        "-c:v", "libx264", "-crf", "12", "-pix_fmt", "yuv420p", f"{stem}_{nm}.mp4"], stdin=subprocess.PIPE)
     CHK = (1, 25, 49, 73, 97, 121); metrics = {}
     for f in range(max(s.n, 121)):
         fr_img = s.render(f)
-        if f < s.n: p.stdin.write(fr_img.tobytes())
+        if f < s.n: p.stdin.write(output_size_frame(fr_img).tobytes())
         if f + 1 in CHK:      # 1-based frame numbers, as in the X3 reports; measured on the frame as it is seen (after the camera move)
             t_ = f / FPS; a_ = s.parallax(s.plume_a, t_); pm_ = s.parallax(s.pmask_f, t_) > 0.5
             from explainer_engine.qa import plume_zones as PZ   # the shared measure: NOT_RUN (never PASS) without a person mask or without a plume
@@ -436,7 +443,8 @@ def run(frame, out_mp4, seconds=5.0, drift=False, particles=True, tel=None, **sh
             cv2.imwrite(stem + "_f%03d_alpha.png" % (f + 1), cv2.resize((np.clip(a_, 0, 1) * 255).astype(np.uint8), (640, 360), interpolation=cv2.INTER_AREA))
             if f + 1 == 1: cv2.imwrite(stem + "_person_zone.png", (pm_ * 255).astype(np.uint8))
         if particles and f < s.n:
-            mw["matte"].stdin.write((np.clip(s.m_all, 0, 1) * 255).astype(np.uint8).tobytes()); mw["far"].stdin.write((np.clip(s.m_far, 0, 1) * 255).astype(np.uint8).tobytes())
+            mw["matte"].stdin.write((np.clip(output_size_frame(s.m_all), 0, 1) * 255).astype(np.uint8).tobytes())
+            mw["far"].stdin.write((np.clip(output_size_frame(s.m_far), 0, 1) * 255).astype(np.uint8).tobytes())
     p.stdin.close(); p.wait()
     json.dump(metrics, open(f"{stem}.smoke_metrics.json", "w"), indent=1); print(metrics)
     for w in mw.values(): w.stdin.close(); w.wait()
