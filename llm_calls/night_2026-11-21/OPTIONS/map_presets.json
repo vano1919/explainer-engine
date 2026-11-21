@@ -1,0 +1,31 @@
+{
+  "presets": [
+    {
+      "name": "bold",
+      "primary_line_pct": 1.0,
+      "secondary_line_pct": 0.5,
+      "label_cap_pct": 3.0,
+      "label_fill": "#FFFFFF",
+      "label_halo": "#000000",
+      "visual_meaning": "Heavy lines and big white labels with a black halo, like a bold infographic."
+    },
+    {
+      "name": "balanced",
+      "primary_line_pct": 0.7,
+      "secondary_line_pct": 0.35,
+      "label_cap_pct": 2.8,
+      "label_fill": "#F4F1E8",
+      "label_halo": "#1B1B1B",
+      "visual_meaning": "Moderate line weights and warm off-white labels with a dark halo for a balanced look."
+    },
+    {
+      "name": "light",
+      "primary_line_pct": 0.5,
+      "secondary_line_pct": 0.25,
+      "label_cap_pct": 2.5,
+      "label_fill": "#1B1B1B",
+      "label_halo": "#FFFFFF",
+      "visual_meaning": "Thin lines and dark labels with a white halo for a light, airy diagram."
+    }
+  ]
+}

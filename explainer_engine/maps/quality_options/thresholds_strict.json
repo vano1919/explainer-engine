@@ -1,0 +1,16 @@
+{
+  "option": "strict",
+  "primary_line_width_pct": 0.6,
+  "secondary_line_width_pct": 0.3,
+  "label_cap_height_pct": 3.0,
+  "label_contrast_ratio": 7.0,
+  "green_hue_min_deg": 85,
+  "green_hue_max_deg": 150,
+  "green_saturation_min_pct": 45,
+  "bridge_onset_tol_frames": 1,
+  "bridge_cap_height_min_pct": 9.0,
+  "bridge_hold_min_s": 1.5,
+  "residual_motion_per_frame_max_pct": 0.04,
+  "residual_displacement_shot_max_pct": 0.15,
+  "visual_meaning": "Crisp, high-contrast diagrams with large labels and wide lines; nothing subtle."
+}
