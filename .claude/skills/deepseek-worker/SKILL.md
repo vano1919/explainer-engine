@@ -67,7 +67,7 @@ be read, or more than about 150 changed lines, is cut in two before it is sent.
 1. **Simple = DeepSeek V4.1 Flash** (`deepseek-flash`): the default for everything below.
 2. **Medium = DeepSeek Pro** (`deepseek-v4-pro`, the regular Pro): the four Pro cases below.
 3. **Hard = Claude Opus 5.5 at medium effort** (`claude-opus-5-5`), sent through the Claude API (`explainer_engine/llm/claude_api.py`, the
-   Console credit), never through an app thread. Hard means: the code and test design of a new method, a new module boundary or schema,
+   Console credit; the code loop is `python -m explainer_engine.llm.opus_code code ... --card-ref <card id>`, `--dry-run` first), never through an app thread. Hard means: the code and test design of a new method, a new module boundary or schema,
    logic across more than 3 modules, or two red Pro rounds on the same task. A thread never opens this tier itself: it asks the
    coordinator for a card (the coordinator passes the brief and the money line), and the first paid Opus call waits for the owner's card.
 

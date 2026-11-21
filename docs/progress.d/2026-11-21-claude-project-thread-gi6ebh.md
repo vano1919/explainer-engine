@@ -27,3 +27,6 @@ map shots belong to `production/build_shot` kind "map" (maplibre lane). Tests: `
 
 ## DeepSeek skill: three code-writing tiers (owner, 2026-11-21, card)
 Simple = DeepSeek V4.1 Flash, medium = DeepSeek Pro, hard = Claude Opus 5.5 medium via the Claude API (coordinator's card first, own ceiling line not yet set). `.claude/skills/deepseek-worker/SKILL.md` sections 1, 4, 7. Written by hand: `.claude/` is on the DeepSeek never-list.
+
+## Tier 3 writer: `llm/opus_code.py` (Claude Opus via the Claude API; built, not live)
+The DeepSeek worker's loop (`deepseek_api.code`) with `claude_api.ClaudeAPI` as the model call: key from `EE_ANTHROPIC_API_KEY` (or `ANTHROPIC_API_KEY`), ledger, stream proof and caps from `claude_api`; per-job `--max-usd`; a real call needs `--card-ref <creator's card message id>`; `--dry-run` spends nothing. Tests `tests/unit/test_opus_code.py` (fake api). NOT live until the creator names (a) the funding of the `opus_code` line ($20, stop at $16: `claude_api.jobs` sums to `max_usd` today, test_claude_api pins it) and (b) the routing class `opus-code` (Opus, medium) in `config/model_routing.json`, which only his word changes.
