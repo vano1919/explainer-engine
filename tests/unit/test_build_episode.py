@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import json
 import subprocess
+from pathlib import Path
 
 import pytest
 
@@ -16,7 +17,16 @@ def _tone(path, secs):
 def _fake_build_shot(spec_path, out_mp4, cache_dir=None, workdir=None, tile_dir=None):
     spec = json.loads(open(spec_path).read())
     FAKE_CALLS.append((spec["id"], spec["seconds"], spec.get("line_t")))
-    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-f", "lavfi", "-i", f"color=c=gray:s=320x180:r=24:d={spec['seconds']}", "-pix_fmt", "yuv420p", str(out_mp4)], check=True)
+    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-f", "lavfi", "-i",
+                    f"color=c=gray:s=320x180:r=24:d={spec['seconds']}", "-pix_fmt", "yuv420p", str(out_mp4)], check=True)
+    receipt_path = Path(out_mp4).with_suffix(".render_log.json")
+    if spec.get("kind", "photo") == "map":
+        receipt = {"kind": "map", "render": {"frames": int(round(float(spec["seconds"]) * 24))}, "camera": spec.get("camera", {"move": "zoom_in"}),
+                   "film_id": "fake_film", "font": "FakeFont"}
+    else:
+        receipt = {"kind": "photo", "camera": spec.get("camera", {"move": "zoom_in"}), "film_id": "fake_film", "font": "FakeFont",
+                   "depth": {"file": "x.npy", "near_m": 2.5, "far_m": 60.0}, "plume_checks": []}
+    receipt_path.write_text(json.dumps(receipt), encoding="utf-8")
     return {}
 
 

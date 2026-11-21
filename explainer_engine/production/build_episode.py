@@ -25,6 +25,7 @@ from pathlib import Path
 
 from explainer_engine.fx25d.living import FPS
 from explainer_engine.production import build_shot as BS
+from explainer_engine.qa import delivery_gate as DG
 
 DEFAULTS = dict(lead_s=0.25, gap_s=0.30, tail_s=0.45)
 
@@ -165,6 +166,10 @@ def build_episode(episode_path, out_mp4, work=None, tile_dir=None, cache_dir="jo
     log = dict(id=ep["id"], out=str(out), seconds=round(total, 3), fps=FPS, shots=[dict(r, clip=c.name) for r, c in zip(sched, clips)], reused=reused,
                lead_s=lead, gap_s=gap, tail_s=tail, loudness="qa/targets.loudnorm('long')", paid_calls=0)
     out.with_suffix(".episode_log.json").write_text(json.dumps(log, indent=1), encoding="utf-8")
+    gate = DG.check(str(out.with_suffix(".episode_log.json")))
+    out.with_suffix(".delivery_gate.json").write_text(json.dumps(gate, indent=1), encoding="utf-8")
+    if gate["status"] == "FAIL":
+        raise BuildEpisodeError("delivery gate FAIL: " + "; ".join(gate["problems"]))
     return log
 
 

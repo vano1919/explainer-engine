@@ -177,6 +177,11 @@ def build(spec_path, out_mp4, workdir=None, tile_dir=None) -> dict:
     own = True
     from explainer_engine.maps import maplibre_spec as MS
     raw = json.loads(spec_path.read_text(encoding="utf-8"))
+    from explainer_engine.production import build_shot as BS
+    film_path = Path(raw["film_file"])
+    if not film_path.is_absolute():
+        film_path = spec_path.parent / film_path
+    fin = BS.film_finish(film_path.resolve())
     try:
         base = work / "lane.mp4"
         info = render.render_shot(str(spec_path), str(base), str(tiles), str(work))
@@ -186,6 +191,7 @@ def build(spec_path, out_mp4, workdir=None, tile_dir=None) -> dict:
         post_info = post(base, out_mp4, lane_spec, fp if fp is not False else False)
     finally:
         shutil.rmtree(work, ignore_errors=True)
-    log = dict(id=spec_path.stem, kind="map", out=str(out_mp4), render=info, post=post_info)
+    log = dict(id=spec_path.stem, kind="map", out=str(out_mp4), render=info, post=post_info,
+               camera=raw["camera"], film_id=fin["film_id"], font=fin["font"])
     Path(out_mp4).with_suffix(".render_log.json").write_text(json.dumps(log, indent=1, default=str), encoding="utf-8")
     return log

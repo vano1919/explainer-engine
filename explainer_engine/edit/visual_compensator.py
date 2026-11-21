@@ -15,6 +15,7 @@ spec and its number, so a chunked render draws the same pixels (CMP-09).
 from __future__ import annotations
 
 import json
+import os
 import sys
 import time
 from functools import lru_cache
@@ -29,6 +30,7 @@ from explainer_engine.standards import sourced_rules as SR
 
 CATALOGUE = Path(__file__).with_name("archetypes.json")
 CONTINUOUS = {"PARALLAX_25D_TABLEAU"}   # a dolly runs the whole item: something moves every frame
+LEGACY_MAP_ENV = "EXPLAINER_ALLOW_LEGACY_MAP"   # the owner's permission for the old PIL map renderer (P4)
 FAMILIES = ("map", "hud", "cutaway", "graph")
 
 
@@ -129,10 +131,14 @@ def check_item(spec: dict, spine: dict, trigger_word_index: int, duration_frames
 
 
 def render_item_frame(spec: dict, spine: dict, trigger_word_index: int, duration_frames: int, f: int, ss: int = D.SS,
-                      base_dir: Path | None = None):
-    """The frame ``f`` (counted from the item's first frame) as a PIL image: RGB, or RGBA for the telemetry overlay."""
-    tl, clock = timeline.build(spec, spine, trigger_word_index, duration_frames)
+                      base_dir: Path | None = None, allow_legacy_map: bool = False):
+    """The frame ``f`` (counted from the item's first frame) as a PIL image: RGB, or RGBA for the telemetry overlay. A map archetype
+    renders through the old PIL renderer only with the owner's permission (``allow_legacy_map`` or ``EXPLAINER_ALLOW_LEGACY_MAP=1``)."""
     kind = _module(spec["archetype_id"])
+    if kind == "map" and not (allow_legacy_map or os.environ.get(LEGACY_MAP_ENV) == "1"):
+        raise ValueError("map shots render only through production/build_shot (kind 'map', maplibre lane); the old PIL map renderer "
+                         "needs the owner's permission: set EXPLAINER_ALLOW_LEGACY_MAP=1")
+    tl, clock = timeline.build(spec, spine, trigger_word_index, duration_frames)
     if kind == "map":
         return maprender.render_frame(spec, tl, clock, f, ss, base_dir)
     if kind == "hud":
