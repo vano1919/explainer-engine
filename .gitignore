@@ -37,3 +37,6 @@ id_ed25519*
 
 # local Claude Code settings (may hold permissions or keys)
 .claude/settings.local.json
+
+# episode example media (photos and reads live on HF, see the example's README)
+examples/episodes/*/media/

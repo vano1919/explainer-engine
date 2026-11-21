@@ -105,7 +105,7 @@ def test_avoiding_plume_without_person_zones_refuses(tmp_path):
 def test_map_spec_goes_to_the_map_lane(tmp_path, monkeypatch):
     from explainer_engine.production import build_map_shot
     called = {}
-    monkeypatch.setattr(build_map_shot, "build", lambda s, o, w=None: called.setdefault("ok", (str(s), str(o))) and {"id": "m"})
+    monkeypatch.setattr(build_map_shot, "build", lambda s, o, w=None, t=None: called.setdefault("ok", (str(s), str(o))) and {"id": "m"})
     (tmp_path / "m.json").write_text(json.dumps({"kind": "map"}))
     BS.build_shot(tmp_path / "m.json", tmp_path / "m.mp4")
     assert "ok" in called

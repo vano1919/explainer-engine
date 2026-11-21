@@ -224,24 +224,24 @@ def build_photo_shot(spec: dict, out_mp4: str, cache_dir: str | Path = "jobs/_de
     return log
 
 
-def build_shot(spec_path, out_mp4, cache_dir="jobs/_depth_cache", workdir=None) -> dict[str, Any]:
+def build_shot(spec_path, out_mp4, cache_dir="jobs/_depth_cache", workdir=None, tile_dir=None) -> dict[str, Any]:
     spec = load_spec(spec_path)
     if spec.get("kind", "photo") == "map":
         from explainer_engine.production import build_map_shot
-        return build_map_shot.build(spec_path, out_mp4, workdir)
+        return build_map_shot.build(spec_path, out_mp4, workdir, tile_dir)
     return build_photo_shot(spec, out_mp4, cache_dir, workdir)
 
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(prog="python -m explainer_engine.production.build_shot")
-    ap.add_argument("spec"); ap.add_argument("out"); ap.add_argument("--cache-dir", default="jobs/_depth_cache"); ap.add_argument("--workdir")
+    ap.add_argument("spec"); ap.add_argument("out"); ap.add_argument("--cache-dir", default="jobs/_depth_cache"); ap.add_argument("--workdir"); ap.add_argument("--tile-dir")
     a = ap.parse_args(argv)
     try:
-        log = build_shot(a.spec, a.out, a.cache_dir, a.workdir)
+        log = build_shot(a.spec, a.out, a.cache_dir, a.workdir, a.tile_dir)
     except BuildShotError as exc:
         print(f"build_shot: {exc}", file=sys.stderr)
         return 2
-    print(json.dumps({k: log[k] for k in ("id", "out", "frames", "camera", "effects")}))
+    print(json.dumps({k: log[k] for k in ("id", "kind", "out") if k in log}))
     return 0
 
 

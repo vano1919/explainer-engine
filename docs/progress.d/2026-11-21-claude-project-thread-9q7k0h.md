@@ -9,3 +9,10 @@ State: CPU only, nothing paid, ~1.3 s per frame. Not decided by the owner (defau
 snow/mist/sky values, grain look. Model file lives in gitignored `tools/depth/`.
 Next: map shot in build_shot (stage 3), `build_episode` (stage 4), test video S01-S02 (stage 5).
 Recovery: revert the commit; `living.py` default behaviour is untouched.
+
+### Stages 3-4 (same day)
+Done: map shots inside `build_shot` (`"kind": "map"` -> `production/build_map_shot.py` -> the maplibre lane, `truce_cold`, five moves, 1280x720/24 like photo shots);
+`maps/trace_front_1914.py` + `examples/maps/truce_front_1914/` (minimal front traced from the public-domain West Point map, georeferenced by 8 towns, RMS about
+9 km: a drawing aid, NOT a claim source); `production/build_episode.py` (shot plan + read durations -> every shot as long as its lines, built by build_shot, clip cache,
+hard cuts, narration laid at each shot's start + lead, long-form loudness from `qa/targets.py`; `plan_from_shot_plan` matches lines by text, no guessing).
+Tests: `test_build_map_shot.py`, `test_build_episode.py` (build_shot faked). Free, nothing paid. maplibre-gl 4.7.1 files were put in `maplibre_lane/vendor/` locally (not committed).
