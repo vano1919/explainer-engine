@@ -37,3 +37,14 @@ def draw_bridge(c, text: str, style: dict, fill=(255, 255, 255), ink=(0, 0, 0), 
 def bridge_text_width(c, text: str, style: dict, frame_h: int | None = None) -> float:
     """The width ``text`` takes at the bridge's size (for placing things clear of it)."""
     return c.text_width(text, _text_size(c, style, frame_h))
+
+
+def visible_at(frame: int, onset_s: float, hold_end_s: float, fps: float, min_hold_s: float = 1.0) -> bool:
+    """Whether the bridge is on screen at ``frame``: from its first word's start to its last word's end, and at least ``min_hold_s``
+    long (the hold rule B5 of QUALITY_SPEC section 3, provisional). ``fps`` must be > 0."""
+    if fps <= 0:
+        raise ValueError("fps must be greater than 0")
+    start = onset_s
+    end = max(hold_end_s, onset_s + min_hold_s)
+    t = frame / float(fps)
+    return start <= t <= end
