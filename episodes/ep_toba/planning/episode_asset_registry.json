@@ -1,0 +1,601 @@
+{
+  "schema": "episode_asset_registry/4.3",
+  "episode_id": "ep_toba",
+  "visual_style_profile": "bande_dessinee_3d_cinematic_adventure",
+  "updated_at": "2026-11-12T07:24:30Z",
+  "total_verified_assets": 37,
+  "assets": [
+    {
+      "asset_id": "char_kael_74000bce",
+      "kind": "character_reference",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "visual_style_profile": "bande_dessinee_3d_cinematic_adventure",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "file_path": "assets/reference/characters/char_kael_74000bce.jpg",
+      "bytes": 821628,
+      "sha256": "6529ba47381a7aa33060c04b2c15f5dbb9a7fc48cd94e234fbeb964043f89ad9",
+      "verified": true
+    },
+    {
+      "asset_id": "char_sena_74000bce",
+      "kind": "character_reference",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "visual_style_profile": "bande_dessinee_3d_cinematic_adventure",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "file_path": "assets/reference/characters/char_sena_74000bce.jpg",
+      "bytes": 857777,
+      "sha256": "276c04902d21480e84a7e003b9062c7b46085f34697bbf5b5f844adc135c8bb4",
+      "verified": true
+    },
+    {
+      "asset_id": "char_thar_74000bce",
+      "kind": "character_reference",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "visual_style_profile": "bande_dessinee_3d_cinematic_adventure",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "file_path": "assets/reference/characters/char_thar_74000bce.jpg",
+      "bytes": 768497,
+      "sha256": "98450841119c2312cfb67bad0617a0e1a3998e9478d75b9033cf2d5e6200ec51",
+      "verified": true
+    },
+    {
+      "asset_id": "loc_rift_cave_hearth",
+      "kind": "location_reference",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "visual_style_profile": "bande_dessinee_3d_cinematic_adventure",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "file_path": "assets/reference/locations/loc_rift_cave_hearth.jpg",
+      "bytes": 990049,
+      "sha256": "d925190439c07948a4f6a97be64ab17a667bc3705711d3ba2aeec683e4902b3c",
+      "verified": true
+    },
+    {
+      "asset_id": "loc_shinfa_ash_riverbed",
+      "kind": "location_reference",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "visual_style_profile": "bande_dessinee_3d_cinematic_adventure",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "file_path": "assets/reference/locations/loc_shinfa_ash_riverbed.jpg",
+      "bytes": 955700,
+      "sha256": "16e8ae19460173e3f443a98812fd2d97416e4049f33f33776af4d3d67a6bc53b",
+      "verified": true
+    },
+    {
+      "asset_id": "loc_sumatra_toba_caldera",
+      "kind": "location_reference",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "visual_style_profile": "bande_dessinee_3d_cinematic_adventure",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "file_path": "assets/reference/locations/loc_sumatra_toba_caldera.jpg",
+      "bytes": 839430,
+      "sha256": "ef978c14ce92ab032d3875234dc9dc82ea2e8c3d795cb85e0e8a99968e7af0b0",
+      "verified": true
+    },
+    {
+      "asset_id": "S01_SH001_start",
+      "kind": "scene_keyframe",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "visual_style_profile": "bande_dessinee_3d_cinematic_adventure",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "file_path": "assets/generated/images/S01_SH001_start.jpg",
+      "bytes": 815258,
+      "sha256": "5f6f6c519935b73fc6498f10e1c4530ca4bfbb355544e627c6fb8eda17b73002",
+      "verified": true
+    },
+    {
+      "asset_id": "S01_SH002_start",
+      "kind": "scene_keyframe",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "visual_style_profile": "bande_dessinee_3d_cinematic_adventure",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "file_path": "assets/generated/images/S01_SH002_start.jpg",
+      "bytes": 887047,
+      "sha256": "f32e38a765dd208a7e79a66d8aa7cc42ecc58299272f51366468f17dfeeec72b",
+      "verified": true
+    },
+    {
+      "asset_id": "S01_SH003_start",
+      "kind": "scene_keyframe",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "visual_style_profile": "bande_dessinee_3d_cinematic_adventure",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "file_path": "assets/generated/images/S01_SH003_start.jpg",
+      "bytes": 835964,
+      "sha256": "59534d9ba0cda038c262977bc08cb1c89f5920e244c5df63ad19d8664a4a2520",
+      "verified": true
+    },
+    {
+      "asset_id": "S01_SH004_start",
+      "kind": "scene_keyframe",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "visual_style_profile": "bande_dessinee_3d_cinematic_adventure",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "file_path": "assets/generated/images/S01_SH004_start.jpg",
+      "bytes": 720415,
+      "sha256": "5c49905b069720727868fffb29bdbbc75fe814111696ffb2cc9aca2664504307",
+      "verified": true
+    },
+    {
+      "asset_id": "S01_SH005_start",
+      "kind": "scene_keyframe",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "visual_style_profile": "bande_dessinee_3d_cinematic_adventure",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "file_path": "assets/generated/images/S01_SH005_start.jpg",
+      "bytes": 771378,
+      "sha256": "d1388b477923283115a6f62996068f9fbe447537fc9e38244679b90df8d7bc29",
+      "verified": true
+    },
+    {
+      "asset_id": "S01_SH006_start",
+      "kind": "scene_keyframe",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "visual_style_profile": "bande_dessinee_3d_cinematic_adventure",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "file_path": "assets/generated/images/S01_SH006_start.jpg",
+      "bytes": 822051,
+      "sha256": "a130dcac23853a7056faebfc1616cca9579801b53fcbf1c1cd8ac161a052468f",
+      "verified": true
+    },
+    {
+      "asset_id": "S01_SH007_start",
+      "kind": "scene_keyframe",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "visual_style_profile": "bande_dessinee_3d_cinematic_adventure",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "file_path": "assets/generated/images/S01_SH007_start.jpg",
+      "bytes": 761146,
+      "sha256": "7b5a2641a15ede96ed0b2f73175945a10fe5bef82c52b5dcb074e86dafddda9f",
+      "verified": true
+    },
+    {
+      "asset_id": "S01_SH008_start",
+      "kind": "scene_keyframe",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "visual_style_profile": "bande_dessinee_3d_cinematic_adventure",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "file_path": "assets/generated/images/S01_SH008_start.jpg",
+      "bytes": 925173,
+      "sha256": "c1649b5f1a63e266e23309a6ca42895675210c828fdcc3964e7a35db07c0cf63",
+      "verified": true
+    },
+    {
+      "asset_id": "S01_SH009_start",
+      "kind": "scene_keyframe",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "visual_style_profile": "bande_dessinee_3d_cinematic_adventure",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "file_path": "assets/generated/images/S01_SH009_start.jpg",
+      "bytes": 662060,
+      "sha256": "b8e30741a13e6dc1a71103b01f91a745ec0bb8496903fda0190e348c8f8bef36",
+      "verified": true
+    },
+    {
+      "asset_id": "S02_SH001_start",
+      "kind": "scene_keyframe",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "visual_style_profile": "bande_dessinee_3d_cinematic_adventure",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "file_path": "assets/generated/images/S02_SH001_start.jpg",
+      "bytes": 882192,
+      "sha256": "5159712f13f3824b1351d68348fff700ea8a448f28e023a57c3b6cf633b8b55a",
+      "verified": true
+    },
+    {
+      "asset_id": "S02_SH002_start",
+      "kind": "scene_keyframe",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "visual_style_profile": "bande_dessinee_3d_cinematic_adventure",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "file_path": "assets/generated/images/S02_SH002_start.jpg",
+      "bytes": 735154,
+      "sha256": "30bad51eba43e3293f064a5356372557a13c58d894c6e843ff0b891178a8f493",
+      "verified": true
+    },
+    {
+      "asset_id": "S02_SH003_start",
+      "kind": "scene_keyframe",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "visual_style_profile": "bande_dessinee_3d_cinematic_adventure",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "file_path": "assets/generated/images/S02_SH003_start.jpg",
+      "bytes": 786773,
+      "sha256": "ff6e3010710fdbecbfce2927bf81050bf0845fb6ad59d8f3d8ec0cfb7dc56fda",
+      "verified": true
+    },
+    {
+      "asset_id": "S02_SH004_start",
+      "kind": "scene_keyframe",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "visual_style_profile": "bande_dessinee_3d_cinematic_adventure",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "file_path": "assets/generated/images/S02_SH004_start.jpg",
+      "bytes": 838303,
+      "sha256": "20acf81bdcb7bda5b0c8f690c071f4dd64c6182bf46b979f66d727531ba922b8",
+      "verified": true
+    },
+    {
+      "asset_id": "S02_SH005_start",
+      "kind": "scene_keyframe",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "visual_style_profile": "bande_dessinee_3d_cinematic_adventure",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "file_path": "assets/generated/images/S02_SH005_start.jpg",
+      "bytes": 758291,
+      "sha256": "ce0e75c10f9e8cd13b23c1110552e8c807861a74d4bb2717ab877de06bf761c4",
+      "verified": true
+    },
+    {
+      "asset_id": "S02_SH006_start",
+      "kind": "scene_keyframe",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "visual_style_profile": "bande_dessinee_3d_cinematic_adventure",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "file_path": "assets/generated/images/S02_SH006_start.jpg",
+      "bytes": 782991,
+      "sha256": "41c0b563da966131c0fa8ce735fa84b97bddd9e1a700c05ca034f4fdc114a11c",
+      "verified": true
+    },
+    {
+      "asset_id": "S02_SH007_start",
+      "kind": "scene_keyframe",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "visual_style_profile": "bande_dessinee_3d_cinematic_adventure",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "file_path": "assets/generated/images/S02_SH007_start.jpg",
+      "bytes": 774655,
+      "sha256": "d9fb0183ac674de7b6a93bfacf176e1b8c50b5583ff88b52a26f58d9be438826",
+      "verified": true
+    },
+    {
+      "asset_id": "S02_SH008_start",
+      "kind": "scene_keyframe",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "visual_style_profile": "bande_dessinee_3d_cinematic_adventure",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "file_path": "assets/generated/images/S02_SH008_start.jpg",
+      "bytes": 702727,
+      "sha256": "73dd9f32a5329ec2895f5e5ef809573ccfb1a6066b98306b4779a4f7c99fd6f1",
+      "verified": true
+    },
+    {
+      "asset_id": "S02_SH009_start",
+      "kind": "scene_keyframe",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "visual_style_profile": "bande_dessinee_3d_cinematic_adventure",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "file_path": "assets/generated/images/S02_SH009_start.jpg",
+      "bytes": 551108,
+      "sha256": "ac6c43bd72c43e83a3829edd99fbeb1d2c45f51a67c9b7e2fb58b6442e1669a4",
+      "verified": true
+    },
+    {
+      "asset_id": "S02_SH010_start",
+      "kind": "scene_keyframe",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "visual_style_profile": "bande_dessinee_3d_cinematic_adventure",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "file_path": "assets/generated/images/S02_SH010_start.jpg",
+      "bytes": 974505,
+      "sha256": "ea5232314b9fca473c3aa9dc2fc7298bf207fd24764846114a567a7eec681b3d",
+      "verified": true
+    },
+    {
+      "asset_id": "S02_SH011_start",
+      "kind": "scene_keyframe",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "visual_style_profile": "bande_dessinee_3d_cinematic_adventure",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "file_path": "assets/generated/images/S02_SH011_start.jpg",
+      "bytes": 668969,
+      "sha256": "c1263133def4acfd496cff5907db4f103ec8319408acc75d77295b7a7ca20114",
+      "verified": true
+    },
+    {
+      "asset_id": "S02_SH012_start",
+      "kind": "scene_keyframe",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "visual_style_profile": "bande_dessinee_3d_cinematic_adventure",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "file_path": "assets/generated/images/S02_SH012_start.jpg",
+      "bytes": 723250,
+      "sha256": "75d53c8c7d8100e666799c99b2f03f1091b544b905f935c6574b2c79e88fc71b",
+      "verified": true
+    },
+    {
+      "asset_id": "S03_SH001_start",
+      "kind": "scene_keyframe",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "visual_style_profile": "bande_dessinee_3d_cinematic_adventure",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "file_path": "assets/generated/images/S03_SH001_start.jpg",
+      "bytes": 693082,
+      "sha256": "3d8fd7e029cc20e49590639e2248551427c0cd3c5e3a3ceb42bb27fff7ed0a21",
+      "verified": true
+    },
+    {
+      "asset_id": "S03_SH002_start",
+      "kind": "scene_keyframe",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "visual_style_profile": "bande_dessinee_3d_cinematic_adventure",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "file_path": "assets/generated/images/S03_SH002_start.jpg",
+      "bytes": 808894,
+      "sha256": "7c9773ffd3854f6f76896433529797f2aabdd1892737dd235ab93d99a3a337b3",
+      "verified": true
+    },
+    {
+      "asset_id": "S03_SH003_start",
+      "kind": "scene_keyframe",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "visual_style_profile": "bande_dessinee_3d_cinematic_adventure",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "file_path": "assets/generated/images/S03_SH003_start.jpg",
+      "bytes": 735419,
+      "sha256": "c0b88e9678449892b24302ffbb4feab54e69b09ad8f9258459eaa49e78c26f63",
+      "verified": true
+    },
+    {
+      "asset_id": "S03_SH004_start",
+      "kind": "scene_keyframe",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "visual_style_profile": "bande_dessinee_3d_cinematic_adventure",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "file_path": "assets/generated/images/S03_SH004_start.jpg",
+      "bytes": 789746,
+      "sha256": "0b9b4ba3b7d60d965613ed615723cff796ff29dbb437c082b79eb4491b3b2e27",
+      "verified": true
+    },
+    {
+      "asset_id": "S01_SH008_gis_end",
+      "kind": "gis_map_render",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "visual_style_profile": "bande_dessinee_3d_cinematic_adventure",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "file_path": "assets/maps/renders/S01_SH008_gis_end.png",
+      "bytes": 2003629,
+      "sha256": "fee6af68311ffcb8ab9b46bc626cdb22f12afc0d5c15f17e04c7a99d8246664e",
+      "verified": true
+    },
+    {
+      "asset_id": "S01_SH008_gis_start",
+      "kind": "gis_map_render",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "visual_style_profile": "bande_dessinee_3d_cinematic_adventure",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "file_path": "assets/maps/renders/S01_SH008_gis_start.png",
+      "bytes": 2260717,
+      "sha256": "9cd69ffce5d807db7d3740538a154cdc26bbc4a8f492195e2972450d7caea1c7",
+      "verified": true
+    },
+    {
+      "asset_id": "S02_SH001_gis_end",
+      "kind": "gis_map_render",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "visual_style_profile": "bande_dessinee_3d_cinematic_adventure",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "file_path": "assets/maps/renders/S02_SH001_gis_end.png",
+      "bytes": 2502570,
+      "sha256": "a046ea709cb67eaeac07f76ad1fe073e437065e44f35882f5aabbc6df91365aa",
+      "verified": true
+    },
+    {
+      "asset_id": "S02_SH001_gis_start",
+      "kind": "gis_map_render",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "visual_style_profile": "bande_dessinee_3d_cinematic_adventure",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "file_path": "assets/maps/renders/S02_SH001_gis_start.png",
+      "bytes": 2738425,
+      "sha256": "157d92657491dc5316cb603361713bca26cf94ec3e6d86092b20581ef3fc1272",
+      "verified": true
+    },
+    {
+      "asset_id": "S02_SH010_gis_end",
+      "kind": "gis_map_render",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "visual_style_profile": "bande_dessinee_3d_cinematic_adventure",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "file_path": "assets/maps/renders/S02_SH010_gis_end.png",
+      "bytes": 2252340,
+      "sha256": "fa4e6eddca19adf93bd632538b1303a312e0208ea79d12e095d129e1a9e006fc",
+      "verified": true
+    },
+    {
+      "asset_id": "S02_SH010_gis_start",
+      "kind": "gis_map_render",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "visual_style_profile": "bande_dessinee_3d_cinematic_adventure",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "file_path": "assets/maps/renders/S02_SH010_gis_start.png",
+      "bytes": 2758073,
+      "sha256": "84a1dd9b30390d76a355e6f4776faea7dcd7ddfdd98a8520cfd3daec5c2f1202",
+      "verified": true
+    }
+  ]
+}

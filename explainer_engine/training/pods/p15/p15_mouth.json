@@ -1,0 +1,110 @@
+{
+ "schema": "p15_mouth/1",
+ "question": "do the 6 Rhubarb mouth shapes and 2 blink frames, redrawn by masked Qwen-Image-Edit-2.1 + xworld_v2 on the two sheets, keep the card identical outside the mask and read as the same character?",
+ "hf": {
+  "repo": "vano1919/tmr-artifacts",
+  "repo_type": "dataset"
+ },
+ "out_dir": "qwen/mouth",
+ "seed_base": 2100,
+ "cfg": 2.5,
+ "scale": 3,
+ "shapes": [
+  "A",
+  "B",
+  "C",
+  "D",
+  "E",
+  "F"
+ ],
+ "blinks": [
+  "blink_half",
+  "blink_full"
+ ],
+ "heroes": {
+  "H2": {
+   "sheet": "B_H2_right34",
+   "files": {
+    "sheet": {
+     "path": "route_test_2026-11/j5_dialogue/mouth_variants_input/B_H2_right34.png",
+     "sha256": "327ff5d588113b9f2f6bbc16f706ed29fbc3542008a4b8f422d53fac02dd0bf7"
+    },
+    "cut": {
+     "path": "route_test_2026-11/j5_dialogue/mouth_variants_input/B_H2_right34.cut.png",
+     "sha256": "b5acfe2734d671db8b622c92d99217b719a84d1fc5eb04f1dbf75fddcd111b0d"
+    },
+    "mask": {
+     "path": "route_test_2026-11/j5_dialogue/mouth_variants_input/B_H2_right34.mask.png",
+     "sha256": "2bfe45419063ee65794f7c5a2b8514388b664ae2663c151041056dbab72443a2"
+    }
+   },
+   "mouth": [
+    672.0,
+    161.0,
+    26,
+    3.0,
+    4.5
+   ],
+   "eyes": [
+    [
+     644.0,
+     122.5,
+     23,
+     19
+    ],
+    [
+     685.5,
+     121.0,
+     20,
+     17
+    ]
+   ],
+   "size": [
+    1280,
+    704
+   ]
+  },
+  "H1": {
+   "sheet": "B_H1_left34",
+   "files": {
+    "sheet": {
+     "path": "route_test_2026-11/j5_dialogue/mouth_variants_input/B_H1_left34.png",
+     "sha256": "9b14f533ac82d56af807f000389e6bd88ae9cf37995d3a352dfa77ffc7c5aaff"
+    },
+    "cut": {
+     "path": "route_test_2026-11/j5_dialogue/mouth_variants_input/B_H1_left34.cut.png",
+     "sha256": "14684c24df5bf09431662c4d1739a9a2a74506c53128c9b17632581d5638fa4a"
+    },
+    "mask": {
+     "path": "route_test_2026-11/j5_dialogue/mouth_variants_input/B_H1_left34.mask.png",
+     "sha256": "6b349af9b4ca71558fb68ec43f422b1e6e63a6aa95580e71a6d017da6b39bf34"
+    }
+   },
+   "mouth": [
+    548.0,
+    225.5,
+    40,
+    4.5,
+    5.5
+   ],
+   "eyes": [
+    [
+     523.5,
+     157.0,
+     25,
+     12
+    ],
+    [
+     581.0,
+     156.0,
+     34,
+     13
+    ]
+   ],
+   "size": [
+    1280,
+    704
+   ]
+  }
+ }
+}

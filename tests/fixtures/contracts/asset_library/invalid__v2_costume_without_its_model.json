@@ -1,0 +1,290 @@
+{
+ "schema": "asset_library/2",
+ "items": [
+  {
+   "id": "rig.ubc_humanoid",
+   "kind": "rig",
+   "file": "assets/3d/rig.ubc_humanoid.glb",
+   "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+   "bytes": 1000,
+   "tags": [
+    "napoleonic"
+   ],
+   "description": "fixture",
+   "bible_version": "1.5",
+   "made_with": {
+    "provider": "third_party",
+    "model": "",
+    "model_version": "",
+    "prompt": "",
+    "params": {},
+    "seed": null,
+    "refs": [],
+    "lora": null,
+    "cost_usd": 0
+   },
+   "licence": {
+    "status": "cc0",
+    "note": "CC0 1.0",
+    "commercial_use": "yes",
+    "source_url": "https://quaternius.com/",
+    "revision_or_version": "UBC 1.0",
+    "inspected_on": "2026-11-05"
+   },
+   "approval": {
+    "status": "approved",
+    "by": "creator",
+    "at": "2026-11-05",
+    "note": ""
+   },
+   "lineage": {
+    "parent": null
+   },
+   "origin": {
+    "episode": "",
+    "created": "2026-11-05",
+    "source": "fixture"
+   },
+   "deps": [],
+   "storage": {
+    "location": "git",
+    "external_path": null
+   },
+   "three_d": {
+    "format": "glb",
+    "skeleton_id": "skeleton.ubc_humanoid_v1",
+    "rig_profile": "ubc_humanoid",
+    "compatible_animation_sets": [
+     "ual"
+    ],
+    "poly_count": 12000,
+    "bounds_m": [
+     0.6,
+     0.4,
+     1.7
+    ],
+    "units": "m",
+    "up_axis": "Z",
+    "materials": [
+     "body",
+     "coat"
+    ]
+   }
+  },
+  {
+   "id": "model.napoleon",
+   "kind": "model",
+   "file": "assets/3d/model.napoleon.glb",
+   "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+   "bytes": 1000,
+   "tags": [
+    "napoleonic"
+   ],
+   "description": "fixture",
+   "bible_version": "1.5",
+   "made_with": {
+    "provider": "third_party",
+    "model": "",
+    "model_version": "",
+    "prompt": "",
+    "params": {},
+    "seed": null,
+    "refs": [],
+    "lora": null,
+    "cost_usd": 0
+   },
+   "licence": {
+    "status": "cc0",
+    "note": "CC0 1.0",
+    "commercial_use": "yes",
+    "source_url": "https://quaternius.com/",
+    "revision_or_version": "UBC 1.0",
+    "inspected_on": "2026-11-05"
+   },
+   "approval": {
+    "status": "approved",
+    "by": "creator",
+    "at": "2026-11-05",
+    "note": ""
+   },
+   "lineage": {
+    "parent": null
+   },
+   "origin": {
+    "episode": "",
+    "created": "2026-11-05",
+    "source": "fixture"
+   },
+   "deps": [
+    {
+     "asset_id": "rig.ubc_humanoid",
+     "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+    }
+   ],
+   "storage": {
+    "location": "git",
+    "external_path": null
+   },
+   "three_d": {
+    "format": "glb",
+    "skeleton_id": "skeleton.ubc_humanoid_v1",
+    "rig_profile": "ubc_humanoid",
+    "compatible_animation_sets": [
+     "ual"
+    ],
+    "poly_count": 12000,
+    "bounds_m": [
+     0.6,
+     0.4,
+     1.7
+    ],
+    "units": "m",
+    "up_axis": "Z",
+    "materials": [
+     "body",
+     "coat"
+    ]
+   }
+  },
+  {
+   "id": "costume.napoleon_winter",
+   "kind": "costume",
+   "file": "assets/3d/costume.napoleon_winter.glb",
+   "sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+   "bytes": 1000,
+   "tags": [
+    "napoleonic"
+   ],
+   "description": "fixture",
+   "bible_version": "1.5",
+   "made_with": {
+    "provider": "third_party",
+    "model": "",
+    "model_version": "",
+    "prompt": "",
+    "params": {},
+    "seed": null,
+    "refs": [],
+    "lora": null,
+    "cost_usd": 0
+   },
+   "licence": {
+    "status": "cc0",
+    "note": "CC0 1.0",
+    "commercial_use": "yes",
+    "source_url": "https://quaternius.com/",
+    "revision_or_version": "UBC 1.0",
+    "inspected_on": "2026-11-05"
+   },
+   "approval": {
+    "status": "approved",
+    "by": "creator",
+    "at": "2026-11-05",
+    "note": ""
+   },
+   "lineage": {
+    "parent": "rig.ubc_humanoid"
+   },
+   "origin": {
+    "episode": "",
+    "created": "2026-11-05",
+    "source": "fixture"
+   },
+   "deps": [],
+   "storage": {
+    "location": "external",
+    "external_path": "assets/3d/costume.napoleon_winter.glb"
+   },
+   "three_d": {
+    "format": "glb",
+    "skeleton_id": "skeleton.ubc_humanoid_v1",
+    "rig_profile": "ubc_humanoid",
+    "compatible_animation_sets": [
+     "ual"
+    ],
+    "poly_count": 12000,
+    "bounds_m": [
+     0.6,
+     0.4,
+     1.7
+    ],
+    "units": "m",
+    "up_axis": "Z",
+    "materials": [
+     "body",
+     "coat"
+    ]
+   }
+  },
+  {
+   "id": "animation.walk",
+   "kind": "animation",
+   "file": "assets/3d/animation.walk.glb",
+   "sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "bytes": 1000,
+   "tags": [
+    "napoleonic"
+   ],
+   "description": "fixture",
+   "bible_version": "1.5",
+   "made_with": {
+    "provider": "third_party",
+    "model": "",
+    "model_version": "",
+    "prompt": "",
+    "params": {},
+    "seed": null,
+    "refs": [],
+    "lora": null,
+    "cost_usd": 0
+   },
+   "licence": {
+    "status": "cc0",
+    "note": "CC0 1.0",
+    "commercial_use": "yes",
+    "source_url": "https://quaternius.com/",
+    "revision_or_version": "UBC 1.0",
+    "inspected_on": "2026-11-05"
+   },
+   "approval": {
+    "status": "approved",
+    "by": "creator",
+    "at": "2026-11-05",
+    "note": ""
+   },
+   "lineage": {
+    "parent": null
+   },
+   "origin": {
+    "episode": "",
+    "created": "2026-11-05",
+    "source": "fixture"
+   },
+   "deps": [],
+   "storage": {
+    "location": "git",
+    "external_path": null
+   },
+   "three_d": {
+    "format": "glb",
+    "skeleton_id": "skeleton.ubc_humanoid_v1",
+    "rig_profile": "ubc_humanoid",
+    "compatible_animation_sets": [
+     "ual"
+    ],
+    "poly_count": 12000,
+    "bounds_m": [
+     0.6,
+     0.4,
+     1.7
+    ],
+    "units": "m",
+    "up_axis": "Z",
+    "materials": [
+     "body",
+     "coat"
+    ]
+   }
+  }
+ ]
+}

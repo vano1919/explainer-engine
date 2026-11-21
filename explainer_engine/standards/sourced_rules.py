@@ -1,3 +1,4 @@
+
 """The sourced production rules (BP-xx, docs/SOURCED_RULES.md; the creator's order of 2026-10-19).
 
 No production rule is law by itself: every number a validator enforces comes from this registry (``sourced_rules.json``),

@@ -368,3 +368,10 @@ def test_create_refuses_an_undecided_review_at_the_paid_assets_gate_and_makes_no
         RP.main(["create", "--yes", "--max-usd", "0.07", "--max-hours", "1", "--ledger", str(ledger), "--script", str(sf),
                  "--script-url", "https://huggingface.co/x/pod.sh", "--rules", str(path), *PLAN], api=api, live=FakeLive(age=60))
     assert not fake.pods
+
+
+def test_episode_rules_schema_v4_defaults_d123():
+    schema = json.loads((ROOT / "explainer_engine/schemas/episode_rules.schema.json").read_text(encoding="utf-8"))
+    assert schema["properties"]["target_duration_seconds"]["default"] == 720
+    assert schema["properties"]["segments_count"]["default"] == 16
+    assert schema["properties"]["phases_count"]["default"] == 5

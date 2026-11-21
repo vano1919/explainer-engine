@@ -1,15 +1,15 @@
 {
   "schema": "world_bible/1",
-  "version": "1.4",
+  "version": "1.5",
   "status": "draft",
-  "date": "2026-10-30",
-  "reason": "P5 review: the palette note's rule ids follow the renumbering (BP-147..153, D-87); no colour changed",
+  "date": "2026-11-05",
+  "reason": "ICW-01 rule rewrite (D-96, D-102): the Ink Chronicle illustrated-from-3D look is the house look; bans re-worded to photoreal / raw CGI / PBR; look_v2 drops '3d render' and adds 'photoreal', 'raw cgi', 'pbr'; motion default per lane (D-97); the style tokens and the collage approval follow in ICW-05",
   "approved_by": null,
   "approved_at": null,
   "parts": {
     "look": {
       "file": "look_v2.json",
-      "sha256": "258920b0a7966d053a9502f48bb8c85d0631402139b045ebd5953dc4eea36645"
+      "sha256": "afc64dcccc13d70544b349325e9dc7cedffc5f2bf01c22cf0afac90641c9645d"
     },
     "eras": {
       "file": "eras.json",
@@ -28,6 +28,7 @@
     "stakes and named heroes in every frame; no empty establishing shot longer than the narration needs"
   ],
   "graphics_style": [
+    "house look ink_chronicle (D-96, D-102): real 3D geometry (Blender) finished as an illustrated / graphic-novel world; line = Blender Line Art at weight 1.5-3.0 px on a 2560x1440 frame, crease 134 degrees (BP-173); shading = three steps (Shader to RGB + ColorRamp, EEVEE only; a Cycles hero shot uses the Cycles-safe ramped-emission variant) with a rim light; paper grain at opacity 0.12 over the frame; grade = AgX view transform, look 'Medium High Contrast'; palette and era tokens stay in the palette and era parts. The structured style tokens and the approved collage come with ICW-05",
     "the video opens on a black card with the title text and a 'what if' question, drawn type, no picture",
     "after every chapter a short recap card (what happened, what to expect) on black or one palette colour with signs and on-screen text (the creator, 2026-10-21)",
     "on-screen text uses the OFL faces of the design system only; colours only from the palette part",
@@ -45,12 +46,12 @@
     "note": "no character must carry over between episodes (the creator, 2026-10-22); within an episode the hero references and expression sheets hold (D-55), and a hero who returns reuses the library sheet instead of a new drawing"
   },
   "motion": {
-    "default": "stills with 2.5D parallax (depth map + layered displacement) and the drawn text objects",
-    "generated_video": "a few hero shots per episode at most, only after a measured paid pilot (D-70)"
+    "default": "Blender VIDEO_3D / STILL_3D per lane (D-97): animated Blender clips for VIDEO_3D, a Blender plate held or moved by a camera (Blender camera move, 2.5D parallax or the dramatic curve) for STILL_3D; HELPER graphics from the Python renderers through the style bridge",
+    "generated_video": "legacy image-generation route only (D-80, D-105): video-model clips are not the Blender path; any return needs a decision-log row"
   },
   "banned_drift": [
     "the storybook / oversized-head grammar of look v1 (the look part lists the child cues and banned words)",
-    "photo-realism or a 3D-render look in any era",
+    "photo-realism, photographic lighting or a raw/PBR CGI look in any era (D-102)",
     "naming an artist, a film, a studio or a character of another work in a prompt",
     "a second drawing grammar inside one episode"
   ],
@@ -84,6 +85,12 @@
       "version": "1.4",
       "date": "2026-10-30",
       "reason": "P5 review: the palette note's rule ids follow the renumbering (BP-147..153, D-87); no colour changed",
+      "approved_by": null
+    },
+    {
+      "version": "1.5",
+      "date": "2026-11-05",
+      "reason": "ICW-01 rule rewrite (D-96, D-102): the Ink Chronicle illustrated-from-3D look is the house look; bans re-worded to photoreal / raw CGI / PBR; look_v2 drops '3d render' and adds 'photoreal', 'raw cgi', 'pbr'; motion default per lane (D-97); the style tokens and the collage approval follow in ICW-05",
       "approved_by": null
     }
   ]

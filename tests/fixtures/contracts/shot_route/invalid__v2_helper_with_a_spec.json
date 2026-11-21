@@ -1,0 +1,65 @@
+{
+ "schema": "shot_route/2",
+ "job_id": "job-001",
+ "fps": 24,
+ "derived_from": {
+  "film_shots": {
+   "path": "film_shots.json",
+   "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  }
+ },
+ "pins": {
+  "blender": {
+   "version": "5.2.3",
+   "series": "LTS",
+   "archive_sha256": "78486c018b4443efe5e75ab54c290ed8c15abafd249b862c2c9ce2530a918eec",
+   "image": null
+  }
+ },
+ "routes": [
+  {
+   "shot_id": "s1",
+   "lane": "VIDEO_3D",
+   "recipe": "blender_eevee/1",
+   "specs": [
+    {
+     "role": "video",
+     "path": "shots/s1.video.spec.json",
+     "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+     "cache_key": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+    }
+   ],
+   "comp_items": []
+  },
+  {
+   "shot_id": "s2",
+   "lane": "STILL_3D",
+   "recipe": "blender_eevee/1",
+   "specs": [
+    {
+     "role": "still",
+     "path": "shots/s2.still.spec.json",
+     "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+     "cache_key": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+    }
+   ],
+   "comp_items": []
+  },
+  {
+   "shot_id": "s3",
+   "lane": "HELPER",
+   "recipe": "python_helper/1",
+   "specs": [
+    {
+     "role": "video",
+     "path": "shots/s1.video.spec.json",
+     "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+     "cache_key": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+    }
+   ],
+   "comp_items": [
+    "item-s3"
+   ]
+  }
+ ]
+}

@@ -1,3 +1,4 @@
+
 # from vano1919/tmr-video-script-engine@f0abe62:cloud/rp.py
 """RunPod pod manager: create, wait, guard, stop, sweep and settle the cost. stdlib only. REST v2 (api.runpod.io/v2).
 
@@ -5,7 +6,7 @@
     python -m explainer_engine.cloud.runpod create --yes --max-usd X --max-hours H [--gpu default|cheap|big] [--boot <manifest>]
            --ledger <episode run.json> [--volume GB] [--min-ram GB] [--name base] [--on-cap stop|delete] [--no-guard]
            [--vram GB [--ref-hours H] [--only <card id substring>[,<more>]] [--cloud COMMUNITY|SECURE] [--wait-stock 15m]]   the cheapest JOB among the cards with stock now (pick_gpus), not a fixed pool
-           [--script pod.sh --script-url <HF url of the same file>] [--heartbeat datasets/<o>/<r>:<file>] [--image I] [--disk GB] [--boot-minutes M]
+           [--script pod.sh --script-url <HF url of the same file> --schedule pod_schedule.json] [--heartbeat datasets/<o>/<r>:<file>] [--image I] [--disk GB] [--boot-minutes M]
     python -m explainer_engine.cloud.runpod dryrun --script pod.sh [--offline]   everything knowable before a pod bills (P1b, CR-18)
     python -m explainer_engine.cloud.runpod pins <pins.txt>   a pod's pins.txt against config/cloud_pins.json
     python -m explainer_engine.cloud.runpod cards --vram GB [--ref-hours H] [--job <type> --units N [--setup-min M]]   what the job costs per card
@@ -393,9 +394,9 @@ CLOUDS = ("COMMUNITY", "SECURE")
 # What ``create`` reads (a flag that is not here is refused, so a typo or a flag from another command is never silently ignored, G15).
 CREATE_VALUE_FLAGS = ("--boot", "--boot-minutes", "--cap-grace-s", "--cloud", "--cuda-min", "--datacenters", "--disk", "--drill", "--gpu", "--heartbeat", "--image",
                       "--job", "--job-type", "--ledger", "--max-hours", "--max-usd", "--min-ram", "--name", "--on-cap", "--only",
-                      "--pass-s", "--hw-extra-retries", "--hw-extra-reason", "--ref-hours", "--rules", "--script", "--script-url", "--second-pod-reason", "--setup-min", "--test", "--units",
+                      "--pass-s", "--hw-extra-retries", "--hw-extra-reason", "--placement-watch-reason", "--ref-hours", "--rules", "--schedule", "--script", "--script-url", "--second-pod-reason", "--setup-min", "--test", "--units",
                       "--upload-grace-s", "--volume", "--vram", "--wait-stock", "--work-min")
-CREATE_BOOL_FLAGS = ("--measure", "--no-guard", "--yes")
+CREATE_BOOL_FLAGS = ("--measure", "--no-guard", "--placement-watch", "--yes")
 PICK_ONLY_FLAGS = ("--only", "--cloud", "--ref-hours", "--wait-stock")  # read only when --vram picks the card
 
 
@@ -1172,6 +1173,7 @@ def guard(api, pid, *, clock=time.time, sleep=time.sleep, push=notify, page=stat
                             push("Pod job needs a hand", f"{pid}: stalled with unstored outputs; not stopped", "urgent")
         if on_look:
             on_look(pod, action, why)
+        guard_beat(pid, now)
         if why != last_line:
             log(f"{time.strftime('%H:%M:%S')} {pid}: {action} {why}")
             last_line = why
@@ -1184,6 +1186,17 @@ def guard(api, pid, *, clock=time.time, sleep=time.sleep, push=notify, page=stat
             last_report = now
             push("Pod status", f"{pid}: {(now - sess['started']) / 60:.0f} min, {why}", "default")
         sleep(poll)
+
+
+GUARD_BEAT_STALE_S = 300   # the guard looks every 30 s (poll); 10 missed looks = a hung or dead guard (asset pod, 2026-11-06 11:41)
+
+
+def guard_beat(pid, now=None):
+    """The guard's own sign of life: ``sessions/<pod>.guard.beat`` = the time of its last look (``live_guard`` reads it)."""
+    try:
+        (RP / "sessions" / f"{pid}.guard.beat").write_text(f"{time.time() if now is None else now:.0f}\n")
+    except OSError:
+        pass
 
 
 def guard_detached(pid):
@@ -1407,14 +1420,41 @@ class PodSession:
 
 
 # --- the creator's ceilings and the account check (D-56) -------------------------------------------------------------
-def live_guard(pid):
-    """True when this machine runs a guard for the pod."""
+def guard_state(pid, now=None):
+    """("alive" | "dead" | "hung", why) of this machine's guard for the pod. Dead: no process behind the lock. Hung: the process is
+    there but its beat (``guard_beat``) is older than GUARD_BEAT_STALE_S, or a guard started before the beat file existed is
+    unknown and counts as alive only while its process lives (the asset pod's guard died silently at 11:41 UTC on 2026-11-06 and
+    only the next `check` at 12:11 saw it)."""
+    now = time.time() if now is None else now
     lock = RP / "sessions" / f"{pid}.guard"
     try:
         os.kill(int(lock.read_text()), 0)
-        return True
     except (OSError, ValueError):
-        return False
+        return "dead", "its guard process is gone"
+    beat = RP / "sessions" / f"{pid}.guard.beat"
+    try:
+        age = now - float(beat.read_text().strip())
+    except (OSError, ValueError):
+        return "alive", "no beat file yet"
+    if age > GUARD_BEAT_STALE_S:
+        return "hung", f"its guard has not looked for {age / 60:.0f} min"
+    return "alive", f"last look {age:.0f} s ago"
+
+
+def live_guard(pid):
+    """True when this machine runs a guard for the pod that is still looking."""
+    return guard_state(pid)[0] == "alive"
+
+
+def restart_guard(pid):
+    """A dead or hung guard is replaced: the old process (if any) is ended, the lock dropped, a new detached guard started."""
+    lock = RP / "sessions" / f"{pid}.guard"
+    try:
+        os.kill(int(lock.read_text()), signal.SIGTERM)
+    except (OSError, ValueError):
+        pass
+    lock.unlink(missing_ok=True)
+    return guard_detached(pid)
 
 
 def _quiet(call):
@@ -1425,7 +1465,7 @@ def _quiet(call):
         return [], f"{type(e).__name__}: {str(e)[:60]}"
 
 
-def check(api, now=None):
+def check(api, now=None, *, restart=None, push=None):
     """The account as it bills now: problems (anything spending money that nobody approved or guards) and info lines.
     Run at the start and end of every session and after every pod job; the session hooks run it (cloud/hooks.py).
     A live pod without a session on this machine (the sandbox was recycled, or the pod was made elsewhere) is a problem:
@@ -1447,7 +1487,14 @@ def check(api, now=None):
                 problems.append(f"{line}: no session here guards it (made elsewhere, or this machine restarted); "
                                 f"`runpod adopt {pid} --max-usd X --max-hours H` or stop it")
             elif not sess.get("closed") and not live_guard(pid):
-                problems.append(f"{line}: its guard is not running here; `runpod guard {pid}` or stop it")
+                state, why = guard_state(pid, now)
+                try:
+                    new_pid = (restart or restart_guard)(pid)
+                    problems.append(f"{line}: {why} ({state}); a new guard was started (pid {new_pid}): check its log "
+                                    f"tools/runpod/sessions/{pid}.guard.log")
+                except OSError as e:
+                    problems.append(f"{line}: {why} ({state}) and the restart failed ({e}); `runpod guard {pid}` or stop it")
+                (push or notify)("Guard was " + state, f"{pid}: {why}; restarted by `runpod check`", "urgent")
             else:
                 info.append(f"{line}, approved until {time.strftime('%H:%M UTC', time.gmtime(until_of(name)))}")
         elif st in ENDED:
@@ -1714,7 +1761,7 @@ def main(argv=None, api=None, live=None):
         sf = _opt(rest, "--script")
         if not sf:
             raise SystemExit("dryrun needs --script <pod.sh>")
-        rec = dryrun.run(Path(sf).read_text(), offline="--offline" in rest)
+        rec = dryrun.run(Path(sf).read_text(), offline="--offline" in rest, folder=Path(sf).parent)
         dryrun.record(rec)
         for r in rec["repos"]:
             print("repo   ", r["type"], r["id"], "ok" if r["ok"] else ("not checked" if r["ok"] is None else "MISSING"), r["note"])
@@ -1763,6 +1810,12 @@ def main(argv=None, api=None, live=None):
             raise SystemExit("refused: --yes only after the creator approved this pod's price and time cap")
         if create_flag_problems(rest):
             raise SystemExit("refused, no pod was made:\n  " + "\n  ".join(create_flag_problems(rest)))
+        from explainer_engine.core.errors import ConfigError
+        from explainer_engine.episode import retired
+        try:
+            retired.refuse("runpod", *[x for x in rest if not x.startswith("-")])
+        except ConfigError as e:
+            raise SystemExit(f"refused, no pod was made: {e}")
         if _opt(rest, "--rules") and _opt(rest, "--test"):
             raise SystemExit("refused: a paid test has no episode rulebook: --rules and --test do not go together")
         max_usd, max_hours = _opt(rest, "--max-usd", None, float), _opt(rest, "--max-hours", None, float)
@@ -1829,13 +1882,19 @@ def main(argv=None, api=None, live=None):
             from explainer_engine.cloud import batching, dryrun
             led = Run.open(ledger)
             script_sha = dryrun.sha256_of(script)
-            weights = sorted(rid for rid, kind in dryrun.repo_ids(script) if kind == "model")
+            batch_why += [f"placeholder: {w}" for w in dryrun.placeholder_problems(script, Path(script_file).parent)]
+            weights = sorted(rid for rid, kind in dryrun.all_repo_ids(script, Path(script_file).parent) if kind == "model")
             earlier = [v.get("weights") or [] for v in led.data["items"].get("pod_plans", {}).values()]
             fails = led.data.get("failures", {})
             batch_why += batching.rp01(work_min, setup_min, measure="--measure" in rest, max_usd=max_usd, test=led.data.get("meta", {}).get("test"))
             batch_why += batching.rp02(weights, earlier, reason=_opt(rest, "--second-pod-reason", ""))
+            from explainer_engine.cloud import schedule as _sched
+            batch_why += _sched.rp11(_opt(rest, "--schedule"), max_usd=max_usd, max_hours=max_hours, measure="--measure" in rest,
+                                     test=led.data.get("meta", {}).get("test"))
             batch_why += batching.rp10(len(fails.get(f"hw:{job_base}", [])), bool(fails.get(f"script:{job_base}:{script_sha[:12]}")), key=job_base,
-                                      extra=int(_opt(rest, "--hw-extra-retries", "0") or 0), extra_reason=_opt(rest, "--hw-extra-reason", ""))
+                                      extra=int(_opt(rest, "--hw-extra-retries", "0") or 0), extra_reason=_opt(rest, "--hw-extra-reason", ""),
+                                      placement_failures=len(fails.get(f"placement:{job_base}", [])), watch="--placement-watch" in rest,
+                                      watch_reason=_opt(rest, "--placement-watch-reason", ""))
             if not _opt(rest, "--disk"):
                 batch_why.append("--disk GB is required for a script pod: state the container disk (weights + outputs + margin); there is no default")
         drill = _opt(rest, "--drill")
@@ -1926,7 +1985,9 @@ def main(argv=None, api=None, live=None):
             if spec is not None:
                 lv.drop_spec(name)
             Run.open(ledger).settle("runpod_usd", "pod:pending", 0.0)
-            Run.open(ledger).fail(f"hw:{job_base}", f"create: {str(e)[:200]}")  # RP-10: no capacity / an API refusal is the hardware try
+            from explainer_engine.cloud import batching as _batching
+            Run.open(ledger).fail(f"placement:{job_base}" if _batching.is_placement_failure(str(e)) else f"hw:{job_base}",
+                                  f"create: {str(e)[:200]}")  # RP-10: "no instances available" (no pod, $0) is a placement try, any other refusal the hardware try
             job.move("FAILED", f"create: {str(e)[:200]}")
             from explainer_engine.cloud import incidents
             incidents.record(incidents.fingerprint("runpod", "pod", "create", text=str(e)), f"create failed: {str(e)[:200]}",

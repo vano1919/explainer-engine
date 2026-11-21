@@ -1,5 +1,7 @@
 # Repository reuse audit — vano1919/tmr-video-script-engine
 
+> **Legacy (image-generation era) note, 2026-11-05 (ICW-01, D-96).** Where this page names Qwen keyframes, LTX clips, sprites, painted pictures or 2.5D stills as the production path, it describes the legacy image-generation route (D-43, D-80, D-105); the Ink Chronicle Blender lanes follow D-97 and the decision log wins on a conflict (CLAUDE.md precedence rule). Everything else on this page stays in force.
+
 Read-only audit made on 2026-10-15 at commit `d88ba8f` for the explainer channel (two code-reading passes over the
 modules named below). Canonical home of the reuse classification; `docs/PROVENANCE.md` records what was actually
 copied.

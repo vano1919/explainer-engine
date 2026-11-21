@@ -1,10 +1,16 @@
+
 """Claude Code session hooks for money (D-56): the rules are checked by code at every turn, not remembered.
 
     session-start  prints what bills on the RunPod account (stray pods, stopped disks, 24 h billing, balance)
     stop           refuses to end a turn while something bills that nobody approved or guards (exit 2 tells Claude why)
     pre-bash       refuses pod starts that bypass the guarded manager (TMR's rp.py create/start, raw POST /pods on REST v1 or
                    v2, a v2 ``action`` start/restart, the GraphQL deploy mutations, the Python SDK's create_pod/resume_pod,
-                   the retired aivideo/pod launchers and a Python ``rp.create(``/``runpod.create(`` outside the CLI)
+                   the retired aivideo/pod launchers and a Python ``rp.create(``/``runpod.create(`` outside the CLI), and
+                   Modal launches outside a committed worker (final audit A7, D-131): ``modal deploy`` and ``modal serve``
+                   always; ``modal run`` of anything but a committed ``explainer_engine/`` worker; a paid entrypoint without
+                   ``EE_MODAL_GO``; the Wan worker's paid rungs without ``EE_MODAL_GO=<card id>:<plan sha256[:12]>``
+Modal (v4.3 runs Wan on Modal): session-start lists every Modal app that is not stopped, and stop refuses the first end of a
+turn while one is (the turn after may end: a detached run that is being watched is allowed to go on).
 A broken check (no key, no network, an API error) never blocks a turn by itself; it blocks only while this machine knows of a
 live pod it cannot then look at (CR-13): an unguarded pod is the one thing worth stopping a turn for.
 """
@@ -59,6 +65,162 @@ def _tmr_rp(cmd):
     return "python" in cmd and bool(RP_IMPORT.search(cmd))
 
 
+MODAL_CMD = re.compile(r"(?:^|[\s;&|(`'\"])(?:\S*?python[\d.]*(?:\.exe)?\s+(?:-\S+\s+)*-m\s+|[^\s;&|(`'\"]*[/\\])?"
+                       r"modal(?:\.exe)?\s+(?P<sub>run|deploy|serve|shell|launch)\b"
+                       r"(?P<rest>[^\n]*)")
+WAN_WORKER = "explainer_engine/training/pods/wan/modal_wan_jobs.py"
+LTX_WORKER = "explainer_engine/training/pods/ltx/modal_ltx_jobs.py"   # the video route since D-132 (2026-11-12 19:10 UTC)
+BAKEOFF = "explainer_engine/training/pods/bakeoff/modal_bakeoff.py"   # the creator's video bake-off, 2026-11-12 15:01 UTC
+BAKEOFF_ENTRIES = ("check", "stage", "run")
+
+
+def bakeoff_go_sha(root=None, plan_name=None) -> str:
+    """``modal_bakeoff.go_sha()`` read from the files on disk (the plan's and the worker's bytes; Fable audit A4). The plan is
+    the one ``EE_BAKEOFF_PLAN`` names (its file name only, in the bake-off folder; default ``plan_v43.json``), as in
+    ``modal_bakeoff.plan_path``."""
+    import hashlib
+    from pathlib import Path
+    root = Path(root) if root else Path(__file__).resolve().parents[2]
+    w = root / BAKEOFF
+    h = lambda p: hashlib.sha256(p.read_bytes()).hexdigest()  # noqa: E731
+    plan = w.with_name(Path(str(plan_name or "plan_v43.json")).name)
+    return hashlib.sha256((h(plan) + h(w)).encode()).hexdigest()
+FREE_ENTRIES = {WAN_WORKER: ("check", "weights"), LTX_WORKER: ("check", "weights")}   # CPU rungs L1/L2: the entrypoint's own ladder gate holds them
+
+
+HEREDOC = re.compile(r"(?m)^(?P<head>[^\n]*?<<-?\s*(?P<q>['\"]?)(?P<tag>\w+)(?P=q)[^\n]*)\n(?P<body>.*?)^\s*(?P=tag)\s*$", re.S)
+SHELLS = ("bash", "sh", "zsh", "dash", "pwsh", "powershell")
+
+
+def _without_text_heredocs(cmd: str) -> str:
+    """A heredoc that only feeds a file or an interpreter's text (``cat > f <<EOF``, ``python3 - <<EOF``) is data, not a
+    command; one fed to a shell (``bash <<EOF``) stays and is read like any command."""
+    def drop(m):
+        head = m.group("head")
+        first = re.sub(r"^\s*(?:\w+=\S*\s+)*", "", RP_SEGMENT.split(head)[-1]).split()
+        prog = first[0].rsplit("/", 1)[-1] if first else ""
+        return m.group(0) if prog in SHELLS else head
+    return HEREDOC.sub(drop, cmd)
+
+
+def modal_refusal(cmd: str, env=None) -> str | None:
+    """Why a Bash command that launches Modal is refused, or None (final audit A7)."""
+    import os
+    env = os.environ if env is None else env
+    cmd = _without_text_heredocs(cmd)
+    for seg in RP_SEGMENT.split(cmd):
+        words = re.sub(r"^\s*(?:\w+=\S*\s+)*", "", seg).split()
+        if words and words[0].rsplit("/", 1)[-1] in RP_READERS and not RP_EXEC.search(seg):
+            continue
+        m = MODAL_CMD.search(seg)
+        if not m:
+            continue
+        if m.group("sub") in ("shell", "launch"):
+            return (f"`modal {m.group('sub')}` starts a container outside any plan, cap or ledger: refused (Fable audit A4, "
+                    "OR-23)")
+        if m.group("sub") in ("deploy", "serve"):
+            return (f"`modal {m.group('sub')}` leaves an app up: this project only runs committed workers with `modal run` "
+                    "(.claude/rules/cloud-platforms.md section 5, D-131)")
+        target = next((t for t in m.group("rest").split() if not t.startswith("-")), "")
+        path, _, entry = target.partition("::")
+        if not path.startswith("explainer_engine/") or not path.endswith(".py"):
+            return (f"`modal run {target}`: only a committed worker under explainer_engine/ runs on Modal (OR-21, D-131)")
+        from explainer_engine.episode import retired
+        gone = retired.retired_worker(path)
+        if gone:
+            return f"`modal run {target}`: {gone} is retired everywhere (D-131, the creator 2026-11-12 14:01 UTC)"
+        if entry in FREE_ENTRIES.get(path, ()):
+            continue
+        go = re.search(r"\bEE_MODAL_GO=['\"]?(\S+?)['\"]?(?:\s|$)", cmd)
+        go = go.group(1) if go else str(env.get("EE_MODAL_GO") or "")
+        if path == BAKEOFF:
+            if entry not in BAKEOFF_ENTRIES:
+                return (f"`modal run {target}`: the bake-off runs only through its entrypoints {BAKEOFF_ENTRIES}, which hold the "
+                        "preflight, the GO and the ledger (Fable audit A4)")
+            if not re.match(r"^cmsg_\w+:[0-9a-f]{12}$", go):
+                return ("the bake-off bills Modal on every entrypoint (its CPU check and stage-in too): "
+                        "EE_MODAL_GO=<the creator's card id>:<go sha[:12]> first (OR-23)")
+            pn = re.search(r"\bEE_BAKEOFF_PLAN=['\"]?(\S+?)['\"]?(?:\s|$)", cmd)
+            try:
+                want = bakeoff_go_sha(plan_name=pn.group(1) if pn else env.get("EE_BAKEOFF_PLAN"))[:12]
+            except OSError:
+                want = None
+            if go.split(":", 1)[1] != want:
+                return ("EE_MODAL_GO names another plan or worker than the files on disk: the creator's GO binds the plan's and "
+                        "the worker's bytes (modal_bakeoff.go_sha, Fable audit A4)")
+        elif path in (WAN_WORKER, LTX_WORKER):
+            if not re.match(r"^cmsg_\w+:[0-9a-f]{12}$", go):
+                return (f"the {'Wan' if path == WAN_WORKER else 'LTX'} worker's paid rungs need EE_MODAL_GO=<the creator's card id>:<the plan's sha256[:12]> "
+                        "(OR-23, final audit B10)")
+            from explainer_engine.cloud import cheapest      # D-133: the cheapest known combination, every paid run
+            why = (cheapest.generator_refusal(path, entry, cmd, env) if path == WAN_WORKER
+                   else cheapest.ltx_refusal(entry, cmd, env))
+            if why:
+                return why
+        elif not go.startswith("cmsg_"):
+            return f"`modal run {target}` is paid: EE_MODAL_GO=<the creator's card id> first (OR-23)"
+    return None
+
+
+WORKER_NAME = re.compile(r"\b(?:modal_ltx_jobs|modal_wan_jobs|modal_bakeoff)\b")
+WORKER_API = re.compile(r"\.(?:remote|spawn|map|starmap|remote_gen|for_each)\s*\(|\bapp\.run\s*\(|\bwith_options\s*\(|\bsubprocess\.\w+\s*\("
+                        r"|\bos\.(?:system|exec\w*|spawn\w*|popen)\b|\bPopen\b|\brunpy\b")
+INTERPRETER = re.compile(r"\bpython[\d.]*(?:\.exe)?\b|\buv\s+run\b|\bnode\b|\bipython\b")
+QUOTED_MODAL = re.compile(r"""['"]modal(?:\.exe)?['"]\s*(?:,\s*['"]|\s+)(?:run|deploy|serve|shell|launch)\b""")
+
+
+def worker_api_refusal(cmd: str) -> str | None:
+    """D-133 / A7, the forms ``MODAL_CMD`` cannot read: a paid worker driven from Python (``ltx_main.remote(...)`` inside
+    ``app.run()``, ``subprocess.run(["modal", "run", ...])``, a heredoc fed to python) or a quoted binary (``"modal" run``).
+    They skip the hook's GO and cheapest-run checks, and a direct ``.remote()`` skips the worker's local entrypoints too."""
+    if QUOTED_MODAL.search(cmd) and INTERPRETER.search(cmd) or re.search(r"""(?:^|[\s;&|(])['"]modal(?:\.exe)?['"]\s+run\b""", cmd):
+        return ("a quoted `modal` or `modal` driven from a program is not read by this hook: launch a worker only as a plain "
+                "`modal run explainer_engine/...::<entry>` command, so its GO and the cheapest-run rules are checked (D-133)")
+    if WORKER_NAME.search(cmd) and WORKER_API.search(cmd) and INTERPRETER.search(cmd):
+        return ("a paid Modal worker driven from Python (`.remote()`, `app.run()`, a subprocess) skips its local entrypoints, "
+                "where the GO, the ladder and the cheapest-run rules are checked: use `modal run <worker>::<entry>` (D-133, A7)")
+    return None
+
+
+def paid_looking(cmd: str) -> bool:
+    """A command the money checks must look at: a Modal launch, a paid worker named or a paid picture batch."""
+    return bool(MODAL_CMD.search(cmd) or WORKER_NAME.search(cmd) or QUOTED_MODAL.search(cmd)
+                or re.search(r"\bscene_pictures\s+submit\b", cmd))       # no import here: it runs when an import broke
+
+
+def _modal_live(runner=None):
+    """The Modal apps that are not stopped, or None when there is no Modal CLI here (nothing to look at)."""
+    import shutil
+    import subprocess
+    from explainer_engine.cloud import modal_run as MR
+    if runner is None:
+        if not shutil.which("modal"):
+            return None
+
+        def runner(argv):
+            r = subprocess.run(argv, capture_output=True, text=True, timeout=25)
+            return r.returncode, r.stdout
+    try:
+        rc, out = runner(["modal", "app", "list", "--json"])
+    except Exception as e:  # noqa: BLE001 - advisory: a broken check never blocks a turn by itself
+        return {"error": f"{type(e).__name__}"}
+    if rc != 0:
+        return {"error": f"modal app list exited {rc}"}
+    try:
+        return {"live": MR.live_apps(out)}
+    except ValueError:
+        return {"error": "modal app list gave no JSON"}
+
+
+def modal_lines(res) -> list[str]:
+    if res is None:
+        return []
+    if "error" in res:
+        return [f"Modal check: cannot look ({res['error']})"]
+    return [f"Modal check (D-131): {len(res['live'])} app(s) not stopped"] + \
+        [f"PROBLEM Modal app {a['id']} {a['name']} is {a['state']}" for a in res["live"]]
+
+
 def _stdin():
     try:
         return json.loads(sys.stdin.read() or "{}")
@@ -104,20 +266,36 @@ def _check():
     return res
 
 
-def session_start() -> int:
+def session_start(modal_runner=None) -> int:
     res = _check()
-    if res is None:
-        return 0
-    lines = [f"RunPod check (D-56): {len(res['problems'])} problem(s)"] + ["PROBLEM " + p for p in res["problems"]] + res["info"]
-    if res["problems"]:
-        lines.append("Fix these before other work (stop/delete per the rules) and tell the creator what they cost.")
-    print("\n".join(lines))
+    lines = []
+    if res is not None:
+        lines = [f"RunPod check (D-56): {len(res['problems'])} problem(s)"] + ["PROBLEM " + p for p in res["problems"]] + res["info"]
+        if res["problems"]:
+            lines.append("Fix these before other work (stop/delete per the rules) and tell the creator what they cost.")
+    lines += modal_lines(_modal_live(modal_runner))
+    if lines:
+        print("\n".join(lines))
     return 0
 
 
-def stop(event: dict) -> int:
+def stop(event: dict, modal_runner=None) -> int:
     if event.get("stop_hook_active"):
         return 0
+    rc = _stop_runpod()
+    if rc:
+        return rc
+    m = _modal_live(modal_runner)
+    if m and m.get("live"):
+        print("Modal apps are not stopped (D-131, cloud rules section 4: leave nothing paid running):\n  "
+              + "\n  ".join(f"{a['id']} {a['name']} {a['state']}" for a in m["live"])
+              + "\nStop them (`modal app stop <id>`) unless a watched, approved run is still working, and say which.",
+              file=sys.stderr)
+        return 2
+    return 0
+
+
+def _stop_runpod() -> int:
     res = _check()
     if not res or res.get("unreadable"):
         live = known_live()
@@ -141,6 +319,20 @@ def pre_bash(event: dict) -> int:
     if any(p.search(cmd) for p in BYPASS) or _tmr_rp(cmd):
         print("refused (D-56): pods start only through `python -m explainer_engine.cloud.runpod create|start`, which checks "
               "config/spend_caps.json, the ledger and the account and starts the guard.", file=sys.stderr)
+        return 2
+    try:
+        why = modal_refusal(cmd)
+        if why:
+            print(f"refused (D-56, A7): {why}; nothing was started.", file=sys.stderr)
+            return 2
+        from explainer_engine.cloud import cheapest
+        why = cheapest.picture_refusal(cmd) or worker_api_refusal(cmd)
+    except Exception as e:  # noqa: BLE001 - D-133: a money check that breaks refuses a paid command, never lets it through
+        if not paid_looking(cmd):
+            return 0
+        why = f"the money check itself failed ({type(e).__name__}: {e}), so this paid command cannot be checked"
+    if why:
+        print(f"refused (D-133): {why}; nothing was started.", file=sys.stderr)
         return 2
     return 0
 

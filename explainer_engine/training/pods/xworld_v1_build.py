@@ -1,3 +1,4 @@
+
 """Builds the xworld_v1 training folders and config on the pod from the material manifest and the reviewed captions (D-80).
 
 One LoRA on Qwen-Image-2.1 learns the style and the scene sequence together (LT-69):

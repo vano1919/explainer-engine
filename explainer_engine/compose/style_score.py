@@ -1,3 +1,4 @@
+
 """AC-14: the automatic style score. Six crops of a picture (line, texture, colour, little layout) are embedded with
 DINOv2-small and compared with the creator's own style photos (HF lora_plan_2026-10-22/references_v3, 11 pictures): the mean
 of the five nearest cosine similarities.

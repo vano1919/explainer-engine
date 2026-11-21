@@ -1,0 +1,287 @@
+{
+ "schema": "character/1",
+ "_doc": "ICW-06 characters (D-101): identity = head model + hair + the toon material map + the mouth rig; a costume is chosen per shot. Assets by asset_library/2 id (character_assets.json). The mouth numbers are a first house setting measured on the two UBC heads (lip line from the mesh's mid-line profile, 2026-11-05) and tuned by eye on the turnaround sheet, not a sourced rule: the creator judges them on the sheet and the clips.",
+ "skeleton": "skeleton.ubc_humanoid_v1",
+ "animation_asset": "animation.ual1_standard",
+ "mouth": {
+  "keys": {
+   "A": "mouth_A",
+   "B": "mouth_B",
+   "C": "mouth_C",
+   "D": "mouth_D",
+   "E": "mouth_E",
+   "F": "mouth_F",
+   "G": "mouth_G",
+   "H": "mouth_H",
+   "X": "mouth_X"
+  },
+  "shapes": {
+   "A": {
+    "open": 0.0,
+    "wide": 0.0,
+    "round": 0.0
+   },
+   "B": {
+    "open": 0.18,
+    "wide": 0.12,
+    "round": 0.0
+   },
+   "C": {
+    "open": 0.5,
+    "wide": 0.18,
+    "round": 0.0
+   },
+   "D": {
+    "open": 0.78,
+    "wide": 0.1,
+    "round": 0.0
+   },
+   "E": {
+    "open": 0.42,
+    "wide": 0.0,
+    "round": 0.45
+   },
+   "F": {
+    "open": 0.2,
+    "wide": 0.0,
+    "round": 0.9
+   },
+   "G": {
+    "open": 0.1,
+    "wide": 0.08,
+    "round": 0.0
+   },
+   "H": {
+    "open": 0.55,
+    "wide": 0.06,
+    "round": 0.0
+   },
+   "X": {
+    "open": 0.0,
+    "wide": 0.0,
+    "round": 0.0
+   }
+  },
+  "radius_m": 0.034,
+  "jaw_radius_m": 0.062,
+  "open_drop_m": 0.03,
+  "open_lift_m": 0.004,
+  "wide_gain": 0.35,
+  "round_push_m": 0.007,
+  "front_y_m": 0.045,
+  "bone": "Head",
+  "interior_material": "mouth_interior",
+  "interior_token": "ink",
+  "_doc": "shapes: open = jaw drop share of open_drop_m (the upper lip lifts open_lift_m), wide/round = lip-corner spread or pucker (x scaled by (wide - round) * wide_gain, round pushes the lips forward round_push_m); A-H follow Rhubarb's shape meanings, X is the rest; the opening is a thin dark lens on the lip line (opening_*), since the UBC lips are one closed surface",
+  "opening_offset_m": [
+   0.0,
+   -0.0085,
+   -0.001
+  ],
+  "opening_half_width_m": 0.017,
+  "opening_depth_m": 0.004,
+  "opening_closed_m": 0.0004,
+  "opening_height_share": 0.4
+ },
+ "characters": {
+  "ink_test_m": {
+   "label": "test cast, man (UBC male head, short parted hair)",
+   "body": "ubc_male",
+   "head": "model.ubc_superhero_male",
+   "hair": "model.ubc_hair_simpleparted",
+   "keep_bones": [
+    "Head",
+    "neck_01"
+   ],
+   "mouth": {
+    "center": [
+     0.0,
+     -0.088,
+     1.624
+    ]
+   },
+   "materials": {
+    "MI_Superhero_Male": {
+     "slot": "skin",
+     "from": "head",
+     "texture": "MI_Superhero_Male",
+     "strength": 0.0
+    },
+    "MI_Eyes": {
+     "slot": "eyes",
+     "from": "head",
+     "texture": "MI_Eyes",
+     "strength": 1.0
+    },
+    "MI_Hair_1": {
+     "slot": "hair",
+     "from": "head",
+     "texture": "MI_Hair_1",
+     "strength": 0.3,
+     "tint": "night"
+    }
+   }
+  },
+  "ink_test_m2": {
+   "label": "test cast, man with long hair (UBC male head)",
+   "body": "ubc_male",
+   "head": "model.ubc_superhero_male",
+   "hair": "model.ubc_hair_long",
+   "keep_bones": [
+    "Head",
+    "neck_01"
+   ],
+   "mouth": {
+    "center": [
+     0.0,
+     -0.088,
+     1.624
+    ]
+   },
+   "materials": {
+    "MI_Superhero_Male": {
+     "slot": "skin",
+     "from": "head",
+     "texture": "MI_Superhero_Male",
+     "strength": 0.0
+    },
+    "MI_Eyes": {
+     "slot": "eyes",
+     "from": "head",
+     "texture": "MI_Eyes",
+     "strength": 1.0
+    },
+    "MI_Hair_1": {
+     "slot": "hair",
+     "from": "head",
+     "texture": "MI_Hair_1",
+     "strength": 0.3,
+     "tint": "grey_mid"
+    },
+    "MI_Hair_2": {
+     "slot": "hair",
+     "from": "head",
+     "texture": "MI_Hair_1",
+     "strength": 0.3,
+     "tint": "grey_mid"
+    }
+   }
+  },
+  "ink_test_f": {
+   "label": "test cast, woman (UBC female head, hair in buns)",
+   "body": "ubc_female",
+   "head": "model.ubc_superhero_female",
+   "hair": "model.ubc_hair_buns",
+   "keep_bones": [
+    "Head",
+    "neck_01"
+   ],
+   "mouth": {
+    "center": [
+     0.0,
+     -0.084,
+     1.5825
+    ]
+   },
+   "materials": {
+    "MI_Superhero_Female": {
+     "slot": "skin",
+     "from": "head",
+     "texture": "MI_Superhero_Female",
+     "strength": 0.0
+    },
+    "MI_Eyes": {
+     "slot": "eyes",
+     "from": "head",
+     "texture": "MI_Eyes",
+     "strength": 1.0
+    },
+    "MI_Hair_2": {
+     "slot": "hair",
+     "from": "head",
+     "texture": "MI_Hair_2",
+     "strength": 0.3,
+     "tint": "kit_shadow"
+    }
+   }
+  }
+ },
+ "costumes": {
+  "costume.mco_male_peasant": {
+   "label": "peasant (man)",
+   "body": "ubc_male",
+   "asset": "costume.mco_male_peasant",
+   "materials": {
+    "MI_Peasant": {
+     "slot": "costume",
+     "from": "costume",
+     "texture": "MI_Peasant",
+     "strength": 0.5
+    },
+    "MI_Regular_Male": {
+     "slot": "skin",
+     "from": "costume",
+     "texture": "MI_Regular_Male",
+     "strength": 0.0
+    }
+   }
+  },
+  "costume.mco_male_ranger": {
+   "label": "ranger (man), hood off",
+   "body": "ubc_male",
+   "asset": "costume.mco_male_ranger",
+   "drop": [
+    "Male_Ranger_Head_Hood"
+   ],
+   "materials": {
+    "MI_Ranger": {
+     "slot": "costume",
+     "from": "costume",
+     "texture": "MI_Ranger",
+     "strength": 0.5
+    },
+    "MI_Regular_Male": {
+     "slot": "skin",
+     "from": "costume",
+     "texture": "MI_Regular_Male",
+     "strength": 0.0
+    }
+   }
+  },
+  "costume.mco_female_peasant": {
+   "label": "peasant (woman)",
+   "body": "ubc_female",
+   "asset": "costume.mco_female_peasant",
+   "materials": {
+    "MI_Peasant": {
+     "slot": "costume",
+     "from": "costume",
+     "texture": "MI_Peasant",
+     "strength": 0.5
+    }
+   }
+  },
+  "costume.mco_female_ranger": {
+   "label": "ranger (woman), hood off",
+   "body": "ubc_female",
+   "asset": "costume.mco_female_ranger",
+   "drop": [
+    "Female_Ranger_Head_Hood"
+   ],
+   "materials": {
+    "MI_Ranger": {
+     "slot": "costume",
+     "from": "costume",
+     "texture": "MI_Ranger",
+     "strength": 0.5
+    },
+    "MI_Regular_Female": {
+     "slot": "skin",
+     "from": "costume",
+     "texture": "MI_Regular_Female",
+     "strength": 0.0
+    }
+   }
+  }
+ }
+}

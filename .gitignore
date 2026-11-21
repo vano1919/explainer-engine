@@ -40,3 +40,7 @@ id_ed25519*
 
 # episode example media (photos and reads live on HF, see the example's README)
 examples/episodes/*/media/
+# sound library (LIB-06): originals and derived indexes stay out of git
+assets/audio/originals/
+assets/audio/library/catalog.sqlite
+assets/audio/previews/

@@ -1,0 +1,454 @@
+{
+  "schema": "p16_config/1",
+  "question": "do Qwen-Image-2.1 + xworld_v2 restyles of our Blender stills hold the look, and does LTX-2.5 distilled i2v hold the motion, across ten clips that cut into one minute (identity across angles, props stay, no melting)?",
+  "hf_root": "route_test_2026-11/pilot/p16",
+  "hf": {
+    "repo": "vano1919/tmr-artifacts",
+    "repo_type": "dataset"
+  },
+  "stills_manifest": {
+    "path": "route_test_2026-11/pilot/blender/pilot_stills.json"
+  },
+  "qwen": {
+    "base": "Qwen/Qwen-Image-2.1",
+    "dtype": "bf16",
+    "gpu_mode": "model_cpu_offload",
+    "style_lora": {
+      "hf": "vano1919/tmr-artifacts",
+      "path": "lora_plan_2026-10-26/train_xworld_v2/output/xworld_v2_000003000.safetensors",
+      "sha256": "f5c420a1597a1fa585fc560f5eaaafef292006e6e6d93b65e4e645facb560b02",
+      "weight": 0.7
+    },
+    "steps": 30,
+    "cfg_text": 4.0,
+    "cfg_edit": 2.5,
+    "seed": 11,
+    "size": [
+      1280,
+      720
+    ],
+    "negative": "text, lettering, letters, words, watermark, signature, photo, 3d render",
+    "timeout_s": 3600
+  },
+  "heroes_refs": [
+    {
+      "name": "B_H1_front",
+      "path": "route_test_2026-11/assets/B/B_H1_front.png",
+      "sha256": "109b0c43e0b34859aaae5c02abcb478d453681f051c3f9c9968eca04e35667a6"
+    },
+    {
+      "name": "B_H2_front",
+      "path": "route_test_2026-11/assets/B/B_H2_front.png",
+      "sha256": "5cc05b92acad0b7ac7c3a022119224c64413428d037c587a4e54be60fd3d8a72"
+    },
+    {
+      "name": "B_H3_front",
+      "path": "route_test_2026-11/assets/B/B_H3_front.png",
+      "sha256": "bae26df7f2a27872e8bcf52c2d762da955c7259f7b5c3b624c535cbe04bd0001"
+    }
+  ],
+  "first_frame_size": [
+    1920,
+    1088
+  ],
+  "qwen_jobs": [
+    {
+      "shot": "battle_f200_colour",
+      "still": {
+        "path": "route_test_2026-11/pilot/blender/battle_f200_colour.png",
+        "sha256": "bb49fbc9aef9143541e879a7e0069c5580ec686cdaaa5c2fd509086fbba76b49"
+      },
+      "qwen_prompt": "xworld style, Image 1 is the scene: keep every place, size and pose. Soldiers in tan leather tunics have broken into a dense army of lanky soldiers in green tunics, each with his own face and helmet, a big blue banner on a pole above them, in a dusty plain below a grassy ridge in a medieval war, lit by a low golden sun under drifting clouds.",
+      "hero_refs": [],
+      "ltx_prompt": "Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The line breaks, men stagger and fall back, smoke drifts over them, then the dust hangs over the field. Static camera."
+    },
+    {
+      "shot": "battle_wide_high_f112_colour",
+      "still": {
+        "path": "route_test_2026-11/pilot/blender/battle_wide_high_f112_colour.png",
+        "sha256": "27a74eb1b88ba3ca475b4a83710199868951c2c6858514e4b38414bff97c86d2"
+      },
+      "qwen_prompt": "xworld style, Image 1 is the scene: keep every place, size and pose. A long shield wall of lanky soldiers in green tunics under blue banners holds the field while a charging wedge of soldiers in tan leather tunics runs at it, a far army under orange banners behind them, in a dusty plain below a grassy ridge in a medieval war, lit by a low golden sun under drifting clouds.",
+      "hero_refs": [],
+      "ltx_prompt": "Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The wedge runs into the shield wall, dust rises and the banners sway, then the two lines are locked together. Static camera."
+    },
+    {
+      "shot": "battle_front_mid_f112_colour",
+      "still": {
+        "path": "route_test_2026-11/pilot/blender/battle_front_mid_f112_colour.png",
+        "sha256": "c3a78135147593d2332c5a26f9570a4fbcbaa18d994f2933422f582a9397648d"
+      },
+      "qwen_prompt": "xworld style, Image 1 is the scene: keep every place, size and pose. A shield wall of lanky soldiers in green tunics under a blue banner stands shoulder to shoulder as soldiers in tan leather tunics run at it, in a dusty plain below a grassy ridge in a medieval war, lit by a low golden sun under drifting clouds.",
+      "hero_refs": [],
+      "ltx_prompt": "Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. Shields push and swords thrust, men stagger, then the wall holds. Static camera."
+    }
+  ],
+  "ltx": {
+    "schema": "p14_config/1",
+    "code": {
+      "url": "https://github.com/Lightricks/LTX-2",
+      "sha": "e98f6d927d83c92ef2be6aec76c8440b19306e39"
+    },
+    "hf": {
+      "repo": "vano1919/tmr-artifacts",
+      "repo_type": "dataset"
+    },
+    "controls": {
+      "canny_vf": "edgedetect=low=0.1:high=0.3:mode=wires,format=gray",
+      "scale_2k_vf": "scale=2598:1472:flags=lanczos,crop=2560:1472"
+    },
+    "upscale": {
+      "enabled": false,
+      "vf": "crop=1920:1080:(in_w-out_w)/2:(in_h-out_h)/2,scale=2560:1440:flags=lanczos,cas=0.4,noise=alls=6:allf=t,fps=24"
+    },
+    "weights": {
+      "ltx25": {
+        "repo": "Lightricks/LTX-2.5",
+        "revision": "49b093a39c19169a8a81721dcc541e07e945232f",
+        "files": {
+          "diffusion_models/ltx-2.5-22b-distilled-transformer-bf16.safetensors": "31eb3cad89b9e54e99dd3baf286f70825ac4f6c660a70d9184d895be76d7bff4",
+          "text_encoders/gemma4-12b-with-proj-ltx-2.5-bf16.safetensors": "ef7243612fdae7a75cb4d5cee9433e81380675fb6c213bd98ae74a9cd16561d1",
+          "vae/ltx-2.5-video-vae-bf16.safetensors": "847e14ca7f3355debca0cea4eaa24ac0fbcdf0061da054ac89ca638a869ddba3",
+          "vae/ltx-2.5-audio-vae-bf16.safetensors": "c52733d37f6a7fb7949c3dc0fb468c6cb2169e4d836983a73babb9f0d54837a5"
+        },
+        "upsampler": {
+          "file": "latent_upscale_models/ltx-2.5-latent-spatial-upscaler-x2-bf16-1.0.safetensors",
+          "sha256": "eb5a71fe4068ee87ccdb1c3aa635e547ca76bd2d30ae20ae889f2c325c0677e8"
+        },
+        "lora": {
+          "repo": "Lightricks/LTX-2.5-22b-IC-LoRA-Layout-To-Render",
+          "revision": "bd765d5592f0ae78457162852a353b6a375cb00f",
+          "file": "ltx-2.5-22b-ic-lora-layout-to-render-1.0.safetensors",
+          "sha256": "77567d81d71b4df558d622dffc0ec218ba1e22c69b2932f6fa12f34772697eae"
+        }
+      }
+    },
+    "clip_timeout_s": 810,
+    "end_reserve_min": 10
+  },
+  "ltx_jobs": [
+    {
+      "id": "pilot.room_establishing.ltx25.i2v.f145.s42",
+      "question": "do Qwen-Image-2.1 + xworld_v2 restyles of our Blender stills hold the look, and does LTX-2.5 distilled i2v hold the motion, across ten clips that cut into one minute (identity across angles, props stay, no melting)?",
+      "recipe": "ltx_i2v/1",
+      "pipeline": "distilled",
+      "shot_id": "room_establishing",
+      "clip_id": "room_establishing",
+      "base": "ltx25",
+      "variant": "i2v",
+      "model": {
+        "key": "video_ltx",
+        "id": "Lightricks/LTX-2.5",
+        "revision": "49b093a39c19169a8a81721dcc541e07e945232f",
+        "sha256": "31eb3cad89b9e54e99dd3baf286f70825ac4f6c660a70d9184d895be76d7bff4"
+      },
+      "text_encoder": null,
+      "lora": null,
+      "frames": 145,
+      "fps": 24,
+      "width": 1920,
+      "height": 1088,
+      "seed": 42,
+      "first_frame": {
+        "path": "route_test_2026-11/pilot/first_frames/room_establishing.png",
+        "sha256": null,
+        "pose": "start"
+      },
+      "conditioning": [],
+      "attention_mask": null,
+      "chain_from": null,
+      "prompt": "Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The broad commander with a grey beard and a red cloak talks with small gestures, the young scout in a green hood listens; nothing else moves, then the room holds still. Static camera.",
+      "stage2_ic": false,
+      "output": "route_test_2026-11/pilot/p16/ltx/pilot.room_establishing.ltx25.i2v.f145.s42.mp4"
+    },
+    {
+      "id": "pilot.room_close_host.ltx25.i2v.f145.s42",
+      "question": "do Qwen-Image-2.1 + xworld_v2 restyles of our Blender stills hold the look, and does LTX-2.5 distilled i2v hold the motion, across ten clips that cut into one minute (identity across angles, props stay, no melting)?",
+      "recipe": "ltx_i2v/1",
+      "pipeline": "distilled",
+      "shot_id": "room_close_host",
+      "clip_id": "room_close_host",
+      "base": "ltx25",
+      "variant": "i2v",
+      "model": {
+        "key": "video_ltx",
+        "id": "Lightricks/LTX-2.5",
+        "revision": "49b093a39c19169a8a81721dcc541e07e945232f",
+        "sha256": "31eb3cad89b9e54e99dd3baf286f70825ac4f6c660a70d9184d895be76d7bff4"
+      },
+      "text_encoder": null,
+      "lora": null,
+      "frames": 145,
+      "fps": 24,
+      "width": 1920,
+      "height": 1088,
+      "seed": 42,
+      "first_frame": {
+        "path": "route_test_2026-11/pilot/first_frames/room_close_host.png",
+        "sha256": null,
+        "pose": "start"
+      },
+      "conditioning": [],
+      "attention_mask": null,
+      "chain_from": null,
+      "prompt": "Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The broad commander with a grey beard and a red cloak speaks and turns his raised hand over; the young scout in a green hood stays still, then his hand comes to rest on the table. Static camera.",
+      "stage2_ic": false,
+      "output": "route_test_2026-11/pilot/p16/ltx/pilot.room_close_host.ltx25.i2v.f145.s42.mp4"
+    },
+    {
+      "id": "pilot.room_close_guest.ltx25.i2v.f145.s42",
+      "question": "do Qwen-Image-2.1 + xworld_v2 restyles of our Blender stills hold the look, and does LTX-2.5 distilled i2v hold the motion, across ten clips that cut into one minute (identity across angles, props stay, no melting)?",
+      "recipe": "ltx_i2v/1",
+      "pipeline": "distilled",
+      "shot_id": "room_close_guest",
+      "clip_id": "room_close_guest",
+      "base": "ltx25",
+      "variant": "i2v",
+      "model": {
+        "key": "video_ltx",
+        "id": "Lightricks/LTX-2.5",
+        "revision": "49b093a39c19169a8a81721dcc541e07e945232f",
+        "sha256": "31eb3cad89b9e54e99dd3baf286f70825ac4f6c660a70d9184d895be76d7bff4"
+      },
+      "text_encoder": null,
+      "lora": null,
+      "frames": 145,
+      "fps": 24,
+      "width": 1920,
+      "height": 1088,
+      "seed": 42,
+      "first_frame": {
+        "path": "route_test_2026-11/pilot/first_frames/room_close_guest.png",
+        "sha256": null,
+        "pose": "start"
+      },
+      "conditioning": [],
+      "attention_mask": null,
+      "chain_from": null,
+      "prompt": "Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The young scout in a green hood listens, frowns, then nods slowly; the broad commander with a grey beard and a red cloak stays still, then the scout holds the nod. Static camera.",
+      "stage2_ic": false,
+      "output": "route_test_2026-11/pilot/p16/ltx/pilot.room_close_guest.ltx25.i2v.f145.s42.mp4"
+    },
+    {
+      "id": "pilot.room_reverse.ltx25.i2v.f145.s42",
+      "question": "do Qwen-Image-2.1 + xworld_v2 restyles of our Blender stills hold the look, and does LTX-2.5 distilled i2v hold the motion, across ten clips that cut into one minute (identity across angles, props stay, no melting)?",
+      "recipe": "ltx_i2v/1",
+      "pipeline": "distilled",
+      "shot_id": "room_reverse",
+      "clip_id": "room_reverse",
+      "base": "ltx25",
+      "variant": "i2v",
+      "model": {
+        "key": "video_ltx",
+        "id": "Lightricks/LTX-2.5",
+        "revision": "49b093a39c19169a8a81721dcc541e07e945232f",
+        "sha256": "31eb3cad89b9e54e99dd3baf286f70825ac4f6c660a70d9184d895be76d7bff4"
+      },
+      "text_encoder": null,
+      "lora": null,
+      "frames": 145,
+      "fps": 24,
+      "width": 1920,
+      "height": 1088,
+      "seed": 42,
+      "first_frame": {
+        "path": "route_test_2026-11/pilot/first_frames/room_reverse.png",
+        "sha256": null,
+        "pose": "start"
+      },
+      "conditioning": [],
+      "attention_mask": null,
+      "chain_from": null,
+      "prompt": "Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The old elder with a long white beard and a blue robe pushes the log into the stove and sparks rise; the two at the table talk quietly, then the elder sits back on his heels. Static camera.",
+      "stage2_ic": false,
+      "output": "route_test_2026-11/pilot/p16/ltx/pilot.room_reverse.ltx25.i2v.f145.s42.mp4"
+    },
+    {
+      "id": "pilot.room_insert_table.ltx25.i2v.f97.s42",
+      "question": "do Qwen-Image-2.1 + xworld_v2 restyles of our Blender stills hold the look, and does LTX-2.5 distilled i2v hold the motion, across ten clips that cut into one minute (identity across angles, props stay, no melting)?",
+      "recipe": "ltx_i2v/1",
+      "pipeline": "distilled",
+      "shot_id": "room_insert_table",
+      "clip_id": "room_insert_table",
+      "base": "ltx25",
+      "variant": "i2v",
+      "model": {
+        "key": "video_ltx",
+        "id": "Lightricks/LTX-2.5",
+        "revision": "49b093a39c19169a8a81721dcc541e07e945232f",
+        "sha256": "31eb3cad89b9e54e99dd3baf286f70825ac4f6c660a70d9184d895be76d7bff4"
+      },
+      "text_encoder": null,
+      "lora": null,
+      "frames": 97,
+      "fps": 24,
+      "width": 1920,
+      "height": 1088,
+      "seed": 42,
+      "first_frame": {
+        "path": "route_test_2026-11/pilot/first_frames/room_insert_table.png",
+        "sha256": null,
+        "pose": "start"
+      },
+      "conditioning": [],
+      "attention_mask": null,
+      "chain_from": null,
+      "prompt": "Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The candle flame flickers and a thin thread of smoke rises, then the flame steadies. Static camera.",
+      "stage2_ic": false,
+      "output": "route_test_2026-11/pilot/p16/ltx/pilot.room_insert_table.ltx25.i2v.f97.s42.mp4"
+    },
+    {
+      "id": "pilot.battle_wide_high_f112_colour.ltx25.i2v.f145.s42",
+      "question": "do Qwen-Image-2.1 + xworld_v2 restyles of our Blender stills hold the look, and does LTX-2.5 distilled i2v hold the motion, across ten clips that cut into one minute (identity across angles, props stay, no melting)?",
+      "recipe": "ltx_i2v/1",
+      "pipeline": "distilled",
+      "shot_id": "battle_wide_high_f112_colour",
+      "clip_id": "battle_wide_high_f112_colour",
+      "base": "ltx25",
+      "variant": "i2v",
+      "model": {
+        "key": "video_ltx",
+        "id": "Lightricks/LTX-2.5",
+        "revision": "49b093a39c19169a8a81721dcc541e07e945232f",
+        "sha256": "31eb3cad89b9e54e99dd3baf286f70825ac4f6c660a70d9184d895be76d7bff4"
+      },
+      "text_encoder": null,
+      "lora": null,
+      "frames": 145,
+      "fps": 24,
+      "width": 1920,
+      "height": 1088,
+      "seed": 42,
+      "first_frame": {
+        "path": "route_test_2026-11/pilot/p16/first_frames/battle_wide_high_f112_colour.png",
+        "sha256": null,
+        "pose": "start"
+      },
+      "conditioning": [],
+      "attention_mask": null,
+      "chain_from": null,
+      "prompt": "Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The wedge runs into the shield wall, dust rises and the banners sway, then the two lines are locked together. Static camera.",
+      "stage2_ic": false,
+      "output": "route_test_2026-11/pilot/p16/ltx/pilot.battle_wide_high_f112_colour.ltx25.i2v.f145.s42.mp4"
+    },
+    {
+      "id": "pilot.battle_front_mid_f112_colour.ltx25.i2v.f145.s42",
+      "question": "do Qwen-Image-2.1 + xworld_v2 restyles of our Blender stills hold the look, and does LTX-2.5 distilled i2v hold the motion, across ten clips that cut into one minute (identity across angles, props stay, no melting)?",
+      "recipe": "ltx_i2v/1",
+      "pipeline": "distilled",
+      "shot_id": "battle_front_mid_f112_colour",
+      "clip_id": "battle_front_mid_f112_colour",
+      "base": "ltx25",
+      "variant": "i2v",
+      "model": {
+        "key": "video_ltx",
+        "id": "Lightricks/LTX-2.5",
+        "revision": "49b093a39c19169a8a81721dcc541e07e945232f",
+        "sha256": "31eb3cad89b9e54e99dd3baf286f70825ac4f6c660a70d9184d895be76d7bff4"
+      },
+      "text_encoder": null,
+      "lora": null,
+      "frames": 145,
+      "fps": 24,
+      "width": 1920,
+      "height": 1088,
+      "seed": 42,
+      "first_frame": {
+        "path": "route_test_2026-11/pilot/p16/first_frames/battle_front_mid_f112_colour.png",
+        "sha256": null,
+        "pose": "start"
+      },
+      "conditioning": [],
+      "attention_mask": null,
+      "chain_from": null,
+      "prompt": "Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. Shields push and swords thrust, men stagger, then the wall holds. Static camera.",
+      "stage2_ic": false,
+      "output": "route_test_2026-11/pilot/p16/ltx/pilot.battle_front_mid_f112_colour.ltx25.i2v.f145.s42.mp4"
+    },
+    {
+      "id": "pilot.battle_f200_colour.ltx25.i2v.f121.s42",
+      "question": "do Qwen-Image-2.1 + xworld_v2 restyles of our Blender stills hold the look, and does LTX-2.5 distilled i2v hold the motion, across ten clips that cut into one minute (identity across angles, props stay, no melting)?",
+      "recipe": "ltx_i2v/1",
+      "pipeline": "distilled",
+      "shot_id": "battle_f200_colour",
+      "clip_id": "battle_f200_colour",
+      "base": "ltx25",
+      "variant": "i2v",
+      "model": {
+        "key": "video_ltx",
+        "id": "Lightricks/LTX-2.5",
+        "revision": "49b093a39c19169a8a81721dcc541e07e945232f",
+        "sha256": "31eb3cad89b9e54e99dd3baf286f70825ac4f6c660a70d9184d895be76d7bff4"
+      },
+      "text_encoder": null,
+      "lora": null,
+      "frames": 121,
+      "fps": 24,
+      "width": 1920,
+      "height": 1088,
+      "seed": 42,
+      "first_frame": {
+        "path": "route_test_2026-11/pilot/p16/first_frames/battle_f200_colour.png",
+        "sha256": null,
+        "pose": "start"
+      },
+      "conditioning": [],
+      "attention_mask": null,
+      "chain_from": null,
+      "prompt": "Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The line breaks, men stagger and fall back, smoke drifts over them, then the dust hangs over the field. Static camera.",
+      "stage2_ic": false,
+      "output": "route_test_2026-11/pilot/p16/ltx/pilot.battle_f200_colour.ltx25.i2v.f121.s42.mp4"
+    }
+  ],
+  "clips": {
+    "ltx_room_establishing": {
+      "job": "pilot.room_establishing.ltx25.i2v.f145.s42",
+      "first_frame_of": "room_establishing",
+      "from": "p15",
+      "frames": 145
+    },
+    "ltx_room_close_host": {
+      "job": "pilot.room_close_host.ltx25.i2v.f145.s42",
+      "first_frame_of": "room_close_host",
+      "from": "p15",
+      "frames": 145
+    },
+    "ltx_room_close_guest": {
+      "job": "pilot.room_close_guest.ltx25.i2v.f145.s42",
+      "first_frame_of": "room_close_guest",
+      "from": "p15",
+      "frames": 145
+    },
+    "ltx_room_reverse": {
+      "job": "pilot.room_reverse.ltx25.i2v.f145.s42",
+      "first_frame_of": "room_reverse",
+      "from": "p15",
+      "frames": 145
+    },
+    "ltx_room_insert_table": {
+      "job": "pilot.room_insert_table.ltx25.i2v.f97.s42",
+      "first_frame_of": "room_insert_table",
+      "from": "p15",
+      "frames": 97
+    },
+    "ltx_battle_wide_high": {
+      "job": "pilot.battle_wide_high_f112_colour.ltx25.i2v.f145.s42",
+      "first_frame_of": "battle_wide_high_f112_colour",
+      "from": "qwen_restyle",
+      "frames": 145
+    },
+    "ltx_battle_front_mid": {
+      "job": "pilot.battle_front_mid_f112_colour.ltx25.i2v.f145.s42",
+      "first_frame_of": "battle_front_mid_f112_colour",
+      "from": "qwen_restyle",
+      "frames": 145
+    },
+    "ltx_battle_f200": {
+      "job": "pilot.battle_f200_colour.ltx25.i2v.f121.s42",
+      "first_frame_of": "battle_f200_colour",
+      "from": "qwen_restyle",
+      "frames": 121
+    }
+  },
+  "max_ltx_failures": 2
+}

@@ -286,8 +286,12 @@
             "ATMOS_BROLL",
             "MAP",
             "COMPENSATOR",
-            "STILL_HOLD"
-           ]
+            "STILL_HOLD",
+            "VIDEO_3D",
+            "STILL_3D",
+            "HELPER"
+           ],
+           "description": "a block's lane: the film_shots/2 lanes (legacy route) or the film_shots/3 lanes VIDEO_3D, STILL_3D, HELPER (D-97)"
           },
           "archetype": {
            "type": "integer",

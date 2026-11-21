@@ -19,3 +19,8 @@ Claude read the gate logic in full. Old cached map clips without the new receipt
 ### P4 — one render path for map shots (DeepSeek Flash, $0.005)
 `edit/visual_compensator.render_item_frame` refuses the old PIL map renderer unless `allow_legacy_map=True` or `EXPLAINER_ALLOW_LEGACY_MAP=1` (the owner's permission);
 map shots belong to `production/build_shot` kind "map" (maplibre lane). Tests: `test_no_silent_fallbacks.py`; the old-renderer tests set the flag explicitly.
+
+## P8 review: systemic/next-video merged into main (trial, owner chose "review first", then "go")
+- Merge of `systemic/next-video` (641 commits) into main, 7 textual conflicts resolved; seam fixes: continuity.py three-way merge (keeps main's identity bible and next-video's `cards_from_v4`/`cards_for_episode`), `lab/blender_blocking.py` loads bpy through importlib (the bpy-import guard stays unchanged), `docs/SOURCED_RULES.md` regenerated from the registry.
+- Evidence: next-video alone 4157 passed; trial merge before fixes 5043 passed / 5 failed (all five seam failures, fixed here); `-m "not system and not media"`, docs_lint, palette.
+- Human read needed: `config/spend_caps.json` and `explainer_engine/governance/hooks.py` were auto-merged from both sides.

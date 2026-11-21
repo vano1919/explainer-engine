@@ -1,0 +1,10 @@
+{
+  "schema": "episode_lock/1",
+  "episode_id": "ep_toba",
+  "locked_at": "2026-11-11T18:35:00Z",
+  "manifest_sha256": "866436ebdafd19428e21b868d945f6539e6d906a42dfa36993ab3c728e36f36e",
+  "verified_assets_count": 133,
+  "quarantined_assets_count": 49,
+  "cross_episode_bleed_possible": false,
+  "visual_style_profile": "bande_dessinee_3d_cinematic_adventure"
+}

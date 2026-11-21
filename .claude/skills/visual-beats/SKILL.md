@@ -5,6 +5,14 @@ description: Write the visual beats of a Crossworld Theories script - something 
 
 # Visual beats and their cues
 
+**v4.3 episode (D-131; Fable audit 2026-11-13), read first:** on a `ProductionScriptV4` the beat stage writes
+`shots[].sound_events` (each with its `class` and a word anchor `at_word`, so it follows the read), `intentional_silence`
+(a sentence) and `sound_design`; one audio decision per visible event (AV-01..AV-08, `episode/events.py`); a word alone never
+earns a sound (AV-07). How: [sound guide v2](../../../docs/sound_guides/SOUND_INTEGRATION_GUIDE_v2.md). The Ink Chronicle lane
+text below is legacy (dated banner 2026-11-13) for the episodes made before 2026-11-12.
+
+**Ink Chronicle lanes (D-97, 2026-11-05):** beats land on VIDEO_3D, STILL_3D or HELPER shots; text and labels are never rendered inside Blender, they stay HELPER or overlay graphics (roadmap section 13).
+
 Rules: `docs/STORY_ENGINE.md`, section "Visual beats" (VB-00..VB-11, PV-44). Field: `lines[].visual_beats` in the
 production script (`docs/PRODUCTION_SCRIPT.md`). Render: `production/beats.py` (free, deterministic); cues:
 `audio/cues.py`. Agent: `.claude/agents/beat-writer.md` (stage 2b, right after the scene-writer, same segment).

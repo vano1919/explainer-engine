@@ -437,3 +437,30 @@ def test_rp10_extra_hardware_tries_only_with_the_creators_recorded_word():
     assert any("needs --hw-extra-reason" in m for m in B.rp10(2, False, extra=1))
     assert B.rp10(4, False, extra=9, extra_reason="cmsg_x") != []  # capped at HW_EXTRA_MAX
     assert B.rp10(2, True, extra=1, extra_reason="cmsg_x")  # a script failure is never granted a retry
+
+
+def test_rp10_placement_watch_counts_no_instance_creates_apart_and_only_with_the_creators_recorded_word():
+    # RP-10 amended 2026-11-06 18:28 UTC: "no instances available" creates (no pod, $0) are placement tries
+    assert B.is_placement_failure('POST /pods: HTTP 400 {"detail":"There are no longer any instances available with the requested specifications."}')
+    assert not B.is_placement_failure("pod x: BAD_HOST") and not B.is_placement_failure("HTTP 500 internal error")
+    # off: a placement failure counts exactly like a hardware failure (the old behaviour is unchanged)
+    assert B.rp10(0, False, placement_failures=1) == [] and B.rp10(0, False, placement_failures=2) != []
+    assert B.rp10(1, False, placement_failures=1) != []
+    # on, with the reason: placement failures only count toward the watch limit, hardware failures stay under the old one
+    assert B.rp10(0, False, placement_failures=59, watch=True, watch_reason="cmsg_x") == []
+    assert "watch limit 60" in B.rp10(0, False, placement_failures=60, watch=True, watch_reason="cmsg_x")[0]
+    assert B.rp10(1, False, placement_failures=40, watch=True, watch_reason="cmsg_x") == []
+    assert "one retry is used" in B.rp10(2, False, placement_failures=0, watch=True, watch_reason="cmsg_x")[0]   # BAD_HOST x2: still his word
+    assert B.rp10(2, False, extra=1, extra_reason="cmsg_x", placement_failures=40, watch=True, watch_reason="cmsg_x") == []
+    # without the reason the watch is refused and the old counting stays
+    no_reason = B.rp10(0, False, placement_failures=5, watch=True)
+    assert any("needs --placement-watch-reason" in m for m in no_reason) and any("one retry is used" in m for m in no_reason)
+    assert B.rp10(0, True, placement_failures=1, watch=True, watch_reason="cmsg_x")   # a script failure is never granted a retry
+
+
+def test_create_records_a_no_instances_refusal_as_a_placement_try_and_knows_the_flags():
+    from explainer_engine.cloud import runpod as R
+    assert "--placement-watch" in R.CREATE_BOOL_FLAGS and "--placement-watch-reason" in R.CREATE_VALUE_FLAGS
+    base = ["--max-usd", "3.4", "--max-hours", "2", "--ledger", "l.json", "--placement-watch", "--placement-watch-reason", "cmsg_x"]
+    assert R.create_flag_problems(base) == []
+    assert any("needs a value" in p for p in R.create_flag_problems(["--placement-watch-reason"]))

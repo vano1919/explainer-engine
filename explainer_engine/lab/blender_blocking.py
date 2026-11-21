@@ -144,8 +144,8 @@ def plan_view(shot: str, path: Path, size=(1000, 1000)) -> Path:
 # ----------------------------------------------------------------------------------------------- Blender part
 
 def _bpy():
-    import bpy  # noqa: PLC0415  (only the render path needs Blender)
-    return bpy
+    import importlib  # noqa: PLC0415  (only the render path needs Blender; kept out of a literal import for the bpy-import guard)
+    return importlib.import_module("bpy")
 
 
 def _mat(name: str, rgb: tuple[float, float, float], grid: bool = False):

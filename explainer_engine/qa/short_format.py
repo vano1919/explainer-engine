@@ -1,3 +1,4 @@
+
 """Is a rendered file a YouTube Short? (creator 2026-10-19: "the Shorts uploaded as videos, fix the code so it never happens")
 
 YouTube makes an upload a Short from the file alone: square or vertical and at most three minutes (YouTube Help 15424877,

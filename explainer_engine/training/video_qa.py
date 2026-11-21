@@ -1,3 +1,4 @@
+
 """Video QA for generated shots (docs/LORA_TRAINING.md LT-50..LT-62, ვანო 2026-10-23 22:32: "write it in code; watch hands,
 faces, the usual AI mistakes; measure every parameter, fix where it is weak; use the hours of cartoons as the norm").
 
@@ -237,6 +238,26 @@ def judge(m, ref=None):
                                             f"lines the layout does not, from {c['at_s']} s (invented or lost content)"))
     return f or [finding("LT-50", "PASS", f"{m['seconds']} s: morph p95 {m['morph_p95']}, lines x{m['edges_min_vs_start']}, "
                                           f"flicker {m['flicker_max']}")]
+
+
+def check_fast_action_rhythm(metrics: dict, *, zone_mode: str = "hyped") -> list[dict]:
+    """LT-80 (BP-172): in a hyped zone a clip must not hold most of its frames or freeze for long. ``metrics`` is the dict of
+    ``analyse``/``rhythm`` with ``hold_share`` (share of frames below the BP-166 speed) and optionally ``frozen_run_frames``.
+    It sits above LT-57's floor on purpose: the cartoons' p10 hold share is the lowest a clip may have (floaty motion), this is
+    the highest a hyped clip may have (a near-frozen clip is no fast action)."""
+    if zone_mode not in ("hyped", "hyped_climax"):
+        return []
+    hold_max = SR.T("BP-172", "hyped_hold_share_max")
+    run_max = SR.T("BP-172", "hyped_frozen_run_frames_max")
+    f = []
+    rh = metrics.get("rhythm", metrics)
+    if rh.get("hold_share", 0.0) > hold_max:
+        f.append(finding("LT-80", SR.level("BP-172", "REVIEW"),
+                         f"holds {rh['hold_share']} of the frames > {hold_max}: too static for a hyped zone"))
+    if metrics.get("frozen_run_frames", 0) > run_max:
+        f.append(finding("LT-80", SR.level("BP-172", "REVIEW"),
+                         f"{metrics['frozen_run_frames']} frozen frames in a row > {run_max}"))
+    return f
 
 
 def footage_rhythm(work_dir, *, per_show=40, max_seconds=6.0):

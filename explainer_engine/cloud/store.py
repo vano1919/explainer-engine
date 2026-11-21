@@ -1,3 +1,4 @@
+
 # from vano1919/tmr-video-script-engine@1c33878:cloud/store.py
 """The durable store: every output of a cloud job is copied here with its sha256 before any pod disk may go (master brief
 2026-10-22: never a sole copy on a pod disk; TMR lost 35 pictures that way, RISK_REGISTER R-29).

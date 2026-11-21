@@ -1,0 +1,70 @@
+{
+  "_doc": "The LTX launch file of modal_ltx_jobs.py (D-132, the creator 2026-11-12 19:10 UTC). Every pin is the bake-off's, which made two 10 s clips with sound on 2026-11-12 (run fae4ee9fb9d2_5dd040ac95c8, plan training/pods/bakeoff/plan_v43.json, variant ltx_distilled): the same LTX-2 code commit, CLI module, LTX-2.5 weights by sha256 (already on the Volume ee-weights at /w/model/Lightricks/LTX-2.5), size, rate, GPU and image. native.max_frames is the longest clip proven (241 = 10 s at 24 fps); a longer shot is split in the script. caps follow the creator's modal_ltx line ($1 per run, 2026-11-12 19:20 UTC); cold_start_s is the bake-off's measured overhead (258 s billed for 224 s of CLI work) rounded up.",
+  "app_name": "ee-ltx-jobs",
+  "model_repo": "Lightricks/LTX-2.5",
+  "model_revision": "49b093a39c19169a8a81721dcc541e07e945232f",
+  "model_files": {
+    "diffusion_models/ltx-2.5-22b-distilled-transformer-bf16.safetensors": "31eb3cad89b9e54e99dd3baf286f70825ac4f6c660a70d9184d895be76d7bff4",
+    "latent_upscale_models/ltx-2.5-latent-spatial-upscaler-x2-bf16-1.0.safetensors": "eb5a71fe4068ee87ccdb1c3aa635e547ca76bd2d30ae20ae889f2c325c0677e8",
+    "text_encoders/gemma4-12b-with-proj-ltx-2.5-bf16.safetensors": "ef7243612fdae7a75cb4d5cee9433e81380675fb6c213bd98ae74a9cd16561d1",
+    "vae/ltx-2.5-audio-vae-bf16.safetensors": "c52733d37f6a7fb7949c3dc0fb468c6cb2169e4d836983a73babb9f0d54837a5",
+    "vae/ltx-2.5-video-vae-bf16.safetensors": "847e14ca7f3355debca0cea4eaa24ac0fbcdf0061da054ac89ca638a869ddba3"
+  },
+  "ltx_code": {
+    "repo": "https://github.com/Lightricks/LTX-2.git",
+    "commit": "e98f6d927d83c92ef2be6aec76c8440b19306e39"
+  },
+  "module": "ltx_pipelines.distilled",
+  "uses": {
+    "transformer": "diffusion_models/ltx-2.5-22b-distilled-transformer-bf16.safetensors",
+    "text_encoder": "text_encoders/gemma4-12b-with-proj-ltx-2.5-bf16.safetensors",
+    "video_vae": "vae/ltx-2.5-video-vae-bf16.safetensors",
+    "audio_vae": "vae/ltx-2.5-audio-vae-bf16.safetensors",
+    "spatial_upsampler": "latent_upscale_models/ltx-2.5-latent-spatial-upscaler-x2-bf16-1.0.safetensors"
+  },
+  "settings_source": "the CLI's own defaults for LTX-2.5 (ltx_pipelines.utils.constants at LTX-2 e98f6d9), as in the bake-off",
+  "native": {
+    "fps": 24,
+    "max_frames": 241,
+    "sizes": [
+      [
+        1280,
+        704
+      ]
+    ],
+    "use": [
+      1280,
+      704
+    ],
+    "source": "the bake-off run fae4ee9fb9d2_5dd040ac95c8 (2 clips of 241 frames at 1280x704, 24 fps)",
+    "checked": "2026-11-12"
+  },
+  "sound": "native: LTX makes speech, effects and ambience with the picture (D-132)",
+  "gpu": "H100",
+  "cpu": 8,
+  "memory_gib": 96,
+  "usd_per_h": 5.0937,
+  "prices_date": "2026-11-07",
+  "base_image": "ghcr.io/vano1919/tmr-pod@sha256:6852f3d9e49de298606baf19fada5ee57a32cc74f3bef8b8f88ed35e890b68c0",
+  "hf_hub_pin": "1.33.0",
+  "hf_out": "explainer-engine/ltx_route/out",
+  "scaledown_window_s": 2,
+  "startup_timeout_s": 120,
+  "runner": "inproc",
+  "runner_why": "the creator 2026-11-13 06:40 UTC asked why a 22 s scene cost ~$0.60 (msg cmsg_01Hnu5zB86sjUj5GtTgaUkPWXt3bQhg6DyxmXs3TumdzYg); the coordinator 06:40 UTC: free code, do it. The CLI runner reloads Gemma and the transformer for every clip (the battle run: ~82 s a clip, ~17 s of it denoising); inproc loads them once per container. Not yet measured on a GPU: the first paid run of this launch is the measurement (the creator's word, a price, a cap and the watchdog first); set runner to cli to go back",
+  "chain_overlap_frames": 0,
+  "chain_overlap_why": "BP-188 (research 2026-11-12, the creator 20:07 UTC): LTX makes a clip's picture and sound together, so two chained clips meet at a hard cut with no overlap; the next clip starts from the last frame of the one before, and assembly drops that repeated first frame and gives each side a 30 ms fade. The 12-frame overlap of audit B3 served a 0.5 s crossfade that BP-188 no longer asks for",
+  "caps": {
+    "smoke_usd": 0.5,
+    "run_usd": 0.97,
+    "cold_start_s": 120
+  },
+  "decided": {
+    "model": "LTX-2.5 distilled (the bake-off's ltx_distilled)",
+    "by": "creator",
+    "message_id": "cmsg_01Hnu5zB86sjUj5GtTgaUkPW8KsicnVNwnnwMXbRDMPsji",
+    "at": "2026-11-12T19:10:06Z",
+    "money": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWWqRxqiE28kSDxnNPn41fng ($1 per test run, 19:20 UTC)"
+  },
+  "caps_why": "run_usd 0.97 for the battle scene (the creator 2026-11-12 20:44 UTC: $1 in total; card cmsg_01Hnu5zB86sjUj5GtTgaUkPWFqZzbAMMDCTETvK3bpDNzd, 20:59 UTC: '4 clips, $1.1'): the run timeout 509 s less the 75 s end path leaves 434 s for four cuts (~380 s at the love run's speed, a cold clip at the bake-off's 147 s still fits); the hard bill (run timeout + cold start) is $0.890 and the scene's budget adds the pictures and the CPU rungs (scene_run.budget_problems). Was 1.2 for the love scene"
+}
