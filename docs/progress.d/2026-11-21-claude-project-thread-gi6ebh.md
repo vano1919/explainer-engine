@@ -24,3 +24,6 @@ map shots belong to `production/build_shot` kind "map" (maplibre lane). Tests: `
 - Merge of `systemic/next-video` (641 commits) into main, 7 textual conflicts resolved; seam fixes: continuity.py three-way merge (keeps main's identity bible and next-video's `cards_from_v4`/`cards_for_episode`), `lab/blender_blocking.py` loads bpy through importlib (the bpy-import guard stays unchanged), `docs/SOURCED_RULES.md` regenerated from the registry.
 - Evidence: next-video alone 4157 passed; trial merge before fixes 5043 passed / 5 failed (all five seam failures, fixed here); `-m "not system and not media"`, docs_lint, palette.
 - Human read needed: `config/spend_caps.json` and `explainer_engine/governance/hooks.py` were auto-merged from both sides.
+
+## DeepSeek skill: three code-writing tiers (owner, 2026-11-21, card)
+Simple = DeepSeek V4.1 Flash, medium = DeepSeek Pro, hard = Claude Opus 5.5 medium via the Claude API (coordinator's card first, own ceiling line not yet set). `.claude/skills/deepseek-worker/SKILL.md` sections 1, 4, 7. Written by hand: `.claude/` is on the DeepSeek never-list.

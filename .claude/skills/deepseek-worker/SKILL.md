@@ -24,6 +24,7 @@ Facts (prices, model names, peak hours, limits) live in `config/deepseek.json`; 
 | Review each diff | DeepSeek Pro (`review`) | automatic, cents; only for a diff over 40 changed lines or a risky area |
 | Check the result | Claude | the summary line, the diff stat, the review verdict (section 5) |
 | Final check of a finished batch or PR | Gemini Neon, high | ONE bundle per PR, never per task |
+| Hard code (tier 3, section 4) | Claude Opus 5.5, medium effort, through the Claude API | never opened by a thread: ask the coordinator for a card first |
 | Merge, money, governance | Claude and the creator | never delegated |
 
 Gemini is kept out of the per-task loop on purpose: its chat needs a browser driver (Claude tokens on every prompt) and its quota
@@ -60,7 +61,17 @@ NOT IN SCOPE: what the writer must not touch.
 No history, no reasons, no pasted code: the files carry the code. One task = one behaviour. A task that needs more than 3 files to
 be read, or more than about 150 changed lines, is cut in two before it is sent.
 
-## 4. Flash or Pro
+## 4. The three tiers, then Flash or Pro
+
+**The three tiers (creator, 2026-11-21, confirmed on a card).** Claude threads stay minimal: a thread plans and checks, and writes only the never-list.
+1. **Simple = DeepSeek V4.1 Flash** (`deepseek-flash`): the default for everything below.
+2. **Medium = DeepSeek Pro** (`deepseek-v4-pro`, the regular Pro): the four Pro cases below.
+3. **Hard = Claude Opus 5.5 at medium effort** (`claude-opus-5-5`), sent through the Claude API (`explainer_engine/llm/claude_api.py`, the
+   Console credit), never through an app thread. Hard means: the code and test design of a new method, a new module boundary or schema,
+   logic across more than 3 modules, or two red Pro rounds on the same task. A thread never opens this tier itself: it asks the
+   coordinator for a card (the coordinator passes the brief and the money line), and the first paid Opus call waits for the owner's card.
+
+### Flash or Pro (tiers 1 and 2)
 
 **Flash is the default** (thinking on). Use it for: code from a clear brief, tests, tools and one-off scripts, fixtures, documents,
 reports, data clean-up, routine edits, and anything with a picture input (only Flash reads pictures).
@@ -98,6 +109,7 @@ Pro costs about four times Flash, so "it might be hard" is not a reason. Start w
 - Every job has its own `--max-usd`; the tool refuses past it and past 80 % of the ceiling. The answer is written to a file as it
   streams and every call is one ledger line (`... deepseek_api spent`; the account itself: `... deepseek_api balance`).
 - Prices are half outside the peak hours of `config/deepseek.json`. Work that can wait (batches, documents, drafts) runs off-peak.
+- The Opus tier (3) has its own ceiling line in `config/spend_caps.json` and is not live until the creator names it.
 - Ask DeepSeek once per task, not three variants "to compare": the test and the review are the quality gate.
 - Measured numbers of this way of working go into the progress fragment after every batch: tasks, rounds, PASS share, dollars,
   Claude turns per task. Until the first five real tasks are measured, the cost table of the plan is an estimate.
