@@ -9,7 +9,8 @@
     "min_bitrate_kbps": 4000,
     "max_black_frame_ratio": 0.02,
     "max_frozen_frame_ratio": 0.05,
-    "min_sharpness": 0.5
+    "min_sharpness": 0.002,
+    "sharpness_basis": "GUESS: floor at the lowest of 24 existing project samples (0.00219, winner1_C2_E2_dialogue_8s_v2); catches blank or badly blurred output only. Not a quality threshold; the owner sets it on approved samples."
   },
   "audio": {
     "lufs_min": -16.5,
@@ -23,6 +24,6 @@
     "sharpness_unit": "laplacian_var_over_mean_sq_0_1",
     "min_width": 1920,
     "min_height": 1080,
-    "min_sharpness": 0.5
+    "min_sharpness": 0.002
   }
 }

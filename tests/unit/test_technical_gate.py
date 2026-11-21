@@ -16,7 +16,7 @@ def _video_metrics(**overrides):
         "bitrate_kbps": 5000,
         "black_frame_ratio": 0.0,
         "frozen_frame_ratio": 0.0,
-        "sharpness": 0.6,
+        "sharpness": 0.05,
     }
     metrics.update(overrides)
     return metrics
@@ -46,7 +46,7 @@ def test_video_metrics_passing_all_limits_is_empty():
     ("bitrate_kbps", 3999),
     ("black_frame_ratio", 0.03),
     ("frozen_frame_ratio", 0.06),
-    ("sharpness", 0.49),
+    ("sharpness", 0.0015),
 ])
 def test_video_each_limit_violated_separately(key, value):
     assert len(tg.check_video(_video_metrics(**{key: value}))) == 1
@@ -85,7 +85,7 @@ def test_audio_missing_lufs_fails_closed():
 
 
 def test_photo_1280x720_fails():
-    problems = tg.check_photo({"width": 1280, "height": 720, "sharpness": 0.6})
+    problems = tg.check_photo({"width": 1280, "height": 720, "sharpness": 0.05})
     assert problems
     assert any("width" in p for p in problems)
     assert any("height" in p for p in problems)
