@@ -212,6 +212,39 @@ def no_diffusion(spec: dict, base_dir: Path | None = None) -> list[dict]:
     return out
 
 
+def check_actions(p: dict) -> list[dict]:
+    """The map laws that apply to a v4.3 ``map_action`` plan (``maps/actions.plan``): the older ``check_item`` runs on a map item spec,
+    which a map_action shot does not have, so the laws were never run on it (lanes test 2026-11-19).
+
+    CMP-03 (BP-124): at most ``labels_max`` shown labels (place labels and front-line names; the date chip is its own element, CMP-13) at any frame;
+    CMP-04: an action's word is measured (a read's spine) or the finding says the timing is estimated;
+    CMP-06 (BP-151): two lines of two sides use the two faction tokens, a and b, never the same side twice, and a side named on one
+    of two opposing front lines is named on both; CMP-13: a map that shows a date has it as a date chip."""
+    out, where = [], p["shot_id"]
+    labels_max = int(SR.T("BP-124", "labels_max"))
+    shown = []
+    for a in p["actions"]:
+        n = 0
+        if a["kind"] == "label":
+            n = 1
+        elif a["kind"] in ("front_line", "route_arrow", "supply_line") and a.get("label") and a.get("side"):
+            n = 1
+        if n:
+            shown.append(a)
+    worst = max((sum(1 for a in shown if a["start"] <= f) for f in range(p["frames"])), default=0)
+    if worst > labels_max:
+        out.append(_f("CMP-03", "BP-124", where, f"{worst} labels on screen at once (at most {labels_max}); the shot's labels never leave"))
+    if p.get("basis") != "measured":
+        out.append(_f("CMP-04", "BP-147", where, "action words are estimated (no read spine yet): the landing frames are spread over the line"))
+    fronts = [a for a in p["actions"] if a["kind"] == "front_line"]
+    sides = [a.get("side") for a in fronts]
+    if len(fronts) >= 2 and (None in sides or len(set(sides)) < 2):
+        out.append(_f("CMP-06", "BP-151", where, f"{len(fronts)} front lines carry sides {sides}: two opposing lines are side a and side b"))
+    if any("label" in a and a["kind"] == "label" and any(ch.isdigit() for ch in str(a["label"])) for a in p["actions"]):
+        out.append({"rule": "CMP-13", "severity": "REVIEW", "where": where, "detail": "a date is a label: use the date kind (the chip, ED-15's counter slot)"})
+    return out
+
+
 def check_item(spec: dict, spine: dict, trigger_word_index: int, duration_frames: int, base_dir: Path | None = None,
                scene_set: dict | None = None) -> list[dict]:
     """Every law on one map item (what ``visual_compensator.check`` runs for the four map archetypes)."""

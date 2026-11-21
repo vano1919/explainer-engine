@@ -6294,3 +6294,31 @@ the edit (capped by `-frames:v`, the sound by `atrim`) and refuses a cut whose f
 - Measured (free, CPU): `graphifyy` 0.9.112 `extract --code-only` on systemic/next-video 8e29be8: 18051 nodes, 44360 edges, 40 s; `update` 30 s.
   Good for `affected` / `path` / `explain`; plain search is as good with grep; GRAPH_REPORT.md is 150 KB with unnamed communities.
 - Done: `docs/GRAPHIFY_RULES_ka.md` (triggers, no `graphify claude install`, commands, where the graph lives, who decides). No code or config changed.
+
+## 2026-11-19 — Lanes test: one real map_action clip and one real still_25d clip, and the gaps they showed (free, CPU)
+- Asked: the creator via the plan thread (overnight order, W11 / Stream M): one 6-8 s Flanders map (10 % lane) and one 6-8 s 2.5D shot of
+  `S04_SH008_start` (30 % lane), both through the repo's own code, gaps fixed with tests, nothing paid, nothing merged.
+- Made: `M01_map_action.mp4` (7 s, 1920x1080, `production/map_clip.render_action_map_clip`) and `S04_SH008_still25d.mp4` (7 s,
+  `production/layers25d.render_clip`, Depth-Anything V2 Small + YuNet, planes 4, all 12 gates PASS) with their check records.
+- Found and fixed (tests in `test_lanes_gaps_2026_11_19.py`, `test_v43_layers25d.py`, `test_esrgan_cpu.py`):
+  1. The map's relief was Natural Earth's 1.85 km pixel enlarged 40x for a 46 km frame (a blur, and the report said nothing).
+     `production/relief_regional.py` makes a hillshade from Copernicus GLO-30 (Flanders, 2 tiles), `maps/relief.py` uses it for views inside
+     it (`regional_for`, `km_per_px`, `source_id` in the plate cache key); the clip's `relief_upsample_max` now reports the raster really used
+     and a new gate `map_relief_sharp` (REVIEW above 3x) flags a soft plate.
+  2. Two front lines were the same coral. `front_line` / `route_arrow` / `supply_line` take `side` a|b (the CMP-06 faction token colour and
+     the square / triangle mark, optional line name); the schema knows it.
+  3. The map had no date element: new action kind `date` (a chip, top left, text from `label`, on its word).
+  4. The eight map laws never ran on a v4.3 map_action shot (they take the old map item spec): `maps/laws.check_actions` runs CMP-03
+     (at most BP-124 labels_max labels: the first draft had 5), CMP-04 (words estimated without a read spine), CMP-06, CMP-13.
+  5. A finished front line stood perfectly still: its dots now travel like a route's (restrained life).
+  6. still_25d had no breath effect for cold-air scenes: `breath_vapour` (atmosphere, needs the mouth as `origin`, a puff every 3.4 s that
+     moves with the mouth's plane); renderer version layers25d/3.
+  7. Free local 2x of a picture without Vulkan: `finish/esrgan_cpu.py` (Real-ESRGAN x2, torch CPU, tiles, weights loaded `weights_only`).
+- Not fixed (reported): `map_not_standing_still` (BP-164) measures the whole frame at 160x90, so thin overlays (lines, rings) count as still
+  (REVIEW on this clip); the front-line courses are illustrative (no source in the repo), the check record says so.
+- Limits: the Esrgan weights' licence is unverified (PROVENANCE); the downloaded `realesrgan-ncnn-vulkan` binary was not run (the session's
+  safety check refused an unreviewed third-party binary).
+- Follow-up (plan thread, 23:00 UTC): relief exaggeration of the Flanders hillshade lowered 3.0 to 1.0 (it read as hills); `esrgan_cpu --face-aware`
+  (ESRGAN 2x outside YuNet face boxes, Lanczos 2x + mild unsharp inside, feathered; test added). No open source for the December 1914 front
+  line was found or verified: the courses stay illustrative and the check JSON says so.
+

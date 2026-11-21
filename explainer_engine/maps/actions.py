@@ -39,7 +39,7 @@ from explainer_engine.maps import draw as D
 from explainer_engine.maps import geo, plate
 
 KINDS = ("route_arrow", "front_line", "spread", "plume", "pulse", "highlight", "label", "counter", "zoom", "split_compare",
-         "marker_travel", "supply_line", "supply_state", "snap", "bar_grow", "progress_bar", "milestone")
+         "marker_travel", "supply_line", "supply_state", "snap", "bar_grow", "progress_bar", "milestone", "date")
 PLACE_KINDS = {"route_arrow": ("from", "to"), "front_line": ("from", "to"), "plume": ("from", "to"), "spread": ("from",),
                "pulse": ("from",), "highlight": ("from",), "label": ("from",), "supply_line": ("from", "to")}
 PATH_KINDS = ("route_arrow", "front_line", "supply_line", "marker_travel")
@@ -137,6 +137,10 @@ def plan(shot: dict, script: dict, places: dict, fps: int, spine: list[dict] | N
             raise ContractError(f"{sid}: marker_travel needs from and to, or the route it rides on")
         if kind in ("supply_state", "snap") and not a.get("route"):
             raise ContractError(f"{sid}: {kind} needs the event_id of its supply line (route)")
+        if kind == "date" and not a.get("label"):
+            raise ContractError(f"{sid}: date shows a date: give it as label (never a guess)")
+        if a.get("side") is not None and a["side"] not in ("a", "b"):
+            raise ContractError(f"{sid}: side {a['side']!r} is a or b (the two faction tokens, CMP-06)")
         if a.get("camera") is not None and a["camera"] not in CAMERAS:
             raise ContractError(f"{sid}: camera {a['camera']!r} is not one of {', '.join(CAMERAS)}")
         path, found = _path_ll(a, places, sid) if kind in PATH_KINDS else (None, [])
@@ -146,7 +150,7 @@ def plan(shot: dict, script: dict, places: dict, fps: int, spine: list[dict] | N
                     "from": _place(places, a.get("from"), sid, kind), "to": _place(places, a.get("to"), sid, kind),
                     "from_id": a.get("from"), "to_id": a.get("to"), "path": path, "route": a.get("route"),
                     "state": a.get("state"), "claim": a.get("claim"), "values": a.get("values"), "labels": a.get("labels"),
-                    "max": a.get("max"), "camera": a.get("camera") or ("zoom" if kind == "zoom" else "hold"),
+                    "max": a.get("max"), "side": a.get("side"), "camera": a.get("camera") or ("zoom" if kind == "zoom" else "hold"),
                     "name": (places.get(a.get("from")) or {}).get("name") if a.get("from") else None,
                     "value": a.get("value"), "unit": a.get("unit", ""), "label": a.get("label")})
     ids = {a["event_id"]: a for a in out}
@@ -356,6 +360,8 @@ def _draw_path(c, a, p, f, col, ink, accent, px, unit) -> None:
         D.marker(c, "a", x, y, unit * 0.016)
         return
     colour = accent
+    if a.get("side") in ("a", "b"):    # CMP-06: a side is its faction colour AND its mark (square a, triangle b), never colour alone
+        colour = (*D.faction(a["side"]), 255)
     pieces = [D.polyline_prefix(path, u)]
     if k == "supply_line":
         state, su, at = supply_state(p, a, f)
@@ -374,10 +380,18 @@ def _draw_path(c, a, p, f, col, ink, accent, px, unit) -> None:
         if len(part) >= 2:
             c.line(part, ink, w * 1.7)
             c.line(part, colour, w, dash=(w * 2.2, w * 1.2) if k in ("front_line", "supply_line") else None)
+    if a.get("side") in ("a", "b") and u > 0.0 and len(pieces[0]) >= 2:
+        x, y = pieces[0][-1]
+        D.marker(c, a["side"], x, y, unit * 0.017)
+        if a.get("label"):
+            size = max(unit * 34 / 1080, 6.0)
+            alpha = int(255 * min(1.0, u * 4))
+            c.text((x + unit * 0.03, y), a["label"], size, (*col["ink"], alpha), anchor="lm", stroke=max(1.0, size * 0.12),
+                   stroke_fill=(*col["paper"], alpha))
     if k == "route_arrow" and u > 0.02 and len(pieces[0]) >= 2:
         part = pieces[0]
         D.arrow_head(c, part[-1], part[-2] if part[-2] != part[-1] else part[0], w * 2.6, accent, ink)
-    if u >= 1.0 and k in ("route_arrow", "supply_line") and not (k == "supply_line" and supply_state(p, a, f)[0] == "cut"):
+    if u >= 1.0 and k in ("route_arrow", "supply_line", "front_line") and not (k == "supply_line" and supply_state(p, a, f)[0] == "cut"):
         _flow(c, path, f - a["end"], (*col["paper"], 170), max(1.5, w * 0.35))
 
 
@@ -469,6 +483,14 @@ def _draw_one(c, a, p, f, view, col, ink, accent, px, unit) -> None:
             r = float(a.get("value") or 120.0) / view.km_per_px
             c.circle(cx, cy, max(4.0, r), fill=(*col["glow"], int(90 * u)), outline=(*col["glow"], int(220 * u)),
                      width=max(2.0, unit * 0.004))
+        elif k == "date":      # the date chip (cartography: a date whenever time moves), top left, in the map's own type
+            text, size = str(a["label"]), unit * 0.05
+            alpha = int(255 * min(1.0, (f - a["start"] + 1) / 8))
+            x0, y0 = c.w * 0.04, unit * 0.05
+            w = c.text_width(text, size) + size
+            c.rect(x0, y0, x0 + w, y0 + size * 1.5, fill=(*col["paper"], int(alpha * 0.94)), outline=(*col["ink"], alpha),
+                   width=max(2.0, unit * 0.004), radius=size * 0.25)
+            c.text((x0 + size / 2, y0 + size * 0.75), text, size, (*col["ink"], alpha), anchor="lm")
         elif k == "label":
             cx, cy = px(a["from"])
             text = a.get("label") or a.get("name") or a["from_id"]
