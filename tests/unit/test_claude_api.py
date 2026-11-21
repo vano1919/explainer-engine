@@ -376,9 +376,10 @@ def test_real_spend_caps_file_holds_the_or24_caps():
     # 2026-11-21 (technical decision delegated by the owner; the old $20/$100/$105 caps are cancelled): the whole credit is
     # $40 = opus_code 15 + fable_medium 15 + opus_high_review 10. The older job lines stay in the file at 0.0 as history.
     c = json.loads((ROOT / "config" / "spend_caps.json").read_text(encoding="utf-8"))["claude_api"]
-    assert c["max_usd"] == 40.0 and sum(c["jobs"].values()) == pytest.approx(c["max_usd"])
-    assert c["jobs"]["opus_code"] == 15.0 and c["jobs"]["fable_medium"] == 15.0 and c["jobs"]["opus_high_review"] == 10.0
-    assert all(v == 0.0 for k, v in c["jobs"].items() if k not in ("opus_code", "fable_medium", "opus_high_review"))
+    # 2026-11-21 21:48 UTC owner word (cmsg_01Hnu5zB86sjUj5GtTgaUkPWU86xfQSP7W7oPE2qg2ka7R): $40 coding + $10 technical check = $50
+    assert c["max_usd"] == 50.0 and sum(c["jobs"].values()) == pytest.approx(c["max_usd"])
+    assert c["jobs"]["opus_code"] == 40.0 and c["jobs"]["opus_tech_check"] == 10.0
+    assert all(v == 0.0 for k, v in c["jobs"].items() if k not in ("opus_code", "opus_tech_check"))
     assert c["approval"]["ref"]   # the recorded approval line stays
     # the 2026-10-30 .. 2026-11-01 history (J1b 5.02, build_loop 45, research_vs_main 25, ...) is in the git history of this file
 

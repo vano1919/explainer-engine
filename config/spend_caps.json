@@ -91,12 +91,13 @@
   },
   "claude_api": {
     "_doc": "The Claude API credit (explainer_engine/llm/claude_api.py, docs/LLM_API.md). max_usd is the whole credit; the client stops at 80 % of it and of each job. A job without a line here is refused. approval is the recorded word that allows real calls.",
-    "max_usd": 40.0,
+    "max_usd": 50.0,
     "jobs": {"J1": 0.0, "J1b": 0.0, "final_review": 0.0, "change_plan": 0.0, "fix_desk": 0.0, "result_check": 0.0,
       "J2a": 0.0, "J2b": 0.0, "J3": 0.0, "J4": 0.0, "J5": 0.0, "J6": 0.0, "plan_v2": 0.0, "reserve": 0.0,
       "research_vs_main": 0.0, "build_loop": 0.0, "plan_revision": 0.0,
-      "opus_code": 15.0, "fable_medium": 15.0, "opus_high_review": 10.0},
+      "opus_code": 40.0, "fable_medium": 0.0, "opus_high_review": 0.0, "opus_tech_check": 10.0},
     "approval": {
+    "owner_budget_2026_11_21": "Claude code writing $40 plus a separate Opus medium technical check $10 = $50 total; owner message cmsg_01Hnu5zB86sjUj5GtTgaUkPWU86xfQSP7W7oPE2qg2ka7R (2026-11-21 21:48 UTC), relayed by coordinator",
       "by": "vano (credit, his word) + the OR-24 plan thread verdict",
       "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWMWfhemnwjz2KZddCLNHbGL; project files blueprint_2026-10-29/CLAUDE_API_PLAN_OR24.md",
       "at": "2026-10-29"
