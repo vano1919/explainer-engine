@@ -68,7 +68,8 @@ def test_the_demo_job_has_no_finding_above_info(job):
     assert [f for f in found if f["severity"] != "INFO"] == [], found
 
 
-def test_all_twelve_archetypes_render_a_frame_of_their_own(job):
+def test_all_twelve_archetypes_render_a_frame_of_their_own(job, monkeypatch):
+    monkeypatch.setenv(VC.LEGACY_MAP_ENV, "1")
     base, manifest = job
     seen = {}
     for r in VC.items_of(manifest, base):
@@ -81,7 +82,8 @@ def test_all_twelve_archetypes_render_a_frame_of_their_own(job):
     assert len(seen) == 12 and len(set(seen.values())) == 12
 
 
-def test_a_frame_is_the_same_bytes_in_a_chunked_render(job):
+def test_a_frame_is_the_same_bytes_in_a_chunked_render(job, monkeypatch):
+    monkeypatch.setenv(VC.LEGACY_MAP_ENV, "1")
     base, manifest = job
     for r in VC.items_of(manifest, base):
         it, spec = r["item"], r["spec"]
@@ -92,7 +94,8 @@ def test_a_frame_is_the_same_bytes_in_a_chunked_render(job):
         assert first == again[::-1], spec["archetype_id"]
 
 
-def test_a_changing_frame_changes_and_the_telemetry_overlay_is_transparent(job):
+def test_a_changing_frame_changes_and_the_telemetry_overlay_is_transparent(job, monkeypatch):
+    monkeypatch.setenv(VC.LEGACY_MAP_ENV, "1")
     base, manifest = job
     for r in VC.items_of(manifest, base):
         it, spec = r["item"], r["spec"]
@@ -104,7 +107,8 @@ def test_a_changing_frame_changes_and_the_telemetry_overlay_is_transparent(job):
             assert b[..., 3].min() == 0 and b[..., 3].max() > 0
 
 
-def test_the_cli_checks_renders_and_measures(job, tmp_path, capsys):
+def test_the_cli_checks_renders_and_measures(job, tmp_path, capsys, monkeypatch):
+    monkeypatch.setenv(VC.LEGACY_MAP_ENV, "1")
     base, manifest = job
     path = base / "visual" / "visual_comp_manifest.json"
     assert VC.main(["check", str(path), "--base", str(base)]) == 0

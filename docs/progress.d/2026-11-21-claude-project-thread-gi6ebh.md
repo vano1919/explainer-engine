@@ -15,3 +15,7 @@ New `qa/delivery_gate.py`: reads the episode log and every shot's `.render_log.j
 film id, font, depth, a non-PASS plume check or `paid_calls != 0` is FAIL. `build_map_shot` receipts now carry camera, film_id and font;
 `build_episode` runs the gate, writes `<out>.delivery_gate.json` and raises on FAIL. Tests: `tests/unit/test_delivery_gate.py` plus adapted fixtures.
 Claude read the gate logic in full. Old cached map clips without the new receipt keys FAIL until rebuilt (intended).
+
+### P4 — one render path for map shots (DeepSeek Flash, $0.005)
+`edit/visual_compensator.render_item_frame` refuses the old PIL map renderer unless `allow_legacy_map=True` or `EXPLAINER_ALLOW_LEGACY_MAP=1` (the owner's permission);
+map shots belong to `production/build_shot` kind "map" (maplibre lane). Tests: `test_no_silent_fallbacks.py`; the old-renderer tests set the flag explicitly.
