@@ -15,6 +15,12 @@ or marked not opened) is the only source a row may cite. A row's `source` is tha
 (SUPPORTED or PARTIAL), a repository rule already in force, or "Blueprint 2026-10 (unverified)" when no opened source
 supports the number.
 
+Supplemental reading: the creator-supplied [cinematic audio-visual craft and tool implementation report](research/cinematic_audio_visual_craft_and_tool_implementation_report_2026_11_04.md)
+is retained as a research lead and technique catalogue. Its source claims and implementation details have not been independently
+verified here; it does not qualify as a second source type for a checklist rule, change a BP status, or authorize a new tool,
+setting, provider, or production route. Recheck a specific claim and record its verdict in the source register before using it
+to support a rule.
+
 **Nothing in this curriculum is binding.** Under D-59 a rule binds only with two of the three source types (article, book,
 video). The research opened articles only: no book was re-opened and no YouTube page could be read in the session, so every
 new rule is a **hypothesis, REVIEW** (BP-114..138), and many numbers have no source at all beyond the Blueprint. The

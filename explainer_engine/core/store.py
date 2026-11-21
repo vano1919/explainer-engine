@@ -1,3 +1,4 @@
+
 """Checkpointed job storage: one directory per job, one atomic JSON file per finished stage.
 
 Two records live here. ``JobStore``: the stage artifacts of one pipeline run (``artifacts/NN_<stage key>.json`` +

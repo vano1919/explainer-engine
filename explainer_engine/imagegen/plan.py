@@ -1,3 +1,4 @@
+
 """Paint plans (audit 2026-10-19, PP-01..PP-07): the image provider is chosen for every batch, the creator says yes to that batch,
 and only then is anything painted. stdlib only.
 
@@ -34,6 +35,8 @@ PROVIDERS = {
             "boot_usd": 0.10, "note": "RunPod reference painter (D-42, TMR cloud/); a pod needs its own price and time cap (OR-06)"},
     "local": {"service": None, "paints_here": False, "max_refs": 4, "usd_per_picture": 0.0,
               "note": "the creator's or a free machine (SDXL / FLUX.1-schnell, Apache-2.0); never FLUX.1-dev (non-commercial)"},
+    "local_comfyui": {"service": None, "paints_here": True, "max_refs": 4, "usd_per_picture": 0.0,
+                      "note": "D-123 local ComfyUI Qwen keyframe workflow (free local execution, EXPLAINER_LOCAL_ONLY=1)"},
 }
 
 

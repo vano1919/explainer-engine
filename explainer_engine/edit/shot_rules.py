@@ -1,3 +1,4 @@
+
 """The Universal Rule Base checks (docs/UNIVERSAL_RULE_BASE.md, UR-01..UR-15) over a shot list. stdlib only.
 
 A shot list is the edit: ``[{id, beat, phase, type A|B|C, emotion, sentences, start, end, motion, transition,

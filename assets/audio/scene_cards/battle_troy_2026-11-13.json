@@ -1,0 +1,132 @@
+{
+ "schema": "scene_join/1",
+ "scene": "battle_troy",
+ "place": "trojan_plain",
+ "room": "outdoor",
+ "era": "bronze_age",
+ "about": "The professional-sound demo of 2026-11-13: the W1 battle card (battle_troy_2026-11-12.json, the same four LTX clips) with the scene-aware design of episode/cue_sheet: spots only for what each clip shows (horses behind the column, the fires on the ridge, the charge with chariots and horses), a war horn as the off-screen signal the column surges on, a tense cue under the talk and an aggressive cue for the charge, crossfaded at the c3->c4 cut where a riser lands.",
+ "bed": [
+  "wind",
+  "army_march",
+  "horse_walk"
+ ],
+ "clips": [
+  {
+   "id": "c1",
+   "file": "battle/battle_c1/battle_c1_seed5401.mp4",
+   "lead_s": 1.2,
+   "line": "general",
+   "what": "a column marching at the camera on a dusty plain, horses behind"
+  },
+  {
+   "id": "c2",
+   "file": "battle/battle_c1/battle_c2_seed5402.mp4",
+   "line": "commander",
+   "what": "the general and the commander in armour, the army and horses behind"
+  },
+  {
+   "id": "c3",
+   "file": "battle/battle_c1/battle_c3_seed5403.mp4",
+   "line": "commander",
+   "line_window": [
+    0.0,
+    3.7
+   ],
+   "what": "the commander points at the ridge, small fires on the ridge, chariots, then the column surges"
+  },
+  {
+   "id": "c4",
+   "file": "battle/battle_c1/battle_c4_seed5404.mp4",
+   "speech": false,
+   "keep": [
+    0.0,
+    6.0
+   ],
+   "what": "a wide charge towards the city, chariots and horses in dust"
+  }
+ ],
+ "spots": [
+  {
+   "clip": "c1",
+   "at_s": 1.4,
+   "class": "horse_neigh",
+   "distance": "distant",
+   "pan": 0.25,
+   "what": "a horse behind the column"
+  },
+  {
+   "clip": "c3",
+   "at_s": 0.0,
+   "class": "fire",
+   "distance": "distant",
+   "what": "the small fires on the ridge"
+  },
+  {
+   "clip": "c3",
+   "at_s": 1.6,
+   "class": "chariot",
+   "distance": "distant",
+   "pan": -0.3,
+   "library_id": "cart_two_horse_walk__v1",
+   "what": "the chariots waiting below the ridge"
+  },
+  {
+   "clip": "c4",
+   "at_s": 0.0,
+   "class": "war_horn",
+   "distance": "distant",
+   "what": "the signal the column surges on (off-screen)"
+  },
+  {
+   "clip": "c4",
+   "at_s": 0.15,
+   "class": "crowd_shout",
+   "distance": "medium",
+   "library_id": "charge_reenactment__v1",
+   "what": "the charge"
+  },
+  {
+   "clip": "c4",
+   "at_s": 0.5,
+   "class": "chariot",
+   "distance": "medium",
+   "library_id": "cart_two_horse_trot__v1",
+   "what": "chariots rolling in the dust"
+  },
+  {
+   "clip": "c4",
+   "at_s": 0.8,
+   "class": "horse_hooves",
+   "distance": "medium",
+   "library_id": "horses_troop_gallop__v1",
+   "what": "horses galloping in the dust"
+  },
+  {
+   "clip": "c4",
+   "at_s": 2.2,
+   "class": "battle_cry",
+   "distance": "distant",
+   "pan": -0.2,
+   "library_id": "battle_crowd_crescendo__v1",
+   "what": "cries along the charging line"
+  }
+ ],
+ "intended_pauses": [
+  {
+   "clip": "c3",
+   "why": "he sees the ridge, then gives the order"
+  }
+ ],
+ "music": [
+  {
+   "from": "c1",
+   "to": "c3",
+   "mood": "tense"
+  },
+  {
+   "from": "c4",
+   "to": "c4",
+   "mood": "aggressive"
+  }
+ ]
+}

@@ -1,3 +1,4 @@
+
 """The production script (D-43): one JSON file per video that is the script, the voice direction, the picture plan,
 the sound plan and the edit. ``schemas/production_script.schema.json`` defines it.
 
@@ -45,6 +46,12 @@ def tok(s: str) -> str:
 
 def narration_text(doc: dict) -> str:
     """What is said: one paragraph per segment (the words.json / captions / claim-map text)."""
+    if doc.get("schema_version") == "4.0.0":
+        by_seg: dict[str, list[str]] = {}
+        for ln in doc.get("audio_lines", []):
+            if ln.get("speaker_type") != "silent_beat" and ln.get("text"):
+                by_seg.setdefault(ln["segment_id"], []).append(ln["text"].strip())
+        return "\n".join(" ".join(by_seg.get(seg["segment_id"], [])) for seg in doc.get("segments", [])) + "\n"
     return "\n".join(" ".join(line["text"].strip() for line in seg["lines"]) for seg in doc["segments"]) + "\n"
 
 
@@ -64,6 +71,8 @@ def tts_line(line: dict) -> str:
 def tts_text(doc: dict) -> str:
     """What the voice gets: delivery tags where the delivery changes, one stressed word in capitals, pause tags. Silent
     lines (``voiced: false``, D-62) are shown as bubbles and never read."""
+    if doc.get("schema_version") == "4.0.0":
+        return narration_text(doc)
     return "\n".join(" ".join(tts_line(line) for line in seg["lines"] if line.get("voiced", True))
                      for seg in doc["segments"]) + "\n"
 
@@ -86,6 +95,8 @@ def speaker(line: dict) -> str:
 
 
 def has_dialogue(doc: dict) -> bool:
+    if doc.get("schema_version") == "4.0.0":
+        return any(l.get("speaker_type") == "character" for l in doc.get("audio_lines", []))
     return any(line.get("speaker") for seg in doc["segments"] for line in seg["lines"])
 
 
@@ -139,6 +150,19 @@ def tts_chunks(doc: dict, max_chars: int = 900) -> list[dict]:
 
 def tokens(doc: dict) -> list[dict]:
     """Written tokens of the whole narration (``scribe_words.script_tokens``), each with its segment and line index."""
+    if doc.get("schema_version") == "4.0.0":
+        toks = script_tokens(narration_text(doc))
+        seg_index = {s["segment_id"]: i for i, s in enumerate(doc.get("segments", []))}
+        k = 0
+        for li, line in enumerate(doc.get("audio_lines", [])):
+            if line.get("speaker_type") == "silent_beat":
+                continue
+            own = script_tokens(line["text"])
+            si = seg_index.get(line["segment_id"], 0)
+            for t in toks[k:k + len(own)]:
+                t["seg"], t["line"] = si, li
+            k += len(own)
+        return toks
     toks = script_tokens(narration_text(doc))
     k = 0
     for si, seg in enumerate(doc["segments"]):
@@ -181,6 +205,18 @@ def segment_spans(toks: list[dict], n_segments: int) -> list[tuple[int, int]]:
 
 def shots(doc: dict) -> list[dict]:
     """Every shot in script order with its sequence number (1..N), id (SH001...), segment and picture id."""
+    if doc.get("schema_version") == "4.0.0":
+        return [
+            {
+                "seq": i + 1,
+                "id": s["shot_id"],
+                "segment": s["segment_id"],
+                "light_beat": 1,
+                "picture_id": f"{s['shot_id']}_start",
+                "shot": s,
+            }
+            for i, s in enumerate(doc.get("shots", []))
+        ]
     out, n = [], 0
     for seg in doc["segments"]:
         for s in seg["shots"]:
@@ -194,6 +230,18 @@ def shots(doc: dict) -> list[dict]:
 def pictures(doc: dict) -> tuple[dict, list[str]]:
     """(id -> picture, problems): library pictures plus every picture defined inline in a shot (defined once, then
     referred to by id). Each picture gets ``first_use`` (shot id) and ``uses`` (shot ids)."""
+    if doc.get("schema_version") == "4.0.0":
+        out = {}
+        for s in doc.get("shots", []):
+            pid = f"{s['shot_id']}_start"
+            out[pid] = {
+                "id": pid,
+                "prompt": s["image_prompt"]["start_frame_prompt"],
+                "source": "stage2_qwen",
+                "first_use": s["shot_id"],
+                "uses": [s["shot_id"]],
+            }
+        return out, []
     out = {k: dict(v, id=k, source="library") for k, v in doc.get("library", {}).items()}
     problems = []
     for sh in shots(doc):
@@ -212,4 +260,6 @@ def pictures(doc: dict) -> tuple[dict, list[str]]:
 
 
 def hero_names(doc: dict) -> dict[str, list[str]]:
+    if doc.get("schema_version") == "4.0.0":
+        return {c["character_id"]: [c["name"]] for c in (doc.get("world_bible") or {}).get("characters", [])}
     return {h: c["names"] for h, c in doc["cast"].items()}

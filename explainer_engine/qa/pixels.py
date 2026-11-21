@@ -1,3 +1,4 @@
+
 """Pixel checks on a rendered chunk range, free and local (the QA loop, ``qa/loop.py``; the creator, 2026-10-20: check the
 video after every two rendered parts). They read the rendered frames and compare them with the plan in ``timed.json``, so
 they catch what the data checks of ``qa/frame_review`` cannot: a renderer that draws something the plan does not say.

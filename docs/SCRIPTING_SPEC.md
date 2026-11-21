@@ -1,5 +1,9 @@
 # Scripting specification: research, claims, script, rubric
 
+
+## Canonical v4.0 Production Method Pointer (D-123)
+> **Route-scoped since D-116 (2026-11-06); updated 2026-11-09 by D-123:** For authoring new 12-minute (`720s`) historical What-If episodes, follow [MAIN_METHOD](MAIN_METHOD.md) (Stages 1-4) and [SCRIPT_ENGINE](SCRIPT_ENGINE.md). The research dossier, claim verification, and editorial rubric gates below remain active and feed `jobs/<episode_id>/01_script/research_dossier.md` and `production_script.json` (`v4.0.0`).
+
 Every video starts with research on its central question and ends its writing stage at the creator's approval #1.
 Drafting is done in Claude Code sessions (D-13): an LLM may assist but cannot establish factual truth by assertion.
 

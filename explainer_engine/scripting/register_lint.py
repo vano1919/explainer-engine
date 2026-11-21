@@ -1,3 +1,4 @@
+
 """The AI register (Blueprint P3, docs/STORY_ENGINE.md "Register (RG)", D-86). stdlib only.
 
 The words and the shapes a language model overuses read as machine writing to a listener, and the creator's point 1 of

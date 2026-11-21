@@ -1,3 +1,4 @@
+
 """``config/job_speeds.json``: seconds per unit of each job type on each card, measured by a pod and written by ``runpod cost``
 from the pod's ``units.json`` (P1c, RP-08/RP-09). stdlib only. A row is evidence, so it is never typed by hand and never guessed;
 no row means "not measured" and the picker says so (``basis``)."""

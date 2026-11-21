@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "speech_mix_report.schema.json",
+  "title": "Speech mix report: narrator vs voiced dialogue words (and seconds, informational) of one script (D-99, roadmap 8.2; written by qa/speech_mix.py, ICW-03)",
+  "type": "object",
+  "required": [
+    "schema",
+    "job_id",
+    "derived_from",
+    "rule",
+    "narrator_words",
+    "dialogue_words",
+    "unvoiced_words",
+    "narrator_share_words",
+    "narrator_share_seconds",
+    "lipsync_shots",
+    "lipsync_seconds",
+    "longest_voiced_cu_s"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "const": "speech_mix_report/1"
+    },
+    "job_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "derived_from": {
+      "type": "object",
+      "required": [
+        "script"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "script": {
+          "$ref": "#/$defs/fileref"
+        },
+        "audio_spine": {
+          "$ref": "#/$defs/fileref"
+        },
+        "film_shots": {
+          "$ref": "#/$defs/fileref"
+        }
+      }
+    },
+    "rule": {
+      "const": "BP-105",
+      "description": "the band and the nominal come from the registry, never from this file"
+    },
+    "narrator_words": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "dialogue_words": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "unvoiced_words": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "narrator_share_words": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "narrator_share_seconds": {
+      "anyOf": [
+        {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "informational, from the audio spine's word windows; null without a spine"
+    },
+    "lipsync_shots": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "lipsync_seconds": {
+      "type": "number",
+      "minimum": 0
+    },
+    "longest_voiced_cu_s": {
+      "type": "number",
+      "minimum": 0
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "fileref": {
+      "type": "object",
+      "required": [
+        "path",
+        "sha256"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "time": {
+      "type": "string",
+      "minLength": 10
+    }
+  }
+}

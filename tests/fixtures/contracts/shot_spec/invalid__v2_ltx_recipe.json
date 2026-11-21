@@ -1,0 +1,116 @@
+{
+ "schema": "shot_spec/2",
+ "job_id": "job-001",
+ "shot_id": "s1",
+ "lane": "VIDEO_3D",
+ "recipe": "ltx_i2v/1",
+ "clock": {
+  "fps": 24,
+  "frames": 96,
+  "start_frame": 480
+ },
+ "frame": {
+  "width": 2560,
+  "height": 1440,
+  "render_scale": 1.0
+ },
+ "scene": {
+  "template_asset": {
+   "id": "scene_template.tent_1812",
+   "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "era": "napoleonic",
+  "set_assets": [
+   {
+    "id": "model.camp_table",
+    "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+   }
+  ],
+  "characters": [
+   {
+    "cast_id": "nap",
+    "asset": {
+     "id": "model.napoleon",
+     "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+    },
+    "rig": {
+     "id": "rig.ubc_humanoid",
+     "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+    },
+    "animation": {
+     "id": "animation.talk_gesture",
+     "sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+    },
+    "position": [
+     0,
+     0,
+     0
+    ],
+    "facing_deg": 180
+   }
+  ],
+  "camera": {
+   "rig": "push",
+   "start": {
+    "pos": [
+     0,
+     -3,
+     1.6
+    ],
+    "yaw_deg": 0,
+    "pitch_deg": 0
+   },
+   "end": {
+    "pos": [
+     0,
+     -2.4,
+     1.6
+    ],
+    "yaw_deg": 0,
+    "pitch_deg": 0
+   },
+   "lens_mm": 50,
+   "ease": "ease_in_out"
+  },
+  "light_rig": "tent_candle_key_rim",
+  "weather": null,
+  "props": [
+   {
+    "id": "prop.candle",
+    "sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+   }
+  ]
+ },
+ "performance": {
+  "lipsync": true,
+  "rhubarb": {
+   "path": "audio/rhubarb/s1.json",
+   "sha256": "1111111111111111111111111111111111111111111111111111111111111111"
+  },
+  "mouth_shapes": 8,
+  "dialogue_cover": "on_screen"
+ },
+ "look": {
+  "bible_version": "1.5",
+  "line_weight_px": 2.0,
+  "crease_deg": 134,
+  "shading_steps": 3,
+  "view_transform": "AgX",
+  "grade_look": "Medium High Contrast",
+  "paper": {
+   "asset": {
+    "id": "texture.paper_grain",
+    "sha256": "2222222222222222222222222222222222222222222222222222222222222222"
+   },
+   "opacity": 0.12
+  }
+ },
+ "render": {
+  "profile": "eevee_full",
+  "samples": 64,
+  "motion_blur": true,
+  "denoise": false,
+  "output": "mkv_ffv1"
+ },
+ "seed": 1
+}

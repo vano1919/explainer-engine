@@ -1,3 +1,4 @@
+
 """P8 retry router and the ``qa_report/1`` writer (docs/CONTRACTS.md, OR-04, CN-13, BP-165).
 
 A failed shot is retried in one fixed order and never a fourth time:

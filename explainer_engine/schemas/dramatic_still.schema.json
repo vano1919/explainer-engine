@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "dramatic_still.schema.json",
+  "title": "Dramatic change inside a held still (BP-170)",
+  "type": "object",
+  "required": ["kind", "at_s"],
+  "additionalProperties": false,
+  "properties": {
+    "kind": {"enum": ["cutout_relocation", "plate_swap", "composite_cutout_and_plate"]},
+    "subject_layer": {"type": "string", "minLength": 1},
+    "from_box": {"$ref": "#/$defs/box"},
+    "to_box": {"$ref": "#/$defs/box"},
+    "relocation_distance_frac": {"type": "number", "minimum": 0.25, "maximum": 1.5},
+    "subject_area_frac": {"type": "number", "minimum": 0.08, "maximum": 1},
+    "plate_swap_pixel_frac": {"type": "number", "minimum": 0.30, "maximum": 1},
+    "at_s": {"type": "number", "exclusiveMinimum": 0},
+    "bg_before": {"type": "string", "minLength": 1},
+    "bg_after": {"type": "string", "minLength": 1}
+  },
+  "allOf": [
+    {"if": {"properties": {"kind": {"enum": ["cutout_relocation", "composite_cutout_and_plate"]}}},
+     "then": {"required": ["subject_layer", "from_box", "to_box", "relocation_distance_frac", "subject_area_frac"]}},
+    {"if": {"properties": {"kind": {"enum": ["plate_swap", "composite_cutout_and_plate"]}}},
+     "then": {"required": ["bg_before", "bg_after", "plate_swap_pixel_frac"]}}
+  ],
+  "$defs": {
+    "box": {"type": "array", "minItems": 4, "maxItems": 4, "items": {"type": "number", "minimum": 0, "maximum": 1}}
+  }
+}

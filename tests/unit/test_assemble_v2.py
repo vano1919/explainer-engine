@@ -207,6 +207,10 @@ def test_room_tone_lands_in_bp116_s_band_and_a_close_spot_keeps_more_of_the_top_
 def test_the_room_tone_has_no_digital_silence_even_where_nothing_else_plays():
     total = 8 * FPS
     nar = np.zeros(total * SRATE // FPS, np.float32)
+    # the one word is spoken (a steady tone): since v4.3 P0.4 SD-02 also checks the narration stem inside every word, and a silent
+    # word is a dropout; this test is about the room tone under the rest of the mix
+    a, z = 10 * SRATE // FPS, 20 * SRATE // FPS
+    nar[a:z] = (0.1 * np.sin(2 * np.pi * 220 * np.arange(z - a) / SRATE)).astype(np.float32)
     lo, hi = SR.T("BP-116", "room_tone_dbfs")
     tone = A.room_tone("hall", 3, 30.0)
     crest = 20 * np.log10(np.abs(tone).max() / np.sqrt(np.mean(tone.astype(np.float64) ** 2)))

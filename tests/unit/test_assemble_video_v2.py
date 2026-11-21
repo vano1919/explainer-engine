@@ -211,6 +211,17 @@ def test_build_video_v2_encodes_the_master_frame_at_the_job_fps_and_writes_the_d
     assert json.loads(r["otio"].read_text(encoding="utf-8"))["OTIO_SCHEMA"] == "Timeline.1"
 
 
+@pytest.mark.skipif(shutil.which("ffmpeg") is None or shutil.which("ffprobe") is None, reason="needs ffmpeg")
+def test_clip_frame_reader_uses_ffmpeg9_fps_mode_passthrough_without_dropping_frames(tmp_path):
+    clip = tmp_path / "source.mp4"
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "lavfi", "-i", "testsrc=size=64x36:rate=24:duration=1",
+                    "-c:v", "libx264", "-pix_fmt", "yuv420p", str(clip)], check=True)
+    count, width, height = ASM.clip_info(clip)
+    frames = list(ASM.clip_frames(clip, 0, count))
+    assert count == 24
+    assert all(frame.shape == (height, width, 3) for frame in frames)
+
+
 @pytest.mark.parametrize("lane,match", [("HOST_COMMENTARY", "D-89"), ("DRAMA_BLOCKED_3D", "D-75"), ("NOT_A_LANE", "CN-01")])
 def test_a_refused_or_unknown_lane_in_film_shots_does_not_compile(tmp_path, lane, match):
     job, shots, manifest = make_job(tmp_path)

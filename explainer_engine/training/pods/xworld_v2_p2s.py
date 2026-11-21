@@ -1,3 +1,4 @@
+
 """The xworld_v2 reference test P2S (D-75; the Opus thread's plan 2026-10-26 16:17 UTC, ვანო's panorama question 16:14):
 does a master frame plus one model sheet per person keep the faces and clothes across the shots of a scene, and do a lower
 cfg (4.0 -> 2.5) or a lower LoRA weight (1.0 -> 0.7) take the grain and the heavy colour out of the edits?

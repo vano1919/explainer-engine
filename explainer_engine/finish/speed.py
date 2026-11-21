@@ -1,3 +1,4 @@
+
 """Speed as a finishing step (ED-06): the finished video is time-compressed (picture and sound together, pitch kept), the
 voice is never re-synthesised. ``excerpts`` makes short samples of the BP-02 rates of the same places for the creator to
 compare; ``retime`` makes the full file at the chosen rate, never above BP-02's ceiling (the tempo just-noticeable

@@ -1,3 +1,4 @@
+
 """``python -m explainer_engine.cloud.env_presence [NAME ...]``: the pre-pod gate for the GitHub repository secrets the cloud
 workflows read (CR-19). It prints, for each name, only ``present`` or ``MISSING`` and exits 1 when any is missing or blank. It never
 prints a value, a prefix, a length or a hash, so a log line cannot leak or hint at a secret. stdlib only.

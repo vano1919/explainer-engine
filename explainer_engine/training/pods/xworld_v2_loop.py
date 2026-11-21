@@ -1,3 +1,4 @@
+
 """The xworld_v2 picture-strategy loop (the Opus plan /mnt/project-files/xworld_v2/STRATEGY_LOOP_PLAN_2026-10-26.md, OR-26).
 
 The loop: draw -> measure -> attribute each failure to ONE cause -> change only that cause -> draw again. This module is the free part

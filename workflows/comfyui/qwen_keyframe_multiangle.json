@@ -1,0 +1,97 @@
+{
+  "_meta": {
+    "workflow_id": "qwen_keyframe_multiangle_v1",
+    "stage": "stage2_keyframes",
+    "description": "Parameterized local ComfyUI API workflow for Stage 2 2D Anchored Storyboard Keyframes (Qwen-Image-Edit-2511 + Multiple-Angles-LoRA or Qwen-Image-2.1 + xworld_v2, D-123)."
+  },
+  "1": {
+    "class_type": "UNETLoader",
+    "inputs": {
+      "unet_name": "{{checkpoint_file}}",
+      "weight_dtype": "fp8_e4m3fn"
+    }
+  },
+  "2": {
+    "class_type": "LoraLoaderModelOnly",
+    "inputs": {
+      "model": ["1", 0],
+      "lora_name": "{{lora_file}}",
+      "strength_model": 0.85
+    }
+  },
+  "3": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "{{location_anchor_image}}"
+    }
+  },
+  "4": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "{{character_reference_image}}"
+    }
+  },
+  "5": {
+    "class_type": "QwenMultiangleCameraNode",
+    "inputs": {
+      "horizontal_azimuth_deg": "{{horizontal_azimuth_deg}}",
+      "vertical_angle": "{{vertical_angle}}",
+      "shot_size": "{{shot_size}}"
+    }
+  },
+  "6": {
+    "class_type": "TextEncodeQwenImageEditPlus",
+    "inputs": {
+      "prompt": "{{positive_prompt}}",
+      "multiangle_token": ["5", 0],
+      "image1": ["3", 0],
+      "image2": ["4", 0]
+    }
+  },
+  "7": {
+    "class_type": "TextEncodeQwenImageEditPlus",
+    "inputs": {
+      "prompt": "{{negative_prompt}}",
+      "multiangle_token": "",
+      "image1": ["3", 0],
+      "image2": ["4", 0]
+    }
+  },
+  "8": {
+    "class_type": "EmptyLatentImage",
+    "inputs": {
+      "width": "{{width}}",
+      "height": "{{height}}",
+      "batch_size": 1
+    }
+  },
+  "9": {
+    "class_type": "KSampler",
+    "inputs": {
+      "model": ["2", 0],
+      "positive": ["6", 0],
+      "negative": ["7", 0],
+      "latent_image": ["8", 0],
+      "seed": "{{seed}}",
+      "steps": "{{steps}}",
+      "cfg": "{{cfg_scale}}",
+      "sampler_name": "euler",
+      "scheduler": "simple",
+      "denoise": 1.0
+    }
+  },
+  "10": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": ["9", 0],
+      "vae": ["1", 0]
+    }
+  },
+  "11": {
+    "class_type": "SaveImage",
+    "inputs": {
+      "images": ["10", 0],
+      "filename_prefix": "{{output_prefix}}"
+    }
+  }
+}
