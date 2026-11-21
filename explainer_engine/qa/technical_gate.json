@@ -1,0 +1,26 @@
+{
+  "option": "provisional",
+  "video": {
+    "min_width": 1920,
+    "min_height": 1080,
+    "fps_min": 23.9,
+    "fps_max": 60.1,
+    "min_bitrate_kbps": 4000,
+    "max_black_frame_ratio": 0.02,
+    "max_frozen_frame_ratio": 0.05,
+    "min_sharpness": 0.5
+  },
+  "audio": {
+    "lufs_min": -16.5,
+    "lufs_max": -13.5,
+    "true_peak_max_db": -1.0,
+    "max_clipped_samples_ratio": 0.0001,
+    "min_speech_to_noise_db": 20.0,
+    "max_silence_ratio": 0.4
+  },
+  "photo": {
+    "min_width": 1920,
+    "min_height": 1080,
+    "min_sharpness": 0.5
+  }
+}
