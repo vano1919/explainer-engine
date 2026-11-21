@@ -1,0 +1,16 @@
+{
+ "id": "S01_SH004",
+ "photo": "../media/photos/S01_SH004.jpeg",
+ "film_file": "../episode_film.json",
+ "seconds": 5.0,
+ "camera": {
+  "move": "truck",
+  "dir": 1,
+  "push": 0.0
+ },
+ "living": {
+  "snow": 0.0,
+  "mist": 0.4,
+  "sky_amp": 0.5
+ }
+}

@@ -1,0 +1,37 @@
+{
+ "kind": "map",
+ "id": "S02_SH003",
+ "size": [
+  1280,
+  720
+ ],
+ "fps": 24,
+ "seconds": 6.0,
+ "line_geojson": "../front.geojson",
+ "line_t": [
+  0.0,
+  0.2
+ ],
+ "counter": null,
+ "date_chip": [
+  {
+   "t": 0.0,
+   "text": "December 1914"
+  }
+ ],
+ "towns": [],
+ "footnote": "Map data: OpenStreetMap contributors, OpenFreeMap; front: West Point map (public domain), approximate",
+ "film_file": "../episode_film.json",
+ "font": "preset",
+ "center": [
+  2.9,
+  50.7
+ ],
+ "zoom": 7.2,
+ "camera": {
+  "move": "zoom_in",
+  "zoom_from": 6.9,
+  "zoom_to": 7.6,
+  "ease": "smoothstep"
+ }
+}

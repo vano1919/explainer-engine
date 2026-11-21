@@ -1,0 +1,37 @@
+{
+ "kind": "map",
+ "id": "S02_SH001",
+ "size": [
+  1280,
+  720
+ ],
+ "fps": 24,
+ "seconds": 6.0,
+ "line_geojson": "../empty_line.geojson",
+ "line_t": [
+  0.0,
+  5.9
+ ],
+ "counter": null,
+ "date_chip": [
+  {
+   "t": 0.0,
+   "text": "August 1914"
+  }
+ ],
+ "towns": [],
+ "footnote": "Map data: OpenStreetMap contributors, OpenFreeMap",
+ "film_file": "../episode_film.json",
+ "font": "preset",
+ "center": [
+  4.9,
+  49.4
+ ],
+ "zoom": 6.25,
+ "camera": {
+  "move": "zoom_in",
+  "zoom_from": 6.0,
+  "zoom_to": 6.5,
+  "ease": "smoothstep"
+ }
+}
