@@ -1,0 +1,7 @@
+video measured: {'width': 1280, 'height': 720, 'fps': 24.0, 'bitrate_kbps': 861.128, 'black_frame_ratio': None, 'frozen_frame_ratio': None, 'sharpness': None}
+video problems: ['missing metric black_frame_ratio', 'missing metric frozen_frame_ratio', 'missing metric sharpness']
+photo measured: {'width': 640, 'height': 360, 'sharpness': 1.4264993217562454}
+photo problems: ['width below minimum 1920', 'height below minimum 1080']
+before_frame24_960x540.png size 960 540 sharp 1353.5 problems ['width below minimum 1920', 'height below minimum 1080']
+after_bold_frame24_960x540.png size 960 540 sharp 1374.3 problems ['width below minimum 1920', 'height below minimum 1080']
+after_light_frame24_960x540.png size 960 540 sharp 1296.6 problems ['width below minimum 1920', 'height below minimum 1080']
