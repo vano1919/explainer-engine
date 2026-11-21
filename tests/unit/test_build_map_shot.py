@@ -24,7 +24,10 @@ def test_the_lane_gets_spec_tiles_and_a_workdir(tmp_path, monkeypatch):
     seen = {}
     monkeypatch.setattr(render, "render_shot", lambda spec, out, tiles, work: seen.update(spec=spec, tiles=tiles, work=work) or {"frames": 3})
     monkeypatch.setattr(BM, "post", lambda base, out, spec, fp=True: {"frames": 3})
-    (tmp_path / "s.json").write_text((EX / "spec.json").read_text())
+    spec = json.loads((EX / "spec.json").read_text())
+    if "film_file" in spec and not Path(spec["film_file"]).is_absolute():
+        spec["film_file"] = str((EX / spec["film_file"]).resolve())
+    (tmp_path / "s.json").write_text(json.dumps(spec))
     log = BM.build(tmp_path / "s.json", tmp_path / "o.mp4", tile_dir=tmp_path / "t")
     assert seen["tiles"].endswith("t") and Path(seen["spec"]).name == "s.json" and log["render"] == {"frames": 3}
     assert (tmp_path / "o.render_log.json").exists() and not Path(seen["work"]).exists()      # temp workdir is cleaned

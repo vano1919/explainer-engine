@@ -9,3 +9,9 @@ Cost: none yet. Next: P2 fail-closed fixes through the DeepSeek tool.
 ### P2 — fail closed (DeepSeek Flash, $0.002)
 `production/build_shot.validate_spec` now runs `build_map_shot.check_spec` for map shots (camera, film_file, arrows were checked only at render time).
 Photo shots already require camera and film since #252; `living` has no silent drift path under `build_shot`. Test: `tests/unit/test_no_silent_fallbacks.py`.
+
+### P3 — receipts and delivery gate (DeepSeek Pro, ~$0.29 in 3 attempts)
+New `qa/delivery_gate.py`: reads the episode log and every shot's `.render_log.json` receipt; a missing receipt, key, clip, camera move outside the five,
+film id, font, depth, a non-PASS plume check or `paid_calls != 0` is FAIL. `build_map_shot` receipts now carry camera, film_id and font;
+`build_episode` runs the gate, writes `<out>.delivery_gate.json` and raises on FAIL. Tests: `tests/unit/test_delivery_gate.py` plus adapted fixtures.
+Claude read the gate logic in full. Old cached map clips without the new receipt keys FAIL until rebuilt (intended).
