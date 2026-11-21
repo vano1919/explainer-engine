@@ -38,6 +38,24 @@ def test_every_copied_file_is_listed_in_provenance():
             assert path.relative_to(ROOT).as_posix() in provenance, path
 
 
+COPIED_HEADER = re.compile(r"^# from ([\w.-]+/[\w.-]+)@([0-9a-f]{7,40}):(\S+) \(([^)]+)\)\s*$", re.M)
+
+
+def test_every_third_party_copy_header_is_listed_in_provenance():
+    """D-115 (draft): any ``# from <owner>/<repo>@<commit>:<path> (<licence>)`` header, not only the TMR one, needs a row that
+    names the file, the repo, the commit and the licence."""
+    provenance = (ROOT / "docs" / "PROVENANCE.md").read_text(encoding="utf-8")
+    found = 0
+    for path in (ROOT / "explainer_engine").rglob("*.py"):
+        head = "\n".join(path.read_text(encoding="utf-8").splitlines()[:5])
+        for repo, commit, src, licence in COPIED_HEADER.findall(head):
+            found += 1
+            row = next((line for line in provenance.splitlines() if path.relative_to(ROOT).as_posix() in line), None)
+            assert row is not None, f"{path}: header names {repo}@{commit} but docs/PROVENANCE.md has no row for the file"
+            assert repo in row and commit[:7] in row and licence in row, f"{path}: the PROVENANCE row must name {repo}, {commit[:7]} and {licence}"
+    assert found >= 1   # polyhaven.py (Blender-MCP) is the first non-TMR copy
+
+
 def test_the_chatgpt_copy_of_claude_is_gone_and_the_ci_does_not_trigger_on_it():
     """P0a / D2 (2026-10-29): no second instruction tree; `.claude/` is the only one."""
     assert not (ROOT / ".chatgpt").exists()

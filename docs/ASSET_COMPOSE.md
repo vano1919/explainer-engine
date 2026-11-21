@@ -1,5 +1,7 @@
 # Shots composed from reusable assets
 
+> **Legacy (image-generation era) banner, 2026-11-05 (ICW-01, D-96).** Since D-96 the VIDEO/STILL pixels come from Blender ([roadmap](architecture/INK_CHRONICLE_OPUS_IMPLEMENTATION_ROADMAP_2026-11-04.md) section 7, D-97); the HELPER rules here stay in force; prompt rules apply to reference art only; the Qwen keyframe, LTX clip, sprite and 2.5D-still procedures below describe the legacy route (D-43, D-80, D-105) and stay readable for the episodes already made. Nothing on this page was deleted.
+
 **Superseded as the production route** (ვანო, 2026-10-25 22:22 Tbilisi: "we are on D-75 now"): keyframes are drawn
 from continuity cards and references ([SHOT_CONTINUITY](SHOT_CONTINUITY.md), [D-75](DECISIONS_AND_OPEN_QUESTIONS.md)).
 This page stays as history; its code may serve tests.

@@ -4,10 +4,14 @@ import copy
 import json
 from pathlib import Path
 
+import pytest
+
 from explainer_engine.qa import style_prompt
 from explainer_engine.scripting import film_shots as F
 from explainer_engine.scripting.shot_prompt_lint import check_shot
 from explainer_engine.training import lora_rules
+
+from _napoleon import legacy_cards
 
 ROOT = Path(__file__).resolve().parents[2]
 EXAMPLE = ROOT / "examples" / "film_shots" / "bus_in_the_ice_age.json"
@@ -237,7 +241,7 @@ def test_composition_goes_to_the_gate_card_and_the_cut_prompt_not_the_keyframe_w
 
 
 def test_keyframes_and_sheets_keep_the_moment_shape_and_name_each_figure_once():
-    d = json.loads((ROOT / "examples" / "napoleon_vs_genghis" / "film_shots.json").read_text(encoding="utf-8"))
+    d = legacy_cards()  # the legacy prompt composer's worked example (the committed cards are film_shots/3 since ICW-02)
     style = [p for p in F.compose(d) + F.sheet_prompts(d) if p["kind"] == "keyframe"]  # moments and sheets (LT-65)
     assert style and not [f for p in style for f in style_prompt.check(p["prompt"])]  # LT-65
     for p in style:  # LY-09: a repeated tag drew a twin
@@ -291,8 +295,15 @@ def test_episode_rules_apply_only_under_the_engine():
     d = doc()
     d["shots"][0].pop("tier", None)
     assert not rules(d) & {"ZI-02", "ZI-03", "KP-35", "KP-37"}
-    d = _episode(doc())
+    d = _episode(doc(), n=10)
+    for i in (0, 4, 6):   # BP-109 (the creator, 2026-11-01): 30 % stills; film_shots/1 names no helper, video+helper = 70 %
+        d["shots"][i]["tier"] = "hold"
     assert not rules(d) & {"KP-35", "KP-36", "KP-37", "KP-38", "KP-40", "ZI-02", "ZI-03"}
+    all_full = _episode(doc(), n=10)
+    assert {f["where"] for f in F.check(all_full) if f["rule"] == "KP-37"} == {"episode"}   # 100 % video breaks the mix
+    long_still = copy.deepcopy(d)
+    long_still["shots"][0]["seconds"] = F.STILL_SHOT_MAX_S + 1
+    assert "X00" in {f["where"] for f in F.check(long_still) if f["rule"] == "KP-37"}
     d["shots"][0].pop("tier")
     assert "ZI-03" in rules(d, "FAIL")
 
@@ -315,13 +326,25 @@ def test_long_clips_holds_and_lines_on_holds():
     talk["tier"] = "light"
     assert "KP-37" in rules(d, "FAIL")
     talk["tier"] = "full"
-    talk["seconds"] = F.CLIP_MAX_S + 2
+    talk["seconds"] = F.DIALOGUE_SHOT_MAX_S + 1
     assert "KP-36" in rules(d, "REVIEW")
     d = _episode(doc())
     for s in d["shots"][:4]:
         if not s.get("dialogue"):
             s["tier"] = "hold"
     assert "KP-37" in rules(d, "REVIEW")
+
+
+
+def test_non_dialogue_video_can_hold_a_continuous_action_up_to_15_seconds():
+    d = _episode(doc())
+    action = next(s for s in d["shots"] if not s.get("dialogue"))
+    action["tier"] = "full"
+    action["seconds"] = 12.0
+    action["last_frame"] = True
+    assert not [f for f in F.check(d) if f["rule"] == "KP-36" and f["where"] == action["id"]]
+    action["seconds"] = F.NON_DIALOGUE_VIDEO_MAX_S + 1
+    assert [f for f in F.check(d) if f["rule"] == "KP-36" and f["where"] == action["id"]]
 
 
 def test_rhythm_and_camera_moves():
@@ -382,10 +405,23 @@ def test_sheet_prompts_for_named_heroes_only():
                 if f["severity"] == "FAIL"]
 
 
-def test_the_napoleon_episode_is_clean_under_the_engine():
+def test_the_napoleon_episode_is_clean_under_the_engine_except_its_held_reactions():
     ep = json.loads((ROOT / "examples" / "napoleon_vs_genghis" / "film_shots.json").read_text(encoding="utf-8"))
     assert ep["engine"] == F.ENGINE
-    assert not F.check(ep)
+    # since ICW-03 the lane planner meets BP-109's 60/30/10 (no episode-level KP-37 mix finding any more); what is left is
+    # KP-37's REVIEW on the played reaction shots the planner held as STILL_3D plates (mostly archetype 5, solitary emotion,
+    # whose default lane is the still): a still cannot act the card's action, so a reviewer looks at each one
+    found = F.check(ep)
+    by = {s["id"]: s for s in ep["shots"]}
+    assert not [f for f in found if f["where"] == "episode"]
+    # D-116 (2026-11-06): the planner now writes each shot's route; the three 2 s J4 shots (one LTX clip each, no ltx_clips yet)
+    # are under BP-172's 3-6 s clip band, a KP-49 REVIEW the step-3 plan answers (cut them as J5 or plan longer clips)
+    clips = [f for f in found if f["rule"] == "KP-49"]
+    assert [(f["severity"], by[f["where"]]["route"], by[f["where"]]["seconds"]) for f in clips] == [("REVIEW", "J4", 2)] * 3
+    found = [f for f in found if f["rule"] != "KP-49"]
+    assert found and all(f["rule"] == "KP-37" and f["severity"] == "REVIEW" and by[f["where"]]["lane"] == "STILL_3D"
+                         and by[f["where"]]["mode"] == "scene" and "acted peak" in f["detail"] for f in found)
+    assert len(found) == 17
     assert sum(s["seconds"] for s in ep["shots"]) == 900
 
 
@@ -546,7 +582,7 @@ def test_a_picture_word_that_names_an_absent_thing_is_flagged():
 
 
 def test_a_four_hero_moment_names_everyone_and_gives_the_others_their_reactions():
-    d = F.load(ROOT / "examples" / "napoleon_vs_genghis" / "film_shots.json")
+    d = legacy_cards()  # the legacy prompt composer's worked example (the committed cards are film_shots/3 since ICW-02)
     for sid in ("S04-01", "S08-01", "S13-01"):  # the LoRA thread: these dropped a hero (KP-45)
         s = next(x for x in d["shots"] if x["id"] == sid)
         k = F.keyframe_prompt(d, s)
@@ -558,3 +594,48 @@ def test_a_four_hero_moment_names_everyone_and_gives_the_others_their_reactions(
     assert not [f for f in F.check(d) if f["rule"] == "KP-45"]
     del s["reactions"]
     assert ("KP-45", "S06-07") in {(f["rule"], f["where"]) for f in F.moment_check(d)}  # nobody reacts
+
+
+# ---- film_shots/3 (ICW-02, D-97): visual_lane dispatches on the contract version --------------------------------------
+@pytest.mark.parametrize("lane,share", [("VIDEO_3D", "video"), ("STILL_3D", "still"), ("HELPER", "helper")])
+def test_visual_lane_reads_the_three_ink_chronicle_lanes_directly(lane, share):
+    assert F.visual_lane({"lane": lane, "archetype": None}, "film_shots/3") == share
+    assert F.visual_lane({"lane": lane, "archetype": 7}) == share  # a /3 lane needs no schema hint
+
+
+def test_visual_lane_refuses_an_unknown_film_shots_3_lane():
+    with pytest.raises(ValueError):
+        F.visual_lane({"lane": "KEYFRAME_LTX", "archetype": None}, "film_shots/3")
+
+
+def test_a_film_shots_2_string_archetype_no_longer_crashes_the_share_count():
+    assert F.visual_lane({"lane": "COMPENSATOR", "archetype": "PARALLAX_25D_TABLEAU"}, "film_shots/2") == "still"
+    assert F.visual_lane({"lane": "MAP", "archetype": "LOGISTICS_TETHER_AND_ATTRITION"}, "film_shots/2") == "helper"
+    assert F.visual_lane({"lane": "KEYFRAME_LTX", "archetype": "scene_wide", "tier": "hold"}, "film_shots/2") == "still"
+    assert F.visual_lane({"lane": "KEYFRAME_LTX", "archetype": "scene_wide", "tier": "full"}, "film_shots/2") == "video"
+
+
+def test_film_shots_3_has_no_prompt_composer():
+    doc = json.loads((ROOT / "tests" / "fixtures" / "contracts" / "film_shots_3" / "valid.json").read_text(encoding="utf-8"))
+    with pytest.raises(ValueError, match="film_shots/3"):
+        F.compose(doc)
+    assert "VIDEO_3D" in F.shotlist(doc)
+    napoleon = json.loads((ROOT / "examples" / "napoleon_vs_genghis" / "film_shots.json").read_text(encoding="utf-8"))
+    assert not [f for f in F.check(napoleon) if f["severity"] == "FAIL"]  # the staging checks still run, the prompt lints do not
+
+
+def test_kp49_bounds_one_ltx_clip_of_a_j2_or_j4_shot_and_bp108_stays_the_scene():
+    """D-116 (the creator, 2026-11-06): BP-108 is the scene (10-15 s), BP-172 one LTX generation (target 3-6 s, at most 8 s)."""
+    assert F.LTX_CLIP_TARGET_S == (3.0, 6.0) and F.LTX_CLIP_MAX_S == 8.0 and F.NON_DIALOGUE_VIDEO_MAX_S == 15.0
+    assert F.lint.LTX_CLIP_TARGET_S == F.LTX_CLIP_TARGET_S and F.lint.LTX_CLIP_MAX_S == F.LTX_CLIP_MAX_S   # one home, two readers
+    clip = lambda s: {"seconds": s, "frames": 8 * round(s * 3) + 1, "width": 1920, "height": 1088}  # noqa: E731
+    battle = {"id": "b", "route": "J4", "seconds": 12, "ltx_clips": [clip(6), clip(6)]}
+    assert F.ltx_clip_findings(battle) == []
+    battle["ltx_clips"] = [clip(2.5), clip(9)]
+    assert [(r, sev) for r, sev, _ in F.ltx_clip_findings(battle)] == [("KP-49", "REVIEW"), ("KP-49", "FAIL")]
+    # no ltx_clips yet: the whole shot is one planned clip, a REVIEW outside the band (never a FAIL before the clips are planned)
+    assert [(r, sev) for r, sev, _ in F.ltx_clip_findings({"id": "d", "route": "J2", "seconds": 12})] == [("KP-49", "REVIEW")]
+    assert F.ltx_clip_findings({"id": "d", "route": "J2", "seconds": 5}) == []
+    # a J5 or H shot, and a card with no route (film_shots/1, /2), is never an LTX generation
+    for shot in ({"id": "t", "route": "J5", "seconds": 14}, {"id": "m", "route": "H", "seconds": 9}, {"id": "o", "seconds": 12}):
+        assert F.ltx_clips(shot) == [] and F.ltx_clip_findings(shot) == []

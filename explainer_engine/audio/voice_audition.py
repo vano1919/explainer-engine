@@ -1,3 +1,4 @@
+
 """Voice audition (P4b, VC-06/VC-07): the one place a voice is measured. Free, numpy only, deterministic.
 
 A candidate voice is listened to for free (the library preview the connector's ``creative_list_voices`` returns, or a test

@@ -1,0 +1,26 @@
+{
+  "schema": "map_actions_proposal/1",
+  "episode_id": "ep_toba",
+  "status": "proposal for the creator (v4.3 P4 demo); the script's 14 map shots get their actions in P1.5, with his approval",
+  "places": {
+    "toba": {"lon": 98.88, "lat": 2.68, "name": "Toba"},
+    "shinfa": {"lon": 36.0, "lat": 12.8, "name": "Shinfa-Metema"},
+    "jwalapuram": {"lon": 78.1, "lat": 15.3, "name": "Jwalapuram"}
+  },
+  "places_note": "Toba caldera from the archive's map (98.88E 2.68N); the two site positions are approximate (archive values, not checked against the papers yet)",
+  "shots": {
+    "S01_SH008": {"map_view": {"lon": 67.0, "lat": 9.0, "span_km": 9500},
+                  "actions": [{"kind": "pulse", "at_word": "killer", "from": "toba"},
+                              {"kind": "route_arrow", "at_word": "four thousand", "from": "toba", "to": "shinfa"},
+                              {"kind": "counter", "at_word": "four thousand", "value": 4000, "unit": "miles"},
+                              {"kind": "label", "at_word": "away", "from": "shinfa"}]},
+    "S02_SH001": {"map_view": {"lon": 98.0, "lat": 3.0, "span_km": 2600},
+                  "actions": [{"kind": "zoom", "at_word": "sumatra", "to": "toba", "value": 1100},
+                              {"kind": "pulse", "at_word": "magma", "from": "toba"},
+                              {"kind": "label", "at_word": "landmine", "from": "toba"}]},
+    "S02_SH010": {"map_view": {"lon": 88.0, "lat": 6.0, "span_km": 5200},
+                  "actions": [{"kind": "label", "at_word": "toba", "from": "toba"},
+                              {"kind": "highlight", "at_word": "southern ocean", "from": "toba", "value": 250},
+                              {"kind": "plume", "at_word": "summer", "from": "toba", "to": "jwalapuram", "value": 700}]}
+  }
+}

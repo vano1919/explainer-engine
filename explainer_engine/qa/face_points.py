@@ -1,3 +1,4 @@
+
 """Face points measured on the painted pictures (the coordinator's QA note, 2026-10-20: the script's
 ``pictures.<id>.speakers`` are template guesses, e.g. s02_signing puts Belfort at [0.76, 0.42] while he is drawn near
 [0.92, 0.3], so bubble tails point at the wrong hero and rings land on walls). Free and local: YuNet (OpenCV, opencv_zoo,

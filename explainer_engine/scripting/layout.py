@@ -1,3 +1,4 @@
+
 """Shot layout from real sizes and a camera (LY-01..LY-08, docs/KEYFRAME_GATE.md "Layout"): code computes where every figure
 of a keyframe stands and how big it is, checks the numbers, and writes them as a technical prompt, a relative prompt, EliGen
 boxes and a grey blockout / depth picture for a ControlNet. Claude never invents a size. stdlib + Pillow.

@@ -1,3 +1,4 @@
+
 """Prompt-type test of xworld_v1 on held-out scenes (D-80, LT-75); run by xworld_v1_test.sh on a pod (OR-21).
 
 For each held-out chain the REAL first frame is given and frames 2..6 are drawn; each drawn frame is later scored against the

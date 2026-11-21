@@ -5,15 +5,24 @@
       "voice_id": "NOpBlnGInO9m6vDvFkFC",
       "name": "Grandpa Spuds Oxley",
       "role": "narrator",
-      "status": "channel",
+      "status": "retired",
       "model": "eleven_v4",
-      "note": "The channel narrator of both finished videos; the creator's own word, 'the voice is good' (Blueprint veto line V1): only his recorded word replaces it (VC-08). Baseline = the median timbre of Episode 1's Day 1 read before it drifted (spectral tilt -21.3 dB, centroid about 1250 Hz; voice_check docstring, 2026-10-16), not a library preview: the free preview measured centroid 914 Hz and tilt -21.8 dB (sha256 e09253de529f8b2a817af2e55c54979e1109954c89289c120b743f370012a8d5), a stylised sample 27 % darker in centroid, so a preview is never a baseline for centroid. Replace the baseline with the approved first piece of the next episode's sample (OR-19) with `python -m explainer_engine.audio.voice_audition baseline <read> --kind read --ref <path>`.",
+      "note": "Retired 2026-11-01 by the creator's word (VC-08): Odom is the channel narrator. The channel narrator of both finished videos; the creator's own word, 'the voice is good' (Blueprint veto line V1): only his recorded word replaces it (VC-08). Baseline = the median timbre of Episode 1's Day 1 read before it drifted (spectral tilt -21.3 dB, centroid about 1250 Hz; voice_check docstring, 2026-10-16), not a library preview: the free preview measured centroid 914 Hz and tilt -21.8 dB (sha256 e09253de529f8b2a817af2e55c54979e1109954c89289c120b743f370012a8d5), a stylised sample 27 % darker in centroid, so a preview is never a baseline for centroid. Replace the baseline with the approved first piece of the next episode's sample (OR-19) with `python -m explainer_engine.audio.voice_audition baseline <read> --kind read --ref <path>`.",
       "baseline": {
         "kind": "read",
         "ref": "explainer_engine/audio/voice_check.py docstring: Episode 1 Day 1 read, median of the windows before the drift (2026-10-16)",
         "centroid_hz": 1250.0,
         "tilt_db": -21.3
       }
+    },
+    {
+      "voice_id": "CcSJ2r3qw0XU9gJpEPyk",
+      "name": "Odom - Deep, Resonant, Dramatic",
+      "role": "narrator",
+      "status": "channel",
+      "model": "eleven_v4",
+      "note": "The channel narrator since 2026-11-01, the creator's own word (cmsg_01Hnu5zB86sjUj5GtTgaUkPW2XEbaJG2R1L8izYhuy2J5v, 'this is our narrator', after listening to a 41 s eleven_v4 test) and 'make this the standard' (cmsg_01Hnu5zB86sjUj5GtTgaUkPW1QSH5W31W8vYr4E4WLzkuR). An ElevenLabs library voice (human-recorded); designed voices were rejected as 'pure AI'. Every take goes through the narrator polish chain (explainer_engine/audio/narrator_polish.py: +12 dB bass shelf and light cleanup, the creator's ear, same day). No baseline yet: the Oxley baseline is NOT Odom's (Odom's 41 s test take measures centroid 1820 Hz, tilt -5.9 dB, a hype+calm mix, not a read). Register one from the approved first piece of the next sample (OR-19) with `python -m explainer_engine.audio.voice_audition baseline <read> --kind read --ref <path>`; until then EL-13 reports REVIEW.",
+      "baseline": null
     }
   ]
 }

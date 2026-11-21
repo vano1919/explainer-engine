@@ -1,3 +1,4 @@
+
 """Footage -> training material for the next-pose (photo) and motion (video) LoRAs (docs/LORA_TRAINING.md section 6,
 FS-00..FS-07). Free, CPU: ffprobe/ffmpeg + OpenCV + PySceneDetect (``pip install scenedetect opencv-python-headless``).
 

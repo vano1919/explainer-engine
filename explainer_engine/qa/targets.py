@@ -1,3 +1,4 @@
+
 """House audio targets, one definition for the mixer, the Shorts renderer, the scorecard and the docs: every number is read
 from the sourced-rules registry (BP-50 long-form loudness and true peak, BP-51 dialogue anchor, BP-52 background under speech,
 BP-59 narration-stem range, BP-61 Shorts loudness; ``explainer_engine/standards/sourced_rules.json``, D-59). Nothing here

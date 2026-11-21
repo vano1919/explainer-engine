@@ -5,6 +5,8 @@ description: Design rules for the channel's drawn characters (silhouette, propor
 
 # The animated universe: simple to make, good to feel
 
+**Ink Chronicle (D-96, 2026-11-05):** characters are rigged 3D models (asset library v2, D-110) animated in Blender (Mixamo cycles retargeted, Rhubarb mouth shapes, the 5-second voiced close-up cap of BP-108); the silhouette, proportion and one-key-light rules below stay; the Qwen keyframe, LTX clip, sprite and 2.5D-still wording on this page is the legacy image-generation route (D-43, D-80, D-105), kept for the episodes already made.
+
 > **Retired in part (creator 2026-10-22, docs/PROGRESS.md "so bad there is no hope"; D-77/D-78):** the cut-out rig (production/rig.py CYCLES, mouth_at, drop_y, Spring) moves no character in an episode. A character moves through a clip prompt: docs/SHOT_PROMPTS.md (KP-xx) and docs/SHOT_CONTINUITY.md (CT-xx). The design rules below (silhouette, proportions, one key light) stay.
 
 The creator's muse (2026-10-22): a world of simple, beautiful animation; complexity is never required, but the emotion

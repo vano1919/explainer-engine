@@ -1,0 +1,1540 @@
+{
+ "schema": "route_shots/draft0 (route test only; not a contract, no schema change)",
+ "episode": "Route test: the ford (new approach, route-aware)",
+ "style": {
+  "trigger": "xworld style",
+  "lora": "xworld_v2 ck3000 @0.7 (cloud_pins.models.loras.xworld_v2)",
+  "ltx_style_sentence": "Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves.",
+  "restyle_sentence": "Restyle the layout video as hand-drawn 2D ink cartoon animation: bold black ink outlines, chalky painterly texture, muted earthy colours with vivid glowing accents. Keep every shape, crowd position and the camera path of the layout exactly; add no new objects."
+ },
+ "cast": {
+  "H1": {
+   "tag": "the broad commander with a grey beard, a dented steel helmet and a red cloak",
+   "voice": "a deep, tired man's voice"
+  },
+  "H2": {
+   "tag": "the young scout in a green hood with a short bow on his back",
+   "voice": "a quick, breathless young man's voice"
+  },
+  "H3": {
+   "tag": "the old elder with a long white beard, a blue robe and a wooden staff",
+   "voice": "a slow, dry old man's voice"
+  }
+ },
+ "places": {
+  "A1": "a tent camp at dusk, white canvas tents around a campfire, a wooden table with a map under an awning",
+  "A2": "a stone castle courtyard at noon, a well in the middle, high grey walls around",
+  "A3": "an open grassy field with a shallow river ford, trampled grass and broken spears",
+  "A4": "the wooden deck of a sailing ship at sea, one tall mast, grey waves all around"
+ },
+ "scene_assets": {
+  "schema": "scene_assets/1 (draft for the route test; the real schema lands in ICW-11)",
+  "scenes": {
+   "S01": {
+    "backdrops_360": [
+     {
+      "asset": "A1",
+      "lora_stack": "xworld_v2 ck3000 @0.7 + qwen-360 @0.8",
+      "size": [
+       2048,
+       1024
+      ],
+      "prompt": "xworld style, empty tent camp at dusk, white canvas tents around a campfire, a wooden table with a map under an awning, warm firelight under a dusk sky",
+      "check": "seam + horizon on a 30 degree pan (plan 9)"
+     }
+    ],
+    "heroes": [
+     {
+      "hero": "H1",
+      "sheet": "sheet.h1",
+      "cutouts": [
+       "front",
+       "3q_left",
+       "3q_right",
+       "back"
+      ],
+      "cutout_tool": "BiRefNet, 2 px feather",
+      "lighting_note": "flat ambient lighting, no cast shadows"
+     },
+     {
+      "hero": "H2",
+      "sheet": "sheet.h2",
+      "cutouts": [
+       "front",
+       "3q_left",
+       "3q_right",
+       "back"
+      ],
+      "cutout_tool": "BiRefNet, 2 px feather",
+      "lighting_note": "flat ambient lighting, no cast shadows"
+     },
+     {
+      "hero": "H3",
+      "sheet": "sheet.h3",
+      "cutouts": [
+       "front",
+       "3q_left",
+       "3q_right",
+       "back"
+      ],
+      "cutout_tool": "BiRefNet, 2 px feather",
+      "lighting_note": "flat ambient lighting, no cast shadows"
+     }
+    ],
+    "props": [
+     "wooden table",
+     "map",
+     "campfire",
+     "white tent"
+    ],
+    "light_variant": "dusk",
+    "defects": [],
+    "edit_template": "change nothing else; fix: <defect>"
+   },
+   "S02": {
+    "backdrops_360": [
+     {
+      "asset": "A3",
+      "lora_stack": "xworld_v2 ck3000 @0.7 + qwen-360 @0.8",
+      "size": [
+       2048,
+       1024
+      ],
+      "prompt": "xworld style, empty open grassy field with a shallow river ford, trampled grass, broken spears, low golden sun breaking through grey clouds",
+      "check": "seam + horizon on a 30 degree pan (plan 9)"
+     }
+    ],
+    "heroes": [
+     {
+      "hero": "H1",
+      "sheet": "sheet.h1",
+      "cutouts": [
+       "front",
+       "3q_left",
+       "3q_right",
+       "back"
+      ],
+      "cutout_tool": "BiRefNet, 2 px feather",
+      "lighting_note": "flat ambient lighting, no cast shadows"
+     },
+     {
+      "hero": "H2",
+      "sheet": "sheet.h2",
+      "cutouts": [
+       "front",
+       "3q_left",
+       "3q_right",
+       "back"
+      ],
+      "cutout_tool": "BiRefNet, 2 px feather",
+      "lighting_note": "flat ambient lighting, no cast shadows"
+     }
+    ],
+    "props": [
+     "banner",
+     "sword"
+    ],
+    "light_variant": "morning",
+    "defects": [],
+    "edit_template": "change nothing else; fix: <defect>"
+   },
+   "S03": {
+    "backdrops_360": [
+     {
+      "asset": "A2",
+      "lora_stack": "xworld_v2 ck3000 @0.7 + qwen-360 @0.8",
+      "size": [
+       2048,
+       1024
+      ],
+      "prompt": "xworld style, empty stone castle courtyard at noon, a well in the middle, high grey walls, hard noon sunlight",
+      "check": "seam + horizon on a 30 degree pan (plan 9)"
+     }
+    ],
+    "heroes": [
+     {
+      "hero": "H1",
+      "sheet": "sheet.h1",
+      "cutouts": [
+       "front",
+       "3q_left",
+       "3q_right",
+       "back"
+      ],
+      "cutout_tool": "BiRefNet, 2 px feather",
+      "lighting_note": "flat ambient lighting, no cast shadows"
+     },
+     {
+      "hero": "H2",
+      "sheet": "sheet.h2",
+      "cutouts": [
+       "front",
+       "3q_left",
+       "3q_right",
+       "back"
+      ],
+      "cutout_tool": "BiRefNet, 2 px feather",
+      "lighting_note": "flat ambient lighting, no cast shadows"
+     },
+     {
+      "hero": "H3",
+      "sheet": "sheet.h3",
+      "cutouts": [
+       "front",
+       "3q_left",
+       "3q_right",
+       "back"
+      ],
+      "cutout_tool": "BiRefNet, 2 px feather",
+      "lighting_note": "flat ambient lighting, no cast shadows"
+     }
+    ],
+    "props": [
+     "well",
+     "broadsword",
+     "short sword",
+     "wooden staff"
+    ],
+    "light_variant": "noon",
+    "defects": [],
+    "edit_template": "change nothing else; fix: <defect>"
+   },
+   "S04": {
+    "backdrops_360": [
+     {
+      "asset": "A3",
+      "lora_stack": "xworld_v2 ck3000 @0.7 + qwen-360 @0.8",
+      "size": [
+       2048,
+       1024
+      ],
+      "prompt": "xworld style, empty open grassy field with a shallow river ford, trampled grass, broken spears, low golden sun breaking through grey clouds",
+      "check": "seam + horizon on a 30 degree pan (plan 9)"
+     }
+    ],
+    "heroes": [
+     {
+      "hero": "H1",
+      "sheet": "sheet.h1",
+      "cutouts": [
+       "front",
+       "3q_left",
+       "3q_right",
+       "back"
+      ],
+      "cutout_tool": "BiRefNet, 2 px feather",
+      "lighting_note": "flat ambient lighting, no cast shadows"
+     },
+     {
+      "hero": "H2",
+      "sheet": "sheet.h2",
+      "cutouts": [
+       "front",
+       "3q_left",
+       "3q_right",
+       "back"
+      ],
+      "cutout_tool": "BiRefNet, 2 px feather",
+      "lighting_note": "flat ambient lighting, no cast shadows"
+     }
+    ],
+    "props": [],
+    "light_variant": "rain (Blender fx: rain streaks + wet grade; no new backdrop)",
+    "defects": [],
+    "edit_template": "change nothing else; fix: <defect>"
+   },
+   "S05": {
+    "backdrops_360": [
+     {
+      "asset": "A3",
+      "lora_stack": "xworld_v2 ck3000 @0.7 + qwen-360 @0.8",
+      "size": [
+       2048,
+       1024
+      ],
+      "prompt": "xworld style, empty open grassy field with a shallow river ford, trampled grass, broken spears, low golden sun breaking through grey clouds",
+      "check": "seam + horizon on a 30 degree pan (plan 9)"
+     },
+     {
+      "asset": "A4",
+      "lora_stack": "xworld_v2 ck3000 @0.7 + qwen-360 @0.8",
+      "size": [
+       2048,
+       1024
+      ],
+      "prompt": "xworld style, empty wooden deck of a sailing ship at sea, one tall mast, grey waves all around, cold blue evening light",
+      "check": "seam + horizon on a 30 degree pan (plan 9)"
+     }
+    ],
+    "heroes": [
+     {
+      "hero": "H1",
+      "sheet": "sheet.h1",
+      "cutouts": [
+       "front",
+       "3q_left",
+       "3q_right",
+       "back"
+      ],
+      "cutout_tool": "BiRefNet, 2 px feather",
+      "lighting_note": "flat ambient lighting, no cast shadows"
+     },
+     {
+      "hero": "H3",
+      "sheet": "sheet.h3",
+      "cutouts": [
+       "front",
+       "3q_left",
+       "3q_right",
+       "back"
+      ],
+      "cutout_tool": "BiRefNet, 2 px feather",
+      "lighting_note": "flat ambient lighting, no cast shadows"
+     }
+    ],
+    "props": [
+     "broken spear"
+    ],
+    "light_variant": "smoke (Blender fx: volume smoke); second place A4 for S05-03/04",
+    "defects": [],
+    "edit_template": "change nothing else; fix: <defect>"
+   }
+  }
+ },
+ "hero_sheets": [
+  {
+   "id": "sheet.h1.front",
+   "hero": "H1",
+   "prompt": "xworld style, the broad commander with a grey beard, a dented steel helmet and a red cloak, standing, seen from the front, neutral face, flat ambient lighting, no cast shadows, plain neutral background",
+   "negative": "text, lettering, letters, words, watermark, signature, photo, 3d render",
+   "lora": "xworld_v2 ck3000 @0.7",
+   "note": "angles 2-4 are Qwen edits of the front image (reference), never redrawn from scratch"
+  },
+  {
+   "id": "sheet.h1.3q_left",
+   "hero": "H1",
+   "prompt": "xworld style, the broad commander with a grey beard, a dented steel helmet and a red cloak, standing, turned three quarters to the left, neutral face, flat ambient lighting, no cast shadows, plain neutral background",
+   "negative": "text, lettering, letters, words, watermark, signature, photo, 3d render",
+   "lora": "xworld_v2 ck3000 @0.7",
+   "note": "angles 2-4 are Qwen edits of the front image (reference), never redrawn from scratch"
+  },
+  {
+   "id": "sheet.h1.3q_right",
+   "hero": "H1",
+   "prompt": "xworld style, the broad commander with a grey beard, a dented steel helmet and a red cloak, standing, turned three quarters to the right, neutral face, flat ambient lighting, no cast shadows, plain neutral background",
+   "negative": "text, lettering, letters, words, watermark, signature, photo, 3d render",
+   "lora": "xworld_v2 ck3000 @0.7",
+   "note": "angles 2-4 are Qwen edits of the front image (reference), never redrawn from scratch"
+  },
+  {
+   "id": "sheet.h1.back",
+   "hero": "H1",
+   "prompt": "xworld style, the broad commander with a grey beard, a dented steel helmet and a red cloak, standing, seen from behind, neutral face, flat ambient lighting, no cast shadows, plain neutral background",
+   "negative": "text, lettering, letters, words, watermark, signature, photo, 3d render",
+   "lora": "xworld_v2 ck3000 @0.7",
+   "note": "angles 2-4 are Qwen edits of the front image (reference), never redrawn from scratch"
+  },
+  {
+   "id": "sheet.h2.front",
+   "hero": "H2",
+   "prompt": "xworld style, the young scout in a green hood with a short bow on his back, standing, seen from the front, neutral face, flat ambient lighting, no cast shadows, plain neutral background",
+   "negative": "text, lettering, letters, words, watermark, signature, photo, 3d render",
+   "lora": "xworld_v2 ck3000 @0.7",
+   "note": "angles 2-4 are Qwen edits of the front image (reference), never redrawn from scratch"
+  },
+  {
+   "id": "sheet.h2.3q_left",
+   "hero": "H2",
+   "prompt": "xworld style, the young scout in a green hood with a short bow on his back, standing, turned three quarters to the left, neutral face, flat ambient lighting, no cast shadows, plain neutral background",
+   "negative": "text, lettering, letters, words, watermark, signature, photo, 3d render",
+   "lora": "xworld_v2 ck3000 @0.7",
+   "note": "angles 2-4 are Qwen edits of the front image (reference), never redrawn from scratch"
+  },
+  {
+   "id": "sheet.h2.3q_right",
+   "hero": "H2",
+   "prompt": "xworld style, the young scout in a green hood with a short bow on his back, standing, turned three quarters to the right, neutral face, flat ambient lighting, no cast shadows, plain neutral background",
+   "negative": "text, lettering, letters, words, watermark, signature, photo, 3d render",
+   "lora": "xworld_v2 ck3000 @0.7",
+   "note": "angles 2-4 are Qwen edits of the front image (reference), never redrawn from scratch"
+  },
+  {
+   "id": "sheet.h2.back",
+   "hero": "H2",
+   "prompt": "xworld style, the young scout in a green hood with a short bow on his back, standing, seen from behind, neutral face, flat ambient lighting, no cast shadows, plain neutral background",
+   "negative": "text, lettering, letters, words, watermark, signature, photo, 3d render",
+   "lora": "xworld_v2 ck3000 @0.7",
+   "note": "angles 2-4 are Qwen edits of the front image (reference), never redrawn from scratch"
+  },
+  {
+   "id": "sheet.h3.front",
+   "hero": "H3",
+   "prompt": "xworld style, the old elder with a long white beard, a blue robe and a wooden staff, standing, seen from the front, neutral face, flat ambient lighting, no cast shadows, plain neutral background",
+   "negative": "text, lettering, letters, words, watermark, signature, photo, 3d render",
+   "lora": "xworld_v2 ck3000 @0.7",
+   "note": "angles 2-4 are Qwen edits of the front image (reference), never redrawn from scratch"
+  },
+  {
+   "id": "sheet.h3.3q_left",
+   "hero": "H3",
+   "prompt": "xworld style, the old elder with a long white beard, a blue robe and a wooden staff, standing, turned three quarters to the left, neutral face, flat ambient lighting, no cast shadows, plain neutral background",
+   "negative": "text, lettering, letters, words, watermark, signature, photo, 3d render",
+   "lora": "xworld_v2 ck3000 @0.7",
+   "note": "angles 2-4 are Qwen edits of the front image (reference), never redrawn from scratch"
+  },
+  {
+   "id": "sheet.h3.3q_right",
+   "hero": "H3",
+   "prompt": "xworld style, the old elder with a long white beard, a blue robe and a wooden staff, standing, turned three quarters to the right, neutral face, flat ambient lighting, no cast shadows, plain neutral background",
+   "negative": "text, lettering, letters, words, watermark, signature, photo, 3d render",
+   "lora": "xworld_v2 ck3000 @0.7",
+   "note": "angles 2-4 are Qwen edits of the front image (reference), never redrawn from scratch"
+  },
+  {
+   "id": "sheet.h3.back",
+   "hero": "H3",
+   "prompt": "xworld style, the old elder with a long white beard, a blue robe and a wooden staff, standing, seen from behind, neutral face, flat ambient lighting, no cast shadows, plain neutral background",
+   "negative": "text, lettering, letters, words, watermark, signature, photo, 3d render",
+   "lora": "xworld_v2 ck3000 @0.7",
+   "note": "angles 2-4 are Qwen edits of the front image (reference), never redrawn from scratch"
+  }
+ ],
+ "shots": [
+  {
+   "id": "S01-01",
+   "scene": "S01",
+   "kind": "S1 establishing",
+   "route": "J5",
+   "seconds": 4,
+   "place": "A1",
+   "narration": "The night before the river, the camp was quiet.",
+   "dialogue": null,
+   "assembly": {
+    "recipe": "assemble_25d/1",
+    "backdrop": "A1",
+    "camera_setup": "establishing_wide",
+    "camera_move": "push_in 4 s",
+    "still_mode": "parallax_25d",
+    "heroes": [],
+    "props_on_cards": {
+     "white tent": 1,
+     "campfire": 1
+    },
+    "fx": [],
+    "life": {
+     "blink_every_s": [
+      3,
+      5
+     ],
+     "breathing": "0.5 % scale at 0.25 Hz"
+    }
+   },
+   "prompts": {
+    "qwen_frame": null,
+    "ltx_motion": null,
+    "note": "no frame prompt, no motion prompt: the picture is assembled from scene_assets"
+   },
+   "cost": {
+    "qwen_images": 0,
+    "ltx_clips": 0
+   }
+  },
+  {
+   "id": "S01-02",
+   "scene": "S01",
+   "kind": "V4 council two-shot",
+   "route": "J5",
+   "seconds": 4.5,
+   "place": "A1",
+   "narration": null,
+   "dialogue": {
+    "who": "H3",
+    "text": "He will cross at dawn.",
+    "delivery": "slow, certain"
+   },
+   "assembly": {
+    "recipe": "assemble_25d/1",
+    "backdrop": "A1",
+    "camera_setup": "profile_two_shot",
+    "camera_move": "static",
+    "still_mode": null,
+    "heroes": [
+     {
+      "hero": "H1",
+      "cutout": "3q_right",
+      "slot": "left",
+      "height": "two_thirds",
+      "pose_from_sheet": "stands at the map table with his fists on it",
+      "mouth": "none"
+     },
+     {
+      "hero": "H3",
+      "cutout": "3q_left",
+      "slot": "right",
+      "height": "two_thirds",
+      "pose_from_sheet": "leans on his staff",
+      "mouth": {
+       "states": [
+        "closed",
+        "half",
+        "open"
+       ],
+       "cross_blend_frames": 2,
+       "cues": "audio.words_to_mouth_cues (the line's read take)"
+      }
+     }
+    ],
+    "props_on_cards": {
+     "wooden table": 1,
+     "map": 1
+    },
+    "fx": [],
+    "life": {
+     "blink_every_s": [
+      3,
+      5
+     ],
+     "breathing": "0.5 % scale at 0.25 Hz"
+    }
+   },
+   "prompts": {
+    "qwen_frame": null,
+    "ltx_motion": null,
+    "note": "no frame prompt, no motion prompt: the picture is assembled from scene_assets"
+   },
+   "cost": {
+    "qwen_images": 0,
+    "ltx_clips": 0
+   }
+  },
+  {
+   "id": "S01-03",
+   "scene": "S01",
+   "kind": "V3 dialogue, visible mouth",
+   "route": "J5",
+   "seconds": 4,
+   "place": "A1",
+   "narration": null,
+   "dialogue": {
+    "who": "H1",
+    "text": "Then we meet him at the ford.",
+    "delivery": "low, decided"
+   },
+   "assembly": {
+    "recipe": "assemble_25d/1",
+    "backdrop": "A1",
+    "camera_setup": "MCU front (NEW preset, not in camera_setups.json)",
+    "camera_move": "static",
+    "still_mode": null,
+    "heroes": [
+     {
+      "hero": "H1",
+      "cutout": "front",
+      "slot": "center",
+      "height": "most",
+      "pose_from_sheet": "stands, his hands flat on a table",
+      "mouth": {
+       "states": [
+        "closed",
+        "half",
+        "open"
+       ],
+       "cross_blend_frames": 2,
+       "cues": "audio.words_to_mouth_cues (the line's read take)"
+      }
+     }
+    ],
+    "props_on_cards": {},
+    "fx": [],
+    "life": {
+     "blink_every_s": [
+      3,
+      5
+     ],
+     "breathing": "0.5 % scale at 0.25 Hz"
+    }
+   },
+   "prompts": {
+    "qwen_frame": null,
+    "ltx_motion": null,
+    "note": "no frame prompt, no motion prompt: the picture is assembled from scene_assets"
+   },
+   "cost": {
+    "qwen_images": 0,
+    "ltx_clips": 0
+   }
+  },
+  {
+   "id": "S01-04",
+   "scene": "S01",
+   "kind": "V3 dialogue, OTS",
+   "route": "J5",
+   "seconds": 4,
+   "place": "A1",
+   "narration": null,
+   "dialogue": {
+    "who": "H3",
+    "text": "And if the ford is already taken?",
+    "delivery": "dry, low"
+   },
+   "assembly": {
+    "recipe": "assemble_25d/1",
+    "backdrop": "A1",
+    "camera_setup": "ots_a",
+    "camera_move": "static",
+    "still_mode": null,
+    "heroes": [
+     {
+      "hero": "H1",
+      "cutout": "back",
+      "slot": "left_front",
+      "height": "most",
+      "pose_from_sheet": "stands with his back to the camera",
+      "mouth": "none"
+     },
+     {
+      "hero": "H3",
+      "cutout": "3q_left",
+      "slot": "right",
+      "height": "most",
+      "pose_from_sheet": "stands holding his staff",
+      "mouth": {
+       "states": [
+        "closed",
+        "half",
+        "open"
+       ],
+       "cross_blend_frames": 2,
+       "cues": "audio.words_to_mouth_cues (the line's read take)"
+      }
+     }
+    ],
+    "props_on_cards": {},
+    "fx": [],
+    "life": {
+     "blink_every_s": [
+      3,
+      5
+     ],
+     "breathing": "0.5 % scale at 0.25 Hz"
+    }
+   },
+   "prompts": {
+    "qwen_frame": null,
+    "ltx_motion": null,
+    "note": "no frame prompt, no motion prompt: the picture is assembled from scene_assets"
+   },
+   "cost": {
+    "qwen_images": 0,
+    "ltx_clips": 0
+   }
+  },
+  {
+   "id": "S01-05",
+   "scene": "S01",
+   "kind": "V3 dialogue, entrance",
+   "route": "J5",
+   "seconds": 3.5,
+   "place": "A1",
+   "narration": null,
+   "dialogue": {
+    "who": "H2",
+    "text": "They are already in the water!",
+    "delivery": "breathless, loud"
+   },
+   "assembly": {
+    "recipe": "assemble_25d/1",
+    "backdrop": "A1",
+    "camera_setup": "profile_two_shot",
+    "camera_move": "static",
+    "still_mode": null,
+    "heroes": [
+     {
+      "hero": "H2",
+      "cutout": "3q_left",
+      "slot": "right",
+      "height": "two_thirds",
+      "pose_from_sheet": "stands panting at the edge of the firelight",
+      "mouth": {
+       "states": [
+        "closed",
+        "half",
+        "open"
+       ],
+       "cross_blend_frames": 2,
+       "cues": "audio.words_to_mouth_cues (the line's read take)"
+      }
+     },
+     {
+      "hero": "H1",
+      "cutout": "3q_right",
+      "slot": "left",
+      "height": "two_thirds",
+      "pose_from_sheet": "turns toward him",
+      "mouth": "none"
+     }
+    ],
+    "props_on_cards": {},
+    "fx": [],
+    "life": {
+     "blink_every_s": [
+      3,
+      5
+     ],
+     "breathing": "0.5 % scale at 0.25 Hz"
+    }
+   },
+   "prompts": {
+    "qwen_frame": null,
+    "ltx_motion": null,
+    "note": "no frame prompt, no motion prompt: the picture is assembled from scene_assets"
+   },
+   "cost": {
+    "qwen_images": 0,
+    "ltx_clips": 0
+   }
+  },
+  {
+   "id": "S01-06",
+   "scene": "S01",
+   "kind": "V3 reaction, no mouth",
+   "route": "J5",
+   "seconds": 2.5,
+   "place": "A1",
+   "narration": null,
+   "dialogue": null,
+   "assembly": {
+    "recipe": "assemble_25d/1",
+    "backdrop": "A1",
+    "camera_setup": "MCU front (NEW preset)",
+    "camera_move": "static",
+    "still_mode": null,
+    "heroes": [
+     {
+      "hero": "H1",
+      "cutout": "front",
+      "slot": "center",
+      "height": "most",
+      "pose_from_sheet": "stands with his hand on the table",
+      "mouth": "none"
+     }
+    ],
+    "props_on_cards": {},
+    "fx": [],
+    "life": {
+     "blink_every_s": [
+      3,
+      5
+     ],
+     "breathing": "0.5 % scale at 0.25 Hz"
+    }
+   },
+   "prompts": {
+    "qwen_frame": null,
+    "ltx_motion": null,
+    "note": "no frame prompt, no motion prompt: the picture is assembled from scene_assets"
+   },
+   "cost": {
+    "qwen_images": 0,
+    "ltx_clips": 0
+   }
+  },
+  {
+   "id": "S02-01",
+   "scene": "S02",
+   "kind": "H1 map graphic",
+   "route": "H",
+   "seconds": 3,
+   "place": "A3",
+   "narration": "The river was shallow enough for a horse, and deep enough to drown a man.",
+   "dialogue": null,
+   "helper": {
+    "recipe": "Python, 2D vector (D-87)",
+    "archetype": "TACTICAL_UNIT_MANEUVER",
+    "spec": "ford map: two banks, river band, two unit blocks that close on the ford; draws on with the narrator's sentence; no on-screen text"
+   },
+   "prompts": {
+    "qwen_frame": null,
+    "ltx_motion": null
+   },
+   "cost": {
+    "qwen_images": 0,
+    "ltx_clips": 0
+   }
+  },
+  {
+   "id": "S02-02",
+   "scene": "S02",
+   "kind": "V1 battle, wide",
+   "route": "J4",
+   "seconds": 10,
+   "place": "A3",
+   "narration": "Two armies met in the water, and neither would step back.",
+   "dialogue": null,
+   "layout": {
+    "recipe": "ltx_restyle/1",
+    "blender_passes": [
+     "colour",
+     "depth",
+     "line"
+    ],
+    "crowd": "GN crowd (T-E proof: 5,000 soldiers as tiers)",
+    "line_pass_mask": "fore + mid planes only (object index); background crowd as depth + silhouette colour (plan 9.3)"
+   },
+   "clips": [
+    {
+     "clip": "S02-02.c1",
+     "seconds": 6,
+     "frames": 145,
+     "overlap_frames_with_previous": 0,
+     "qwen_first_frame": "xworld style, two armies of lanky soldiers face each other across a shallow river, spears lowered, banners snapping, spray rising, low golden sun through grey clouds",
+     "qwen_frame_check": [],
+     "first_frame_source": "Qwen from the layout colour frame",
+     "ltx_restyle": "Restyle the layout video as hand-drawn 2D ink cartoon animation: bold black ink outlines, chalky painterly texture, muted earthy colours with vivid glowing accents. Keep every shape, crowd position and the camera path of the layout exactly; add no new objects.",
+     "ltx_motion": null
+    },
+    {
+     "clip": "S02-02.c2",
+     "seconds": 6,
+     "frames": 145,
+     "overlap_frames_with_previous": 8,
+     "qwen_first_frame": "xworld style, two armies of lanky soldiers locked together in a shallow river, spears splintering, a horse rearing, spray and mud flying, low golden sun through grey clouds",
+     "qwen_frame_check": [],
+     "first_frame_source": "Qwen edit of the layout colour frame (new frame, not the last frame of the previous clip, D-78)",
+     "ltx_restyle": "Restyle the layout video as hand-drawn 2D ink cartoon animation: bold black ink outlines, chalky painterly texture, muted earthy colours with vivid glowing accents. Keep every shape, crowd position and the camera path of the layout exactly; add no new objects.",
+     "ltx_motion": null
+    }
+   ],
+   "prompts": {
+    "qwen_frame": null,
+    "ltx_motion": null,
+    "note": "restyle: one look prompt per clip, no motion prompt; the motion is Blender's"
+   },
+   "cost": {
+    "qwen_images": 2,
+    "ltx_clips": 2
+   }
+  },
+  {
+   "id": "S02-03",
+   "scene": "S02",
+   "kind": "V6 travel / V2 action",
+   "route": "J2",
+   "seconds": 5,
+   "place": "A3",
+   "narration": "The scout carried the banner through the water.",
+   "dialogue": null,
+   "layout": {
+    "recipe": "ltx_layout/1",
+    "blender_passes": [
+     "clay"
+    ],
+    "blocking_from": "Blender scene (heroes as clay figures at their slots)",
+    "camera": {
+     "size": "MS",
+     "angle": "eye",
+     "move": "follow"
+    },
+    "inputs": [
+     "clay.mp4",
+     "first_frame.png",
+     "prompt"
+    ]
+   },
+   "prompts": {
+    "qwen_frame": "xworld style, the young scout in a green hood with a short bow on his back wades a shallow river with a torn banner held low, spray flying, a muddy bank behind him, low golden sun through grey clouds",
+    "qwen_frame_check": [],
+    "ltx_motion": "Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. Composition and camera follow the layout video. The young scout wades forward with the banner low, then pushes the banner up high above the water, and holds the banner high. His face is fierce shows on the face. Nobody speaks. Water splashing.",
+    "note": "the frame prompt draws the look of layout frame one; composition, camera and positions come from the clay video, so the motion prompt carries only the acting"
+   },
+   "ltx": {
+    "frames": 121,
+    "fps": 24,
+    "size": [
+     1920,
+     1088
+    ],
+    "clip_s": 5.04
+   },
+   "cost": {
+    "qwen_images": 1,
+    "ltx_clips": 1
+   }
+  },
+  {
+   "id": "S02-04",
+   "scene": "S02",
+   "kind": "S3 insert",
+   "route": "J5",
+   "seconds": 3,
+   "place": "A3",
+   "narration": "Hooves drove the river white.",
+   "dialogue": null,
+   "assembly": {
+    "recipe": "assemble_25d/1",
+    "backdrop": "A3",
+    "camera_setup": "low_angle_hero_cu (insert, hooves on a card)",
+    "camera_move": "parallax 3 s",
+    "still_mode": "parallax_25d",
+    "heroes": [],
+    "props_on_cards": {
+     "horse hoof": 2
+    },
+    "fx": [],
+    "life": {
+     "blink_every_s": [
+      3,
+      5
+     ],
+     "breathing": "0.5 % scale at 0.25 Hz"
+    }
+   },
+   "prompts": {
+    "qwen_frame": null,
+    "ltx_motion": null,
+    "note": "no frame prompt, no motion prompt: the picture is assembled from scene_assets"
+   },
+   "cost": {
+    "qwen_images": 0,
+    "ltx_clips": 0
+   }
+  },
+  {
+   "id": "S02-05",
+   "scene": "S02",
+   "kind": "V8 emotional gesture",
+   "route": "J2",
+   "seconds": 4,
+   "place": "A3",
+   "narration": "Aldric did not shout for them to hold. He shouted for them to come.",
+   "dialogue": null,
+   "layout": {
+    "recipe": "ltx_layout/1",
+    "blender_passes": [
+     "clay"
+    ],
+    "blocking_from": "Blender scene (heroes as clay figures at their slots)",
+    "camera": {
+     "size": "MS",
+     "angle": "low",
+     "move": "static"
+    },
+    "inputs": [
+     "clay.mp4",
+     "first_frame.png",
+     "prompt"
+    ]
+   },
+   "prompts": {
+    "qwen_frame": "xworld style, the broad commander with a grey beard, a dented steel helmet and a red cloak stands in the river shallows, sword hanging low, jaw set, spray around his boots, low golden sun through grey clouds",
+    "qwen_frame_check": [],
+    "ltx_motion": "Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. Composition and camera follow the layout video. The broad commander stands with the sword hanging low, then throws the sword up and opens his mouth in a roar, and holds the sword high, mouth open. His face is red with effort shows on the face. Nobody speaks. A roar over rushing water.",
+    "note": "the frame prompt draws the look of layout frame one; composition, camera and positions come from the clay video, so the motion prompt carries only the acting"
+   },
+   "ltx": {
+    "frames": 97,
+    "fps": 24,
+    "size": [
+     1920,
+     1088
+    ],
+    "clip_s": 4.04
+   },
+   "cost": {
+    "qwen_images": 1,
+    "ltx_clips": 1
+   }
+  },
+  {
+   "id": "S03-01",
+   "scene": "S03",
+   "kind": "S1 establishing",
+   "route": "J5",
+   "seconds": 4,
+   "place": "A2",
+   "narration": "Behind the walls, the argument from the ford had not ended.",
+   "dialogue": null,
+   "assembly": {
+    "recipe": "assemble_25d/1",
+    "backdrop": "A2",
+    "camera_setup": "establishing_wide",
+    "camera_move": "slow drift",
+    "still_mode": "drift",
+    "heroes": [],
+    "props_on_cards": {
+     "well": 1
+    },
+    "fx": [],
+    "life": {
+     "blink_every_s": [
+      3,
+      5
+     ],
+     "breathing": "0.5 % scale at 0.25 Hz"
+    }
+   },
+   "prompts": {
+    "qwen_frame": null,
+    "ltx_motion": null,
+    "note": "no frame prompt, no motion prompt: the picture is assembled from scene_assets"
+   },
+   "cost": {
+    "qwen_images": 0,
+    "ltx_clips": 0
+   }
+  },
+  {
+   "id": "S03-02",
+   "scene": "S03",
+   "kind": "V2 duel",
+   "route": "J2",
+   "seconds": 5,
+   "place": "A2",
+   "narration": null,
+   "dialogue": null,
+   "layout": {
+    "recipe": "ltx_layout/1",
+    "blender_passes": [
+     "clay"
+    ],
+    "blocking_from": "Blender scene (heroes as clay figures at their slots)",
+    "camera": {
+     "size": "WS",
+     "angle": "eye",
+     "move": "static"
+    },
+    "inputs": [
+     "clay.mp4",
+     "first_frame.png",
+     "prompt"
+    ]
+   },
+   "prompts": {
+    "qwen_frame": "xworld style, the broad commander with a grey beard, a dented steel helmet and a red cloak circles a crouching young scout, broadsword raised, both with bulging eyes, courtyard well behind them, hard noon sunlight",
+    "qwen_frame_check": [],
+    "ltx_motion": "Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. Composition and camera follow the layout video. The broad commander circles with the sword raised, then swings the broadsword down in a wide arc, and holds the sword low after the swing. His teeth are bared shows on the face. The young scout ducks under the blade and steps back. Nobody speaks. Boots scrape on stone.",
+    "note": "the frame prompt draws the look of layout frame one; composition, camera and positions come from the clay video, so the motion prompt carries only the acting"
+   },
+   "ltx": {
+    "frames": 121,
+    "fps": 24,
+    "size": [
+     1920,
+     1088
+    ],
+    "clip_s": 5.04
+   },
+   "cost": {
+    "qwen_images": 1,
+    "ltx_clips": 1
+   }
+  },
+  {
+   "id": "S03-03",
+   "scene": "S03",
+   "kind": "S3 insert (C5: J5, the creator 2026-11-06 11:12 UTC)",
+   "route": "J5",
+   "seconds": 3,
+   "place": "A2",
+   "narration": "Steel rang on steel, and sparks fell on the stones.",
+   "dialogue": null,
+   "assembly": {
+    "recipe": "assemble_25d/1",
+    "backdrop": "A2",
+    "camera_setup": "ots_a",
+    "camera_move": "static",
+    "still_mode": null,
+    "heroes": [],
+    "props_on_cards": {
+     "sword": 2
+    },
+    "fx": [],
+    "life": {
+     "blink_every_s": [
+      3,
+      5
+     ],
+     "breathing": "0.5 % scale at 0.25 Hz"
+    }
+   },
+   "prompts": {
+    "qwen_frame": null,
+    "ltx_motion": null,
+    "note": "no frame prompt, no motion prompt: the picture is assembled from scene_assets"
+   },
+   "cost": {
+    "qwen_images": 0,
+    "ltx_clips": 0
+   }
+  },
+  {
+   "id": "S03-04",
+   "scene": "S03",
+   "kind": "V8 emotional gesture",
+   "route": "J2",
+   "seconds": 4,
+   "place": "A2",
+   "narration": null,
+   "dialogue": null,
+   "layout": {
+    "recipe": "ltx_layout/1",
+    "blender_passes": [
+     "clay"
+    ],
+    "blocking_from": "Blender scene (heroes as clay figures at their slots)",
+    "camera": {
+     "size": "MCU",
+     "angle": "eye",
+     "move": "static"
+    },
+    "inputs": [
+     "clay.mp4",
+     "first_frame.png",
+     "prompt"
+    ]
+   },
+   "prompts": {
+    "qwen_frame": "xworld style, the young scout in a green hood with a short bow on his back breathes hard, short sword raised, bulging eyes locked ahead, hard noon sunlight",
+    "qwen_frame_check": [],
+    "ltx_motion": "Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. Composition and camera follow the layout video. The young scout breathes hard with the sword up, then bares his teeth and his eyes flash, and holds the glare. Fury shows on the face. Nobody speaks. Heavy breathing.",
+    "note": "the frame prompt draws the look of layout frame one; composition, camera and positions come from the clay video, so the motion prompt carries only the acting"
+   },
+   "ltx": {
+    "frames": 97,
+    "fps": 24,
+    "size": [
+     1920,
+     1088
+    ],
+    "clip_s": 4.04
+   },
+   "cost": {
+    "qwen_images": 1,
+    "ltx_clips": 1
+   }
+  },
+  {
+   "id": "S03-05",
+   "scene": "S03",
+   "kind": "V3 dialogue, visible mouth",
+   "route": "J5",
+   "seconds": 3,
+   "place": "A2",
+   "narration": null,
+   "dialogue": {
+    "who": "H3",
+    "text": "Enough.",
+    "delivery": "quiet, final"
+   },
+   "assembly": {
+    "recipe": "assemble_25d/1",
+    "backdrop": "A2",
+    "camera_setup": "MCU front (NEW preset)",
+    "camera_move": "static",
+    "still_mode": null,
+    "heroes": [
+     {
+      "hero": "H3",
+      "cutout": "front",
+      "slot": "center",
+      "height": "two_thirds",
+      "pose_from_sheet": "stands between two swords holding his staff",
+      "mouth": {
+       "states": [
+        "closed",
+        "half",
+        "open"
+       ],
+       "cross_blend_frames": 2,
+       "cues": "audio.words_to_mouth_cues (the line's read take)"
+      }
+     }
+    ],
+    "props_on_cards": {},
+    "fx": [],
+    "life": {
+     "blink_every_s": [
+      3,
+      5
+     ],
+     "breathing": "0.5 % scale at 0.25 Hz"
+    }
+   },
+   "prompts": {
+    "qwen_frame": null,
+    "ltx_motion": null,
+    "note": "no frame prompt, no motion prompt: the picture is assembled from scene_assets"
+   },
+   "cost": {
+    "qwen_images": 0,
+    "ltx_clips": 0
+   }
+  },
+  {
+   "id": "S04-01",
+   "scene": "S04",
+   "kind": "V6 travel, column",
+   "route": "J4",
+   "seconds": 10,
+   "place": "A3",
+   "narration": "They marched until the rain made the road and the river the same thing.",
+   "dialogue": null,
+   "layout": {
+    "recipe": "ltx_restyle/1",
+    "blender_passes": [
+     "colour",
+     "depth",
+     "line"
+    ],
+    "crowd": "GN crowd (T-E proof: 5,000 soldiers as tiers)",
+    "line_pass_mask": "fore + mid planes only (object index); background crowd as depth + silhouette colour (plan 9.3)"
+   },
+   "clips": [
+    {
+     "clip": "S04-01.c1",
+     "seconds": 5,
+     "frames": 121,
+     "overlap_frames_with_previous": 0,
+     "qwen_first_frame": "xworld style, a long column of lanky soldiers trudges along a muddy road in heavy rain, banners drooping, cold blue rain light",
+     "qwen_frame_check": [],
+     "first_frame_source": "Qwen from the layout colour frame",
+     "ltx_restyle": "Restyle the layout video as hand-drawn 2D ink cartoon animation: bold black ink outlines, chalky painterly texture, muted earthy colours with vivid glowing accents. Keep every shape, crowd position and the camera path of the layout exactly; add no new objects.",
+     "ltx_motion": null
+    },
+    {
+     "clip": "S04-01.c2",
+     "seconds": 5,
+     "frames": 121,
+     "overlap_frames_with_previous": 8,
+     "qwen_first_frame": "xworld style, the long column of lanky soldiers bends round a green hill in heavy rain, heads down, rain streaking the air, cold blue rain light",
+     "qwen_frame_check": [],
+     "first_frame_source": "Qwen edit of the layout colour frame (new frame, not the last frame of the previous clip, D-78)",
+     "ltx_restyle": "Restyle the layout video as hand-drawn 2D ink cartoon animation: bold black ink outlines, chalky painterly texture, muted earthy colours with vivid glowing accents. Keep every shape, crowd position and the camera path of the layout exactly; add no new objects.",
+     "ltx_motion": null
+    }
+   ],
+   "prompts": {
+    "qwen_frame": null,
+    "ltx_motion": null,
+    "note": "restyle: one look prompt per clip, no motion prompt; the motion is Blender's"
+   },
+   "cost": {
+    "qwen_images": 2,
+    "ltx_clips": 2
+   }
+  },
+  {
+   "id": "S04-01b",
+   "scene": "S04",
+   "kind": "H1 map graphic (C6: the creator 2026-11-06 11:12 UTC)",
+   "route": "H",
+   "seconds": 4,
+   "place": "A3",
+   "narration": "A long road, and the river beside it the whole way.",
+   "dialogue": null,
+   "helper": {
+    "recipe": "Python, 2D vector (D-87)",
+    "archetype": "TACTICAL_UNIT_MANEUVER",
+    "spec": "march map: the road as a line that draws on beside the river band, a single unit block moving along it, rain hatching over the whole map; no on-screen text"
+   },
+   "prompts": {
+    "qwen_frame": null,
+    "ltx_motion": null
+   },
+   "cost": {
+    "qwen_images": 0,
+    "ltx_clips": 0
+   }
+  },
+  {
+   "id": "S04-02",
+   "scene": "S04",
+   "kind": "V6 travel, two heroes",
+   "route": "J5",
+   "seconds": 4,
+   "place": "A3",
+   "narration": "Nobody spoke of the duel.",
+   "dialogue": null,
+   "assembly": {
+    "recipe": "assemble_25d/1",
+    "backdrop": "A3",
+    "camera_setup": "profile_two_shot",
+    "camera_move": "truck right 4 s",
+    "still_mode": null,
+    "heroes": [
+     {
+      "hero": "H1",
+      "cutout": "3q_right",
+      "slot": "left",
+      "height": "most",
+      "pose_from_sheet": "walks in the rain with his cloak soaked",
+      "mouth": "none"
+     },
+     {
+      "hero": "H2",
+      "cutout": "3q_left",
+      "slot": "right",
+      "height": "most",
+      "pose_from_sheet": "walks beside him with his hood up",
+      "mouth": "none"
+     }
+    ],
+    "props_on_cards": {},
+    "fx": [
+     "rain streaks",
+     "wet grade"
+    ],
+    "life": {
+     "blink_every_s": [
+      3,
+      5
+     ],
+     "breathing": "0.5 % scale at 0.25 Hz"
+    }
+   },
+   "prompts": {
+    "qwen_frame": null,
+    "ltx_motion": null,
+    "note": "no frame prompt, no motion prompt: the picture is assembled from scene_assets"
+   },
+   "cost": {
+    "qwen_images": 0,
+    "ltx_clips": 0
+   }
+  },
+  {
+   "id": "S04-03",
+   "scene": "S04",
+   "kind": "S3 insert",
+   "route": "J5",
+   "seconds": 3,
+   "place": "A3",
+   "narration": "Mud took every footprint.",
+   "dialogue": null,
+   "assembly": {
+    "recipe": "assemble_25d/1",
+    "backdrop": "A3",
+    "camera_setup": "low_angle_hero_cu",
+    "camera_move": "parallax 3 s",
+    "still_mode": "parallax_25d",
+    "heroes": [],
+    "props_on_cards": {
+     "boot": 2
+    },
+    "fx": [
+     "rain streaks"
+    ],
+    "life": {
+     "blink_every_s": [
+      3,
+      5
+     ],
+     "breathing": "0.5 % scale at 0.25 Hz"
+    }
+   },
+   "prompts": {
+    "qwen_frame": null,
+    "ltx_motion": null,
+    "note": "no frame prompt, no motion prompt: the picture is assembled from scene_assets"
+   },
+   "cost": {
+    "qwen_images": 0,
+    "ltx_clips": 0
+   }
+  },
+  {
+   "id": "S05-01",
+   "scene": "S05",
+   "kind": "V9 aftermath",
+   "route": "J5",
+   "seconds": 6,
+   "place": "A3",
+   "narration": "By morning the field was silent. Smoke lay over it like a lid.",
+   "dialogue": null,
+   "assembly": {
+    "recipe": "assemble_25d/1",
+    "backdrop": "A3",
+    "camera_setup": "establishing_wide",
+    "camera_move": "static, Blender smoke volume",
+    "still_mode": "drift",
+    "heroes": [],
+    "props_on_cards": {
+     "broken spear": 3
+    },
+    "fx": [
+     "smoke volume"
+    ],
+    "life": {
+     "blink_every_s": [
+      3,
+      5
+     ],
+     "breathing": "0.5 % scale at 0.25 Hz"
+    }
+   },
+   "prompts": {
+    "qwen_frame": null,
+    "ltx_motion": null,
+    "note": "no frame prompt, no motion prompt: the picture is assembled from scene_assets"
+   },
+   "cost": {
+    "qwen_images": 0,
+    "ltx_clips": 0
+   }
+  },
+  {
+   "id": "S05-02",
+   "scene": "S05",
+   "kind": "V7 discovery / push-in",
+   "route": "J5",
+   "seconds": 4,
+   "place": "A3",
+   "narration": "Aldric stood where the line had been.",
+   "dialogue": null,
+   "assembly": {
+    "recipe": "assemble_25d/1",
+    "backdrop": "A3",
+    "camera_setup": "push_in_reveal",
+    "camera_move": "push in 4 s",
+    "still_mode": null,
+    "heroes": [
+     {
+      "hero": "H1",
+      "cutout": "back",
+      "slot": "center",
+      "height": "most",
+      "pose_from_sheet": "stands alone with his back to the camera",
+      "mouth": "none"
+     }
+    ],
+    "props_on_cards": {},
+    "fx": [
+     "smoke volume"
+    ],
+    "life": {
+     "blink_every_s": [
+      3,
+      5
+     ],
+     "breathing": "0.5 % scale at 0.25 Hz"
+    }
+   },
+   "prompts": {
+    "qwen_frame": null,
+    "ltx_motion": null,
+    "note": "no frame prompt, no motion prompt: the picture is assembled from scene_assets"
+   },
+   "cost": {
+    "qwen_images": 0,
+    "ltx_clips": 0
+   }
+  },
+  {
+   "id": "S05-03",
+   "scene": "S05",
+   "kind": "S1 establishing",
+   "route": "J5",
+   "seconds": 4,
+   "place": "A4",
+   "narration": "By dusk they were at sea, and none of them spoke of the river.",
+   "dialogue": null,
+   "assembly": {
+    "recipe": "assemble_25d/1",
+    "backdrop": "A4",
+    "camera_setup": "establishing_wide",
+    "camera_move": "static",
+    "still_mode": "parallax_25d",
+    "heroes": [
+     {
+      "hero": "H1",
+      "cutout": "3q_right",
+      "slot": "left",
+      "height": "third",
+      "pose_from_sheet": "stands at the rail",
+      "mouth": "none"
+     },
+     {
+      "hero": "H3",
+      "cutout": "3q_left",
+      "slot": "right",
+      "height": "third",
+      "pose_from_sheet": "stands beside him",
+      "mouth": "none"
+     }
+    ],
+    "props_on_cards": {},
+    "fx": [],
+    "life": {
+     "blink_every_s": [
+      3,
+      5
+     ],
+     "breathing": "0.5 % scale at 0.25 Hz"
+    }
+   },
+   "prompts": {
+    "qwen_frame": null,
+    "ltx_motion": null,
+    "note": "no frame prompt, no motion prompt: the picture is assembled from scene_assets"
+   },
+   "cost": {
+    "qwen_images": 0,
+    "ltx_clips": 0
+   }
+  },
+  {
+   "id": "S05-04",
+   "scene": "S05",
+   "kind": "V8 emotional close-up",
+   "route": "J2",
+   "seconds": 3,
+   "place": "A4",
+   "narration": null,
+   "dialogue": null,
+   "layout": {
+    "recipe": "ltx_layout/1",
+    "blender_passes": [
+     "clay"
+    ],
+    "blocking_from": "Blender scene (heroes as clay figures at their slots)",
+    "camera": {
+     "size": "CU",
+     "angle": "eye",
+     "move": "push_in"
+    },
+    "inputs": [
+     "clay.mp4",
+     "first_frame.png",
+     "prompt"
+    ]
+   },
+   "prompts": {
+    "qwen_frame": "xworld style, the broad commander with a grey beard, a dented steel helmet and a red cloak stares at the waves from a ship rail, wet wind in his beard, cold blue evening light",
+    "qwen_frame_check": [],
+    "ltx_motion": "Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. Composition and camera follow the layout video. The broad commander stares at the waves, then turns his eyes to the camera with a quiet resolve, and holds the stare. Calm resolve shows on the face. Nobody speaks.",
+    "note": "the frame prompt draws the look of layout frame one; composition, camera and positions come from the clay video, so the motion prompt carries only the acting"
+   },
+   "ltx": {
+    "frames": 73,
+    "fps": 24,
+    "size": [
+     1920,
+     1088
+    ],
+    "clip_s": 3.04
+   },
+   "cost": {
+    "qwen_images": 1,
+    "ltx_clips": 1
+   }
+  }
+ ],
+ "scene_seconds": {
+  "S01": 22.5,
+  "S02": 25,
+  "S03": 19,
+  "S04": 21,
+  "S05": 17
+ },
+ "lint": []
+}

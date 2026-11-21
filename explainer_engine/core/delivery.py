@@ -1,3 +1,4 @@
+
 """Delivery defaults of an animated episode (BP-167, the creator's word of 2026-10-30 16:13 UTC, D-59 house).
 
 The one reader of the registry row: the long video's target minutes, its frame size, its frame rate and the number of Shorts.

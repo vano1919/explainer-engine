@@ -1,3 +1,4 @@
+
 """Sound-layer rules on a timed production script: AL-01..AL-04 (docs/STORY_ENGINE.md, D-48) with their numbers read from the
 sourced-rules registry, and the BP audio rules that have no older id (BP-54 sync window, BP-55 beat share, BP-57 repeats,
 BP-62 music spotting). Enough sound that the picture's motion is heard, never so much that the layers turn into noise under

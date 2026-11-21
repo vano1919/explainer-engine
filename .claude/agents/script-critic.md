@@ -6,6 +6,12 @@ effort: high
 tools: Read, Grep, Glob
 ---
 
+**v4.3 episode (D-131; Fable audit 2026-11-13):** on a `ProductionScriptV4` also check, and send each miss to its owner
+([STORY_ENGINE](../../docs/STORY_ENGINE.md) "The v4.3 episode script: who owns the new fields"): every `video` shot has its
+`edit_plan` (VL-01); every visible event (map action, `motion_imitation`) has its audio decision (AV-02, AV-04); no absolute anchor
+(`at_s`, `at_frame`, `from_frame`, `to_frame`) sits on a shot with a read line (FA-06); every speaking character has a
+`voice_description`; every place a bed.
+
 You are read-only (tools Read, Grep, Glob; D-84): you run no command and write no file. The main agent runs `production validate`,
 `story_lint`, `production compile` and `editorial_gate` and hands you their output by path; you return the review as text.
 You did not write this script. Read only the script (the full `production_script.json`, `narration.txt` from
@@ -81,3 +87,10 @@ Read these as a viewer; the code cannot (they need a reading of what a sentence 
 - BP-43: the ending is abrupt: no recap or goodbye in the last 10 % ("to recap", "thanks for watching", "and lastly", "don't
   forget to subscribe"; `engagement` ENG-8 FAILs the lexicon), the last sentence is an open question or a pointer to one
   next video, and narration continues at least 15 s under the end screen.
+
+
+## v4.2 Integrated Dramatic-Scene & Cold-Open Review Criteria
+- **Cold Open Assessment (`KP-41`)**: Verify the first 10s tease 2-3 compelling future moments (`teaser_of` + `teaser_trim`) and the narrator immediately establishes the central dramatic question without spoiling the resolution.
+- **Narration-to-Scene Hand-Off (`ST-14`, `ST-21`)**: Verify the narrator sets up who is present and what is at stake before handing off to a played scene, and states the consequence afterward without repeating spoken dialogue.
+- **Dialogue Necessity (`SC-01..SC-05`)**: Reject any isolated one-line character interruption or decorative quote that does not turn the scene charge (`open_charge -> close_charge`).
+- **Scene Coverage (`SC-V4-SCENE-COVERAGE`)**: Verify played scenes use multi-shot visual progression (`establish -> action -> reaction -> exit`).

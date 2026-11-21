@@ -1,3 +1,4 @@
+
 """Register an already-generated sound into the reusable library (D-34, D-76): the ElevenLabs connector's music and
 sound effects arrive as MP3/stereo files, this converts them to the library's 16-bit mono WAV (ffmpeg) and records id,
 tags, source (model, prompt, cost), licence and review through ``sfx_library.add``, so future episodes find them by

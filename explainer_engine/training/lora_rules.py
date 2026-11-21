@@ -1,3 +1,4 @@
+
 """The one home of the LoRA dataset rules (docs/LORA_TRAINING.md LT-01): ``training/lora_rules.json``. stdlib only, so
 ``scripting/`` and ``qa/`` import it cheaply.
 

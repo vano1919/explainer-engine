@@ -1,0 +1,56 @@
+{
+  "schema": "continuity_card/1",
+  "scene_id": "S06@loc_shinfa_ash_riverbed:S06_SH008",
+  "model": "gemini_3_1_flash_image",
+  "style_line": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama",
+  "location": {
+    "id": "loc_shinfa_ash_riverbed",
+    "where_when": "Shinfa-Metema Seasonal Riverbed & Shrinking Waterholes / dusk",
+    "int_ext": "EXT",
+    "time_of_day": "dusk",
+    "weather": "dust",
+    "master_frame": "S06_SH008_start"
+  },
+  "light": {
+    "key_light_dir": "left",
+    "light_source": "the low sun through the ash veil"
+  },
+  "cast": {
+    "char_sena_74000bce": {
+      "name": "the master stone artisan and inventor",
+      "description": "26-year-old Late Pleistocene East African woman artisan, intense dark eyes reflecting amber firelight, charcoal-stained fingers, woven leather work apron, necklace of perforated Nassarius shells and an obsidian pendant",
+      "sheet": "assets/reference/characters/char_sena_74000bce.jpg",
+      "costumes": {
+        "default": "Leather work apron, perforated shell and obsidian necklace, bone pressure-flaker at belt"
+      }
+    }
+  },
+  "shots": [
+    {
+      "shot_id": "S06_SH008",
+      "shot_size": "WS",
+      "angle": "eye",
+      "camera_side": "A",
+      "head_count": 1,
+      "characters": [
+        {
+          "id": "char_sena_74000bce",
+          "screen_pos": "right",
+          "depth": "mid",
+          "facing": "camera",
+          "costume": "default"
+        }
+      ],
+      "camera_move": "slow_push_in",
+      "refs": [
+        {
+          "path": "assets/reference/characters/char_sena_74000bce.jpg",
+          "role": "character",
+          "of": "char_sena_74000bce"
+        }
+      ],
+      "is_master": true,
+      "hook_up": "first"
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://explainer-engine.local/schemas/reference_library.schema.json",
+  "title": "ReferenceLibraryManifest",
+  "type": "object",
+  "required": [
+    "schema",
+    "status",
+    "style_name",
+    "style_anchor_token",
+    "negative_prompt",
+    "visual_principles",
+    "categories"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "const": "reference_library/1"
+    },
+    "status": {
+      "enum": [
+        "PROPOSED",
+        "LOCKED_APPROVED_BY_CREATOR"
+      ]
+    },
+    "style_name": {
+      "type": "string",
+      "minLength": 3
+    },
+    "style_anchor_token": {
+      "type": "string",
+      "minLength": 10
+    },
+    "negative_prompt": {
+      "type": "string",
+      "minLength": 10
+    },
+    "visual_principles": {
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "type": "string"
+      }
+    },
+    "categories": {
+      "type": "object",
+      "required": [
+        "battlefield_and_exterior_anchors",
+        "interior_and_character_anchors",
+        "dynamic_action_anchors",
+        "tactile_map_and_diagram_anchors"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "battlefield_and_exterior_anchors": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "interior_and_character_anchors": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "dynamic_action_anchors": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "tactile_map_and_diagram_anchors": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

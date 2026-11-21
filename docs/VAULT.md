@@ -20,7 +20,7 @@ the list with hashes: `docs/VAULT_MANIFEST.json` (critical rows only; the full l
 
 | ID | Rule | Enforced by |
 |---|---|---|
-| VT-01 | A pod script that trains or writes weights ends with `python -m explainer_engine.vault check-uploaded <out> --to <hf prefix>` after its last upload: every output file on HF with the same sha256 (LFS) or git blob id. | `vault.lint_pod_script`, `tests/unit/test_vault.py` |
+| VT-01 | A pod script that trains or writes weights, or renders frames (the Blender render pod, D-96; its frames, checkpoints, final clips and `.blend` scene templates live under the critical prefix `blender/`, the 3D assets under `assets/3d/`), ends with `python -m explainer_engine.vault check-uploaded <out> --to <hf prefix>` after its last upload: every output file on HF with the same sha256 (LFS) or git blob id. | `vault.lint_pod_script`, `tests/unit/test_vault.py` |
 | VT-02 | That check is never muted (`\|\| true`): when it fails the pod is left as it is (stopped, never deleted) and someone reads the log. | `vault.lint_pod_script` |
 | VT-03 | Nothing in the manifest is deleted, renamed away or overwritten without the creator's word; a new version gets a new name. | review; `vault verify` exits 1 on any MISSING/CHANGED row |
 | VT-04 | After every approved LoRA, dataset or episode: `vault snapshot`, a new HF tag `vault-<date>`, and the creator is told how big the second copy's update is. | the thread that made it |

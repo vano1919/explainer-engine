@@ -1,3 +1,4 @@
+
 """Story hypotheses (docs/EPISODE_STANDARDS.md section 8): several different premises, researched fairly, before the treatment.
 
     python -m explainer_engine.research.hypotheses jobs/<slug>/research/story_hypotheses.json

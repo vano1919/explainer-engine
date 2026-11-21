@@ -1,3 +1,4 @@
+
 """The picture-like archetypes of the visual compensator: 6 weapon and material cutaway, 8 parallax tableau, 9 primary-source
 dossier card (without the stamp, D-61). Free, drawn by code, a pure function of (spec, frame) and the PNGs the spec names.
 
