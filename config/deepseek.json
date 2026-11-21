@@ -1,0 +1,29 @@
+{
+  "_doc": "DeepSeek API facts for explainer_engine/llm/deepseek_api.py: model names, list prices (USD per million tokens, PEAK rate), peak hours and the worker's limits. Not a money ceiling: the ceiling is the deepseek_api line of config/spend_caps.json, and a real call is refused without it. Re-check the pricing page before a big batch; a model missing here is refused, never guessed.",
+  "checked": "2026-11-21",
+  "source": "https://api-docs.deepseek.com/quick_start/pricing and /quick_start/rate_limit and /guides/thinking_mode (read 2026-11-21)",
+  "base_url": "https://api.deepseek.com",
+  "key_env": "DEEPSEEK_API_KEY",
+  "off_peak_factor": 0.5,
+  "peak_utc": {"weekdays": [0, 1, 2, 3, 4], "hours": [[1, 4], [6, 10]]},
+  "models": {
+    "flash": {"id": "deepseek-flash", "version": "DeepSeek-V4.1-Flash-1017", "in": 0.30, "cache_read": 0.006, "out": 1.20,
+              "context": 1000000, "max_output": 384000, "vision": true, "concurrency": 2500},
+    "pro": {"id": "deepseek-v4-pro", "version": "DeepSeek-V4-Pro-0813", "in": 1.32, "cache_read": 0.044, "out": 3.96,
+            "context": 1000000, "max_output": 384000, "vision": false, "concurrency": 500}
+  },
+  "limits": {
+    "max_input_chars": 400000,
+    "max_output_tokens": 32000,
+    "max_rounds": 3,
+    "max_shrink": 0.30,
+    "test_timeout_s": 600,
+    "chars_per_token": 3.0
+  },
+  "never_paths": [
+    ".claude/", ".github/", ".git/", "config/", "tools/", "CLAUDE.md",
+    "explainer_engine/governance/", "explainer_engine/cloud/", "explainer_engine/llm/", "explainer_engine/publish/",
+    "explainer_engine/core/ledger.py", "explainer_engine/core/spend_caps.py", "explainer_engine/standards/hook.py",
+    "explainer_engine/production/paint.py", "explainer_engine/imagegen/gemini.py"
+  ]
+}

@@ -17,6 +17,8 @@ link to it, never copy it (`python -m explainer_engine.docs_lint` enforces this)
 **Fable's full-repo audit is the last gate before a paid test (creator, 2026-10-30, OR-34):** before ANY paid test one Fable audit over the whole repo and the changes, run through the Claude API, confirms that nothing from the old era is still used and everything runs on the new approaches; only then the paid tests that are necessary or recommended for the final changes.
 **API instead of threads where quality holds (creator, 2026-10-30, OR-35):** cross-reviews, audits, research, script variants and document or test-text writing go to the Claude API (`llm/claude_api.py`) where quality does not suffer; threads keep code writing and merging.
 
+**DeepSeek writes, Claude plans and checks (creator, 2026-11-21):** no thread writes code, tests, tools, documents or drafts itself; it sends a brief through `python -m explainer_engine.llm.deepseek_api` (skill `deepseek-worker`: Flash by default, Pro by its four cases, Gemini Neon only for the plan's structure and the final check of a PR); Claude writes only the never-list (governance, hooks, money, paid code, merges).
+
 ## Commands
 
 ```powershell
