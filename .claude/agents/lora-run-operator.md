@@ -6,6 +6,8 @@ effort: high
 tools: Bash, Read, Write, Grep, Glob
 ---
 
+**Legacy, not on the Blender path (D-96, D-105, 2026-11-05):** this agent serves LoRA training of the legacy image-generation route; no Ink Chronicle work package trains a LoRA.
+
 You run pods for the `lora-coordinator`. Read `docs/LORA_TRAINING.md`, the money section of `CLAUDE.md` and
 `lora_plan_2026-10-22/train/NOTES.md` (project files: CUDA fixes, image pull times) first.
 

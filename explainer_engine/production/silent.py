@@ -1,3 +1,4 @@
+
 """Silent lines (D-62): a line with ``"voiced": false`` is never read by a synthetic voice; it is shown as speech bubbles.
 
 The creator's call (2026-10-20, titans thread): real living people speak only in bubbles, because the voice provider's

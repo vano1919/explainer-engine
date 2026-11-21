@@ -1,0 +1,254 @@
+{
+  "stems": {
+    "narration": {
+      "path": "/working_dir/c_efd963322f544321/explainer_engine_repo/episodes/ep_toba/audio/stems/narration.wav",
+      "sample_rate_hz": 48000,
+      "channels": 2,
+      "duration_sec": 120.0,
+      "rms_dbfs": -15.84,
+      "peak_dbfs": -5.26,
+      "sha256": "f67411f53ee1e2ad2d81cebe458b5287a9c97256e0ab56224a42227803f1940f"
+    },
+    "music": {
+      "path": "/working_dir/c_efd963322f544321/explainer_engine_repo/episodes/ep_toba/audio/stems/music.wav",
+      "sample_rate_hz": 48000,
+      "channels": 2,
+      "duration_sec": 120.0,
+      "rms_dbfs": -30.37,
+      "peak_dbfs": -18.58,
+      "sha256": "926e974283b38024b95e31849c7f3038ad374853a664dba41fdaea143e8c5411"
+    },
+    "ambience": {
+      "path": "/working_dir/c_efd963322f544321/explainer_engine_repo/episodes/ep_toba/audio/stems/ambience.wav",
+      "sample_rate_hz": 48000,
+      "channels": 2,
+      "duration_sec": 120.0,
+      "rms_dbfs": -36.7,
+      "peak_dbfs": -18.58,
+      "sha256": "d1fbf0717b63f4a0edf6d719be795c17fafe40bd8b2d723da253b3bde0832e9a"
+    },
+    "sfx": {
+      "path": "/working_dir/c_efd963322f544321/explainer_engine_repo/episodes/ep_toba/audio/stems/sfx.wav",
+      "sample_rate_hz": 48000,
+      "channels": 2,
+      "duration_sec": 120.0,
+      "rms_dbfs": -37.87,
+      "peak_dbfs": -13.75,
+      "sha256": "1c3268f56b56f4925955d73e126a18e4d31f4555d81a1e04c7d9704eb4e46c54"
+    },
+    "mix": {
+      "path": "/working_dir/c_efd963322f544321/explainer_engine_repo/episodes/ep_toba/audio/stems/mix.wav",
+      "sample_rate_hz": 48000,
+      "channels": 2,
+      "duration_sec": 120.0,
+      "rms_dbfs": -15.63,
+      "peak_dbfs": -3.89,
+      "sha256": "121bd8f007f30bbae00f414b7f9d69d1f76e0af0fb19ff9d65a4c2d6bbcc32d2"
+    }
+  },
+  "spoken_lines_audited": 25,
+  "mid_line_narration_dropouts": 0,
+  "sound_director_stem_findings": [],
+  "line_audits": [
+    {
+      "line_id": "S01_L001",
+      "shot_id": "S01_SH001",
+      "start_sec": 0.0,
+      "end_sec": 2.0,
+      "active_rms_dbfs": -15.1,
+      "mid_line_dropouts": 0
+    },
+    {
+      "line_id": "S01_L002",
+      "shot_id": "S01_SH002",
+      "start_sec": 2.0,
+      "end_sec": 6.8,
+      "active_rms_dbfs": -15.91,
+      "mid_line_dropouts": 0
+    },
+    {
+      "line_id": "S01_L003",
+      "shot_id": "S01_SH003",
+      "start_sec": 6.8,
+      "end_sec": 12.4,
+      "active_rms_dbfs": -15.69,
+      "mid_line_dropouts": 0
+    },
+    {
+      "line_id": "S01_L004",
+      "shot_id": "S01_SH004",
+      "start_sec": 12.4,
+      "end_sec": 14.6,
+      "active_rms_dbfs": -15.44,
+      "mid_line_dropouts": 0
+    },
+    {
+      "line_id": "S01_L005",
+      "shot_id": "S01_SH005",
+      "start_sec": 14.6,
+      "end_sec": 18.0,
+      "active_rms_dbfs": -15.32,
+      "mid_line_dropouts": 0
+    },
+    {
+      "line_id": "S01_L006",
+      "shot_id": "S01_SH006",
+      "start_sec": 18.0,
+      "end_sec": 24.2,
+      "active_rms_dbfs": -15.77,
+      "mid_line_dropouts": 0
+    },
+    {
+      "line_id": "S01_L007",
+      "shot_id": "S01_SH007",
+      "start_sec": 24.2,
+      "end_sec": 27.0,
+      "active_rms_dbfs": -15.09,
+      "mid_line_dropouts": 0
+    },
+    {
+      "line_id": "S01_L008",
+      "shot_id": "S01_SH008",
+      "start_sec": 27.0,
+      "end_sec": 31.6,
+      "active_rms_dbfs": -15.74,
+      "mid_line_dropouts": 0
+    },
+    {
+      "line_id": "S01_L009",
+      "shot_id": "S01_SH009",
+      "start_sec": 31.6,
+      "end_sec": 38.0,
+      "active_rms_dbfs": -15.9,
+      "mid_line_dropouts": 0
+    },
+    {
+      "line_id": "S02_L001",
+      "shot_id": "S02_SH001",
+      "start_sec": 38.0,
+      "end_sec": 43.8,
+      "active_rms_dbfs": -15.88,
+      "mid_line_dropouts": 0
+    },
+    {
+      "line_id": "S02_L002",
+      "shot_id": "S02_SH002",
+      "start_sec": 43.8,
+      "end_sec": 45.9,
+      "active_rms_dbfs": -15.73,
+      "mid_line_dropouts": 0
+    },
+    {
+      "line_id": "S02_L003",
+      "shot_id": "S02_SH003",
+      "start_sec": 45.9,
+      "end_sec": 53.3,
+      "active_rms_dbfs": -15.77,
+      "mid_line_dropouts": 0
+    },
+    {
+      "line_id": "S02_L004",
+      "shot_id": "S02_SH004",
+      "start_sec": 53.3,
+      "end_sec": 58.5,
+      "active_rms_dbfs": -15.61,
+      "mid_line_dropouts": 0
+    },
+    {
+      "line_id": "S02_L005",
+      "shot_id": "S02_SH005",
+      "start_sec": 58.5,
+      "end_sec": 65.3,
+      "active_rms_dbfs": -15.7,
+      "mid_line_dropouts": 0
+    },
+    {
+      "line_id": "S02_L006",
+      "shot_id": "S02_SH006",
+      "start_sec": 65.3,
+      "end_sec": 68.3,
+      "active_rms_dbfs": -15.21,
+      "mid_line_dropouts": 0
+    },
+    {
+      "line_id": "S02_L007",
+      "shot_id": "S02_SH007",
+      "start_sec": 68.3,
+      "end_sec": 74.8,
+      "active_rms_dbfs": -15.67,
+      "mid_line_dropouts": 0
+    },
+    {
+      "line_id": "S02_L008",
+      "shot_id": "S02_SH008",
+      "start_sec": 74.8,
+      "end_sec": 80.2,
+      "active_rms_dbfs": -15.69,
+      "mid_line_dropouts": 0
+    },
+    {
+      "line_id": "S02_L009",
+      "shot_id": "S02_SH009",
+      "start_sec": 80.2,
+      "end_sec": 82.8,
+      "active_rms_dbfs": -15.8,
+      "mid_line_dropouts": 0
+    },
+    {
+      "line_id": "S02_L010",
+      "shot_id": "S02_SH010",
+      "start_sec": 82.8,
+      "end_sec": 89.4,
+      "active_rms_dbfs": -15.72,
+      "mid_line_dropouts": 0
+    },
+    {
+      "line_id": "S02_L011",
+      "shot_id": "S02_SH011",
+      "start_sec": 89.4,
+      "end_sec": 95.6,
+      "active_rms_dbfs": -15.65,
+      "mid_line_dropouts": 0
+    },
+    {
+      "line_id": "S02_L012",
+      "shot_id": "S02_SH012",
+      "start_sec": 95.6,
+      "end_sec": 102.0,
+      "active_rms_dbfs": -15.64,
+      "mid_line_dropouts": 0
+    },
+    {
+      "line_id": "S03_L001",
+      "shot_id": "S03_SH001",
+      "start_sec": 102.0,
+      "end_sec": 107.8,
+      "active_rms_dbfs": -15.87,
+      "mid_line_dropouts": 0
+    },
+    {
+      "line_id": "S03_L002",
+      "shot_id": "S03_SH002",
+      "start_sec": 107.8,
+      "end_sec": 114.4,
+      "active_rms_dbfs": -15.98,
+      "mid_line_dropouts": 0
+    },
+    {
+      "line_id": "S03_L003",
+      "shot_id": "S03_SH003",
+      "start_sec": 114.4,
+      "end_sec": 117.0,
+      "active_rms_dbfs": -15.91,
+      "mid_line_dropouts": 0
+    },
+    {
+      "line_id": "S03_L004",
+      "shot_id": "S03_SH004",
+      "start_sec": 117.0,
+      "end_sec": 120.0,
+      "active_rms_dbfs": -15.98,
+      "mid_line_dropouts": 0
+    }
+  ]
+}

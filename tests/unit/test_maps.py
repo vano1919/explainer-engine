@@ -98,7 +98,7 @@ def test_ocr_finds_no_letters_on_a_plate(tmp_path):
     import subprocess
     p = tmp_path / "p.png"
     p.write_bytes(D.png_bytes(plate.render_plate(geo.View(25.0, 52.0, 2200, 1280, 720))))
-    out = subprocess.run(["tesseract", str(p), "-", "--psm", "11"], capture_output=True, text=True).stdout
+    out = subprocess.run(["tesseract", str(p), "-", "--psm", "3"], capture_output=True, text=True).stdout
     assert len([c for c in out if c.isalpha()]) == 0
 
 

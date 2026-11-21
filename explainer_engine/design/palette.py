@@ -1,3 +1,4 @@
+
 """Colour tokens and WCAG contrast checks. stdlib only. ``palette.json`` is the single source of the hex values."""
 
 from __future__ import annotations

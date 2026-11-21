@@ -1,3 +1,4 @@
+
 """``publish thumbnail``: the long video's thumbnail, painted by Gemini's premium image model behind the paid gate (D-57).
 
 Without ``--generate`` it prints the prompt and the price and spends nothing. With ``--generate --approved-by '<who, where>'``

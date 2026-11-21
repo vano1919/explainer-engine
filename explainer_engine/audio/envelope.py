@@ -1,3 +1,4 @@
+
 """A fallback mouth driven by loudness, for clips without phoneme timings. stdlib + numpy.
 
 - ``envelope``: the loudness of a WAV in 1/12 s steps, streamed in 1-second blocks.

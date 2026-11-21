@@ -1,3 +1,4 @@
+
 """The staging plan (D-57): what each upload of an episode carries, built from the episode's own files. Pure, no network.
 
 Inputs: ``<episode>/publish.json`` (publish/1: title, description, chapters, disclosure, tags, thumbnail, and per Short an

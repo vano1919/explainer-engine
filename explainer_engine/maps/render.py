@@ -1,3 +1,4 @@
+
 """The four map archetypes (1 flyover, 2 unit manoeuvre, 3 formation, 4 logistics) drawn as a pure function of (spec, frame).
 
 The base is the vector plate (or a certified painted plate), the overlays are drawn over it at the frame the viewer sees: routes that
@@ -57,8 +58,8 @@ def validate_payload(spec: dict) -> list[dict]:
             if "from_word" in m and "to_word" in m and m["to_word"] <= m["from_word"]:
                 bad(f"camera.moves[{i}]", "a move ends on a later word than it starts")
     base = p.get("base", {"kind": "vector"})
-    if base.get("kind") not in ("vector", "plate"):
-        bad("base.kind", "vector or plate")
+    if base.get("kind") not in ("vector", "plate", "shaded_relief"):
+        bad("base.kind", "vector, plate, or shaded_relief")
     elif base["kind"] == "plate" and (not base.get("ref") or not {"lon", "lat", "span_km"} <= set(base.get("view") or {})):
         bad("base", "a painted plate needs ref and view (lon, lat, span_km)")
     for key in ("routes", "units", "labels", "rings"):
@@ -329,7 +330,13 @@ def render_frame(spec: dict, tl: Timeline, clock, f: int, ss: int = D.SS, base_d
     p = spec["payload"]
     view, cam = _view(spec, tl, clock, f)
     base = p.get("base", {"kind": "vector"})
-    c = _plate_base(spec, view, ss, base_dir) if base["kind"] == "plate" else plate.draw_base(view, ss=ss)
+    if base["kind"] == "plate":
+        c = _plate_base(spec, view, ss, base_dir)
+    elif base["kind"] == "shaded_relief":
+        c = plate.draw_base(view, ss=ss, shaded_relief=True, cache_dir=base_dir)
+    else:
+        c = plate.draw_base(view, ss=ss)
+    c.face = "map"   # map lettering in the map face, never the bubbles' comic face (v4.3 P4)
     # the active area (law 3): a focus ring or the payload's fixed focus
     focus = None
     if p.get("focus"):
@@ -417,6 +424,201 @@ def render_frame(spec: dict, tl: Timeline, clock, f: int, ss: int = D.SS, base_d
     _scale_bar(c, view, CAM.tier_of(cam.span_km))
     img = c.image()
     if cam.pitch_deg > 0:
-        bg = Image.new("RGBA", img.size, (*plate.colours()["sea"], 255))
-        img = Image.alpha_composite(bg, CAM.tilt(img, cam.pitch_deg))
+        img = CAM.tilt_fill(img, cam.pitch_deg)   # no empty corners (v4.3 P4)
     return img.convert("RGB")
+
+
+
+def build_episode_gis_map_spec(
+    shot_or_id: dict | str,
+    width: int = 1920,
+    height: int = 1080,
+    total_frames: int = 96,
+    plate_ref: str | None = None,
+    plate_view: dict | None = None,
+) -> tuple[dict, dict]:
+    """Build a canonical `maps/render.py` GIS spec for any episode map shot (supports custom `shot['map_spec']` or preset coordinates)."""
+    if isinstance(shot_or_id, dict):
+        shot_id = str(shot_or_id.get("shot_id") or "MAP_SH001")
+        if isinstance(shot_or_id.get("map_spec"), dict):
+            words = [{"word": f"w{i}", "start_frame": i * 4, "end_frame": i * 4 + 3} for i in range(max(40, total_frames // 3))]
+            spine = {"fps": 24, "total_frames": max(total_frames + 24, 240), "words": words}
+            custom_spec = dict(shot_or_id["map_spec"])
+            custom_spec["width"] = width
+            custom_spec["height"] = height
+            if plate_ref and plate_view:
+                custom_spec.setdefault("payload", {})["base"] = {"kind": "plate", "ref": plate_ref, "view": plate_view}
+            return custom_spec, spine
+    else:
+        shot_id = str(shot_or_id)
+    return build_toba_gis_map_spec(shot_id, width=width, height=height, total_frames=total_frames, plate_ref=plate_ref, plate_view=plate_view)
+
+
+def build_toba_gis_map_spec(
+    shot_id: str,
+    width: int = 1920,
+    height: int = 1080,
+    total_frames: int = 96,
+    plate_ref: str | None = None,
+    plate_view: dict | None = None,
+) -> tuple[dict, dict]:
+    """Build a canonical `maps/render.py` GIS spec and synthetic word-clock spine for a Toba episode map shot."""
+    words = [{"word": f"w{i}", "start_frame": i * 4, "end_frame": i * 4 + 3} for i in range(max(40, total_frames // 3))]
+    spine = {"fps": 24, "total_frames": max(total_frames + 24, 240), "words": words}
+
+    base_cfg = (
+        {"kind": "plate", "ref": plate_ref, "view": plate_view}
+        if (plate_ref and plate_view)
+        else {"kind": "shaded_relief"}
+    )
+
+    if shot_id == "S01_SH008":
+        # Sumatra & Sunda Trench: Mount Toba Caldera (98.88E, 2.68N) with blast rings & pyroclastic trajectories
+        spec = {
+            "schema": "comp_spec/1",
+            "item_id": "map_toba_s01_sh008",
+            "archetype_id": "TACTICAL_UNIT_MANEUVER",
+            "width": width,
+            "height": height,
+            "payload": {
+                "base": base_cfg,
+                "camera": {
+                    "start": {"lon": 98.88, "lat": 2.68, "span_km": 1450.0, "pitch_deg": 10.0},
+                    "moves": [
+                        {"from_word": 1, "to_word": max(12, total_frames // 4 - 2), "lon": 98.88, "lat": 2.68, "span_km": 680.0, "pitch_deg": 16.0}
+                    ],
+                },
+                "focus": {"lon": 98.88, "lat": 2.68, "radius_km": 420.0},
+                "date_chip": {"text": "74,000 BCE · MOUNT TOBA CALDERA (2.68°N, 98.88°E)"},
+                "rings": [
+                    {"id": "ring_caldera", "lon": 98.88, "lat": 2.68, "radius_km": 55.0},
+                    {"id": "ring_pyroclastic", "lon": 98.88, "lat": 2.68, "radius_km": 195.0},
+                    {"id": "ring_shockwave", "lon": 98.88, "lat": 2.68, "radius_km": 380.0},
+                ],
+                "routes": [
+                    {"id": "rt_nw_plume", "side": "a", "domain": "air", "waypoints": [[98.88, 2.68], [97.4, 3.8], [95.6, 5.1]]},
+                    {"id": "rt_sw_trench", "side": "b", "domain": "air", "waypoints": [[98.88, 2.68], [97.6, 1.4], [96.2, 0.2]]},
+                    {"id": "rt_ne_malacca", "side": "a", "domain": "air", "waypoints": [[98.88, 2.68], [100.2, 3.6], [101.6, 4.4]]},
+                ],
+                "units": [
+                    {"id": "u_toba_vent", "side": "a", "at": [98.88, 2.68], "group": "caldera"},
+                    {"id": "u_barisan_arc", "side": "b", "at": [97.5, 4.1], "group": "arc"},
+                ],
+                "labels": [
+                    {"id": "lbl_toba", "lon": 98.88, "lat": 2.68, "text": "MT. TOBA CALDERA (2,800 km³ DRE)"},
+                    {"id": "lbl_sumatra", "lon": 100.4, "lat": 0.9, "text": "BARISAN VOLCANIC ARC"},
+                    {"id": "lbl_sunda", "lon": 95.8, "lat": 1.6, "text": "SUNDA SUBDUCTION TRENCH"},
+                ],
+            },
+            "events": [
+                {"id": "ev1", "op": "show_unit", "target": "u_toba_vent", "word_index": 0, "frames": 6},
+                {"id": "ev2", "op": "show_ring", "target": "ring_caldera", "word_index": 1, "frames": 10},
+                {"id": "ev3", "op": "show_label", "target": "lbl_toba", "word_index": 2, "frames": 8},
+                {"id": "ev4", "op": "show_ring", "target": "ring_pyroclastic", "word_index": 4, "frames": 14},
+                {"id": "ev5", "op": "show_route", "target": "rt_nw_plume", "word_index": 5, "frames": 18},
+                {"id": "ev6", "op": "show_route", "target": "rt_sw_trench", "word_index": 6, "frames": 18},
+                {"id": "ev7", "op": "show_route", "target": "rt_ne_malacca", "word_index": 7, "frames": 18},
+                {"id": "ev8", "op": "show_ring", "target": "ring_shockwave", "word_index": 8, "frames": 16},
+                {"id": "ev9", "op": "show_label", "target": "lbl_sumatra", "word_index": 9, "frames": 8},
+                {"id": "ev10", "op": "show_label", "target": "lbl_sunda", "word_index": 11, "frames": 8},
+            ],
+        }
+    elif shot_id == "S02_SH001":
+        # Indian Ocean & South Asia: Ash dispersal corridor from Sumatra (98.88E, 2.68N) across Bay of Bengal to Jwalapuram India (78.1E, 15.3N)
+        spec = {
+            "schema": "comp_spec/1",
+            "item_id": "map_toba_s02_sh001",
+            "archetype_id": "TACTICAL_UNIT_MANEUVER",
+            "width": width,
+            "height": height,
+            "payload": {
+                "base": base_cfg,
+                "camera": {
+                    "start": {"lon": 90.0, "lat": 9.5, "span_km": 4200.0, "pitch_deg": 8.0},
+                    "moves": [
+                        {"from_word": 1, "to_word": max(14, total_frames // 4 - 2), "lon": 84.5, "lat": 12.2, "span_km": 3300.0, "pitch_deg": 12.0}
+                    ],
+                },
+                "focus": {"lon": 86.5, "lat": 11.0, "radius_km": 1850.0},
+                "date_chip": {"text": "74,000 BCE · YOUNGEST TOBA TUFF (YTT) ASH DISPERSAL"},
+                "rings": [
+                    {"id": "ring_source", "lon": 98.88, "lat": 2.68, "radius_km": 260.0},
+                    {"id": "ring_jwalapuram", "lon": 78.13, "lat": 15.32, "radius_km": 320.0},
+                ],
+                "routes": [
+                    {"id": "rt_ash_main", "side": "a", "domain": "air", "waypoints": [[98.88, 2.68], [92.5, 7.2], [85.4, 11.8], [78.13, 15.32]]},
+                    {"id": "rt_ash_north", "side": "b", "domain": "air", "waypoints": [[98.88, 2.68], [93.8, 10.5], [88.2, 16.4], [82.0, 20.1]]},
+                    {"id": "rt_ash_south", "side": "b", "domain": "air", "waypoints": [[98.88, 2.68], [89.0, 3.8], [79.5, 6.9], [73.0, 9.5]]},
+                ],
+                "units": [
+                    {"id": "u_toba_origin", "side": "a", "at": [98.88, 2.68], "group": "origin"},
+                    {"id": "u_jwalapuram", "side": "b", "at": [78.13, 15.32], "group": "site"},
+                ],
+                "labels": [
+                    {"id": "lbl_toba_src", "lon": 98.88, "lat": 2.68, "text": "TOBA ERUPTION SOURCE"},
+                    {"id": "lbl_bengal", "lon": 87.5, "lat": 11.5, "text": "BAY OF BENGAL ASH PLUME (4,000 KM)"},
+                    {"id": "lbl_jwala", "lon": 78.13, "lat": 15.32, "text": "JWALAPURAM (YTT TEPHRA LAYER)"},
+                ],
+            },
+            "events": [
+                {"id": "ev1", "op": "show_unit", "target": "u_toba_origin", "word_index": 0, "frames": 6},
+                {"id": "ev2", "op": "show_ring", "target": "ring_source", "word_index": 1, "frames": 10},
+                {"id": "ev3", "op": "show_label", "target": "lbl_toba_src", "word_index": 2, "frames": 8},
+                {"id": "ev4", "op": "show_route", "target": "rt_ash_main", "word_index": 3, "frames": 22},
+                {"id": "ev5", "op": "show_route", "target": "rt_ash_north", "word_index": 5, "frames": 20},
+                {"id": "ev6", "op": "show_route", "target": "rt_ash_south", "word_index": 6, "frames": 20},
+                {"id": "ev7", "op": "show_label", "target": "lbl_bengal", "word_index": 8, "frames": 8},
+                {"id": "ev8", "op": "show_unit", "target": "u_jwalapuram", "word_index": 10, "frames": 8},
+                {"id": "ev9", "op": "show_ring", "target": "ring_jwalapuram", "word_index": 11, "frames": 12},
+                {"id": "ev10", "op": "show_label", "target": "lbl_jwala", "word_index": 12, "frames": 8},
+            ],
+        }
+    else:
+        # S02_SH010: East African Refugia & Blue Nile Tributaries (Shinfa-Metema 12.7N, 36.2E & Horn of Africa)
+        spec = {
+            "schema": "comp_spec/1",
+            "item_id": f"map_toba_{shot_id.lower()}",
+            "archetype_id": "TACTICAL_UNIT_MANEUVER",
+            "width": width,
+            "height": height,
+            "payload": {
+                "base": base_cfg,
+                "camera": {
+                    "start": {"lon": 38.2, "lat": 11.5, "span_km": 2100.0, "pitch_deg": 10.0},
+                    "moves": [
+                        {"from_word": 1, "to_word": max(12, total_frames // 4 - 2), "lon": 36.4, "lat": 12.7, "span_km": 980.0, "pitch_deg": 15.0}
+                    ],
+                },
+                "focus": {"lon": 36.2, "lat": 12.7, "radius_km": 520.0},
+                "date_chip": {"text": "74,000 BCE · SHINFA-METEMA 1 & BLUE NILE CORRIDOR"},
+                "rings": [
+                    {"id": "ring_shinfa", "lon": 36.2, "lat": 12.7, "radius_km": 115.0},
+                    {"id": "ring_tana", "lon": 37.3, "lat": 12.0, "radius_km": 240.0},
+                ],
+                "routes": [
+                    {"id": "rt_shinfa_river", "side": "a", "waypoints": [[36.8, 11.8], [36.2, 12.7], [35.2, 13.6], [33.8, 14.8]]},
+                    {"id": "rt_rift_corridor", "side": "b", "waypoints": [[37.8, 9.0], [38.9, 11.2], [39.8, 12.4], [40.6, 13.2]]},
+                ],
+                "units": [
+                    {"id": "u_shinfa_site", "side": "a", "at": [36.2, 12.7], "group": "refugium"},
+                    {"id": "u_highland_source", "side": "b", "at": [37.3, 12.0], "group": "water"},
+                ],
+                "labels": [
+                    {"id": "lbl_shinfa", "lon": 36.2, "lat": 12.7, "text": "SHINFA-METEMA 1 (CRYPTO-TEPHRA & ARCHERY)"},
+                    {"id": "lbl_nile", "lon": 34.8, "lat": 13.8, "text": "BLUE NILE SEASONAL WATERHOLE REFUGIA"},
+                    {"id": "lbl_highlands", "lon": 37.8, "lat": 11.4, "text": "ETHIOPIAN HIGHLANDS CATCHMENT"},
+                ],
+            },
+            "events": [
+                {"id": "ev1", "op": "show_unit", "target": "u_highland_source", "word_index": 0, "frames": 6},
+                {"id": "ev2", "op": "show_ring", "target": "ring_tana", "word_index": 1, "frames": 10},
+                {"id": "ev3", "op": "show_label", "target": "lbl_highlands", "word_index": 2, "frames": 8},
+                {"id": "ev4", "op": "show_route", "target": "rt_shinfa_river", "word_index": 4, "frames": 20},
+                {"id": "ev5", "op": "show_unit", "target": "u_shinfa_site", "word_index": 6, "frames": 8},
+                {"id": "ev6", "op": "show_ring", "target": "ring_shinfa", "word_index": 7, "frames": 12},
+                {"id": "ev7", "op": "show_label", "target": "lbl_shinfa", "word_index": 8, "frames": 8},
+                {"id": "ev8", "op": "show_route", "target": "rt_rift_corridor", "word_index": 9, "frames": 16},
+                {"id": "ev9", "op": "show_label", "target": "lbl_nile", "word_index": 11, "frames": 8},
+            ],
+        }
+    return spec, spine

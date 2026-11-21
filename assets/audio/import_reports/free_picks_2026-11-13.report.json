@@ -1,0 +1,553 @@
+{
+  "schema": "sound_import_report/1",
+  "picks": "assets/audio/free_picks_2026-11-13.json",
+  "read_on": "2026-11-13",
+  "stored": [
+    {
+      "id": "war_horn_ambience__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "PASS",
+      "seconds": 7.903
+    },
+    {
+      "id": "warfare_horn__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "PASS",
+      "seconds": 4.175
+    },
+    {
+      "id": "war_drums_call__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "REVIEW",
+      "seconds": 3.437
+    },
+    {
+      "id": "war_drums__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "REVIEW",
+      "seconds": 3.071
+    },
+    {
+      "id": "drums_ancient_heartbeat__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "REVIEW",
+      "seconds": 36.2
+    },
+    {
+      "id": "drums_tribal_ritual__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "REVIEW",
+      "seconds": 20.6
+    },
+    {
+      "id": "drums_tribal_ambience__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "REVIEW",
+      "seconds": 37.8
+    },
+    {
+      "id": "drum_roll_tension__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "REVIEW",
+      "seconds": 12.719
+    },
+    {
+      "id": "drum_hit_deep__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "REVIEW",
+      "seconds": 3.35
+    },
+    {
+      "id": "army_marching_big__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "REVIEW",
+      "seconds": 8.521
+    },
+    {
+      "id": "sword_chainmail__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "REVIEW",
+      "seconds": 0.532
+    },
+    {
+      "id": "armour_hit_metal__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "REVIEW",
+      "seconds": 0.754
+    },
+    {
+      "id": "sword_strikes_armour__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "REVIEW",
+      "seconds": 0.368
+    },
+    {
+      "id": "sword_blade_metal__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "PASS",
+      "seconds": 0.711
+    },
+    {
+      "id": "sword_slashes__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "REVIEW",
+      "seconds": 0.783
+    },
+    {
+      "id": "arrow_shot__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "REVIEW",
+      "seconds": 0.347
+    },
+    {
+      "id": "arrow_whizz__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "REVIEW",
+      "seconds": 0.081
+    },
+    {
+      "id": "arrow_hit_metal__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "REVIEW",
+      "seconds": 0.134
+    },
+    {
+      "id": "battle_scream__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "REVIEW",
+      "seconds": 1.649
+    },
+    {
+      "id": "crowd_angry_men__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "PASS",
+      "seconds": 30.3
+    },
+    {
+      "id": "horse_gallop_dirt__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "REVIEW",
+      "seconds": 12.0
+    },
+    {
+      "id": "horse_walk_dirt__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "REVIEW",
+      "seconds": 12.0
+    },
+    {
+      "id": "horse_neigh_scared__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "REVIEW",
+      "seconds": 2.022
+    },
+    {
+      "id": "horse_neigh_stallion__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "PASS",
+      "seconds": 2.15
+    },
+    {
+      "id": "horse_snort__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "REVIEW",
+      "seconds": 1.008
+    },
+    {
+      "id": "carriage_street__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "REVIEW",
+      "seconds": 10.0
+    },
+    {
+      "id": "campfire_crackles__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "REVIEW",
+      "seconds": 22.9
+    },
+    {
+      "id": "campfire_night_wind__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "PASS",
+      "seconds": 26.9
+    },
+    {
+      "id": "fire_big_burning__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "PASS",
+      "seconds": 7.46
+    },
+    {
+      "id": "fire_burning_big2__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "REVIEW",
+      "seconds": 3.044
+    },
+    {
+      "id": "wind_blowing__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "PASS",
+      "seconds": 49.3
+    },
+    {
+      "id": "wind_mountain_top__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "PASS",
+      "seconds": 26.7
+    },
+    {
+      "id": "forest_wind_birds__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "PASS",
+      "seconds": 49.9
+    },
+    {
+      "id": "forest_european__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "PASS",
+      "seconds": 50.7
+    },
+    {
+      "id": "birds_morning__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "REVIEW",
+      "seconds": 49.2
+    },
+    {
+      "id": "night_forest_insects__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "PASS",
+      "seconds": 51.4
+    },
+    {
+      "id": "crickets_wild__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "PASS",
+      "seconds": 25.5
+    },
+    {
+      "id": "river_flow__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "PASS",
+      "seconds": 51.2
+    },
+    {
+      "id": "river_birds__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "PASS",
+      "seconds": 48.6
+    },
+    {
+      "id": "water_flowing__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "PASS",
+      "seconds": 49.0
+    },
+    {
+      "id": "rain_long__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "PASS",
+      "seconds": 50.7
+    },
+    {
+      "id": "storm_thunder_rumble__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "REVIEW",
+      "seconds": 48.5
+    },
+    {
+      "id": "thunder_single__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "REVIEW",
+      "seconds": 8.586
+    },
+    {
+      "id": "thunder_rumble_big__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "REVIEW",
+      "seconds": 19.767
+    },
+    {
+      "id": "desert_wind__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "PASS",
+      "seconds": 50.9
+    },
+    {
+      "id": "sea_storm_waves__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "PASS",
+      "seconds": 49.3
+    },
+    {
+      "id": "harbor_small_waves__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "PASS",
+      "seconds": 51.1
+    },
+    {
+      "id": "sea_waves__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "REVIEW",
+      "seconds": 49.7
+    },
+    {
+      "id": "ship_wooden_sea__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "PASS",
+      "seconds": 30.6
+    },
+    {
+      "id": "ship_hull_creak__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "REVIEW",
+      "seconds": 7.592
+    },
+    {
+      "id": "seabirds__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "PASS",
+      "seconds": 10.005
+    },
+    {
+      "id": "farm_morning__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "REVIEW",
+      "seconds": 38.8
+    },
+    {
+      "id": "hens_rooster__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "REVIEW",
+      "seconds": 10.388
+    },
+    {
+      "id": "countryside_forest_farm__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "PASS",
+      "seconds": 49.7
+    },
+    {
+      "id": "crowd_talking_big__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "PASS",
+      "seconds": 49.2
+    },
+    {
+      "id": "fair_people_laughter__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "REVIEW",
+      "seconds": 14.881
+    },
+    {
+      "id": "church_bell_calling__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "REVIEW",
+      "seconds": 27.965
+    },
+    {
+      "id": "cathedral_bell__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "REVIEW",
+      "seconds": 27.195
+    },
+    {
+      "id": "medieval_door_lock__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "PASS",
+      "seconds": 3.507
+    },
+    {
+      "id": "old_church_door__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "PASS",
+      "seconds": 2.104
+    },
+    {
+      "id": "footsteps_stones__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "REVIEW",
+      "seconds": 14.0
+    },
+    {
+      "id": "footsteps_forest_ground__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "REVIEW",
+      "seconds": 31.5
+    },
+    {
+      "id": "footsteps_tall_grass__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "REVIEW",
+      "seconds": 23.2
+    },
+    {
+      "id": "wood_hard_hit__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "REVIEW",
+      "seconds": 0.342
+    },
+    {
+      "id": "paper_book_stiff__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "REVIEW",
+      "seconds": 5.426
+    },
+    {
+      "id": "paper_slide__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "REVIEW",
+      "seconds": 0.468
+    },
+    {
+      "id": "papers_moved__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "PASS",
+      "seconds": 5.831
+    },
+    {
+      "id": "transition_windy_swoosh__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "PASS",
+      "seconds": 2.776
+    },
+    {
+      "id": "storm_coming_whoosh__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "REVIEW",
+      "seconds": 3.933
+    },
+    {
+      "id": "mystery_heartbeat_texture__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "REVIEW",
+      "seconds": 59.3
+    },
+    {
+      "id": "suspense_ambience__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "PASS",
+      "seconds": 59.5
+    },
+    {
+      "id": "deep_wind_hum__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "PASS",
+      "seconds": 50.5
+    },
+    {
+      "id": "trailer_riser__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "PASS",
+      "seconds": 2.29
+    },
+    {
+      "id": "epic_orchestra_transition__v1",
+      "licence": "mixkit_sfx_free",
+      "qc": "REVIEW",
+      "seconds": 6.046
+    },
+    {
+      "id": "mus_crusade__v1",
+      "licence": "cc_by_4",
+      "qc": "REVIEW",
+      "seconds": 198.74
+    },
+    {
+      "id": "mus_lord_of_the_land__v1",
+      "licence": "cc_by_4",
+      "qc": "PASS",
+      "seconds": 186.488
+    },
+    {
+      "id": "mus_clash_defiant__v1",
+      "licence": "cc_by_4",
+      "qc": "REVIEW",
+      "seconds": 375.589
+    },
+    {
+      "id": "mus_five_armies__v1",
+      "licence": "cc_by_4",
+      "qc": "REVIEW",
+      "seconds": 155.847
+    },
+    {
+      "id": "mus_prelude_and_action__v1",
+      "licence": "cc_by_4",
+      "qc": "REVIEW",
+      "seconds": 98.847
+    },
+    {
+      "id": "mus_dark_times__v1",
+      "licence": "cc_by_4",
+      "qc": "PASS",
+      "seconds": 183.696
+    },
+    {
+      "id": "mus_ancient_rite__v1",
+      "licence": "cc_by_4",
+      "qc": "REVIEW",
+      "seconds": 113.215
+    },
+    {
+      "id": "mus_rites__v1",
+      "licence": "cc_by_4",
+      "qc": "PASS",
+      "seconds": 126.912
+    },
+    {
+      "id": "mus_thunder_dreams__v1",
+      "licence": "cc_by_4",
+      "qc": "REVIEW",
+      "seconds": 230.4
+    },
+    {
+      "id": "mus_echoes_of_time__v1",
+      "licence": "cc_by_4",
+      "qc": "REVIEW",
+      "seconds": 285.153
+    },
+    {
+      "id": "mus_lightless_dawn__v1",
+      "licence": "cc_by_4",
+      "qc": "PASS",
+      "seconds": 379.847
+    },
+    {
+      "id": "mus_village_consort__v1",
+      "licence": "cc_by_4",
+      "qc": "REVIEW",
+      "seconds": 214.805
+    },
+    {
+      "id": "mus_strength_of_titans__v1",
+      "licence": "cc_by_4",
+      "qc": "REVIEW",
+      "seconds": 61.885
+    },
+    {
+      "id": "mus_heroic_age__v1",
+      "licence": "cc_by_4",
+      "qc": "REVIEW",
+      "seconds": 97.463
+    },
+    {
+      "id": "mus_despair_and_triumph__v1",
+      "licence": "cc_by_4",
+      "qc": "REVIEW",
+      "seconds": 285.727
+    }
+  ],
+  "quarantined": [],
+  "rejected": [],
+  "failed": [
+    {
+      "id": "sword_pierces_armour__v1",
+      "why": "82% of the file is digital silence; 62 clipped samples (runs of 3+ at full scale)"
+    },
+    {
+      "id": "twig_break__v1",
+      "why": "87% of the file is digital silence"
+    }
+  ]
+}

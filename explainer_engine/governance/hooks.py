@@ -1,3 +1,4 @@
+
 """Claude Code hooks that lint what instructions cannot enforce (P0b, D-84, MODEL_ROUTING v2 part 6). Hooks cannot set a model or an
 effort (verified 2026-10-29 on the hooks page); they deny, add context or log.
 

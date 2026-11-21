@@ -1,3 +1,4 @@
+
 """Factor cells of the strategy matrix (Opus plan section 10, 2026-10-26): every picture row of round 3 and 4 is a COMBINATION of four factors, not a
 hand-written strategy. Pure logic, no model: the names, the L16 design and the text builders; the pod side is in xworld_v2_loop_run.py.
 

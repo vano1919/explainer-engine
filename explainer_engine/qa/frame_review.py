@@ -1,3 +1,4 @@
+
 """Claude's own look at a render before the creator sees it (standing order 12, docs/PRODUCTION_RULES.md; the creator,
 2026-10-20: "why can't you watch and evaluate it yourself?"). Free and local: ffmpeg + PIL, no paid call.
 

@@ -1,3 +1,4 @@
+
 """Sidechain ducking without audible cuts (creator 2026-10-16): when a world sound hits (a strike, friction, a snap) the music
 dips for its length and comes back, so the two never pile up into noise, and the dip must never sound like a cut.
 

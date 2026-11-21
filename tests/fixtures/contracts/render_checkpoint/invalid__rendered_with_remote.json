@@ -1,0 +1,36 @@
+{
+ "schema": "render_checkpoint/1",
+ "job_id": "job-001",
+ "shot_key": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+ "spec_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+ "frames_expected": 96,
+ "chunk_size": 8,
+ "vault_prefix": "blender/job-001/cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc/frames/",
+ "frames": [
+  {
+   "index": 0,
+   "state": "COMMITTED",
+   "file": "frame_0000.png",
+   "local_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+   "remote_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+   "stored_at": "2026-11-05T10:00:05Z"
+  },
+  {
+   "index": 1,
+   "state": "DURABLY_STORED",
+   "file": "frame_0001.png",
+   "local_sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+   "remote_sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+   "stored_at": "2026-11-05T10:00:08Z"
+  },
+  {
+   "index": 2,
+   "state": "RENDERED",
+   "file": "frame_0002.png",
+   "local_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+   "remote_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+   "stored_at": null
+  }
+ ],
+ "updated_at": "2026-11-05T10:00:09Z"
+}

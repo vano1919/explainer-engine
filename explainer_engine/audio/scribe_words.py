@@ -1,3 +1,4 @@
+
 """Word timings for a narration that is not Kokoro's (ElevenLabs, D-39): a speech-to-text word list with times
 (ElevenLabs Scribe: ``{"text", "start", "end"[, "type"]}``) aligned to the script text -> ``words.json``.
 

@@ -1,0 +1,73 @@
+{
+  "done": [
+    "L0",
+    "L1",
+    "L2",
+    "L3"
+  ],
+  "red": null,
+  "measured": {
+    "gpu": "H100",
+    "s_per_clip_s": 38.6,
+    "setup_s": 13.8,
+    "body_s": 91.0,
+    "runner": "inproc",
+    "setup": {
+      "pipeline_s": 4.9,
+      "prompts_s": 29.5,
+      "prompts": 1,
+      "transformer_s": 18.2
+    }
+  },
+  "rungs": {
+    "L0": {
+      "tests": [
+        "tests/unit/test_v43_ltx_jobs.py",
+        "tests/unit/test_ltx_inproc.py",
+        "tests/unit/test_videolane.py",
+        "tests/unit/test_cloud_hooks_modal.py"
+      ],
+      "pytest": "114 passed, 2 skipped in 11.58s",
+      "commit": "8cd8be8485230a38394aab334410f4aabde56c01",
+      "ok": true,
+      "at": "2026-11-13T14:51:19Z"
+    },
+    "L1": {
+      "launch_sha": "fc6ae61bf4108b3b8adc0dff7c8bc5fb5a68b3b15181df632e041b149f616a27",
+      "worker_sha": "803eea113276c948bcae60f2be32c8108cfe55a88b2dc6e08d9a1743880a5014",
+      "missing": [],
+      "ok": true,
+      "at": "2026-11-13T14:51:47Z"
+    },
+    "L2": {
+      "launch_sha": "fc6ae61bf4108b3b8adc0dff7c8bc5fb5a68b3b15181df632e041b149f616a27",
+      "worker_sha": "803eea113276c948bcae60f2be32c8108cfe55a88b2dc6e08d9a1743880a5014",
+      "problems": [],
+      "ok": true,
+      "at": "2026-11-13T14:53:39Z"
+    },
+    "L3": {
+      "launch_sha": "fc6ae61bf4108b3b8adc0dff7c8bc5fb5a68b3b15181df632e041b149f616a27",
+      "worker_sha": "803eea113276c948bcae60f2be32c8108cfe55a88b2dc6e08d9a1743880a5014",
+      "measured": {
+        "gpu": "H100",
+        "s_per_clip_s": 38.6,
+        "setup_s": 13.8,
+        "body_s": 91.0,
+        "runner": "inproc",
+        "setup": {
+          "pipeline_s": 4.9,
+          "prompts_s": 29.5,
+          "prompts": 1,
+          "transformer_s": 18.2
+        }
+      },
+      "result": {
+        "state": "DONE",
+        "error": null
+      },
+      "ok": true,
+      "at": "2026-11-13T15:30:21Z"
+    }
+  }
+}

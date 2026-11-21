@@ -1,3 +1,4 @@
+
 """The Claude API client of the project (P0d, docs/LLM_API.md): the one place that calls Anthropic.
 
 Model and effort come from ``config/model_routing.json`` by task class (never a model string in a job file); the key is read
@@ -40,6 +41,7 @@ FALLBACK_BETA = "server-side-fallback-2026-07-01"
 BATCH_MIN = 20            # a job with at least this many requests goes through the Batch API
 CHARS_PER_TOKEN = 3.0     # offline upper bound for the reservation, never for the bill
 OVERLOAD_WAIT_S = 900     # 429 / overloaded for longer than this stops the job (plan stop rule)
+WARN_FRACTION = 0.8       # a "warn" ledger line when a job or the total reaches this share of its limit
 UNCHARGED = (400, 401, 403, 404, 413, 422, 429, 500, 502, 503, 529)  # statuses where no tokens were billed
 RETRYABLE = (429, 500, 502, 503, 529)
 SAFE_ID = re.compile(r"^[A-Za-z0-9_-]{1,64}$")
@@ -107,6 +109,10 @@ class Overloaded(LLMError):
     """429 / overloaded for longer than OVERLOAD_WAIT_S."""
 
 
+class EmergencyStop(LLMError):
+    """``config/EMERGENCY_STOP`` exists: no paid call starts until the file is removed."""
+
+
 class CacheCold(LLMError):
     """A tool loop's history is not being read from cache: it is billed as fresh input every turn (the J1b scope A state, $5.02)."""
 
@@ -159,6 +165,16 @@ def cache_dir() -> Path:
 
 def ledger_dir() -> Path:
     return _env_path("EXPLAINER_LLM_LEDGER", ROOT / "jobs" / "llm_ledger")
+
+
+def emergency_stop_path() -> Path:
+    return _env_path("EXPLAINER_EMERGENCY_STOP", ROOT / "config" / "EMERGENCY_STOP")
+
+
+def check_emergency_stop() -> None:
+    p = emergency_stop_path()
+    if p.exists():
+        raise EmergencyStop(f"{p} exists: emergency stop, no paid call starts (remove the file to resume)")
 
 
 def caps() -> dict:
@@ -704,13 +720,41 @@ class ClaudeAPI:
             self._runs[job] = run
         return self._runs[job]
 
-    def _reserve(self, job: str, item: str, amount: float) -> None:
+    def _reserve(self, job: str, item: str, amount: float, *, per_call: float | None = None) -> None:
+        """Emergency stop, then the per-call hard limit (the worst case of ONE call, ``per_call`` for a batch, may not exceed the job's
+        own cap), then the existing gap / total / job checks. Retries already count: a 429 / overloaded re-send in ``_send`` is an
+        unbilled status and the SDK's own retries are off (F11); every paid re-attempt (the Fable fallback, a batch refusal rerun,
+        every tool-loop turn) goes through ``_attempt`` and is reserved here on its own before it is sent."""
+        check_emergency_stop()
         self.ledger.check_gap()
         c = caps()
+        cap = c["jobs"].get(job)
+        one = amount if per_call is None else per_call
+        if cap is not None and one > float(cap) + 1e-9:
+            raise CapReached(f"{item}: the worst case of one call ${one:.4f} is above the cap of job {job} (${float(cap):.2f}); "
+                             "nothing was sent; stop and report")
         if self.ledger.total() + amount > c["max_usd"] * STOP_FRACTION + 1e-9:
             raise CapReached(f"claude_api total {self.ledger.total() + amount:.2f} would pass {int(STOP_FRACTION * 100)} % of "
                              f"{c['max_usd']}; stop and report")
         self.run_for(job).reserve(SERVICE, amount, item)
+
+    def _warn_near_limits(self, job: str) -> None:
+        """A ``warn`` ledger line, once per scope, when the job's spending reaches WARN_FRACTION of its cap or the total reaches
+        WARN_FRACTION of claude_api.max_usd. The stop itself is the existing reservation check (at STOP_FRACTION, before 100 %)."""
+        try:
+            c = caps()
+            seen = {(r.get("job"), r.get("scope")) for r in self.ledger.rows() if r.get("ev") == "warn"}
+            cap = c["jobs"].get(job)
+            checks = [("total", "*", self.ledger.total(), float(c["max_usd"]))]
+            if cap is not None:
+                checks.insert(0, ("job", job, self.ledger.by_job().get(job, 0.0), float(cap)))
+            for scope, who, used, limit in checks:
+                if limit > 0 and used >= WARN_FRACTION * limit - 1e-9 and (who, scope) not in seen:
+                    self.ledger.append({"ev": "warn", "uid": f"warn-{scope}-{uuid.uuid4().hex[:6]}", "job": who, "scope": scope,
+                                        "spent": round(used, 6), "limit": limit,
+                                        "note": f"{used / limit:.0%} of the {scope} limit spent (warning at {WARN_FRACTION:.0%})"})
+        except Exception:  # noqa: BLE001 - a warning line must never lose a paid answer
+            return
 
     # -- one paid call --
     def _count(self, params: dict) -> int | None:
@@ -786,6 +830,7 @@ class ClaudeAPI:
                 self.run_for(req.job).settle(SERVICE, item, est)
                 self.ledger.append({"ev": "done", "uid": uid, "job": req.job, "id": req.id, "model": r.model, "usage": {},
                                     "usd": round(est, 6), "batch": batch, "note": note, "stream": str(sink.path)})
+                self._warn_near_limits(req.job)
                 raise StreamBroken(f"{req.id}: {note} ({type(e).__name__}: {e}); the text so far is in {sink.path}", sink.path,
                                    sink.text) from e
             if _status(e) in UNCHARGED or isinstance(e, Overloaded):
@@ -808,6 +853,7 @@ class ClaudeAPI:
                             "effort": r.effort, "usage": use, "usd": round(usd, 6), "batch": batch, "fallback_ran": fb_ran,
                             "iterations": it_rows, "note": note, "fell_back_from": fell_from, "stop": resp.stop_reason,
                             "request_id": getattr(resp, "_request_id", None)})
+        self._warn_near_limits(req.job)
         if not batch:
             self._stream_proof(uid, resp, r, sink)
         return resp, r, usd, use
@@ -1011,8 +1057,9 @@ class ClaudeAPI:
         if state_file.exists():
             batch_id = json.loads(state_file.read_text(encoding="utf-8"))["batch_id"]   # resume: nothing is paid twice
         else:
-            est = sum(worst_usd(routes[i].model, params[i], by_id[i].cache_ttl, batch=True) for i in params)
-            self._reserve(job, tag, est)
+            ests = {i: worst_usd(routes[i].model, params[i], by_id[i].cache_ttl, batch=True) for i in params}
+            est = sum(ests.values())
+            self._reserve(job, tag, est, per_call=max(ests.values()))
             for i in params:
                 self.ledger.append({"ev": "start", "uid": f"b-{i}", "batch": True, "job": job, "id": i, "model": routes[i].model})
             b = c.messages.batches.create(requests=[{"custom_id": i, "params": params[i]} for i in params])   # F3: no fallbacks here
@@ -1060,6 +1107,7 @@ class ClaudeAPI:
                                                                 "stop_reason": res.stop_reason, "usage": use, "id": i})
             put(q, res)
         self.run_for(job).settle(SERVICE, tag, spent)
+        self._warn_near_limits(job)
 
 
 # --- jobs from files and the command line ------------------------------------------------------------------------------

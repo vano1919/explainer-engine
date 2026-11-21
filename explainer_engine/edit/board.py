@@ -1,3 +1,4 @@
+
 """The storyboard (D-42, creator 2026-10-16): pictures follow the story, not the clock.
 
 Day 1 v5 cut 44 pictures into 3 minutes (14 a minute) and its fire beat showed campfires already burning while the narrator

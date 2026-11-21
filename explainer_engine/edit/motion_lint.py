@@ -1,3 +1,4 @@
+
 """Motion and visual-change rules MO-01..MO-07 (docs/STORY_ENGINE.md, D-48) on a timed production script.
 
 Episode 1 (measured 2026-10-19 on its production script): 217 shots, a picture change every 5.0 s on average, but every

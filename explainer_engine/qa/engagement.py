@@ -1,3 +1,4 @@
+
 """Anti-boredom gate (docs/EPISODE_STANDARDS.md section 7, Q-E16): run before script approval and again before the final render.
 
     python -m explainer_engine.qa.engagement <production_script.json> [--rules episode_rules.json]
