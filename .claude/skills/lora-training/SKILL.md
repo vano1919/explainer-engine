@@ -5,6 +5,8 @@ description: How the channel trains and tests its LoRAs (since D-80, 2026-10-26:
 
 # LoRA training and testing
 
+**Legacy, not on the Blender path (D-96, D-105, 2026-11-05):** LoRA training belongs to the legacy image-generation route; no Ink Chronicle work package trains a LoRA.
+
 > **Retired in part by [D-80](../../../docs/DECISIONS_AND_OPEN_QUESTIONS.md) (2026-10-26):** Qwen-Image-2512, Edit-2511 and every `wldnk_*` LoRA are banned; keyframes come from Qwen-Image-2.1 (draws and edits with references) with the new LoRA learned from Rick and Morty. Model rows and the `wldnk style` prompt shape below describe the banned stack; the new prompt rules come from the 2.1 prompt-type test. Settings below that name 2512, Edit-2511 or `wldnk` are lessons, not instructions.
 
 Rules and sources: `docs/LORA_TRAINING.md` (LT-xx). Agents: `lora-coordinator` (owner), `lora-dataset-auditor`,

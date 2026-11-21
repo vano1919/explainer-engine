@@ -48,7 +48,7 @@ def test_dynamics_on_a_toy_plan_gives_exact_shares_and_runs():
     assert d["share"] == {"scene": 0.1, "map_pure": 0.3, "compensator": 0.2, "host": 0.0, "hold": 0.4}
     assert sum(d["share"].values()) == pytest.approx(1.0) and d["non_character"] == pytest.approx(0.9)
     assert d["map_run_max_s"] == 30 and d["non_scene_run_max_s"] == 90
-    assert d["narrator_basis"] == "seconds" and d["narrator_share"] == pytest.approx(0.9)
+    assert d["narrator_basis"] == "unknown" and d["narrator_share"] is None
 
 
 def test_the_category_of_a_block_follows_its_lane_and_the_film_shots_1_inference():
@@ -112,12 +112,29 @@ def test_vp10_one_compensator_picture_over_seven_seconds_reviews():
 
 
 def test_vp16_the_narrator_share_uses_words_when_the_blocks_carry_them():
-    segs = [seg("S01", blk("scene", 10, who="a", words={"character": 60}), blk("compensator", 10, words={"narrator": 40}))]
-    d = VP.dynamics(segs, VP.profile("A"))
-    assert d["narrator_basis"] == "words" and d["narrator_share"] == pytest.approx(0.4)
+    balanced = [seg("S01", blk("scene", 10, who="a", words={"character": 30}), blk("compensator", 10, words={"narrator": 70}))]
+    d = VP.dynamics(balanced, VP.profile("A"))
+    assert d["narrator_basis"] == "audible_words" and d["narrator_share"] == pytest.approx(0.7)
     assert "VP-16" not in rules(VP.checks(d, VP.profile("A")))
     heavy = [seg("S01", blk("scene", 10, who="a", words={"character": 10}), blk("compensator", 10, words={"narrator": 90}))]
     assert sev(VP.checks(VP.dynamics(heavy, VP.profile("A")), VP.profile("A")), "VP-16") == ["REVIEW"]
+    unmeasured = [seg("S01", blk("scene", 10, who="a"), blk("compensator", 90))]
+    unknown = VP.dynamics(unmeasured, VP.profile("A"))
+    assert unknown["narrator_share"] is None and "VP-16" not in rules(VP.checks(unknown, VP.profile("A")))
+
+
+
+def test_segments_from_script_excludes_unvoiced_lines_from_dialogue_share():
+    doc = {"segments": [{"id": "S01", "lines": [
+        {"text": "The narrator explains the move."},
+        {"speaker": "historical_figure", "voiced": False, "text": "A silent bubble does not count as audible dialogue."},
+        {"speaker": "invented_character", "voiced": True, "text": "I will do it."}
+    ]}]}
+    blocks = VP.segments_from_script(doc)[0]["blocks"]
+    character_words = sum((b.get("words") or {}).get("character", 0) for b in blocks)
+    narrator_words = sum((b.get("words") or {}).get("narrator", 0) for b in blocks)
+    assert character_words == len("I will do it.".split())
+    assert narrator_words == len("The narrator explains the move.".split())
 
 
 def test_vp17_the_central_scene_has_the_most_played_seconds():
@@ -128,9 +145,21 @@ def test_vp17_the_central_scene_has_the_most_played_seconds():
     assert "VP-17" not in rules(run(scenes))
 
 
-def test_vp18_hold_share_over_the_limit_reviews():
-    segs = [seg("S01", blk("scene", 50, who="a"), blk("hold", 50))]
-    assert sev(run(segs), "VP-18") == ["REVIEW"]
+def test_vp18_lane_shares_follow_the_creators_60_30_10():
+    # BP-109 (the creator, 2026-11-01): video 60 % / still 30 % / helper 10 % of the runtime, +- the tolerance
+    off = [seg("S01", blk("scene", 50, who="a"), blk("hold", 50))]
+    assert sorted(f["where"] for f in run(off) if f["rule"] == "VP-18" and f["where"] in ("video", "still", "helper")) == \
+        ["helper", "still", "video"]
+    ok = [seg("S01", blk("scene", 60, who="a"), blk("hold", 30), blk("map_pure", 10, archetype=1))]
+    assert not [f for f in run(ok) if f["rule"] == "VP-18" and f["where"] in ("video", "still", "helper")]
+    assert VP.dynamics(ok, VP.profile("A"))["lane_share"] == pytest.approx({"video": 0.6, "still": 0.3, "helper": 0.1})
+
+
+def test_vp02_pure_map_is_bounded_by_the_helper_lane():
+    lim = SR.T("BP-109", "lane_share")["helper"] + SR.T("BP-109", "lane_tolerance")
+    over = [seg("S01", blk("scene", 80, who="a"), blk("map_pure", 20, archetype=1))]
+    assert lim < 0.2 and sev(run(over), "VP-02") == ["REVIEW"]
+    assert "VP-02" not in rules(run([seg("S01", blk("scene", 90, who="a"), blk("map_pure", 10, archetype=1))]))
 
 
 def test_vp11_each_missing_lane_is_one_finding_naming_its_phase_and_the_table_is_honest():
@@ -259,17 +288,22 @@ def load(path):
 
 
 def test_napoleon_v1_is_rebuilt_from_the_shot_cards_and_scores_70():
+    """Since ICW-03 the cards carry the lane planner's lanes (60/30/10 within BP-109's band): a STILL_3D plate is a hold, a
+    HELPER visual its catalogue lane (map or compensator), a VIDEO_3D shot played when it has a cast member."""
     fs = load(NAP / "film_shots.json")
     segs = VP.segments_from_film_shots(fs)
     d = VP.dynamics(segs, VP.profile("D"))
     assert d["total_s"] == 900 and len(fs["shots"]) == 214
-    assert d["share"]["scene"] == pytest.approx(0.801, abs=0.001) and d["share"]["compensator"] == pytest.approx(0.153, abs=0.001)
-    assert d["share"]["hold"] == pytest.approx(0.046, abs=0.001) and d["share"]["map_pure"] == 0 and d["share"]["host"] == 0
-    assert d["narrator_share"] == pytest.approx(0.449, abs=0.001) and d["narrator_basis"] == "words"
-    assert d["non_scene_run_max_s"] == 8 and d["map_run_max_s"] == 0
-    assert {t: round(s, 2) for t, s in d["turn_played_share"].items()} == {"S04": 0.89, "S06": 0.70, "S08": 0.83, "S10": 0.68,
-                                                                           "S11": 0.74, "S13": 0.88}
-    assert d["turn_played_s"]["S10"] == pytest.approx(101, abs=1) and d["turn_played_s"]["S13"] == pytest.approx(89, abs=1)
+    assert d["share"]["scene"] == pytest.approx(0.564, abs=0.001) and d["share"]["compensator"] == pytest.approx(0.092, abs=0.001)
+    assert d["share"]["hold"] == pytest.approx(0.306, abs=0.001) and d["share"]["map_pure"] == pytest.approx(0.038, abs=0.001)
+    assert d["share"]["host"] == 0
+    assert d["narrator_share"] == pytest.approx(0.701, abs=0.001) and d["narrator_basis"] == "audible_words"
+    assert d["non_scene_run_max_s"] == 33 and d["map_run_max_s"] == 5
+    assert {t: round(s, 2) for t, s in d["turn_played_share"].items()} == {"S04": 0.72, "S06": 0.60, "S08": 0.65, "S10": 0.56,
+                                                                           "S11": 0.63, "S13": 0.67}
+    assert d["turn_played_s"]["S10"] == pytest.approx(83, abs=1) and d["turn_played_s"]["S13"] == pytest.approx(68, abs=1)
+    assert d["lane_share"] == pytest.approx({"video": 0.62, "still": 0.306, "helper": 0.074}, abs=0.001)
+    assert not d["adjacent_repeats"] and not d["family_overruns"]  # the planner keeps VP-06 and VP-07
 
 
 def test_the_napoleon_fixture_is_current_valid_and_scored_as_designed():
@@ -278,9 +312,15 @@ def test_the_napoleon_fixture_is_current_valid_and_scored_as_designed():
     contracts.validate(doc, NAP)
     assert doc == VP.napoleon_variants(speeds={}), "script_variants.json is stale: run `variant_plan napoleon --write`"
     v1, v2 = doc["variants"]
-    assert (v1["profile_id"], v1["scores"]["code"], v1["risks"]) == ("D", 70, ["REVIEW VP-11 KEYFRAME_LTX:full", "REVIEW VP-11 KEYFRAME_LTX:light", "REVIEW VP-12 cost"])
-    assert (v2["profile_id"], v2["scores"]["code"]) == ("B", 70)   # was 60 while MAP and COMPENSATOR were listed as missing (P5 landed)
-    assert sorted(v2["risks"]) == ["REVIEW VP-11 KEYFRAME_LTX:full", "REVIEW VP-12 cost", "REVIEW VP-16 narrator"]
+    # v1's cards carry the lane planner's 60/30/10 since ICW-03 (no VP-18 mix REVIEW) and BP-105's 70/30 since ICW-00 (70.1 %
+    # narrator words); its Blender lanes do not exist in code yet (VP-11, ICW-04..07). v2's plan predates BP-109's 60/30/10
+    # and its planned words give 63.8 %.
+    mix = ["REVIEW VP-18 helper", "REVIEW VP-18 still", "REVIEW VP-18 video"]
+    assert (v1["profile_id"], v1["scores"]["code"]) == ("D", 70)
+    assert sorted(v1["risks"]) == sorted(["REVIEW VP-11 STILL_3D", "REVIEW VP-11 VIDEO_3D", "REVIEW VP-12 cost"])
+    assert (v2["profile_id"], v2["scores"]["code"]) == ("B", 30)
+    assert sorted(v2["risks"]) == sorted(["REVIEW VP-02 map_pure", "REVIEW VP-11 KEYFRAME_LTX:full", "REVIEW VP-12 cost",
+                                          "REVIEW VP-16 narrator"] + mix)
     assert not [f for f in VP.check_file(path, speeds={}) if f["severity"] == "FAIL"]
     assert VP.check_file(path, speeds={}) and all(f["rule"] != "VP-14" for f in VP.check_file(path, speeds={}))
     assert v1["cost"]["usd_planned"] == "unknown" and v2["cost"]["usd_worst"] == "unknown"
@@ -353,8 +393,8 @@ def test_score_write_recomputes_derived_numbers_and_keeps_the_critic_and_the_cho
     doc["variants"][0]["scores"] = {"code": 1, "critic": 77}
     doc["variants"][0]["dynamics"]["share_scene"] = 0.2
     fixed = VP.rescore(doc, speeds={})
-    assert fixed["variants"][0]["scores"] == {"code": 70, "critic": 77}
-    assert fixed["variants"][0]["dynamics"]["share_scene"] == pytest.approx(0.801, abs=0.001)
+    assert fixed["variants"][0]["scores"] == {"code": 70, "critic": 77}   # 70 again: the planned cards meet BP-109 (ICW-03)
+    assert fixed["variants"][0]["dynamics"]["share_scene"] == pytest.approx(0.564, abs=0.001)
     doc["chosen"] = {"variant_id": "v1", "by": "creator", "ref": "r", "at": "2026-10-30T00:00:00Z", "variants_sha256": "0" * 64}
     assert VP.rescore(doc, speeds={})["chosen"]["variants_sha256"] == contracts.variants_sha256(VP.rescore(doc, speeds={}))
 

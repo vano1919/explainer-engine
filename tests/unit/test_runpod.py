@@ -1,5 +1,7 @@
 """The pod manager against a fake RunPod API (REST v2 shape): no network, no pod, no money."""
 import json
+import os
+from pathlib import Path
 
 import pytest
 
@@ -163,7 +165,8 @@ def script_pod(tmp, disk="40"):
     tests/unit/conftest.py; the plan's work/setup minutes and the container disk, P1c)."""
     sf = tmp / "job.sh"
     sf.write_text(NEW_SH)
-    return ["--script", str(sf), "--script-url", "https://huggingface.co/x/pod.sh", "--work-min", "60", "--setup-min", "10", "--disk", disk]
+    return ["--script", str(sf), "--script-url", "https://huggingface.co/x/pod.sh", "--work-min", "60", "--setup-min", "10", "--disk", disk,
+            "--schedule", str(Path(__file__).resolve().parents[1] / "fixtures" / "pod_schedule_ok.json")]
 
 
 def live_ok():
@@ -978,3 +981,28 @@ def test_cuda_min_picks_a_tail_of_the_ladder_and_refuses_unknown_floors():
     assert R.cuda_from("12.4")[0] == "12.4" and R.cuda_from("12.8") == R.CUDA_VERSIONS
     with pytest.raises(R.RunPodError):
         R.cuda_from("11.8")
+
+
+def test_a_dead_or_hung_guard_is_seen_by_its_beat_and_check_restarts_it_loudly(env, tmp_path, monkeypatch):
+    """Asset pod 2026-11-06: the local guard died silently at 11:41 UTC and only `check` at 12:11 noticed. The guard writes
+    sessions/<pod>.guard.beat on every look; a lock without a live process is dead, a live process with an old beat is hung,
+    and `check` replaces either one with a new detached guard and pushes an urgent note."""
+    fake, api = env
+    monkeypatch.setenv("NTFY_TOPIC", "test-topic")
+    fake.pods = {"g1": pod("g1", "ee-x-until-9999999999")}
+    R.sess_write({"pod": "g1", "started": 0, "price": 0.89, "max_usd": 5, "max_hours": 2})
+    (tmp_path / "sessions").mkdir(exist_ok=True)
+    lock, beat = tmp_path / "sessions" / "g1.guard", tmp_path / "sessions" / "g1.guard.beat"
+    lock.write_text("999999999")                                     # no such process
+    assert R.guard_state("g1", now=1000)[0] == "dead" and not R.live_guard("g1")
+    lock.write_text(str(os.getpid()))                                # a live process ...
+    R.guard_beat("g1", now=1000)
+    assert R.guard_state("g1", now=1000 + 60)[0] == "alive"
+    assert R.guard_state("g1", now=1000 + R.GUARD_BEAT_STALE_S + 1)[0] == "hung"   # ... that stopped looking
+    beat.unlink()
+    assert R.guard_state("g1", now=1000)[0] == "alive"               # an older guard without a beat file: its process decides
+    lock.write_text("999999999")
+    started, pushed = [], []
+    res = R.check(api, now=1000, restart=lambda pid: started.append(pid) or 4343, push=lambda *a: pushed.append(a))
+    assert started == ["g1"] and pushed and pushed[0][0] == "Guard was dead"
+    assert any("a new guard was started (pid 4343)" in p for p in res["problems"])

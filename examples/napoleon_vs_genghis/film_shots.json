@@ -1,12 +1,9 @@
 {
- "schema": "film_shots/1",
+ "schema": "film_shots/3",
+ "fps": 24,
  "engine": "script_engine/1",
  "episode": "What If Napoleon Marched Into Genghis Khan? (15-minute animated docudrama, template D)",
  "script": "script.md",
- "style": {
-  "trigger": "xworld style",
-  "video_sentence": "Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves."
- },
  "cast": {
   "napoleon": {
    "name": "Napoleon",
@@ -217,6 +214,10 @@
    "source": "the episode's story"
   }
  },
+ "style": {
+  "house_look": "ink_chronicle",
+  "bible_version": "1.5"
+ },
  "shots": [
   {
    "id": "S01-01",
@@ -249,7 +250,23 @@
     "ambience": "a slow marching drum in the fog",
     "loudest": "two sharp drum beats"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": 18,
+   "duration_frames": 72,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J4",
+   "sub_category": "V1",
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S01-02",
@@ -289,7 +306,23 @@
    },
    "tier": "full",
    "source": "keyframe",
-   "teaser_of": "S10-23"
+   "teaser_of": "S10-23",
+   "lane": "VIDEO_3D",
+   "archetype": 18,
+   "duration_frames": 48,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J4",
+   "sub_category": "V1",
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S01-03",
@@ -328,7 +361,23 @@
    },
    "tier": "full",
    "source": "keyframe",
-   "teaser_of": "S10-17"
+   "teaser_of": "S10-17",
+   "lane": "VIDEO_3D",
+   "archetype": 18,
+   "duration_frames": 48,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J4",
+   "sub_category": "V1",
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S01-04",
@@ -371,7 +420,23 @@
    },
    "tier": "full",
    "source": "keyframe",
-   "teaser_of": "S10-25"
+   "teaser_of": "S10-25",
+   "lane": "VIDEO_3D",
+   "archetype": 18,
+   "duration_frames": 48,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J4",
+   "sub_category": "V1",
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S01-05",
@@ -409,13 +474,30 @@
     "peak": "raise their bows all at once",
     "settle": "hold the bows high against the sky"
    },
+   "narration": "Out of the fog came something else.",
    "sound": {
     "ambience": "wind over the ridge",
     "foley": [
      "horses snorting"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": 18,
+   "duration_frames": 72,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J4",
+   "sub_category": "V1",
+   "render_profile": "eevee_fast",
+   "lipsync": false
   },
   {
    "id": "S02-01",
@@ -436,7 +518,7 @@
      "side": "none"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "infantry",
@@ -452,7 +534,7 @@
     "peak": "jerk to a halt, row after row",
     "settle": "stand frozen with muskets on their shoulders"
    },
-   "narration": "They came out of it in the year 1223.",
+   "narration": "When they came out of it, the year was 1223.",
    "claims": [
     "I01"
    ],
@@ -462,7 +544,22 @@
      "boots stamping to a halt"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "HELPER",
+   "archetype": 17,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "H",
+   "sub_category": "H6",
+   "helper_archetype": "PRIMARY_SOURCE_DOSSIER_CARD"
   },
   {
    "id": "S02-02",
@@ -508,7 +605,23 @@
      "a horse shifting its hooves"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": 9,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V7",
+   "render_profile": "eevee_fast",
+   "lipsync": false
   },
   {
    "id": "S02-03",
@@ -527,7 +640,7 @@
      "for": "where he looks"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "genghis",
@@ -548,7 +661,23 @@
    "sound": {
     "ambience": "wind over the ridge"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "STILL_3D",
+   "archetype": 5,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S2",
+   "render_profile": "eevee_fast",
+   "still_mode": "drift"
   },
   {
    "id": "S02-04",
@@ -567,7 +696,7 @@
      "for": "where he stares"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "brun",
@@ -583,12 +712,28 @@
     "peak": "swallows hard and raises his chin",
     "settle": "holds still, eyes wide"
    },
-   "narration": "And it will be his worst victory.",
+   "narration": "And it will be the worst victory of his life.",
    "sound": {
     "ambience": "wind over open grass"
    },
    "source": "cut",
-   "master": "S02-03"
+   "master": "S02-03",
+   "lane": "STILL_3D",
+   "archetype": 5,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S2",
+   "render_profile": "eevee_fast",
+   "still_mode": "drift"
   },
   {
    "id": "S02-05",
@@ -617,7 +762,23 @@
    "sound": {
     "ambience": "wind over open grass"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": 6,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J2",
+   "sub_category": "V5",
+   "render_profile": "eevee_fast",
+   "lipsync": false
   },
   {
    "id": "S02-06",
@@ -664,10 +825,26 @@
      "does": "wait on their shaggy horses"
     }
    ],
+   "narration": "The emperor's army here. The khan's army there.",
    "sound": {
     "ambience": "wind over open grass"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "HELPER",
+   "archetype": 12,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "H",
+   "sub_category": "H1",
+   "helper_archetype": "MAP_3D_TERRAIN_FLYOVER"
   },
   {
    "id": "S03-01",
@@ -686,7 +863,7 @@
      "for": "where the barrel points"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "gunners",
@@ -702,7 +879,7 @@
     "peak": "ram a cannonball down the barrel and jump clear",
     "settle": "freeze in their places beside the wheels"
    },
-   "narration": "Napoleon had trained as an artillery officer.",
+   "narration": "Napoleon had trained as an artillery officer, a gunner first.",
    "claims": [
     "C04"
    ],
@@ -712,7 +889,22 @@
      "a ramrod thumping"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "HELPER",
+   "archetype": 17,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "H",
+   "sub_category": "H6",
+   "helper_archetype": "WEAPON_AND_MATERIAL_CUTAWAY"
   },
   {
    "id": "S03-02",
@@ -762,7 +954,23 @@
     ]
    },
    "source": "cut",
-   "master": "S03-01"
+   "master": "S03-01",
+   "lane": "VIDEO_3D",
+   "archetype": 2,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J2",
+   "sub_category": "V2",
+   "render_profile": "eevee_fast",
+   "lipsync": false
   },
   {
    "id": "S03-03",
@@ -806,7 +1014,23 @@
     "loudest": "one cannon shot"
    },
    "source": "cut",
-   "master": "S03-01"
+   "master": "S03-01",
+   "lane": "VIDEO_3D",
+   "archetype": 1,
+   "duration_frames": 72,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J4",
+   "sub_category": "V1",
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S03-04",
@@ -825,7 +1049,7 @@
      "for": "where they fire"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "infantry",
@@ -841,7 +1065,7 @@
     "peak": "swing the muskets down and fire one volley",
     "settle": "lower the muskets in a cloud of white smoke"
    },
-   "narration": "His muskets reached about a hundred.",
+   "narration": "His infantry muskets reached about a hundred metres.",
    "claims": [
     "C06"
    ],
@@ -849,7 +1073,22 @@
     "ambience": "a busy army camp, distant shouted orders",
     "loudest": "one musket volley"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "HELPER",
+   "archetype": 13,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "H",
+   "sub_category": "H3",
+   "helper_archetype": "BALLISTIC_RANGE_AND_ENERGY_HUD"
   },
   {
    "id": "S03-05",
@@ -882,14 +1121,30 @@
      "height": "quarter"
     }
    ],
-   "narration": "Genghis Khan built his army to move.",
+   "narration": "Genghis Khan built his army to move, and to keep moving.",
    "sound": {
     "ambience": "horses grazing, a far-off horn",
     "foley": [
      "many hooves on turf"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "STILL_3D",
+   "archetype": 15,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S3",
+   "render_profile": "eevee_full",
+   "still_mode": "camera_move_3d"
   },
   {
    "id": "S03-06",
@@ -908,7 +1163,7 @@
      "for": "where they ride"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "riders",
@@ -934,7 +1189,22 @@
      "a saddle creaking"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "STILL_3D",
+   "archetype": 7,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "render_profile": "eevee_full",
+   "still_mode": "parallax_25d"
   },
   {
    "id": "S03-07",
@@ -953,7 +1223,7 @@
      "for": "where the arrows fly"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "riders",
@@ -979,7 +1249,22 @@
      "bowstrings snapping"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "HELPER",
+   "archetype": 13,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "H",
+   "sub_category": "H3",
+   "helper_archetype": "BALLISTIC_RANGE_AND_ENERGY_HUD"
   },
   {
    "id": "S03-08",
@@ -998,7 +1283,7 @@
      "for": "where he looks"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "genghis",
@@ -1022,7 +1307,22 @@
    "sound": {
     "ambience": "horses grazing, a far-off horn"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "STILL_3D",
+   "archetype": 8,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "render_profile": "eevee_fast",
+   "still_mode": "drift"
   },
   {
    "id": "S03-09",
@@ -1040,20 +1340,37 @@
      "side": "none"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "action": {
     "who": "infantry",
     "start": "a heavy supply wagon wheel sinks in soft mud",
     "peak": "a horse's hoof stamps down beside it and lifts away",
     "settle": "the wheel stays stuck in the mud"
    },
+   "narration": "Guns against horses. Weight against speed. Battle against campaign.",
    "sound": {
     "ambience": "wind over open grass",
     "foley": [
      "mud sucking at a wheel"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "STILL_3D",
+   "archetype": 6,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S4",
+   "render_profile": "eevee_fast",
+   "still_mode": "hold"
   },
   {
    "id": "S03-10",
@@ -1103,17 +1420,34 @@
      "does": "trot slowly closer"
     }
    ],
+   "narration": "Sooner or later, these machines would have to meet.",
    "sound": {
     "ambience": "wind over open grass"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "STILL_3D",
+   "archetype": 15,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S3",
+   "render_profile": "eevee_full",
+   "still_mode": "camera_move_3d"
   },
   {
    "id": "S04-01",
    "scene": "S04",
    "mode": "establish",
    "beat": "A lone rider comes to the emperor's tents.",
-   "seconds": 4,
+   "seconds": 5,
    "frame": {
     "size": "WS",
     "angle": "eye",
@@ -1128,7 +1462,7 @@
      "for": "where he rides in"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "murat",
@@ -1178,6 +1512,10 @@
      "does": "leans in to listen"
     }
    ],
+   "narration": "Then a rider came to the emperor's tents. He came alone.",
+   "claims": [
+    "I04"
+   ],
    "sound": {
     "ambience": "flags snapping in the wind, a quiet camp",
     "foley": [
@@ -1185,7 +1523,22 @@
      "a horse snorting"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "STILL_3D",
+   "archetype": 7,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "render_profile": "eevee_full",
+   "still_mode": "parallax_25d"
   },
   {
    "id": "S04-02",
@@ -1232,21 +1585,38 @@
    "dialogue": {
     "who": "murat",
     "to": "napoleon",
-    "text": "Sire. Let me knock that ghost off his pony.",
+    "text": "Let me knock that ghost off his pony.",
     "delivery": "eager, too loud"
    },
    "sound": {
     "ambience": "flags snapping in the wind, a quiet camp"
    },
    "source": "cut",
-   "master": "S04-01"
+   "master": "S04-01",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S04-03",
    "scene": "S04",
    "mode": "scene",
    "beat": "Napoleon wants information first.",
-   "seconds": 6,
+   "seconds": 5,
    "frame": {
     "size": "MS",
     "angle": "eye",
@@ -1286,7 +1656,7 @@
    "dialogue": {
     "who": "napoleon",
     "to": "murat",
-    "text": "Not yet. A man who rides in alone wants to talk.",
+    "text": "Not yet. He rode in alone to talk.",
     "delivery": "quiet, clipped"
    },
    "sound": {
@@ -1294,7 +1664,23 @@
    },
    "source": "cut",
    "master": "S04-01",
-   "last_frame": true
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S04-04",
@@ -1341,7 +1727,7 @@
    "dialogue": {
     "who": "kemal",
     "to": "napoleon",
-    "text": "Sire. He speaks the old Tatar tongue. My grandmother's.",
+    "text": "He speaks Tatar, Sire. My grandmother's tongue.",
     "delivery": "hushed, amazed"
    },
    "claims": [
@@ -1352,14 +1738,31 @@
     "ambience": "flags snapping in the wind, a quiet camp"
    },
    "source": "cut",
-   "master": "S04-01"
+   "master": "S04-01",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S04-05",
    "scene": "S04",
    "mode": "scene",
    "beat": "Napoleon registers the impossible and moves on.",
-   "seconds": 4,
+   "seconds": 5,
    "frame": {
     "size": "CU",
     "angle": "eye",
@@ -1371,7 +1774,7 @@
      "for": "where he looks"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "napoleon",
@@ -1387,11 +1790,32 @@
     "peak": "raises one eyebrow sharply",
     "settle": "holds the look"
    },
+   "narration": "Napoleon had brought a Tatar speaker without knowing it.",
+   "claims": [
+    "C14",
+    "C15"
+   ],
    "sound": {
     "ambience": "flags snapping in the wind, a quiet camp"
    },
    "source": "cut",
-   "master": "S04-01"
+   "master": "S04-01",
+   "lane": "STILL_3D",
+   "archetype": 5,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S2",
+   "render_profile": "eevee_fast",
+   "still_mode": "drift"
   },
   {
    "id": "S04-06",
@@ -1444,14 +1868,31 @@
     "ambience": "flags snapping in the wind, a quiet camp"
    },
    "source": "cut",
-   "master": "S04-01"
+   "master": "S04-01",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S04-07",
    "scene": "S04",
    "mode": "scene",
    "beat": "The khan's terms.",
-   "seconds": 6,
+   "seconds": 5,
    "frame": {
     "size": "OTS",
     "angle": "eye",
@@ -1491,7 +1932,7 @@
    "dialogue": {
     "who": "bars",
     "to": "kemal",
-    "text": "The khan of all who live in felt tents says: kneel.",
+    "text": "The khan of the felt tents says: kneel.",
     "delivery": "formal, chanted"
    },
    "sound": {
@@ -1499,14 +1940,30 @@
    },
    "source": "cut",
    "master": "S04-01",
-   "last_frame": true
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S04-08",
    "scene": "S04",
    "mode": "scene",
    "beat": "The price of living.",
-   "seconds": 6,
+   "seconds": 5,
    "frame": {
     "size": "OTS",
     "angle": "eye",
@@ -1546,7 +2003,7 @@
    "dialogue": {
     "who": "bars",
     "to": "kemal",
-    "text": "Give him your horses and your guns, and you will live.",
+    "text": "Give him your horses and guns, and live.",
     "delivery": "flat, rehearsed"
    },
    "sound": {
@@ -1554,14 +2011,30 @@
    },
    "source": "cut",
    "master": "S04-01",
-   "last_frame": true
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S04-09",
    "scene": "S04",
    "mode": "scene",
    "beat": "Murat finds it funny.",
-   "seconds": 4,
+   "seconds": 5,
    "frame": {
     "size": "MS",
     "angle": "eye",
@@ -1573,7 +2046,7 @@
      "for": "where his head goes"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "murat",
@@ -1590,6 +2063,7 @@
     "settle": "shakes with laughter",
     "face": "his mouth opens wide and his eyes squeeze shut"
    },
+   "narration": "Murat had never even heard the name of this khan.",
    "sound": {
     "ambience": "flags snapping in the wind, a quiet camp",
     "foley": [
@@ -1597,14 +2071,30 @@
     ]
    },
    "source": "cut",
-   "master": "S04-01"
+   "master": "S04-01",
+   "lane": "STILL_3D",
+   "archetype": 2,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S7",
+   "render_profile": "eevee_full",
+   "still_mode": "hold"
   },
   {
    "id": "S04-10",
    "scene": "S04",
    "mode": "scene",
    "beat": "Napoleon answers with his whole biography.",
-   "seconds": 6,
+   "seconds": 5,
    "frame": {
     "size": "OTS",
     "angle": "eye",
@@ -1644,7 +2134,7 @@
    "dialogue": {
     "who": "napoleon",
     "to": "bars",
-    "text": "Tell your khan I kneel to nobody. We meet in battle.",
+    "text": "Tell your khan I kneel to nobody.",
     "delivery": "slow, cold, every word clear"
    },
    "sound": {
@@ -1652,7 +2142,23 @@
    },
    "source": "cut",
    "master": "S04-01",
-   "last_frame": true
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S04-11",
@@ -1696,12 +2202,7 @@
     "peak": "points back toward the west",
     "settle": "holds the pointing arm still"
    },
-   "dialogue": {
-    "who": "bars",
-    "to": "napoleon",
-    "text": "This spring, princes on the river killed the khan's envoys.",
-    "delivery": "low, almost kind"
-   },
+   "narration": "That spring, Rus princes had killed the khan's envoys.",
    "claims": [
     "C10"
    ],
@@ -1709,7 +2210,23 @@
     "ambience": "flags snapping in the wind, a quiet camp"
    },
    "source": "cut",
-   "master": "S04-01"
+   "master": "S04-01",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S04-12",
@@ -1762,14 +2279,31 @@
     "ambience": "flags snapping in the wind, a quiet camp"
    },
    "source": "cut",
-   "master": "S04-01"
+   "master": "S04-01",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S04-13",
    "scene": "S04",
    "mode": "scene",
    "beat": "Murat goes for his pistol.",
-   "seconds": 4,
+   "seconds": 5,
    "frame": {
     "size": "MS",
     "angle": "eye",
@@ -1781,7 +2315,7 @@
      "for": "where the pistol points"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "murat",
@@ -1798,6 +2332,10 @@
     "settle": "freezes with it half drawn",
     "face": "his teeth bare"
    },
+   "narration": "To the Mongols, killing an envoy meant war without mercy.",
+   "claims": [
+    "C10"
+   ],
    "sound": {
     "ambience": "flags snapping in the wind, a quiet camp",
     "foley": [
@@ -1805,7 +2343,23 @@
     ]
    },
    "source": "cut",
-   "master": "S04-01"
+   "master": "S04-01",
+   "lane": "STILL_3D",
+   "archetype": 2,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S7",
+   "render_profile": "eevee_full",
+   "still_mode": "hold"
   },
   {
    "id": "S04-14",
@@ -1858,7 +2412,24 @@
     "ambience": "flags snapping in the wind, a quiet camp"
    },
    "source": "cut",
-   "master": "S04-01"
+   "master": "S04-01",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S04-15",
@@ -1911,7 +2482,24 @@
     "ambience": "flags snapping in the wind, a quiet camp"
    },
    "source": "cut",
-   "master": "S04-01"
+   "master": "S04-01",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S04-16",
@@ -1965,7 +2553,24 @@
     "ambience": "flags snapping in the wind, a quiet camp"
    },
    "source": "cut",
-   "master": "S04-01"
+   "master": "S04-01",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S04-17",
@@ -1984,7 +2589,7 @@
      "for": "the camp below"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "riders",
@@ -2000,13 +2605,30 @@
     "peak": "turn their heads together toward the camp",
     "settle": "sit still, watching"
    },
+   "narration": "The khan's riders had been there all along.",
    "sound": {
     "ambience": "wind over the ridge",
     "foley": [
      "wind over the ridge"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "STILL_3D",
+   "archetype": 11,
+   "duration_frames": 72,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S1",
+   "render_profile": "eevee_fast",
+   "still_mode": "parallax_25d"
   },
   {
    "id": "S04-18",
@@ -2025,7 +2647,7 @@
      "for": "where he rides off"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "murat",
@@ -2057,6 +2679,7 @@
     "peak": "kicks the horse into a trot up the slope",
     "settle": "rides small toward the horizon"
    },
+   "narration": "Then the steppe was empty again.",
    "sound": {
     "ambience": "flags snapping in the wind, a quiet camp",
     "foley": [
@@ -2065,7 +2688,22 @@
    },
    "source": "cut",
    "master": "S04-17",
-   "exit": true
+   "exit": true,
+   "lane": "STILL_3D",
+   "archetype": 7,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "render_profile": "eevee_full",
+   "still_mode": "parallax_25d"
   },
   {
    "id": "S04-19",
@@ -2118,7 +2756,24 @@
     "ambience": "flags snapping in the wind, a quiet camp"
    },
    "source": "cut",
-   "master": "S04-17"
+   "master": "S04-17",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S04-20",
@@ -2155,14 +2810,31 @@
    "dialogue": {
     "who": "murat",
     "to": "room",
-    "text": "Tomorrow, Sire. You'll have him by lunch.",
+    "text": "You'll have him by lunch, Sire.",
     "delivery": "cocky"
    },
    "sound": {
     "ambience": "flags snapping in the wind, a quiet camp"
    },
    "source": "cut",
-   "master": "S04-17"
+   "master": "S04-17",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S04-21",
@@ -2200,14 +2872,31 @@
    "dialogue": {
     "who": "brun",
     "to": "self",
-    "text": "Wherever it is, I hope it has bread.",
+    "text": "I hope it has bread.",
     "delivery": "a grumble under his breath"
    },
    "sound": {
     "ambience": "flags snapping in the wind, a quiet camp"
    },
    "source": "cut",
-   "master": "S04-17"
+   "master": "S04-17",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S05-01",
@@ -2225,7 +2914,7 @@
      "the covered wagons stand in a long line on the grass"
     ]
    },
-   "tier": "light",
+   "tier": "hold",
    "narration": "Napoleon's army ate from wagons, and from the farms along the road.",
    "claims": [
     "C16"
@@ -2236,7 +2925,22 @@
      "a harness jingling"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "STILL_3D",
+   "archetype": 7,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "render_profile": "eevee_fast",
+   "still_mode": "parallax_25d"
   },
   {
    "id": "S05-02",
@@ -2254,19 +2958,35 @@
      "side": "none"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "action": {
     "who": "infantry",
     "start": "an empty flour sack hangs from a soldier's hand",
     "peak": "the hand shakes the sack upside down",
     "settle": "a little white dust falls onto the grass"
    },
-   "narration": "On this steppe, there were no farms.",
+   "narration": "On this steppe, there were no farms to take from.",
    "sound": {
     "ambience": "wind over open grass, a wagon creaking"
    },
    "source": "cut",
-   "master": "S05-01"
+   "master": "S05-01",
+   "lane": "STILL_3D",
+   "archetype": 6,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S4",
+   "render_profile": "eevee_full",
+   "still_mode": "hold"
   },
   {
    "id": "S05-03",
@@ -2284,7 +3004,7 @@
      "side": "none"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "action": {
     "who": "cavalry",
     "start": "a French cavalry horse tears up a mouthful of grass",
@@ -2295,7 +3015,23 @@
    "sound": {
     "ambience": "wind over open grass"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "STILL_3D",
+   "archetype": 6,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S4",
+   "render_profile": "eevee_full",
+   "still_mode": "hold"
   },
   {
    "id": "S05-04",
@@ -2330,12 +3066,28 @@
     "settle": "leans on both fists, breathing hard",
     "face": "his brows crush down over his eyes"
    },
-   "narration": "So he needed his battle, and he needed it fast.",
+   "narration": "So he needed his battle, and he needed it before the bread ran out.",
    "sound": {
     "ambience": "a candle guttering, canvas creaking",
     "loudest": "a fist on wood"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": 5,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J2",
+   "sub_category": "V8",
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S05-05",
@@ -2386,13 +3138,30 @@
      "does": "spur their big horses forward"
     }
    ],
+   "narration": "Murat rode out at dawn to find the khan.",
    "sound": {
     "ambience": "wind over open grass",
     "foley": [
      "sabre ringing"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": 7,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J4",
+   "sub_category": "V6",
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S06-01",
@@ -2414,7 +3183,7 @@
      "for": "where he looks"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "murat",
@@ -2430,13 +3199,32 @@
     "peak": "pulls up and twists round in the saddle",
     "settle": "stares at the empty trampled grass"
    },
+   "narration": "Murat found the khan's camp the next morning. It was empty.",
+   "claims": [
+    "I03"
+   ],
    "sound": {
     "ambience": "wind in dry grass, far-off hooves",
     "foley": [
      "a horse blowing"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "STILL_3D",
+   "archetype": 8,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "render_profile": "eevee_full",
+   "still_mode": "drift"
   },
   {
    "id": "S06-02",
@@ -2471,17 +3259,28 @@
     "settle": "holds the hand in the ashes",
     "face": "his eyes widen"
    },
-   "dialogue": {
-    "who": "murat",
-    "to": "self",
-    "text": "Gone. And the ashes are warm.",
-    "delivery": "puzzled, low"
-   },
+   "narration": "Gone. The ashes were still warm.",
    "sound": {
     "ambience": "wind in dry grass, far-off hooves"
    },
    "source": "cut",
-   "master": "S06-01"
+   "master": "S06-01",
+   "lane": "VIDEO_3D",
+   "archetype": 8,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V7",
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S06-03",
@@ -2506,12 +3305,29 @@
     "peak": "the arrow slams into the turf beside a riding boot",
     "settle": "the arrow quivers upright"
    },
+   "narration": "Then the arrows came, from nowhere.",
    "sound": {
     "ambience": "wind in dry grass, far-off hooves",
     "loudest": "a hard thud"
    },
    "source": "cut",
-   "master": "S06-01"
+   "master": "S06-01",
+   "lane": "VIDEO_3D",
+   "archetype": 6,
+   "duration_frames": 72,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J2",
+   "sub_category": "V5",
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S06-04",
@@ -2530,7 +3346,7 @@
      "for": "where the arrows rise"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "riders",
@@ -2546,13 +3362,33 @@
     "peak": "raise their bows and loose a volley high",
     "settle": "hold the bows up against the sky"
    },
+   "narration": "The archers stood on a ridge, far out of musket range.",
+   "claims": [
+    "C06",
+    "C09"
+   ],
    "sound": {
     "ambience": "wind over the ridge",
     "foley": [
      "many bowstrings at once"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "HELPER",
+   "archetype": 12,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "H",
+   "sub_category": "H1",
+   "helper_archetype": "TACTICAL_UNIT_MANEUVER"
   },
   {
    "id": "S06-05",
@@ -2613,7 +3449,24 @@
     "ambience": "wind in dry grass, far-off hooves",
     "loudest": "arrows hissing down"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S06-06",
@@ -2631,13 +3484,17 @@
      "side": "none"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "action": {
     "who": "riders",
     "start": "arrows rain down onto a soldier's pack on the grass",
     "peak": "an arrow pins the pack to the ground",
     "settle": "the pack lies pinned, the arrow shaking"
    },
+   "narration": "They came down almost straight.",
+   "claims": [
+    "C09"
+   ],
    "sound": {
     "ambience": "wind in dry grass, far-off hooves",
     "foley": [
@@ -2645,7 +3502,23 @@
     ]
    },
    "source": "cut",
-   "master": "S06-05"
+   "master": "S06-05",
+   "lane": "STILL_3D",
+   "archetype": 6,
+   "duration_frames": 72,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S4",
+   "render_profile": "eevee_full",
+   "still_mode": "hold"
   },
   {
    "id": "S06-07",
@@ -2702,7 +3575,24 @@
    "sound": {
     "ambience": "wind in dry grass, far-off hooves"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S06-08",
@@ -2721,7 +3611,7 @@
      "for": "where he points"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "kemal",
@@ -2744,12 +3634,7 @@
     "peak": "points at the far ridge",
     "settle": "holds the point"
    },
-   "dialogue": {
-    "who": "kemal",
-    "to": "napoleon",
-    "text": "Four hundred metres, Sire. Maybe more.",
-    "delivery": "careful"
-   },
+   "narration": "The archers were four hundred metres away, maybe more.",
    "claims": [
     "C09"
    ],
@@ -2757,7 +3642,23 @@
     "ambience": "wind in dry grass, far-off hooves"
    },
    "source": "nextpose",
-   "master": "S06-07"
+   "master": "S06-07",
+   "lane": "STILL_3D",
+   "archetype": 3,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S2",
+   "render_profile": "eevee_full",
+   "still_mode": "hold"
   },
   {
    "id": "S06-09",
@@ -2801,14 +3702,31 @@
    "dialogue": {
     "who": "kemal",
     "to": "napoleon",
-    "text": "They shoot high, Sire. The arrows drop on us.",
+    "text": "They shoot high. The arrows drop on us.",
     "delivery": "quick, low"
    },
    "sound": {
     "ambience": "wind in dry grass, far-off hooves"
    },
    "source": "nextpose",
-   "master": "S06-07"
+   "master": "S06-07",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S06-10",
@@ -2833,12 +3751,29 @@
     "peak": "the arrow slams into the turf beside a cannon wheel",
     "settle": "the arrow quivers upright"
    },
+   "narration": "And they kept coming down.",
    "sound": {
     "ambience": "wind in dry grass, far-off hooves",
     "loudest": "a hard thud"
    },
    "source": "cut",
-   "master": "S06-07"
+   "master": "S06-07",
+   "lane": "VIDEO_3D",
+   "archetype": 6,
+   "duration_frames": 72,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J2",
+   "sub_category": "V5",
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S06-11",
@@ -2856,7 +3791,7 @@
      "side": "none"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "napoleon",
@@ -2873,12 +3808,7 @@
     "settle": "holds his head still",
     "face": "his jaw tightens"
    },
-   "dialogue": {
-    "who": "napoleon",
-    "to": "self",
-    "text": "Our muskets reach a hundred.",
-    "delivery": "flat, to himself"
-   },
+   "narration": "French muskets reached about a hundred metres.",
    "claims": [
     "C06"
    ],
@@ -2886,7 +3816,23 @@
     "ambience": "wind in dry grass, far-off hooves"
    },
    "source": "cut",
-   "master": "S06-07"
+   "master": "S06-07",
+   "lane": "STILL_3D",
+   "archetype": 5,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S2",
+   "render_profile": "eevee_full",
+   "still_mode": "drift"
   },
   {
    "id": "S06-12",
@@ -2938,7 +3884,24 @@
     "ambience": "wind in dry grass, far-off hooves"
    },
    "source": "cut",
-   "master": "S06-07"
+   "master": "S06-07",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S06-13",
@@ -2986,7 +3949,24 @@
     ]
    },
    "source": "cut",
-   "master": "S06-07"
+   "master": "S06-07",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S06-14",
@@ -3005,7 +3985,7 @@
      "for": "where they charge"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "cavalry",
@@ -3021,11 +4001,27 @@
     "peak": "lunge forward together in a charge",
     "settle": "thunder across the grass in a wall of steel"
    },
+   "narration": "The French cavalry charged straight up the ridge.",
    "sound": {
     "ambience": "wind in dry grass, far-off hooves",
     "loudest": "hundreds of hooves"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "STILL_3D",
+   "archetype": 1,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "render_profile": "eevee_full",
+   "still_mode": "dramatic_curve"
   },
   {
    "id": "S06-15",
@@ -3060,13 +4056,30 @@
     "peak": "twist in their saddles and loose arrows backward",
     "settle": "ride on, still twisting round"
    },
+   "narration": "The Mongols turned away and shot backwards as they rode.",
    "sound": {
     "ambience": "wind over the ridge",
     "foley": [
      "bowstrings snapping"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": 10,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J2",
+   "sub_category": "V2",
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S06-16",
@@ -3100,6 +4113,7 @@
     "peak": "the horse stumbles and jerks its head down",
     "settle": "the horse stands, blowing hard"
    },
+   "narration": "Within the hour, the French horses were blown.",
    "sound": {
     "ambience": "wind in dry grass, far-off hooves",
     "foley": [
@@ -3107,7 +4121,23 @@
     ]
    },
    "source": "cut",
-   "master": "S06-15"
+   "master": "S06-15",
+   "lane": "VIDEO_3D",
+   "archetype": 16,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V9",
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S06-17",
@@ -3126,7 +4156,7 @@
      "for": "where they ride"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "riders",
@@ -3142,11 +4172,30 @@
     "peak": "leap from their saddles onto the fresh horses",
     "settle": "sit the fresh horses, rested"
    },
+   "narration": "The Mongols changed to fresh ones and rode on.",
+   "claims": [
+    "C08"
+   ],
    "sound": {
     "ambience": "wind over the ridge"
    },
    "source": "nextpose",
-   "master": "S06-15"
+   "master": "S06-15",
+   "lane": "STILL_3D",
+   "archetype": 7,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "render_profile": "eevee_full",
+   "still_mode": "parallax_25d"
   },
   {
    "id": "S06-18",
@@ -3191,7 +4240,7 @@
    "dialogue": {
     "who": "murat",
     "to": "napoleon",
-    "text": "They change horses, Sire! Like shirts! We can't catch them.",
+    "text": "They change horses like shirts, Sire!",
     "delivery": "shouting, out of breath"
    },
    "claims": [
@@ -3201,7 +4250,24 @@
     "ambience": "wind in dry grass, far-off hooves"
    },
    "source": "cut",
-   "master": "S06-15"
+   "master": "S06-15",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S06-19",
@@ -3253,7 +4319,24 @@
     "ambience": "wind in dry grass, far-off hooves"
    },
    "source": "cut",
-   "master": "S06-15"
+   "master": "S06-15",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S06-20",
@@ -3272,7 +4355,7 @@
      "for": "where the gun will point"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "gunners",
@@ -3288,6 +4371,7 @@
     "peak": "heave the cannon wheels over the crest",
     "settle": "set the cannon facing the ridge"
    },
+   "narration": "The guns came up the slope by hand.",
    "sound": {
     "ambience": "wind in dry grass, far-off hooves",
     "foley": [
@@ -3295,7 +4379,22 @@
      "ropes creaking"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "STILL_3D",
+   "archetype": 1,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "render_profile": "eevee_full",
+   "still_mode": "dramatic_curve"
   },
   {
    "id": "S06-21",
@@ -3346,7 +4445,24 @@
     "ambience": "wind in dry grass, far-off hooves"
    },
    "source": "cut",
-   "master": "S06-20"
+   "master": "S06-20",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S06-22",
@@ -3391,7 +4507,24 @@
     "ambience": "wind in dry grass, far-off hooves"
    },
    "source": "cut",
-   "master": "S06-20"
+   "master": "S06-20",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 72,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S06-23",
@@ -3426,12 +4559,29 @@
     "peak": "the cannon jerks back in a burst of smoke",
     "settle": "the crew stand up in the drifting smoke"
    },
+   "narration": "The gun bucked.",
    "sound": {
     "ambience": "wind in dry grass, far-off hooves",
     "loudest": "one cannon shot"
    },
    "source": "cut",
-   "master": "S06-20"
+   "master": "S06-20",
+   "lane": "VIDEO_3D",
+   "archetype": 1,
+   "duration_frames": 72,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J4",
+   "sub_category": "V1",
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S06-24",
@@ -3450,7 +4600,7 @@
      "for": "where they scatter"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "riders",
@@ -3466,12 +4616,31 @@
     "peak": "scatter as a cannonball throws up a fountain of earth",
     "settle": "spread out across the slope"
    },
+   "narration": "The round shot crossed the whole valley and hit the ridge.",
+   "claims": [
+    "C05"
+   ],
    "sound": {
     "ambience": "wind over the ridge",
     "loudest": "a far thud of earth"
    },
    "source": "cut",
-   "master": "S06-20"
+   "master": "S06-20",
+   "lane": "HELPER",
+   "archetype": 12,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "H",
+   "sub_category": "H1",
+   "helper_archetype": "TACTICAL_UNIT_MANEUVER"
   },
   {
    "id": "S06-25",
@@ -3519,7 +4688,24 @@
     "ambience": "wind in dry grass, far-off hooves"
    },
    "source": "cut",
-   "master": "S06-20"
+   "master": "S06-20",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S06-26",
@@ -3563,7 +4749,24 @@
     "ambience": "wind in dry grass, far-off hooves"
    },
    "source": "cut",
-   "master": "S06-20"
+   "master": "S06-20",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S06-27",
@@ -3582,7 +4785,7 @@
      "for": "where they wait"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "riders",
@@ -3598,6 +4801,7 @@
     "peak": "wheel round into a new line, farther away",
     "settle": "sit their horses in the new line"
    },
+   "narration": "The riders formed again, further out.",
    "sound": {
     "ambience": "wind over the ridge",
     "foley": [
@@ -3605,7 +4809,23 @@
     ]
    },
    "source": "cut",
-   "master": "S06-20"
+   "master": "S06-20",
+   "lane": "STILL_3D",
+   "archetype": 15,
+   "duration_frames": 72,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S3",
+   "render_profile": "eevee_fast",
+   "still_mode": "drift"
   },
   {
    "id": "S07-01",
@@ -3626,7 +4846,7 @@
      "side": "none"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "infantry",
@@ -3649,7 +4869,23 @@
    "sound": {
     "ambience": "campfires crackling, a horse coughing"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "STILL_3D",
+   "archetype": 11,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S1",
+   "render_profile": "eevee_fast",
+   "still_mode": "parallax_25d"
   },
   {
    "id": "S07-02",
@@ -3671,7 +4907,7 @@
      "for": "the thin horse"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "murat",
@@ -3695,7 +4931,23 @@
     "ambience": "campfires crackling, a horse coughing"
    },
    "source": "cut",
-   "master": "S07-01"
+   "master": "S07-01",
+   "lane": "STILL_3D",
+   "archetype": 16,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S5",
+   "render_profile": "eevee_fast",
+   "still_mode": "drift"
   },
   {
    "id": "S07-03",
@@ -3739,7 +4991,24 @@
     "ambience": "campfires crackling, a horse coughing"
    },
    "source": "cut",
-   "master": "S07-01"
+   "master": "S07-01",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S07-04",
@@ -3757,7 +5026,7 @@
      "side": "none"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "action": {
     "who": "infantry",
     "start": "a black pot bubbles over a small fire",
@@ -3772,7 +5041,23 @@
     ]
    },
    "source": "cut",
-   "master": "S07-01"
+   "master": "S07-01",
+   "lane": "STILL_3D",
+   "archetype": 6,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S4",
+   "render_profile": "eevee_full",
+   "still_mode": "hold"
   },
   {
    "id": "S07-05",
@@ -3791,7 +5076,7 @@
      "for": "where the herd runs"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "riders",
@@ -3818,7 +5103,22 @@
      "a whip cracking"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "HELPER",
+   "archetype": 13,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "H",
+   "sub_category": "H3",
+   "helper_archetype": "SPLIT_SCREEN_SPEED_RACE"
   },
   {
    "id": "S07-06",
@@ -3869,7 +5169,7 @@
    "dialogue": {
     "who": "brun",
     "to": "drummer",
-    "text": "Last biscuit. Half each, and don't argue.",
+    "text": "Last biscuit. Half each.",
     "delivery": "gruff, kind"
    },
    "sound": {
@@ -3878,7 +5178,24 @@
      "a biscuit cracking"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S07-07",
@@ -3930,7 +5247,24 @@
     "ambience": "campfires crackling, a horse coughing"
    },
    "source": "cut",
-   "master": "S07-06"
+   "master": "S07-06",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S07-08",
@@ -3982,7 +5316,24 @@
     "ambience": "campfires crackling, a horse coughing"
    },
    "source": "cut",
-   "master": "S07-06"
+   "master": "S07-06",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S07-09",
@@ -4034,7 +5385,24 @@
     "ambience": "campfires crackling, a horse coughing"
    },
    "source": "cut",
-   "master": "S07-06"
+   "master": "S07-06",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S07-10",
@@ -4055,7 +5423,23 @@
    "sound": {
     "ambience": "campfires crackling, a horse coughing"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "STILL_3D",
+   "archetype": 11,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S1",
+   "render_profile": "eevee_full",
+   "still_mode": "camera_move_3d"
   },
   {
    "id": "S07-11",
@@ -4074,7 +5458,7 @@
      "for": "the dark grass"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "infantry",
@@ -4090,14 +5474,30 @@
     "peak": "stop and drop the sacks in the tall grass",
     "settle": "stand looking around in the tall grass"
    },
-   "narration": "Foragers who wandered off did not come back.",
+   "narration": "Foragers who wandered off into the grass did not come back.",
    "claims": [
     "I03"
    ],
    "sound": {
     "ambience": "wind over open grass"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "STILL_3D",
+   "archetype": 16,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S5",
+   "render_profile": "eevee_full",
+   "still_mode": "drift"
   },
   {
    "id": "S07-12",
@@ -4133,7 +5533,7 @@
     "settle": "stands breathing hard",
     "face": "his face goes red and his teeth clench"
    },
-   "narration": "And Napoleon could not find his battle.",
+   "narration": "And still, Napoleon could not find his battle.",
    "claims": [
     "C04"
    ],
@@ -4141,14 +5541,30 @@
     "ambience": "a candle guttering, canvas creaking",
     "loudest": "a candlestick clattering"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": 2,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J2",
+   "sub_category": "V2",
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S08-01",
    "scene": "S08",
    "mode": "establish",
    "beat": "The scout who lost his horse.",
-   "seconds": 4,
+   "seconds": 5,
    "frame": {
     "size": "WS",
     "angle": "eye",
@@ -4163,7 +5579,7 @@
      "for": "where he kneels"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "subutai",
@@ -4211,20 +5627,39 @@
      "does": "frowns"
     }
    ],
+   "narration": "In the khan's tent that night, a scout came back on foot.",
+   "claims": [
+    "I03"
+   ],
    "sound": {
     "ambience": "a fire crackling, wind against felt",
     "foley": [
      "felt flapping"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "STILL_3D",
+   "archetype": 7,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "render_profile": "eevee_full",
+   "still_mode": "parallax_25d"
   },
   {
    "id": "S08-02",
    "scene": "S08",
    "mode": "scene",
    "beat": "He confesses.",
-   "seconds": 6,
+   "seconds": 5,
    "frame": {
     "size": "OTS",
     "angle": "eye",
@@ -4263,7 +5698,7 @@
    "dialogue": {
     "who": "bayan",
     "to": "genghis",
-    "text": "Great Khan. My horse is dead. An iron ball. I ran.",
+    "text": "My horse is dead, Khan. An iron ball. I ran.",
     "delivery": "breathless, fast"
    },
    "sound": {
@@ -4271,7 +5706,23 @@
    },
    "source": "cut",
    "master": "S08-01",
-   "last_frame": true
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S08-03",
@@ -4316,21 +5767,38 @@
    "dialogue": {
     "who": "genghis",
     "to": "bayan",
-    "text": "You ran back to tell me the truth?",
+    "text": "You ran back to tell me?",
     "delivery": "slow, quiet"
    },
    "sound": {
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S08-01"
+   "master": "S08-01",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S08-04",
    "scene": "S08",
    "mode": "scene",
    "beat": "Yes.",
-   "seconds": 3,
+   "seconds": 4,
    "frame": {
     "size": "MS",
     "angle": "eye",
@@ -4341,7 +5809,7 @@
      "side": "none"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "bayan",
@@ -4364,18 +5832,35 @@
     "peak": "drops his eyes to the carpet",
     "settle": "keeps his eyes down"
    },
+   "narration": "In most armies, that answer would cost him his life.",
    "sound": {
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S08-01"
+   "master": "S08-01",
+   "lane": "STILL_3D",
+   "archetype": 3,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S2",
+   "render_profile": "eevee_fast",
+   "still_mode": "hold"
   },
   {
    "id": "S08-05",
    "scene": "S08",
    "mode": "scene",
    "beat": "The khan rewards honesty.",
-   "seconds": 6,
+   "seconds": 5,
    "frame": {
     "size": "MCU",
     "angle": "eye",
@@ -4406,7 +5891,7 @@
    "dialogue": {
     "who": "genghis",
     "to": "room",
-    "text": "Then you are worth more than the horse. Give him two.",
+    "text": "You are worth more than a horse. Give him two.",
     "delivery": "warm, slow"
    },
    "claims": [
@@ -4417,14 +5902,30 @@
    },
    "source": "cut",
    "master": "S08-01",
-   "last_frame": true
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S08-06",
    "scene": "S08",
    "mode": "scene",
    "beat": "The scout cannot believe it.",
-   "seconds": 3,
+   "seconds": 4,
    "frame": {
     "size": "MS",
     "angle": "eye",
@@ -4458,11 +5959,31 @@
     "peak": "drops his forehead to the carpet",
     "settle": "stays bowed low"
    },
+   "narration": "The khan had once spared an archer who shot his horse.",
+   "claims": [
+    "C11"
+   ],
    "sound": {
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S08-01"
+   "master": "S08-01",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_fast",
+   "lipsync": false
   },
   {
    "id": "S08-07",
@@ -4481,7 +6002,7 @@
      "for": "the arc"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "subutai",
@@ -4504,17 +6025,32 @@
     "peak": "raises his open hand high to show a long arc",
     "settle": "drops the hand to his knee"
    },
-   "dialogue": {
-    "who": "subutai",
-    "to": "genghis",
-    "text": "Their iron balls fly farther than our arrows.",
-    "delivery": "dry, factual"
-   },
+   "narration": "Subutai had seen it: the French iron balls flew farther than Mongol arrows.",
+   "claims": [
+    "C05",
+    "C09"
+   ],
    "sound": {
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S08-01"
+   "master": "S08-01",
+   "lane": "STILL_3D",
+   "archetype": 3,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S2",
+   "render_profile": "eevee_full",
+   "still_mode": "hold"
   },
   {
    "id": "S08-08",
@@ -4565,7 +6101,24 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S08-01"
+   "master": "S08-01",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S08-09",
@@ -4610,14 +6163,31 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S08-01"
+   "master": "S08-01",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S08-10",
    "scene": "S08",
    "mode": "scene",
    "beat": "The interpreter has watched the French camp.",
-   "seconds": 6,
+   "seconds": 5,
    "frame": {
     "size": "MS",
     "angle": "eye",
@@ -4655,14 +6225,30 @@
    },
    "source": "cut",
    "master": "S08-01",
-   "last_frame": true
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S08-11",
    "scene": "S08",
    "mode": "establish",
    "beat": "Out in the grass, his scouts count the wagons.",
-   "seconds": 3,
+   "seconds": 4,
    "frame": {
     "size": "WS",
     "angle": "eye",
@@ -4677,7 +6263,7 @@
      "for": "the wagons"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "scouts",
@@ -4693,13 +6279,29 @@
     "peak": "lift their heads and stare at the wagon line",
     "settle": "sink back down into the grass"
    },
+   "narration": "His scouts had been counting the French wagons for days.",
    "sound": {
     "ambience": "wind, a wagon creaking",
     "foley": [
      "grass rustling"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "STILL_3D",
+   "archetype": 8,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "render_profile": "eevee_fast",
+   "still_mode": "drift"
   },
   {
    "id": "S08-12",
@@ -4744,14 +6346,31 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S08-11"
+   "master": "S08-11",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S08-13",
    "scene": "S08",
    "mode": "establish",
    "beat": "The French march: the fighting column ahead, the wagons falling behind.",
-   "seconds": 4,
+   "seconds": 5,
    "frame": {
     "size": "EWS",
     "angle": "eye",
@@ -4766,7 +6385,7 @@
      "for": "where the column marches"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "infantry",
@@ -4782,20 +6401,39 @@
     "peak": "the column pulls away over a low rise",
     "settle": "the column marches on, small"
    },
+   "narration": "The French fighting column marched ahead. The wagons fell further behind every day.",
+   "claims": [
+    "C16"
+   ],
    "sound": {
     "ambience": "wind over open grass",
     "foley": [
      "far-off wagon wheels creaking"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "HELPER",
+   "archetype": 12,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "H",
+   "sub_category": "H1",
+   "helper_archetype": "MAP_3D_TERRAIN_FLYOVER"
   },
   {
    "id": "S08-14",
    "scene": "S08",
    "mode": "scene",
    "beat": "Subutai offers the move that worked at the Kalka.",
-   "seconds": 7,
+   "seconds": 5,
    "frame": {
     "size": "MS",
     "angle": "eye",
@@ -4832,7 +6470,7 @@
    "dialogue": {
     "who": "subutai",
     "to": "genghis",
-    "text": "Like at the river this spring. Run nine days. Turn on the tenth.",
+    "text": "Like the river. Run nine days, then turn.",
     "delivery": "confident"
    },
    "claims": [
@@ -4843,7 +6481,23 @@
    },
    "source": "cut",
    "master": "S08-13",
-   "last_frame": true
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S08-15",
@@ -4887,21 +6541,38 @@
    "dialogue": {
     "who": "genghis",
     "to": "subutai",
-    "text": "No. This one wants a battle. Give him one.",
+    "text": "No. He wants a battle. Give him one.",
     "delivery": "calm"
    },
    "sound": {
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S08-13"
+   "master": "S08-13",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S08-16",
    "scene": "S08",
    "mode": "scene",
    "beat": "Subutai does not follow.",
-   "seconds": 4,
+   "seconds": 5,
    "frame": {
     "size": "MCU",
     "angle": "eye",
@@ -4913,7 +6584,7 @@
      "for": "the khan"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "subutai",
@@ -4929,18 +6600,38 @@
     "peak": "raises both eyebrows high",
     "settle": "holds the look"
    },
+   "narration": "Subutai had won with that trick on the Kalka that spring.",
+   "claims": [
+    "C10"
+   ],
    "sound": {
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S08-13"
+   "master": "S08-13",
+   "lane": "STILL_3D",
+   "archetype": 5,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S2",
+   "render_profile": "eevee_fast",
+   "still_mode": "drift"
   },
   {
    "id": "S08-17",
    "scene": "S08",
    "mode": "scene",
    "beat": "The plan, in one sentence.",
-   "seconds": 6,
+   "seconds": 5,
    "frame": {
     "size": "OTS",
     "angle": "eye",
@@ -4978,7 +6669,7 @@
    "dialogue": {
     "who": "genghis",
     "to": "subutai",
-    "text": "A small one. Let him win. While he wins, take his wagons.",
+    "text": "A small one. Let him win it. Take his wagons.",
     "delivery": "slow, pleased"
    },
    "sound": {
@@ -4986,14 +6677,30 @@
    },
    "source": "cut",
    "master": "S08-13",
-   "last_frame": true
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S08-18",
    "scene": "S08",
    "mode": "establish",
    "beat": "That night, riders slip out of the camp.",
-   "seconds": 3,
+   "seconds": 4,
    "frame": {
     "size": "WS",
     "angle": "eye",
@@ -5005,7 +6712,7 @@
      "for": "where they ride off"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "riders",
@@ -5021,6 +6728,7 @@
     "peak": "swing up into the saddles one by one",
     "settle": "ride off into the dark in single file"
    },
+   "narration": "That night, a few riders slipped out of the camp.",
    "sound": {
     "ambience": "horses grazing, a far-off horn",
     "foley": [
@@ -5028,7 +6736,22 @@
     ]
    },
    "source": "keyframe",
-   "exit": true
+   "exit": true,
+   "lane": "STILL_3D",
+   "archetype": 7,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "render_profile": "eevee_fast",
+   "still_mode": "parallax_25d"
   },
   {
    "id": "S08-19",
@@ -5072,7 +6795,24 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S08-18"
+   "master": "S08-18",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S08-20",
@@ -5123,14 +6863,31 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S08-18"
+   "master": "S08-18",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S08-21",
    "scene": "S08",
    "mode": "scene",
    "beat": "The khan's creed.",
-   "seconds": 6,
+   "seconds": 5,
    "frame": {
     "size": "OTS",
     "angle": "eye",
@@ -5177,7 +6934,23 @@
    },
    "source": "cut",
    "master": "S08-18",
-   "last_frame": true
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S08-22",
@@ -5196,7 +6969,7 @@
      "for": "the door"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "subutai",
@@ -5227,6 +7000,10 @@
     "peak": "pushes out through the felt door",
     "settle": "the door flap swings shut"
    },
+   "narration": "The khan collected engineers the way other men collect horses.",
+   "claims": [
+    "C11"
+   ],
    "sound": {
     "ambience": "a fire crackling, wind against felt",
     "foley": [
@@ -5235,7 +7012,23 @@
    },
    "source": "cut",
    "master": "S08-18",
-   "exit": true
+   "exit": true,
+   "lane": "STILL_3D",
+   "archetype": 4,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S3",
+   "render_profile": "eevee_full",
+   "still_mode": "hold"
   },
   {
    "id": "S09-01",
@@ -5268,7 +7061,23 @@
    "sound": {
     "ambience": "wind over the ridge"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "STILL_3D",
+   "archetype": 14,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S6",
+   "render_profile": "eevee_full",
+   "still_mode": "camera_move_3d"
   },
   {
    "id": "S09-02",
@@ -5303,10 +7112,27 @@
     "peak": "swing their bows up and loose arrows high",
     "settle": "hold the bows up as the arrows fly"
    },
+   "narration": "A volley of arrows, then nothing but grass.",
    "sound": {
     "ambience": "wind over the ridge"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": 1,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J4",
+   "sub_category": "V1",
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S09-03",
@@ -5350,7 +7176,24 @@
     "ambience": "wind, far-off hooves"
    },
    "source": "cut",
-   "master": "S09-02"
+   "master": "S09-02",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S09-04",
@@ -5392,14 +7235,30 @@
    "sound": {
     "ambience": "wind, far-off hooves"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": 10,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J2",
+   "sub_category": "V2",
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S09-05",
    "scene": "S09",
    "mode": "narrated",
    "beat": "Napoleon decides.",
-   "seconds": 4,
+   "seconds": 5,
    "frame": {
     "size": "MCU",
     "angle": "eye",
@@ -5411,7 +7270,7 @@
      "for": "the ridge"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "napoleon",
@@ -5427,18 +7286,35 @@
     "peak": "lifts his chin sharply",
     "settle": "keeps his eyes on the ridge"
    },
+   "narration": "Then Napoleon stopped chasing the riders and started thinking.",
    "sound": {
     "ambience": "wind, far-off hooves"
    },
    "source": "cut",
-   "master": "S09-04"
+   "master": "S09-04",
+   "lane": "STILL_3D",
+   "archetype": 5,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S2",
+   "render_profile": "eevee_fast",
+   "still_mode": "drift"
   },
   {
    "id": "S09-06",
    "scene": "S09",
    "mode": "scene",
    "beat": "Napoleon finds his move.",
-   "seconds": 6,
+   "seconds": 5,
    "frame": {
     "size": "MS",
     "angle": "eye",
@@ -5475,7 +7351,7 @@
    "dialogue": {
     "who": "napoleon",
     "to": "kemal",
-    "text": "If he won't come to me, I'll give him a reason.",
+    "text": "Then I'll give him a reason to come.",
     "delivery": "a sudden grin in the voice"
    },
    "sound": {
@@ -5483,7 +7359,23 @@
    },
    "source": "cut",
    "master": "S09-04",
-   "last_frame": true
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S09-07",
@@ -5501,21 +7393,37 @@
      "side": "none"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "action": {
     "who": "napoleon",
     "start": "a gloved finger draws a curving line in the dust on a wagon board",
     "peak": "the finger stabs down hard at the end of the line",
     "settle": "the finger rests on the spot"
    },
-   "narration": "He set a trap.",
+   "narration": "So Napoleon set a trap of his own.",
    "sound": {
     "ambience": "a candle guttering, canvas creaking",
     "foley": [
      "a finger tapping wood"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "STILL_3D",
+   "archetype": 6,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S4",
+   "render_profile": "eevee_full",
+   "still_mode": "hold"
   },
   {
    "id": "S09-08",
@@ -5534,7 +7442,7 @@
      "the division stands in front of the low hill"
     ]
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "infantry",
@@ -5548,7 +7456,22 @@
    "sound": {
     "ambience": "wind, distant horns, horses"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "HELPER",
+   "archetype": 12,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "H",
+   "sub_category": "H1",
+   "helper_archetype": "TACTICAL_UNIT_MANEUVER"
   },
   {
    "id": "S09-09",
@@ -5591,7 +7514,23 @@
     "ambience": "wind, distant horns, horses"
    },
    "source": "cut",
-   "master": "S09-08"
+   "master": "S09-08",
+   "lane": "VIDEO_3D",
+   "archetype": 1,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J4",
+   "sub_category": "V1",
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S09-10",
@@ -5626,13 +7565,30 @@
     "peak": "pushes the grass apart with both hands and stares",
     "settle": "lets the grass close again"
    },
+   "narration": "But the hills had eyes.",
    "sound": {
     "ambience": "wind, distant horns, horses",
     "foley": [
      "grass rustling"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": 8,
+   "duration_frames": 72,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V7",
+   "render_profile": "eevee_fast",
+   "lipsync": false
   },
   {
    "id": "S09-11",
@@ -5650,7 +7606,7 @@
      "the covered wagons stand behind the drummer"
     ]
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "drummer",
@@ -5664,7 +7620,23 @@
    "sound": {
     "ambience": "wind, a wagon creaking"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "STILL_3D",
+   "archetype": 5,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S2",
+   "render_profile": "eevee_fast",
+   "still_mode": "drift"
   },
   {
    "id": "S09-12",
@@ -5683,7 +7655,7 @@
      "for": "where they walk"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "riders",
@@ -5699,13 +7671,29 @@
     "peak": "duck their heads below the rim",
     "settle": "walk on in single file"
    },
+   "narration": "Far from the valley, other riders moved.",
    "sound": {
     "ambience": "wind, far-off hooves",
     "foley": [
      "hooves on dry earth"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "STILL_3D",
+   "archetype": 7,
+   "duration_frames": 72,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "render_profile": "eevee_fast",
+   "still_mode": "parallax_25d"
   },
   {
    "id": "S09-13",
@@ -5724,7 +7712,7 @@
      "for": "the valley"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "genghis",
@@ -5744,7 +7732,23 @@
    "sound": {
     "ambience": "wind over the ridge"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "STILL_3D",
+   "archetype": 9,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S7",
+   "render_profile": "eevee_fast",
+   "still_mode": "dramatic_curve"
   },
   {
    "id": "S10-01",
@@ -5796,11 +7800,31 @@
      "does": "brace their muskets"
     }
    ],
+   "narration": "At last, the khan came, and he came in force.",
+   "claims": [
+    "I03"
+   ],
    "sound": {
     "ambience": "wind, distant horns, horses",
     "loudest": "a horn blast"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": 19,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J4",
+   "sub_category": "V1",
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S10-02",
@@ -5844,7 +7868,24 @@
    "sound": {
     "ambience": "wind, distant horns, horses"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S10-03",
@@ -5881,13 +7922,33 @@
     "peak": "slam their musket butts down with bayonets out",
     "settle": "kneel in four walls of bayonets"
    },
+   "narration": "The infantry formed a square, bayonets out on every side.",
+   "claims": [
+    "C07"
+   ],
    "sound": {
     "ambience": "wind, distant horns, horses",
     "foley": [
      "bayonets clicking"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": 1,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J4",
+   "sub_category": "V1",
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S10-04",
@@ -5906,7 +7967,7 @@
      "for": "the hills"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "drummer",
@@ -5922,13 +7983,30 @@
     "peak": "jerks his head up toward the hills",
     "settle": "freezes with the cloth in his hand"
    },
+   "narration": "Back at the wagons, the drummer heard hooves.",
    "sound": {
     "ambience": "wind, a wagon creaking",
     "foley": [
      "far-off hooves growing louder"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "STILL_3D",
+   "archetype": 5,
+   "duration_frames": 72,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S2",
+   "render_profile": "eevee_fast",
+   "still_mode": "drift"
   },
   {
    "id": "S10-05",
@@ -5963,11 +8041,28 @@
     "peak": "swing their bows up and loose a dark cloud of arrows",
     "settle": "ride on, reaching for more arrows"
    },
+   "narration": "The arrows came down on the square like rain.",
    "sound": {
     "ambience": "wind, distant horns, horses",
     "loudest": "hundreds of arrows hissing"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": 19,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J4",
+   "sub_category": "V1",
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S10-06",
@@ -5985,13 +8080,14 @@
      "side": "none"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "action": {
     "who": "infantry",
     "start": "arrows rain down into the square",
     "peak": "an arrow knocks a shako off a soldier's head",
     "settle": "the shako rolls on the grass"
    },
+   "narration": "Men fell. The square closed up.",
    "sound": {
     "ambience": "wind, distant horns, horses",
     "foley": [
@@ -5999,7 +8095,23 @@
     ]
    },
    "source": "cut",
-   "master": "S10-05"
+   "master": "S10-05",
+   "lane": "STILL_3D",
+   "archetype": 6,
+   "duration_frames": 72,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S4",
+   "render_profile": "eevee_full",
+   "still_mode": "hold"
   },
   {
    "id": "S10-07",
@@ -6046,7 +8158,24 @@
    "sound": {
     "ambience": "wind, distant horns, horses"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S10-08",
@@ -6083,14 +8212,31 @@
    "dialogue": {
     "who": "brun",
     "to": "room",
-    "text": "Steady, lads. They can't stay up there all day.",
+    "text": "Steady, lads. They can't shoot all day.",
     "delivery": "loud, steady"
    },
    "sound": {
     "ambience": "wind, distant horns, horses"
    },
    "source": "cut",
-   "master": "S10-07"
+   "master": "S10-07",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S10-09",
@@ -6125,11 +8271,28 @@
     "peak": "fire a thin ragged volley in a puff of smoke",
     "settle": "fumble with their ramrods to reload"
    },
+   "narration": "At the camp, a handful of guards fired.",
    "sound": {
     "ambience": "wind, a wagon creaking",
     "loudest": "a thin musket volley"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": 19,
+   "duration_frames": 72,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J4",
+   "sub_category": "V1",
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S10-10",
@@ -6163,12 +8326,29 @@
     "peak": "slams his sticks down in a fast roll",
     "settle": "keeps the roll going"
    },
+   "narration": "A drum kept the square together.",
    "sound": {
     "ambience": "wind, distant horns, horses",
     "loudest": "a fast drum roll"
    },
    "source": "cut",
-   "master": "S10-09"
+   "master": "S10-09",
+   "lane": "VIDEO_3D",
+   "archetype": 19,
+   "duration_frames": 72,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J4",
+   "sub_category": "V1",
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S10-11",
@@ -6203,11 +8383,28 @@
     "peak": "kick their horses forward into a charge",
     "settle": "thunder toward the square"
    },
+   "narration": "Then the heavy riders formed up to charge.",
    "sound": {
     "ambience": "wind, distant horns, horses",
     "loudest": "a wall of hooves"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": 19,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J4",
+   "sub_category": "V1",
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S10-12",
@@ -6251,7 +8448,24 @@
     "ambience": "wind, distant horns, horses"
    },
    "source": "cut",
-   "master": "S10-11"
+   "master": "S10-11",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S10-13",
@@ -6295,7 +8509,24 @@
     "ambience": "wind, distant horns, horses"
    },
    "source": "cut",
-   "master": "S10-11"
+   "master": "S10-11",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S10-14",
@@ -6314,7 +8545,7 @@
      "for": "where they aim"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "infantry",
@@ -6330,10 +8561,26 @@
     "peak": "jerk their cheeks down onto the stocks",
     "settle": "hold their aim"
    },
+   "narration": "The front rank aimed low.",
    "sound": {
     "ambience": "wind, distant horns, horses"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "STILL_3D",
+   "archetype": 1,
+   "duration_frames": 72,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "render_profile": "eevee_full",
+   "still_mode": "dramatic_curve"
   },
   {
    "id": "S10-15",
@@ -6378,7 +8625,24 @@
     "ambience": "wind, distant horns, horses"
    },
    "source": "cut",
-   "master": "S10-14"
+   "master": "S10-14",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 72,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S10-16",
@@ -6413,11 +8677,31 @@
     "peak": "fire one volley in a wall of white smoke",
     "settle": "lower the muskets in the smoke"
    },
+   "narration": "A steady square held its fire until the last moment.",
+   "claims": [
+    "C07"
+   ],
    "sound": {
     "ambience": "wind, distant horns, horses",
     "loudest": "one huge musket volley"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": 19,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J4",
+   "sub_category": "V1",
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S10-17",
@@ -6436,7 +8720,7 @@
      "for": "where they wheel"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "riders",
@@ -6452,10 +8736,29 @@
     "peak": "swerve around the corners of the square and pull up hard",
     "settle": "wheel away into the grass"
    },
+   "narration": "The charge broke around it like water around a rock.",
+   "claims": [
+    "C07"
+   ],
    "sound": {
     "ambience": "wind, distant horns, horses"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "HELPER",
+   "archetype": 12,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "H",
+   "sub_category": "H1",
+   "helper_archetype": "FORMATION_MICRO_MECHANICS"
   },
   {
    "id": "S10-18",
@@ -6499,7 +8802,24 @@
     "ambience": "wind, distant horns, horses"
    },
    "source": "cut",
-   "master": "S10-17"
+   "master": "S10-17",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S10-19",
@@ -6556,7 +8876,24 @@
    "sound": {
     "ambience": "wind, distant horns, horses"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S10-20",
@@ -6575,7 +8912,7 @@
      "for": "where the barrel points"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "gunners",
@@ -6591,13 +8928,29 @@
     "peak": "heave the wheels forward and swing the barrel down",
     "settle": "crouch beside the aimed cannon"
    },
+   "narration": "Then the hidden guns rolled over the crest.",
    "sound": {
     "ambience": "wind, distant horns, horses",
     "foley": [
      "wheels grinding"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "STILL_3D",
+   "archetype": 8,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "render_profile": "eevee_full",
+   "still_mode": "drift"
   },
   {
    "id": "S10-21",
@@ -6644,7 +8997,24 @@
     "ambience": "wind, distant horns, horses"
    },
    "source": "cut",
-   "master": "S10-20"
+   "master": "S10-20",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S10-22",
@@ -6679,12 +9049,29 @@
     "peak": "the cannon jerks back in a blast of smoke",
     "settle": "the crew stand up in the smoke"
    },
+   "narration": "The guns fired again.",
    "sound": {
     "ambience": "wind, distant horns, horses",
     "loudest": "a cannon blast"
    },
    "source": "cut",
-   "master": "S10-20"
+   "master": "S10-20",
+   "lane": "VIDEO_3D",
+   "archetype": 19,
+   "duration_frames": 72,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J4",
+   "sub_category": "V1",
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S10-23",
@@ -6719,11 +9106,31 @@
     "peak": "break apart and scatter under a hail of shot",
     "settle": "spread out up the hill"
    },
+   "narration": "Canister turned each gun into a giant shotgun.",
+   "claims": [
+    "C05"
+   ],
    "sound": {
     "ambience": "wind, distant horns, horses",
     "loudest": "a crack of shot"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": 19,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J4",
+   "sub_category": "V1",
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S10-24",
@@ -6768,7 +9175,24 @@
     "ambience": "wind, distant horns, horses"
    },
    "source": "cut",
-   "master": "S10-23"
+   "master": "S10-23",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S10-25",
@@ -6806,11 +9230,31 @@
     "peak": "hurl burning torches onto the canvas covers",
     "settle": "wheel round as the canvas catches"
    },
+   "narration": "Behind the hills, other riders reached the wagons.",
+   "claims": [
+    "I03"
+   ],
    "sound": {
     "ambience": "wind, a wagon creaking",
     "loudest": "fire roaring up"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": 19,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J4",
+   "sub_category": "V1",
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S10-26",
@@ -6855,7 +9299,24 @@
     "ambience": "wind, a wagon creaking",
     "loudest": "a drum alarm"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S10-27",
@@ -6900,14 +9361,31 @@
    "dialogue": {
     "who": "murat",
     "to": "napoleon",
-    "text": "Let me finish them, Sire! Now, while they run!",
+    "text": "Let me finish them, Sire! While they run!",
     "delivery": "begging, loud"
    },
    "sound": {
     "ambience": "wind, distant horns, horses"
    },
    "source": "cut",
-   "master": "S10-26"
+   "master": "S10-26",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S10-28",
@@ -6959,7 +9437,24 @@
     "ambience": "wind, distant horns, horses"
    },
    "source": "cut",
-   "master": "S10-26"
+   "master": "S10-26",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S10-29",
@@ -6977,7 +9472,7 @@
      "side": "none"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "murat",
@@ -6993,11 +9488,28 @@
     "peak": "tears off his plumed hat and slaps it against his knee",
     "settle": "holds the crushed hat"
    },
+   "narration": "Murat stayed. He did not like it.",
    "sound": {
     "ambience": "wind, distant horns, horses"
    },
    "source": "cut",
-   "master": "S10-26"
+   "master": "S10-26",
+   "lane": "STILL_3D",
+   "archetype": 2,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S7",
+   "render_profile": "eevee_full",
+   "still_mode": "hold"
   },
   {
    "id": "S10-30",
@@ -7047,10 +9559,30 @@
      "does": "grips his reins and waits"
     }
    ],
+   "narration": "The khan had never wanted to win this battle.",
+   "claims": [
+    "I03"
+   ],
    "sound": {
     "ambience": "wind over the ridge"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": 8,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V7",
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S10-31",
@@ -7102,14 +9634,31 @@
     "ambience": "wind over the ridge"
    },
    "source": "cut",
-   "master": "S10-30"
+   "master": "S10-30",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S10-32",
    "scene": "S10",
    "mode": "scene",
    "beat": "The khan sees the opposite.",
-   "seconds": 6,
+   "seconds": 5,
    "frame": {
     "size": "OTS",
     "angle": "eye",
@@ -7156,14 +9705,30 @@
    },
    "source": "cut",
    "master": "S10-30",
-   "last_frame": true
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S10-33",
    "scene": "S10",
    "mode": "scene",
    "beat": "The khan looks behind the French.",
-   "seconds": 4,
+   "seconds": 5,
    "frame": {
     "size": "CU",
     "angle": "eye",
@@ -7175,7 +9740,7 @@
      "for": "where he looks"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "genghis",
@@ -7191,11 +9756,28 @@
     "peak": "lifts his chin toward the far smoke",
     "settle": "holds the look"
    },
+   "narration": "He was not looking at the battle. He was looking past it.",
    "sound": {
     "ambience": "wind over the ridge"
    },
    "source": "cut",
-   "master": "S10-30"
+   "master": "S10-30",
+   "lane": "STILL_3D",
+   "archetype": 5,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S2",
+   "render_profile": "eevee_fast",
+   "still_mode": "drift"
   },
   {
    "id": "S10-34",
@@ -7247,7 +9829,24 @@
     "ambience": "wind, distant horns, horses"
    },
    "source": "cut",
-   "master": "S10-30"
+   "master": "S10-30",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S10-35",
@@ -7292,7 +9891,24 @@
     "ambience": "wind, distant horns, horses"
    },
    "source": "cut",
-   "master": "S10-30"
+   "master": "S10-30",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 72,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S10-36",
@@ -7312,10 +9928,27 @@
     ]
    },
    "tier": "hold",
+   "narration": "Black smoke rose where the camp had been.",
    "sound": {
     "ambience": "wind over open grass"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "STILL_3D",
+   "archetype": 16,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S5",
+   "render_profile": "eevee_full",
+   "still_mode": "camera_move_3d"
   },
   {
    "id": "S10-37",
@@ -7366,7 +9999,24 @@
     "ambience": "wind, distant horns, horses"
    },
    "source": "cut",
-   "master": "S10-36"
+   "master": "S10-36",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S10-38",
@@ -7401,11 +10051,28 @@
     "settle": "sits with empty hands",
     "face": "his mouth falls open and his eyes go flat"
    },
+   "narration": "Napoleon understood what the khan had done.",
    "sound": {
     "ambience": "wind, distant horns, horses"
    },
    "source": "cut",
-   "master": "S10-36"
+   "master": "S10-36",
+   "lane": "VIDEO_3D",
+   "archetype": 5,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J2",
+   "sub_category": "V8",
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S11-01",
@@ -7434,10 +10101,27 @@
      "height": "quarter"
     }
    ],
+   "narration": "Napoleon had his battle at last, and he had won it.",
    "sound": {
     "ambience": "wind, a single crow, silence"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "STILL_3D",
+   "archetype": 9,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S7",
+   "render_profile": "eevee_full",
+   "still_mode": "camera_move_3d"
   },
   {
    "id": "S11-02",
@@ -7481,7 +10165,24 @@
     "ambience": "wind, a single crow, silence"
    },
    "source": "cut",
-   "master": "S11-01"
+   "master": "S11-01",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S11-03",
@@ -7526,14 +10227,31 @@
    "dialogue": {
     "who": "brun",
     "to": "napoleon",
-    "text": "Sire. This is what's left of the bread.",
+    "text": "This is what's left of the bread.",
     "delivery": "quiet"
    },
    "sound": {
     "ambience": "wind, a single crow, silence"
    },
    "source": "cut",
-   "master": "S11-01"
+   "master": "S11-01",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S11-04",
@@ -7584,7 +10302,24 @@
     "ambience": "wind, a single crow, silence"
    },
    "source": "cut",
-   "master": "S11-01"
+   "master": "S11-01",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S11-05",
@@ -7635,7 +10370,24 @@
     "ambience": "wind, a single crow, silence"
    },
    "source": "cut",
-   "master": "S11-01"
+   "master": "S11-01",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S11-06",
@@ -7653,7 +10405,7 @@
      "side": "none"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "napoleon",
@@ -7669,11 +10421,31 @@
     "peak": "drops his eyes and closes them",
     "settle": "keeps the eyes shut"
    },
+   "narration": "Without wagons, an army on the steppe starves.",
+   "claims": [
+    "C16"
+   ],
    "sound": {
     "ambience": "wind, a single crow, silence"
    },
    "source": "cut",
-   "master": "S11-01"
+   "master": "S11-01",
+   "lane": "STILL_3D",
+   "archetype": 5,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S2",
+   "render_profile": "eevee_fast",
+   "still_mode": "drift"
   },
   {
    "id": "S11-07",
@@ -7724,7 +10496,24 @@
     "ambience": "wind, a single crow, silence"
    },
    "source": "cut",
-   "master": "S11-01"
+   "master": "S11-01",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S11-08",
@@ -7744,10 +10533,27 @@
     ]
    },
    "tier": "hold",
+   "narration": "The wagons, and the bread in them, had burned.",
    "sound": {
     "ambience": "wind, a wagon creaking"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "STILL_3D",
+   "archetype": 16,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S5",
+   "render_profile": "eevee_full",
+   "still_mode": "camera_move_3d"
   },
   {
    "id": "S12-01",
@@ -7767,11 +10573,27 @@
     ]
    },
    "tier": "hold",
-   "narration": "On paper, it was a victory.",
+   "narration": "On paper, it was a clean French victory.",
    "sound": {
     "ambience": "wind over open grass"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "STILL_3D",
+   "archetype": 16,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S5",
+   "render_profile": "eevee_full",
+   "still_mode": "camera_move_3d"
   },
   {
    "id": "S12-02",
@@ -7790,7 +10612,7 @@
      "for": "where they ride in"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "riders",
@@ -7813,7 +10635,22 @@
    "sound": {
     "ambience": "horses grazing, a far-off horn"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "HELPER",
+   "archetype": 13,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "H",
+   "sub_category": "H3",
+   "helper_archetype": "ORDER_OF_BATTLE_TELEMETRY_HUD"
   },
   {
    "id": "S12-03",
@@ -7856,7 +10693,23 @@
     "ambience": "horses grazing, a far-off horn"
    },
    "source": "cut",
-   "master": "S12-02"
+   "master": "S12-02",
+   "lane": "VIDEO_3D",
+   "archetype": 8,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V7",
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S12-04",
@@ -7894,7 +10747,23 @@
    "sound": {
     "ambience": "wind, a wagon creaking"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": 16,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V9",
+   "render_profile": "eevee_fast",
+   "lipsync": false
   },
   {
    "id": "S12-05",
@@ -7912,7 +10781,7 @@
      "side": "none"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "infantry",
@@ -7928,7 +10797,7 @@
     "peak": "pull the hide back from the meat",
     "settle": "work on with bent heads"
    },
-   "narration": "Within days, they were eating their horses.",
+   "narration": "Within days, the French were eating their own horses.",
    "claims": [
     "I03"
    ],
@@ -7936,7 +10805,23 @@
     "ambience": "wind, a wagon creaking"
    },
    "source": "cut",
-   "master": "S12-04"
+   "master": "S12-04",
+   "lane": "STILL_3D",
+   "archetype": 16,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S5",
+   "render_profile": "eevee_full",
+   "still_mode": "drift"
   },
   {
    "id": "S12-06",
@@ -7954,7 +10839,7 @@
      "side": "none"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "napoleon",
@@ -7970,10 +10855,27 @@
     "peak": "drops his face into his hands",
     "settle": "stays bent over"
    },
+   "narration": "Napoleon had won his battle and lost his campaign.",
    "sound": {
     "ambience": "a candle guttering, canvas creaking"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "STILL_3D",
+   "archetype": 5,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S2",
+   "render_profile": "eevee_fast",
+   "still_mode": "drift"
   },
   {
    "id": "S12-07",
@@ -8008,13 +10910,33 @@
     "peak": "raises a white felt banner on a pole",
     "settle": "sits holding the banner high"
    },
+   "narration": "Then a rider brought an invitation from the khan.",
+   "claims": [
+    "I04"
+   ],
    "sound": {
     "ambience": "a busy army camp, distant shouted orders",
     "foley": [
      "a banner flapping"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": 9,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V7",
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S12-08",
@@ -8058,14 +10980,31 @@
    "dialogue": {
     "who": "murat",
     "to": "napoleon",
-    "text": "It's a trap, Sire. He'll cut your throat.",
+    "text": "It's a trap, Sire.",
     "delivery": "urgent"
    },
    "sound": {
     "ambience": "a busy army camp, distant shouted orders"
    },
    "source": "cut",
-   "master": "S12-07"
+   "master": "S12-07",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S12-09",
@@ -8116,14 +11055,31 @@
     "ambience": "a busy army camp, distant shouted orders"
    },
    "source": "cut",
-   "master": "S12-07"
+   "master": "S12-07",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S13-01",
    "scene": "S13",
    "mode": "establish",
    "beat": "The emperor enters the khan's tent.",
-   "seconds": 4,
+   "seconds": 5,
    "frame": {
     "size": "WS",
     "angle": "eye",
@@ -8138,7 +11094,7 @@
      "for": "the khan"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "napoleon",
@@ -8187,17 +11143,37 @@
      "does": "freezes with his cap in his hands"
     }
    ],
+   "narration": "That evening, the emperor walked into the khan's tent.",
+   "claims": [
+    "I04"
+   ],
    "sound": {
     "ambience": "a fire crackling, wind against felt"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "STILL_3D",
+   "archetype": 4,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S3",
+   "render_profile": "eevee_full",
+   "still_mode": "hold"
   },
   {
    "id": "S13-02",
    "scene": "S13",
    "mode": "scene",
    "beat": "The khan opens with a compliment.",
-   "seconds": 6,
+   "seconds": 5,
    "frame": {
     "size": "OTS",
     "angle": "eye",
@@ -8243,7 +11219,23 @@
    },
    "source": "cut",
    "master": "S13-01",
-   "last_frame": true
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S13-03",
@@ -8295,14 +11287,31 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S13-01"
+   "master": "S13-01",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S13-04",
    "scene": "S13",
    "mode": "scene",
    "beat": "The khan names the difference between them.",
-   "seconds": 6,
+   "seconds": 5,
    "frame": {
     "size": "OTS",
     "angle": "eye",
@@ -8340,7 +11349,7 @@
    "dialogue": {
     "who": "genghis",
     "to": "napoleon",
-    "text": "You came to fight a battle. I came to win a war.",
+    "text": "You came for a battle. I came for a war.",
     "delivery": "even, slow"
    },
    "sound": {
@@ -8348,14 +11357,30 @@
    },
    "source": "cut",
    "master": "S13-01",
-   "last_frame": true
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S13-05",
    "scene": "S13",
    "mode": "scene",
    "beat": "The hit lands.",
-   "seconds": 4,
+   "seconds": 5,
    "frame": {
     "size": "CU",
     "angle": "eye",
@@ -8366,7 +11391,7 @@
      "side": "none"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "napoleon",
@@ -8382,18 +11407,35 @@
     "peak": "drops his eyes to the fire",
     "settle": "keeps his eyes down"
    },
+   "narration": "The khan had read him in a single sentence.",
    "sound": {
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S13-01"
+   "master": "S13-01",
+   "lane": "STILL_3D",
+   "archetype": 2,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S7",
+   "render_profile": "eevee_fast",
+   "still_mode": "hold"
   },
   {
    "id": "S13-06",
    "scene": "S13",
    "mode": "scene",
    "beat": "The offer.",
-   "seconds": 6,
+   "seconds": 5,
    "frame": {
     "size": "OTS",
     "angle": "eye",
@@ -8431,7 +11473,7 @@
    "dialogue": {
     "who": "genghis",
     "to": "napoleon",
-    "text": "Ride with me. I will give you a tumen. Ten thousand.",
+    "text": "Ride with me. I will give you a tumen.",
     "delivery": "generous, plain"
    },
    "claims": [
@@ -8442,7 +11484,23 @@
    },
    "source": "cut",
    "master": "S13-01",
-   "last_frame": true
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S13-07",
@@ -8483,24 +11541,38 @@
     "peak": "raises a hand beside his mouth",
     "settle": "keeps the hand up"
    },
-   "dialogue": {
-    "who": "kemal",
-    "to": "napoleon",
-    "text": "Sire, he means it. He gives armies to strangers.",
-    "delivery": "a whisper"
-   },
+   "narration": "He meant it. The khan gave armies to men he had just met.",
+   "claims": [
+    "C11"
+   ],
    "sound": {
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S13-01"
+   "master": "S13-01",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S13-08",
    "scene": "S13",
    "mode": "scene",
    "beat": "Napoleon will not serve.",
-   "seconds": 6,
+   "seconds": 5,
    "frame": {
     "size": "OTS",
     "angle": "eye",
@@ -8539,7 +11611,7 @@
    "dialogue": {
     "who": "napoleon",
     "to": "genghis",
-    "text": "I have given orders to kings. I do not take them.",
+    "text": "I give orders to kings. I do not take them.",
     "delivery": "clipped, chin high"
    },
    "sound": {
@@ -8547,14 +11619,30 @@
    },
    "source": "cut",
    "master": "S13-01",
-   "last_frame": true
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S13-09",
    "scene": "S13",
    "mode": "scene",
    "beat": "The interpreter swallows.",
-   "seconds": 3,
+   "seconds": 4,
    "frame": {
     "size": "MCU",
     "angle": "eye",
@@ -8565,7 +11653,7 @@
      "side": "none"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "bars",
@@ -8581,11 +11669,28 @@
     "peak": "pulls his cap tight against his chest with both fists",
     "settle": "holds the cap tight"
    },
+   "narration": "Bars swallowed hard before he translated that.",
    "sound": {
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S13-01"
+   "master": "S13-01",
+   "lane": "STILL_3D",
+   "archetype": 5,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S2",
+   "render_profile": "eevee_fast",
+   "still_mode": "drift"
   },
   {
    "id": "S13-10",
@@ -8637,7 +11742,24 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S13-01"
+   "master": "S13-01",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S13-11",
@@ -8681,7 +11803,24 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S13-01"
+   "master": "S13-01",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S13-12",
@@ -8733,14 +11872,31 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S13-01"
+   "master": "S13-01",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S13-13",
    "scene": "S13",
    "mode": "scene",
    "beat": "The price: the guns, and a teacher.",
-   "seconds": 6,
+   "seconds": 5,
    "frame": {
     "size": "OTS",
     "angle": "eye",
@@ -8778,7 +11934,7 @@
    "dialogue": {
     "who": "genghis",
     "to": "napoleon",
-    "text": "Two of your iron tubes. And a gunner to teach mine.",
+    "text": "Two iron tubes. And a gunner to teach mine.",
     "delivery": "plain"
    },
    "sound": {
@@ -8786,14 +11942,30 @@
    },
    "source": "cut",
    "master": "S13-01",
-   "last_frame": true
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S13-14",
    "scene": "S13",
    "mode": "scene",
    "beat": "The longest silence of his life.",
-   "seconds": 4,
+   "seconds": 5,
    "frame": {
     "size": "CU",
     "angle": "eye",
@@ -8805,7 +11977,7 @@
      "for": "where he looks"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "napoleon",
@@ -8822,11 +11994,31 @@
     "settle": "keeps the eyes up",
     "face": "his jaw works once"
    },
+   "narration": "Napoleon was an artillery officer. The guns were his trade.",
+   "claims": [
+    "C04"
+   ],
    "sound": {
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S13-01"
+   "master": "S13-01",
+   "lane": "STILL_3D",
+   "archetype": 5,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S2",
+   "render_profile": "eevee_fast",
+   "still_mode": "drift"
   },
   {
    "id": "S13-15",
@@ -8877,14 +12069,31 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S13-01"
+   "master": "S13-01",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S13-16",
    "scene": "S13",
    "mode": "scene",
    "beat": "Outside, they are.",
-   "seconds": 3,
+   "seconds": 4,
    "frame": {
     "size": "MS",
     "angle": "eye",
@@ -8924,17 +12133,34 @@
      "does": "watches him chew"
     }
    ],
+   "narration": "Outside, the soldiers were already chewing grass.",
    "sound": {
     "ambience": "wind, a wagon creaking"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": 16,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V9",
+   "render_profile": "eevee_fast",
+   "lipsync": false
   },
   {
    "id": "S13-17",
    "scene": "S13",
    "mode": "scene",
    "beat": "The choice.",
-   "seconds": 6,
+   "seconds": 5,
    "frame": {
     "size": "OTS",
     "angle": "eye",
@@ -8984,14 +12210,30 @@
    },
    "source": "cut",
    "master": "S13-16",
-   "last_frame": true
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S13-18",
    "scene": "S13",
    "mode": "scene",
    "beat": "The khan's smile.",
-   "seconds": 4,
+   "seconds": 5,
    "frame": {
     "size": "MCU",
     "angle": "eye",
@@ -9002,7 +12244,7 @@
      "side": "none"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "genghis",
@@ -9018,18 +12260,35 @@
     "peak": "lifts the corner of his mouth into a slow smile",
     "settle": "holds the smile"
    },
+   "narration": "The khan got exactly what he had come for.",
    "sound": {
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S13-16"
+   "master": "S13-16",
+   "lane": "STILL_3D",
+   "archetype": 5,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S2",
+   "render_profile": "eevee_fast",
+   "still_mode": "drift"
   },
   {
    "id": "S13-19",
    "scene": "S13",
    "mode": "scene",
    "beat": "The khan's last lesson.",
-   "seconds": 6,
+   "seconds": 5,
    "frame": {
     "size": "OTS",
     "angle": "eye",
@@ -9067,7 +12326,7 @@
    "dialogue": {
     "who": "genghis",
     "to": "napoleon",
-    "text": "You lost nothing today but pride. Pride eats too much grass.",
+    "text": "You lost only pride. Pride eats too much grass.",
     "delivery": "kind, amused"
    },
    "sound": {
@@ -9075,14 +12334,30 @@
    },
    "source": "cut",
    "master": "S13-16",
-   "last_frame": true
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S13-20",
    "scene": "S13",
    "mode": "establish",
    "beat": "Napoleon takes his glove and goes.",
-   "seconds": 4,
+   "seconds": 5,
    "frame": {
     "size": "WS",
     "angle": "eye",
@@ -9133,6 +12408,7 @@
     "peak": "turns and pushes out through the felt door",
     "settle": "the felt flap swings shut behind him"
    },
+   "narration": "Napoleon took his glove and walked out.",
    "sound": {
     "ambience": "a fire crackling, wind against felt",
     "foley": [
@@ -9141,7 +12417,23 @@
    },
    "source": "cut",
    "master": "S13-16",
-   "exit": true
+   "exit": true,
+   "lane": "VIDEO_3D",
+   "archetype": 7,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J4",
+   "sub_category": "V6",
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S13-21",
@@ -9160,7 +12452,7 @@
      "for": "where they drag them"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "gunners",
@@ -9189,6 +12481,10 @@
      "does": "stand watching with their caps in their hands"
     }
    ],
+   "narration": "The guns went to the khan, and a gunner went with them.",
+   "claims": [
+    "I04"
+   ],
    "sound": {
     "ambience": "wind over open grass",
     "foley": [
@@ -9197,7 +12493,22 @@
     ]
    },
    "source": "keyframe",
-   "exit": true
+   "exit": true,
+   "lane": "HELPER",
+   "archetype": 12,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "H",
+   "sub_category": "H1",
+   "helper_archetype": "TACTICAL_UNIT_MANEUVER"
   },
   {
    "id": "S14-01",
@@ -9236,7 +12547,23 @@
    "sound": {
     "ambience": "wind, then a city's distant bells"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": 14,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V10",
+   "render_profile": "eevee_fast",
+   "lipsync": false
   },
   {
    "id": "S14-02",
@@ -9255,7 +12582,7 @@
      "for": "where the smoke rolls"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "infantry",
@@ -9281,7 +12608,22 @@
     "loudest": "a musket volley"
    },
    "source": "nextpose",
-   "master": "S14-01"
+   "master": "S14-01",
+   "lane": "HELPER",
+   "archetype": 13,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "H",
+   "sub_category": "H3",
+   "helper_archetype": "MULTI_SCENARIO_VERDICT_MATRIX"
   },
   {
    "id": "S14-03",
@@ -9320,7 +12662,23 @@
    "sound": {
     "ambience": "wind over the ridge"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": 1,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J4",
+   "sub_category": "V1",
+   "render_profile": "eevee_fast",
+   "lipsync": false
   },
   {
    "id": "S14-04",
@@ -9378,7 +12736,23 @@
    "sound": {
     "ambience": "a slow marching drum in the fog"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": 7,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J4",
+   "sub_category": "V6",
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S14-05",
@@ -9402,7 +12776,22 @@
    "sound": {
     "ambience": "a city burning, timbers cracking"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "HELPER",
+   "archetype": 17,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "H",
+   "sub_category": "H6",
+   "helper_archetype": "PRIMARY_SOURCE_DOSSIER_CARD"
   },
   {
    "id": "S14-06",
@@ -9421,7 +12810,7 @@
      "for": "the empty street"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "brun",
@@ -9445,7 +12834,23 @@
     "ambience": "a city burning, timbers cracking"
    },
    "source": "cut",
-   "master": "S14-05"
+   "master": "S14-05",
+   "lane": "STILL_3D",
+   "archetype": 16,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S5",
+   "render_profile": "eevee_full",
+   "still_mode": "drift"
   },
   {
    "id": "S14-07",
@@ -9496,7 +12901,24 @@
     "ambience": "a city burning, timbers cracking"
    },
    "source": "cut",
-   "master": "S14-05"
+   "master": "S14-05",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S14-08",
@@ -9547,7 +12969,24 @@
     "ambience": "a city burning, timbers cracking"
    },
    "source": "cut",
-   "master": "S14-05"
+   "master": "S14-05",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V3",
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
   },
   {
    "id": "S14-09",
@@ -9566,7 +13005,7 @@
      "for": "the window"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "napoleon",
@@ -9582,14 +13021,30 @@
     "peak": "drops a folded letter onto the sill",
     "settle": "stares out at the flames"
    },
-   "narration": "The tsar refused to talk.",
+   "narration": "The tsar refused to talk. There was no one to beat.",
    "claims": [
     "C12"
    ],
    "sound": {
     "ambience": "a city burning, timbers cracking"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "STILL_3D",
+   "archetype": 5,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S2",
+   "render_profile": "eevee_fast",
+   "still_mode": "drift"
   },
   {
    "id": "S14-10",
@@ -9608,7 +13063,7 @@
      "for": "where they march"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "infantry",
@@ -9634,7 +13089,22 @@
      "boots in snow"
     ]
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "HELPER",
+   "archetype": 12,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "H",
+   "sub_category": "H1",
+   "helper_archetype": "MAP_3D_TERRAIN_FLYOVER"
   },
   {
    "id": "S14-11",
@@ -9673,7 +13143,23 @@
     "ambience": "a slow marching drum in the fog"
    },
    "source": "cut",
-   "master": "S14-10"
+   "master": "S14-10",
+   "lane": "VIDEO_3D",
+   "archetype": 8,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V7",
+   "render_profile": "eevee_fast",
+   "lipsync": false
   },
   {
    "id": "S15-01",
@@ -9698,11 +13184,28 @@
     "peak": "the drumstick strikes the drum skin twice",
     "settle": "the drumstick stops in mid-air, shaking"
    },
+   "narration": "The drum stopped again.",
    "sound": {
     "ambience": "a city burning, a far drum",
     "loudest": "two drum beats"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": 6,
+   "duration_frames": 72,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J2",
+   "sub_category": "V5",
+   "render_profile": "eevee_full",
+   "lipsync": false
   },
   {
    "id": "S15-02",
@@ -9741,7 +13244,23 @@
    "sound": {
     "ambience": "a city burning, a far drum"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "VIDEO_3D",
+   "archetype": 8,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "V7",
+   "render_profile": "eevee_fast",
+   "lipsync": false
   },
   {
    "id": "S15-03",
@@ -9759,7 +13278,7 @@
      "side": "none"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "napoleon",
@@ -9775,7 +13294,7 @@
     "peak": "narrows his eyes as the flames jump",
     "settle": "keeps the eyes narrowed"
    },
-   "narration": "Five hundred and eighty-nine years earlier.",
+   "narration": "The same fire, five hundred and eighty-nine years earlier.",
    "claims": [
     "C21",
     "I01"
@@ -9784,7 +13303,23 @@
     "ambience": "a city burning, a far drum"
    },
    "source": "cut",
-   "master": "S15-02"
+   "master": "S15-02",
+   "lane": "STILL_3D",
+   "archetype": 5,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S2",
+   "render_profile": "eevee_fast",
+   "still_mode": "drift"
   },
   {
    "id": "S16-01",
@@ -9802,7 +13337,7 @@
      "side": "none"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "geniuses",
@@ -9825,7 +13360,23 @@
    "sound": {
     "ambience": "a crackling campfire"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "STILL_3D",
+   "archetype": 20,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S5",
+   "render_profile": "eevee_fast",
+   "still_mode": "drift"
   },
   {
    "id": "S16-02",
@@ -9843,7 +13394,7 @@
      "side": "none"
     }
    },
-   "tier": "light",
+   "tier": "hold",
    "blocking": [
     {
      "who": "stranded",
@@ -9866,7 +13417,23 @@
    "sound": {
     "ambience": "an icy wind howling"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "STILL_3D",
+   "archetype": 20,
+   "duration_frames": 120,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S5",
+   "render_profile": "eevee_fast",
+   "still_mode": "drift"
   },
   {
    "id": "S16-03",
@@ -9885,7 +13452,7 @@
      "for": "where the ball goes"
     }
    },
-   "tier": "full",
+   "tier": "hold",
    "blocking": [
     {
      "who": "genghis",
@@ -9906,7 +13473,23 @@
    "sound": {
     "ambience": "a fire crackling, wind against felt"
    },
-   "source": "keyframe"
+   "source": "keyframe",
+   "lane": "STILL_3D",
+   "archetype": 20,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "route": "J5",
+   "sub_category": "S5",
+   "render_profile": "eevee_full",
+   "still_mode": "drift"
   }
  ]
 }

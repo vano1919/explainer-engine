@@ -1,0 +1,1929 @@
+{
+  "schema": "production_script/4.3",
+  "episode_id": "ep_toba",
+  "episode_scope": "ep_toba",
+  "historical_period": "prehistoric_pleistocene",
+  "title": "When Humanity Dropped to 2,000 People: The Volcanic Winter That Almost Killed Us All",
+  "target_duration_seconds": 120.0,
+  "segments": [
+    {
+      "segment_id": "S01",
+      "phase_id": "Z1",
+      "title": "Paradoxical Hook: Volcanic Glass in Africa",
+      "narrative_purpose": "Open on a single glowing hearth ember in the dark Ethiopian rift valley where microscopic volcanic glass falls four thousand miles from Sumatra.",
+      "target_duration_seconds": 38.0,
+      "factual_status": "actual_history",
+      "cause_from_segment_id": null,
+      "effect_to_segment_id": "S02",
+      "segment_mode": "narration_led"
+    },
+    {
+      "segment_id": "S02",
+      "phase_id": "Z1",
+      "title": "The Sumatra Magma Bomb: VEI 8 Detonation",
+      "narrative_purpose": "Because razor-sharp volcanic glass fell on the Ethiopian riverbed, trace the ash cloud back across the Indian Ocean to five rupturing magma chambers beneath Mount Toba.",
+      "target_duration_seconds": 64.0,
+      "factual_status": "actual_history",
+      "cause_from_segment_id": "S01",
+      "effect_to_segment_id": "S03",
+      "segment_mode": "narration_led"
+    },
+    {
+      "segment_id": "S03",
+      "phase_id": "Z2",
+      "title": "The Ash Monsoon and the Sulfuric Sky",
+      "narrative_purpose": "Because Toba detonated during the northern summer monsoon, high-altitude winds carry the thirty-two-kilometer ash column across India and wrap both hemispheres in reflective sulfate aerosols.",
+      "target_duration_seconds": 78.0,
+      "factual_status": "actual_history",
+      "cause_from_segment_id": "S02",
+      "effect_to_segment_id": "S04",
+      "segment_mode": "narration_led"
+    }
+  ],
+  "shots": [
+    {
+      "shot_id": "S01_SH001",
+      "segment_id": "S01",
+      "target_duration_seconds": 2.0,
+      "narrative_purpose": "Open with maximum kinetic urgency in the first 1.8 seconds as terrified Pleistocene survivors sprint full-speed from an exploding supervolcanic ash wall",
+      "visual_type": "cinematic_video",
+      "generation_mode": "WAN_I2V",
+      "location_id": "loc_rift_cave_hearth",
+      "character_ids": [
+        "char_kael_74000bce",
+        "char_sena_74000bce"
+      ],
+      "prop_ids": [
+        "prop_bone_pressure_flaker"
+      ],
+      "audio_line_ids": [
+        "S01_L001"
+      ],
+      "action_start_state": "Terrified Pleistocene hunters Kael and Sena sprint full-speed through falling incandescent pumice as a colossal black pyroclastic surge explodes behind them",
+      "action_end_state": "Crimson volcanic lightning forks across the boiling ash wall as Kael leaps across a fractured basalt ledge toward the camera",
+      "camera_spec": {
+        "shot_size": "medium_wide",
+        "vertical_angle": "worm_eye_-30",
+        "horizontal_azimuth_deg": 0,
+        "camera_move": "tracking_shot",
+        "multiangle_token": null
+      },
+      "screen_composition": {
+        "foreground": "Glowing amber pumice embers and razor-sharp volcanic ash streaking past the lens in high-speed motion",
+        "midground": "Kael in his antelope-hide cloak and Sena sprinting desperately forward across dark basalt rock",
+        "background": "A towering wall of boiling black pyroclastic ash laced with blinding amber volcanic lightning",
+        "screen_direction_notes": "180-degree axis locked: Kael and Sena sprinting right-to-left toward the canyon shelter"
+      },
+      "lighting_and_time": "Late Pleistocene volcanic twilight with sculptural golden-amber firelight shafts and deep indigo-slate shadows",
+      "continuity_refs": {
+        "reuse_location_anchor": true,
+        "inherit_from_previous_shot_id": null
+      },
+      "keyframe_plan": {
+        "needs_start_frame": true,
+        "needs_end_frame": false,
+        "start_frame_source": "reference_derived_anchor",
+        "end_frame_reason": null
+      },
+      "image_prompt": {
+        "start_frame_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic 35mm anamorphic action frame in the East African Rift; terrified Pleistocene hunters Kael and Sena sprint full-speed through falling incandescent pumice as a colossal black pyroclastic surge explodes behind them, with foreground glowing amber pumice embers streaking past the lens, midground Kael in his antelope-hide cloak and Sena sprinting desperately forward across dark basalt rock, and background a towering wall of boiling black volcanic ash laced with blinding amber lightning.",
+        "end_frame_prompt": null,
+        "negative_prompt": "text watermarks, speech bubbles, modern clothing, plastic CGI sheen, deformed hands, extra fingers, static pose"
+      },
+      "video_prompt": {
+        "motion_prompt": "Terrified Pleistocene hunters Kael and Sena sprint full-speed through falling incandescent pumice as a colossal black pyroclastic surge explodes behind them; camera tracks rapidly backward as crimson volcanic lightning forks across the boiling ash wall.",
+        "primary_action_count": 1,
+        "camera_move_count": 1,
+        "parallax_preset": null
+      },
+      "selective_control": null,
+      "transition_out": "hard_cut",
+      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE",
+      "teaser_of": "S05_SH001",
+      "teaser_trim": [
+        0.4,
+        2.2
+      ],
+      "shot_role": "teaser",
+      "episode_id": "ep_toba",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "start_keyframe_rel": "assets/generated/images/S01_SH001_start.jpg"
+    },
+    {
+      "shot_id": "S01_SH002",
+      "segment_id": "S01",
+      "target_duration_seconds": 4.8,
+      "narrative_purpose": "Deliver the second explosive visual hook shot at 1.8-4.0s as Mount Toba detonates with Category 8 supersonic shockwaves",
+      "visual_type": "cinematic_video",
+      "generation_mode": "WAN_FLF2V",
+      "location_id": "loc_sumatra_toba_caldera",
+      "character_ids": [],
+      "prop_ids": [],
+      "audio_line_ids": [
+        "S01_L002"
+      ],
+      "action_start_state": "Mount Toba summit violently detonates into a mile-wide fountain of incandescent magma and a supersonic atmospheric shockwave ring",
+      "action_end_state": "The blinding shockwave tears outward across the burning Barisan mountain ridges as a thirty-two-kilometer black ash column punches into the sky",
+      "camera_spec": {
+        "shot_size": "extreme_wide",
+        "vertical_angle": "high_angle_30",
+        "horizontal_azimuth_deg": 45,
+        "camera_move": "push_in",
+        "multiangle_token": null
+      },
+      "screen_composition": {
+        "foreground": "Shattering jungle ridges and shockwave condensation rings ripping toward the foreground",
+        "midground": "Colossal hundred-kilometer volcanic caldera erupting in blinding amber-orange magma fountains",
+        "background": "Stratospheric pitch-black ash cloud boiling upward through crimson lightning bolts",
+        "screen_direction_notes": "180-degree axis locked: shockwave expanding radially outward from center-right toward screen-left"
+      },
+      "lighting_and_time": "Late Pleistocene volcanic twilight with sculptural golden-amber firelight shafts and deep indigo-slate shadows",
+      "continuity_refs": {
+        "reuse_location_anchor": true,
+        "inherit_from_previous_shot_id": null
+      },
+      "keyframe_plan": {
+        "needs_start_frame": true,
+        "needs_end_frame": true,
+        "start_frame_source": "reference_derived_anchor",
+        "end_frame_reason": "Lock the final expanded state of the supersonic shockwave ring and towering ash pillar at 4.0s"
+      },
+      "image_prompt": {
+        "start_frame_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic 35mm anamorphic frame at the erupting Mount Toba caldera in Sumatra; Mount Toba summit violently detonates into a mile-wide fountain of incandescent magma and a supersonic atmospheric shockwave ring, with foreground shattering jungle ridges, midground colossal volcanic caldera erupting in blinding amber-orange magma fountains, and background stratospheric pitch-black ash cloud boiling upward.",
+        "end_frame_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Final resolved frame at the erupting Mount Toba caldera in Sumatra; the blinding shockwave tears outward across burning mountain ridges as a thirty-two-kilometer black ash column engulfs the sky in high-contrast amber magma glare and deep indigo shadow.",
+        "negative_prompt": "text watermarks, speech bubbles, modern clothing, plastic CGI sheen, deformed hands, extra fingers"
+      },
+      "video_prompt": {
+        "motion_prompt": "Mount Toba summit violently detonates into a mile-wide fountain of incandescent magma and a supersonic atmospheric shockwave ring; camera pushes in as the blinding shockwave tears outward across burning mountain ridges.",
+        "primary_action_count": 1,
+        "camera_move_count": 1,
+        "parallax_preset": null
+      },
+      "selective_control": null,
+      "transition_out": "hard_cut",
+      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE",
+      "teaser_of": "S09_SH001",
+      "teaser_trim": [
+        0.5,
+        2.7
+      ],
+      "shot_role": "teaser",
+      "episode_id": "ep_toba",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "start_keyframe_rel": "assets/generated/images/S01_SH002_start.jpg"
+    },
+    {
+      "shot_id": "S01_SH003",
+      "segment_id": "S01",
+      "target_duration_seconds": 5.6,
+      "narrative_purpose": "Show how nineteen gaunt hunters and children huddle beneath a basalt overhang around a low amber fire leads to cold wind gusts into the mouth of the shelter as kael tightens his hide cloak around his shoulders",
+      "visual_type": "cinematic_video",
+      "generation_mode": "WAN_FLF2V",
+      "location_id": "loc_rift_cave_hearth",
+      "character_ids": [
+        "char_kael_74000bce",
+        "char_sena_74000bce"
+      ],
+      "prop_ids": [
+        "prop_wooden_throwing_spear"
+      ],
+      "audio_line_ids": [
+        "S01_L003"
+      ],
+      "action_start_state": "Kael grabs a stumbling child and dives beneath the jagged basalt overhang as nineteen gaunt survivors scramble away from the roaring ash gale",
+      "action_end_state": "Blinding grey volcanic ash slams across the gorge outside as Kael shields the huddled survivors beside the wind-whipped amber hearth",
+      "camera_spec": {
+        "shot_size": "wide",
+        "vertical_angle": "high_angle_30",
+        "horizontal_azimuth_deg": 90,
+        "camera_move": "slow_push_in",
+        "multiangle_token": null
+      },
+      "screen_composition": {
+        "foreground": "Jagged basalt overhang dripping with cold condensation in foreground shadow",
+        "midground": "Nineteen gaunt Pleistocene survivors huddled in animal hides around a low amber fire",
+        "background": "Wind-swept gorge of the Shinfa river disappearing into indigo darkness",
+        "screen_direction_notes": "180-degree axis locked: Kael screen-left facing right; Sena screen-right facing left across the fire"
+      },
+      "lighting_and_time": "Late Pleistocene volcanic twilight with sculptural golden-amber firelight shafts and deep indigo-slate shadows",
+      "continuity_refs": {
+        "reuse_location_anchor": true,
+        "inherit_from_previous_shot_id": null
+      },
+      "keyframe_plan": {
+        "needs_start_frame": true,
+        "needs_end_frame": true,
+        "start_frame_source": "reference_derived_anchor",
+        "end_frame_reason": "Anchor final composition as cold wind gusts into the mouth of the shelter as kael tightens his hide cloak around his shoulders"
+      },
+      "image_prompt": {
+        "start_frame_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the firelit basalt overhang shelter above the Shinfa gorge in the East African Rift; nineteen gaunt hunters and children huddle beneath a basalt overhang around a low amber fire, with foreground jagged basalt overhang dripping with cold condensation in foreground shadow, midground nineteen gaunt pleistocene survivors huddled in animal hides around a low amber fire, and background wind-swept gorge of the shinfa river disappearing into indigo darkness in high-contrast golden-amber firelight and deep slate shadow.",
+        "end_frame_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Final resolved frame at the firelit basalt overhang shelter above the Shinfa gorge in the East African Rift; Close amber-lit tableau of the huddled clan leaning closer to the wind-bent flames inside the basalt overhang, preserving foreground jagged basalt overhang dripping with cold condensation in foreground shadow and deep chiaroscuro lighting.",
+        "negative_prompt": "text watermarks, speech bubbles, modern clothing, plastic CGI sheen, deformed hands, extra fingers"
+      },
+      "video_prompt": {
+        "motion_prompt": "Kael grabs a stumbling child and dives beneath the jagged basalt overhang as nineteen gaunt survivors scramble away from the roaring ash gale; camera pushes in as blinding grey volcanic ash slams across the gorge outside.",
+        "primary_action_count": 1,
+        "camera_move_count": 1,
+        "parallax_preset": null
+      },
+      "selective_control": null,
+      "transition_out": "hard_cut",
+      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE",
+      "episode_id": "ep_toba",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "start_keyframe_rel": "assets/generated/images/S01_SH003_start.jpg"
+    },
+    {
+      "shot_id": "S01_SH004",
+      "segment_id": "S01",
+      "target_duration_seconds": 2.2,
+      "narrative_purpose": "Show how sena steps to the cave rim and tilts her face toward the darkening slate sky leads to coarse grey volcanic particles begin settling across her cheekbones and eyelashes",
+      "visual_type": "cinematic_video",
+      "generation_mode": "WAN_I2V",
+      "location_id": "loc_shinfa_ash_riverbed",
+      "character_ids": [
+        "char_sena_74000bce"
+      ],
+      "prop_ids": [],
+      "audio_line_ids": [
+        "S01_L004"
+      ],
+      "action_start_state": "Sena steps to the cave rim and tilts her face toward the darkening slate sky",
+      "action_end_state": "Coarse grey volcanic particles begin settling across her cheekbones and eyelashes",
+      "camera_spec": {
+        "shot_size": "medium_close_up",
+        "vertical_angle": "worm_eye_-30",
+        "horizontal_azimuth_deg": 135,
+        "camera_move": "static",
+        "multiangle_token": null
+      },
+      "screen_composition": {
+        "foreground": "Abrasive grey volcanic dust flakes falling past the lens in warm rim light",
+        "midground": "Sena tilting her chin upward at the cave mouth with wide dark eyes",
+        "background": "Overcast slate-grey morning sky blotting out the morning sun",
+        "screen_direction_notes": "180-degree axis locked: Sena screen-right looking upward toward the left horizon"
+      },
+      "lighting_and_time": "Late Pleistocene volcanic twilight with sculptural golden-amber firelight shafts and deep indigo-slate shadows",
+      "continuity_refs": {
+        "reuse_location_anchor": true,
+        "inherit_from_previous_shot_id": null
+      },
+      "keyframe_plan": {
+        "needs_start_frame": true,
+        "needs_end_frame": false,
+        "start_frame_source": "reference_derived_anchor",
+        "end_frame_reason": null
+      },
+      "image_prompt": {
+        "start_frame_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; sena steps to the cave rim and tilts her face toward the darkening slate sky, with foreground abrasive grey volcanic dust flakes falling past the lens in warm rim light, midground sena tilting her chin upward at the cave mouth with wide dark eyes, and background overcast slate-grey morning sky blotting out the morning sun in high-contrast golden-amber firelight and deep slate shadow.",
+        "end_frame_prompt": null,
+        "negative_prompt": "text watermarks, speech bubbles, modern clothing, plastic CGI sheen, deformed hands, extra fingers"
+      },
+      "video_prompt": {
+        "motion_prompt": "Sena steps to the cave rim and tilts her face toward the darkening slate sky; static locked camera holds steady as coarse grey volcanic particles begin settling across her cheekbones and eyelashes.",
+        "primary_action_count": 1,
+        "camera_move_count": 0,
+        "parallax_preset": null
+      },
+      "selective_control": null,
+      "transition_out": "j_cut",
+      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE",
+      "episode_id": "ep_toba",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "start_keyframe_rel": "assets/generated/images/S01_SH004_start.jpg"
+    },
+    {
+      "shot_id": "S01_SH005",
+      "segment_id": "S01",
+      "target_duration_seconds": 3.4,
+      "narrative_purpose": "Show how sena holds her open palm into the falling grey grit outside the cave ledge leads to she rubs the sharp volcanic dust between her fingers as fine scratches appear on her skin",
+      "visual_type": "cinematic_video",
+      "generation_mode": "WAN_I2V",
+      "location_id": "loc_shinfa_ash_riverbed",
+      "character_ids": [
+        "char_sena_74000bce"
+      ],
+      "prop_ids": [],
+      "audio_line_ids": [
+        "S01_L005"
+      ],
+      "action_start_state": "Sena holds her open palm into the falling grey grit outside the cave ledge",
+      "action_end_state": "She rubs the sharp volcanic dust between her fingers as fine scratches appear on her skin",
+      "camera_spec": {
+        "shot_size": "close_up",
+        "vertical_angle": "eye_level_0",
+        "horizontal_azimuth_deg": 180,
+        "camera_move": "slow_push_in",
+        "multiangle_token": null
+      },
+      "screen_composition": {
+        "foreground": "Swirling grey tephra motes caught in a narrow shaft of amber firelight",
+        "midground": "Sena's open palm rubbing sharp silver-grey volcanic glass grit between her thumb and forefinger",
+        "background": "Out-of-focus dark basalt ledge and Kael's shoulder in left shadow",
+        "screen_direction_notes": "180-degree axis locked: Sena's hand extending from screen-right toward Kael on screen-left"
+      },
+      "lighting_and_time": "Late Pleistocene volcanic twilight with sculptural golden-amber firelight shafts and deep indigo-slate shadows",
+      "continuity_refs": {
+        "reuse_location_anchor": true,
+        "inherit_from_previous_shot_id": null
+      },
+      "keyframe_plan": {
+        "needs_start_frame": true,
+        "needs_end_frame": false,
+        "start_frame_source": "reference_derived_anchor",
+        "end_frame_reason": null
+      },
+      "image_prompt": {
+        "start_frame_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; sena holds her open palm into the falling grey grit outside the cave ledge, with foreground swirling grey tephra motes caught in a narrow shaft of amber firelight, midground sena's open palm rubbing sharp silver-grey volcanic glass grit between her thumb and forefinger, and background out-of-focus dark basalt ledge and kael's shoulder in left shadow in high-contrast golden-amber firelight and deep slate shadow.",
+        "end_frame_prompt": null,
+        "negative_prompt": "text watermarks, speech bubbles, modern clothing, plastic CGI sheen, deformed hands, extra fingers"
+      },
+      "video_prompt": {
+        "motion_prompt": "Sena holds her open palm into the falling grey grit outside the cave ledge; camera glides steadily as she rubs the sharp volcanic dust between her fingers as fine scratches appear on her skin.",
+        "primary_action_count": 1,
+        "camera_move_count": 1,
+        "parallax_preset": null
+      },
+      "selective_control": null,
+      "transition_out": "j_cut",
+      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE",
+      "episode_id": "ep_toba",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "start_keyframe_rel": "assets/generated/images/S01_SH005_start.jpg"
+    },
+    {
+      "shot_id": "S01_SH006",
+      "segment_id": "S01",
+      "target_duration_seconds": 6.2,
+      "narrative_purpose": "Show how microscopic bubble-wall shards of volcanic cryptotephra glisten atop dark ethiopian river silt leads to amber chiaroscuro light reveals the razor-sharp fractured edges of the volcanic glass",
+      "visual_type": "composed_illustration",
+      "generation_mode": "COLLAGE_STILL",
+      "location_id": "loc_shinfa_ash_riverbed",
+      "character_ids": [],
+      "prop_ids": [],
+      "audio_line_ids": [
+        "S01_L006"
+      ],
+      "action_start_state": "Microscopic bubble-wall shards of volcanic cryptotephra glisten atop dark Ethiopian river silt",
+      "action_end_state": "Amber chiaroscuro light reveals the razor-sharp fractured edges of the volcanic glass",
+      "camera_spec": {
+        "shot_size": "close_up",
+        "vertical_angle": "eye_level_0",
+        "horizontal_azimuth_deg": 225,
+        "camera_move": "parallax_dolly",
+        "multiangle_token": null
+      },
+      "screen_composition": {
+        "foreground": "Translucent bubble-wall volcanic glass shards glinting under warm amber side-lighting",
+        "midground": "Coarse alluvial river silt and dark basalt pebbles of the Shinfa riverbank",
+        "background": "Shadowed geological strata of the Ethiopian lowlands in deep chiaroscuro texture",
+        "screen_direction_notes": "180-degree axis locked: macro forensic plane aligned left-to-right with river current"
+      },
+      "lighting_and_time": "Late Pleistocene volcanic twilight with sculptural golden-amber firelight shafts and deep indigo-slate shadows",
+      "continuity_refs": {
+        "reuse_location_anchor": true,
+        "inherit_from_previous_shot_id": null
+      },
+      "keyframe_plan": {
+        "needs_start_frame": true,
+        "needs_end_frame": false,
+        "start_frame_source": "reference_derived_anchor",
+        "end_frame_reason": null
+      },
+      "image_prompt": {
+        "start_frame_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Multi-plane 35mm anamorphic chiaroscuro composition at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; microscopic bubble-wall shards of volcanic cryptotephra glisten atop dark ethiopian river silt, featuring foreground translucent bubble-wall volcanic glass shards glinting under warm amber side-lighting, midground coarse alluvial river silt and dark basalt pebbles of the shinfa riverbank, and background shadowed geological strata of the ethiopian lowlands in deep chiaroscuro texture under sculptural golden-amber rim light.",
+        "end_frame_prompt": null,
+        "negative_prompt": "text watermarks, speech bubbles, modern clothing, plastic CGI sheen, deformed hands, extra fingers"
+      },
+      "video_prompt": {
+        "motion_prompt": "Microscopic bubble-wall shards of volcanic cryptotephra glisten atop dark Ethiopian river silt; camera glides steadily as amber chiaroscuro light reveals the razor-sharp fractured edges of the volcanic glass.",
+        "primary_action_count": 1,
+        "camera_move_count": 1,
+        "parallax_preset": "zoom_focus"
+      },
+      "selective_control": null,
+      "transition_out": "hard_cut",
+      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V",
+      "episode_id": "ep_toba",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "start_keyframe_rel": "assets/generated/images/S01_SH006_start.jpg"
+    },
+    {
+      "shot_id": "S01_SH007",
+      "segment_id": "S01",
+      "target_duration_seconds": 2.8,
+      "narrative_purpose": "Show how kael grips his wooden throwing spear and scans the silent eastern highland ridge leads to he turns his ash-streaked face back toward sena with furrowed brows",
+      "visual_type": "composed_illustration",
+      "generation_mode": "COLLAGE_STILL",
+      "location_id": "loc_shinfa_ash_riverbed",
+      "character_ids": [
+        "char_kael_74000bce"
+      ],
+      "prop_ids": [
+        "prop_wooden_throwing_spear"
+      ],
+      "audio_line_ids": [
+        "S01_L007"
+      ],
+      "action_start_state": "Kael grips his wooden throwing spear and scans the silent eastern highland ridge",
+      "action_end_state": "He turns his ash-streaked face back toward Sena with furrowed brows",
+      "camera_spec": {
+        "shot_size": "medium",
+        "vertical_angle": "eye_level_0",
+        "horizontal_azimuth_deg": 45,
+        "camera_move": "static",
+        "multiangle_token": null
+      },
+      "screen_composition": {
+        "foreground": "Fire-hardened wooden spear tip held vertically in left foreground",
+        "midground": "Kael squinting toward the eastern plateau with ash dusting his bearded jaw",
+        "background": "Silent volcanic peaks of the Ethiopian highlands showing zero smoke plumes",
+        "screen_direction_notes": "180-degree axis locked: Kael screen-left facing right toward Sena and the eastern horizon"
+      },
+      "lighting_and_time": "Late Pleistocene volcanic twilight with sculptural golden-amber firelight shafts and deep indigo-slate shadows",
+      "continuity_refs": {
+        "reuse_location_anchor": true,
+        "inherit_from_previous_shot_id": null
+      },
+      "keyframe_plan": {
+        "needs_start_frame": true,
+        "needs_end_frame": false,
+        "start_frame_source": "reference_derived_anchor",
+        "end_frame_reason": null
+      },
+      "image_prompt": {
+        "start_frame_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; kael grips his wooden throwing spear and scans the silent eastern highland ridge, with foreground fire-hardened wooden spear tip held vertically in left foreground, midground kael squinting toward the eastern plateau with ash dusting his bearded jaw, and background silent volcanic peaks of the ethiopian highlands showing zero smoke plumes in high-contrast golden-amber firelight and deep slate shadow.",
+        "end_frame_prompt": null,
+        "negative_prompt": "text watermarks, speech bubbles, modern clothing, plastic CGI sheen, deformed hands, extra fingers"
+      },
+      "video_prompt": {
+        "motion_prompt": "Kael grips his wooden throwing spear and scans the silent eastern highland ridge; static locked camera holds steady as he turns his ash-streaked face back toward sena with furrowed brows.",
+        "primary_action_count": 1,
+        "camera_move_count": 0,
+        "parallax_preset": "pan_slide"
+      },
+      "selective_control": null,
+      "transition_out": "j_cut",
+      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V",
+      "episode_id": "ep_toba",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "start_keyframe_rel": "assets/generated/images/S01_SH007_start.jpg"
+    },
+    {
+      "shot_id": "S01_SH008",
+      "segment_id": "S01",
+      "target_duration_seconds": 4.6,
+      "narrative_purpose": "Show how a tactile hammered-copper relief map reveals the vast indian ocean basin between africa and sumatra leads to a glowing crimson and gold vector traces four thousand miles from northern sumatra to ethiopia",
+      "visual_type": "map_visualization",
+      "generation_mode": "TACTILE_MAP",
+      "location_id": "loc_sumatra_toba_caldera",
+      "character_ids": [],
+      "prop_ids": [],
+      "audio_line_ids": [
+        "S01_L008"
+      ],
+      "action_start_state": "A tactile hammered-copper relief map reveals the vast Indian Ocean basin between Africa and Sumatra",
+      "action_end_state": "A glowing crimson and gold vector traces four thousand miles from northern Sumatra to Ethiopia",
+      "camera_spec": {
+        "shot_size": "top_down_map",
+        "vertical_angle": "bird_eye_60",
+        "horizontal_azimuth_deg": 90,
+        "camera_move": "parallax_dolly",
+        "multiangle_token": null
+      },
+      "screen_composition": {
+        "foreground": "Carved walnut war-table rim and flickering beeswax candle casting warm amber light",
+        "midground": "Hammered copper relief map of the Indian Ocean stretching from East Africa to Sumatra",
+        "background": "Glowing liquid-gold trajectory line spanning four thousand miles from Indonesia to Ethiopia",
+        "screen_direction_notes": "180-degree axis locked: geographical map oriented west-to-east from the Horn of Africa to Sumatra"
+      },
+      "lighting_and_time": "Late Pleistocene volcanic twilight with sculptural golden-amber firelight shafts and deep indigo-slate shadows",
+      "continuity_refs": {
+        "reuse_location_anchor": true,
+        "inherit_from_previous_shot_id": null
+      },
+      "keyframe_plan": {
+        "needs_start_frame": true,
+        "needs_end_frame": false,
+        "start_frame_source": "new_master_anchor",
+        "end_frame_reason": null
+      },
+      "image_prompt": {
+        "start_frame_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Top-down physical relief map in hammered copper, oxidized bronze, and liquid gold on a carved walnut table depicting the erupting Mount Toba volcanic caldera in the Barisan Mountains of northern Sumatra; a tactile hammered-copper relief map reveals the vast indian ocean basin between africa and sumatra, with foreground carved walnut war-table rim and flickering beeswax candle casting warm amber light and warm beeswax candlelight casting deep indigo shadows.",
+        "end_frame_prompt": null,
+        "negative_prompt": "text watermarks, speech bubbles, modern clothing, plastic CGI sheen, deformed hands, extra fingers"
+      },
+      "video_prompt": {
+        "motion_prompt": "A tactile hammered-copper relief map reveals the vast Indian Ocean basin between Africa and Sumatra; camera glides steadily as a glowing crimson and gold vector traces four thousand miles from northern sumatra to ethiopia.",
+        "primary_action_count": 1,
+        "camera_move_count": 1,
+        "parallax_preset": "pan_horizontal"
+      },
+      "selective_control": null,
+      "transition_out": "hard_cut",
+      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V",
+      "episode_id": "ep_toba",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "start_keyframe_rel": "assets/generated/images/S01_SH008_start.jpg"
+    },
+    {
+      "shot_id": "S01_SH009",
+      "segment_id": "S01",
+      "target_duration_seconds": 6.4,
+      "narrative_purpose": "Show how dark indian ocean swells pitch beneath a sky split by crimson volcanic lightning leads to a colossal black ash pillar erupts above sumatra and swallows the eastern horizon",
+      "visual_type": "cinematic_video",
+      "generation_mode": "WAN_FLF2V",
+      "location_id": "loc_sumatra_toba_caldera",
+      "character_ids": [],
+      "prop_ids": [],
+      "audio_line_ids": [
+        "S01_L009"
+      ],
+      "action_start_state": "Dark Indian Ocean swells pitch beneath a sky split by crimson volcanic lightning",
+      "action_end_state": "A colossal black ash pillar erupts above Sumatra and swallows the eastern horizon",
+      "camera_spec": {
+        "shot_size": "extreme_wide",
+        "vertical_angle": "bird_eye_60",
+        "horizontal_azimuth_deg": 135,
+        "camera_move": "slow_push_in",
+        "multiangle_token": null
+      },
+      "screen_composition": {
+        "foreground": "Dark ocean swells reflecting blood-amber lightning flashes in the foreground",
+        "midground": "Towering black volcanic eruption column bursting above the coastline of northern Sumatra",
+        "background": "Stratospheric shockwave ring expanding across the indigo sky",
+        "screen_direction_notes": "180-degree axis locked: perspective approaches Sumatra from the western Indian Ocean looking east"
+      },
+      "lighting_and_time": "Late Pleistocene volcanic twilight with sculptural golden-amber firelight shafts and deep indigo-slate shadows",
+      "continuity_refs": {
+        "reuse_location_anchor": true,
+        "inherit_from_previous_shot_id": null
+      },
+      "keyframe_plan": {
+        "needs_start_frame": true,
+        "needs_end_frame": true,
+        "start_frame_source": "reference_derived_anchor",
+        "end_frame_reason": "Anchor final composition as a colossal black ash pillar erupts above sumatra and swallows the eastern horizon"
+      },
+      "image_prompt": {
+        "start_frame_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the erupting Mount Toba volcanic caldera in the Barisan Mountains of northern Sumatra; dark indian ocean swells pitch beneath a sky split by crimson volcanic lightning, with foreground dark ocean swells reflecting blood-amber lightning flashes in the foreground, midground towering black volcanic eruption column bursting above the coastline of northern sumatra, and background stratospheric shockwave ring expanding across the indigo sky in high-contrast golden-amber firelight and deep slate shadow.",
+        "end_frame_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Final resolved frame at the erupting Mount Toba volcanic caldera in the Barisan Mountains of northern Sumatra; Colossal black co-ignimbrite ash column towering above the burning Sumatra coastline under blood-amber lightning, preserving foreground dark ocean swells reflecting blood-amber lightning flashes in the foreground and deep chiaroscuro lighting.",
+        "negative_prompt": "text watermarks, speech bubbles, modern clothing, plastic CGI sheen, deformed hands, extra fingers"
+      },
+      "video_prompt": {
+        "motion_prompt": "Dark Indian Ocean swells pitch beneath a sky split by crimson volcanic lightning; camera glides steadily as a colossal black ash pillar erupts above sumatra and swallows the eastern horizon.",
+        "primary_action_count": 1,
+        "camera_move_count": 1,
+        "parallax_preset": null
+      },
+      "selective_control": null,
+      "transition_out": "l_cut",
+      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE",
+      "episode_id": "ep_toba",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "start_keyframe_rel": "assets/generated/images/S01_SH009_start.jpg"
+    },
+    {
+      "shot_id": "S02_SH001",
+      "segment_id": "S02",
+      "target_duration_seconds": 5.8,
+      "narrative_purpose": "Show how a tactile bronze cross-section relief map displays five glowing magma chambers beneath sumatra leads to liquid-gold veins pulse and merge across the five subterranean reservoirs",
+      "visual_type": "map_visualization",
+      "generation_mode": "TACTILE_MAP",
+      "location_id": "loc_sumatra_toba_caldera",
+      "character_ids": [],
+      "prop_ids": [],
+      "audio_line_ids": [
+        "S02_L001"
+      ],
+      "action_start_state": "A tactile bronze cross-section relief map displays five glowing magma chambers beneath Sumatra",
+      "action_end_state": "Liquid-gold veins pulse and merge across the five subterranean reservoirs",
+      "camera_spec": {
+        "shot_size": "top_down_map",
+        "vertical_angle": "bird_eye_60",
+        "horizontal_azimuth_deg": 0,
+        "camera_move": "parallax_dolly",
+        "multiangle_token": null
+      },
+      "screen_composition": {
+        "foreground": "Oxidized bronze geological cross-section frame with incised depth markers",
+        "midground": "Five interconnected reservoirs of glowing liquid gold and amber resin beneath carved copper mountains",
+        "background": "Dark obsidian tectonic fault lines converging under the Barisan mountain range",
+        "screen_direction_notes": "180-degree axis locked: north-south geological relief cross-section of the Sumatra subduction zone"
+      },
+      "lighting_and_time": "Late Pleistocene volcanic twilight with sculptural golden-amber firelight shafts and deep indigo-slate shadows",
+      "continuity_refs": {
+        "reuse_location_anchor": true,
+        "inherit_from_previous_shot_id": null
+      },
+      "keyframe_plan": {
+        "needs_start_frame": true,
+        "needs_end_frame": false,
+        "start_frame_source": "new_master_anchor",
+        "end_frame_reason": null
+      },
+      "image_prompt": {
+        "start_frame_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Top-down physical relief map in hammered copper, oxidized bronze, and liquid gold on a carved walnut table depicting the erupting Mount Toba volcanic caldera in the Barisan Mountains of northern Sumatra; a tactile bronze cross-section relief map displays five glowing magma chambers beneath sumatra, with foreground oxidized bronze geological cross-section frame with incised depth markers and warm beeswax candlelight casting deep indigo shadows.",
+        "end_frame_prompt": null,
+        "negative_prompt": "text watermarks, speech bubbles, modern clothing, plastic CGI sheen, deformed hands, extra fingers"
+      },
+      "video_prompt": {
+        "motion_prompt": "A tactile bronze cross-section relief map displays five glowing magma chambers beneath Sumatra; camera glides steadily as liquid-gold veins pulse and merge across the five subterranean reservoirs.",
+        "primary_action_count": 1,
+        "camera_move_count": 1,
+        "parallax_preset": "zoom_focus"
+      },
+      "selective_control": null,
+      "transition_out": "hard_cut",
+      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V",
+      "episode_id": "ep_toba",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "start_keyframe_rel": "assets/generated/images/S02_SH001_start.jpg"
+    },
+    {
+      "shot_id": "S02_SH002",
+      "segment_id": "S02",
+      "target_duration_seconds": 2.1,
+      "narrative_purpose": "Show how solid granite and basalt bedrock cracks along the crest of mount toba leads to a blinding jet of incandescent amber gas blasts upward through the shattered crust",
+      "visual_type": "cinematic_video",
+      "generation_mode": "WAN_I2V",
+      "location_id": "loc_sumatra_toba_caldera",
+      "character_ids": [],
+      "prop_ids": [],
+      "audio_line_ids": [
+        "S02_L002"
+      ],
+      "action_start_state": "Solid granite and basalt bedrock cracks along the crest of Mount Toba",
+      "action_end_state": "A blinding jet of incandescent amber gas blasts upward through the shattered crust",
+      "camera_spec": {
+        "shot_size": "close_up",
+        "vertical_angle": "worm_eye_-30",
+        "horizontal_azimuth_deg": 45,
+        "camera_move": "static",
+        "multiangle_token": null
+      },
+      "screen_composition": {
+        "foreground": "Shattering basalt boulders hurtling past the lens in orange magma glare",
+        "midground": "Mountain crust splitting open along a blinding fissure of incandescent white-amber lava",
+        "background": "Roiling black smoke wall climbing into the night sky",
+        "screen_direction_notes": "180-degree axis locked: fissure tears from left to right across the mountain ridge"
+      },
+      "lighting_and_time": "Late Pleistocene volcanic twilight with sculptural golden-amber firelight shafts and deep indigo-slate shadows",
+      "continuity_refs": {
+        "reuse_location_anchor": true,
+        "inherit_from_previous_shot_id": null
+      },
+      "keyframe_plan": {
+        "needs_start_frame": true,
+        "needs_end_frame": false,
+        "start_frame_source": "reference_derived_anchor",
+        "end_frame_reason": null
+      },
+      "image_prompt": {
+        "start_frame_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the erupting Mount Toba volcanic caldera in the Barisan Mountains of northern Sumatra; solid granite and basalt bedrock cracks along the crest of mount toba, with foreground shattering basalt boulders hurtling past the lens in orange magma glare, midground mountain crust splitting open along a blinding fissure of incandescent white-amber lava, and background roiling black smoke wall climbing into the night sky in high-contrast golden-amber firelight and deep slate shadow.",
+        "end_frame_prompt": null,
+        "negative_prompt": "text watermarks, speech bubbles, modern clothing, plastic CGI sheen, deformed hands, extra fingers"
+      },
+      "video_prompt": {
+        "motion_prompt": "Solid granite and basalt bedrock cracks along the crest of Mount Toba; static locked camera holds steady as a blinding jet of incandescent amber gas blasts upward through the shattered crust.",
+        "primary_action_count": 1,
+        "camera_move_count": 0,
+        "parallax_preset": null
+      },
+      "selective_control": null,
+      "transition_out": "hard_cut",
+      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE",
+      "episode_id": "ep_toba",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "start_keyframe_rel": "assets/generated/images/S02_SH002_start.jpg"
+    },
+    {
+      "shot_id": "S02_SH003",
+      "segment_id": "S02",
+      "target_duration_seconds": 7.4,
+      "narrative_purpose": "Show how the mountain summit disintegrates into a mile-wide fountain of incandescent rhyolite magma leads to the entire caldera roof collapses inward as shockwaves flatten the surrounding jungle",
+      "visual_type": "cinematic_video",
+      "generation_mode": "WAN_FLF2V",
+      "location_id": "loc_sumatra_toba_caldera",
+      "character_ids": [],
+      "prop_ids": [],
+      "audio_line_ids": [
+        "S02_L003"
+      ],
+      "action_start_state": "The mountain summit disintegrates into a mile-wide fountain of incandescent rhyolite magma",
+      "action_end_state": "The entire caldera roof collapses inward as shockwaves flatten the surrounding jungle",
+      "camera_spec": {
+        "shot_size": "extreme_wide",
+        "vertical_angle": "worm_eye_-30",
+        "horizontal_azimuth_deg": 90,
+        "camera_move": "slow_pull_back",
+        "multiangle_token": null
+      },
+      "screen_composition": {
+        "foreground": "Burning rainforest canopy silhouetted against blinding golden-amber shockwaves",
+        "midground": "Twin vents of the Toba caldera collapsing inward as a massive fountain of magma jets skyward",
+        "background": "Forked purple-amber volcanic lightning webs illuminating a thirty-kilometer ash dome",
+        "screen_direction_notes": "180-degree axis locked: wide volcanic front expanding outward from center-right to screen-left"
+      },
+      "lighting_and_time": "Late Pleistocene volcanic twilight with sculptural golden-amber firelight shafts and deep indigo-slate shadows",
+      "continuity_refs": {
+        "reuse_location_anchor": true,
+        "inherit_from_previous_shot_id": null
+      },
+      "keyframe_plan": {
+        "needs_start_frame": true,
+        "needs_end_frame": true,
+        "start_frame_source": "reference_derived_anchor",
+        "end_frame_reason": "Anchor final composition as the entire caldera roof collapses inward as shockwaves flatten the surrounding jungle"
+      },
+      "image_prompt": {
+        "start_frame_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the erupting Mount Toba volcanic caldera in the Barisan Mountains of northern Sumatra; the mountain summit disintegrates into a mile-wide fountain of incandescent rhyolite magma, with foreground burning rainforest canopy silhouetted against blinding golden-amber shockwaves, midground twin vents of the toba caldera collapsing inward as a massive fountain of magma jets skyward, and background forked purple-amber volcanic lightning webs illuminating a thirty-kilometer ash dome in high-contrast golden-amber firelight and deep slate shadow.",
+        "end_frame_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Final resolved frame at the erupting Mount Toba volcanic caldera in the Barisan Mountains of northern Sumatra; Collapsed hundred-kilometer volcanic cauldron glowing with molten amber rivers beneath a towering black ash umbrella, preserving foreground burning rainforest canopy silhouetted against blinding golden-amber shockwaves and deep chiaroscuro lighting.",
+        "negative_prompt": "text watermarks, speech bubbles, modern clothing, plastic CGI sheen, deformed hands, extra fingers"
+      },
+      "video_prompt": {
+        "motion_prompt": "The mountain summit disintegrates into a mile-wide fountain of incandescent rhyolite magma; camera glides steadily as the entire caldera roof collapses inward as shockwaves flatten the surrounding jungle.",
+        "primary_action_count": 1,
+        "camera_move_count": 1,
+        "parallax_preset": null
+      },
+      "selective_control": null,
+      "transition_out": "hard_cut",
+      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE",
+      "episode_id": "ep_toba",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "start_keyframe_rel": "assets/generated/images/S02_SH003_start.jpg"
+    },
+    {
+      "shot_id": "S02_SH004",
+      "segment_id": "S02",
+      "target_duration_seconds": 5.2,
+      "narrative_purpose": "Show how a tactile hammered-bronze and obsidian scale relief contrasts a tiny modern volcanic plume with toba's colossal dome leads to golden volumetric light highlights the staggering ten-thousand-fold volume difference",
+      "visual_type": "composed_illustration",
+      "generation_mode": "COLLAGE_STILL",
+      "location_id": "loc_sumatra_toba_caldera",
+      "character_ids": [],
+      "prop_ids": [],
+      "audio_line_ids": [
+        "S02_L004"
+      ],
+      "action_start_state": "A tactile hammered-bronze and obsidian scale relief contrasts a tiny modern volcanic plume with Toba's colossal dome",
+      "action_end_state": "Golden volumetric light highlights the staggering ten-thousand-fold volume difference",
+      "camera_spec": {
+        "shot_size": "wide",
+        "vertical_angle": "eye_level_0",
+        "horizontal_azimuth_deg": 135,
+        "camera_move": "parallax_dolly",
+        "multiangle_token": null
+      },
+      "screen_composition": {
+        "foreground": "Carved obsidian scale monolith in left foreground showing a tiny golden speck for modern eruptions",
+        "midground": "Monstrous chiaroscuro ash dome of Youngest Toba Tuff dwarfing an entire mountain range",
+        "background": "Volumetric amber light rays slicing through slate-grey stratospheric clouds",
+        "screen_direction_notes": "180-degree axis locked: scale comparison oriented left-to-right from small peak to colossal caldera plume"
+      },
+      "lighting_and_time": "Late Pleistocene volcanic twilight with sculptural golden-amber firelight shafts and deep indigo-slate shadows",
+      "continuity_refs": {
+        "reuse_location_anchor": true,
+        "inherit_from_previous_shot_id": null
+      },
+      "keyframe_plan": {
+        "needs_start_frame": true,
+        "needs_end_frame": false,
+        "start_frame_source": "reference_derived_anchor",
+        "end_frame_reason": null
+      },
+      "image_prompt": {
+        "start_frame_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Multi-plane 35mm anamorphic chiaroscuro composition at the erupting Mount Toba volcanic caldera in the Barisan Mountains of northern Sumatra; a tactile hammered-bronze and obsidian scale relief contrasts a tiny modern volcanic plume with toba's colossal dome, featuring foreground carved obsidian scale monolith in left foreground showing a tiny golden speck for modern eruptions, midground monstrous chiaroscuro ash dome of youngest toba tuff dwarfing an entire mountain range, and background volumetric amber light rays slicing through slate-grey stratospheric clouds under sculptural golden-amber rim light.",
+        "end_frame_prompt": null,
+        "negative_prompt": "text watermarks, speech bubbles, modern clothing, plastic CGI sheen, deformed hands, extra fingers"
+      },
+      "video_prompt": {
+        "motion_prompt": "A tactile hammered-bronze and obsidian scale relief contrasts a tiny modern volcanic plume with Toba's colossal dome; camera glides steadily as golden volumetric light highlights the staggering ten-thousand-fold volume difference.",
+        "primary_action_count": 1,
+        "camera_move_count": 1,
+        "parallax_preset": "pan_horizontal"
+      },
+      "selective_control": null,
+      "transition_out": "hard_cut",
+      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V",
+      "episode_id": "ep_toba",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "start_keyframe_rel": "assets/generated/images/S02_SH004_start.jpg"
+    },
+    {
+      "shot_id": "S02_SH005",
+      "segment_id": "S02",
+      "target_duration_seconds": 6.8,
+      "narrative_purpose": "Show how a supersonic column of pulverized rock and incandescent pumice roars out of the caldera vent leads to boiling pyroclastic density currents swallow the surrounding mountain valleys in ash",
+      "visual_type": "cinematic_video",
+      "generation_mode": "WAN_I2V",
+      "location_id": "loc_sumatra_toba_caldera",
+      "character_ids": [],
+      "prop_ids": [],
+      "audio_line_ids": [
+        "S02_L005"
+      ],
+      "action_start_state": "A supersonic column of pulverized rock and incandescent pumice roars out of the caldera vent",
+      "action_end_state": "Boiling pyroclastic density currents swallow the surrounding mountain valleys in ash",
+      "camera_spec": {
+        "shot_size": "wide",
+        "vertical_angle": "eye_level_0",
+        "horizontal_azimuth_deg": 180,
+        "camera_move": "slow_push_in",
+        "multiangle_token": null
+      },
+      "screen_composition": {
+        "foreground": "Incandescent pumice boulders and ash avalanches roaring across the foreground valley",
+        "midground": "Continuous supersonic jet of pulverized rock roaring out of the ruptured Sumatra caldera",
+        "background": "Darkening crimson horizon choked with boiling pyroclastic surges",
+        "screen_direction_notes": "180-degree axis locked: pyroclastic surge races from screen-right toward screen-left"
+      },
+      "lighting_and_time": "Late Pleistocene volcanic twilight with sculptural golden-amber firelight shafts and deep indigo-slate shadows",
+      "continuity_refs": {
+        "reuse_location_anchor": true,
+        "inherit_from_previous_shot_id": null
+      },
+      "keyframe_plan": {
+        "needs_start_frame": true,
+        "needs_end_frame": false,
+        "start_frame_source": "reference_derived_anchor",
+        "end_frame_reason": null
+      },
+      "image_prompt": {
+        "start_frame_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the erupting Mount Toba volcanic caldera in the Barisan Mountains of northern Sumatra; a supersonic column of pulverized rock and incandescent pumice roars out of the caldera vent, with foreground incandescent pumice boulders and ash avalanches roaring across the foreground valley, midground continuous supersonic jet of pulverized rock roaring out of the ruptured sumatra caldera, and background darkening crimson horizon choked with boiling pyroclastic surges in high-contrast golden-amber firelight and deep slate shadow.",
+        "end_frame_prompt": null,
+        "negative_prompt": "text watermarks, speech bubbles, modern clothing, plastic CGI sheen, deformed hands, extra fingers"
+      },
+      "video_prompt": {
+        "motion_prompt": "A supersonic column of pulverized rock and incandescent pumice roars out of the caldera vent; camera glides steadily as boiling pyroclastic density currents swallow the surrounding mountain valleys in ash.",
+        "primary_action_count": 1,
+        "camera_move_count": 1,
+        "parallax_preset": null
+      },
+      "selective_control": null,
+      "transition_out": "hard_cut",
+      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE",
+      "episode_id": "ep_toba",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "start_keyframe_rel": "assets/generated/images/S02_SH005_start.jpg"
+    },
+    {
+      "shot_id": "S02_SH006",
+      "segment_id": "S02",
+      "target_duration_seconds": 3.0,
+      "narrative_purpose": "Show how a scorching wall of grey ash sweeps across charred forest trunks along the sumatra coast leads to the pyroclastic surge hits the ocean and sends up towering curtains of white steam",
+      "visual_type": "composed_illustration",
+      "generation_mode": "COLLAGE_STILL",
+      "location_id": "loc_sumatra_toba_caldera",
+      "character_ids": [],
+      "prop_ids": [],
+      "audio_line_ids": [
+        "S02_L006"
+      ],
+      "action_start_state": "A scorching wall of grey ash sweeps across charred forest trunks along the Sumatra coast",
+      "action_end_state": "The pyroclastic surge hits the ocean and sends up towering curtains of white steam",
+      "camera_spec": {
+        "shot_size": "medium",
+        "vertical_angle": "high_angle_30",
+        "horizontal_azimuth_deg": 225,
+        "camera_move": "parallax_dolly",
+        "multiangle_token": null
+      },
+      "screen_composition": {
+        "foreground": "Charred, snapped tree trunks smoking in deep grey tephra drifts",
+        "midground": "Pyroclastic surge boiling into the steaming coastal waters of Sumatra",
+        "background": "Wall of pitch-black ash blotting out the sky",
+        "screen_direction_notes": "180-degree axis locked: ash flow moves left-to-right into the smoking sea"
+      },
+      "lighting_and_time": "Late Pleistocene volcanic twilight with sculptural golden-amber firelight shafts and deep indigo-slate shadows",
+      "continuity_refs": {
+        "reuse_location_anchor": true,
+        "inherit_from_previous_shot_id": null
+      },
+      "keyframe_plan": {
+        "needs_start_frame": true,
+        "needs_end_frame": false,
+        "start_frame_source": "reference_derived_anchor",
+        "end_frame_reason": null
+      },
+      "image_prompt": {
+        "start_frame_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Multi-plane 35mm anamorphic chiaroscuro composition at the erupting Mount Toba volcanic caldera in the Barisan Mountains of northern Sumatra; a scorching wall of grey ash sweeps across charred forest trunks along the sumatra coast, featuring foreground charred, snapped tree trunks smoking in deep grey tephra drifts, midground pyroclastic surge boiling into the steaming coastal waters of sumatra, and background wall of pitch-black ash blotting out the sky under sculptural golden-amber rim light.",
+        "end_frame_prompt": null,
+        "negative_prompt": "text watermarks, speech bubbles, modern clothing, plastic CGI sheen, deformed hands, extra fingers"
+      },
+      "video_prompt": {
+        "motion_prompt": "A scorching wall of grey ash sweeps across charred forest trunks along the Sumatra coast; camera glides steadily as the pyroclastic surge hits the ocean and sends up towering curtains of white steam.",
+        "primary_action_count": 1,
+        "camera_move_count": 1,
+        "parallax_preset": "dolly_out"
+      },
+      "selective_control": null,
+      "transition_out": "hard_cut",
+      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V",
+      "episode_id": "ep_toba",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "start_keyframe_rel": "assets/generated/images/S02_SH006_start.jpg"
+    },
+    {
+      "shot_id": "S02_SH007",
+      "segment_id": "S02",
+      "target_duration_seconds": 6.5,
+      "narrative_purpose": "Show how high aerial chiaroscuro view reveals the smoking hundred-kilometer abyss of the collapsed toba caldera leads to glowing golden magma veins pulse across the shattered floor of the crater",
+      "visual_type": "composed_illustration",
+      "generation_mode": "COLLAGE_STILL",
+      "location_id": "loc_sumatra_toba_caldera",
+      "character_ids": [],
+      "prop_ids": [],
+      "audio_line_ids": [
+        "S02_L007"
+      ],
+      "action_start_state": "High aerial chiaroscuro view reveals the smoking hundred-kilometer abyss of the collapsed Toba caldera",
+      "action_end_state": "Glowing golden magma veins pulse across the shattered floor of the crater",
+      "camera_spec": {
+        "shot_size": "extreme_wide",
+        "vertical_angle": "bird_eye_60",
+        "horizontal_azimuth_deg": 270,
+        "camera_move": "parallax_dolly",
+        "multiangle_token": null
+      },
+      "screen_composition": {
+        "foreground": "Billowing charcoal ash rims framed in heavy chiaroscuro brushwork",
+        "midground": "Gaping hundred-kilometer smoking caldera basin where the mountain once stood",
+        "background": "Faint golden-amber magma fissures glowing inside the collapsed abyss",
+        "screen_direction_notes": "180-degree axis locked: high aerial perspective looking down into the collapsed Sumatra basin"
+      },
+      "lighting_and_time": "Late Pleistocene volcanic twilight with sculptural golden-amber firelight shafts and deep indigo-slate shadows",
+      "continuity_refs": {
+        "reuse_location_anchor": true,
+        "inherit_from_previous_shot_id": null
+      },
+      "keyframe_plan": {
+        "needs_start_frame": true,
+        "needs_end_frame": false,
+        "start_frame_source": "reference_derived_anchor",
+        "end_frame_reason": null
+      },
+      "image_prompt": {
+        "start_frame_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Multi-plane 35mm anamorphic chiaroscuro composition at the erupting Mount Toba volcanic caldera in the Barisan Mountains of northern Sumatra; high aerial chiaroscuro view reveals the smoking hundred-kilometer abyss of the collapsed toba caldera, featuring foreground billowing charcoal ash rims framed in heavy chiaroscuro brushwork, midground gaping hundred-kilometer smoking caldera basin where the mountain once stood, and background faint golden-amber magma fissures glowing inside the collapsed abyss under sculptural golden-amber rim light.",
+        "end_frame_prompt": null,
+        "negative_prompt": "text watermarks, speech bubbles, modern clothing, plastic CGI sheen, deformed hands, extra fingers"
+      },
+      "video_prompt": {
+        "motion_prompt": "High aerial chiaroscuro view reveals the smoking hundred-kilometer abyss of the collapsed Toba caldera; camera glides steadily as glowing golden magma veins pulse across the shattered floor of the crater.",
+        "primary_action_count": 1,
+        "camera_move_count": 1,
+        "parallax_preset": "dolly_in"
+      },
+      "selective_control": null,
+      "transition_out": "hard_cut",
+      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V",
+      "episode_id": "ep_toba",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "start_keyframe_rel": "assets/generated/images/S02_SH007_start.jpg"
+    },
+    {
+      "shot_id": "S02_SH008",
+      "segment_id": "S02",
+      "target_duration_seconds": 5.4,
+      "narrative_purpose": "Show how the black co-ignimbrite column punches through the white cloud deck of the tropopause leads to the umbrella plume flattens and spreads laterally across the dark indigo stratosphere",
+      "visual_type": "cinematic_video",
+      "generation_mode": "WAN_FLF2V",
+      "location_id": "loc_sumatra_toba_caldera",
+      "character_ids": [],
+      "prop_ids": [],
+      "audio_line_ids": [
+        "S02_L008"
+      ],
+      "action_start_state": "The black co-ignimbrite column punches through the white cloud deck of the tropopause",
+      "action_end_state": "The umbrella plume flattens and spreads laterally across the dark indigo stratosphere",
+      "camera_spec": {
+        "shot_size": "extreme_wide",
+        "vertical_angle": "worm_eye_-30",
+        "horizontal_azimuth_deg": 315,
+        "camera_move": "slow_pull_back",
+        "multiangle_token": null
+      },
+      "screen_composition": {
+        "foreground": "Thinning blue-white upper atmospheric clouds parted like a curtain",
+        "midground": "Mushrooming black ash umbrella spreading thirty-two kilometers above the Earth",
+        "background": "Curved dark-indigo edge of the stratosphere lit by a thin amber solar rim",
+        "screen_direction_notes": "180-degree axis locked: vertical ascent breaking outward across the upper stratosphere"
+      },
+      "lighting_and_time": "Late Pleistocene volcanic twilight with sculptural golden-amber firelight shafts and deep indigo-slate shadows",
+      "continuity_refs": {
+        "reuse_location_anchor": true,
+        "inherit_from_previous_shot_id": null
+      },
+      "keyframe_plan": {
+        "needs_start_frame": true,
+        "needs_end_frame": true,
+        "start_frame_source": "reference_derived_anchor",
+        "end_frame_reason": "Anchor final composition as the umbrella plume flattens and spreads laterally across the dark indigo stratosphere"
+      },
+      "image_prompt": {
+        "start_frame_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the erupting Mount Toba volcanic caldera in the Barisan Mountains of northern Sumatra; the black co-ignimbrite column punches through the white cloud deck of the tropopause, with foreground thinning blue-white upper atmospheric clouds parted like a curtain, midground mushrooming black ash umbrella spreading thirty-two kilometers above the earth, and background curved dark-indigo edge of the stratosphere lit by a thin amber solar rim in high-contrast golden-amber firelight and deep slate shadow.",
+        "end_frame_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Final resolved frame at the erupting Mount Toba volcanic caldera in the Barisan Mountains of northern Sumatra; Vast stratospheric umbrella cloud spreading across the curved horizon thirty-two kilometers above Earth, preserving foreground thinning blue-white upper atmospheric clouds parted like a curtain and deep chiaroscuro lighting.",
+        "negative_prompt": "text watermarks, speech bubbles, modern clothing, plastic CGI sheen, deformed hands, extra fingers"
+      },
+      "video_prompt": {
+        "motion_prompt": "The black co-ignimbrite column punches through the white cloud deck of the tropopause; camera glides steadily as the umbrella plume flattens and spreads laterally across the dark indigo stratosphere.",
+        "primary_action_count": 1,
+        "camera_move_count": 1,
+        "parallax_preset": null
+      },
+      "selective_control": null,
+      "transition_out": "hard_cut",
+      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE",
+      "episode_id": "ep_toba",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "start_keyframe_rel": "assets/generated/images/S02_SH008_start.jpg"
+    },
+    {
+      "shot_id": "S02_SH009",
+      "segment_id": "S02",
+      "target_duration_seconds": 2.6,
+      "narrative_purpose": "Show how golden-amber sulfur gas clouds swirl inside the black stratospheric ash column leads to the dense chemical plume thickens into an opaque veil blocking the sun",
+      "visual_type": "composed_illustration",
+      "generation_mode": "COLLAGE_STILL",
+      "location_id": "loc_sumatra_toba_caldera",
+      "character_ids": [],
+      "prop_ids": [],
+      "audio_line_ids": [
+        "S02_L009"
+      ],
+      "action_start_state": "Golden-amber sulfur gas clouds swirl inside the black stratospheric ash column",
+      "action_end_state": "The dense chemical plume thickens into an opaque veil blocking the sun",
+      "camera_spec": {
+        "shot_size": "medium_close_up",
+        "vertical_angle": "eye_level_0",
+        "horizontal_azimuth_deg": 45,
+        "camera_move": "parallax_dolly",
+        "multiangle_token": null
+      },
+      "screen_composition": {
+        "foreground": "Swirling yellow-amber sulfur gas tendrils in macro chiaroscuro detail",
+        "midground": "Dense stratospheric aerosol cloud glowing dimly against eclipsed sunlight",
+        "background": "Deep slate-black void of the upper atmosphere",
+        "screen_direction_notes": "180-degree axis locked: gas plume drifting right-to-left toward the Indian Ocean"
+      },
+      "lighting_and_time": "Late Pleistocene volcanic twilight with sculptural golden-amber firelight shafts and deep indigo-slate shadows",
+      "continuity_refs": {
+        "reuse_location_anchor": true,
+        "inherit_from_previous_shot_id": null
+      },
+      "keyframe_plan": {
+        "needs_start_frame": true,
+        "needs_end_frame": false,
+        "start_frame_source": "reference_derived_anchor",
+        "end_frame_reason": null
+      },
+      "image_prompt": {
+        "start_frame_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Multi-plane 35mm anamorphic chiaroscuro composition at the erupting Mount Toba volcanic caldera in the Barisan Mountains of northern Sumatra; golden-amber sulfur gas clouds swirl inside the black stratospheric ash column, featuring foreground swirling yellow-amber sulfur gas tendrils in macro chiaroscuro detail, midground dense stratospheric aerosol cloud glowing dimly against eclipsed sunlight, and background deep slate-black void of the upper atmosphere under sculptural golden-amber rim light.",
+        "end_frame_prompt": null,
+        "negative_prompt": "text watermarks, speech bubbles, modern clothing, plastic CGI sheen, deformed hands, extra fingers"
+      },
+      "video_prompt": {
+        "motion_prompt": "Golden-amber sulfur gas clouds swirl inside the black stratospheric ash column; camera glides steadily as the dense chemical plume thickens into an opaque veil blocking the sun.",
+        "primary_action_count": 1,
+        "camera_move_count": 1,
+        "parallax_preset": "zoom_focus"
+      },
+      "selective_control": null,
+      "transition_out": "hard_cut",
+      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V",
+      "episode_id": "ep_toba",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "start_keyframe_rel": "assets/generated/images/S02_SH009_start.jpg"
+    },
+    {
+      "shot_id": "S02_SH010",
+      "segment_id": "S02",
+      "target_duration_seconds": 6.6,
+      "narrative_purpose": "Show how a hammered-copper relief map shows summer monsoon wind arrows curving northwest from sumatra leads to black obsidian ash markers sweep across the indian ocean toward india and east africa",
+      "visual_type": "map_visualization",
+      "generation_mode": "TACTILE_MAP",
+      "location_id": "loc_sumatra_toba_caldera",
+      "character_ids": [],
+      "prop_ids": [],
+      "audio_line_ids": [
+        "S02_L010"
+      ],
+      "action_start_state": "A hammered-copper relief map shows summer monsoon wind arrows curving northwest from Sumatra",
+      "action_end_state": "Black obsidian ash markers sweep across the Indian Ocean toward India and East Africa",
+      "camera_spec": {
+        "shot_size": "top_down_map",
+        "vertical_angle": "bird_eye_60",
+        "horizontal_azimuth_deg": 90,
+        "camera_move": "parallax_dolly",
+        "multiangle_token": null
+      },
+      "screen_composition": {
+        "foreground": "Brass compass rose and flickering tallow candle on the walnut war-table edge",
+        "midground": "Hammered copper relief map of South Asia and the Indian Ocean with golden monsoon wind arrows",
+        "background": "Dark obsidian ash blanket sweeping northwest over India and the Arabian Sea",
+        "screen_direction_notes": "180-degree axis locked: monsoon wind vectors blowing strictly east-to-west across the Indian Ocean"
+      },
+      "lighting_and_time": "Late Pleistocene volcanic twilight with sculptural golden-amber firelight shafts and deep indigo-slate shadows",
+      "continuity_refs": {
+        "reuse_location_anchor": true,
+        "inherit_from_previous_shot_id": null
+      },
+      "keyframe_plan": {
+        "needs_start_frame": true,
+        "needs_end_frame": false,
+        "start_frame_source": "new_master_anchor",
+        "end_frame_reason": null
+      },
+      "image_prompt": {
+        "start_frame_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Top-down physical relief map in hammered copper, oxidized bronze, and liquid gold on a carved walnut table depicting the erupting Mount Toba volcanic caldera in the Barisan Mountains of northern Sumatra; a hammered-copper relief map shows summer monsoon wind arrows curving northwest from sumatra, with foreground brass compass rose and flickering tallow candle on the walnut war-table edge and warm beeswax candlelight casting deep indigo shadows.",
+        "end_frame_prompt": null,
+        "negative_prompt": "text watermarks, speech bubbles, modern clothing, plastic CGI sheen, deformed hands, extra fingers"
+      },
+      "video_prompt": {
+        "motion_prompt": "A hammered-copper relief map shows summer monsoon wind arrows curving northwest from Sumatra; camera glides steadily as black obsidian ash markers sweep across the indian ocean toward india and east africa.",
+        "primary_action_count": 1,
+        "camera_move_count": 1,
+        "parallax_preset": "pan_horizontal"
+      },
+      "selective_control": null,
+      "transition_out": "hard_cut",
+      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V",
+      "episode_id": "ep_toba",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "start_keyframe_rel": "assets/generated/images/S02_SH010_start.jpg"
+    },
+    {
+      "shot_id": "S02_SH011",
+      "segment_id": "S02",
+      "target_duration_seconds": 6.2,
+      "narrative_purpose": "Show how monsoon winds drive a towering black wall of volcanic ash across the indian ocean leads to the shadow swallows the sunlit waves as it races toward the asian mainland",
+      "visual_type": "cinematic_video",
+      "generation_mode": "WAN_I2V",
+      "location_id": "loc_sumatra_toba_caldera",
+      "character_ids": [],
+      "prop_ids": [],
+      "audio_line_ids": [
+        "S02_L011"
+      ],
+      "action_start_state": "Monsoon winds drive a towering black wall of volcanic ash across the Indian Ocean",
+      "action_end_state": "The shadow swallows the sunlit waves as it races toward the Asian mainland",
+      "camera_spec": {
+        "shot_size": "extreme_wide",
+        "vertical_angle": "bird_eye_60",
+        "horizontal_azimuth_deg": 135,
+        "camera_move": "slow_push_in",
+        "multiangle_token": null
+      },
+      "screen_composition": {
+        "foreground": "Roiling grey-black cloud front advancing toward the lens in amber twilight",
+        "midground": "Towering monsoon wind wall dragging Toba's ash plume across the dark Indian Ocean",
+        "background": "Distant coastline of the Indian subcontinent vanishing under the shadow",
+        "screen_direction_notes": "180-degree axis locked: ash front advances from screen-right toward screen-left"
+      },
+      "lighting_and_time": "Late Pleistocene volcanic twilight with sculptural golden-amber firelight shafts and deep indigo-slate shadows",
+      "continuity_refs": {
+        "reuse_location_anchor": true,
+        "inherit_from_previous_shot_id": null
+      },
+      "keyframe_plan": {
+        "needs_start_frame": true,
+        "needs_end_frame": false,
+        "start_frame_source": "reference_derived_anchor",
+        "end_frame_reason": null
+      },
+      "image_prompt": {
+        "start_frame_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the erupting Mount Toba volcanic caldera in the Barisan Mountains of northern Sumatra; monsoon winds drive a towering black wall of volcanic ash across the indian ocean, with foreground roiling grey-black cloud front advancing toward the lens in amber twilight, midground towering monsoon wind wall dragging toba's ash plume across the dark indian ocean, and background distant coastline of the indian subcontinent vanishing under the shadow in high-contrast golden-amber firelight and deep slate shadow.",
+        "end_frame_prompt": null,
+        "negative_prompt": "text watermarks, speech bubbles, modern clothing, plastic CGI sheen, deformed hands, extra fingers"
+      },
+      "video_prompt": {
+        "motion_prompt": "Monsoon winds drive a towering black wall of volcanic ash across the Indian Ocean; camera glides steadily as the shadow swallows the sunlit waves as it races toward the asian mainland.",
+        "primary_action_count": 1,
+        "camera_move_count": 1,
+        "parallax_preset": null
+      },
+      "selective_control": null,
+      "transition_out": "hard_cut",
+      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE",
+      "episode_id": "ep_toba",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "start_keyframe_rel": "assets/generated/images/S02_SH011_start.jpg"
+    },
+    {
+      "shot_id": "S02_SH012",
+      "segment_id": "S02",
+      "target_duration_seconds": 6.4,
+      "narrative_purpose": "Show how the midday sun hangs above the indian coast as a black stratospheric shelf approaches leads to the ash curtain swallows the solar disc and plunges the coastline into premature night",
+      "visual_type": "cinematic_video",
+      "generation_mode": "WAN_FLF2V",
+      "location_id": "loc_sumatra_toba_caldera",
+      "character_ids": [],
+      "prop_ids": [],
+      "audio_line_ids": [
+        "S02_L012"
+      ],
+      "action_start_state": "The midday sun hangs above the Indian coast as a black stratospheric shelf approaches",
+      "action_end_state": "The ash curtain swallows the solar disc and plunges the coastline into premature night",
+      "camera_spec": {
+        "shot_size": "wide",
+        "vertical_angle": "eye_level_0",
+        "horizontal_azimuth_deg": 180,
+        "camera_move": "slow_push_in",
+        "multiangle_token": null
+      },
+      "screen_composition": {
+        "foreground": "Silhouetted coastal palm trees bending under a sudden freezing gale",
+        "midground": "Blinding midday sun being devoured by an advancing ceiling of black volcanic ash",
+        "background": "Last sliver of golden-amber light vanishing into total eclipse",
+        "screen_direction_notes": "180-degree axis locked: black cloud front advances right-to-left across the solar disc"
+      },
+      "lighting_and_time": "Late Pleistocene volcanic twilight with sculptural golden-amber firelight shafts and deep indigo-slate shadows",
+      "continuity_refs": {
+        "reuse_location_anchor": true,
+        "inherit_from_previous_shot_id": null
+      },
+      "keyframe_plan": {
+        "needs_start_frame": true,
+        "needs_end_frame": true,
+        "start_frame_source": "reference_derived_anchor",
+        "end_frame_reason": "Anchor final composition as the ash curtain swallows the solar disc and plunges the coastline into premature night"
+      },
+      "image_prompt": {
+        "start_frame_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the erupting Mount Toba volcanic caldera in the Barisan Mountains of northern Sumatra; the midday sun hangs above the indian coast as a black stratospheric shelf approaches, with foreground silhouetted coastal palm trees bending under a sudden freezing gale, midground blinding midday sun being devoured by an advancing ceiling of black volcanic ash, and background last sliver of golden-amber light vanishing into total eclipse in high-contrast golden-amber firelight and deep slate shadow.",
+        "end_frame_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Final resolved frame at the erupting Mount Toba volcanic caldera in the Barisan Mountains of northern Sumatra; Total volcanic darkness over the coastline with only a faint blood-amber ring where the sun vanished, preserving foreground silhouetted coastal palm trees bending under a sudden freezing gale and deep chiaroscuro lighting.",
+        "negative_prompt": "text watermarks, speech bubbles, modern clothing, plastic CGI sheen, deformed hands, extra fingers"
+      },
+      "video_prompt": {
+        "motion_prompt": "The midday sun hangs above the Indian coast as a black stratospheric shelf approaches; camera glides steadily as the ash curtain swallows the solar disc and plunges the coastline into premature night.",
+        "primary_action_count": 1,
+        "camera_move_count": 1,
+        "parallax_preset": null
+      },
+      "selective_control": null,
+      "transition_out": "l_cut",
+      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE",
+      "episode_id": "ep_toba",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "start_keyframe_rel": "assets/generated/images/S02_SH012_start.jpg"
+    },
+    {
+      "shot_id": "S03_SH001",
+      "segment_id": "S03",
+      "target_duration_seconds": 5.8,
+      "narrative_purpose": "Show how noon across the jwalapuram valley in india turns black under swirling ash and amber lightning leads to heavy grey tephra blankets the rocky hills and riverbeds",
+      "visual_type": "composed_illustration",
+      "generation_mode": "COLLAGE_STILL",
+      "location_id": "loc_sumatra_toba_caldera",
+      "character_ids": [],
+      "prop_ids": [],
+      "audio_line_ids": [
+        "S03_L001"
+      ],
+      "action_start_state": "Noon across the Jwalapuram valley in India turns black under swirling ash and amber lightning",
+      "action_end_state": "Heavy grey tephra blankets the rocky hills and riverbeds",
+      "camera_spec": {
+        "shot_size": "wide",
+        "vertical_angle": "eye_level_0",
+        "horizontal_azimuth_deg": 0,
+        "camera_move": "parallax_dolly",
+        "multiangle_token": null
+      },
+      "screen_composition": {
+        "foreground": "Dead tree branches coated in grey tephra in the foreground",
+        "midground": "Ancient Jwalapuram valley in India buried beneath swirling ash clouds and amber lightning",
+        "background": "Blackened sky pressing down on the hills in deep chiaroscuro contrast",
+        "screen_direction_notes": "180-degree axis locked: valley vista oriented east-to-west following the ashfall"
+      },
+      "lighting_and_time": "Late Pleistocene volcanic twilight with sculptural golden-amber firelight shafts and deep indigo-slate shadows",
+      "continuity_refs": {
+        "reuse_location_anchor": true,
+        "inherit_from_previous_shot_id": null
+      },
+      "keyframe_plan": {
+        "needs_start_frame": true,
+        "needs_end_frame": false,
+        "start_frame_source": "reference_derived_anchor",
+        "end_frame_reason": null
+      },
+      "image_prompt": {
+        "start_frame_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Multi-plane 35mm anamorphic chiaroscuro composition at the erupting Mount Toba volcanic caldera in the Barisan Mountains of northern Sumatra; noon across the jwalapuram valley in india turns black under swirling ash and amber lightning, featuring foreground dead tree branches coated in grey tephra in the foreground, midground ancient jwalapuram valley in india buried beneath swirling ash clouds and amber lightning, and background blackened sky pressing down on the hills in deep chiaroscuro contrast under sculptural golden-amber rim light.",
+        "end_frame_prompt": null,
+        "negative_prompt": "text watermarks, speech bubbles, modern clothing, plastic CGI sheen, deformed hands, extra fingers"
+      },
+      "video_prompt": {
+        "motion_prompt": "Noon across the Jwalapuram valley in India turns black under swirling ash and amber lightning; camera glides steadily as heavy grey tephra blankets the rocky hills and riverbeds.",
+        "primary_action_count": 1,
+        "camera_move_count": 1,
+        "parallax_preset": "pan_horizontal"
+      },
+      "selective_control": null,
+      "transition_out": "hard_cut",
+      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V",
+      "episode_id": "ep_toba",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "start_keyframe_rel": "assets/generated/images/S03_SH001_start.jpg"
+    },
+    {
+      "shot_id": "S03_SH002",
+      "segment_id": "S03",
+      "target_duration_seconds": 6.6,
+      "narrative_purpose": "Show how thick drifts of grey volcanic ash cascade into an indian river valley leads to the flowing water congeals into a sluggish grey paste of wet tephra",
+      "visual_type": "cinematic_video",
+      "generation_mode": "WAN_I2V",
+      "location_id": "loc_sumatra_toba_caldera",
+      "character_ids": [],
+      "prop_ids": [],
+      "audio_line_ids": [
+        "S03_L002"
+      ],
+      "action_start_state": "Thick drifts of grey volcanic ash cascade into an Indian river valley",
+      "action_end_state": "The flowing water congeals into a sluggish grey paste of wet tephra",
+      "camera_spec": {
+        "shot_size": "medium",
+        "vertical_angle": "high_angle_30",
+        "horizontal_azimuth_deg": 45,
+        "camera_move": "slow_push_in",
+        "multiangle_token": null
+      },
+      "screen_composition": {
+        "foreground": "Thick grey ash avalanches sliding down a steep rocky ravine",
+        "midground": "River channel in South Asia completely clogged by six-meter drifts of wet volcanic mud",
+        "background": "Dim amber glow filtering through dense falling tephra",
+        "screen_direction_notes": "180-degree axis locked: mud-choked river channel flowing right-to-left"
+      },
+      "lighting_and_time": "Late Pleistocene volcanic twilight with sculptural golden-amber firelight shafts and deep indigo-slate shadows",
+      "continuity_refs": {
+        "reuse_location_anchor": true,
+        "inherit_from_previous_shot_id": null
+      },
+      "keyframe_plan": {
+        "needs_start_frame": true,
+        "needs_end_frame": false,
+        "start_frame_source": "reference_derived_anchor",
+        "end_frame_reason": null
+      },
+      "image_prompt": {
+        "start_frame_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the erupting Mount Toba volcanic caldera in the Barisan Mountains of northern Sumatra; thick drifts of grey volcanic ash cascade into an indian river valley, with foreground thick grey ash avalanches sliding down a steep rocky ravine, midground river channel in south asia completely clogged by six-meter drifts of wet volcanic mud, and background dim amber glow filtering through dense falling tephra in high-contrast golden-amber firelight and deep slate shadow.",
+        "end_frame_prompt": null,
+        "negative_prompt": "text watermarks, speech bubbles, modern clothing, plastic CGI sheen, deformed hands, extra fingers"
+      },
+      "video_prompt": {
+        "motion_prompt": "Thick drifts of grey volcanic ash cascade into an Indian river valley; camera glides steadily as the flowing water congeals into a sluggish grey paste of wet tephra.",
+        "primary_action_count": 1,
+        "camera_move_count": 1,
+        "parallax_preset": null
+      },
+      "selective_control": null,
+      "transition_out": "hard_cut",
+      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE",
+      "episode_id": "ep_toba",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "start_keyframe_rel": "assets/generated/images/S03_SH002_start.jpg"
+    },
+    {
+      "shot_id": "S03_SH003",
+      "segment_id": "S03",
+      "target_duration_seconds": 2.6,
+      "narrative_purpose": "Show how thick grey volcanic scum coats the surface of a stagnant river pool leads to acidic droplets pit the water surface as dead leaves sink into the sludge",
+      "visual_type": "cinematic_video",
+      "generation_mode": "WAN_I2V",
+      "location_id": "loc_shinfa_ash_riverbed",
+      "character_ids": [],
+      "prop_ids": [
+        "prop_wooden_throwing_spear"
+      ],
+      "audio_line_ids": [
+        "S03_L003"
+      ],
+      "action_start_state": "Thick grey volcanic scum coats the surface of a stagnant river pool",
+      "action_end_state": "Acidic droplets pit the water surface as dead leaves sink into the sludge",
+      "camera_spec": {
+        "shot_size": "close_up",
+        "vertical_angle": "eye_level_0",
+        "horizontal_azimuth_deg": 90,
+        "camera_move": "static",
+        "multiangle_token": null
+      },
+      "screen_composition": {
+        "foreground": "Crust of grey pumice floating atop dark acidic water",
+        "midground": "Dead fish and scorched leaves trapped in thick volcanic scum along the bank",
+        "background": "Dark basalt rocks stained with yellowish sulfur residue",
+        "screen_direction_notes": "180-degree axis locked: riverbank edge aligned left-to-right"
+      },
+      "lighting_and_time": "Late Pleistocene volcanic twilight with sculptural golden-amber firelight shafts and deep indigo-slate shadows",
+      "continuity_refs": {
+        "reuse_location_anchor": true,
+        "inherit_from_previous_shot_id": null
+      },
+      "keyframe_plan": {
+        "needs_start_frame": true,
+        "needs_end_frame": false,
+        "start_frame_source": "reference_derived_anchor",
+        "end_frame_reason": null
+      },
+      "image_prompt": {
+        "start_frame_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Cinematic frame at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; thick grey volcanic scum coats the surface of a stagnant river pool, with foreground crust of grey pumice floating atop dark acidic water, midground dead fish and scorched leaves trapped in thick volcanic scum along the bank, and background dark basalt rocks stained with yellowish sulfur residue in high-contrast golden-amber firelight and deep slate shadow.",
+        "end_frame_prompt": null,
+        "negative_prompt": "text watermarks, speech bubbles, modern clothing, plastic CGI sheen, deformed hands, extra fingers"
+      },
+      "video_prompt": {
+        "motion_prompt": "Thick grey volcanic scum coats the surface of a stagnant river pool; static locked camera holds steady as acidic droplets pit the water surface as dead leaves sink into the sludge.",
+        "primary_action_count": 1,
+        "camera_move_count": 0,
+        "parallax_preset": null
+      },
+      "selective_control": null,
+      "transition_out": "hard_cut",
+      "video_engine_tier": "WAN_2_1_HEAVY_ACTION_ENGINE",
+      "episode_id": "ep_toba",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "start_keyframe_rel": "assets/generated/images/S03_SH003_start.jpg"
+    },
+    {
+      "shot_id": "S03_SH004",
+      "segment_id": "S03",
+      "target_duration_seconds": 3.0,
+      "narrative_purpose": "Show how acid rain strips the foliage from prehistoric trees above a grey ash-covered plain leads to fallen grazing herds lie half-buried under drifting dunes of volcanic dust",
+      "visual_type": "composed_illustration",
+      "generation_mode": "COLLAGE_STILL",
+      "location_id": "loc_shinfa_ash_riverbed",
+      "character_ids": [],
+      "prop_ids": [],
+      "audio_line_ids": [
+        "S03_L004"
+      ],
+      "action_start_state": "Acid rain strips the foliage from prehistoric trees above a grey ash-covered plain",
+      "action_end_state": "Fallen grazing herds lie half-buried under drifting dunes of volcanic dust",
+      "camera_spec": {
+        "shot_size": "wide",
+        "vertical_angle": "eye_level_0",
+        "horizontal_azimuth_deg": 135,
+        "camera_move": "parallax_dolly",
+        "multiangle_token": null
+      },
+      "screen_composition": {
+        "foreground": "Skeletal defoliated acacia branches dripping with acidic grey rain",
+        "midground": "Prehistoric antelope carcasses half-buried in drifting grey volcanic dust",
+        "background": "Faint amber light shaft piercing a suffocating slate-grey fog",
+        "screen_direction_notes": "180-degree axis locked: valley floor stretching left-to-right toward the dry hills"
+      },
+      "lighting_and_time": "Late Pleistocene volcanic twilight with sculptural golden-amber firelight shafts and deep indigo-slate shadows",
+      "continuity_refs": {
+        "reuse_location_anchor": true,
+        "inherit_from_previous_shot_id": null
+      },
+      "keyframe_plan": {
+        "needs_start_frame": true,
+        "needs_end_frame": false,
+        "start_frame_source": "reference_derived_anchor",
+        "end_frame_reason": null
+      },
+      "image_prompt": {
+        "start_frame_prompt": "Luminescent Chiaroscuro and Tactile Mythic Realism historical docudrama. Multi-plane 35mm anamorphic chiaroscuro composition at the entrenched ash-draped riverbed and shrinking waterholes of the Shinfa river in northwestern Ethiopia; acid rain strips the foliage from prehistoric trees above a grey ash-covered plain, featuring foreground skeletal defoliated acacia branches dripping with acidic grey rain, midground prehistoric antelope carcasses half-buried in drifting grey volcanic dust, and background faint amber light shaft piercing a suffocating slate-grey fog under sculptural golden-amber rim light.",
+        "end_frame_prompt": null,
+        "negative_prompt": "text watermarks, speech bubbles, modern clothing, plastic CGI sheen, deformed hands, extra fingers"
+      },
+      "video_prompt": {
+        "motion_prompt": "Acid rain strips the foliage from prehistoric trees above a grey ash-covered plain; camera glides steadily as fallen grazing herds lie half-buried under drifting dunes of volcanic dust.",
+        "primary_action_count": 1,
+        "camera_move_count": 1,
+        "parallax_preset": "dolly_in"
+      },
+      "selective_control": null,
+      "transition_out": "hard_cut",
+      "video_engine_tier": "GEMINI_LIGHT_VIDEO_I2V",
+      "episode_id": "ep_toba",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "start_keyframe_rel": "assets/generated/images/S03_SH004_start.jpg"
+    }
+  ],
+  "audio_lines": [
+    {
+      "line_id": "S01_L001",
+      "shot_id": "S01_SH001",
+      "segment_id": "S01",
+      "speaker_type": "narrator",
+      "speaker_id": "narrator_main",
+      "text": "Eight billion people.",
+      "start_sec": 0.0,
+      "end_sec": 2.0,
+      "estimated_duration_seconds": 2.0
+    },
+    {
+      "line_id": "S01_L002",
+      "shot_id": "S01_SH002",
+      "segment_id": "S01",
+      "speaker_type": "narrator",
+      "speaker_id": "narrator_main",
+      "text": "Today, our species floods every continent with electric light, yet a single volcanic trap almost erased our bloodline.",
+      "start_sec": 2.0,
+      "end_sec": 6.8,
+      "estimated_duration_seconds": 4.8
+    },
+    {
+      "line_id": "S01_L003",
+      "shot_id": "S01_SH003",
+      "segment_id": "S01",
+      "speaker_type": "narrator",
+      "speaker_id": "narrator_main",
+      "text": "Yet seventy-four thousand years ago, every living ancestor of modern humanity could have sheltered inside one narrow valley.",
+      "start_sec": 6.8,
+      "end_sec": 12.4,
+      "estimated_duration_seconds": 5.6
+    },
+    {
+      "line_id": "S01_L004",
+      "shot_id": "S01_SH004",
+      "segment_id": "S01",
+      "speaker_type": "character",
+      "speaker_id": "char_sena_74000bce",
+      "text": "The sun is vanishing, Kael.",
+      "start_sec": 12.4,
+      "end_sec": 14.6,
+      "estimated_duration_seconds": 2.2
+    },
+    {
+      "line_id": "S01_L005",
+      "shot_id": "S01_SH005",
+      "segment_id": "S01",
+      "speaker_type": "character",
+      "speaker_id": "char_sena_74000bce",
+      "text": "Feel this dust, Kael. Warm ash falls like snow, yet it cuts the skin.",
+      "start_sec": 14.6,
+      "end_sec": 18.0,
+      "estimated_duration_seconds": 3.4
+    },
+    {
+      "line_id": "S01_L006",
+      "shot_id": "S01_SH006",
+      "segment_id": "S01",
+      "speaker_type": "narrator",
+      "speaker_id": "narrator_main",
+      "text": "What settled onto her palm in northwestern Ethiopia was not woodsmoke, nor desert sand, but razor-sharp shards of volcanic glass.",
+      "start_sec": 18.0,
+      "end_sec": 24.2,
+      "estimated_duration_seconds": 6.2
+    },
+    {
+      "line_id": "S01_L007",
+      "shot_id": "S01_SH007",
+      "segment_id": "S01",
+      "speaker_type": "character",
+      "speaker_id": "char_kael_74000bce",
+      "text": "The eastern mountains are quiet. Nothing burns there.",
+      "start_sec": 24.2,
+      "end_sec": 27.0,
+      "estimated_duration_seconds": 2.8
+    },
+    {
+      "line_id": "S01_L008",
+      "shot_id": "S01_SH008",
+      "segment_id": "S01",
+      "speaker_type": "narrator",
+      "speaker_id": "narrator_main",
+      "text": "Kael was right about the local peaks, because the killer lay four thousand miles away.",
+      "start_sec": 27.0,
+      "end_sec": 31.6,
+      "estimated_duration_seconds": 4.6
+    },
+    {
+      "line_id": "S01_L009",
+      "shot_id": "S01_SH009",
+      "segment_id": "S01",
+      "speaker_type": "narrator",
+      "speaker_id": "narrator_main",
+      "text": "Across the Indian Ocean, an island had just ruptured with a violence Earth had not seen in two million years.",
+      "start_sec": 31.6,
+      "end_sec": 38.0,
+      "estimated_duration_seconds": 6.4
+    },
+    {
+      "line_id": "S02_L001",
+      "shot_id": "S02_SH001",
+      "segment_id": "S02",
+      "speaker_type": "narrator",
+      "speaker_id": "narrator_main",
+      "text": "Beneath northern Sumatra, five colossal chambers of silica-rich rhyolite magma had been pressurizing for centuries like a planetary landmine.",
+      "start_sec": 38.0,
+      "end_sec": 43.8,
+      "estimated_duration_seconds": 5.8
+    },
+    {
+      "line_id": "S02_L002",
+      "shot_id": "S02_SH002",
+      "segment_id": "S02",
+      "speaker_type": "narrator",
+      "speaker_id": "narrator_main",
+      "text": "Then the roof failed.",
+      "start_sec": 43.8,
+      "end_sec": 45.9,
+      "estimated_duration_seconds": 2.1
+    },
+    {
+      "line_id": "S02_L003",
+      "shot_id": "S02_SH003",
+      "segment_id": "S02",
+      "speaker_type": "narrator",
+      "speaker_id": "narrator_main",
+      "text": "When Mount Toba detonated seventy-four thousand years ago, it registered Category Eight on the Volcanic Explosivity Index, shattering the ceiling of geological history.",
+      "start_sec": 45.9,
+      "end_sec": 53.3,
+      "estimated_duration_seconds": 7.4
+    },
+    {
+      "line_id": "S02_L004",
+      "shot_id": "S02_SH004",
+      "segment_id": "S02",
+      "speaker_type": "narrator",
+      "speaker_id": "narrator_main",
+      "text": "Compare it to Mount Saint Helens in nineteen eighty: Toba was ten thousand times larger.",
+      "start_sec": 53.3,
+      "end_sec": 58.5,
+      "estimated_duration_seconds": 5.2
+    },
+    {
+      "line_id": "S02_L005",
+      "shot_id": "S02_SH005",
+      "segment_id": "S02",
+      "speaker_type": "narrator",
+      "speaker_id": "narrator_main",
+      "text": "Every ten minutes, the vent hurled a full cubic kilometer of pulverized rock into the sky, sustaining that fury for two weeks.",
+      "start_sec": 58.5,
+      "end_sec": 65.3,
+      "estimated_duration_seconds": 6.8
+    },
+    {
+      "line_id": "S02_L006",
+      "shot_id": "S02_SH006",
+      "segment_id": "S02",
+      "speaker_type": "narrator",
+      "speaker_id": "narrator_main",
+      "text": "Nothing within hundreds of miles survived.",
+      "start_sec": 65.3,
+      "end_sec": 68.3,
+      "estimated_duration_seconds": 3.0
+    },
+    {
+      "line_id": "S02_L007",
+      "shot_id": "S02_SH007",
+      "segment_id": "S02",
+      "speaker_type": "narrator",
+      "speaker_id": "narrator_main",
+      "text": "In total, two thousand eight hundred cubic kilometers of dense magma tore out of the earth, leaving a hundred-kilometer crater behind.",
+      "start_sec": 68.3,
+      "end_sec": 74.8,
+      "estimated_duration_seconds": 6.5
+    },
+    {
+      "line_id": "S02_L008",
+      "shot_id": "S02_SH008",
+      "segment_id": "S02",
+      "speaker_type": "narrator",
+      "speaker_id": "narrator_main",
+      "text": "Superheated co-ignimbrite columns punched thirty-two kilometers upward, piercing straight through the tropopause into the dry stratosphere.",
+      "start_sec": 74.8,
+      "end_sec": 80.2,
+      "estimated_duration_seconds": 5.4
+    },
+    {
+      "line_id": "S02_L009",
+      "shot_id": "S02_SH009",
+      "segment_id": "S02",
+      "speaker_type": "narrator",
+      "speaker_id": "narrator_main",
+      "text": "Yet lava was not the weapon.",
+      "start_sec": 80.2,
+      "end_sec": 82.8,
+      "estimated_duration_seconds": 2.6
+    },
+    {
+      "line_id": "S02_L010",
+      "shot_id": "S02_SH010",
+      "segment_id": "S02",
+      "speaker_type": "narrator",
+      "speaker_id": "narrator_main",
+      "text": "Had Toba erupted in winter, winds would have dumped its ash harmlessly into the southern ocean\u2014but Toba erupted in summer.",
+      "start_sec": 82.8,
+      "end_sec": 89.4,
+      "estimated_duration_seconds": 6.6
+    },
+    {
+      "line_id": "S02_L011",
+      "shot_id": "S02_SH011",
+      "segment_id": "S02",
+      "speaker_type": "narrator",
+      "speaker_id": "narrator_main",
+      "text": "Caught by the northern summer monsoon, the stratospheric plume locked onto a collision course with the heart of the ancient world.",
+      "start_sec": 89.4,
+      "end_sec": 95.6,
+      "estimated_duration_seconds": 6.2
+    },
+    {
+      "line_id": "S02_L012",
+      "shot_id": "S02_SH012",
+      "segment_id": "S02",
+      "speaker_type": "narrator",
+      "speaker_id": "narrator_main",
+      "text": "And inside that cloud rode a chemical payload capable of switching off the sun across the entire planet.",
+      "start_sec": 95.6,
+      "end_sec": 102.0,
+      "estimated_duration_seconds": 6.4
+    },
+    {
+      "line_id": "S03_L001",
+      "shot_id": "S03_SH001",
+      "segment_id": "S03",
+      "speaker_type": "narrator",
+      "speaker_id": "narrator_main",
+      "text": "Within hours, noon across the Indian subcontinent darkened into a suffocating, pitch-black midnight laced with volcanic lightning.",
+      "start_sec": 102.0,
+      "end_sec": 107.8,
+      "estimated_duration_seconds": 5.8
+    },
+    {
+      "line_id": "S03_L002",
+      "shot_id": "S03_SH002",
+      "segment_id": "S03",
+      "speaker_type": "narrator",
+      "speaker_id": "narrator_main",
+      "text": "Fifteen centimeters of abrasive tephra blanketed the entire peninsula, while river valleys choked under ash drifts six meters deep.",
+      "start_sec": 107.8,
+      "end_sec": 114.4,
+      "estimated_duration_seconds": 6.6
+    },
+    {
+      "line_id": "S03_L003",
+      "shot_id": "S03_SH003",
+      "segment_id": "S03",
+      "speaker_type": "narrator",
+      "speaker_id": "narrator_main",
+      "text": "Water turned to toxic sludge.",
+      "start_sec": 114.4,
+      "end_sec": 117.0,
+      "estimated_duration_seconds": 2.6
+    },
+    {
+      "line_id": "S03_L004",
+      "shot_id": "S03_SH004",
+      "segment_id": "S03",
+      "speaker_type": "narrator",
+      "speaker_id": "narrator_main",
+      "text": "Fluorine and sulfuric acid leached into streams, stripping leaves from trees and blinding grazing herds before they could flee the valleys.",
+      "start_sec": 117.0,
+      "end_sec": 120.0,
+      "estimated_duration_seconds": 3.0
+    }
+  ]
+}

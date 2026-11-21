@@ -1,3 +1,4 @@
+
 """Reference study: what the docudrama niche's videos do, measured against how viewers react (plan v2, 2026-10-25,
 docs/research/STYLE_AND_TRANSITIONS_PLAN_2026-10-25.md section 5). Free, CPU: PySceneDetect (via training/footage) + the
 ``.info.json`` that ``yt-dlp --write-info-json`` saves beside each video (views, duration, chapters, ``heatmap`` =

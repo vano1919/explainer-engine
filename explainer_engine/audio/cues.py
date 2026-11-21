@@ -1,3 +1,4 @@
+
 """Beat cues (VB-08, docs/STORY_ENGINE.md; the creator, 2026-10-19): a very short, light sound on a visual beat, so the
 change on screen is noticed for an instant without the ear tiring. Built here from tones and noise (numpy only, free,
 deterministic: the same name gives the same samples), so a cue never needs a library file.

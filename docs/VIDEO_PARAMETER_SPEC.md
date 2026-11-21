@@ -29,8 +29,8 @@ CLI flag > episode file > channel profile > built-in default ([PIPELINE_ARCHITEC
 |---|---|---|---|---|---|---|---|
 | P-10 | long duration | 7 min (animated route: [BP-167](SOURCED_RULES.md)) | 5-11 | depth without padding | L/P,T | word budget | outside range = REVIEW, not FAIL |
 | P-11 | short duration | the length bands of BP-12 | see BP-12 | standalone Shorts; YouTube counts square/vertical videos up to 3 minutes as Shorts (V-25) | L/P,T | script | PV-28 (BP-12 word budget); > 180 s FAIL (not a Short) |
-| P-12 | resolution | 1920x1080 (16:9), 1080x1920 (9:16) (animated route: [BP-167](SOURCED_RULES.md)) | fixed pair | vector art needs no 4K (D-08) | H/F | renderer | ffprobe |
-| P-13 | frame rate | 30, constant (animated route: [BP-167](SOURCED_RULES.md)) | 24, 30 | smooth motion at low cost | M/C | cache key | ffprobe CFR |
+| P-12 | resolution | 1920x1080 (16:9), 1080x1920 (9:16); legacy still route only: the Blender lanes and the spine follow [BP-167](SOURCED_RULES.md) (2560x1440, 24 fps; D-104) | fixed pair | vector art needs no 4K (D-08) | H/F | renderer | ffprobe |
+| P-13 | frame rate | 30, constant; legacy still route only: the Blender lanes and the spine follow [BP-167](SOURCED_RULES.md) (2560x1440, 24 fps; D-104) | 24, 30 | smooth motion at low cost | M/C | cache key | ffprobe CFR |
 | P-14 | video codec | H.264 High, yuv420p, CRF 18, preset medium, +faststart | CRF 16-23 | quality vs size (D-08) | H/C | disk | ffprobe |
 | P-15 | audio codec | AAC-LC stereo, bitrate and sample rate per BP-63 | see BP-63 | YouTube's recommended upload settings (V-26); `assemble.AUDIO_CODEC` is the one export line for the video and the Shorts | H/F | mix | ffprobe |
 | P-16 | container, names | mp4; `<slug>_<yyyymmdd>_<kind>.mp4` | | traceability | H/F | manifest | regex |
@@ -67,7 +67,7 @@ CLI flag > episode file > channel profile > built-in default ([PIPELINE_ARCHITEC
 ## 5. Visual and assets
 | ID | Parameter | Default | Allowed | Purpose, evidence | Conf/Status | Depends on | Validation |
 |---|---|---|---|---|---|---|---|
-| P-60 | medium | painted pictures (pod) + keyed sprites; the SVG plan is superseded (D-27, D-36) | | the creator's look (D-27) | H/F | renderer | asset check |
+| P-60 | medium | legacy still route: painted pictures (pod) + keyed sprites; the SVG plan is superseded (D-27, D-36); the Blender lanes render real 3D geometry in the Ink Chronicle look (D-96, D-97) | | the creator's look (D-27) | H/F | renderer | asset check |
 | P-61 | stroke | 6 px characters, 4 px props at 1080p; round caps | | style (STYLE_BIBLE) | M/F | rig | SVG lint |
 | P-62 | palette | palette.json tokens only | | identity, contrast (D-22) | H/F | all art | colour lint + palette test |
 | P-63 | typography | Fredoka titles, Inter labels | OFL fonts | licence, legibility | H/F | renderer | font check |

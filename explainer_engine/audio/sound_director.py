@@ -1,3 +1,4 @@
+
 """The sound director (Blueprint P4, docs/AUDIO_SYSTEM.md "Sound director", SD-01..SD-15): from the audio spine, the timed script and
 (when the job has one) ``film_shots/2`` it DERIVES ``sound_mix_manifest/2`` (CN-02: never edited by hand) and checks it.
 
@@ -28,7 +29,7 @@ from pathlib import Path
 import numpy as np
 
 from explainer_engine import assets_reuse
-from explainer_engine.audio import acoustics, duck, foley, sfx_library
+from explainer_engine.audio import acoustics, dropouts, duck, foley, sfx_library
 from explainer_engine.audio import layers as L
 from explainer_engine.core import contracts, delivery
 from explainer_engine.core.errors import ContractError
@@ -921,6 +922,23 @@ def _check_stems(manifest: dict, spine: dict, stems: dict, measures: dict, ramps
         if len(bad):
             out.append(_f("SD-02", "mix", f"{len(bad)} window(s) of {h * 1000 // RATE} ms under {floor:g} dBFS, the first at {(a + bad[0] * h) / RATE:.2f} s "
                                           "(BP-161: no digital silence between the opening ramp and the final fade)"))
+    # SD-02 (narration stem): independent check on stems["narration"] inside active spoken word spans so room_tone/ambience cannot mask voice dropouts
+    if "narration" in stems:
+        nar_mono = _mid_channel(stems["narration"]).astype(np.float64)
+        floor_nar = float(SR.T("BP-161", "digital_silence_dbfs"))
+        for w_item in spine.get("words", []):
+            wa = max(0, int(round(w_item["start_frame"] / fps * RATE)))
+            wz = min(len(nar_mono), int(round(w_item["end_frame"] / fps * RATE)))
+            if wz - wa >= max(h, int(0.08 * RATE)):
+                w_rms = acoustics.rms_db(nar_mono[wa:wz])
+                if w_rms < floor_nar:
+                    out.append(_f("SD-02", "narration", f"narration stem drops to {w_rms:.1f} dBFS (< {floor_nar:g} dBFS) inside active word '{w_item.get('word', '')}' at {wa / RATE:.2f} s"))
+                    break
+                scan_res = dropouts.scan(nar_mono[wa:wz], RATE, min_run=0.05, loud_db=-45.0)
+                if scan_res["cut_into_sound"]:
+                    first_cut = scan_res["cut_into_sound"][0]
+                    out.append(_f("SD-02", "narration", f"narration stem has mid-word dropout ({first_cut['seconds']:.2f} s) inside word '{w_item.get('word', '')}' at {wa / RATE + first_cut['at']:.2f} s"))
+                    break
     # SD-04: the background's share of the presence band under speech against the pauses
     lo, hi = SR.T("BP-118", "measure_band_hz")
     need = float(SR.T("BP-118", "notch_depth_db")[0])

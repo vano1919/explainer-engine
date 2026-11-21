@@ -1,3 +1,4 @@
+
 """Picture and text embeddings for the judge (CLIP ViT-B-32, CPU is enough for a few hundred pictures).
 
 Needs ``torch`` + ``open_clip_torch`` (not in requirements.txt: install them where the judge runs, the pod or a cloud

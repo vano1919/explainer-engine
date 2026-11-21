@@ -1,3 +1,4 @@
+
 """The World Bible (D-70 stage C; rules WB-01..WB-05 in docs/WORLD_BIBLE.md): ONE versioned record of the channel's
 visual world. It does not restate the look, the era codex or the palette; it pins their files by hash under one version,
 adds what no part holds (camera language, graphics style, era-change rules, motion default, the approved anchor

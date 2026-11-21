@@ -1,3 +1,4 @@
+
 """How each speaking hero talks (PV-46, DW-11; creator 2026-10-19). stdlib only.
 
 Every hero who speaks has ``cast.<id>.speech``: the manner and the vocabulary of their speech. A real person or a known

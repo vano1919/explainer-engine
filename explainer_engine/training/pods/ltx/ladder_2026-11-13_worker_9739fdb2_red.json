@@ -1,0 +1,49 @@
+{
+  "done": [
+    "L0",
+    "L1",
+    "L2"
+  ],
+  "red": "L3",
+  "measured": {},
+  "rungs": {
+    "L0": {
+      "tests": [
+        "tests/unit/test_v43_ltx_jobs.py",
+        "tests/unit/test_ltx_inproc.py",
+        "tests/unit/test_videolane.py",
+        "tests/unit/test_cloud_hooks_modal.py"
+      ],
+      "pytest": "113 passed, 2 skipped in 12.08s",
+      "commit": "6e144f864949ff313d6bcf9b31dfd5df40313de4",
+      "ok": true,
+      "at": "2026-11-13T14:28:51Z"
+    },
+    "L1": {
+      "launch_sha": "fc6ae61bf4108b3b8adc0dff7c8bc5fb5a68b3b15181df632e041b149f616a27",
+      "worker_sha": "9739fdb2c355e30f494aae8a0e9d077eec2e0807217a87fa117faa430f0425c4",
+      "missing": [],
+      "ok": true,
+      "at": "2026-11-13T14:39:07Z"
+    },
+    "L2": {
+      "launch_sha": "fc6ae61bf4108b3b8adc0dff7c8bc5fb5a68b3b15181df632e041b149f616a27",
+      "worker_sha": "9739fdb2c355e30f494aae8a0e9d077eec2e0807217a87fa117faa430f0425c4",
+      "problems": [],
+      "ok": true,
+      "at": "2026-11-13T14:41:03Z"
+    },
+    "L3": {
+      "launch_sha": "fc6ae61bf4108b3b8adc0dff7c8bc5fb5a68b3b15181df632e041b149f616a27",
+      "worker_sha": "9739fdb2c355e30f494aae8a0e9d077eec2e0807217a87fa117faa430f0425c4",
+      "measured": null,
+      "result": {
+        "state": "FAILED",
+        "error": null
+      },
+      "ok": false,
+      "at": "2026-11-13T14:43:17Z"
+    }
+  },
+  "closed": "2026-11-13: L3 red on worker 9739fdb2 (CUDA out of memory: the in-process session opened outside inference mode); the fixed worker starts a new ladder.json"
+}

@@ -1,0 +1,399 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://explainer-engine.local/schemas/episode_manifest.schema.json",
+  "title": "EpisodeManifest",
+  "description": "Schema for an isolated, self-contained Episode-First production workspace (episodes/<episode_id>/episode.json).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "episode_id",
+    "slug",
+    "title",
+    "historical_period",
+    "geographic_scope",
+    "canonical_characters",
+    "canonical_locations",
+    "target_duration_s",
+    "visual_style_profile",
+    "map_style_profile",
+    "audio_profile",
+    "asset_sources",
+    "allowed_era_tags",
+    "forbidden_era_tags",
+    "created_at",
+    "status"
+  ],
+  "properties": {
+    "schema": {
+      "const": "episode_manifest/1"
+    },
+    "episode_id": {
+      "type": "string",
+      "pattern": "^ep_[a-z0-9_]+$"
+    },
+    "slug": {
+      "type": "string",
+      "minLength": 2
+    },
+    "title": {
+      "type": "string",
+      "minLength": 5
+    },
+    "historical_period": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "era_id",
+        "label",
+        "start_year",
+        "end_year"
+      ],
+      "properties": {
+        "era_id": {
+          "type": "string",
+          "enum": [
+            "prehistoric_pleistocene",
+            "ancient_classical",
+            "medieval",
+            "early_modern",
+            "napoleonic_19th_century",
+            "modern_20th_century",
+            "contemporary_21st_century"
+          ]
+        },
+        "label": {
+          "type": "string"
+        },
+        "start_year": {
+          "type": "integer"
+        },
+        "end_year": {
+          "type": "integer"
+        }
+      }
+    },
+    "geographic_scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "regions",
+        "primary_bbox",
+        "key_coordinates"
+      ],
+      "properties": {
+        "regions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "primary_bbox": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "items": {
+            "type": "number"
+          }
+        },
+        "key_coordinates": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "required": [
+              "lat",
+              "lon",
+              "label"
+            ],
+            "properties": {
+              "lat": {
+                "type": "number"
+              },
+              "lon": {
+                "type": "number"
+              },
+              "label": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "canonical_characters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "character_id",
+          "name",
+          "role"
+        ],
+        "properties": {
+          "character_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          },
+          "voice_profile_id": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "canonical_locations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "location_id",
+          "name",
+          "era_and_geography"
+        ],
+        "properties": {
+          "location_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "era_and_geography": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "target_duration_s": {
+      "type": "number",
+      "minimum": 30.0,
+      "maximum": 3600.0
+    },
+    "demo_duration_s": {
+      "type": "number",
+      "minimum": 30.0,
+      "maximum": 300.0
+    },
+    "visual_style_profile": {
+      "type": "string",
+      "minLength": 3
+    },
+    "map_style_profile": {
+      "type": "string",
+      "minLength": 3
+    },
+    "audio_profile": {
+      "type": "object",
+      "required": [
+        "narrator_voice_id",
+        "sample_rate_hz",
+        "channels",
+        "target_lufs"
+      ],
+      "properties": {
+        "narrator_voice_id": {
+          "type": "string"
+        },
+        "sample_rate_hz": {
+          "type": "integer",
+          "const": 48000
+        },
+        "channels": {
+          "type": "integer",
+          "const": 2
+        },
+        "target_lufs": {
+          "type": "number"
+        }
+      }
+    },
+    "asset_sources": {
+      "type": "object",
+      "required": [
+        "episode_assets_dir",
+        "allow_shared_style_anchors",
+        "strict_episode_isolation"
+      ],
+      "properties": {
+        "episode_assets_dir": {
+          "type": "string"
+        },
+        "allow_shared_style_anchors": {
+          "type": "boolean"
+        },
+        "strict_episode_isolation": {
+          "type": "boolean",
+          "const": true
+        }
+      }
+    },
+    "allowed_era_tags": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    },
+    "forbidden_era_tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "forbidden_semantic_tokens": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "created_at": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "initialized",
+        "in_production",
+        "qa_verified",
+        "completed",
+        "archived"
+      ]
+    },
+    "era_line": {
+      "type": "string",
+      "pattern": "^The world is [^:]+: the only light sources are [^,].*, and everything is made of [^.]+\\.$",
+      "description": "the episode's one era sentence of the preset's era_line_shape, added after the scene in every Gemini Task prompt word for word (GC-22); gemini_task/ep.era_line also refuses never-words"
+    },
+    "look_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9_]+$",
+      "description": "the ONE canonical look of the episode (Q8, D-131); its sentences live in `look`"
+    },
+    "look": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "style_sentence",
+        "face_sentence"
+      ],
+      "description": "GC-03/GC-11: the sentence that opens every picture prompt and the face sentence (adult, angular, weathered; never round or modern-cartoon). Set by the reference round with the creator.",
+      "properties": {
+        "style_sentence": {
+          "type": "string",
+          "minLength": 20
+        },
+        "face_sentence": {
+          "type": "string",
+          "minLength": 20
+        },
+        "approved_by_creator": {
+          "type": "string",
+          "description": "date-time and message of his OK"
+        }
+      }
+    },
+    "image_native_min_long_side": {
+      "type": "integer",
+      "minimum": 512,
+      "default": 1376,
+      "description": "intake gate GC-12: the chat tool's native long side (1376) or more"
+    },
+    "image_min_long_side": {
+      "type": "integer",
+      "minimum": 2048,
+      "default": 2752,
+      "description": "working master long side after the free local 2x upscale (plan 0.7)"
+    },
+    "map_style": {
+      "type": "string",
+      "minLength": 3,
+      "description": "the map system of P4 in the video's look (Q6): relief plate + action layer"
+    },
+    "places": {
+      "type": "object",
+      "description": "map places of the episode (v4.3 P4): id -> lon/lat and the name a label shows",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "lon",
+          "lat"
+        ],
+        "properties": {
+          "lon": {
+            "type": "number",
+            "minimum": -180,
+            "maximum": 180
+          },
+          "lat": {
+            "type": "number",
+            "minimum": -85,
+            "maximum": 85
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "map_look": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "the map plate and action layer in the episode's look (v4.3 P4): palette token names (design/palette.json), relief strength, grain",
+      "properties": {
+        "sea": {
+          "type": "string"
+        },
+        "land": {
+          "type": "string"
+        },
+        "coast": {
+          "type": "string"
+        },
+        "river": {
+          "type": "string"
+        },
+        "border": {
+          "type": "string"
+        },
+        "lake": {
+          "type": "string"
+        },
+        "ink": {
+          "type": "string"
+        },
+        "accent": {
+          "type": "string"
+        },
+        "ash": {
+          "type": "string"
+        },
+        "card": {
+          "type": "string"
+        },
+        "relief_strength": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 2
+        },
+        "grain": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 0.2
+        }
+      }
+    },
+    "run_scope": {
+      "type": "string",
+      "enum": [
+        "sample",
+        "full"
+      ],
+      "description": "Q7 (the creator 2026-11-13, D-138): a sample run or the full episode; the 60 % video gate is REVIEW on a sample and FAIL on a full episode; absent = full"
+    }
+  }
+}

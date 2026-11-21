@@ -1,0 +1,14 @@
+{
+ "_doc": "J5 mouth SHEETS (ვანო 19:41 UTC). Inputs: HF vano1919/tmr-artifacts route_test_2026-11/j5_dialogue/mouth_variants_input/, held to the sha256 below; the grid layout is mouth_grid.py.",
+ "hf": "route_test_2026-11/j5_dialogue/mouth_variants_input",
+ "sheets": {
+  "B_H2_right34": {
+   "png_sha256": "327ff5d588113b9f2f6bbc16f706ed29fbc3542008a4b8f422d53fac02dd0bf7",
+   "prompt": "xworld style, model sheet of one person, three-quarter view right, neutral pose, flat ambient lighting, no cast shadows, plain neutral background. a young scout, wiry, freckled, messy short hair, hooded green cloak, leather jerkin, short bow in hand."
+  },
+  "B_H1_left34": {
+   "png_sha256": "9b14f533ac82d56af807f000389e6bd88ae9cf37995d3a352dfa77ffc7c5aaff",
+   "prompt": "xworld style, model sheet of one person, three-quarter view left, neutral pose, flat ambient lighting, no cast shadows, plain neutral background. a middle-aged commander, broad shoulders, grey-streaked beard, scarred chin, steel breastplate over a dark red tunic, fur-collared cloak."
+  }
+ }
+}

@@ -1,0 +1,122 @@
+{
+ "schema": "film_shots/3",
+ "episode": "napoleon",
+ "fps": 24,
+ "style": {
+  "house_look": "ink_chronicle",
+  "bible_version": "1.5"
+ },
+ "cast": {
+  "nap": {
+   "tag": "a short man in a grey greatcoat with a black bicorne hat"
+  }
+ },
+ "places": {
+  "tent": "a canvas command tent"
+ },
+ "claims": {
+  "C1": {
+   "text": "The road was long.",
+   "source": "fixture"
+  }
+ },
+ "shots": [
+  {
+   "id": "s1",
+   "scene": "S01",
+   "mode": "scene",
+   "beat": "Napoleon tells the khan he will not bow.",
+   "seconds": 4,
+   "frame": {
+    "size": "MCU",
+    "place": "tent"
+   },
+   "blocking": [
+    {
+     "who": "nap",
+     "where": "center",
+     "facing": "camera"
+    }
+   ],
+   "dialogue": {
+    "who": "nap",
+    "to": "room",
+    "text": "I bow to no one."
+   },
+   "source": "keyframe",
+   "tier": "full",
+   "lane": "VIDEO_3D",
+   "archetype": 3,
+   "duration_frames": 96,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "long",
+   "focal_xy": [
+    0.5,
+    0.45
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full",
+   "lipsync": true,
+   "dialogue_cover": "on_screen"
+  },
+  {
+   "id": "s2",
+   "scene": "S01",
+   "mode": "establish",
+   "beat": "The tent at dawn.",
+   "seconds": 3,
+   "frame": {
+    "size": "WS",
+    "place": "tent",
+    "camera": "push_in"
+   },
+   "source": "keyframe",
+   "tier": "hold",
+   "lane": "STILL_3D",
+   "archetype": 11,
+   "duration_frames": 72,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "wide",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "render_profile": "eevee_full"
+  },
+  {
+   "id": "s3",
+   "scene": "S01",
+   "mode": "narrated",
+   "beat": "The march to Moscow on the map.",
+   "seconds": 2,
+   "frame": {
+    "size": "WS",
+    "place": "tent"
+   },
+   "narration": "Six hundred miles of road.",
+   "claims": [
+    "C1"
+   ],
+   "source": "keyframe",
+   "tier": "hold",
+   "lane": "HELPER",
+   "archetype": 12,
+   "duration_frames": 48,
+   "width": 2560,
+   "height": 1440,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null,
+   "helper_archetype": "LOGISTICS_TETHER_AND_ATTRITION"
+  }
+ ]
+}

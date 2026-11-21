@@ -1,3 +1,4 @@
+
 """The variant planner, stage 1b (Blueprint P3, docs/SCRIPT_ENGINE.md VP-01..VP-18, OR-31): two or three priced variants of
 different structure profiles before the scenario, each scored by code, so the creator picks on one card.
 
@@ -20,8 +21,8 @@ import json
 import sys
 from pathlib import Path
 
-from explainer_engine.core import contracts, ledger, spend_caps
-from explainer_engine.scripting import syllables
+from explainer_engine.core import contracts, delivery, ledger, spend_caps
+from explainer_engine.scripting import film_shots, syllables
 from explainer_engine.standards import sourced_rules as SR
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -50,6 +51,10 @@ LANES: dict[str, dict] = {
     "DIALOGUE_CU": {"available": False, "phase": "P6"},
     "DRAMA_BLOCKED_3D": {"available": False, "phase": "P6"},
     "ATMOS_BROLL": {"available": False, "phase": "P6", "note": "UNVERIFIED which phase owns it; P6 is 'shot router, lanes'"},
+    # film_shots/3 (D-97): the Blender lanes; the runtime, the scenes and the router land in ICW-04, ICW-06 and ICW-07 (the
+    # Ink Chronicle roadmap, section 15), the Blueprint's P6 "shot router, lanes"; a HELPER shot reads its catalogue lane above
+    "VIDEO_3D": {"available": False, "phase": "P6", "note": "the Blender clip lane: no Blender renderer in code until ICW-04/ICW-06"},
+    "STILL_3D": {"available": False, "phase": "P6", "note": "the Blender plate lane: no Blender renderer in code until ICW-04/ICW-06"},
 }
 _ARCHETYPE_KEY = {a: k for k, v in LANES.items() for a in v.get("archetypes", [])}
 
@@ -74,7 +79,7 @@ def category(block: dict, cast=None) -> str:
         return block["category"]
     lane, who = block.get("lane"), block.get("who")
     cast_ok = bool(who) if cast is None else who in cast
-    if block.get("tier") == "hold" or lane == "STILL_HOLD":
+    if block.get("tier") == "hold" or lane in ("STILL_HOLD", "STILL_3D"):
         return "hold"
     if lane == "MAP":
         return "map_pure"
@@ -95,8 +100,14 @@ def category(block: dict, cast=None) -> str:
 
 
 def segments_from_film_shots(doc: dict) -> list[dict]:
-    """The shot cards grouped by scene: one block per shot, its category by ``category`` (film_shots/1 has no lanes)."""
+    """The shot cards grouped by scene: one block per shot, its category by ``category`` (film_shots/1 has no lanes). On
+    film_shots/3 a HELPER shot is placed by its catalogue visual (``helper_archetype``: its lane MAP or COMPENSATOR and its
+    catalogue number, the archetype the rotation rules VP-06/VP-07 count); the Ink Chronicle archetype 1-20 of a Blender
+    shot is another numbering (roadmap 7.3) and never enters them."""
+    from explainer_engine.edit import visual_compensator as VC
+
     cast = set(doc.get("cast", {}))
+    v3 = doc.get("schema") == film_shots.V3
     order: list[str] = []
     segs: dict[str, dict] = {}
     for s in doc["shots"]:
@@ -106,7 +117,11 @@ def segments_from_film_shots(doc: dict) -> list[dict]:
         who = (s.get("action") or {}).get("who")
         block = {"id": s["id"], "seconds": float(s["seconds"]), "tier": s.get("tier"), "mode": s.get("mode"), "who": who,
                  "lane": s.get("lane"), "shots": 1}
-        if s.get("archetype") is not None:
+        if v3 and s.get("lane") == "HELPER":
+            block["tier"] = None  # a HELPER card's tier is ``hold`` by the migration; its category is its catalogue lane's
+            block["lane"] = VC.lane_of(s["helper_archetype"])
+            block["archetype"] = VC.archetype(s["helper_archetype"])["number"]
+        elif not v3 and s.get("archetype") is not None:
             block["archetype"] = s["archetype"]
         block["category"] = category(block, cast)
         narr = len((s.get("narration") or "").split())
@@ -129,7 +144,7 @@ def segments_from_script(doc: dict) -> list[dict]:
             secs = syllables.seconds(ln["text"], pause_after=float(ln.get("pause_after", 0) or 0))
             words = len(ln["text"].split())
             if ln.get("speaker"):
-                blocks.append({"category": "scene", "who": ln["speaker"], "seconds": secs, "words": {"character": words}})
+                blocks.append({"category": "scene", "who": ln["speaker"], "seconds": secs, "words": {"character": words if ln.get("voiced", True) is not False else 0}})
             else:
                 blocks.append({"category": "compensator", "seconds": secs, "words": {"narrator": words}})
         out.append({"id": seg["id"], "function": (seg.get("drama") or {}).get("function"), "blocks": blocks,
@@ -202,10 +217,10 @@ def dynamics(segments: list[dict], prof: dict, *, template: str = "D") -> dict:
     central = [t for t in turns if by_id[t].get("function") in CENTRAL_FUNCS]
     if not central and template == "D" and len(turns) >= 4:
         central = [turns[3]]  # template D row 10 is the central scene (docs/STORY_ENGINE.md)
-    # narrator share: spoken words when the blocks carry them, else the seconds that are not played
+    # Speech share is measured only from audible narrator/character words; never infer it from visual or played runtime.
     nw = sum((b.get("words") or {}).get("narrator", 0) for _, b, _ in flat)
     cw = sum((b.get("words") or {}).get("character", 0) for _, b, _ in flat)
-    narrator, basis = ((nw / (nw + cw), "words") if nw + cw else (1.0 - share[PLAYED] if total else 0.0, "seconds"))
+    narrator, basis = ((nw / (nw + cw), "audible_words") if nw + cw else (None, "unknown"))
     shots_band = SR.T("BP-107", "shots_per_min")
     default_rate = sum(shots_band) / 2
     planned = sum(b.get("shots") or max(1, round(b["seconds"] * default_rate / 60)) for _, b, _ in flat)
@@ -220,7 +235,7 @@ def dynamics(segments: list[dict], prof: dict, *, template: str = "D") -> dict:
             "adjacent_repeats": adjacent, "family_overruns": over_family, "turns": turns, "turn_played_share": turn_played,
             "turn_has_played": turn_has_who, "turn_played_s": played_s, "central": central, "narrator_share": narrator,
             "narrator_basis": basis, "planned_shots": planned, "shots_per_min": planned / (total / 60) if total else 0.0,
-            "kuleshov_over": kuleshov}
+            "kuleshov_over": kuleshov, "lane_share": film_shots.lane_shares([b for _, b, _ in flat])}
 
 
 # --- the checks ------------------------------------------------------------------------------------------------------------
@@ -240,9 +255,10 @@ def turn_findings(dyn: dict, prof: dict) -> list[dict]:
 def checks(dyn: dict, prof: dict) -> list[dict]:
     """VP-02..VP-11 (no lane table here: ``lane_findings``), VP-16..VP-18 of a plan's dynamics."""
     out: list[dict] = []
-    if dyn["share"]["map_pure"] > SR.T("BP-141", "map_pure_max") + 1e-9:
-        _f(out, "VP-02", "map_pure", f"pure map is {dyn['share']['map_pure']:.0%} of the episode (at most "
-           f"{SR.T('BP-141', 'map_pure_max'):.0%}, BP-141)", sev("BP-141"))
+    map_max = film_shots.LANE_SHARE["helper"] + film_shots.LANE_TOLERANCE
+    if dyn["share"]["map_pure"] > map_max + 1e-9:
+        _f(out, "VP-02", "map_pure", f"pure map is {dyn['share']['map_pure']:.0%} of the episode (a helper visual: at most "
+           f"{map_max:.0%}, BP-109)", sev("BP-109"))
     if dyn["non_character"] > prof["non_character_max"] + 1e-9:
         _f(out, "VP-03", "non_character", f"{dyn['non_character']:.0%} of the episode has no played block (this profile: at most "
            f"{prof['non_character_max']:.0%}, BP-141)", sev("BP-141"))
@@ -262,9 +278,10 @@ def checks(dyn: dict, prof: dict) -> list[dict]:
         _f(out, "VP-10", where, f"one compensator picture held longer than {SR.T('BP-141', 'kuleshov_max_s'):g} s (BP-141)",
            sev("BP-141"))
     lo, hi = SR.T("BP-105", "narrator_share")
-    if not lo <= dyn["narrator_share"] <= hi:
-        _f(out, "VP-16", "narrator", f"the narrator has about {dyn['narrator_share']:.0%} ({dyn['narrator_basis']}); aim {lo:.0%}-{hi:.0%} "
-           "(BP-105, a template D band: a tactical profile narrates more by design)", sev("BP-105"))
+    if dyn["narrator_share"] is not None and not lo <= dyn["narrator_share"] <= hi:
+        _f(out, "VP-16", "narrator", f"the narrator has about {dyn['narrator_share']:.0%} ({dyn['narrator_basis']}); aim "
+           f"{SR.T('BP-105', 'nominal_narrator_share'):.0%}, band {lo:.0%}-{hi:.0%} (BP-105, a template D band: a tactical "
+           "profile narrates more by design)", sev("BP-105"))
     if dyn["central"] and dyn["turn_played_s"]:
         top = max(dyn["turn_played_s"], key=dyn["turn_played_s"].get)
         c = dyn["central"][0]
@@ -274,9 +291,8 @@ def checks(dyn: dict, prof: dict) -> list[dict]:
     lo, hi = SR.T("BP-107", "shots_per_min")
     if not lo <= dyn["shots_per_min"] <= hi:
         _f(out, "VP-18", "shots", f"{dyn['shots_per_min']:.1f} planned shots a minute (band {lo}-{hi}, BP-107)", sev("BP-107"))
-    if dyn["share"]["hold"] > SR.T("BP-109", "hold_share_max") + 1e-9:
-        _f(out, "VP-18", "hold", f"{dyn['share']['hold']:.0%} of the plan is held stills (at most "
-           f"{SR.T('BP-109', 'hold_share_max'):.0%}, BP-109)", sev("BP-109"))
+    for lane, detail in film_shots.lane_share_findings(dyn["lane_share"]):
+        _f(out, "VP-18", lane, detail, sev("BP-109"))
     return out
 
 
@@ -466,7 +482,7 @@ def variant_findings(variant: dict, *, speeds: dict | None = None, caps: dict | 
 def summarize(found: list[dict], dyn: dict) -> dict:
     """The derived numbers a /2 document stores per variant (``check_file`` recomputes them)."""
     return {"dynamics": {**{f"share_{k}": round(v, 3) for k, v in dyn["share"].items()},
-                         "non_character": round(dyn["non_character"], 3), "narrator_share": round(dyn["narrator_share"], 3),
+                         "non_character": round(dyn["non_character"], 3), "narrator_share": round(dyn["narrator_share"], 3) if dyn["narrator_share"] is not None else None,
                          "map_run_max_s": round(dyn["map_run_max_s"], 1), "non_scene_run_max_s": round(dyn["non_scene_run_max_s"], 1),
                          "shots_per_min": round(dyn["shots_per_min"], 1)},
             "scores_code": score(found), "eligible": not any(f["severity"] == "FAIL" for f in found),
@@ -540,7 +556,7 @@ def brief(dossier_dir: Path | str, *, traits: dict | None = None) -> dict:
             "lanes": {k: {"available": v["available"], **({"phase": v["phase"]} if "phase" in v else {})} for k, v in LANES.items()},
             "caps": {"per_episode": caps.get("per_episode"), "per_pod_usd": caps.get("runpod", {}).get("per_pod_usd"),
                      "stop_fraction": ledger.STOP_FRACTION},
-            "job_speeds_measured": JOB_SPEEDS.exists(), "template_d_target_s": 900}
+            "job_speeds_measured": JOB_SPEEDS.exists(), "episode_runtime_s": delivery.long_minutes() * 60}
 
 
 def napoleon_variants(*, speeds: dict | None = None, caps: dict | None = None) -> dict:

@@ -5,6 +5,10 @@ description: Choose and apply an editing style for a Crossworld Theories video (
 
 # Editing style
 
+**v4.3 episode-first (2026-11-12, D-131), read first:** the shares are 10 % `map_action`, 30 % `still_25d`, 60 % `video` by duration (RT-04; LTX-2.5 distilled, D-132; the cuts inside a scene follow the video lane VL-01..VL-13, docs/VIDEO_LANE.md; every visible event has its audio decision, AV-01..AV-08, `episode/events.py`); the cut plan and its transitions are blended from the two clips' boundary frames and assembled in chunks by the runner's G9 (`production/assemble.assemble_shot_clips`, RN-05); one sound level for every route (SP-02, BP-186). The editing judgement below stays; the VIDEO_3D / STILL_3D / HELPER lane text is legacy for a v4.3 episode.
+
+**Ink Chronicle lanes (legacy since 2026-11-12, banner 2026-11-13: the D-116 route of the older episodes; D-97, 2026-11-05):** the lanes are VIDEO_3D (Blender clip), STILL_3D (Blender plate, held or moved by a camera) and HELPER (Python maps, HUD, tableaux); the editing rules below apply to all three; the Qwen keyframe, LTX clip, sprite and 2.5D-still wording on this page is the legacy image-generation route (D-43, D-80, D-105), kept for the episodes already made.
+
 **Episode rulebook first (D-51, OR-11):** read `python -m explainer_engine.standards brief <episode>/episode_rules.json --role edit` and follow it; legal, licence, likeness and art-direction questions are decided there (docs/EPISODE_STANDARDS.md), never invented in this skill. A conflict goes back to the orchestrator.
 
 Rules: `docs/EDITING.md` (ED-01..ED-07). This page is the judgement behind them. Sources of the research (2026-10-17):
@@ -153,6 +157,11 @@ The numbers of this skill live in the registry (D-59); the code reads them with 
   beat counts only when it is tied to a narration word (BP-93): never add a prop or ring to beat a clock; fix a long still
   with a cut or a move the story asks for, or accept the REVIEW.
 - BP-41: one scripted pattern interrupt in the 25-35 s window (a cut with a new element).
+- BP-187 / BP-188 (2026-11-12): a line ends 0.5 s before its clip ends. At a cut, the sound depends on where it came from.
+  If picture and sound came from one generation (LTX), cut both on the same frame with no overlap: a crossfade under a hard cut
+  doubles the speech or moves it off the lips. Give each side only a 30 ms de-click fade, and drop a chained clip's repeated
+  first frame. If the sound was made apart (ElevenLabs, narration, beds), it runs on its own tracks across the cut over a
+  continuous bed. A line may lead or trail as a J/L split, and two different beds crossfade.
 - BP-116..BP-123: room tone, J/L at scene boundaries, the masking gap, composite hits, the pre-reveal vacuum, the stereo
   field and same-colour density, acoustic perspective, motifs and the beat grid (all hypothesis, REVIEW; the sound
   checklist above names each one's planned validator, `audio/sound_director.py`, P4).

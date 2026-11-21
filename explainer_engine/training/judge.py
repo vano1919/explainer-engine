@@ -1,3 +1,4 @@
+
 """During and after a LoRA run: score every checkpoint and decide CONTINUE / STOP (docs/LORA_TRAINING.md LT-20..LT-45).
 
 Pure numpy on embeddings and frames, so it is tested without a GPU; ``embed.py`` turns pictures into embeddings.

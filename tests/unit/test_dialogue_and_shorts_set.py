@@ -135,3 +135,23 @@ def test_words_checks_each_voice_on_its_own_turns(tmp_path, monkeypatch):
     assert [t[0] for t in seen["turns"]] == ["narrator", "einstein", "narrator"]
     lens = [w["words"][i]["s"] for i, tk in enumerate(S.tokens(d)) if tk["seg"] == 1 and tk["line"] == 1]
     assert abs(seen["turns"][1][1] - lens[0]) < 0.3 and rep["voice_check"] == []
+    assert rep["narrator_polish"] is None  # a conversation is not the narrator's read: no polish
+
+
+@pytest.mark.skipif(shutil.which("ffmpeg") is None, reason="needs ffmpeg")
+def test_words_polishes_a_single_narrator_read(tmp_path):
+    d, sr, rng = dialogue(), 48000, np.random.default_rng(4)
+    for seg in d["segments"]:
+        for line in seg["lines"]:
+            line.pop("speaker", None)
+    assert not S.has_dialogue(d)
+    w = words_for(d)
+    x = rng.normal(0, 3e-4, int(w["duration"] * sr))
+    for ww in w["words"]:
+        a, b = int(ww["s"] * sr), int(ww["e"] * sr)
+        x[a:b] = _voice(b - a, sr, True, rng)
+    _wav(tmp_path / "read.wav", x)
+    tr = tmp_path / "scribe.json"
+    tr.write_text(json.dumps({"words": [{"text": ww["w"], "start": ww["s"], "end": ww["e"]} for ww in w["words"]]}))
+    rep = CLI.cmd_words(d, [tmp_path / "read.wav"], tmp_path / "out", tr)
+    assert rep["narrator_polish"]["chain"].startswith("volume=-0.6dB") and not (tmp_path / "out" / "narration.polish.wav").exists()

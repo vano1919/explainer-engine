@@ -1,3 +1,4 @@
+
 """Measures the pictures of one xworld_v2 round test with Qwen3-VL-8B (DSG-style questions, arXiv 2310.18235): for every shot
 its own yes/no checks (did the change happen, who is there, the shot's content), "same place as shot 0?", the shot size
 (close / medium / wide) and "which era are the people from?" against the scene's era words (ვანო 13:26: a viewer must see

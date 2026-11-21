@@ -1,3 +1,4 @@
+
 """The craft checklists (P3b, docs/CRAFT_CURRICULUM.md): one JSON per department, rendered into its skill page.
 
 Each ``craft_checklists/<dept>.json`` has the shape of ``training/video_criteria.json`` (``about``, ``criteria[]`` with

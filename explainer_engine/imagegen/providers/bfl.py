@@ -1,3 +1,4 @@
+
 """Black Forest Labs API: FLUX 3 Image Klein (and FLUX 3 Image) through the async task endpoint. stdlib only.
 
 Read 2026-10-22 from docs.bfl.ml (flux_3/flux3_image_klein.md, api-reference/utility/generate-an-image-with-flux-3-klein,
