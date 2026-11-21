@@ -332,7 +332,10 @@ def test_stop_checks_the_active_phase_checklist(repo, capsys):
     assert "required path missing" in err and "PROGRESS" in err
     (repo / "docs/research").mkdir()
     (repo / "docs/research/AGENT_AB_2026-10.md").write_text("x", encoding="utf-8")
-    (repo / "docs/PROGRESS.md").write_text("## P0c done\n", encoding="utf-8")
+    (repo / "docs/PROGRESS.md").unlink(missing_ok=True)
+    assert hooks.stop({}, repo) == 2
+    (repo / "docs/progress.d").mkdir(exist_ok=True)
+    (repo / "docs/progress.d/2026-11-21-x.md").write_text("## 2026-11-21 — P0c done\n- x\n", encoding="utf-8")
     assert hooks.stop({}, repo) == 0
 
 
