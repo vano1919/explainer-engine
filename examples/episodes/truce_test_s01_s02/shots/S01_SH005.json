@@ -1,0 +1,14 @@
+{
+ "id": "S01_SH005",
+ "photo": "../media/photos/S01_SH005.jpeg",
+ "film_file": "../episode_film.json",
+ "seconds": 5.0,
+ "camera": {
+  "move": "zoom_in"
+ },
+ "living": {
+  "snow": 1.0,
+  "mist": 0.3,
+  "sky_amp": 0.2
+ }
+}

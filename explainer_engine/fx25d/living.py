@@ -56,6 +56,20 @@ def remap(img, mx, my, interp=cv2.INTER_LINEAR, **kw):
     return _remap(img, np.ascontiguousarray(mx, dtype=np.float32), np.ascontiguousarray(my, dtype=np.float32), interp, **kw)
 
 
+MOVES = ("truck", "zoom_in", "zoom_out", "truck_zoom_in", "truck_zoom_out")   # the owner's five camera moves (2026-11-20); no orbit, no static
+
+
+def check_camera(camera):
+    mv = camera.get("move")
+    if mv not in MOVES: raise ValueError(f"camera move must be one of {MOVES}, got {mv!r}")
+    bad = sorted(set(camera) - {"move", "lateral", "push", "dir", "ease"})
+    if bad: raise ValueError(f"camera: unknown keys {bad} (no orbit, tilt or rotation)")
+    if camera.get("ease", "smoothstep") != "smoothstep": raise ValueError("camera ease must be smoothstep")
+    d = camera.get("dir", 1)
+    if d not in (1, -1): raise ValueError("camera dir must be 1 or -1")
+    return dict(move=mv, lateral=float(camera.get("lateral", LAT)), push=float(camera.get("push", PUSH)), dir=d)
+
+
 def box(b): return (int(b[0] * SX), int(b[1] * SY), int(b[2] * SX), int(b[3] * SY))
 
 
@@ -84,12 +98,16 @@ INV = {
 
 
 class Shot:
-    def __init__(self, frame, seconds=5.0, drift=False, particles=True, pic=None, depth=None, faces=None, mouths=None, inventory=None, person_mask=None):
+    def __init__(self, frame, seconds=5.0, drift=False, particles=True, pic=None, depth=None, faces=None, mouths=None, inventory=None, person_mask=None, camera=None):
         """pic: BGR image array or path; depth: metres, array or .npy path (same picture); faces: [(x0, y0, x1, y1)] in 1280x720 pixels;
         mouths: [(x, y, score)]; person_mask: extra person zones for the measurement, an image array or path (non-zero = person; resized to 1280x720), unioned
-        with the inventory silhouettes and the faces; it never changes the picture, only Shot.pmask / pmask_f; inventory: dict like INV[frame] (default INV[frame])."""
+        with the inventory silhouettes and the faces; it never changes the picture, only Shot.pmask / pmask_f; inventory: dict like INV[frame] (default INV[frame]);
+        camera: None keeps the legacy ``drift`` move; else {"move": one of MOVES, "lateral": share of W (default LAT), "push": zoom share (default PUSH), "dir": 1 or -1 (truck to the right / left)}
+        and the shot always moves (``drift`` is then true)."""
         _init_noise()
         self.frame, self.inv, self.drift, self.particles = frame, (inventory if inventory is not None else INV[frame]), drift, particles
+        self.camera = None if camera is None else check_camera(camera)
+        if self.camera is not None: self.drift = True
         self.n = int(seconds * FPS); self.secs = seconds
         pic = cv2.imread(str(pic)) if isinstance(pic, (str, bytes)) or hasattr(pic, "__fspath__") else pic
         if pic is None: raise ValueError("pic: an image array or a readable path is required")
@@ -183,6 +201,10 @@ class Shot:
     # ---- camera drift with depth parallax (D-139: slow push + lateral over the shot)
     def cam(self, t):
         u = t / self.secs; e = u * u * (3 - 2 * u)
+        if self.camera is not None:
+            c = self.camera; mv = c["move"]; lat = c["dir"] * c["lateral"] * W * (e - 0.5) if "truck" in mv else 0.0
+            push = c["push"] * e if mv.endswith("zoom_in") else -c["push"] * e if mv.endswith("zoom_out") else 0.0   # zoom_out: the zoom shrinks over the move (the base zoom is solved for the widest frame)
+            return lat, push
         return (LAT * W * (e - 0.5), PUSH * e) if self.drift else (0.0, 0.0)   # lateral px at the focus depth, push share at the focus depth
 
     def maps(self, t, z0):

@@ -1,0 +1,78 @@
+{
+ "id": "truce_test_s01_s02_v2",
+ "film_file": "episode_film.json",
+ "durations": "media/reads/durations.json",
+ "audio_dir": "media/reads",
+ "shots": [
+  {
+   "id": "S01_SH001",
+   "spec": "shots/S01_SH001.json",
+   "lines": [
+    "S01_L001"
+   ]
+  },
+  {
+   "id": "S01_SH002",
+   "spec": "shots/S01_SH002.json",
+   "lines": [
+    "S01_L002"
+   ]
+  },
+  {
+   "id": "S01_SH003",
+   "spec": "shots/S01_SH003.json",
+   "lines": [
+    "S01_L003"
+   ]
+  },
+  {
+   "id": "S01_SH004",
+   "spec": "shots/S01_SH004.json",
+   "lines": [
+    "S01_L004"
+   ]
+  },
+  {
+   "id": "S01_SH005",
+   "spec": "shots/S01_SH005.json",
+   "lines": [
+    "S01_L005"
+   ]
+  },
+  {
+   "id": "S02_SH001",
+   "spec": "shots/S02_SH001.json",
+   "lines": [
+    "S02_L001"
+   ]
+  },
+  {
+   "id": "S02_SH002",
+   "spec": "shots/S02_SH002.json",
+   "lines": [
+    "S02_L002"
+   ]
+  },
+  {
+   "id": "S02_SH003",
+   "spec": "shots/S02_SH003.json",
+   "lines": [
+    "S02_L003"
+   ]
+  },
+  {
+   "id": "S02_SH004",
+   "spec": "shots/S02_SH004.json",
+   "lines": [
+    "S02_L004"
+   ]
+  },
+  {
+   "id": "S02_SH005",
+   "spec": "shots/S02_SH005.json",
+   "lines": [
+    "S02_L005"
+   ]
+  }
+ ]
+}

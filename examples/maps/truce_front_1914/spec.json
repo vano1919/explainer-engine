@@ -1,0 +1,5 @@
+{"kind": "map", "size": [1280, 720], "fps": 24, "seconds": 6.0, "line_geojson": "front.geojson", "line_t": [0.4, 5.4],
+ "counter": null, "date_chip": [{"t": 0.0, "text": "1914"}], "towns": [],
+ "footnote": "Map data: OpenStreetMap contributors, OpenFreeMap; front: West Point map (public domain), approximate",
+ "film_file": "episode_film.json", "font": "preset", "center": [4.9, 49.4], "zoom": 6.25,
+ "camera": {"move": "zoom_in", "zoom_from": 6.1, "zoom_to": 6.4, "ease": "smoothstep"}}
