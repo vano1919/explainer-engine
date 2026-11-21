@@ -173,7 +173,8 @@ class Canvas:
         pts = self._pts(pts)
         if len(pts) < 2:
             return
-        width_px = max(1, self.px(width))
+        from explainer_engine.maps.render_presets import line_scale  # MAP_PRESET switch; 1.0 when unset
+        width_px = max(1, self.px(width * line_scale()))
         if dash is not None:
             on, off = dash[0] * self.ss, dash[1] * self.ss
             if not all(math.isfinite(v) for v in (on, off)) or on <= 0 or off < 0:
@@ -203,7 +204,8 @@ class Canvas:
     face = "ui"   # "map": the map face (Inter); set by the map renderers
 
     def text(self, xy, s: str, size: float, fill, anchor: str = "la", stroke: float = 0, stroke_fill=None):
-        f = font(self.px(size), self.face)
+        from explainer_engine.maps.render_presets import label_scale  # MAP_PRESET switch; 1.0 when unset
+        f = font(self.px(size * label_scale()), self.face)
         self.d.text((xy[0] * self.ss, xy[1] * self.ss), s, font=f, fill=fill, anchor=anchor,
                     stroke_width=self.px(stroke) if stroke else 0, stroke_fill=stroke_fill)
 

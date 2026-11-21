@@ -64,3 +64,23 @@ def colours(preset: dict) -> tuple[str, str]:
         if not isinstance(value, str) or not _HEX_RE.match(value):
             raise ValueError(f"Invalid hex colour: {value!r}")
     return fill, halo
+
+
+def _scales() -> tuple[float, float]:
+    """(line, label) multipliers relative to the balanced preset; (1.0, 1.0) when MAP_PRESET is unset, so renders are unchanged."""
+    import os
+    if os.environ.get("MAP_PRESET") in (None, ""):
+        return 1.0, 1.0
+    base = get_map_preset("balanced")
+    chosen = active_map_preset()
+    return chosen["primary_line_pct"] / base["primary_line_pct"], chosen["label_cap_pct"] / base["label_cap_pct"]
+
+
+def line_scale() -> float:
+    """Width multiplier for map lines (1.0 unless MAP_PRESET is set)."""
+    return _scales()[0]
+
+
+def label_scale() -> float:
+    """Text size multiplier for map labels (1.0 unless MAP_PRESET is set)."""
+    return _scales()[1]
