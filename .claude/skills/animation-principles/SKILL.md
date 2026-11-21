@@ -3,6 +3,8 @@ name: animation-principles
 description: Judge and direct the character animation of a Crossworld Theories episode by the twelve principles of animation (squash and stretch, anticipation, staging, pose to pose, follow-through, slow in/out, arcs, secondary action, timing, exaggeration, solid drawing, appeal), plus moving holds, blinks, planted feet, lip-sync and identity. Use for every keyframe/next-pose pair, every LTX clip review, and whenever a clip looks stiff, floaty, frozen, off-model or out of sync.
 ---
 
+Legacy (D-131, 2026-11-12): RunPod, Qwen-Image and LoRA routes are retired for v4.3 episodes; the text below describes them only for episodes made before that date.
+
 # Animation principles: characters that move like they think
 
 **Ink Chronicle (D-96, 2026-11-05):** the twelve principles are medium-neutral and stay; on the Blender path they are keyed into the rig's animation and checked on the rendered clip; the Qwen keyframe, LTX clip, sprite and 2.5D-still wording on this page is the legacy image-generation route (D-43, D-80, D-105), kept for the episodes already made.

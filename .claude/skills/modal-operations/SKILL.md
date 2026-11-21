@@ -3,6 +3,8 @@ name: modal-operations
 description: Read-only capacity, per-second GPU/CPU/Memory cost estimation, Starter $30/month credit accounting, and Volume persistence rules for Modal serverless GPU containers via explainer_engine/cloud/providers/modal_provider.py.
 ---
 
+Legacy (D-131, 2026-11-12): RunPod, Qwen-Image and LoRA routes are retired for v4.3 episodes; the text below describes them only for episodes made before that date.
+
 > **Route-scoped since D-116 (2026-11-06):** LTX and Qwen are named here only as GPU workloads of the J2/J4 routes and of the Qwen assets of J5 (D-116); provider runs stay dry-run until the creator approves caps in `config/spend_caps.json` (D-56).
 
 # Modal Serverless GPU Operations (`explainer_engine/cloud/providers/modal_provider.py`)

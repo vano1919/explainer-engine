@@ -3,6 +3,8 @@ name: cartography
 description: Design the maps of a Crossworld Theories episode (campaign maps, fronts, routes, territories, animated map moves) so the viewer reads them at a glance - simple frames, one change at a time, labels that never fight the lines, colour-blind-safe palettes, a date whenever time moves, and our own type. Use for every map shot, map plate, map animation or HUD-over-map, and whenever a map looks busy, unreadable or like a GIS screenshot.
 ---
 
+Legacy (D-131, 2026-11-12): RunPod, Qwen-Image and LoRA routes are retired for v4.3 episodes; the text below describes them only for episodes made before that date.
+
 # Cartography: maps the eye reads in one look
 
 **v4.3 episode-first (2026-11-12, D-131), read first:** a map is route `map_action` (about 10 % of the runtime by duration, RT-04): `maps/` draws it on real relief, letter-free (CMP-01), with an action layer in the video's look, each action started on its spoken word (`actions[].at_word`, RT-03). The reading rules below stay; the Ink Chronicle style-bridge, Blender terrain and Qwen notes below are legacy for a v4.3 episode.

@@ -3,6 +3,8 @@ name: lora-training
 description: How the channel trains and tests its LoRAs (since D-80, 2026-10-26: one LoRA on Qwen-Image-2.1 for the Rick-and-Morty-learned style and the scene sequence; older 2512/Edit-2511/wldnk notes are history) - the G1-G6 protocol, the free tools in explainer_engine.training, settings that worked and the lessons that cost money. Use before planning, launching, judging or comparing any LoRA run.
 ---
 
+Legacy (D-131, 2026-11-12): RunPod, Qwen-Image and LoRA routes are retired for v4.3 episodes; the text below describes them only for episodes made before that date.
+
 # LoRA training and testing
 
 **Legacy, not on the Blender path (D-96, D-105, 2026-11-05):** LoRA training belongs to the legacy image-generation route; no Ink Chronicle work package trains a LoRA.

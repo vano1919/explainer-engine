@@ -3,6 +3,8 @@ name: editing-style
 description: Choose and apply an editing style for a Crossworld Theories video (cuts, dissolves, zoom continuity, sound layering, seams, speed, a mysterious look at no cost) and avoid the common editing mistakes. Use for every cut plan, every assembly, every complaint about jumps, loudness, zoom or too many sounds.
 ---
 
+Legacy (D-131, 2026-11-12): RunPod, Qwen-Image and LoRA routes are retired for v4.3 episodes; the text below describes them only for episodes made before that date.
+
 # Editing style
 
 **v4.3 episode-first (2026-11-12, D-131), read first:** the shares are 10 % `map_action`, 30 % `still_25d`, 60 % `video` by duration (RT-04; LTX-2.5 distilled, D-132; the cuts inside a scene follow the video lane VL-01..VL-13, docs/VIDEO_LANE.md; every visible event has its audio decision, AV-01..AV-08, `episode/events.py`); the cut plan and its transitions are blended from the two clips' boundary frames and assembled in chunks by the runner's G9 (`production/assemble.assemble_shot_clips`, RN-05); one sound level for every route (SP-02, BP-186). The editing judgement below stays; the VIDEO_3D / STILL_3D / HELPER lane text is legacy for a v4.3 episode.

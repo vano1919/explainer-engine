@@ -3,6 +3,8 @@ name: shot-visuals
 description: Plan the pictures of a Crossworld Theories video so they carry stakes, conflict and named heroes instead of generic nature scenery. Use for every new shot list, every pod prompt, every plate or sprite request, and whenever a contact sheet looks like a picnic, a brochure, or "scientists seen from behind".
 ---
 
+Legacy (D-131, 2026-11-12): RunPod, Qwen-Image and LoRA routes are retired for v4.3 episodes; the text below describes them only for episodes made before that date.
+
 # Shot visuals: stakes in every frame, heroes you can recognise
 
 **v4.3 episode-first (2026-11-12, D-131), read first:** every shot carries one route with its reason (`map_action`, `still_25d`, `video`; RT-01..RT-05 in docs/EPISODE_FIRST.md, `episode/router`). Pictures come from the Gemini chat's turn packs and pass the intake gates (GC-01..GC-17, docs/GEMINI_CONSISTENCY_RULES.md). A `video` shot (LTX-2.5 distilled on Modal, D-132; the old name `wan` still reads as `video`) is where a body performs or a hero speaks: its `edit_plan` (continuation from the clip before, coverage drawn from the scene master, or an insert; VL-01..VL-13, docs/VIDEO_LANE.md), a start picture unless it is a continuation, a motion prompt free of dialogue, `fallback_motion_imitation` (RT-07). A `still_25d` shot moves in at least two families (RT-06, BP-185). The stakes-and-heroes rules below stay; the Blender `shot_spec/2`, sprite and pod-prompt text below is legacy for a v4.3 episode (the tools are retired, Q10).

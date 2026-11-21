@@ -17,19 +17,18 @@ Facts (prices, model names, peak hours, limits) live in `config/deepseek.json`; 
 | Step | Who | Cost rule |
 |---|---|---|
 | Plan a topic, cut it into tasks | Claude (the model the coordinator chose) | one plan per topic, tasks of 1-3 files |
-| Check the plan's structure | Gemini Neon, high | ONE prompt per topic, only for a topic of 5+ tasks or a new design |
+| Check the plan's structure | Claude Fable 5.2, medium, API (class fable-plan) | routine checks; Gemini Neon only for a very hard plan, never for code |
 | Write the brief | Claude | 25 lines at most (section 3) |
 | Write code, tests, scripts, documents, drafts | DeepSeek Flash | the default; Pro by section 4 |
 | Run the tests, feed failures back | the tool itself | no Claude turn inside the loop |
 | Review each diff | DeepSeek Pro (`review`) | automatic, cents; only for a diff over 40 changed lines or a risky area |
 | Check the result | Claude | the summary line, the diff stat, the review verdict (section 5) |
-| Final check of a finished batch or PR | Gemini Neon, high | ONE bundle per PR, never per task |
-| Hard code (tier 3, section 4) | Claude Opus 5.5, medium effort, through the Claude API | never opened by a thread: ask the coordinator for a card first |
+| Final check of a finished batch or PR | Claude Fable 5.2, medium, API (class fable-plan) | ONE bundle per PR, never per task; Gemini Neon only for a very hard plan |
+| Hard code (tier 3, section 4) | Claude Opus 5.5, medium effort, through the Claude API; a hard code review at high effort only when needed | never opened by a thread: ask the coordinator for a card first |
 | Merge, money, governance | Claude and the creator | never delegated |
 
 Gemini is kept out of the per-task loop on purpose: its chat needs a browser driver (Claude tokens on every prompt) and its quota
-is needed for pictures. Neon gets at most the two prompts above per topic; Hydrogen is only the fallback writer when DeepSeek is
-down or its ceiling is reached.
+is needed for pictures. Gemini Neon is used only for a very hard plan and never writes or checks code; routine checks go to Fable 5.2 through the API. Hydrogen is only the fallback writer when DeepSeek is down or its ceiling is reached.
 
 ## 2. The loop
 

@@ -3,6 +3,8 @@ name: cloud-provider-selection
 description: Deterministic, dry-run multi-provider GPU ranking across Hyperstack, Modal, and RunPod via explainer_engine/cloud/providers/selector.py. Enforces VRAM, RAM, disk, stock freshness, RP-09 setup-share, and proposed budget caps without creating live resources.
 ---
 
+Legacy (D-131, 2026-11-12): RunPod, Qwen-Image and LoRA routes are retired for v4.3 episodes; the text below describes them only for episodes made before that date.
+
 > **Route-scoped since D-116 (2026-11-06):** LTX and Qwen are named here only as GPU workloads of the J2/J4 routes and of the Qwen assets of J5 (D-116); provider runs stay dry-run until the creator approves caps in `config/spend_caps.json` (D-56).
 
 # Cloud Provider Selection (`explainer_engine/cloud/providers/selector.py`)
