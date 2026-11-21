@@ -19,7 +19,7 @@ NAMES = sorted(p.stem for p in AGENTS.glob("*.md"))
 def test_config_validates_and_covers_every_agent_file():
     governance.validate(CFG)
     assert set(CFG["agents"]) == set(NAMES)
-    assert len(CFG["classes"]) == 18
+    assert len(CFG["classes"]) == 19  # 19 since opus-code (cdc763d, owner card); fable-plan is NOT here: the validator allows four aliases, owner decides
 
 
 @pytest.mark.parametrize("name", NAMES)
