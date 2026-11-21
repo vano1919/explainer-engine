@@ -7,7 +7,7 @@ effort (verified 2026-10-29 on the hooks page); they deny, add context or log.
     post-edit   py_compile / json / config / docs_lint findings fed back after an edit
     pre-switch  an in-thread model switch without the creator's recorded word; post-switch logs it
     prompt      one reminder line on every prompt
-    stop        a done phase without its routing_log line, PROGRESS entry, files or tests; usage backup at 95 %
+    stop        a done phase without its routing_log line, progress fragment, files or tests; usage backup at 95 %
     statusline  prints model/effort and the 5-hour/weekly usage, records it, starts the backup at 95 %
     stop-failure the rate_limit failure: back up what is unfinished
 Every hook fails open: an exception prints one line and exits 0; only a matched rule exits 2."""
@@ -375,9 +375,8 @@ def stop(event: dict, root=None) -> int:
         for p in cl.get("paths", []):
             if not (root / p).exists():
                 problems.append(f"{phase}: required path missing: {p}")
-        progress = root / "docs" / "PROGRESS.md"
-        if cl.get("progress") and (not progress.exists() or cl["progress"] not in progress.read_text(encoding="utf-8")):
-            problems.append(f"{phase}: no docs/PROGRESS.md entry naming {cl['progress']}")
+        if cl.get("progress") and not _progress_logged(root, cl["progress"]):
+            problems.append(f"{phase}: no docs/progress.d fragment (or old docs/PROGRESS.md entry) naming {cl['progress']}")
         if cl.get("tests") and not problems:
             fail = _tests_pass(root, cl["tests"])
             if fail:
@@ -385,6 +384,12 @@ def stop(event: dict, root=None) -> int:
     if problems:
         return _deny("The phase is not finished:\n  " + "\n  ".join(problems))
     return 0
+
+
+def _progress_logged(root: Path, needle: str) -> bool:
+    """The phase is named in a progress fragment (docs/progress.d, since PR #247) or in the frozen docs/PROGRESS.md."""
+    files = sorted((root / "docs" / "progress.d").glob("*.md")) + [root / "docs" / "PROGRESS.md"]
+    return any(f.name != "README.md" and f.exists() and needle in f.read_text(encoding="utf-8") for f in files)
 
 
 def stop_failure(event: dict, root=None) -> int:

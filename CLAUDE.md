@@ -49,7 +49,7 @@ link to it, never copy it (`python -m explainer_engine.docs_lint` enforces this)
    deletes only job directories via `core/jobs.clean_jobs`.
 9. Do not change the approved strategy or architecture without new evidence and a minimal-change proposal.
 10. Never remove or weaken a test or acceptance criterion to make a phase pass.
-11. Every meaningful change: a focused test + an entry in `docs/PROGRESS.md` (and the decision log if a decision moved).
+11. Every meaningful change: a focused test + a progress fragment `docs/progress.d/<date>-<branch>.md`, checked by `python -m explainer_engine.progress_fragments check` (not an edit of the frozen `docs/PROGRESS.md`; and the decision log if a decision moved).
 12. A material conflict found during implementation: stop at the boundary, report evidence and options, ask.
 
 **Autonomous runs:** `docs/ORCHESTRATION.md` and the `orchestrator` agent (`.claude/agents/orchestrator.md`), with the
@@ -122,7 +122,7 @@ explainer_engine/schemas/ versioned JSON Schemas (rights_manifest, fan_brief, ep
 .claude/skills/crossover-episode/   procedure for crossover episodes (fan research -> scenario -> script -> rights)
 assets/characters/kit/    kit_reference.svg (character parts; poses and rig come in Phase 4)
 tests/unit/               fast tests; test_repo_hygiene.py guards media/keys, tmr_engine imports, provenance
-docs/                     INDEX.md and the canonical specifications; PROGRESS.md (read the last entry first)
+docs/                     INDEX.md and the canonical specifications; progress.d/ (one fragment per change; read the newest first; PROGRESS.md is frozen history)
 explainer_engine/production/  the D-43 production script: compile, validate (PV-xx), timing, assemble, paint (paint plans:
                           provider per batch, creator approval bound to the plan hash, PP-xx), fill_holds, accents
 explainer_engine/imagegen/  gemini.py (sync/batch, cache in $EXPLAINER_IMAGE_CACHE or <out>/cache, ChargeUncertain), plan.py
