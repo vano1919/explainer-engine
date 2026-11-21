@@ -1,0 +1,16 @@
+{
+  "option": "light",
+  "primary_line_width_pct": 0.4,
+  "secondary_line_width_pct": 0.2,
+  "label_cap_height_pct": 2.0,
+  "label_contrast_ratio": 3.0,
+  "green_hue_min_deg": 70,
+  "green_hue_max_deg": 170,
+  "green_saturation_min_pct": 25,
+  "bridge_onset_tol_frames": 2,
+  "bridge_cap_height_min_pct": 6.0,
+  "bridge_hold_min_s": 0.8,
+  "residual_motion_per_frame_max_pct": 0.07,
+  "residual_displacement_shot_max_pct": 0.3,
+  "visual_meaning": "Softer, lighter diagrams with thinner lines and lower minimum label contrast."
+}
