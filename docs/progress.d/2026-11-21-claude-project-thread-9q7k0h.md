@@ -16,3 +16,11 @@ Done: map shots inside `build_shot` (`"kind": "map"` -> `production/build_map_sh
 9 km: a drawing aid, NOT a claim source); `production/build_episode.py` (shot plan + read durations -> every shot as long as its lines, built by build_shot, clip cache,
 hard cuts, narration laid at each shot's start + lead, long-form loudness from `qa/targets.py`; `plan_from_shot_plan` matches lines by text, no guessing).
 Tests: `test_build_map_shot.py`, `test_build_episode.py` (build_shot faked). Free, nothing paid. maplibre-gl 4.7.1 files were put in `maplibre_lane/vendor/` locally (not committed).
+
+### Map rework v3 (owner: maps "not in the film style, not animated")
+Map shots now get the photos' film look over the lane's render (`build_map_shot.post`: desaturate, warm highlights / cool shadows, lifted blacks, paper fibre and stains,
+vignette, stronger per-frame grain; spec key `film_post` overrides, `false` switches off) and real motion: animated arrows (`arrows`: geo path + time window, smoothstep growth,
+head follows the tip), the front drawing in, a truck_zoom_in camera. Fail loudly instead of degrading (Gemini root cause 2026-11-21, point 2): a map spec without `camera` (it would be
+static) or `film_file`, or with a bad arrow, is refused before rendering (`MapShotError`); photo shots already refuse a missing camera or depth model. Parallel map builds no longer share a
+frames folder (own temp dir per shot). NOT done (point 1): `edit/router.py` / `visual_compensator.py` still route MAP shots to the legacy vector renderer; build_episode uses the MapLibre
+lane directly. The arrows in the test film are illustrative (August advance, December facing each other), no claim source. Tests: `test_build_map_shot.py`.

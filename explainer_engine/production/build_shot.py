@@ -238,7 +238,7 @@ def main(argv=None) -> int:
     a = ap.parse_args(argv)
     try:
         log = build_shot(a.spec, a.out, a.cache_dir, a.workdir, a.tile_dir)
-    except BuildShotError as exc:
+    except ValueError as exc:
         print(f"build_shot: {exc}", file=sys.stderr)
         return 2
     print(json.dumps({k: log[k] for k in ("id", "kind", "out") if k in log}))

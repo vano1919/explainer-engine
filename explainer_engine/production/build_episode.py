@@ -181,7 +181,7 @@ def main(argv=None) -> int:
     a = ap.parse_args(argv)
     try:
         log = build_episode(a.episode, a.out, a.work, a.tile_dir, a.cache_dir, set(a.only.split(",")) if a.only else None)
-    except (BuildEpisodeError, BS.BuildShotError) as exc:
+    except ValueError as exc:   # BuildEpisodeError, BuildShotError, MapShotError, LV camera errors
         print(f"build_episode: {exc}", file=sys.stderr)
         return 2
     print(json.dumps({k: log[k] for k in ("id", "out", "seconds", "reused")}))

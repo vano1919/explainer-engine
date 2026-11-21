@@ -9,8 +9,8 @@
  "seconds": 6.0,
  "line_geojson": "../front.geojson",
  "line_t": [
-  0.0,
-  0.2
+  0.2,
+  3.0
  ],
  "counter": null,
  "date_chip": [
@@ -24,14 +24,58 @@
  "film_file": "../episode_film.json",
  "font": "preset",
  "center": [
-  2.9,
-  50.7
+  3.0,
+  50.75
  ],
  "zoom": 7.2,
  "camera": {
-  "move": "zoom_in",
-  "zoom_from": 6.9,
-  "zoom_to": 7.6,
+  "move": "truck_zoom_in",
+  "center_from": [
+   3.4,
+   50.4
+  ],
+  "center_to": [
+   2.95,
+   50.8
+  ],
+  "zoom_from": 7.0,
+  "zoom_to": 8.0,
   "ease": "smoothstep"
- }
+ },
+ "arrows": [
+  {
+   "path": [
+    [
+     2.2,
+     50.95
+    ],
+    [
+     2.78,
+     50.9
+    ]
+   ],
+   "t": [
+    1.5,
+    2.7
+   ],
+   "width": 8
+  },
+  {
+   "path": [
+    [
+     3.6,
+     50.82
+    ],
+    [
+     3.05,
+     50.88
+    ]
+   ],
+   "t": [
+    1.7,
+    2.9
+   ],
+   "width": 8
+  }
+ ]
 }
