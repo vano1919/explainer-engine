@@ -148,6 +148,20 @@
       "how": "separate reviewer thread (OR-24/26)"
     },
     {
+      "id": "opus-code",
+      "task": "Hard code written through the Claude API (Tier 3, medium effort)",
+      "level": "S3",
+      "models": [
+        "opus"
+      ],
+      "efforts": [
+        "medium"
+      ],
+      "effort_text": "medium (never high or xhigh here; the high review class is critical-review)",
+      "guard": "API only; --dry-run first; owner card required",
+      "how": "claude_api via explainer_engine/llm/opus_code.py"
+    },
+    {
       "id": "pod-plan",
       "task": "Pod or paid-run plan",
       "level": "S3",
