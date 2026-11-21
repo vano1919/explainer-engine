@@ -6,8 +6,7 @@
     "haiku": "claude-haiku-5-5",
     "sonnet": "claude-sonnet-5-5",
     "opus": "claude-opus-5-5",
-    "fable": "claude-fable-5-1",
-    "fable52": "claude-fable-5-2"
+    "fable": "claude-fable-5-1"
   },
   "efforts": [
     "low",
@@ -147,16 +146,6 @@
       "effort_text": "high (xhigh only for a plan that commits money or is irreversible)",
       "guard": "fresh context; facts, files and OPEN items only; verdict first (OR-25); names the SHA or plan hash it read",
       "how": "separate reviewer thread (OR-24/26)"
-    },
-    {
-      "id": "fable-plan",
-      "task": "Plan or document check through the Claude API (Fable 5.2, medium effort; not code)",
-      "level": "S3",
-      "models": ["fable52"],
-      "efforts": ["medium"],
-      "effort_text": "medium",
-      "guard": "API only; --dry-run first; owner card required; the price in config/llm_prices.json is copied from claude-fable-5-1 until checked",
-      "how": "claude_api, job fable_medium"
     },
     {
       "id": "opus-code",
