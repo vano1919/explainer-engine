@@ -5,3 +5,7 @@ Done: PR #253 (deepseek-worker skill + tool) and PR #252 (assembly line) merged 
 coordinator; recorded with `governance ok protected_config`, message cmsg_01Hnu5zB86sjUj5GtTgaUkPW2nA93UhHqTMgSF6w2H9s19).
 Project rule 15 (scripts written by the thread's Claude) is replaced by: scripts are written by DeepSeek, Claude plans and checks.
 Cost: none yet. Next: P2 fail-closed fixes through the DeepSeek tool.
+
+### P2 — fail closed (DeepSeek Flash, $0.002)
+`production/build_shot.validate_spec` now runs `build_map_shot.check_spec` for map shots (camera, film_file, arrows were checked only at render time).
+Photo shots already require camera and film since #252; `living` has no silent drift path under `build_shot`. Test: `tests/unit/test_no_silent_fallbacks.py`.

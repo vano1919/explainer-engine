@@ -57,6 +57,11 @@ def validate_spec(spec: dict) -> list[str]:
     if spec.get("kind", "photo") not in ("photo", "map"):
         problems.append("kind must be 'photo' or 'map'")
     if spec.get("kind", "photo") == "map":
+        from explainer_engine.production import build_map_shot
+        try:
+            build_map_shot.check_spec(spec)
+        except ValueError as exc:
+            problems.append(str(exc))
         return problems
     for key in ("id", "photo", "film_file", "seconds", "camera"):
         if key not in spec:
