@@ -43,18 +43,21 @@ def test_fs_2_note_says_the_film_is_chosen_per_video_and_has_no_fixed_list():
     assert "ფილმის სტილი ყველგან" in _by()["OR-F02"]["words"]  # the words themselves are untouched
 
 
-def test_fs_4_is_a_new_row_resting_on_a_card_press_not_typed_words():
+def test_fs_4_is_verbatim_on_his_typed_chat_confirmation_and_keeps_its_layers():
     f4 = _by()["OR-F04"]
-    assert f4["words_verbatim"] is False and "NOT typed words" in f4["words_origin"]
-    assert f4["source"]["kind"] == "doc" and f4["layers"] == ["L15", "L25"] and f4["check"] == {"kind": "unmapped"}
+    # 2026-11-22 18:06:12Z: his typed chat message "F04 ვადასტურებ" (cmsg_01Hnu5zB86sjUj5GtTgaUkPW2YK4HX8tRgKYnPZmDS8bMG)
+    assert f4["words_verbatim"] is True and "typed confirmation" in f4["words_origin"]
+    assert "cmsg_01Hnu5zB86sjUj5GtTgaUkPW2YK4HX8tRgKYnPZmDS8bMG" in f4["words_origin"]
+    assert "cmsg_01Hnu5zB86sjUj5GtTgaUkPW2YK4HX8tRgKYnPZmDS8bMG" in f4["source"]["ref"]
+    assert f4["layers"] == ["L15", "L25"] and f4["check"] == {"kind": "unmapped"}
 
 
-def test_or_v40_is_unchanged_except_for_an_unapplied_proposed_amendment():
+def test_or_v40_words_are_unchanged_and_its_font_amendment_is_applied_on_his_typed_word():
     v40 = _by()["OR-V40"]
     assert v40["words"] == "Maps are Python over a letter-free relief plate with our own type (D-130, L15)."
     assert v40["status"] == "active" and "superseded_by" not in v40
     pa = v40["proposed_amendment"]
-    assert pa["applied"] is False and pa["change"]["amended_by"] == "OR-F04" and "waits for his word" in pa["why_not_applied"]
+    assert pa["applied"] is True and pa["change"]["amended_by"] == "OR-F04" and "why_not_applied" not in pa
 
 
 def test_delta_7_is_unsigned_and_delta_8_and_p03_are_not_loaded():
