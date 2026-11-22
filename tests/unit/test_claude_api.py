@@ -374,7 +374,8 @@ def test_real_client_needs_the_key_and_the_recorded_approval(env, monkeypatch):
 
 def test_real_spend_caps_file_holds_the_or24_caps():
     c = json.loads((ROOT / "config" / "spend_caps.json").read_text(encoding="utf-8"))["claude_api"]
-    assert c["max_usd"] == 95.0 and sum(c["jobs"].values()) == pytest.approx(c["max_usd"])
+    # 2026-11-22: max_usd 95 -> 125 and two owner-approved lines (opus_high_review 10, fable_52_high_replan 20), approved by the owner (cmsg_01Hnu5zB86sjUj5GtTgaUkPWMkurS68ZEgMaRv5qv1rPjq)
+    assert c["max_usd"] == 125.0 and sum(c["jobs"].values()) == pytest.approx(c["max_usd"])
     # 2026-10-30: plan v2 got its own $28 line from J1b's unspent part, all of J6, J4 and the reserve (ვანო's card answer, docs/PROGRESS.md)
     assert c["jobs"]["J1"] == 10.0 and c["jobs"]["J1b"] == 5.02 and c["jobs"]["J6"] == 0.0 and c["jobs"]["plan_v2"] == 18.0
     # 2026-10-30 20:46 UTC (ვანო's card, all lines): the night run's four lines, paid from plan_v2, J3, J4, J5 and the reserve

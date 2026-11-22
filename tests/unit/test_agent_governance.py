@@ -19,7 +19,8 @@ NAMES = sorted(p.stem for p in AGENTS.glob("*.md"))
 def test_config_validates_and_covers_every_agent_file():
     governance.validate(CFG)
     assert set(CFG["agents"]) == set(NAMES)
-    assert len(CFG["classes"]) == 18
+    # 2026-11-22: 19 classes, the owner-approved fable-replan class (cmsg_01Hnu5zB86sjUj5GtTgaUkPWMkurS68ZEgMaRv5qv1rPjq)
+    assert len(CFG["classes"]) == 19
 
 
 @pytest.mark.parametrize("name", NAMES)
