@@ -155,9 +155,10 @@
         "fable"
       ],
       "efforts": [
+        "medium",
         "high"
       ],
-      "effort_text": "high",
+      "effort_text": "medium by default; high for the owner-approved job fable_52_high_replan (owner, 2026-11-22 08:31 UTC)",
       "guard": "single owner-approved job fable_52_high_replan, $20 line; not for code; no story stage",
       "how": "API only, claude_api.run"
     },
