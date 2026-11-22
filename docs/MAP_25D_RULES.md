@@ -1,4 +1,4 @@
-# Map and 2.5D rules (owner decisions and where each is enforced)
+# Map and 2.5D rules (D-131) (owner decisions and where each is enforced)
 
 Written 2026-11-22 from the owner's recorded decisions and the repo state. Proposals are marked PROPOSAL; nothing here is approved unless marked APPROVED.
 
