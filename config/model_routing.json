@@ -6,7 +6,7 @@
     "haiku": "claude-haiku-5-5",
     "sonnet": "claude-sonnet-5-5",
     "opus": "claude-opus-5-5",
-    "fable": "claude-fable-5-1"
+    "fable": "claude-fable-5-2"
   },
   "efforts": [
     "low",
@@ -146,6 +146,20 @@
       "effort_text": "high (xhigh only for a plan that commits money or is irreversible)",
       "guard": "fresh context; facts, files and OPEN items only; verdict first (OR-25); names the SHA or plan hash it read",
       "how": "separate reviewer thread (OR-24/26)"
+    },
+    {
+      "id": "fable-replan",
+      "task": "Fable 5.2 high replan from the owner-approved Opus package (owner cmsg_01Hnu5zB86sjUj5GtTgaUkPWMkurS68ZEgMaRv5qv1rPjq, 2026-11-22)",
+      "level": "S3",
+      "models": [
+        "fable"
+      ],
+      "efforts": [
+        "high"
+      ],
+      "effort_text": "high",
+      "guard": "single owner-approved job fable_52_high_replan, $20 line; not for code; no story stage",
+      "how": "API only, claude_api.run"
     },
     {
       "id": "pod-plan",
