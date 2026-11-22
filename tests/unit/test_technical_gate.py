@@ -234,3 +234,41 @@ def test_measure_video_uses_filter_strings(monkeypatch):
     monkeypatch.setattr(tg, "measure_video_sharpness", lambda path, samples=8: 0.05)
     tg.measure_video("clip.mp4")
     assert seen == ["blackdetect=d=0.1:pix_th=0.1", "freezedetect=n=0.003:d=0.5"]
+
+
+def _no_melt_metrics(**overrides):
+    metrics = {"residual_motion_per_frame": 0.01, "residual_drift": 0.05}
+    metrics.update(overrides)
+    return metrics
+
+
+def test_check_no_melt_passes_below_limits():
+    assert tg.check_no_melt(_no_melt_metrics()) == []
+
+
+@pytest.mark.parametrize("key,value", [
+    ("residual_motion_per_frame", 0.06),
+    ("residual_drift", 0.25),
+])
+def test_check_no_melt_each_limit_violated_separately(key, value):
+    problems = tg.check_no_melt(_no_melt_metrics(**{key: value}))
+    assert len(problems) == 1
+    assert key in problems[0]
+
+
+@pytest.mark.parametrize("key", ["residual_motion_per_frame", "residual_drift"])
+def test_check_no_melt_missing_key_fails_closed(key):
+    metrics = _no_melt_metrics()
+    metrics.pop(key)
+    problems = tg.check_no_melt(metrics)
+    assert len(problems) == 1
+    assert f"missing metric {key}" in problems[0]
+
+
+def test_check_video_animated_without_no_melt_fails_closed():
+    problems = tg.check_video(_video_metrics(animated=True))
+    assert any("missing metric" in p for p in problems)
+
+
+def test_check_video_animated_absent_is_unchanged():
+    assert tg.check_video(_video_metrics()) == []

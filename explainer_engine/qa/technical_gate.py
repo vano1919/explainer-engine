@@ -15,6 +15,7 @@ _CONFIG = "technical_gate.json"
 _VIDEO_KEYS = ("width", "height", "fps", "bitrate_kbps", "black_frame_ratio", "frozen_frame_ratio", "sharpness")
 _AUDIO_KEYS = ("lufs", "true_peak_db", "clipped_ratio", "speech_to_noise_db", "silence_ratio")
 _PHOTO_KEYS = ("width", "height", "sharpness")
+_NO_MELT_KEYS = ("residual_motion_per_frame", "residual_drift")
 
 
 def load_limits(path: str | Path | None = None) -> dict:
@@ -41,6 +42,8 @@ def check_video(metrics: dict) -> list[str]:
     limits = load_limits()["video"]
     problems = _missing(metrics, _VIDEO_KEYS)
     if problems:
+        if metrics.get("animated") is True:
+            problems.extend(check_no_melt(metrics.get("no_melt", {})))
         return problems
     if metrics["width"] < limits["min_width"]:
         problems.append(f"width below minimum {limits['min_width']}")
@@ -56,6 +59,8 @@ def check_video(metrics: dict) -> list[str]:
         problems.append(f"frozen_frame_ratio above maximum {limits['max_frozen_frame_ratio']}")
     if metrics["sharpness"] < limits["min_sharpness"]:
         problems.append(f"sharpness below minimum {limits['min_sharpness']}")
+    if metrics.get("animated") is True:
+        problems.extend(check_no_melt(metrics.get("no_melt", {})))
     return problems
 
 
@@ -88,6 +93,18 @@ def check_photo(metrics: dict) -> list[str]:
         problems.append(f"height below minimum {limits['min_height']}")
     if metrics["sharpness"] < limits["min_sharpness"]:
         problems.append(f"sharpness below minimum {limits['min_sharpness']}")
+    return problems
+
+
+def check_no_melt(metrics: dict) -> list[str]:
+    limits = load_limits()["video"]["no_melt"]
+    problems = _missing(metrics, _NO_MELT_KEYS)
+    if problems:
+        return problems
+    if metrics["residual_motion_per_frame"] > limits["residual_motion_per_frame_max"]:
+        problems.append(f"residual_motion_per_frame above maximum {limits['residual_motion_per_frame_max']}")
+    if metrics["residual_drift"] > limits["residual_drift_max"]:
+        problems.append(f"residual_drift above maximum {limits['residual_drift_max']}")
     return problems
 
 
