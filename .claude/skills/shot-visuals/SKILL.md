@@ -9,6 +9,8 @@ description: Plan the pictures of a Crossworld Theories video so they carry stak
 
 **Episode rulebook first (D-51, OR-11):** read `python -m explainer_engine.standards brief <episode>/episode_rules.json --role image` and follow it; legal, licence, likeness and art-direction questions are decided there (docs/EPISODE_STANDARDS.md), never invented in this skill. A conflict goes back to the orchestrator.
 
+**Provider rule (owner, 2026-11-22):** Gemini Neon never makes pictures, because it is expensive; the image provider factory refuses it (`explainer_engine/imagegen/providers/__init__.py`, `tests/unit/test_neon_no_pictures.py`). Neon is a checking chat only.
+
 > **Primary rule, above everything below (UR-22, one universe):** every picture, sprite, prop and background is drawn in the same
 > universe, as if by one artist for one scene. Characters and environment share one design language (look v2: bold ink-shadowed
 > silhouettes, caricature in faces, hands and posture on adult proportions), one line, one fill, one palette; an era or a place changes props, clothes and architecture, never the style. The
