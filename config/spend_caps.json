@@ -105,7 +105,7 @@
   },
   "claude_api": {
     "_doc": "The Claude API credit (explainer_engine/llm/claude_api.py, docs/LLM_API.md). max_usd is the whole credit; the client stops at 80 % of it and of each job. A job without a line here is refused. approval is the recorded word that allows real calls.",
-    "max_usd": 130.0,
+    "max_usd": 137.0,
     "jobs": {
       "J1": 10.0,
       "J1b": 5.02,
@@ -124,7 +124,8 @@
       "research_vs_main": 25.0,
       "opus_high_review": 10.0,
       "fable_52_high_replan": 20.0,
-      "rules_verify_sonnet": 5.0
+      "rules_verify_sonnet": 5.0,
+      "rv01": 7.0
     },
     "approval": {
       "by": "vano (credit, his word) + the OR-24 plan thread verdict",
