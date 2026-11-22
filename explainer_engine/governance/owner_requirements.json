@@ -1861,7 +1861,7 @@
   {
    "id": "OR-C04",
    "kind": "conflict",
-   "status": "open",
+   "status": "resolved",
    "title": "LTX needs no background sounds (11-12 19:12) vs one continuous sound bed and no dead air",
    "conflicts": [
     "OR-A07",
@@ -1905,7 +1905,31 @@
      "text": "აბსოლუტურად უაზრო ბეგრაუნდ ხმები",
      "source": "chat cmsg_01Hnu5zB86sjUj5GtTgaUkPWVMsQtbv2YdqWCRYtcMXpMu"
     }
-   ]
+   ],
+   "proposed_amendment": {
+    "change": {
+     "status": "closed_by_lead_reading",
+     "note": "closed by lead reading, shown to the owner at MS-7",
+     "status_value_description": "closed_by_lead_reading = closed by the lead's reading of D-136 and OR-A18, to be shown to the owner at the final read-through; the developer maps it onto a schema status"
+    },
+    "source": {
+     "kind": "decision_log",
+     "ref": "D-136 (docs/DECISIONS_AND_OPEN_QUESTIONS.md @ origin/claude/project-thread-2vxd8y); OR-A18 (D-138 Q2, 11-13 13:55Z)"
+    },
+    "lead_reading": "closed as answered by D-136 plus OR-A18, no card now",
+    "applied": false,
+    "why_not_applied": "superseded: the conflict is resolved by his answer, see 'resolution'"
+   },
+   "note": "answered by card press 2026-11-20 16:57 (per shot); resolved after his typed confirmation 17:39:57Z",
+   "resolved_by": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWJMmGE4iwH1R4hiLiKzwfVW",
+   "resolution": {
+    "answer": "per shot (თითო კადრზე)",
+    "card_option_text": "The director writes a reason for every shot and picks a bed or silence.",
+    "card_press": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWK9Ha9eydSoHSKEhJeDMfmr, 2026-11-20 16:57Z (reported by the lead)",
+    "confirmed_by": "his typed word 'მიდი' in the registry thread, 2026-11-20 17:39:57Z, answering the request to type his confirmation; and the project-chat card press 17:37Z reported by the coordinator",
+    "words_verbatim": false,
+    "effect": "no blanket rule for LTX beds or silence; each shot's sound_plan carries a bed or silent_by_design with a reason (fits OR-A14, OR-A15); L18/L20 are no longer blocked by this conflict"
+   }
   },
   {
    "id": "OR-S01",
@@ -2056,7 +2080,20 @@
    "measures": "host figures exist as sheets in the library; no host LoRA unless he decides",
    "repeats": 1,
    "repeat_evidence": "",
-   "note": "narrows OR-S05; card answer, no chat text stored"
+   "note": "narrows OR-S05; card answer, no chat text stored",
+   "proposed_amendment": {
+    "change": {
+     "status": "superseded",
+     "superseded_by": "OR-S24"
+    },
+    "source": {
+     "kind": "decision_log",
+     "ref": "D-89 (docs/DECISIONS_AND_OPEN_QUESTIONS.md @ origin/claude/project-thread-2vxd8y)"
+    },
+    "lead_reading": "yes",
+    "applied": false,
+    "why_not_applied": "the registry CI keeps owner words and status immutable unless the superseding entry cites his own chat message (REG-WORDS-CHANGED, REG-SUPERSEDE-UNSOURCED); this one rests on the decision log or the lead's reading, so it waits for his word"
+   }
   },
   {
    "id": "OR-S07",
@@ -2412,7 +2449,8 @@
    "measures": "clip audio from LTX is the base of video scenes; separate background tracks only where OR-C04 is answered",
    "repeats": 1,
    "repeat_evidence": "",
-   "note": "see OR-C04: possible conflict with dead-air and bed rules"
+   "amended_by": "OR-C04 resolution (per shot)",
+   "note": "see OR-C04: possible conflict with dead-air and bed rules | C04 resolved per shot, 6cbb2e7a"
   },
   {
    "id": "OR-A08",
@@ -2514,7 +2552,20 @@
    },
    "measures": "voice cast record lists traits per voice; VC-02 no-soundalike check; ElevenLabs sample calls refused by the hook without his yes",
    "repeats": 2,
-   "repeat_evidence": "10-20 (twice)"
+   "repeat_evidence": "10-20 (twice)",
+   "proposed_amendment": {
+    "change": {
+     "status": "superseded",
+     "superseded_by": "OR-A21"
+    },
+    "source": {
+     "kind": "decision_log",
+     "ref": "D-62, D-68 (docs/DECISIONS_AND_OPEN_QUESTIONS.md @ origin/claude/project-thread-2vxd8y); memory hero-voices-real-people (its own 10-20 update)"
+    },
+    "lead_reading": "yes (lead, 2026-11-20 09:35Z)",
+    "applied": false,
+    "why_not_applied": "the registry CI keeps owner words and status immutable unless the superseding entry cites his own chat message (REG-WORDS-CHANGED, REG-SUPERSEDE-UNSOURCED); this one rests on the decision log or the lead's reading, so it waits for his word"
+   }
   },
   {
    "id": "OR-A12",
@@ -2689,7 +2740,8 @@
    },
    "measures": "registry gate: an unmapped entry BLOCKs its layers and the send gate; the tester reports PASS/FAIL/NOT_RUN per entry with a negative fixture",
    "repeats": 3,
-   "repeat_evidence": "11-20 08:34, 08:36, 08:37"
+   "repeat_evidence": "11-20 08:34, 08:36, 08:37",
+   "amended_by": "OR-Q14"
   },
   {
    "id": "OR-Q02",
@@ -2714,7 +2766,8 @@
    },
    "measures": "hooks (PreToolUse, Stop, SubagentStop), require_pass() in code, a CI job owner-requirements, mutation check per validator",
    "repeats": 2,
-   "repeat_evidence": "11-20 08:34, 08:37"
+   "repeat_evidence": "11-20 08:34, 08:37",
+   "amended_by": "OR-Q14"
   },
   {
    "id": "OR-Q03",
@@ -3181,7 +3234,28 @@
    "measures": "lane shares by duration from the shot plan within +-5 % of 10/30/60; a lane share never raised by cutting video seconds. Candidate: tests/unit/test_film_shots.py (BP-109 users, function not read)",
    "repeats": 2,
    "repeat_evidence": "11-01 20:03, 11-12 (CLAUDE.md D-131 mix)",
-   "note": "English summary in memory of his 20:03 answers"
+   "note": "English summary in memory of his 20:03 answers",
+   "proposed_amendment": {
+    "change": {
+     "words": "10 % helper visuals made by Python: maps, progress, calculations or anything else; 30 % still frames where Python can add objects to the frame and move them, the frames change fast enough and match the narrator; 60 % the real videos. Fit every old rule to this rule and rewrite whatever contradicts it",
+     "words_verbatim": false,
+     "words_origin": "decision_log_quote",
+     "old_words": "The mix 10/30/60 is approximate: it must never sacrifice the video; tolerance +-5 % (BP-109 lane_tolerance 0.05).",
+     "old_words_origin": "paraphrase",
+     "date": "2026-11-01T10:16:00Z",
+     "source": {
+      "kind": "decision_log",
+      "ref": "D-93 (docs/DECISIONS_AND_OPEN_QUESTIONS.md @ origin/claude/project-thread-2vxd8y), project thread, 2026-11-01 10:16 UTC"
+     }
+    },
+    "source": {
+     "kind": "decision_log",
+     "ref": "D-93 (docs/DECISIONS_AND_OPEN_QUESTIONS.md @ origin/claude/project-thread-2vxd8y)"
+    },
+    "lead_reading": "words_verbatim stays false: the D-93 sentence is a decision-log quote, not his typed words (group B, C04 resolution)",
+    "applied": false,
+    "why_not_applied": "the registry CI keeps owner words and status immutable unless the superseding entry cites his own chat message (REG-WORDS-CHANGED, REG-SUPERSEDE-UNSOURCED); this one rests on the decision log or the lead's reading, so it waits for his word"
+   }
   },
   {
    "id": "OR-S14",
@@ -3253,7 +3327,11 @@
    },
    "measures": "dialogue lines per minute and beat spacing from edit/motion_lint (BP numbers only). Candidate: edit/motion_lint.py measure (test not located)",
    "repeats": 2,
-   "repeat_evidence": "10-20, 10-21"
+   "repeat_evidence": "10-20, 10-21",
+   "amended_by": [
+    "OR-V67",
+    "OR-V68"
+   ]
   },
   {
    "id": "OR-S17",
@@ -4369,7 +4447,8 @@
    "repeats": 1,
    "repeat_evidence": "",
    "date_basis": "snapshot: undated rule in the project instructions, read 2026-11-20",
-   "note": "RunPod was dropped on 11-20 (memory), rule 3 still names pods and covers any paid cloud runner"
+   "note": "RunPod was dropped on 11-20 (memory), rule 3 still names pods and covers any paid cloud runner",
+   "amended_by": "OR-I51"
   },
   {
    "id": "OR-I19",
@@ -5036,6 +5115,16 @@
      "text": "მაგალტად ახლა დავტესტე ბლენდერით მერე ჯემინაი კარგად ინარჩუნებს გარემოს",
      "source": "{\"kind\": \"chat\", \"ref\": \"cmsg_01Hnu5zB86sjUj5GtTgaUkPWW8G4AXJG77L6sCBVFxaLJEW\"}"
     }
+   ],
+   "evidence_added": [
+    {
+     "ref": "D-124",
+     "text": "Gemini the sole image engine (Qwen retired), 2026-11-09, recorded from the v4.3 archive; where it disagrees with D-131 the creator's answers win"
+    },
+    {
+     "ref": "D-131",
+     "text": "2026-11-12 08:06-10:04 UTC: pictures come free from the Gemini chat's image tool; amended 14:26 UTC: Qwen is retired everywhere, style rounds included (his audit)"
+    }
    ]
   },
   {
@@ -5297,6 +5386,1171 @@
    "repeats": 1,
    "repeat_evidence": "",
    "note": "split from OR-V27b on 2026-11-20 so the camera half is visible in the coverage table and CI (tester Z13). Unmapped honestly: how a plan's camera strength maps to a measured zoom percentage is not settled (OR-22: no number is guessed)."
+  },
+  {
+   "id": "OR-A16",
+   "kind": "requirement",
+   "words": "licence does not interest me, quality does; licence concerns only the background music",
+   "words_verbatim": false,
+   "words_origin": "decision_log_quote (the log's author renders his words in English; his Georgian is not in the log)",
+   "gloss": "Sound effects are picked on quality and their licence is only recorded; only background music must be licence-checked.",
+   "date": "2026-11-13T07:24:00Z",
+   "source": {
+    "kind": "decision_log",
+    "ref": "D-134",
+    "detail": "D-134 (docs/DECISIONS_AND_OPEN_QUESTIONS.md @ origin/claude/project-thread-2vxd8y)"
+   },
+   "layers": [
+    "L18",
+    "L29"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "effects and voices are chosen by quality; licence is recorded in the asset's catalog row but never excludes an effect; music keeps the licence gate",
+   "repeats": 3,
+   "repeat_evidence": "11-13 07:24 (D-134), 10-29 17:53 (OR-P08), 11-20 08:10 (OR-I06 'ლიცენზია გვკიდია')",
+   "note": "his message cmsg_01Hnu5zB86sjUj5GtTgaUkPWKaLKJDs6p5VapSGxLUNarC. D-134 calls the BBC RemArc allowance 'a temporary exception to invariant 5 by his word'. Narrowed by OR-P05 (11-19: licence checks cover third-party media YouTube can block, which includes audio) and by OR-A17 (11-19: no BBC RemArc in a monetised master); not a conflict, the newer words narrow it."
+  },
+  {
+   "id": "OR-A17",
+   "kind": "requirement",
+   "words": "No BBC RemArc sound in a monetised master: the six ids are replaced from the same pools by Mixkit/CC0 items; the 2026-11-13 'yes, BBC too' card no longer covers a monetised master.",
+   "words_verbatim": false,
+   "words_origin": "card_press (recorded by the coordinator or the log's author; not his typed words)",
+   "gloss": "A monetised master contains no BBC RemArc effect; the six ids are swapped for Mixkit or CC0 ones.",
+   "date": "2026-11-19T09:46:00Z",
+   "source": {
+    "kind": "decision_log",
+    "ref": "D-139",
+    "detail": "D-139 item 3 (docs/DECISIONS_AND_OPEN_QUESTIONS.md @ origin/claude/project-thread-2vxd8y)"
+   },
+   "layers": [
+    "L18",
+    "L29"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "audio/stems_report.json lists no BBC RemArc id in a monetised master",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "card option 'კი, Claude წერს' on the final action plan, 2026-11-19 13:46 Georgia time. It reverses his 11-13 07:49 card 'yes, BBC too'. Consistent with OR-P05 and with his 11-19 10:04 UTC addition recorded in memory (a code gate on sound licences rejects only sources YouTube could block, a named set, today bbc_remarc, 34 items). His blanket 11-20 08:10 'ლიცენზია გვკიდია' (OR-I06) was said about tools and candidates (memory: informational only, never excludes a candidate); I do not read it as lifting this ban, and I did not raise a conflict for it."
+  },
+  {
+   "id": "OR-A18",
+   "kind": "requirement",
+   "words": "both sound almost the same, but the second is slightly better",
+   "words_verbatim": false,
+   "words_origin": "decision_log_quote (the log's author renders his words in English; his Georgian is not in the log)",
+   "gloss": "A narrated LTX clip keeps its own sound as a quiet layer under the narrator, as in the second sample of the free A/B.",
+   "date": "2026-11-13T13:55:00Z",
+   "source": {
+    "kind": "decision_log",
+    "ref": "D-138",
+    "detail": "D-138 Q2 (docs/DECISIONS_AND_OPEN_QUESTIONS.md @ origin/claude/project-thread-2vxd8y)"
+   },
+   "layers": [
+    "L13",
+    "L18",
+    "L20"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "in a narrated LTX clip, the clip's own sound is present as a layer ducked under the narrator (switch on in config/creator_open_questions.json)",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "his words 13:55 UTC after the free A/B (audio/clip_audio_ab) by ear; chose option b. Relates to the sound-bed question OR-C04, which is still open in the registry. | C04 resolved per shot, 6cbb2e7a"
+  },
+  {
+   "id": "OR-A19",
+   "kind": "requirement",
+   "words": "A speaking character has one fixed ElevenLabs voice, read first, and that take conditions the LTX clip.",
+   "words_verbatim": false,
+   "words_origin": "card_press (recorded by the coordinator or the log's author; not his typed words)",
+   "gloss": "Card A3 option A: a fixed ElevenLabs voice, read first, then given to the video model as audio input, so the voice is the same in every clip.",
+   "date": "2026-10-30T16:16:00Z",
+   "source": {
+    "kind": "decision_log",
+    "ref": "D-90",
+    "detail": "D-90 (docs/DECISIONS_AND_OPEN_QUESTIONS.md @ origin/claude/project-thread-2vxd8y)"
+   },
+   "layers": [
+    "L4",
+    "L6",
+    "L13"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "every dialogue line has a cast voice_id and a first-take read; the read is the clip's audio input; one voice per character across clips",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "card cmsg_01Hnu5zB86sjUj5GtTgaUkPWFv6dvb6QVwMfnJ6ic89ksh answered in the project chat 16:16 UTC (cmsg_01Hnu5zB86sjUj5GtTgaUkPW2NH14ua52J71BNXGPoJuUN); his question at 16:13 UTC was whether characters can keep the same voice from video to video. Supersedes his earlier answer 'LTX native voice'. D-62 holds: a real living person never gets a synthetic voice (OR-A21)."
+  },
+  {
+   "id": "OR-A20",
+   "kind": "requirement",
+   "words": "one fixed voice text per character with its four facets (age, timbre, pace, accent), verbatim in every LTX prompt",
+   "words_verbatim": false,
+   "words_origin": "card_press (recorded by the coordinator or the log's author; not his typed words)",
+   "gloss": "Each character has one voice description with four facets, copied unchanged into every video prompt.",
+   "date": "2026-11-13T13:28:00Z",
+   "source": {
+    "kind": "decision_log",
+    "ref": "D-138",
+    "detail": "D-138 Q5 (docs/DECISIONS_AND_OPEN_QUESTIONS.md @ origin/claude/project-thread-2vxd8y)"
+   },
+   "layers": [
+    "L6",
+    "L12",
+    "L13"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "a character's voice_card (age, timbre, pace, accent) appears verbatim in every LTX prompt of that character; checked across the scene files; no paid voice conversion",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "words_partial": true,
+   "date_basis": "card answers 13:27-13:29 UTC",
+   "note": "Q5 (a) of the seven answers; see OR-S28 for the date basis"
+  },
+  {
+   "id": "OR-A21",
+   "kind": "requirement",
+   "words": "all voices must be one narrator... nobody speaks, so changing the voice makes no sense; regenerate the dialogues in the same voice, not monotone but the way he would say it",
+   "words_verbatim": false,
+   "words_origin": "decision_log_quote (the log's author renders his words in English; his Georgian is not in the log)",
+   "gloss": "Real living people never get a synthetic voice, clone, accent or cadence; the narrator may tell their words as short performed quotes in his own voice.",
+   "date": "2026-10-21T08:59:00Z",
+   "source": {
+    "kind": "decision_log",
+    "ref": "D-62, D-68",
+    "detail": "D-62 and D-68 (docs/DECISIONS_AND_OPEN_QUESTIONS.md @ origin/claude/project-thread-2vxd8y)"
+   },
+   "layers": [
+    "L4",
+    "L6",
+    "L29"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "a line of a real living person is voiced:false (PV-55) and read by no synthetic voice, accent or cadence of its own",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "words_partial": true,
+   "note": "D-62 (10-20, provider terms V-51) and D-68 (10-21, his words quoted). Replaces OR-A11 (v3, 10-20 14:30: heroes based on real people get type-matched voices): the memory file hero-voices-real-people itself records the D-62 update of the same day (even a type-matched voice cannot speak AS a named real living person) and D-68 (10-21) is newer still: propose OR-A11 superseded_by OR-A21. D-90 later gave invented characters their own fixed voice and kept D-62."
+  },
+  {
+   "id": "OR-A22",
+   "kind": "requirement",
+   "words": "Heard pace: target 170 wpm, accepted 155-185",
+   "words_verbatim": false,
+   "words_origin": "card_press (recorded by the coordinator or the log's author; not his typed words)",
+   "gloss": "The narration's heard pace is 170 words a minute, now his own number rather than a research default.",
+   "date": "2026-11-01T00:00:00Z",
+   "source": {
+    "kind": "decision_log",
+    "ref": "D-92",
+    "detail": "D-92 item 2 (docs/DECISIONS_AND_OPEN_QUESTIONS.md @ origin/claude/project-thread-2vxd8y)"
+   },
+   "layers": [
+    "L4"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "the read's measured pace is 155-185 wpm (BP-01), target 170",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "D-92 item 2, 'now the creator's own number'; the same card batch fixed 24 fps and 1440x2560 Shorts (not registered: technical values)"
+  },
+  {
+   "id": "OR-A23",
+   "kind": "requirement",
+   "words": "wants Kokoro's word timings kept",
+   "words_verbatim": false,
+   "words_origin": "decision_log_summary (the log's statement of his decision; not a quote of his words)",
+   "gloss": "The cut follows the word times of the read: on 2026-10-16 he rejected the generic Kokoro voice but wanted the word timings kept; D-39 moved them to ElevenLabs Scribe and D-42 to a local Whisper.",
+   "date": "2026-10-16T00:00:00Z",
+   "source": {
+    "kind": "decision_log",
+    "ref": "D-38",
+    "detail": "D-38 (docs/DECISIONS_AND_OPEN_QUESTIONS.md @ origin/claude/project-thread-2vxd8y)"
+   },
+   "layers": [
+    "L17"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "words.json carries a time for every spoken word, measured on the exact audio the mix uses (Scribe coverage >= 97 % or REVIEW, BP/UR rules in D-39)",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "words_partial": true,
+   "note": "the only record of his words on word timing: D-38 (superseded by D-39, the Kokoro takes were rejected) as the log renders them. The tool changed three times; whether he still holds the requirement is not recorded, he never spoke of timing again in anything I could read. The only L17 entry."
+  },
+  {
+   "id": "OR-E06",
+   "kind": "requirement",
+   "words": "One render path: episode/run.py is the only way to make a master; sound only from G8 audio/stems.",
+   "words_verbatim": false,
+   "words_origin": "card_press (recorded by the coordinator or the log's author; not his typed words)",
+   "gloss": "Masters are made by one path and its sound is library takes only.",
+   "date": "2026-11-19T09:46:00Z",
+   "source": {
+    "kind": "decision_log",
+    "ref": "D-139",
+    "detail": "D-139 item 2 (docs/DECISIONS_AND_OPEN_QUESTIONS.md @ origin/claude/project-thread-2vxd8y)"
+   },
+   "layers": [
+    "L20",
+    "L21"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "a master exists only with an episode/run.py stage record; its sound comes from audio/stems and is listed in audio/stems_report.json; mix.py output is preview only",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "same card as OR-A17 (2026-11-19 13:46 Georgia time)"
+  },
+  {
+   "id": "OR-I44",
+   "kind": "requirement",
+   "words": "write into the rules: Mac runs and GitHub runs need no consent to start, because they are free",
+   "words_verbatim": false,
+   "words_origin": "decision_log_quote (the log's author renders his words in English; his Georgian is not in the log)",
+   "gloss": "Free runs need no approval; anything that bills still does.",
+   "date": "2026-11-05T17:31:00Z",
+   "source": {
+    "kind": "decision_log",
+    "ref": "D-114",
+    "detail": "D-114 (docs/DECISIONS_AND_OPEN_QUESTIONS.md @ origin/claude/project-thread-2vxd8y)"
+   },
+   "layers": [
+    "L31",
+    "L33"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "a free run (his Mac, GitHub Actions) starts without a launch approval; the thread reports what it started; a run that bills still needs the OR-23 plan and his word",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "his message cmsg_01Hnu5zB86sjUj5GtTgaUkPW5npzd1w7L1b2bL6uuetvpE. A paid API inside a workflow would make the run a billing run (the log's own revisit condition)."
+  },
+  {
+   "id": "OR-I45",
+   "kind": "requirement",
+   "words": "compute every combination of the run before the run and always take the cheapest, so that it does not get in the way of the existing work",
+   "words_verbatim": false,
+   "words_origin": "decision_log_quote (the log's author renders his words in English; his Georgian is not in the log)",
+   "gloss": "Before a pod starts, every combination of its run is computed and the cheapest one is taken.",
+   "date": "2026-11-06T14:48:00Z",
+   "source": {
+    "kind": "decision_log",
+    "ref": "D-117",
+    "detail": "D-117 (docs/DECISIONS_AND_OPEN_QUESTIONS.md @ origin/claude/project-thread-2vxd8y)"
+   },
+   "layers": [
+    "L31"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "cloud/schedule.py computes every combination of a pod run (order, card, lane) before create; the cheapest that keeps every stage is taken (RP-11)",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "his message cmsg_01Hnu5zB86sjUj5GtTgaUkPW7UwcxZB5ntM5UAFKMtVJnA. RunPod has since been dropped (memory index 11-20): the rule stays for any paid GPU (Modal) until he says otherwise."
+  },
+  {
+   "id": "OR-I46",
+   "kind": "requirement",
+   "words": "write into the code an exception that concerns the watchdog",
+   "words_verbatim": false,
+   "words_origin": "decision_log_quote (the log's author renders his words in English; his Georgian is not in the log)",
+   "gloss": "A pod create that the API refuses for lack of instances bills $0 and may be retried up to 60 times under a recorded placement watch.",
+   "date": "2026-11-06T18:28:00Z",
+   "source": {
+    "kind": "decision_log",
+    "ref": "D-118",
+    "detail": "D-118 (docs/DECISIONS_AND_OPEN_QUESTIONS.md @ origin/claude/project-thread-2vxd8y)"
+   },
+   "layers": [
+    "L31"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "a create refused with HTTP 400 'no instances available' is recorded as placement:<job> and counts to 60 tries only with --placement-watch and his message id",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "his message cmsg_01Hnu5zB86sjUj5GtTgaUkPWErgnZZ8KHmtKgv99xyoWz1. Moot while RunPod is dropped; kept so the history is complete."
+  },
+  {
+   "id": "OR-I47",
+   "kind": "requirement",
+   "words": "nothing we made is lost, every copy is the creator's",
+   "words_verbatim": false,
+   "words_origin": "decision_log_summary (the log's statement of his decision; not a quote of his words)",
+   "gloss": "The primary copy stays in the private HF dataset; code bundles and a second copy of the critical set go to his own disk; pods and scratchpads are never a copy.",
+   "date": "2026-10-24T00:00:00Z",
+   "source": {
+    "kind": "decision_log",
+    "ref": "D-73",
+    "detail": "D-73 (docs/DECISIONS_AND_OPEN_QUESTIONS.md @ origin/claude/project-thread-2vxd8y)"
+   },
+   "layers": [
+    "L31",
+    "L33"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "vault verify PASS; a dated HF tag pins each approved state; a pod proves its outputs are on HF with the same hash before it stops (VT-01/02)",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "words_partial": true,
+   "note": "thread 'დაცვა: ნაშრომი არ დაიკარგოს' (his task title as the log gives it); the log gives no sentence of his"
+  },
+  {
+   "id": "OR-I48",
+   "kind": "requirement",
+   "words": "create a local library of the background music and objects we already made that other videos can use too; create new only when needed",
+   "words_verbatim": false,
+   "words_origin": "decision_log_quote (the log's author renders his words in English; his Georgian is not in the log)",
+   "gloss": "Library first: search the reusable music, sound and picture library before making anything new.",
+   "date": "2026-10-20T00:00:00Z",
+   "source": {
+    "kind": "decision_log",
+    "ref": "D-76",
+    "detail": "D-76 (docs/DECISIONS_AND_OPEN_QUESTIONS.md @ origin/claude/project-thread-2vxd8y)"
+   },
+   "layers": [
+    "L18",
+    "L19",
+    "L9"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "a paid ElevenLabs music or SFX call is refused without a recorded library search (assets_reuse, asset_reuse.json); paint plan lists library matches (PP-08)",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "quote as the log gives it: 'change this rule for future videos, and keep what this session created'"
+  },
+  {
+   "id": "OR-I49",
+   "kind": "requirement",
+   "words": "one strong main agent and at most one independent critic",
+   "words_verbatim": false,
+   "words_origin": "decision_log_quote (the log's author renders his words in English; his Georgian is not in the log)",
+   "gloss": "Yes to an outside AI's advice: one main agent runs every stage, with at most one independent critic.",
+   "date": "2026-10-25T18:21:00Z",
+   "source": {
+    "kind": "decision_log",
+    "ref": "D-79",
+    "detail": "D-79 (docs/DECISIONS_AND_OPEN_QUESTIONS.md @ origin/claude/project-thread-2vxd8y)"
+   },
+   "layers": [
+    "L33"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "only script-critic and lora-checkpoint-judge are spawned; stage pages run in the main agent (test_agent_roles)",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "date_basis": "log: 22:21 Tbilisi 2026-10-25 (UTC+4 = 18:21Z)",
+   "note": "thread 'შევაფასოთ 3 AI-ის სისტემის რჩევა'. Overtaken in practice by the 11-19/20 skills-team and plan-thread setup, where a lead, analysts and a developer run as threads: whether D-79 still holds is not recorded (see OR-C06 for the model side)."
+  },
+  {
+   "id": "OR-P10",
+   "kind": "requirement",
+   "words": "Channel name: Crossworld Theories (spelling confirmed)",
+   "words_verbatim": false,
+   "words_origin": "decision_log_summary (the log's statement of his decision; not a quote of his words)",
+   "gloss": "On 2026-10-16 he wrote 'Crossword Theories'; the log fixed the spelling as Crossworld Theories and records it as confirmed by him.",
+   "date": "2026-10-16T00:00:00Z",
+   "source": {
+    "kind": "decision_log",
+    "ref": "D-29",
+    "detail": "D-29 (docs/DECISIONS_AND_OPEN_QUESTIONS.md @ origin/claude/project-thread-2vxd8y)"
+   },
+   "layers": [
+    "L27",
+    "L30"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "the name in metadata, channel art and descriptions equals the name the owner confirms",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "words_partial": true,
+   "note": "the memory index and youtube-staging-upload (2026-10-19) call the channel 'CrossWorld Chronicles' (YouTube channel id UCndsNlyExB-jKRB9hs283BQ) and his own 10-24 English research brief is titled 'CrossWorld Chronicles': the name changed after D-29 (his 10-30 answers include 'rebrand yes', card text not readable here) or the log is stale. Not raised as a conflict: the coordinator already works with 'CrossWorld Chronicles'; confirm with the coordinator, and if it holds propose OR-P10 superseded_by OR-P11.",
+   "proposed_amendment": {
+    "change": {
+     "status": "superseded",
+     "superseded_by": "OR-P11"
+    },
+    "source": {
+     "kind": "memory",
+     "ref": "prompt-rules-shot-cards-2026-10-24; youtube-staging-upload; MEMORY.md"
+    },
+    "lead_reading": "yes, no card needed: project memory also names the channel CrossWorld Chronicles",
+    "applied": false,
+    "why_not_applied": "the registry CI keeps owner words and status immutable unless the superseding entry cites his own chat message (REG-WORDS-CHANGED, REG-SUPERSEDE-UNSOURCED); this one rests on the decision log or the lead's reading, so it waits for his word"
+   }
+  },
+  {
+   "id": "OR-P11",
+   "kind": "requirement",
+   "words": "CrossWorld Chronicles — Research and Improve Historical Docudrama Scriptwriting",
+   "words_verbatim": true,
+   "words_origin": "memory_quote",
+   "gloss": "The title of his own English research brief of 2026-10-24 (about 19:00 Tbilisi) calls the channel CrossWorld Chronicles; the memory index and the YouTube staging record (channel id UCndsNlyExB-jKRB9hs283BQ, 2026-10-19) use the same name.",
+   "date": "2026-10-24T15:00:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "prompt-rules-shot-cards-2026-10-24"
+   },
+   "layers": [
+    "L27",
+    "L30"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "the name in metadata, channel art and descriptions equals the name the owner confirms",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "words_partial": true,
+   "note": "a title, not an instruction: it shows the name he used on 10-24, after D-29 (10-16, Crossworld Theories). The 15:00Z time is 'about 19:00 Tbilisi' in the memory file."
+  },
+  {
+   "id": "OR-Q13",
+   "kind": "requirement",
+   "words": "Every rule has its code check; the cut is gated before it is drawn",
+   "words_verbatim": false,
+   "words_origin": "decision_log_summary (the log's statement of his decision; not a quote of his words)",
+   "gloss": "His answers 1a-8a to the Gemini review of the minute-1 test: no time labels in LTX prompts, held props kept, one continuous shot, a gated cut plan.",
+   "date": "2026-11-07T22:23:00Z",
+   "source": {
+    "kind": "decision_log",
+    "ref": "D-121",
+    "detail": "D-121 (docs/DECISIONS_AND_OPEN_QUESTIONS.md @ origin/claude/project-thread-2vxd8y)"
+   },
+   "layers": [
+    "L10",
+    "L21",
+    "L33"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "test_rule_coverage: every rule row has a validator; production/cut_plan.py gates the plan before any picture is drawn; paid_preflight gates every Modal launcher",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "words_partial": true,
+   "note": "his message cmsg_01Hnu5zB86sjUj5GtTgaUkPWH3yBwffdTpnyWVr339uFoN with answers 1a-8a (not quoted in the log). Same idea as OR-Q01 and OR-Q02 on 11-20, four days earlier."
+  },
+  {
+   "id": "OR-Q14",
+   "kind": "requirement",
+   "words": "„ჩართე რბილი რეჟიმი: production ჩერდება მხოლოდ ჩავარდნილ ვალიდატორზე.",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "Soft mode: production stops only on a failed validator; everything else is listed, not blocking.",
+   "date": "2026-11-20T09:11:34Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWMd8fDv9ExMX3zJq6nwZXau"
+   },
+   "layers": [
+    "L33",
+    "L23"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "layer_gate refuses only a missing or invalid registry and a failed validator on a stage's files; every non-final layer and unmapped entry is listed in each stage record",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "amends": [
+    "OR-Q01",
+    "OR-Q02"
+   ],
+   "note": "typed by him in the developer thread, id as the lead thread read it. Recorded as D-143 and as layer_gate_mode fail_only (PR #219, 93cf005d). It narrows how OR-Q01 and OR-Q02 bite; it does not withdraw them (the layer records still decide when a layer's skill work is final). The SEND to him stays hard in code: the lead put 'should sending be soft too?' to the coordinator and the coordinator confirmed 09:15Z that this was the coordinator's reading, not his word. Not a conflict entry. Loader fix: the delta file had a one-character typo in the message id; the id here was read back from the chat and matches his typed word. | group B: no words change, C04 resolved per shot, 6cbb2e7a"
+  },
+  {
+   "id": "OR-S24",
+   "kind": "requirement",
+   "words": "no if it adds cost or complexity",
+   "words_verbatim": false,
+   "words_origin": "decision_log_quote (the log's author renders his words in English; his Georgian is not in the log)",
+   "gloss": "Card A1 (two permanent hosts) is NO: it adds two drawn characters, a host lane and region plates, so it adds cost and complexity.",
+   "date": "2026-10-30T16:13:00Z",
+   "source": {
+    "kind": "decision_log",
+    "ref": "D-89",
+    "detail": "D-89 (docs/DECISIONS_AND_OPEN_QUESTIONS.md @ origin/claude/project-thread-2vxd8y)"
+   },
+   "layers": [
+    "L2",
+    "L9"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "no plan holds a permanent host figure or a HOST_COMMENTARY lane entry; every plan's cast has permanent:false",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "words_partial": true,
+   "note": "his message cmsg_01Hnu5zB86sjUj5GtTgaUkPW5f8NsnbZwPhLsKQESi7SXS item 1, quoted in D-89. It withdraws his 2026-10-29 08:55 'two permanent hosts' answer, which v3 holds as OR-S06 (still ACTIVE in the registry): propose OR-S06 status=superseded, superseded_by=OR-S24 (v3 not touched here). OR-S05 (no permanent heroes) agrees with it."
+  },
+  {
+   "id": "OR-S25",
+   "kind": "requirement",
+   "words": "Worlds collide: what happens when one world meets another",
+   "words_verbatim": false,
+   "words_origin": "decision_log_summary (the log's statement of his decision; not a quote of his words)",
+   "gloss": "The channel's positioning: one world meets another (you in another era, past meets present, era meets era without gore, nature or science meets today, money across eras, myth meets today); every video explains the real history or science and labels speculation.",
+   "date": "2026-10-15T00:00:00Z",
+   "source": {
+    "kind": "decision_log",
+    "ref": "D-25",
+    "detail": "D-25 (docs/DECISIONS_AND_OPEN_QUESTIONS.md @ origin/claude/project-thread-2vxd8y)"
+   },
+   "layers": [
+    "L2",
+    "L30"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "the episode's premise names two worlds and their collision type; speculation is labelled; the explained history or science behind the collision is present",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "words_partial": true,
+   "date_basis": "log row says 'decided 2026-10-15 (creator delegated)': the idea is his, the synthesis is Claude's",
+   "note": "amended 2026-10-16 by D-26: fictional worlds allowed as analysis episodes under the RR rules. The channel's later docudrama/storyteller form is in OR-S18-family entries; this entry is the positioning, not the form."
+  },
+  {
+   "id": "OR-S26",
+   "kind": "requirement",
+   "words": "rewrite the whole system",
+   "words_verbatim": false,
+   "words_origin": "decision_log_quote (the log's author renders his words in English; his Georgian is not in the log)",
+   "gloss": "After the Syndicate Wars review (senseless cues, no real dialogue, press-release narration) he asked for the scene system to be rewritten: every scene turns a value, every cut has a reason, every sound maps to a story event or is deleted.",
+   "date": "2026-10-19T00:00:00Z",
+   "source": {
+    "kind": "decision_log",
+    "ref": "D-58",
+    "detail": "D-58 (docs/DECISIONS_AND_OPEN_QUESTIONS.md @ origin/claude/project-thread-2vxd8y)"
+   },
+   "layers": [
+    "L2",
+    "L3",
+    "L18"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "scene_lint SC-01..SC-10 pass; no cue without a named story event; narration is not press-release register",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "words_partial": true,
+   "note": "his phrase is quoted inside D-58's cause line; the McKee/Murch rules are Claude's synthesis with his sourcing rule (D-59). The clause 'every sound maps to a named story event' is overtaken by D-136 (11-12 21:44: a bed of the place under every shot): do not enforce it literally for the bed, see conflict OR-C04. | C04 resolved per shot, 6cbb2e7a"
+  },
+  {
+   "id": "OR-S27",
+   "kind": "requirement",
+   "words": "Geography is mixed: real Earth for history and science episodes, an invented map for other people's fictional worlds.",
+   "words_verbatim": false,
+   "words_origin": "card_press (recorded by the coordinator or the log's author; not his typed words)",
+   "gloss": "History and science episodes use real geography; analysis episodes of fictional worlds use an invented map.",
+   "date": "2026-11-01T00:00:00Z",
+   "source": {
+    "kind": "decision_log",
+    "ref": "D-92",
+    "detail": "D-92 item 3 (docs/DECISIONS_AND_OPEN_QUESTIONS.md @ origin/claude/project-thread-2vxd8y)"
+   },
+   "layers": [
+    "L15",
+    "L30"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "an episode's map plates declare map_basis real_earth or invented, matching the episode type",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "one of his answers to the open creator-only items, 2026-11-01, decision cards in the project thread (the log does not give the message ids)"
+  },
+  {
+   "id": "OR-S28",
+   "kind": "requirement",
+   "words": "the read comes first for every video shot",
+   "words_verbatim": false,
+   "words_origin": "card_press (recorded by the coordinator or the log's author; not his typed words)",
+   "gloss": "Clip length comes from the measured read of its line, never the other way round.",
+   "date": "2026-11-13T13:28:00Z",
+   "source": {
+    "kind": "decision_log",
+    "ref": "D-138",
+    "detail": "D-138 Q4 (docs/DECISIONS_AND_OPEN_QUESTIONS.md @ origin/claude/project-thread-2vxd8y)"
+   },
+   "layers": [
+    "L4",
+    "L13"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "every video shot has a measured read (narration G6 or the clip line's TTS or recording) before its clip length is set; hard gate at the scene file and at the paid launch",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "words_partial": true,
+   "date_basis": "the seven answers were given 13:27-13:29 UTC by card; 13:28 is the middle of the window",
+   "note": "log wording: 'Q4 (a) the read comes first for every video shot'; the words are the log's rendering of the option he pressed"
+  },
+  {
+   "id": "OR-V63",
+   "kind": "requirement",
+   "words": "Scene continuity: the pictures of one scene are shots of one room",
+   "words_verbatim": false,
+   "words_origin": "decision_log_summary (the log's statement of his decision; not a quote of his words)",
+   "gloss": "After the titans episode (five men on a bench of ten, then two other men in another room while the narration told one conversation) he asked that one scene's pictures show one room.",
+   "date": "2026-10-22T00:00:00Z",
+   "source": {
+    "kind": "decision_log",
+    "ref": "D-69",
+    "detail": "D-69 (docs/DECISIONS_AND_OPEN_QUESTIONS.md @ origin/claude/project-thread-2vxd8y)"
+   },
+   "layers": [
+    "L8",
+    "L10"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "pictures of one scene share the master frame's room, seats and roster; a master is painted first and shots wait for its continuity review (CS-01..CS-12)",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "words_partial": true,
+   "note": "project thread 'სცენის უწყვეტობა სურათებში'; the log gives the cause and the fix, not his sentence. The 2026-11-19 plan (CT-1, CT-2, OR-V12) later changed how continuity is done; this is the requirement behind it."
+  },
+  {
+   "id": "OR-V64",
+   "kind": "requirement",
+   "words": "Filler pictures may come from Canva",
+   "words_verbatim": false,
+   "words_origin": "decision_log_summary (the log's statement of his decision; not a quote of his words)",
+   "gloss": "Low-importance pictures may be made in Canva; he read and accepted the Canva terms himself on 2026-10-17.",
+   "date": "2026-10-17T00:00:00Z",
+   "source": {
+    "kind": "decision_log",
+    "ref": "D-53",
+    "detail": "D-53 (docs/DECISIONS_AND_OPEN_QUESTIONS.md @ origin/claude/project-thread-2vxd8y)"
+   },
+   "layers": [
+    "L9"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "a Canva picture is type A or C, no person, used once, at most 30 % of an episode; engine canva refused while channel.canva_terms_verified is false",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "words_partial": true,
+   "note": "decided by creator 2026-10-17 per the log; Canva pictures are made by hand through the connector, never in pipeline code. Whether the new-style rule (OR-V50, Gemini only) still lets Canva filler through is not recorded."
+  },
+  {
+   "id": "OR-V65",
+   "kind": "requirement",
+   "words": "a hero face that differs FAILs and a paid scene is refused while the binding face is not measured; costume, helmet and props are a warning with an eye check",
+   "words_verbatim": false,
+   "words_origin": "card_press (recorded by the coordinator or the log's author; not his typed words)",
+   "gloss": "A hero whose face changes between shots fails the check; a changed helmet or prop only warns and is looked at by eye.",
+   "date": "2026-11-13T13:28:00Z",
+   "source": {
+    "kind": "decision_log",
+    "ref": "D-138",
+    "detail": "D-138 Q3 (docs/DECISIONS_AND_OPEN_QUESTIONS.md @ origin/claude/project-thread-2vxd8y)"
+   },
+   "layers": [
+    "L10",
+    "L13",
+    "L24"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "hero face match measured per scene (BP-166 style share); a different face FAILs; costume_review/1 eye check for costume, helmet, props",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "words_partial": true,
+   "date_basis": "card answers 13:27-13:29 UTC",
+   "note": "Q3 (c). The log's cause: the 11-12 battle where the helmet changed and the head-box palette read 0.094 against 0.15."
+  },
+  {
+   "id": "OR-V66",
+   "kind": "requirement",
+   "words": "EVERYTHING in the frame (living or not, near or far, hero or background) in the same style; a background mammoth has the same eyes/line as the hero one",
+   "words_verbatim": false,
+   "words_origin": "memory_quote (the memory file renders his rule in English)",
+   "gloss": "At the 2026-10-22 16:09 Tbilisi pick of the Wild Ink direction (D-71) he ruled that every element of a frame, near or far, living or not, is in the one style.",
+   "date": "2026-10-22T12:09:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "animation-universe-2026-10-22"
+   },
+   "layers": [
+    "L9",
+    "L10",
+    "L24"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "one style judged per frame: background figures, objects and plates match the hero's line, eyes and palette (style check against the era-film frame)",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "words_partial": true,
+   "date_basis": "memory time 16:09 (Tbilisi, UTC+4 = 12:09Z)",
+   "note": "the Wild Ink direction itself was replaced (D-80, then the 11-19 era-film style, OR-V01/V50); the one-style-for-the-whole-frame part has no replacement and no registry entry before this one."
+  },
+  {
+   "id": "OR-A24",
+   "kind": "requirement",
+   "words": "მნიშვნელვანია ხმის ლეიერების კონტროლი რატა ხმაურში არ გადაიზარდოს",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "Control the sound layers so they do not become noise.",
+   "date": "2026-10-19T10:13:30Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWKu1edpuBeo8MoHxrWf3328",
+    "thread": "main chat (message id given by the coordinator)"
+   },
+   "layers": [
+    "L20"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "the sound layers are controlled so the mix never turns into noise (layer count and level per moment)",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "the 10-19 origin of audio/layers.py; later D-134 and D-136 changed which sounds exist, not this control"
+  },
+  {
+   "id": "OR-A25",
+   "kind": "requirement",
+   "words": "ილევენ ლაბში საჭირო ხმების ავტომატური პოვნა გმირის ხასიათი დან და ამ გმირზე თუ ეს საჯარო ფიგურა ან ქარაქტერია მისი რეალური არსიდან გამიმდინარე",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "Find the ElevenLabs voices automatically from the hero's character, and for a public figure or a character from who they really are.",
+   "date": "2026-10-19T10:13:30Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWKu1edpuBeo8MoHxrWf3328",
+    "thread": "main chat (message id given by the coordinator)"
+   },
+   "layers": [
+    "L6"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "voices are found automatically in the voice library from the character's traits; for a public figure or a known character from their real essence",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "overtaken in part: D-62 (10-20) and D-68 (10-21), OR-A21: a real living person never gets a synthetic voice; invented characters' voices from traits stay (voice-caster, OR-A19). OR-A11 (10-20) is the middle step."
+  },
+  {
+   "id": "OR-A26",
+   "kind": "requirement",
+   "words": "სკრიპტის წერისას ტექნიკური დეტალები როგორიცაა ტონი შორისდებულები ხმები მნიშვნელოვანია თუმცა აგენტი არ უნდ აცდეს საერთო ტესტქს",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "Technical details such as tone, interjections and sounds matter in script writing, but the agent must not stray from the common text.",
+   "date": "2026-10-19T10:13:30Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWKu1edpuBeo8MoHxrWf3328",
+    "thread": "main chat (message id given by the coordinator)"
+   },
+   "layers": [
+    "L4",
+    "L5"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "delivery details (tone, interjections, sounds) are written with the script and the words themselves are unchanged (string check on frozen words)",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "the performance-director stage of the writers' room"
+  },
+  {
+   "id": "OR-A27",
+   "kind": "requirement",
+   "words": "ეს დამატებაც უნდა გამოსცემდეს ხმას რათა ცვლილებამ ყურადღება მიიქციოს. ეს უნდა იყოს მილიწამიანი ხმა გააჩნაი რა ემატება უნდა იყოს მსუბუქი არა შემაწუხებელი რათა უბრალოდ ტვინი წამიერად გამოაფხიზლოს",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "Every added object or text should make a short, light sound so the change catches attention.",
+   "date": "2026-10-19T13:05:24Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWGMdcvn453aY391LKU7E6aG",
+    "thread": "main chat (message id given by the coordinator)"
+   },
+   "layers": [
+    "L18"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "each visual addition has a light millisecond sound that is not annoying and only wakes the brain for a moment (written with the script as an audio-effect field)",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "narrowed by his later words: D-58 (10-19, later the same day, 'senseless cues'), and the card OR-A28 (11-13, silence allowed with a budget). Same message: expression changes may get a sound, he is not sure, asked for general editing rules."
+  },
+  {
+   "id": "OR-A28",
+   "kind": "requirement",
+   "words": "Silent allowed, with a budget",
+   "words_verbatim": false,
+   "words_origin": "card_press (recorded by the AV thread; not his typed words)",
+   "gloss": "A map or 2.5D motion may be silent on purpose, with a reason, within a cue budget.",
+   "date": "2026-11-13T11:44:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "feedback-sound-source-order-2026-11-12"
+   },
+   "layers": [
+    "L15",
+    "L18"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "a map or 2.5D motion may be silent_by_design with its reason, inside BP-81's budget (at most 8 cues a minute REVIEW, one emphasis cue a line)",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "amends": [
+    "OR-A27",
+    "OR-A02",
+    "OR-V30c"
+   ],
+   "date_basis": "memory: 2026-11-13 11:44 UTC, decision card in the AV thread (D-135)",
+   "note": "narrows his earlier 'every map move has its own sound' (OR-A02, OR-V30c) and 'every addition makes a sound' (OR-A27); it does not withdraw them. Not raised as a conflict: the newer card governs."
+  },
+  {
+   "id": "OR-A29",
+   "kind": "requirement",
+   "words": "in the bake-off, LTX cut a character's speech mid-line. Every video clip must be planned so the character FINISHES the line: the clip length comes from the line plus a tail; a gate measures where the speech ends",
+   "words_verbatim": false,
+   "words_origin": "memory_quote (the memory file renders his words in English)",
+   "gloss": "A character always finishes the spoken line inside the clip.",
+   "date": "2026-11-12T19:16:00Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWR1zwsJYy2hthiFJQQj48kT",
+    "thread": "bake-off audit"
+   },
+   "layers": [
+    "L4",
+    "L13"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "every video clip's length covers its line plus a tail; a gate measures where the speech ends and FAILs a clip that cuts the line",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "words_partial": true,
+   "note": "source memory: project-video-model-ltx-2026-11-12. The third bullet there (0.5 s sound overlap) is NOT registered: at 20:07:14Z he said it was his own invented rule, to research it (BP-188)."
+  },
+  {
+   "id": "OR-E07",
+   "kind": "requirement",
+   "words": "მნიშვნელოვანია ხშირი ცვლა ვიზუალების და არა მხოლოდ ფოტოების სტანდარტული გადასვლები",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "Frequent change of visuals, not only standard photo-to-photo transitions.",
+   "date": "2026-10-19T10:13:30Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWKu1edpuBeo8MoHxrWf3328",
+    "thread": "main chat (message id given by the coordinator)"
+   },
+   "layers": [
+    "L21"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "the first video's edit was slow, not animated, boring: visual changes are frequent and are more than standard photo transitions",
+   "repeats": 2,
+   "repeat_evidence": "10-19 10:13 and 10-19 12:20 (OR-V67)"
+  },
+  {
+   "id": "OR-I50",
+   "kind": "requirement",
+   "words": "he approves a rule once and expects every later iteration to apply it",
+   "words_verbatim": false,
+   "words_origin": "memory_summary (the memory file's own why-line, not a quote)",
+   "gloss": "Runs use the newest code and rules of all threads, not stale copies; an approved rule is not asked again.",
+   "date": "2026-10-24T18:19:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "use-newest-code-and-approved-rules"
+   },
+   "layers": [
+    "L33"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "before a paid run the repo heads of the owning branches are fetched and the commit of each is recorded in the run record; approved rules apply to every next iteration",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "words_partial": true,
+   "date_basis": "memory: 2026-10-24 22:19 Tbilisi = 18:19Z",
+   "note": "the 10-24 origin of what OR-Q01/Q02 and OR-Q13 say in 11-20 words; his sentence is not in memory, only the situation (pod-error fixes living in one PR)."
+  },
+  {
+   "id": "OR-P12",
+   "kind": "requirement",
+   "words": "შორთები კი უნდა იყოს სხვადასხვა სტილისადა სკრიპტის 10 ვიდეო რომელიც ძრითად ვიდეოს დააპრომოუტერებს და გამოყენებული იქნება შორთებისათვის განკუთვნილი ყველა ხრიკი",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "The Shorts should be in different styles, 10 scripted videos that promote the main video, using every Shorts trick.",
+   "date": "2026-10-19T10:13:30Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWKu1edpuBeo8MoHxrWf3328",
+    "thread": "main chat (message id given by the coordinator)"
+   },
+   "layers": [
+    "L28"
+   ],
+   "status": "superseded",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "(history) a Shorts set of 10 scripted videos in different styles promoting the main video",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "superseded_by": "OR-P09",
+   "supersession_confirmed": true,
+   "id_order_exception": true,
+   "note": "memory titans-qa-loop-state: on 2026-10-21 18:55 he dropped the 10 scripted Shorts and 5 clip Shorts were cut from the long video (OR-P09). History, kept so L28 shows both his words."
+  },
+  {
+   "id": "OR-S29",
+   "kind": "requirement",
+   "words": "თავად სკრიპტის არსებული წერა ნაკლებად საინტერესო ისტორიას ქმნის ხშირად ცდება მაყურებლების მოთხოვნებს ობიექტურობის და ადამანების ძრითადი მოთხოვნილებების ბალანსი მნიშვნელოცანია საჭიროა როგორც კონკურენტების შესწავლა ასევე ფილმის ან მოკლე სერიალებისსცენარის წერის ტექნიკების შესწავლა და მათი დანერგვა ისე რომ იუთუბის თემატიკას მოერგოს",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "The script writing makes dull stories and misses what the audience wants: balance objectivity with people's basic needs; study competitors and film/short-series screenplay technique and fit it to YouTube.",
+   "date": "2026-10-19T10:13:30Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWKu1edpuBeo8MoHxrWf3328",
+    "thread": "main chat (message id given by the coordinator)"
+   },
+   "layers": [
+    "L1",
+    "L2"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "the story layer record lists the competitor study and the film or short-series screenwriting techniques it applied, fitted to YouTube; objectivity and the viewer's basic needs are both addressed",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "first sentence of his 10-19 10:13 message; the rest of that message is OR-E07, A24, A25, A26, P12. The same message says the Sonnet model can do it inside a good frame and an agent system."
+  },
+  {
+   "id": "OR-V67",
+   "kind": "requirement",
+   "words": "აუცილებელი არაა თავად ფოტო თიმცა ყოველ 1.5 წამში ერთხელ რაღაც უნდა ხდებოდეს ვიზუალში ემატებოდეს ჩარტი ტექსტი საგანი ან სხვა რამე ოღონდ კონტექსტუალურად მგონი ამისთვის დიდი ცვლილება მოგვიწევს რადგან ეს უნდა მოხდეს სკრიპტის წერის პარალელ;ურად ასე რომ 3-6 წამში ერთხელ ფოტოს ცვლა ოქეია",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "Not necessarily the photo itself, but every 1.5 s something must happen in the visual (a chart, text or object, contextually); a photo change every 3-6 s is OK.",
+   "date": "2026-10-19T12:20:54Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWAEYVEPDbhBtd8UhRERUZoL",
+    "thread": "main chat (message id given by the coordinator)"
+   },
+   "layers": [
+    "L7",
+    "L21"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "the edit plan has something new on screen (chart, text, object, other) at least every 1.5 s, contextual to what the narrator says; a photo change every 3-6 s is accepted",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "the exact 10-19 12:20 Georgian behind OR-S16, which is a paraphrase from memory (10-21); the 1.5 s additions must be written in parallel with the script (a new skill and a new script field)"
+  },
+  {
+   "id": "OR-V68",
+   "kind": "requirement",
+   "words": "რაც შეეხება დიალოგებისას რადგან ამ დროს ძირითადი ფოკუსი სახეზეე 1 წამში ერთხელ უნდა შეიცვალოს გამომეტყველება ბრაზი იქნება მხიარულება თუ სხვა რამე",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "In dialogue the focus is the face, so the expression changes once every second.",
+   "date": "2026-10-19T12:20:54Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWAEYVEPDbhBtd8UhRERUZoL",
+    "thread": "main chat (message id given by the coordinator)"
+   },
+   "layers": [
+    "L3",
+    "L12"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "in a dialogue shot the facial expression changes about once a second (anger, joy or other)",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "same message as OR-V67; the other half of OR-S16"
+  },
+  {
+   "id": "OR-V70",
+   "kind": "requirement",
+   "words": "No shot lasts longer than 5 s. That does not mean 12 new pictures per minute. When the script comes back to a view that already exists, the system reuses the old keyframe: it may zoom, crop or take a slightly different angle. A new picture only when the shot really needs one. An option, not an obligation.",
+   "words_verbatim": false,
+   "words_origin": "memory_quote (the memory file renders his words in English)",
+   "gloss": "Shots stay at most 5 s; returning to an existing view reuses its keyframe instead of drawing a new picture.",
+   "date": "2026-10-24T22:13:00Z",
+   "source": {
+    "kind": "memory",
+    "ref": "shot-reuse-rule"
+   },
+   "layers": [
+    "L9",
+    "L10"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "each shot is marked new or reuse:<shot> with zoom/crop; only new shots count for generation and cost; no shot above 5 s",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "words_partial": true,
+   "date_basis": "memory: 2026-10-25 02:13 Tbilisi = 10-24 22:13Z",
+   "note": "related but different: OR-V18/V24 (5 s limits), OR-V45 (a place is drawn twice only with a blurred background or non-consecutively, 11-07). Reuse of a keyframe and drawing a place twice are not the same act; if the lead reads them as in tension, one card."
+  },
+  {
+   "kind": "requirement",
+   "check": {
+    "kind": "unmapped"
+   },
+   "status": "active",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "words_verbatim": false,
+   "id": "OR-I51",
+   "date": "2026-11-01T06:54:00Z",
+   "words": "auto-delete after 24 hours; it must be 0 GB so it has no cost",
+   "words_origin": "decision_log_quote (the log renders his words in English)",
+   "gloss": "A stopped pod with a 0 GB volume is deleted automatically 24 h after its approved life ended; a pod with a volume is never touched.",
+   "source": {
+    "kind": "decision_log",
+    "ref": "D-92",
+    "detail": "D-92 item 4 (docs/DECISIONS_AND_OPEN_QUESTIONS.md @ origin/claude/project-thread-2vxd8y); his word 2026-11-01 06:54 UTC, yes to the hook run 06:58 UTC"
+   },
+   "layers": [
+    "L31"
+   ],
+   "measures": "runpod sweep auto_delete_due: only a stopped 0 GB pod past its valid -until-<epoch> + 24 h; session-start and stop hooks run it",
+   "amends": [
+    "OR-I18"
+   ],
+   "words_partial": true,
+   "date_basis": "log: his word 2026-11-01 06:54 UTC",
+   "note": "amends OR-I18 (delete a pod only on his word) for that case only; moot while RunPod is dropped (11-19 20:07), kept so OR-I18 is not read as absolute."
+  },
+  {
+   "kind": "requirement",
+   "check": {
+    "kind": "unmapped"
+   },
+   "status": "active",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "words_verbatim": false,
+   "id": "OR-V71",
+   "date": "2026-11-01T00:00:00Z",
+   "words": "Shorts are 1440x2560 (the BP-167 master rotated)",
+   "words_origin": "card_press (the log's statement of his answer; not his typed words)",
+   "gloss": "His answer to the open creator-only items of 2026-11-01: Shorts are 1440x2560, the 2560x1440 master rotated.",
+   "source": {
+    "kind": "decision_log",
+    "ref": "D-92",
+    "detail": "D-92 item 5 (docs/DECISIONS_AND_OPEN_QUESTIONS.md @ origin/claude/project-thread-2vxd8y)"
+   },
+   "layers": [
+    "L28",
+    "L21"
+   ],
+   "measures": "every Short's frame is 1440x2560 (core/delivery.shorts_frame)",
+   "words_partial": true,
+   "note": "OR-E02 (master 2560x1440 at 24 fps, BP-167) is the long video; this is the Shorts frame. Date: the card batch of 2026-11-01, time not in the log."
   }
  ],
  "process_requirements": [
@@ -5756,6 +7010,56 @@
    "repeats": 1,
    "repeat_evidence": "",
    "note": "words are a paraphrase of the lead's relay; the owner's typed words are not in this thread. Registry id OR-G21, creator's name OR-P-CC1, rule OR-38 in docs/ORCHESTRATION.md."
+  },
+  {
+   "id": "OR-G22",
+   "kind": "requirement",
+   "words": "no production rule is law by itself: every number a validator enforces lives in sourced_rules.json with its sources",
+   "words_verbatim": false,
+   "words_origin": "decision_log_summary (the log's statement of his decision; not a quote of his words)",
+   "gloss": "Every enforced number has two source types (article, book, video) or is a dated house call by him; documents link the BP id.",
+   "date": "2026-10-19T00:00:00Z",
+   "source": {
+    "kind": "decision_log",
+    "ref": "D-59",
+    "detail": "D-59 (docs/DECISIONS_AND_OPEN_QUESTIONS.md @ origin/claude/project-thread-2vxd8y)"
+   },
+   "layers": [
+    "L33"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "test_sourced_rules: registry, table and code agree; binding = two of three source types; a one-type rule is REVIEW",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "words_partial": true,
+   "note": "'creator's sourcing rule, 2026-10-19' (D-58, D-59); the log gives the rule, not his sentence. Overlaps OR-Q01 (everything has a test) for numbers specifically. Renumbered on loading: the delta file called it OR-G21, but OR-G21 is already the CC-1 thread-cost rule in the live registry."
+  },
+  {
+   "id": "OR-G23",
+   "kind": "process",
+   "status": "active",
+   "words": "გავაკეთოთ არა მოbrunებითი ვარიანტი, არამედ ზოგ კადრში გვერდიდან გადატარება გავაკეთოთ, ზოგ კადრში ზუმინი გავაკეთოთ, ზოგ კადრში ზუმაუთი გავაკეთოთ, ზოგ კადრში გვერდიდან გადატარება ზუმინი და ზუმაუთი ერთად გავაკეთოთ, გააჩნია კადრის სპეციფიკა და ნარატორის საუბარი. Ну გავართულებთ ძალიან.",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "Camera moves are chosen per shot from four moves: sideways pass (truck), zoom-in, zoom-out, and a sideways pass combined with zoom-in or zoom-out, depending on the shot's content and on what the narrator says at that moment. No orbit or rotation variant (the garbled word is as typed; read as rotating/orbit). He notes it makes things more complex.",
+   "date": "2026-11-20T16:25:31Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWCo5ZZjCRJebBnUpvGyyPUn"
+   },
+   "layers": [
+    "L33"
+   ],
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "shot card has camera_move (truck_l, truck_r, zoom_in, zoom_out, truck_zoom_in, truck_zoom_out; no default, a missing or other value fails) and camera_why (one line quoting the narration cue); rotation, roll and orbit are forbidden values; living_motion v2 camera fit: tx, scale and rotation match the card's move, rotation about 0",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "Delta 6 (CAMERA_MOVES_DECISION_2026-11-20.md). The selection table (which move for which shot) is a proposal, not his: he confirms by looking at the first test. Which of focal length or dolly he wants for 'zoom' in Blender is open. That body folding comes from camera rotation is a hypothesis, not measured. No validator exists yet; unmapped. | owner card 2026-11-22 17:41 UTC: \"Back to process\" (kept as a process entry, L33 only)"
   }
  ]
 }
