@@ -35,3 +35,21 @@ def _job_speeds_isolated(tmp_path, monkeypatch):
     shutil.copy(S.FILE, copy)
     monkeypatch.setattr(S, "FILE", copy)
     yield
+
+
+@pytest.fixture(autouse=True)
+def _overnight_isolated(request, tmp_path, monkeypatch):
+    """The overnight ledger (core/spend_caps.overnight_reserve) writes into a temp dir, never into the real jobs/overnight; the
+    runner tests use fake spend-cap files without a night, so their calls are not counted there. The ceiling itself is tested
+    with the ``real_overnight`` fixture (tests/unit/test_spend_caps_overnight.py)."""
+    from explainer_engine.core import spend_caps as SC
+    monkeypatch.setenv("EXPLAINER_OVERNIGHT_DIR", str(tmp_path / "overnight_default"))
+    if "real_overnight" not in request.fixturenames:
+        monkeypatch.setattr(SC, "overnight_reserve", lambda *a, **k: None)
+        monkeypatch.setattr(SC, "overnight_settle", lambda *a, **k: None)
+    yield
+
+
+@pytest.fixture
+def real_overnight():
+    """Ask for this fixture to run the real overnight reserve and settle against the file's own night."""
