@@ -7,6 +7,7 @@ One canonical home per specification and per ID (D-23). Link to a document or an
 | [PROJECT_BRIEF](PROJECT_BRIEF.md) | mission, constraints, positioning, scope | |
 | [PLAN_SCOPE_RULES](PLAN_SCOPE_RULES.md) | binding rules: every plan covers every owner requirement, incl. new skills; no scope cut to protect current code; requirements coverage section | SC- |
 | [PLAN_SCOPE_RULES_CLAUDE_MD_PROPOSAL](PLAN_SCOPE_RULES_CLAUDE_MD_PROPOSAL.md) | proposed CLAUDE.md paragraph for the plan scope rule; not applied | |
+| [PLAN_SCOPE_SKILLS_PROPOSAL](PLAN_SCOPE_SKILLS_PROPOSAL.md) | proposed plan-scope paragraph for each of the 17 skills; not applied | |
 | [DECISIONS_AND_OPEN_QUESTIONS](DECISIONS_AND_OPEN_QUESTIONS.md) | every decision, open questions, approval gates | D- |
 | [MARKET_RESEARCH](MARKET_RESEARCH.md) | seed-evidence register, verification log, topic comparison, vidIQ ledger | SE-, V- |
 | [CREATIVE_STYLE_BIBLE](CREATIVE_STYLE_BIBLE.md) | tone, Kit, shape grammar, typography, hook framework | |
