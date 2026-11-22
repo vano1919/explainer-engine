@@ -1,0 +1,9 @@
+Task A (explainer_engine/qa/technical_gate.py, explainer_engine/qa/technical_gate.json, tests/unit/test_technical_gate.py): move the hard-coded ffmpeg filter parameters into the JSON.
+1. In technical_gate.json add a top-level block "filters" with: "blackdetect": {"d": 0.1, "pix_th": 0.10}, "freezedetect": {"n": 0.003, "d": 0.5}, and "basis": "PROVISIONAL: house values, no source; freezes shorter than freezedetect.d are not counted; the owner sets them on rendered samples".
+2. measure_video currently builds vf "blackdetect=d=0.1:pix_th=0.10" and "freezedetect=n=0.003:d=0.5". Build the same two strings from the JSON values with the same formatting (f"blackdetect=d={d}:pix_th={pix_th}" and f"freezedetect=n={n}:d={d}"), so the strings are identical to today's: "blackdetect=d=0.1:pix_th=0.1" would differ from "pix_th=0.10", so format pix_th with the value as float and check the resulting string in a test to be exactly "blackdetect=d=0.1:pix_th=0.1" and "freezedetect=n=0.003:d=0.5". State the chosen string in a test comment.
+3. Add a test that load_limits()["filters"]["freezedetect"]["d"] == 0.5 and that the strings in 2 are produced by a helper function _filter_strings() that measure_video uses.
+Do not change any other value.
+
+Task B (explainer_engine/fx25d/living.py, tests/unit/test_living_output_size.py): output_size_frame must accept a bool or float16 mask. Before cv2.resize, cast the input: if the dtype is bool, convert to uint8 * 255; if it is float16, convert to float32. Keep float32/float64 and uint8 unchanged. Add a test that output_size_frame on a bool 720x1280 array returns shape (1080, 1920) and does not raise, and on a float16 array the same. Do not change anything else in living.py.
+
+Run: python -m pytest -q tests/unit/test_technical_gate.py tests/unit/test_living_output_size.py
