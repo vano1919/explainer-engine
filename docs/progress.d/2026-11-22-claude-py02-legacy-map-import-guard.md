@@ -1,0 +1,4 @@
+## 2026-11-22 — PY-02: guard against new legacy map-renderer imports
+- New `tests/unit/test_no_legacy_map_imports.py`: scans `explainer_engine/` and `tests/` for imports of `explainer_engine/maps/render.py`. Nine files import it on this base (7fb0c725); they are the allowlist. A new importer fails the test; a stale allowlist entry fails too. A scratch-file test shows the scanner flags a new importer.
+- Gap, recorded and not changed: `explainer_engine/edit/archetypes.json` names `explainer_engine.maps.render` as the renderer of the map archetypes (a string, which an import scan cannot see). `production/map_clip.py` (the map clip encoder) still imports the legacy renderer. Routing is not changed here; the owner decides (PY-02 acceptance: ask before changing routing).
+- Test: `tests/unit/test_no_legacy_map_imports.py` (3 passed); `test_maps.py`, `test_bridge_caller.py`, `test_preset_render_switch.py` still pass (41 passed, 7 skipped).
