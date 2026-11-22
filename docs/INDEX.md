@@ -46,6 +46,7 @@ One canonical home per specification and per ID (D-23). Link to a document or an
 | [SCRIPTING_SPEC](SCRIPTING_SPEC.md) | research-to-script gate, format structures, script rubric | |
 | [VIDEO_PARAMETER_SPEC](VIDEO_PARAMETER_SPEC.md) | every parameter: default, range, evidence, validation | P- |
 | [PRODUCTION_RULES](PRODUCTION_RULES.md) | the gates every video passes in order, the creator's standing orders, the feedback log, planning numbers by length | |
+| [MAP_25D_RULES](MAP_25D_RULES.md) | owner rules for maps and 2.5D: camera, palette, font, bridges, no melting, film style per episode, and where each is enforced (proposals marked) | |
 | [VISUAL_WORLD_ARCHITECTURE](VISUAL_WORLD_ARCHITECTURE.md) | how a topic's world and era are resolved and shown (era codex, look v2, anchored hybrid generation, grade, visual QA); proposal D-41 | |
 | [WORLD_BIBLE](WORLD_BIBLE.md) | the versioned World Bible (`world/bible.json`) and the reusable asset library (`assets/library.json`): records, versions, approval, duplicate warnings; D-70 stage C | WB- |
 | [PRODUCTION_SCRIPT](PRODUCTION_SCRIPT.md) | the one JSON per video (narration, voice, pictures and prompts, sounds, edit), its validation rules PV-01..PV-60, paint plans PP-xx, scene continuity CS-01..CS-12 (D-69) and the command line; D-43 | |
