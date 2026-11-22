@@ -1917,7 +1917,7 @@
      "ref": "D-136 (docs/DECISIONS_AND_OPEN_QUESTIONS.md @ origin/claude/project-thread-2vxd8y); OR-A18 (D-138 Q2, 11-13 13:55Z)"
     },
     "lead_reading": "closed as answered by D-136 plus OR-A18, no card now",
-    "applied": true,
+    "applied": false,
     "why_not_applied": "superseded: the conflict is resolved by his answer, see 'resolution'"
    },
    "note": "answered by card press 2026-11-20 16:57 (per shot); resolved after his typed confirmation 17:39:57Z",
@@ -2449,7 +2449,8 @@
    "measures": "clip audio from LTX is the base of video scenes; separate background tracks only where OR-C04 is answered",
    "repeats": 1,
    "repeat_evidence": "",
-   "note": "see OR-C04: possible conflict with dead-air and bed rules"
+   "amended_by": "OR-C04 resolution (per shot)",
+      "note": "see OR-C04: possible conflict with dead-air and bed rules | C04 resolved per shot, 6cbb2e7a"
   },
   {
    "id": "OR-A08",
@@ -3251,7 +3252,7 @@
      "kind": "decision_log",
      "ref": "D-93 (docs/DECISIONS_AND_OPEN_QUESTIONS.md @ origin/claude/project-thread-2vxd8y)"
     },
-    "lead_reading": "take the D-93 sentence as words_verbatim true, keep the paraphrase as the old text",
+    "lead_reading": "words_verbatim stays false: the D-93 sentence is a decision-log quote, not his typed words (group B, C04 resolution)",
     "applied": false,
     "why_not_applied": "the registry CI keeps owner words and status immutable unless the superseding entry cites his own chat message (REG-WORDS-CHANGED, REG-SUPERSEDE-UNSOURCED); this one rests on the decision log or the lead's reading, so it waits for his word"
    }
@@ -5463,7 +5464,7 @@
    "measures": "in a narrated LTX clip, the clip's own sound is present as a layer ducked under the narrator (switch on in config/creator_open_questions.json)",
    "repeats": 1,
    "repeat_evidence": "",
-   "note": "his words 13:55 UTC after the free A/B (audio/clip_audio_ab) by ear; chose option b. Relates to the sound-bed question OR-C04, which is still open in the registry."
+   "note": "his words 13:55 UTC after the free A/B (audio/clip_audio_ab) by ear; chose option b. Relates to the sound-bed question OR-C04, which is still open in the registry. | C04 resolved per shot, 6cbb2e7a"
   },
   {
    "id": "OR-A19",
@@ -5903,7 +5904,7 @@
     "OR-Q01",
     "OR-Q02"
    ],
-   "note": "typed by him in the developer thread, id as the lead thread read it. Recorded as D-143 and as layer_gate_mode fail_only (PR #219, 93cf005d). It narrows how OR-Q01 and OR-Q02 bite; it does not withdraw them (the layer records still decide when a layer's skill work is final). The SEND to him stays hard in code: the lead put 'should sending be soft too?' to the coordinator and the coordinator confirmed 09:15Z that this was the coordinator's reading, not his word. Not a conflict entry. Loader fix: the delta file had a one-character typo in the message id; the id here was read back from the chat and matches his typed word."
+   "note": "typed by him in the developer thread, id as the lead thread read it. Recorded as D-143 and as layer_gate_mode fail_only (PR #219, 93cf005d). It narrows how OR-Q01 and OR-Q02 bite; it does not withdraw them (the layer records still decide when a layer's skill work is final). The SEND to him stays hard in code: the lead put 'should sending be soft too?' to the coordinator and the coordinator confirmed 09:15Z that this was the coordinator's reading, not his word. Not a conflict entry. Loader fix: the delta file had a one-character typo in the message id; the id here was read back from the chat and matches his typed word. | group B: no words change, C04 resolved per shot, 6cbb2e7a"
   },
   {
    "id": "OR-S24",
@@ -5986,7 +5987,7 @@
    "repeats": 1,
    "repeat_evidence": "",
    "words_partial": true,
-   "note": "his phrase is quoted inside D-58's cause line; the McKee/Murch rules are Claude's synthesis with his sourcing rule (D-59). The clause 'every sound maps to a named story event' is overtaken by D-136 (11-12 21:44: a bed of the place under every shot): do not enforce it literally for the bed, see conflict OR-C04."
+   "note": "his phrase is quoted inside D-58's cause line; the McKee/Murch rules are Claude's synthesis with his sourcing rule (D-59). The clause 'every sound maps to a named story event' is overtaken by D-136 (11-12 21:44: a bed of the place under every shot): do not enforce it literally for the bed, see conflict OR-C04. | C04 resolved per shot, 6cbb2e7a"
   },
   {
    "id": "OR-S27",
@@ -7038,7 +7039,7 @@
   },
   {
    "id": "OR-G23",
-   "kind": "process",
+   "kind": "requirement",
    "status": "active",
    "words": "გავაკეთოთ არა მოbrunებითი ვარიანტი, არამედ ზოგ კადრში გვერდიდან გადატარება გავაკეთოთ, ზოგ კადრში ზუმინი გავაკეთოთ, ზოგ კადრში ზუმაუთი გავაკეთოთ, ზოგ კადრში გვერდიდან გადატარება ზუმინი და ზუმაუთი ერთად გავაკეთოთ, გააჩნია კადრის სპეციფიკა და ნარატორის საუბარი. Ну გავართულებთ ძალიან.",
    "words_verbatim": true,
@@ -7058,7 +7059,7 @@
    "measures": "shot card has camera_move (truck_l, truck_r, zoom_in, zoom_out, truck_zoom_in, truck_zoom_out; no default, a missing or other value fails) and camera_why (one line quoting the narration cue); rotation, roll and orbit are forbidden values; living_motion v2 camera fit: tx, scale and rotation match the card's move, rotation about 0",
    "repeats": 1,
    "repeat_evidence": "",
-   "note": "Delta 6 (CAMERA_MOVES_DECISION_2026-11-20.md). The selection table (which move for which shot) is a proposal, not his: he confirms by looking at the first test. Which of focal length or dolly he wants for 'zoom' in Blender is open. That body folding comes from camera rotation is a hypothesis, not measured. No validator exists yet; unmapped."
+   "note": "Delta 6 (CAMERA_MOVES_DECISION_2026-11-20.md). The selection table (which move for which shot) is a proposal, not his: he confirms by looking at the first test. Which of focal length or dolly he wants for 'zoom' in Blender is open. That body folding comes from camera rotation is a hypothesis, not measured. No validator exists yet; unmapped. | camera layer id pending (layers stay L33 until the owner gives the id)"
   }
  ]
 }

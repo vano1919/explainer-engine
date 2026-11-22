@@ -61,7 +61,7 @@ def test_his_typed_words_are_verbatim_with_the_message_id_read_back_from_the_cha
     assert q14["words_verbatim"] is True and q14["source"] == {"kind": "chat", "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWMd8fDv9ExMX3zJq6nwZXau"}
     assert "რბილი რეჟიმი" in q14["words"]
     g23 = by["OR-G23"]
-    assert g23["words_verbatim"] is True and g23["kind"] == "process" and g23["status"] == "active"
+    assert g23["words_verbatim"] is True and g23["kind"] == "requirement" and g23["status"] == "active"  # group B: G23 bound as a requirement (owner card cmsg_01Hnu5zB86sjUj5GtTgaUkPWVp8KWLfiUjQ7TvKogVM2nW)
     assert g23["source"] == {"kind": "chat", "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWCo5ZZjCRJebBnUpvGyyPUn"}
     assert g23["date"] == "2026-11-20T16:25:31Z"
     assert "ზუმინი" in g23["words"] and "ზუმაუთი" in g23["words"] and "გვერდიდან გადატარება" in g23["words"]
