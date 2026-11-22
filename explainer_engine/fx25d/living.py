@@ -76,7 +76,12 @@ def box(b): return (int(b[0] * SX), int(b[1] * SY), int(b[2] * SX), int(b[3] * S
 
 
 def output_size_frame(frame):
-    """1280x720 working frame (BGR or mask) -> 1920x1080 output frame, resized only when it is written or encoded."""
+    """1280x720 working frame (BGR or mask) -> 1920x1080 output frame, resized only when it is written or encoded.
+    A bool mask becomes uint8 0/255 and a float16 mask becomes float32, so resize accepts both; other dtypes are untouched."""
+    if frame.dtype == np.bool_:
+        frame = frame.astype(np.uint8) * 255
+    elif frame.dtype == np.float16:
+        frame = frame.astype(np.float32)
     return cv2.resize(frame, (W_OUT, H_OUT), interpolation=cv2.INTER_LANCZOS4)
 
 

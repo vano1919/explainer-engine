@@ -12,3 +12,15 @@ def test_output_size_constants_and_helper():
     assert out.shape == (living.H_OUT, living.W_OUT, 3)
     # run() builds the ffmpeg -s argument inline; no function builds the command, so this test checks the helper and
     # the OUT_SIZE constant that run() passes to ffmpeg. ffmpeg is not run here.
+
+
+def test_output_size_frame_accepts_bool_mask():
+    mask = np.zeros((living.H, living.W), bool)
+    out = living.output_size_frame(mask)
+    assert out.shape == (living.H_OUT, living.W_OUT)
+
+
+def test_output_size_frame_accepts_float16_mask():
+    mask = np.zeros((living.H, living.W), np.float16)
+    out = living.output_size_frame(mask)
+    assert out.shape == (living.H_OUT, living.W_OUT)
