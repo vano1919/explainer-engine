@@ -35,7 +35,7 @@ map frame is a sentence, not a page.
 6. **One map language per episode.** One projection, north up, a scale bar on every meso and micro map, a legend only when
    there are more than two symbol classes.
 7. **Altitude moves are eased and timed.** Macro to meso to micro takes BP-125's duration; a faster drop reads as a jump.
-8. **Our type, our art.** Map labels use the style bible's faces (Fredoka, Inter); the Blueprint's Calibri / Cinzel set is
+8. **Our type, our art.** Map labels use the episode film's font preset (OR-F04, verbatim: "the font always comes from the episode film's preset"); the Blueprint's Calibri / Cinzel set is
    conflict 9 of the curriculum. Plates are our own drawing over open data; no third-party map imagery (RIGHTS_AND_FAIR_USE).
 9. **Maps are a lane, not the video.** A map run without a character beat stays inside BP-127's cap; see the
    `shot-visuals` skill for the lane balance.
@@ -56,7 +56,7 @@ differ). Every row is a hypothesis until a second source type is verified.
 | CRAFT-CART-05 | code | quantitative layers use sequential or diverging palettes; faction pairs are colour-blind safe and never colour-only | map layer palette (design/palette.json) | D-22 | `explainer_engine/design/palette.py:faction_findings` |
 | CRAFT-CART-06 | critic | one projection and north-up per episode; a scale bar on every meso and micro map; a legend only with more than two symbol classes | map plate set of the episode | - | `explainer_engine/qa/editorial_review.py` (planned, P8) |
 | CRAFT-CART-07 | code | a change of map altitude takes its eased duration | map camera keyframes | BP-125 | `explainer_engine/maps/laws.py:scale_progression` |
-| CRAFT-CART-08 | eye | map type is the style bible's (Fredoka, Inter), not the Blueprint's set | map label fonts | - | manual |
+| CRAFT-CART-08 | eye | map type is the episode film's font preset (OR-F04), not the Blueprint's set | map label fonts | - | manual |
 <!-- craft-checklist:cartography:end -->
 
 ## Sourced rules (docs/SOURCED_RULES.md)
