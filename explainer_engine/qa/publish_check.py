@@ -169,7 +169,15 @@ def third_party_findings(episode: Path, description: str = "", manifest: Path | 
             rep = {}
             add("audio/stems_report.json", f"unreadable: {exc}")
         mp = Path(manifest) if manifest else LIBRARY_MANIFEST
-        lib = {i["id"]: i for i in json.loads(mp.read_text(encoding="utf-8"))["items"]} if mp.is_file() else {}
+        lib: dict = {}
+        if not mp.is_file():
+            add(str(mp), "library manifest missing: no licence can be checked (not run never passes)")
+        else:
+            try:
+                lib = {i["id"]: i for i in json.loads(mp.read_text(encoding="utf-8"))["items"]}
+            except (OSError, ValueError, KeyError, TypeError) as exc:
+                lib = {}
+                add(str(mp), f"library manifest unreadable: {exc}")
         seen = {}
         for u in rep.get("sounds_used", []):
             if u.get("id") and u["id"] not in seen:

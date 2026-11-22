@@ -67,6 +67,36 @@ def test_media_classes_without_a_provenance_record_are_listed_by_name_never_pass
     assert {i["id"]: i["status"] for i in rec["items"] if i["id"]} == {"mix": "PASS"}
 
 
+def test_a_missing_manifest_path_fails_and_is_not_a_review(tmp_path):
+    ep, mp = _ep(tmp_path, ["mix"])
+    missing = tmp_path / "no_manifest.json"
+    found = PC.third_party_findings(ep, "", missing)
+    assert str(missing) in _by(found, "FAIL")
+    assert "mix" not in _by(found, "FAIL")
+    assert any(f["detail"].startswith("library manifest missing") for f in found if f["severity"] == "FAIL")
+
+
+def test_a_corrupt_manifest_fails_and_does_not_raise(tmp_path):
+    ep, mp = _ep(tmp_path, ["mix"])
+    mp.write_text("{not json")
+    found = PC.third_party_findings(ep, "", mp)
+    assert any(f["severity"] == "FAIL" and f["detail"].startswith("library manifest unreadable") for f in found)
+
+
+def test_a_manifest_without_items_fails_and_does_not_raise(tmp_path):
+    ep, mp = _ep(tmp_path, ["mix"])
+    mp.write_text(json.dumps({"version": 1}))
+    found = PC.third_party_findings(ep, "", mp)
+    assert any(f["severity"] == "FAIL" and f["detail"].startswith("library manifest unreadable") for f in found)
+
+
+def test_a_readable_manifest_with_a_missing_id_is_still_review(tmp_path):
+    ep, mp = _ep(tmp_path, ["not_in_lib"])
+    found = PC.third_party_findings(ep, "", mp)
+    assert "not_in_lib" in _by(found, "REVIEW")
+    assert "not_in_lib" not in _by(found, "FAIL")
+
+
 def test_a_do_not_monetise_marker_fails_and_check_wires_pc10(tmp_path):
     ep, mp = _ep(tmp_path, ["mix"])
     (ep / "render" / "pass1").mkdir(parents=True)
