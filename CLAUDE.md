@@ -94,6 +94,7 @@ Also binding: crossover episodes of other people's fictional worlds follow docs/
 media, our own art only, short analysed quotes, small recap, credited fan theories) and pass `rights/ip_check.py`.
 Pictures: the creator picks the provider for every batch (D-50, paint plan -> approve -> run; supersedes D-52's "Gemini
 batch tier only"); on Gemini the batch tier and the tiers draft/standard/premium pick the model (`imagegen/routing.py`, D-52); audio: ElevenLabs for narration and sound effects, music from ElevenLabs or a per-track verified free library (D-52), guarded by the `.claude/settings.json` PreToolUse hook.
+Gemini Neon never makes pictures, because it is expensive (owner rule, 2026-11-22; the image provider factory refuses it, `explainer_engine/imagegen/providers/__init__.py`, test `tests/unit/test_neon_no_pictures.py`; Neon is a checking chat only).
 Filler pictures (type A/C, no person, used once, low-stakes beat, at most 30 %) may come from Canva once its terms are verified (D-53, PV-43).
 Main market: US (D-52). Disclosure is decided per video by the checklist (realistic content
 only, YouTube Help 14328491); channel audience "not made for kids".

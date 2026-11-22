@@ -5,9 +5,19 @@ from __future__ import annotations
 
 from explainer_engine.imagegen.providers.base import ChargeUncertain, ImageProvider, ProviderError, Result  # noqa: F401
 
+# Owner rule (2026-11-22): Gemini Neon never makes pictures, because it is expensive. Neon is a web chat used for checks
+# only (deepseek-worker skill); no adapter exists for it and none may be added. Refused before any other lookup.
+REFUSED_PROVIDERS = frozenset({"neon", "gemini_neon", "gemini-neon"})
+
+
+def _refuse(name: str) -> None:
+    if name in REFUSED_PROVIDERS:
+        raise ValueError(f"image provider {name!r} is refused: Gemini Neon does not generate pictures (owner rule, 2026-11-22; it is expensive)")
+
 
 def cls(name: str) -> type[ImageProvider]:
     """The adapter class (prices, limits, versions as class data; no folder is made, no key is read)."""
+    _refuse(name)
     if name == "bfl":
         from explainer_engine.imagegen.providers.bfl import BFL
         return BFL
@@ -21,6 +31,7 @@ def cls(name: str) -> type[ImageProvider]:
 
 
 def get(name: str, **kw) -> ImageProvider:
+    _refuse(name)
     if name == "bfl":
         from explainer_engine.imagegen.providers.bfl import BFL
         return BFL(**kw)
