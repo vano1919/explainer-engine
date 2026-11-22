@@ -28,3 +28,17 @@ Rule: a check is written only for a rule that code can measure from its own word
 
 Counts: AUTO candidates 8 (A17, A22, I48, I49, S24, S27, V64 and one more to confirm), NEEDS-CODE 7, MANUAL 6. Nothing is written as a check yet; each candidate first gets a check of its input field.
 Owner decisions needed before writing: the MANUAL rows (taste or policy), and whether the NEEDS-CODE rows may be written now at DeepSeek cost.
+
+## Step 1 result: code existence check for the 8 AUTO candidates (grep, ro5jb3-equivalent vw8syg tree)
+| ID | Enforcing code found | Test found | Result |
+|---|---|---|---|
+| OR-V64 | explainer_engine/production/validate.py (canva_terms_verified) | tests/unit/test_production_system.py | CODE EXISTS: a check can point at it after reading the gate |
+| OR-S24 | explainer_engine/core/contracts.py (permanent, HOST_COMMENTARY) | none named | CODE EXISTS, test missing: write the test after reading contracts.py |
+| OR-A22 | explainer_engine/edit/rhythm_profile.py (BP-01) | none named | CODE EXISTS, wpm field to confirm |
+| OR-A17 | explainer_engine/qa/publish_check.py (PC-10 RemArc) | tests/unit/test_third_party_media.py | CODE EXISTS (covered by PC-10 tests) |
+| OR-I48 | explainer_engine/assets_reuse.py (OR-18 refusal) | tests/unit/test_assets_reuse.py | CODE EXISTS (covered) |
+| OR-S27 | none: map_basis appears only in the registry | none | GAP: no code or field; not written |
+| OR-I49 | none: test_agent_roles is named in the registry but does not exist in the tree | none | GAP: the named test is missing; not written |
+| OR-A17 and OR-I48 are already covered by existing tests and need only a pointer. |
+
+So of the 8 AUTO candidates: 5 have code to point at (V64, S24, A22, A17, I48; A17 and I48 need only the pointer), 2 are gaps (S27, I49), and the 8th candidate (listed as "to confirm") is S27-or-I49 territory and is recorded as a gap too. No check was written in this step.
