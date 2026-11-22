@@ -1,0 +1,94 @@
+{
+ "note": "Base snapshot for the C04 append-only test: the registry at commit 1e530833 (C04 open), only the entries C04 touches. Taken with git show; not edited.",
+ "requirements": [
+  {
+   "id": "OR-C04",
+   "kind": "conflict",
+   "status": "open",
+   "title": "LTX needs no background sounds (11-12 19:12) vs one continuous sound bed and no dead air",
+   "conflicts": [
+    "OR-A07",
+    "OR-A04",
+    "OR-A03"
+   ],
+   "words": "ლტხ ვიდეოებს აღარ დაჭირდება ბეგრაუნდ ხმები. რადგან ლტხ იდეალურად აკეთებს; დიალოგია დროს სიჩუმე ყველაზე მეტად ხელოვნურიბას აჩენს; აბსოლუტურად უაზრო ბეგრაუნდ ხმები",
+   "words_verbatim": false,
+   "words_origin": "both sides quoted in `sides`",
+   "gloss": "His 11-12 19:12 message says LTX videos need no background sounds; his 11-12 21:44 message calls silence in dialogue the most artificial thing and asks for beds and action sounds. Possibly different scopes (clip audio vs the assembled mix). Goes to him as a card via the lead.",
+   "date": "2026-11-20T00:00:00Z",
+   "source": {
+    "kind": "doc",
+    "ref": "chat cmsg_01Hnu5zB86sjUj5GtTgaUkPWGKmz1ggG982FmdKJd1dYji; chat cmsg_01Hnu5zB86sjUj5GtTgaUkPWVMsQtbv2YdqWCRYtcMXpMu; chat cmsg_01Hnu5zB86sjUj5GtTgaUkPWVMsQtbv2YdqWCRYtcMXpMu"
+   },
+   "layers": [
+    "L13",
+    "L18",
+    "L20"
+   ],
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "owner answers; the gate BLOCKs the bound layers until then (REQ-CONFLICT-OPEN)",
+   "repeats": 0,
+   "repeat_evidence": "",
+   "summary": "His 11-12 19:12 message says LTX videos need no background sounds; his 11-12 21:44 message calls silence in dialogue the most artificial thing and asks for beds and action sounds. Possibly different scopes (clip audio vs the assembled mix). Goes to him as a card via the lead.",
+   "sides": [
+    {
+     "id": "OR-A07",
+     "text": "ლტხ ვიდეოებს აღარ დაჭირდება ბეგრაუნდ ხმები. რადგან ლტხ იდეალურად აკეთებს",
+     "source": "chat cmsg_01Hnu5zB86sjUj5GtTgaUkPWGKmz1ggG982FmdKJd1dYji"
+    },
+    {
+     "id": "OR-A04",
+     "text": "დიალოგია დროს სიჩუმე ყველაზე მეტად ხელოვნურიბას აჩენს",
+     "source": "chat cmsg_01Hnu5zB86sjUj5GtTgaUkPWVMsQtbv2YdqWCRYtcMXpMu"
+    },
+    {
+     "id": "OR-A03",
+     "text": "აბსოლუტურად უაზრო ბეგრაუნდ ხმები",
+     "source": "chat cmsg_01Hnu5zB86sjUj5GtTgaUkPWVMsQtbv2YdqWCRYtcMXpMu"
+    }
+   ],
+   "proposed_amendment": {
+    "change": {
+     "status": "closed_by_lead_reading",
+     "note": "closed by lead reading, shown to the owner at MS-7",
+     "status_value_description": "closed_by_lead_reading = closed by the lead's reading of D-136 and OR-A18, to be shown to the owner at the final read-through; the developer maps it onto a schema status"
+    },
+    "source": {
+     "kind": "decision_log",
+     "ref": "D-136 (docs/DECISIONS_AND_OPEN_QUESTIONS.md @ origin/claude/project-thread-2vxd8y); OR-A18 (D-138 Q2, 11-13 13:55Z)"
+    },
+    "lead_reading": "closed as answered by D-136 plus OR-A18, no card now",
+    "applied": false,
+    "why_not_applied": "the registry CI keeps owner words and status immutable unless the superseding entry cites his own chat message (REG-WORDS-CHANGED, REG-SUPERSEDE-UNSOURCED); this one rests on the decision log or the lead's reading, so it waits for his word"
+   },
+   "note": "answered by card press 2026-11-20 16:57 (per shot), awaiting his typed confirmation; status stays open"
+  },
+  {
+   "id": "OR-A07",
+   "kind": "requirement",
+   "words": "ლტხ ვიდეოებს აღარ დაჭირდება ბეგრაუნდ ხმები. რადგან ლტხ იდეალურად აკეთებს",
+   "words_verbatim": true,
+   "words_origin": "chat",
+   "gloss": "LTX videos will not need background sounds, because LTX makes them ideally.",
+   "date": "2026-11-12T19:12:52Z",
+   "source": {
+    "kind": "chat",
+    "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWGKmz1ggG982FmdKJd1dYji"
+   },
+   "layers": [
+    "L13",
+    "L18"
+   ],
+   "status": "active",
+   "check": {
+    "kind": "unmapped"
+   },
+   "measures": "clip audio from LTX is the base of video scenes; separate background tracks only where OR-C04 is answered",
+   "repeats": 1,
+   "repeat_evidence": "",
+   "note": "see OR-C04: possible conflict with dead-air and bed rules"
+  }
+ ]
+}

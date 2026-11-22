@@ -133,3 +133,12 @@ def test_c04_is_resolved_per_shot_after_his_typed_confirmation():
     assert "per shot" in c04["resolution"]["answer"] and c04["resolution"]["words_verbatim"] is False
     assert "OR-C04" not in OR.report(ROOT)["open_conflicts"]
     assert OR.check_registry(OR.load(ROOT)[0], ROOT) == []
+
+
+def test_c04_resolution_is_append_only_against_base_snapshot():
+    base = json.loads((ROOT / "tests" / "fixtures" / "owner_registry_base_c04.json").read_text(encoding="utf-8"))
+    base_list = base["requirements"]
+    assert len(base_list) == 2
+    c04 = next(e for e in base_list if e["id"] == "OR-C04")
+    assert c04["status"] == "open"
+    assert OR.compare_with_base(base_list, OR.load(ROOT)[0]) == []
