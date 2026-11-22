@@ -98,15 +98,17 @@ def _rate(value: str | None) -> float | None:
 
 
 def sharpness_from_gray(gray) -> float:
-    """Contrast-normalised sharpness of a grayscale frame: variance of the Laplacian (frame scaled to 0..1) divided by
-    the squared mean intensity plus a small epsilon. Invariant to a global brightness factor while not clipped."""
+    """Scale-invariant sharpness of a grayscale frame: variance of the Laplacian (frame scaled to 0..1) divided by the
+    variance of the frame itself (also 0..1). Frames with standard deviation below 2/255 are treated as flat and return
+    0.0."""
     arr = np.asarray(gray, dtype=np.float64)
     if arr.size == 0:
         return 0.0
     norm = arr / 255.0
-    laplacian_var = float(cv2.Laplacian(norm, cv2.CV_64F).var())
-    mean = float(norm.mean())
-    return laplacian_var / (mean * mean + 1e-6)
+    std = float(norm.std())
+    if std < 2.0 / 255.0:
+        return 0.0
+    return float(cv2.Laplacian(norm, cv2.CV_64F).var()) / (std * std)
 
 
 def _parse_blackdetect(text: str, total_duration: float) -> float:

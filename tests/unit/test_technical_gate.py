@@ -46,7 +46,7 @@ def test_video_metrics_passing_all_limits_is_empty():
     ("bitrate_kbps", 3999),
     ("black_frame_ratio", 0.03),
     ("frozen_frame_ratio", 0.06),
-    ("sharpness", 0.0015),
+    ("sharpness", 0.0019),
 ])
 def test_video_each_limit_violated_separately(key, value):
     assert len(tg.check_video(_video_metrics(**{key: value}))) == 1
@@ -126,7 +126,12 @@ def test_measure_audio_uses_argument_list(monkeypatch):
 
 def test_sharpness_flat_gray_is_near_zero():
     flat = np.full((64, 64), 128, dtype=np.uint8)
-    assert tg.sharpness_from_gray(flat) < 1e-3
+    assert tg.sharpness_from_gray(flat) == 0.0
+
+
+def test_sharpness_near_black_flat_returns_zero():
+    near_black = np.full((64, 64), 1, dtype=np.uint8)
+    assert tg.sharpness_from_gray(near_black) == 0.0
 
 
 def test_sharpness_checkerboard_exceeds_flat():
@@ -137,12 +142,12 @@ def test_sharpness_checkerboard_exceeds_flat():
     assert tg.sharpness_from_gray(checker) > tg.sharpness_from_gray(flat)
 
 
-def test_sharpness_invariant_to_unclipped_scaling():
-    base = np.zeros((64, 64), dtype=np.uint8)
-    base[::2, ::2] = 120
-    base[1::2, 1::2] = 60
-    half = (base * 0.5).astype(np.uint8)
-    assert tg.sharpness_from_gray(half) == pytest.approx(tg.sharpness_from_gray(base), rel=1e-4)
+def test_sharpness_invariant_to_brightness_scaling():
+    bright = np.zeros((64, 64), dtype=np.float64)
+    bright[::2, ::2] = 255.0
+    bright[1::2, 1::2] = 255.0
+    dark = bright * 0.05
+    assert tg.sharpness_from_gray(dark) == pytest.approx(tg.sharpness_from_gray(bright), rel=1e-3)
 
 
 def test_parse_blackdetect_sums_seconds():

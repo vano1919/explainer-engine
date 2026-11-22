@@ -1,7 +1,7 @@
 {
   "option": "provisional",
   "video": {
-    "sharpness_unit": "laplacian_var_over_mean_sq_0_1",
+    "sharpness_unit": "laplacian_var_over_gray_var_0_1",
     "min_width": 1920,
     "min_height": 1080,
     "fps_min": 23.9,
@@ -21,9 +21,10 @@
     "max_silence_ratio": 0.4
   },
   "photo": {
-    "sharpness_unit": "laplacian_var_over_mean_sq_0_1",
+    "sharpness_unit": "laplacian_var_over_gray_var_0_1",
     "min_width": 1920,
     "min_height": 1080,
-    "min_sharpness": 0.002
+    "min_sharpness": 0.002,
+    "sharpness_basis": "GUESS: floor at the lowest of 24 existing project samples (0.00219, winner1_C2_E2_dialogue_8s_v2); catches blank or badly blurred output only. Not a quality threshold; the owner sets it on approved samples."
   }
 }
