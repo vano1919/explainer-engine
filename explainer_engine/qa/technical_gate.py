@@ -109,47 +109,68 @@ def sharpness_from_gray(gray) -> float:
     return laplacian_var / (mean * mean + 1e-6)
 
 
-def _parse_blackdetect(text: str) -> float:
-    """Sum the black seconds reported by ffmpeg's blackdetect filter."""
+def _parse_blackdetect(text: str, total_duration: float) -> float:
+    """Sum the black seconds reported by ffmpeg's blackdetect filter. A dangling black_start is closed at
+    ``total_duration`` (a run that lasts to the end of the stream)."""
     total = 0.0
+    pending: float | None = None
     for line in text.splitlines():
-        if "black_start:" not in line and "black_duration:" not in line:
+        if "black_start:" not in line and "black_duration:" not in line and "black_end:" not in line:
             continue
         duration = _float_match(r"black_duration:\s*(-?\d+(?:\.\d+)?)", line)
         if duration is not None:
             total += duration
+            pending = None
             continue
         start = _float_match(r"black_start:\s*(-?\d+(?:\.\d+)?)", line)
         end = _float_match(r"black_end:\s*(-?\d+(?:\.\d+)?)", line)
         if start is not None and end is not None:
             total += end - start
+            pending = None
+        elif start is not None:
+            pending = start
+        elif end is not None and pending is not None:
+            total += end - pending
+            pending = None
+    if pending is not None:
+        total += total_duration - pending
     return total
 
 
-def _parse_freezedetect(text: str) -> float:
-    """Sum the frozen seconds reported by ffmpeg's freezedetect filter."""
+def _parse_freezedetect(text: str, total_duration: float) -> float:
+    """Sum the frozen seconds reported by ffmpeg's freezedetect filter. A dangling freeze_start is closed at
+    ``total_duration`` (a run that lasts to the end of the stream)."""
     total = 0.0
+    pending: float | None = None
     for line in text.splitlines():
-        if "freeze_duration:" in line:
-            duration = _float_match(r"freeze_duration:\s*(-?\d+(?:\.\d+)?)", line)
-            if duration is not None:
-                total += duration
-        elif "freeze_start:" in line and "freeze_end:" in line:
-            start = _float_match(r"freeze_start:\s*(-?\d+(?:\.\d+)?)", line)
-            end = _float_match(r"freeze_end:\s*(-?\d+(?:\.\d+)?)", line)
-            if start is not None and end is not None:
-                total += end - start
+        duration = _float_match(r"freeze_duration:\s*(-?\d+(?:\.\d+)?)", line)
+        if duration is not None:
+            total += duration
+            pending = None
+            continue
+        start = _float_match(r"freeze_start:\s*(-?\d+(?:\.\d+)?)", line)
+        end = _float_match(r"freeze_end:\s*(-?\d+(?:\.\d+)?)", line)
+        if start is not None and end is not None:
+            total += end - start
+            pending = None
+        elif start is not None:
+            pending = start
+        elif end is not None and pending is not None:
+            total += end - pending
+            pending = None
+    if pending is not None:
+        total += total_duration - pending
     return total
 
 
-def _ffmpeg_filter_seconds(path: str, vf: str, parser) -> float:
+def _ffmpeg_filter_seconds(path: str, vf: str, parser, duration: float) -> float:
     if shutil.which("ffmpeg") is None:
         raise RuntimeError("ffmpeg not found on PATH")
     cmd = ["ffmpeg", "-v", "info", "-i", path, "-vf", vf, "-an", "-f", "null", "-"]
     proc = subprocess.run(cmd, capture_output=True, text=True, check=False)
     if proc.returncode != 0:
         raise RuntimeError(f"ffmpeg failed: {proc.stderr.strip()}")
-    return parser(proc.stderr)
+    return parser(proc.stderr, duration)
 
 
 def measure_video_sharpness(path: str, samples: int = 8) -> float:
@@ -195,9 +216,11 @@ def measure_video(path: str) -> dict:
     if duration is None:
         raise RuntimeError("ffprobe did not report a duration")
     duration = float(duration)
+    if duration < 1e-6:
+        raise RuntimeError("video duration is zero")
     bit_rate = stream.get("bit_rate") or data.get("format", {}).get("bit_rate")
-    black_seconds = _ffmpeg_filter_seconds(path, "blackdetect=d=0.1:pix_th=0.10", _parse_blackdetect)
-    frozen_seconds = _ffmpeg_filter_seconds(path, "freezedetect=n=0.003:d=0.5", _parse_freezedetect)
+    black_seconds = _ffmpeg_filter_seconds(path, "blackdetect=d=0.1:pix_th=0.10", _parse_blackdetect, duration)
+    frozen_seconds = _ffmpeg_filter_seconds(path, "freezedetect=n=0.003:d=0.5", _parse_freezedetect, duration)
     return {
         "width": stream.get("width"),
         "height": stream.get("height"),

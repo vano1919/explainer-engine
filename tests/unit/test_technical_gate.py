@@ -150,7 +150,11 @@ def test_parse_blackdetect_sums_seconds():
         "[blackdetect @ 0x1] black_start:1.0 black_end:2.5 black_duration:1.5\n"
         "[blackdetect @ 0x1] black_start:4.0 black_end:5.0 black_duration:1.0\n"
     )
-    assert tg._parse_blackdetect(text) == pytest.approx(2.5)
+    assert tg._parse_blackdetect(text, 10.0) == pytest.approx(2.5)
+
+
+def test_parse_blackdetect_dangling_start_closes_at_duration():
+    assert tg._parse_blackdetect("black_start:9.0", 10.0) == pytest.approx(1.0)
 
 
 def test_parse_freezedetect_sums_seconds():
@@ -162,7 +166,11 @@ def test_parse_freezedetect_sums_seconds():
         "[freezedetect @ 0x1] lavfi.freezedetect.freeze_duration: 1.5\n"
         "[freezedetect @ 0x1] lavfi.freezedetect.freeze_end: 6.5\n"
     )
-    assert tg._parse_freezedetect(text) == pytest.approx(3.5)
+    assert tg._parse_freezedetect(text, 10.0) == pytest.approx(3.5)
+
+
+def test_parse_freezedetect_dangling_start_closes_at_duration():
+    assert tg._parse_freezedetect("freeze_start: 7.0", 10.0) == pytest.approx(3.0)
 
 
 def test_check_video_black_half_fails():
@@ -187,6 +195,8 @@ def test_measure_video_fills_filter_keys(tmp_path):
         check=True,
     )
     metrics = tg.measure_video(str(video))
-    assert metrics["black_frame_ratio"] is not None
+    assert metrics["black_frame_ratio"] == 0.0
     assert metrics["frozen_frame_ratio"] is not None
     assert metrics["sharpness"] is not None
+    assert isinstance(metrics["sharpness"], float)
+    assert metrics["sharpness"] >= 0.0
