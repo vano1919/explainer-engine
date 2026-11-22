@@ -2450,7 +2450,7 @@
    "repeats": 1,
    "repeat_evidence": "",
    "amended_by": "OR-C04 resolution (per shot)",
-      "note": "see OR-C04: possible conflict with dead-air and bed rules | C04 resolved per shot, 6cbb2e7a"
+   "note": "see OR-C04: possible conflict with dead-air and bed rules | C04 resolved per shot, 6cbb2e7a"
   },
   {
    "id": "OR-A08",
@@ -7039,7 +7039,7 @@
   },
   {
    "id": "OR-G23",
-   "kind": "requirement",
+   "kind": "process",
    "status": "active",
    "words": "გავაკეთოთ არა მოbrunებითი ვარიანტი, არამედ ზოგ კადრში გვერდიდან გადატარება გავაკეთოთ, ზოგ კადრში ზუმინი გავაკეთოთ, ზოგ კადრში ზუმაუთი გავაკეთოთ, ზოგ კადრში გვერდიდან გადატარება ზუმინი და ზუმაუთი ერთად გავაკეთოთ, გააჩნია კადრის სპეციფიკა და ნარატორის საუბარი. Ну გავართულებთ ძალიან.",
    "words_verbatim": true,
@@ -7059,7 +7059,7 @@
    "measures": "shot card has camera_move (truck_l, truck_r, zoom_in, zoom_out, truck_zoom_in, truck_zoom_out; no default, a missing or other value fails) and camera_why (one line quoting the narration cue); rotation, roll and orbit are forbidden values; living_motion v2 camera fit: tx, scale and rotation match the card's move, rotation about 0",
    "repeats": 1,
    "repeat_evidence": "",
-   "note": "Delta 6 (CAMERA_MOVES_DECISION_2026-11-20.md). The selection table (which move for which shot) is a proposal, not his: he confirms by looking at the first test. Which of focal length or dolly he wants for 'zoom' in Blender is open. That body folding comes from camera rotation is a hypothesis, not measured. No validator exists yet; unmapped. | camera layer id pending (layers stay L33 until the owner gives the id)"
+   "note": "Delta 6 (CAMERA_MOVES_DECISION_2026-11-20.md). The selection table (which move for which shot) is a proposal, not his: he confirms by looking at the first test. Which of focal length or dolly he wants for 'zoom' in Blender is open. That body folding comes from camera rotation is a hypothesis, not measured. No validator exists yet; unmapped. | owner card 2026-11-22 17:41 UTC: \"Back to process\" (kept as a process entry, L33 only)"
   }
  ]
 }
