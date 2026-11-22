@@ -7,6 +7,7 @@ import pytest
 
 from explainer_engine.maps import render as R
 from explainer_engine.maps import timeline as T
+from pathlib import Path
 
 W, H, FPS = 320, 180, 24
 WORDS = [
@@ -29,6 +30,7 @@ def _frame(spec: dict, spine: dict, f: int, duration_frames: int = 48) -> np.nda
     return np.array(R.render_frame(spec, tl, clock, f))
 
 
+@pytest.mark.skipif(not Path("tools/maps/SR_HR.tif").exists(), reason="SR_HR raster not in CI (gitignored)")
 def test_bridge_paints_only_inside_its_window():
     plain, spine = _spec()
     bridged, _ = _spec(with_bridge=True)
@@ -46,6 +48,7 @@ def test_bridges_from_words_refuses_missing_text():
         R.bridges_from_words(WORDS, [{"text": "a missing caption"}])
 
 
+@pytest.mark.skipif(not Path("tools/maps/SR_HR.tif").exists(), reason="SR_HR raster not in CI (gitignored)")
 def test_spec_without_bridges_renders_identically():
     spec, spine = _spec()
     assert "bridges" not in spec["payload"]
@@ -57,6 +60,7 @@ def test_spec_without_bridges_renders_identically():
     assert np.array_equal(base, _frame(empty, spine, 24))
 
 
+@pytest.mark.skipif(not Path("tools/maps/SR_HR.tif").exists(), reason="SR_HR raster not in CI (gitignored)")
 def test_bridges_without_fps_raise():
     spec, spine = _spec(with_bridge=True)
     del spec["payload"]["fps"]
@@ -64,6 +68,7 @@ def test_bridges_without_fps_raise():
         _frame(spec, spine, 24)
 
 
+@pytest.mark.skipif(not Path("tools/maps/SR_HR.tif").exists(), reason="SR_HR raster not in CI (gitignored)")
 def test_bridges_none_is_a_noop():
     plain, spine = _spec()
     none = copy.deepcopy(plain)
@@ -79,6 +84,7 @@ def test_bridges_from_words_keeps_fill_and_ink():
     assert "fill" not in plain and "ink" not in plain
 
 
+@pytest.mark.skipif(not Path("tools/maps/SR_HR.tif").exists(), reason="SR_HR raster not in CI (gitignored)")
 def test_bridge_window_edges():
     # onset 1.0 s and hold_end 3.0 s at 24 fps: the first drawn frame is 24; the window is well over by frame 80
     plain, spine = _spec()

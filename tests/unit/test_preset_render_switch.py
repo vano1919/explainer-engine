@@ -2,6 +2,9 @@
 
 import hashlib
 import os
+from pathlib import Path
+
+import pytest
 
 from explainer_engine.maps import render as R
 from explainer_engine.maps import render_presets as P
@@ -19,6 +22,7 @@ def test_unset_preset_gives_unit_scales(monkeypatch):
     assert P.line_scale() == 1.0 and P.label_scale() == 1.0
 
 
+@pytest.mark.skipif(not Path("tools/maps/SR_HR.tif").exists(), reason="SR_HR raster not in CI (gitignored)")
 def test_balanced_is_identity_and_bold_changes_the_frame(monkeypatch):
     monkeypatch.delenv("MAP_PRESET", raising=False)
     base = _frame_hash()
