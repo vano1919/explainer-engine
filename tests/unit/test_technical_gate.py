@@ -272,3 +272,20 @@ def test_check_video_animated_without_no_melt_fails_closed():
 
 def test_check_video_animated_absent_is_unchanged():
     assert tg.check_video(_video_metrics()) == []
+
+
+def test_measure_video_zero_duration_raises(monkeypatch):
+    # PY-01: a zero-length video has no black or freeze ratio to measure; it must be rejected, not divided by zero.
+    import json as _json
+    import subprocess as _sp
+
+    monkeypatch.setattr(tg.shutil, "which", lambda name: "/usr/bin/" + name)
+    payload = {"streams": [{"codec_type": "video", "width": 1920, "height": 1080}], "format": {"duration": "0.0"}}
+    monkeypatch.setattr(tg.subprocess, "run", lambda *a, **k: _sp.CompletedProcess(a, 0, _json.dumps(payload), ""))
+    with pytest.raises(RuntimeError, match="zero"):
+        tg.measure_video("zero.mp4")
+
+
+def test_black_interval_open_at_clip_end_is_counted_to_duration():
+    # PY-01 acceptance: black_start 9.0 in a 10.0 s clip gives 1.0 s of black.
+    assert tg._parse_blackdetect("black_start:9.0", 10.0) == pytest.approx(1.0)
