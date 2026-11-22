@@ -24,6 +24,15 @@ def load_limits(path: str | Path | None = None) -> dict:
         return json.load(f)
 
 
+def _filter_strings() -> tuple[str, str]:
+    """The two ffmpeg filter arguments, built from the JSON "filters" block. The numbers are formatted from their float
+    values, so pix_th 0.10 becomes "0.1": "blackdetect=d=0.1:pix_th=0.1" and "freezedetect=n=0.003:d=0.5"."""
+    filters = load_limits()["filters"]
+    bd, fd = filters["blackdetect"], filters["freezedetect"]
+    return (f"blackdetect=d={float(bd['d'])}:pix_th={float(bd['pix_th'])}",
+            f"freezedetect=n={float(fd['n'])}:d={float(fd['d'])}")
+
+
 def _missing(metrics: dict, keys: tuple[str, ...]) -> list[str]:
     return [f"missing metric {k}" for k in keys if k not in metrics or metrics[k] is None]
 
@@ -221,8 +230,9 @@ def measure_video(path: str) -> dict:
     if duration < 1e-6:
         raise RuntimeError("video duration is zero")
     bit_rate = stream.get("bit_rate") or data.get("format", {}).get("bit_rate")
-    black_seconds = _ffmpeg_filter_seconds(path, "blackdetect=d=0.1:pix_th=0.10", _parse_blackdetect, duration)
-    frozen_seconds = _ffmpeg_filter_seconds(path, "freezedetect=n=0.003:d=0.5", _parse_freezedetect, duration)
+    vf_black, vf_freeze = _filter_strings()
+    black_seconds = _ffmpeg_filter_seconds(path, vf_black, _parse_blackdetect, duration)
+    frozen_seconds = _ffmpeg_filter_seconds(path, vf_freeze, _parse_freezedetect, duration)
     return {
         "width": stream.get("width"),
         "height": stream.get("height"),

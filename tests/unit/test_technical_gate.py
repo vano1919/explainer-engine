@@ -1,3 +1,4 @@
+import json
 import shutil
 import subprocess
 from types import SimpleNamespace
@@ -93,7 +94,7 @@ def test_photo_1280x720_fails():
 
 def test_load_limits_has_expected_keys():
     limits = tg.load_limits()
-    assert set(limits) == {"option", "video", "audio", "photo"}
+    assert set(limits) == {"option", "filters", "video", "audio", "photo"}
     assert limits["video"]["min_width"] == 1920
     assert limits["audio"]["max_silence_ratio"] == 0.4
     assert limits["photo"]["min_height"] == 1080
@@ -205,3 +206,31 @@ def test_measure_video_fills_filter_keys(tmp_path):
     assert metrics["sharpness"] is not None
     assert isinstance(metrics["sharpness"], float)
     assert metrics["sharpness"] >= 0.0
+
+
+def test_load_limits_filters_block_and_filter_strings():
+    limits = tg.load_limits()
+    assert limits["filters"]["freezedetect"]["d"] == 0.5
+    black, freeze = tg._filter_strings()
+    # chosen strings: the numbers come from the JSON filters block formatted from their float values, so pix_th 0.10
+    # is written as "0.1" and the blackdetect string is exactly "blackdetect=d=0.1:pix_th=0.1"
+    assert black == "blackdetect=d=0.1:pix_th=0.1"
+    assert freeze == "freezedetect=n=0.003:d=0.5"
+
+
+def test_measure_video_uses_filter_strings(monkeypatch):
+    monkeypatch.setattr(tg.shutil, "which", lambda name: name)
+    probe = {
+        "streams": [{"codec_type": "video", "width": 1920, "height": 1080, "avg_frame_rate": "24/1", "bit_rate": "5000000"}],
+        "format": {"duration": "5.0"},
+    }
+
+    def fake_run(cmd, *args, **kwargs):
+        return SimpleNamespace(returncode=0, stdout=json.dumps(probe), stderr="")
+
+    seen = []
+    monkeypatch.setattr(tg.subprocess, "run", fake_run)
+    monkeypatch.setattr(tg, "_ffmpeg_filter_seconds", lambda path, vf, parser, duration: seen.append(vf) or 0.0)
+    monkeypatch.setattr(tg, "measure_video_sharpness", lambda path, samples=8: 0.05)
+    tg.measure_video("clip.mp4")
+    assert seen == ["blackdetect=d=0.1:pix_th=0.1", "freezedetect=n=0.003:d=0.5"]

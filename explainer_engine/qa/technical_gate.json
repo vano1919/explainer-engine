@@ -1,5 +1,10 @@
 {
   "option": "provisional",
+  "filters": {
+    "blackdetect": {"d": 0.1, "pix_th": 0.10},
+    "freezedetect": {"n": 0.003, "d": 0.5},
+    "basis": "PROVISIONAL: house values, no source; freezes shorter than freezedetect.d are not counted; the owner sets them on rendered samples"
+  },
   "video": {
     "sharpness_unit": "laplacian_var_over_gray_var_0_1",
     "min_width": 1920,
