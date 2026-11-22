@@ -46,7 +46,7 @@ def test_video_metrics_passing_all_limits_is_empty():
     ("bitrate_kbps", 3999),
     ("black_frame_ratio", 0.03),
     ("frozen_frame_ratio", 0.06),
-    ("sharpness", 0.0019),
+    ("sharpness", 0.019),
 ])
 def test_video_each_limit_violated_separately(key, value):
     assert len(tg.check_video(_video_metrics(**{key: value}))) == 1
