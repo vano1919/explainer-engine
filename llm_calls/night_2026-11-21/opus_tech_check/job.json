@@ -1,0 +1,13 @@
+{
+ "job": "opus_tech_check",
+ "task_class": "opus-code",
+ "model": "opus",
+ "effort": "medium",
+ "max_tokens": 16000,
+ "requests": [
+  {
+   "id": "night_modal_render_review",
+   "user_file": "brief_opus_tech_check.md"
+  }
+ ]
+}

@@ -1,0 +1,9 @@
+{
+  "stream_proof_ping": {
+    "ok": true,
+    "model": "claude-haiku-5-5",
+    "usd": 0.0,
+    "cached": false
+  },
+  "_ledger_total_usd": 4e-06
+}
