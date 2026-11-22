@@ -137,3 +137,9 @@ Blueprint gates (the creator's open and closed questions, cards in `docs/bluepri
 review (Phase 6). 3. Each script and claim map before storyboard/render spend (per video, "approval #1"). 4. Each final
 package before it goes public (per video, "approval #2"; since D-57 the package is staged unlisted for that review and the
 creator's own Public click in Studio is the approval). Nothing is published automatically.
+
+## Model routing decisions, 2026-11-22 (Haiku thread, owner's words)
+
+- **Fable default is 5.2, at medium effort.** Owner, 2026-11-22 08:30 UTC (cmsg_01Hnu5zB86sjUj5GtTgaUkPWXyDxcoFX1snfUR6TBPFGv2): the rule text named 5.1 as the default and 5.2 must be enabled too; 08:31 UTC (cmsg_01Hnu5zB86sjUj5GtTgaUkPWFzHjqbd8rH8B8qGMUGsx2U): default 5.2 at medium, this run at 5.2 high. Config: `config/model_routing.json` (`fable` → claude-fable-5-2; class `fable-replan` efforts [medium, high]), commit `fbdd2f17`.
+- **"Rule 2.1" was a mistake for "5.1"**, per the owner's own clarification (08:30 UTC above). Fable 5.1 remains only in historical logs. No text named "2.1" exists in the rules.
+- **Opus $10 and Fable $20** are the owner-approved job limits (cmsg_01Hnu5zB86sjUj5GtTgaUkPWMkurS68ZEgMaRv5qv1rPjq). Global `max_usd` 125 (approved). Opus job `opus_high_review` ($1.2485 spent) and Fable job `fable_52_high_replan` ($2.692 spent) ran under them.
