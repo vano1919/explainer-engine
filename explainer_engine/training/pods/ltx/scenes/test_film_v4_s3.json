@@ -1,0 +1,22 @@
+{
+  "schema": "ltx_scene_test/1",
+  "id": "test_film_v4_s3",
+  "asked": "Test Film v4, shot 3 (the video shot): the creator's card cmsg_01Hnu5zB86sjUj5GtTgaUkPWRhvamKe2myiM8csXGaxq8F (3 separate shots, Modal cap $2); the night's $20 ceiling cmsg_01Hnu5zB86sjUj5GtTgaUkPWCVmDsU4aSBNwFZQaqdSRLV; the picture, prompt and length are the session's technical choice (coordinator note 2026-11-22 20:29 UTC)",
+  "start_picture": {
+    "path": "/tmp/tf4/s3/start.png",
+    "hf": "explainer-engine/test_film_v4/s3_start.png",
+    "note": "Truce 1914 new-style photo S02_SH004 (HF explainer-engine/demo_truce_1914/new_style_B_2026-11-19/), resized to width 1280 and centre-cropped to 1280x704, the model's own size; no new picture was made",
+    "sha256": "69c4a52d3d377e7df0c612703af2b05dde23f10a20b7038b4566da5b85d17ec5",
+    "from": "explainer-engine/demo_truce_1914/new_style_B_2026-11-19/S02_SH004.jpeg"
+  },
+  "sound": "LTX's own ambience only; Nobody speaks. No narration in this shot.",
+  "ledger": {"path": "/mnt/project-files/test_film_v4/ledger_s3.json", "caps": {"modal_ltx": 1.5}},
+  "shots": [
+    {
+      "shot_id": "tf4_s3",
+      "seconds": 5.0,
+      "seed": 7401,
+      "motion_prompt": "Dawn in a frozen trench with frosted sandbags and wooden planks. Three tired soldiers in brown wool greatcoats sit close together on a plank bench above a pool of muddy water. Their breath rises as pale steam in the cold air. The middle soldier gestures slowly with one hand while the soldier on the left listens, and the soldier on the right keeps his head bowed. Faces, uniforms and the trench keep their shape and stay solid. Thin mist drifts in the background over bare trees. Quiet wind and distant muffled sounds. Nobody speaks. The camera pushes in slowly and steadily toward the three men."
+    }
+  ]
+}
