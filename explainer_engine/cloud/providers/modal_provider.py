@@ -11,6 +11,7 @@ import os
 import time
 from typing import Any, Callable
 
+from explainer_engine.core import spend_caps
 from explainer_engine.cloud.providers.base import (
     ApprovalGate,
     ApprovalRequiredError,
@@ -277,6 +278,7 @@ class ModalAdapter:
         if approval is None:
             raise ApprovalRequiredError("Live Modal execution requires an explicit ApprovalGate")
         approval.validate("modal")
+        spend_caps.overnight_reserve("modal", idempotency_key, cost.conservative_retry_total_usd)   # the night's $20, worst case first
         self.verify_credentials()
         call_id = f"fc-{idempotency_key[:12]}"
         self._submitted_keys[idempotency_key] = call_id
