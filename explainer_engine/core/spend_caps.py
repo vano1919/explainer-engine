@@ -80,6 +80,45 @@ def overnight(name: str) -> dict:
     return n
 
 
+OVERNIGHT = "overnight_2026_11_23"   # the night the paid runners are counted against (config/spend_caps.json overnight)
+
+
+def _overnight_dir() -> Path:
+    return Path(os.environ.get("EXPLAINER_OVERNIGHT_DIR") or Path(__file__).resolve().parents[2] / "jobs" / "overnight")
+
+
+def overnight_spent(name: str = OVERNIGHT) -> float:
+    """Everything the night has booked so far, in every service: reservations plus their corrections (each row adds a USD
+    amount; a reservation with no correction stays booked, the safe side)."""
+    f = _overnight_dir() / f"{name}.jsonl"
+    if not f.exists():
+        return 0.0
+    return round(sum(float(json.loads(x)["usd"]) for x in f.read_text(encoding="utf-8").splitlines() if x.strip()), 6)
+
+
+def _overnight_append(name: str, row: dict) -> None:
+    d = _overnight_dir()
+    d.mkdir(parents=True, exist_ok=True)
+    with (d / f"{name}.jsonl").open("a", encoding="utf-8") as f:
+        f.write(json.dumps(row, ensure_ascii=False) + "\n")
+
+
+def overnight_reserve(service: str, uid: str, estimate: float, name: str = OVERNIGHT) -> None:
+    """Refuse a paid call unless the night's booked spend plus this call's estimate stays within the night's max_usd
+    (the creator 2026-11-22: $20 in total, every service). On success the estimate is booked under uid."""
+    n = overnight(name)
+    spent = overnight_spent(name)
+    if spent + estimate > float(n["max_usd"]) + 1e-9:
+        raise OverCeiling(f"{service}: the night has ${spent:.4f} booked and this call estimates ${estimate:.4f}, which would pass "
+                          f"its ${float(n['max_usd']):g} ceiling (config/spend_caps.json overnight); stop and ask the creator")
+    _overnight_append(name, {"service": service, "uid": uid, "usd": round(estimate, 6), "kind": "reserve"})
+
+
+def overnight_settle(service: str, uid: str, actual: float, reserved: float, name: str = OVERNIGHT) -> None:
+    """Replace uid's reservation by the actual USD: a correction row of actual - reserved (0 when the call was not charged)."""
+    _overnight_append(name, {"service": service, "uid": uid, "usd": round(actual - reserved, 6), "kind": "settle"})
+
+
 def runpod() -> dict:
     return load()["runpod"]
 

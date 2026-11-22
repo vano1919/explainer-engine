@@ -817,6 +817,7 @@ class ClaudeAPI:
         pr = prices()
         uid = uuid.uuid4().hex[:12]
         est = worst_usd(r.model, params, req.cache_ttl, input_tokens=self._count(params))
+        spend_caps.overnight_reserve(SERVICE, uid, est)   # the night's $20 in every service, before anything is booked
         self._reserve(req.job, item, est)
         sink = StreamSink(ledger_dir() / "stream" / f"{uid}.txt",
                           f"--- {item} {r.model} effort={r.effort} max_tokens={params['max_tokens']} ---")
@@ -835,6 +836,7 @@ class ClaudeAPI:
                                    sink.text) from e
             if _status(e) in UNCHARGED or isinstance(e, Overloaded):
                 self.run_for(req.job).refund(SERVICE, est)
+                spend_caps.overnight_settle(SERVICE, uid, 0.0, est)
                 self.ledger.append({"ev": "void", "uid": uid, "job": req.job, "id": req.id, "why": f"{type(e).__name__} {_status(e)}"})
             raise   # anything else (timeout, kill) may have been billed: the open start line stops the next call
         finally:
@@ -848,6 +850,7 @@ class ClaudeAPI:
         except PriceMissing as e:     # the call is paid: book the reservation instead of losing the answer and the line
             usd, it_rows, note = est, [], f"price missing, booked the reserved amount: {e}"
         self.run_for(req.job).settle(SERVICE, item, usd)
+        spend_caps.overnight_settle(SERVICE, uid, usd, est)
         fb_ran = any(getattr(i, "type", None) == "fallback_message" for i in (getattr(resp.usage, "iterations", None) or []))
         self.ledger.append({"ev": "done", "uid": uid, "job": req.job, "id": req.id, "model": getattr(resp, "model", r.model),
                             "effort": r.effort, "usage": use, "usd": round(usd, 6), "batch": batch, "fallback_ran": fb_ran,
@@ -1055,11 +1058,14 @@ class ClaudeAPI:
         by_id = {q.id: q for q in reqs}
         c = self.client()
         if state_file.exists():
-            batch_id = json.loads(state_file.read_text(encoding="utf-8"))["batch_id"]   # resume: nothing is paid twice
+            saved = json.loads(state_file.read_text(encoding="utf-8"))
+            batch_id, res_est = saved["batch_id"], float(saved["reserved"])   # resume: nothing is paid twice
         else:
             ests = {i: worst_usd(routes[i].model, params[i], by_id[i].cache_ttl, batch=True) for i in params}
             est = sum(ests.values())
+            spend_caps.overnight_reserve(SERVICE, f"batch-{job}-{tag}", est)
             self._reserve(job, tag, est, per_call=max(ests.values()))
+            res_est = est
             for i in params:
                 self.ledger.append({"ev": "start", "uid": f"b-{i}", "batch": True, "job": job, "id": i, "model": routes[i].model})
             b = c.messages.batches.create(requests=[{"custom_id": i, "params": params[i]} for i in params])   # F3: no fallbacks here
@@ -1108,6 +1114,7 @@ class ClaudeAPI:
             put(q, res)
         self.run_for(job).settle(SERVICE, tag, spent)
         self._warn_near_limits(job)
+        spend_caps.overnight_settle(SERVICE, f"batch-{job}-{tag}", spent, res_est)
 
 
 # --- jobs from files and the command line ------------------------------------------------------------------------------
