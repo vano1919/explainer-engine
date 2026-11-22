@@ -424,8 +424,11 @@ def render_frame(spec: dict, tl: Timeline, clock, f: int, ss: int = D.SS, base_d
         c.text((c.w * 0.04 + size / 2, c.h * 0.04 + size * 0.75), chip, size, ink, anchor="lm")
     _scale_bar(c, view, CAM.tier_of(cam.span_km))
     # bridge captions: the narration's words over the frame, from their own onset to the end of their last word
+    bridges = p.get("bridges") or []
     fps = p.get("fps", 24)
-    for item in p.get("bridges", []):
+    if bridges and "fps" not in p:
+        raise ValueError("bridges need payload fps: the caption timing depends on it")
+    for item in bridges:
         if not bridge_render.visible_at(f, item["onset_s"], item["hold_end_s"], fps):
             continue
         style = render_presets.get_bridge_style(item.get("style", "card"))
@@ -444,8 +447,12 @@ def bridges_from_words(words: list[dict], items: list[dict], style_default: str 
         window = bridge_sync.bridge_window(words, item["text"])
         if not window["ok"]:
             raise ValueError(f"bridge text {item['text']!r}: {'; '.join(window['problems'])}")
-        out.append({"text": item["text"], "onset_s": window["onset_s"], "hold_end_s": window["hold_end_s"],
-                    "style": item.get("style", style_default)})
+        bridge = {"text": item["text"], "onset_s": window["onset_s"], "hold_end_s": window["hold_end_s"],
+                  "style": item.get("style", style_default)}
+        for key in ("fill", "ink"):
+            if key in item:
+                bridge[key] = item[key]
+        out.append(bridge)
     return out
 
 
