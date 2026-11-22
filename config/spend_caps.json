@@ -151,6 +151,16 @@
     "period": "week",
     "decided": "the creator, 2026-11-21: 'start execution' after the DeepSeek cost-limit card (recommended option $10/week), relayed by the coordinator; recorded under message cmsg_01Hnu5zB86sjUj5GtTgaUkPW2nA93UhHqTMgSF6w2H9s19"
   },
+  "overnight": {
+    "_doc": "One overnight money ceiling (the creator 2026-11-22): every paid call of the night, in every service, adds up to max_usd. The lines inside each night are the ones this file names; code refuses a night whose lines pass its max_usd (explainer_engine/core/spend_caps.overnight).",
+    "overnight_2026_11_23": {
+      "max_usd": 20.0,
+      "decided": "the creator, 2026-11-22 20:28 UTC: the whole night at $20 in total, all technical questions answered by the coordinator; message cmsg_01Hnu5zB86sjUj5GtTgaUkPWCVmDsU4aSBNwFZQaqdSRLV",
+      "lines": {
+        "test_film_v4_modal": {"modal_usd": 2.0, "for": "the Test Film v4 Modal run (the coordinator's note of the same date)"}
+      }
+    }
+  },
   "_runpod_note": "2026-10-24 (the creator's OK on the strategy): money is capped per JOB (per_pod_usd, the guard stops there) and cards are picked by the job's estimated cost (runpod.pick_gpus); max_price_per_hour is only the runaway ceiling of one card.",
   "_runpod_hours_note": "2026-10-26 02:15 Tbilisi, the creator (\"ყველა კი\" to the night plan): max_hours_per_pod 4 -> 5 so the xworld_v1 training pod may run 5 h (its own cap $4)."
 }

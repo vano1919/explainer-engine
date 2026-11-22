@@ -62,6 +62,23 @@ def gemini_api() -> dict:
     return g
 
 
+def overnight(name: str) -> dict:
+    """One night's ceiling (``overnight.<name>``: max_usd and its lines). A night whose lines together pass its max_usd, or
+    a night not in the file, is refused: the lines of every paid service of the night add up to one number (the creator
+    2026-11-22: $20 in total)."""
+    nights = load().get("overnight", {})
+    n = nights.get(name) if not name.startswith("_") else None
+    if not isinstance(n, dict) or not isinstance(n.get("max_usd"), (int, float)) or isinstance(n.get("max_usd"), bool):
+        raise OverCeiling(f"no overnight {name!r} with a max_usd in config/spend_caps.json: a night spends nothing without its line")
+    total = 0.0
+    for row in (n.get("lines") or {}).values():
+        if isinstance(row, dict):
+            total += sum(float(v) for k, v in row.items() if k.endswith("_usd"))
+    if total > float(n["max_usd"]) + 1e-9:
+        raise OverCeiling(f"overnight {name!r} lines add up to {total:g} USD, above its max_usd {n['max_usd']} (config/spend_caps.json)")
+    return n
+
+
 def runpod() -> dict:
     return load()["runpod"]
 
