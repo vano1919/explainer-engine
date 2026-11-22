@@ -61,7 +61,7 @@ def test_his_typed_words_are_verbatim_with_the_message_id_read_back_from_the_cha
     assert q14["words_verbatim"] is True and q14["source"] == {"kind": "chat", "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWMd8fDv9ExMX3zJq6nwZXau"}
     assert "რბილი რეჟიმი" in q14["words"]
     g23 = by["OR-G23"]
-    assert g23["words_verbatim"] is True and g23["kind"] == "process" and g23["status"] == "active"
+    assert g23["words_verbatim"] is True and g23["kind"] == "process" and g23["status"] == "active"  # group B: G23 bound as a requirement (owner card cmsg_01Hnu5zB86sjUj5GtTgaUkPWVp8KWLfiUjQ7TvKogVM2nW)
     assert g23["source"] == {"kind": "chat", "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWCo5ZZjCRJebBnUpvGyyPUn"}
     assert g23["date"] == "2026-11-20T16:25:31Z"
     assert "ზუმინი" in g23["words"] and "ზუმაუთი" in g23["words"] and "გვერდიდან გადატარება" in g23["words"]
@@ -133,3 +133,12 @@ def test_c04_is_resolved_per_shot_after_his_typed_confirmation():
     assert "per shot" in c04["resolution"]["answer"] and c04["resolution"]["words_verbatim"] is False
     assert "OR-C04" not in OR.report(ROOT)["open_conflicts"]
     assert OR.check_registry(OR.load(ROOT)[0], ROOT) == []
+
+
+def test_c04_resolution_is_append_only_against_base_snapshot():
+    base = json.loads((ROOT / "tests" / "fixtures" / "owner_registry_base_c04.json").read_text(encoding="utf-8"))
+    base_list = base["requirements"]
+    assert len(base_list) == 2
+    c04 = next(e for e in base_list if e["id"] == "OR-C04")
+    assert c04["status"] == "open"
+    assert OR.compare_with_base(base_list, OR.load(ROOT)[0]) == []

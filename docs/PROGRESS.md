@@ -6868,3 +6868,4 @@ OR-C04 resolved (his typed "მიდი" 2026-11-20 17:39:57Z in the registry t
 - OR-F04 (font from the film preset, L15 L25) is a new row resting on a card press (not typed words); OR-V40 only gets `proposed_amendment` (font part, `applied: false`) until his typed word. OR-V40 words and status untouched.
 - Counts: 267 entries (was 263), 250 active, 210 unmapped, 7 open conflicts, 0 registry errors, `compare_with_base` against #229's registry: 0. Layers whose records must now list these in `requirements_covered` before the gate: L2 L3 L4 L7 L9 L10 L14 L15 L22 L25.
 - Tests: `tests/unit/test_owner_requirements_delta7.py`; `LAYER_COVERAGE.md` regenerated. Not loaded: delta 8, OR-P03 exception (need his word). Stacked on #229's branch.
+OR-G23 back to process (owner's card choice 2026-11-22 17:41 UTC, "Back to process"): kind `process`, layer L33 as before; the group-B change to `requirement` is reverted. Tests updated; 189 pass.
