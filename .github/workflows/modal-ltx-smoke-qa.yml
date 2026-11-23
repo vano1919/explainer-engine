@@ -64,6 +64,7 @@ jobs:
           env["EE_MODAL_GO"] = f"cmsg_owner_approved_2026_11_23:{plan_sha12}"
           ladder_path = pathlib.Path("/tmp/ltx_ladder.json")
           env["EE_LTX_LADDER"] = str(ladder_path)
+          env["PYTHONPATH"] = str(repo)
 
           # Ensure volume exists on MODAL1
           subprocess.run(["modal", "volume", "create", "ee-weights"], env=env, check=False)
@@ -82,29 +83,30 @@ jobs:
           )
           from explainer_engine.cloud import modal_run as MR
           from explainer_engine.training.pods.ltx import modal_ltx_jobs as MLJ
-          MR.record_rung(ladder_path, "L0", True, note="CI L0 gate")
+          head_sha = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
+          MR.record_rung(ladder_path, "L0", True, commit=head_sha, note="CI L0 gate")
 
           # L1: import check
           subprocess.run(
-              ["modal", "run", "-m", "explainer_engine.training.pods.ltx.modal_ltx_jobs::check"],
+              ["modal", "run", "explainer_engine/training/pods/ltx/modal_ltx_jobs.py::check"],
               env=env,
               check=True,
           )
 
           # L2: weights check, stage if missing
           w_res = subprocess.run(
-              ["modal", "run", "-m", "explainer_engine.training.pods.ltx.modal_ltx_jobs::weights"],
+              ["modal", "run", "explainer_engine/training/pods/ltx/modal_ltx_jobs.py::weights"],
               env=env,
               check=False,
           )
           if w_res.returncode != 0:
               subprocess.run(
-                  ["modal", "run", "-m", "explainer_engine.training.pods.ltx.modal_ltx_jobs::stage", "--plan", str(plan)],
+                  ["modal", "run", "explainer_engine/training/pods/ltx/modal_ltx_jobs.py::stage", "--plan", str(plan)],
                   env=env,
                   check=True,
               )
               subprocess.run(
-                  ["modal", "run", "-m", "explainer_engine.training.pods.ltx.modal_ltx_jobs::weights"],
+                  ["modal", "run", "explainer_engine/training/pods/ltx/modal_ltx_jobs.py::weights"],
                   env=env,
                   check=True,
               )
@@ -112,7 +114,7 @@ jobs:
           # L3: live 2s smoke clip on MODAL1
           subprocess.run(
               [
-                  "modal", "run", "-m", "explainer_engine.training.pods.ltx.modal_ltx_jobs::smoke",
+                  "modal", "run", "explainer_engine/training/pods/ltx/modal_ltx_jobs.py::smoke",
                   "--picture", str(pic), "--plan", str(plan),
               ],
               env=env,
