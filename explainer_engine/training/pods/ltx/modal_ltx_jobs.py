@@ -472,7 +472,10 @@ def night_reserve(item: str, usd: float, why: str = "", path=None) -> None:
     no ledger (``cloud/night_budget``). Without the line the night rule does not apply and nothing is done."""
     from explainer_engine.core import spend_caps
     from explainer_engine.cloud import night_budget as NB
-    if not isinstance((spend_caps.modal() or {}).get("night_total_usd"), (int, float)):
+    cfg = spend_caps.load()
+    has_night = isinstance((cfg.get("modal") or {}).get("night_total_usd"), (int, float))
+    has_env = "modal_modal1" in ((cfg.get("orchestration_envelopes") or {}).get("services") or {})
+    if not (has_night or has_env):
         return
     try:
         NB.reserve(path or NIGHT_LEDGER, item, usd, why)
@@ -484,7 +487,10 @@ def night_settle(item: str, usd: float, path=None) -> None:
     """After the launch: the wall clock at the rate replaces the reservation (a failure to settle is printed, never hides the run)."""
     from explainer_engine.core import spend_caps
     from explainer_engine.cloud import night_budget as NB
-    if not isinstance((spend_caps.modal() or {}).get("night_total_usd"), (int, float)):
+    cfg = spend_caps.load()
+    has_night = isinstance((cfg.get("modal") or {}).get("night_total_usd"), (int, float))
+    has_env = "modal_modal1" in ((cfg.get("orchestration_envelopes") or {}).get("services") or {})
+    if not (has_night or has_env):
         return
     try:
         NB.settle(path or NIGHT_LEDGER, item, usd)

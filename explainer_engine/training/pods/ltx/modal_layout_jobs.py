@@ -286,7 +286,10 @@ def settle_launch(run, item: str, wall_s: float, rate: float) -> float:
 def night_reserve(item: str, usd: float, why: str = ""):
     from explainer_engine.cloud import night_budget as NB
     from explainer_engine.core import spend_caps
-    if not isinstance((spend_caps.modal() or {}).get("night_total_usd"), (int, float)):
+    cfg = spend_caps.load()
+    has_night = isinstance((cfg.get("modal") or {}).get("night_total_usd"), (int, float))
+    has_env = "modal_modal1" in ((cfg.get("orchestration_envelopes") or {}).get("services") or {})
+    if not (has_night or has_env):
         return
     try:
         NB.reserve(NIGHT_LEDGER, item, usd, why)
