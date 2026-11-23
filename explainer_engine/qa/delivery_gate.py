@@ -5,7 +5,7 @@ import argparse
 import json
 from pathlib import Path
 
-ALLOWED_CAMERA_MOVES = ("truck", "zoom_in", "zoom_out", "truck_zoom_in", "truck_zoom_out")
+from explainer_engine.core.camera_vocab import ALLOWED_CAMERA_MOVES
 
 
 def check(episode_log_path, clips_dir=None):

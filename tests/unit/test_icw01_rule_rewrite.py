@@ -12,14 +12,22 @@ WORDS = re.compile(r"LTX|Qwen|2\.5D|hand-drawn|sprite|keyframe", re.I)
 HISTORY = {"DECISIONS_AND_OPEN_QUESTIONS.md", "PLAN_2026-10-15.md"}
 
 
+def _classify_claude_doc(path: Path) -> str:
+    """Classify .claude markdown files explicitly so vendor/archive files are audited rather than silently skipped."""
+    rel = path.relative_to(ROOT / ".claude").parts
+    if len(rel) >= 2 and rel[0] == "skills" and rel[1].startswith("v-"):
+        return "pinned_vendor_skill"
+    if len(rel) >= 2 and rel[0] == "skills" and rel[1] == "_archive":
+        return "pinned_archive_skill"
+    return "active_rule_or_skill"
+
+
 def _files():
     yield ROOT / "CLAUDE.md"
     yield from sorted((ROOT / "docs").glob("*.md"))
     for p in sorted((ROOT / ".claude").rglob("*.md")):
-        rel = p.relative_to(ROOT / ".claude").parts
-        if len(rel) >= 2 and rel[0] == "skills" and (rel[1].startswith("v-") or rel[1] == "_archive"):
-            continue
-        yield p
+        if _classify_claude_doc(p) == "active_rule_or_skill":
+            yield p
 
 
 def _banner(lines):
@@ -81,3 +89,15 @@ def test_the_2026_11_06_amendments_keep_the_history():
     for d in ("D-97", "D-101", "D-105", "D-113"):
         assert "Amended 2026-11-06" in rows[d], d
     assert "J5" in rows["D-116"] and "J2" in rows["D-116"] and "J4" in rows["D-116"] and "decided by creator 2026-11-06" in rows["D-116"]
+
+
+def test_vendor_and_archive_skills_are_explicitly_classified_and_accounted_for():
+    """Workstream L: vendor (v-*) and _archive markdown files are explicitly classified, never silently skipped."""
+    counts = {"pinned_vendor_skill": 0, "pinned_archive_skill": 0, "active_rule_or_skill": 0}
+    for p in sorted((ROOT / ".claude").rglob("*.md")):
+        cls = _classify_claude_doc(p)
+        counts[cls] += 1
+        assert p.stat().st_size > 0, f"Empty markdown file: {p}"
+    assert counts["pinned_vendor_skill"] > 0
+    assert counts["pinned_archive_skill"] > 0
+    assert counts["active_rule_or_skill"] > 0

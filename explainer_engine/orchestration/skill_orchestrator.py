@@ -88,7 +88,9 @@ def _exec_blender_previs(payload: dict[str, Any]) -> dict[str, Any]:
         spec = payload.get("scene_spec")
     if not isinstance(spec, dict):
         raise ContractError("S4_blender_previs requires scene_spec or scene_spec_path")
-    errors = SS.validate(spec) if hasattr(SS, "validate") else []
+    SS.check_schema(spec)
+    results = SS.validate_spec(spec)
+    errors = [r for r in results if isinstance(r, dict) and str(r.get("status", "")).upper() == "FAIL"]
     if errors:
         raise ContractError(f"Blender previs spec validation failed: {errors}")
     rendered = [Path(p) for p in (payload.get("rendered_frames") or [])]
@@ -108,27 +110,45 @@ def _exec_blender_previs(payload: dict[str, Any]) -> dict[str, Any]:
 
 
 def _exec_gemini_images(payload: dict[str, Any]) -> dict[str, Any]:
-    """Record Gemini reference-image provenance manifest; emit PASS only when real image files & manifest exist."""
+    """Record Gemini reference-image provenance manifest; emit PASS only when real decodable images & manifest exist."""
+    from PIL import Image, UnidentifiedImageError
+
     out_path = payload.get("provenance_path")
     images = list(payload.get("images") or [])
-    verified_images = [p for p in images if isinstance(p, (str, Path)) and Path(p).is_file()]
+    verified_records: list[dict[str, Any]] = []
+    for raw_p in images:
+        if not isinstance(raw_p, (str, Path)):
+            continue
+        p = Path(raw_p)
+        if not p.is_file():
+            raise ContractError(f"Reference image does not exist: {p}")
+        try:
+            with Image.open(p) as im:
+                im.verify()
+            with Image.open(p) as im2:
+                width, height = im2.size
+        except (OSError, UnidentifiedImageError) as exc:
+            raise ContractError(f"Reference image failed decode verification ({p}): {exc}") from exc
+        digest = hashlib.sha256(p.read_bytes()).hexdigest()
+        verified_records.append({"path": str(p), "width": width, "height": height, "sha256": digest})
     manifest = {
         "schema_version": "image_provenance/1",
         "mode": payload.get("generation_mode", "interactive_gemini_chat"),
-        "images": [str(p) for p in verified_images],
+        "images": [r["path"] for r in verified_records],
+        "verified_assets": verified_records,
         "ts": datetime.datetime.now(UTC).isoformat(),
     }
-    if out_path and verified_images:
+    if out_path and verified_records:
         write_json_atomic(Path(out_path), manifest)
         return {
             "status": "PASS",
             "outputs": ["scene_images", "image_provenance"],
-            "count": len(verified_images),
+            "count": len(verified_records),
         }
     return {
         "status": "VALIDATED",
         "outputs": [],
-        "count": len(verified_images),
+        "count": len(verified_records),
         "notes": "No verified on-disk images + provenance_path supplied; cannot mark PASS",
     }
 
@@ -142,7 +162,20 @@ def _exec_ltx_video(payload: dict[str, Any]) -> dict[str, Any]:
     rec_path = payload.get("clip_record_path")
     if rec_path and Path(rec_path).is_file():
         rec = json.loads(Path(rec_path).read_text(encoding="utf-8"))
-        if rec.get("schema") == "video_clip_record/1" and rec.get("status") != "FAIL":
+        rec_status = str(rec.get("status") or "").upper()
+        if rec.get("schema") == "video_clip_record/1" and rec_status == "PASS":
+            clip_ref = rec.get("clip_path") or rec.get("path") or rec.get("video_path")
+            if clip_ref:
+                clip_p = Path(clip_ref)
+                if not clip_p.is_file() or clip_p.stat().st_size == 0:
+                    raise ContractError(f"video_clip_record/1 clip file missing or empty: {clip_p}")
+                expected_sha = rec.get("sha256")
+                if expected_sha:
+                    actual_sha = hashlib.sha256(clip_p.read_bytes()).hexdigest()
+                    if actual_sha != expected_sha:
+                        raise ContractError(
+                            f"video_clip_record/1 SHA-256 mismatch for {clip_p}: expected {expected_sha}, got {actual_sha}"
+                        )
             return {"status": "PASS", "outputs": ["ltx_video_clips"], "worker": worker, "clip_record_path": str(rec_path)}
     return {
         "status": "PLANNED",
@@ -348,6 +381,12 @@ class SkillOrchestrator:
                 f"Plan is not ready: missing_inputs={plan.blocked_missing_inputs}, "
                 f"implementation_gaps={plan.blocked_implementation_gaps}"
             )
+        for st in plan.stages:
+            st_meta = self._stages[st.stage_id]
+            if st_meta.get("execution_category") == "not_implemented":
+                raise ContractError(f"Stage {st.stage_id!r} is marked not_implemented and cannot be executed")
+            if st.stage_id not in self._executors:
+                raise ContractError(f"Pre-run refusal: no executable Python handler registered for stage {st.stage_id!r}")
         plan_hash = self._plan_fingerprint(plan, stage_payloads)
         done_stages: set[str] = set()
         results: dict[str, Any] = {}
@@ -374,17 +413,29 @@ class SkillOrchestrator:
             )
             results[st.stage_id] = res
             st_status = str(res.get("status") or "NOT_RUN").upper()
-            if st_status in ("FAIL", "ERROR"):
+            if st_status != "PASS":
+                halted_status = "FAIL" if st_status in ("FAIL", "ERROR") else (st_status if st_status in status_rank else "NEEDS_REVIEW")
                 if checkpoint_path:
                     write_json_atomic(
                         checkpoint_path,
-                        {"plan_hash": plan_hash, "completed_stages": sorted(done_stages), "results": results, "failed_stage": st.stage_id},
+                        {
+                            "plan_hash": plan_hash,
+                            "completed_stages": sorted(done_stages),
+                            "results": results,
+                            "failed_stage": st.stage_id if halted_status == "FAIL" else None,
+                            "halted_stage": st.stage_id,
+                        },
                     )
-                return {"status": "FAIL", "failed_stage": st.stage_id, "completed_stages": sorted(done_stages), "results": results}
-            if status_rank.get(st_status, 3) > status_rank.get(worst_status, 0):
-                worst_status = st_status if st_status in status_rank else "NEEDS_REVIEW"
-            if st_status == "PASS":
-                done_stages.add(st.stage_id)
+                out_halt = {
+                    "status": halted_status,
+                    "halted_stage": st.stage_id,
+                    "completed_stages": sorted(done_stages),
+                    "results": results,
+                }
+                if halted_status == "FAIL":
+                    out_halt["failed_stage"] = st.stage_id
+                return out_halt
+            done_stages.add(st.stage_id)
             if checkpoint_path:
                 write_json_atomic(
                     checkpoint_path,

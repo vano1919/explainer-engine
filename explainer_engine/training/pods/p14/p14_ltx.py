@@ -211,7 +211,7 @@ def derive_cmd(cfg, kind, src, dst):
 def chain_cmd(prev, frames, total, dst_pattern):
     """The last ``frames`` frames of the previous clip as PNGs (``dst_pattern`` with %d from 0)."""
     first = total - frames
-    return ["ffmpeg", "-y", "-v", "error", "-i", str(prev), "-vf", f"select='gte(n\\,{first})'", "-vsync", "0", "-start_number",
+    return ["ffmpeg", "-y", "-v", "error", "-i", str(prev), "-vf", f"select='gte(n\\,{first})'", "-fps_mode", "passthrough", "-start_number",
             "0", str(dst_pattern)]
 
 
