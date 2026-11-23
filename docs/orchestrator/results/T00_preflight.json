@@ -1,0 +1,22 @@
+{
+  "task_id": "T00_preflight",
+  "mode": "preflight-check",
+  "exit_code": 1,
+  "secrets_present": {
+    "ANTHROPIC_API_KEY": true,
+    "EE_ANTHROPIC_API_KEY": true,
+    "DEEPSEEK_API_KEY": true,
+    "MODAL_TOKEN_ID": true,
+    "MODAL_TOKEN_SECRET": true,
+    "MODAL1_TOKEN_ID": true,
+    "MODAL1_TOKEN_SECRET": true,
+    "HF_TOKEN": true,
+    "HUGGING_FACE_HUB_TOKEN": false,
+    "GEMINI_API_KEY": true,
+    "ELEVENLABS_API_KEY": true
+  },
+  "docs_lint_rc": 0,
+  "docs_lint_tail": "0 finding(s)\n",
+  "pytest_rc": 1,
+  "pytest_tail": "'explainer_engine/validators/prompts.py:91 reads BP-207 but is not in its '\n  +     'enforced_by',\n  +     'explainer_engine/validators/shorts.py:29 reads BP-135 but is not in its '\n  +     'enforced_by',\n  +     'explainer_engine/validators/shorts.py:13 reads BP-137 but is not in its '\n  +     'enforced_by',\n  +     'explainer_engine/validators/shorts.py:13 reads BP-12 but is not in its '\n  +     'enforced_by',\n  +     'explainer_engine/validators/shots.py:19 reads BP-126 but is not in its '\n  +     'enforced_by',\n  +     'explainer_engine/validators/shots.py:89 reads BP-124 but is not in its '\n  +     'enforced_by',\n  +     'explainer_engine/validators/shots.py:32 reads BP-126 but is not in its '\n  +     'enforced_by',\n  +     'explainer_engine/validators/shots.py:65 reads BP-126 but is not in its '\n  +     'enforced_by',\n  +     'explainer_engine/validators/shots.py:65 reads BP-126 but is not in its '\n  +     'enforced_by',\n  +     'explainer_engine/validators/story.py:112 reads BP-213 but is not in its '\n  +     'enforced_by',\n  +     'explainer_engine/validators/story.py:131 reads BP-213 but is not in its '\n  +     'enforced_by',\n  +     'explainer_engine/validators/story.py:65 reads BP-72 but is not in its '\n  +     'enforced_by',\n  +     'explainer_engine/validators/story.py:65 reads BP-73 but is not in its '\n  +     'enforced_by',\n  +     'explainer_engine/validators/subtitles.py:30 reads BP-210 but is not in '\n  +     'its enforced_by',\n  +     'explainer_engine/validators/subtitles.py:42 reads BP-210 but is not in '\n  +     'its enforced_by',\n  +     'explainer_engine/validators/tech_qa.py:103 reads BP-54 but is not in its '\n  +     'enforced_by',\n  +     'explainer_engine/validators/tech_qa.py:103 reads BP-54 but is not in its '\n  +     'enforced_by',\n  + ]\nFAILED tests/unit/test_sourced_rules_sync.py::test_every_key_read_exists_in_the_rule - KeyError: 'BP-199'\n7 failed, 5280 passed, 32 skipped, 3 deselected, 2 xfailed, 1417 warnings in 594.21s (0:09:54)\n"
+}
