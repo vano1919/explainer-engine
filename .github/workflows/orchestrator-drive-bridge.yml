@@ -2,6 +2,11 @@ name: Orchestrator Drive Bridge
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - integration/explainer-engine-unification
+    paths:
+      - .github/workflows/orchestrator-drive-bridge.yml
   schedule:
     - cron: "*/5 * * * *"
 
@@ -61,7 +66,8 @@ jobs:
         if: steps.fetch.outputs.already_done == 'false'
         run: |
           python - <<'PY'
-          import json, os, pathlib, subprocess, sys
+          import json, os, pathlib, sys
+          from subprocess import run as exec_cmd
 
           task = json.loads(pathlib.Path("/tmp/active_task.json").read_text(encoding="utf-8"))
           tid = task["task_id"]
@@ -77,10 +83,10 @@ jobs:
               task["brief_path"] = str(bp)
 
           if mode == "preflight-check":
-              names = ["ANTHROPIC_API_KEY","EE_ANTHROPIC_API_KEY","DEEPSEEK_API_KEY","MODAL_TOKEN_ID","MODAL_TOKEN_SECRET","MODAL1_TOKEN_ID","MODAL1_TOKEN_SECRET","HF_TOKEN","HUGGING_FACE_HUB_TOKEN","GEMINI_API_KEY","ELEVENLABS_API_KEY"]
+              names = ["ANTHROPIC_API_KEY","DEEPSEEK_API_KEY","MODAL_TOKEN_ID","MODAL_TOKEN_SECRET","MODAL1_TOKEN_ID","MODAL1_TOKEN_SECRET","HF_TOKEN","HUGGING_FACE_HUB_TOKEN","GEMINI_API_KEY","ELEVENLABS_API_KEY"]
               result["secrets_present"] = {n: bool(os.environ.get(n)) for n in names}
-              p1 = [invalid URL]([sys.executable, "-m", "explainer_engine.docs_lint"], capture_output=True, text=True)
-              p2 = [invalid URL]([sys.executable, "-m", "pytest", "-q", "-m", "not system and not media"], capture_output=True, text=True)
+              p1 = exec_cmd([sys.executable, "-m", "explainer_engine.docs_lint"], capture_output=True, text=True)
+              p2 = exec_cmd([sys.executable, "-m", "pytest", "-q", "-m", "not system and not media"], capture_output=True, text=True)
               result["docs_lint_rc"] = p1.returncode
               result["docs_lint_tail"] = (p1.stdout + p1.stderr)[-1000:]
               result["pytest_rc"] = p2.returncode
@@ -99,7 +105,7 @@ jobs:
                   cmd += ["--card-ref", task.get("card_ref", "cmsg_owner_approved_2026_11_23")]
               if task.get("dry_run", True):
                   cmd += ["--dry-run"]
-              p = [invalid URL](cmd, capture_output=True, text=True)
+              p = exec_cmd(cmd, capture_output=True, text=True)
               result["exit_code"] = p.returncode
               result["stdout"] = p.stdout[-4000:]
               result["stderr"] = p.stderr[-2000:]
@@ -107,7 +113,7 @@ jobs:
               cmd = [sys.executable, "-m", "explainer_engine.llm.deepseek_api", "review", "--brief", task["brief_path"], "--diff", task["diff_path"], "--max-usd", str(task["max_usd"]), "--model", task.get("model", "pro")]
               if task.get("dry_run", True):
                   cmd += ["--dry-run"]
-              p = [invalid URL](cmd, capture_output=True, text=True)
+              p = exec_cmd(cmd, capture_output=True, text=True)
               result["exit_code"] = p.returncode
               result["stdout"] = p.stdout[-4000:]
               result["stderr"] = p.stderr[-2000:]
@@ -118,14 +124,14 @@ jobs:
       - name: Commit results and accepted changes
         if: steps.fetch.outputs.already_done == 'false'
         run: |
-          git config [invalid URL] "vano1919"
-          git config [invalid URL] "122537395+vano1919@users.noreply.github.com"
+          export GIT_AUTHOR_NAME="vano1919"
+          export GIT_AUTHOR_EMAIL="122537395+vano1919@users.noreply.github.com"
+          export GIT_COMMITTER_NAME="vano1919"
+          export GIT_COMMITTER_EMAIL="122537395+vano1919@users.noreply.github.com"
           git add docs/orchestrator/
-          if [ "${{ steps.fetch.outputs.already_done }}" = "false" ]; then
-            COMMIT_ON_PASS=$(python -c 'import json; t=json.load(open("/tmp/active_task.json")); print("true" if t.get("commit_on_pass") and not t.get("dry_run", True) else "false")')
-            if [ "$COMMIT_ON_PASS" = "true" ]; then
-              git add -A
-            fi
+          COMMIT_ON_PASS=$(python -c 'import json; t=json.load(open("/tmp/active_task.json")); print("true" if t.get("commit_on_pass") and not t.get("dry_run", True) else "false")')
+          if [ "$COMMIT_ON_PASS" = "true" ]; then
+            git add -A
           fi
           if [ -n "$(git status --porcelain)" ]; then
             git commit -m "chore(orchestrator): result for ${{ steps.fetch.outputs.task_id }} [skip ci]"
