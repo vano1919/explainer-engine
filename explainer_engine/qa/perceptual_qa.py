@@ -358,7 +358,7 @@ def _default_gemini_http(
     except urllib.error.HTTPError as exc:
         err_body = _redact_secret(exc.read().decode("utf-8", errors="replace"), api_key)
         raise ContractError(f"Gemini multimodal QA HTTP {exc.code}: {err_body[:300]}") from None
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         raise ContractError(f"Gemini multimodal QA transport error: {_redact_secret(str(exc), api_key)}") from None
 
 

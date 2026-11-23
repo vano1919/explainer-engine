@@ -217,7 +217,8 @@ def modal_bakeoff() -> dict:
     """The creator's line for the v4.3 video bake-off only (``modal_bakeoff``: ``per_run_usd``, ``tests_total_usd``; the creator
     2026-11-12 17:50 UTC). It is not the Wan route's ``modal`` line: that one stays unset (a zero budget) until rung L3."""
     m = load().get("modal_bakeoff")
-    num = lambda v: isinstance(v, (int, float)) and not isinstance(v, bool) and v > 0
+    def num(v):
+        return isinstance(v, (int, float)) and not isinstance(v, bool) and v > 0
     if not (isinstance(m, dict) and num(m.get("per_run_usd")) and num(m.get("tests_total_usd"))):
         raise OverCeiling("no modal_bakeoff line in config/spend_caps.json: the bake-off spends nothing until the creator sets it")
     return m
@@ -227,7 +228,8 @@ def modal_cheap_video() -> dict:
     """The creator's line for the cheaper-video-generator test on Modal (``modal_cheap_video``: ``per_run_usd``,
     ``tests_total_usd``; the creator 2026-11-12 22:21 UTC, "$3 on Modal"). Its own key, like ``modal_bakeoff``."""
     m = load().get("modal_cheap_video")
-    num = lambda v: isinstance(v, (int, float)) and not isinstance(v, bool) and v > 0
+    def num(v):
+        return isinstance(v, (int, float)) and not isinstance(v, bool) and v > 0
     if not (isinstance(m, dict) and num(m.get("per_run_usd")) and num(m.get("tests_total_usd"))):
         raise OverCeiling("no modal_cheap_video line in config/spend_caps.json: the test spends nothing until the creator sets it")
     return m
@@ -248,7 +250,8 @@ def modal(episode: bool = False) -> dict:
     episode's runs (``episode=True``): the creator sets it after rung L3 has measured the real price per clip (final audit
     section 7, answer 3, 2026-11-12 14:01 UTC); until then only the ladder's test runs may spend, each under ``per_run_usd``."""
     m = load().get("modal")
-    num = lambda v: isinstance(v, (int, float)) and not isinstance(v, bool) and v > 0
+    def num(v):
+        return isinstance(v, (int, float)) and not isinstance(v, bool) and v > 0
     if not (isinstance(m, dict) and num(m.get("per_run_usd"))):
         raise OverCeiling("no modal per_run_usd in config/spend_caps.json: Modal spends nothing until the creator sets the "
                           "line (zero approved budget)")
@@ -263,7 +266,8 @@ def modal_ltx(episode: bool = False) -> dict:
     D-132, 2026-11-12). Its own key, like ``modal_bakeoff``: the Wan route's ``modal`` line is not reused. Missing = refused, a
     zero approved budget, until the creator sets the numbers (cloud rules section 4); ``per_episode_usd`` comes after rung L3."""
     m = load().get("modal_ltx")
-    num = lambda v: isinstance(v, (int, float)) and not isinstance(v, bool) and v > 0
+    def num(v):
+        return isinstance(v, (int, float)) and not isinstance(v, bool) and v > 0
     if not (isinstance(m, dict) and num(m.get("per_run_usd"))):
         raise OverCeiling("no modal_ltx per_run_usd in config/spend_caps.json: the LTX video route spends nothing until the "
                           "creator sets the line (zero approved budget)")

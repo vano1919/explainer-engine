@@ -23,11 +23,11 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from explainer_engine.cloud import modal_run as MR
-from explainer_engine.cloud import night_budget as NB
-from explainer_engine.core import approvals
-from explainer_engine.core.env_loader import load_project_env
-from explainer_engine.training.pods.ltx import modal_ltx_jobs as MLJ
+from explainer_engine.cloud import modal_run as MR  # noqa: E402
+from explainer_engine.cloud import night_budget as NB  # noqa: E402
+from explainer_engine.core import approvals  # noqa: E402
+from explainer_engine.core.env_loader import load_project_env  # noqa: E402
+from explainer_engine.training.pods.ltx import modal_ltx_jobs as MLJ  # noqa: E402
 
 
 def _bind_modal1_env(env: dict[str, str]) -> dict[str, str]:
@@ -99,7 +99,7 @@ def _verify_modal_secret_present() -> None:
 
     try:
         modal.Secret.from_name(MLJ.SECRET_NAME, required_keys=["HF_TOKEN"])
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         raise SystemExit(
             f"Modal-ზე სეკრეტი '{MLJ.SECRET_NAME}' (გასაღებით HF_TOKEN) არ მოიძებნა ან არასწორია.\n"
             f"შექმენი ხელით Modal Dashboard-ში (MODAL1 პროფილზე) და ხელახლა გაუშვი. დეტალი: {type(exc).__name__}"

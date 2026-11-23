@@ -6,6 +6,7 @@ without relying on platform-specific POSIX-only fcntl locks.
 """
 from __future__ import annotations
 
+import contextlib
 import datetime
 import os
 import sqlite3
@@ -170,10 +171,8 @@ def reserve(
     except OverCeiling:
         raise
     except sqlite3.Error as exc:
-        try:
+        with contextlib.suppress(sqlite3.Error):
             conn.execute("ROLLBACK")
-        except sqlite3.Error:
-            pass
         raise LedgerPersistenceError(f"Ledger reservation failed for {service}/{item_id}: {exc}") from exc
     finally:
         conn.close()
@@ -243,10 +242,8 @@ def settle(
     except OverCeiling:
         raise
     except sqlite3.Error as exc:
-        try:
+        with contextlib.suppress(sqlite3.Error):
             conn.execute("ROLLBACK")
-        except sqlite3.Error:
-            pass
         raise LedgerPersistenceError(f"Ledger settlement failed for {service}/{item_id}: {exc}") from exc
     finally:
         conn.close()
