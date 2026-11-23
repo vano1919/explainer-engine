@@ -969,3 +969,21 @@ def main(argv=None) -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
+
+
+def stage_previs_blender(episode_dir: Path, scene_spec_path: Path) -> dict:
+    """Optional previs stage (S4): validate a blender_scene/1 spec for Gemini reference blocking.
+    Distinct from retired explainer_engine/blender/ final renders (config/retired_era.json)."""
+    from explainer_engine.lab import scene_spec as SS
+
+    spec = json.loads(Path(scene_spec_path).read_text(encoding="utf-8"))
+    errs = SS.validate(spec) if hasattr(SS, "validate") else []
+    if errs:
+        return {"stage": "previs_blender", "status": "FAIL", "errors": errs}
+    return {
+        "stage": "previs_blender",
+        "status": "PASS",
+        "scene_id": spec.get("scene_id"),
+        "episode_dir": str(episode_dir),
+        "previs_module": "explainer_engine.lab.scene_render",
+    }

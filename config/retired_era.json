@@ -47,7 +47,8 @@
         "explainer_engine/training/pods/blender_render.py",
         "explainer_engine/blender/"
       ],
-      "replacement": "route still_25d (production/layers25d) and route map (maps/)"
+      "replacement": "route still_25d (production/layers25d) and route map (maps/)",
+      "previs_exception": "explainer_engine/lab/ (blender_scene/1 grey-box layout previs) is ACTIVE for spatial blocking and Gemini reference preparation; only legacy explainer_engine/blender/ J5 final rendering is retired."
     },
     "runpod": {
       "what": "RunPod pods (cloud/runpod.py create)",
