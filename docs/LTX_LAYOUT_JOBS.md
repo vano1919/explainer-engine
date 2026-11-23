@@ -65,7 +65,7 @@ and the container checks it again.
 | LR-4 | the prompt is one or two sentences and holds none of "clay", "3D", "Unreal" (the card's own rule); with a film line (variant B) more than two sentences is a recorded warning, not a refusal (Q-L4) |
 | LR-5 | a chain: each row's `hop` equals its place; hop 3 and further needs `hop3_word` (the owner's message id; CT-1 in `LTX_PIPELINES.md`, Q6 open); a chained row brings no picture of its own (it starts from a frame of the previous clip; a cut is a job of its own) |
 
-Hand-over (a chain's next first picture): `pick: last` (the default, as in `modal_ltx_jobs.handover_frame`) or `best_tail` (BP-199
+Hand-over (a chain's next first picture): `pick: last` (the default, as in `modal_ltx_jobs.handover_frame`) or `best_tail` (handover tail-frame rule (unregistered on main)
 person-weighted score over the last `window_s`), the speech floor (BP-187) and the crop rule (VL-05) are the LTX worker's functions,
 copied, and a test keeps their source equal to that worker's. A clip whose line is not over by the last frame has no hand-over frame:
 the chain stops, never a cut inside a line.
