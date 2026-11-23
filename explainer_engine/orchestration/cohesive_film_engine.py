@@ -597,3 +597,6 @@ def verify_real_api_media_renders(
         "provider_execution_verified": provider_execution_verified,
         "issues": issues,
     }
+
+# Unification policy (2026-11-23): 10/30/60 is an earlier hypothesis only; visual mix is chosen flexibly per film.
+FLEXIBLE_VISUAL_COMPOSITION = True

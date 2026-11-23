@@ -131,6 +131,11 @@ def _stage_inputs(ep: Episode, stage: str) -> dict:
         files["sound_library/manifest.json"] = _sha(ep.sound_library / "manifest.json")
     if stage == "clips":
         files[WAN_LEDGER_REL] = _sha(ep.root / WAN_LEDGER_REL)
+        files["production/pictures.json"] = _sha(ep.root / "production" / "pictures.json")
+        for sh in ep.script.get("shots", []):
+            if sh.get("route") == "video" and sh.get("shot_id"):
+                rel = f"production/video/{sh['shot_id']}.json"
+                files[rel] = _sha(ep.root / rel)
     if stage == "voice":   # VL-07: the clip records of the clip-spoken shots time them (G7 re-cuts only the others)
         from explainer_engine.videolane import plan as VP
         for sid in sorted(VP.clip_spoken(ep.script)):
@@ -969,3 +974,21 @@ def main(argv=None) -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
+
+
+def stage_previs_blender(episode_dir: Path, scene_spec_path: Path) -> dict:
+    """Optional previs stage (S4): validate a blender_scene/1 spec for Gemini reference blocking.
+    Distinct from retired explainer_engine/blender/ final renders (config/retired_era.json)."""
+    from explainer_engine.lab import scene_spec as SS
+
+    spec = json.loads(Path(scene_spec_path).read_text(encoding="utf-8"))
+    errs = SS.validate(spec) if hasattr(SS, "validate") else []
+    if errs:
+        return {"stage": "previs_blender", "status": "FAIL", "errors": errs}
+    return {
+        "stage": "previs_blender",
+        "status": "PASS",
+        "scene_id": spec.get("scene_id"),
+        "episode_dir": str(episode_dir),
+        "previs_module": "explainer_engine.lab.scene_render",
+    }

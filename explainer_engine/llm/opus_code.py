@@ -84,6 +84,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--rounds", type=int, default=None)
     p.add_argument("--max-usd", required=True, type=float, help="the job's own hard limit")
     p.add_argument("--task-class", default=DEFAULT_CLASS)
+    p.add_argument("--max-tokens", type=int, default=24000, help="hard max output tokens per round")
     p.add_argument("--job", default=None)
     p.add_argument("--out", type=Path, default=None)
     p.add_argument("--dry-run", action="store_true", help="print the worst-case estimate of one round, send nothing")
@@ -93,13 +94,16 @@ def main(argv: list[str] | None = None) -> int:
         brief = a.brief.read_text(encoding="utf-8")
         job = a.job or a.brief.stem
         out = a.out or ROOT / "jobs" / "opus_code" / job
-        w = ClaudeWorker(max_usd=a.max_usd, task_class=a.task_class)
+        w = ClaudeWorker(max_usd=a.max_usd, task_class=a.task_class, max_tokens=a.max_tokens)
         first = [{"role": "system", "content": DS.CODE_SYSTEM},
                  {"role": "user", "content": DS.pack(a.files, ROOT, w.cfg) + "\n=== BRIEF ===\n" + brief}]
         if a.dry_run:
             r = CA.route(a.task_class)
-            print(json.dumps({"job": job, "model": r.model, "effort": r.effort, "worst_usd_per_round": round(w.estimate(first), 4),
-                              "key_present": CA.api_key() is not None}))
+            in_chars = sum(len(m["content"]) for m in first)
+            print(json.dumps({"job": job, "model": r.model, "effort": r.effort, "input_chars": in_chars,
+                              "input_tokens_estimate": int(in_chars / 3.0), "max_output_tokens": a.max_tokens,
+                              "token_count_basis": "upper_bound_estimate_3_chars_per_token",
+                              "worst_usd_per_round": round(w.estimate(first), 4), "key_present": CA.api_key() is not None}))
             return 0
         if not (a.card_ref or "").startswith("cmsg_"):
             raise OpusCodeError("a paid Opus call needs --card-ref <the creator's card message id>: nothing was sent")

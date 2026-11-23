@@ -15,7 +15,11 @@ HISTORY = {"DECISIONS_AND_OPEN_QUESTIONS.md", "PLAN_2026-10-15.md"}
 def _files():
     yield ROOT / "CLAUDE.md"
     yield from sorted((ROOT / "docs").glob("*.md"))
-    yield from sorted((ROOT / ".claude").rglob("*.md"))
+    for p in sorted((ROOT / ".claude").rglob("*.md")):
+        rel = p.relative_to(ROOT / ".claude").parts
+        if len(rel) >= 2 and rel[0] == "skills" and (rel[1].startswith("v-") or rel[1] == "_archive"):
+            continue
+        yield p
 
 
 def _banner(lines):

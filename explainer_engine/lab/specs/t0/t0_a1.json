@@ -1,0 +1,171 @@
+{
+ "schema": "explainer.blender_scene",
+ "version": 1,
+ "scene_id": "t0_a1",
+ "place": "no_mans_land",
+ "fps": 24,
+ "clip_frames": 241,
+ "size": [
+  1280,
+  704
+ ],
+ "people": [
+  {
+   "id": "private",
+   "side": "british",
+   "hero_id": "british_private",
+   "track": [
+    {
+     "frame": 0,
+     "pos": [
+      -0.5,
+      6
+     ],
+     "heading": 0,
+     "pose": "stand"
+    },
+    {
+     "frame": 100,
+     "pos": [
+      -0.5,
+      11
+     ],
+     "heading": 0,
+     "pose": "stand"
+    }
+   ]
+  },
+  {
+   "id": "german",
+   "side": "german",
+   "hero_id": "german_soldier",
+   "track": [
+    {
+     "frame": 0,
+     "pos": [
+      0.5,
+      32
+     ],
+     "heading": 180,
+     "pose": "stand"
+    },
+    {
+     "frame": 168,
+     "pos": [
+      0.5,
+      19
+     ],
+     "heading": 180,
+     "pose": "stand"
+    },
+    {
+     "frame": 169,
+     "pos": [
+      0.5,
+      19
+     ],
+     "heading": 180,
+     "pose": "hands_open"
+    }
+   ]
+  }
+ ],
+ "cameras": [
+  {
+   "id": "a_wide_behind",
+   "pos": [
+    0,
+    0,
+    1.6
+   ],
+   "heading": 0,
+   "pitch": 0,
+   "lens": 35
+  },
+  {
+   "id": "a_priv_side",
+   "pos": [
+    1.2,
+    20,
+    1.4
+   ],
+   "heading": 180,
+   "pitch": 0,
+   "lens": 50
+  },
+  {
+   "id": "a_ger_side",
+   "pos": [
+    -1.4,
+    12,
+    1.5
+   ],
+   "heading": 0,
+   "pitch": 0,
+   "lens": 50
+  },
+  {
+   "id": "a_gap_wide",
+   "pos": [
+    0,
+    4,
+    1.6
+   ],
+   "heading": 0,
+   "pitch": 0,
+   "lens": 28
+  },
+  {
+   "id": "a_ger_over",
+   "pos": [
+    -0.1,
+    8.5,
+    1.7
+   ],
+   "heading": 0,
+   "pitch": 0,
+   "lens": 85
+  }
+ ],
+ "cuts": [
+  {
+   "camera": "a_wide_behind",
+   "frame_in": 0,
+   "frame_out": 48,
+   "focus": [
+    "private"
+   ]
+  },
+  {
+   "camera": "a_priv_side",
+   "frame_in": 48,
+   "frame_out": 96,
+   "focus": [
+    "private"
+   ]
+  },
+  {
+   "camera": "a_ger_side",
+   "frame_in": 96,
+   "frame_out": 144,
+   "focus": [
+    "german"
+   ]
+  },
+  {
+   "camera": "a_gap_wide",
+   "frame_in": 144,
+   "frame_out": 192,
+   "focus": []
+  },
+  {
+   "camera": "a_ger_over",
+   "frame_in": 192,
+   "frame_out": 240,
+   "focus": [
+    "german"
+   ]
+  }
+ ],
+ "new_photo": true
+}

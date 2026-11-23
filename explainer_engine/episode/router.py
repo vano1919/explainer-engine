@@ -144,3 +144,18 @@ def talking_check(script: dict) -> list[dict]:
                   "or a listener): allowed only on the creator's yes to off-screen lines (audit A9)", off, level=G.REVIEW),
             G.row("speaker_shots_short", not long_, f"{len(long_)} speaker shot(s) longer than {DIALOGUE_SHOT_MAX_S} s "
                   "(BP-108)", long_, level=SR.severity("BP-108") if SR.severity("BP-108") == "REVIEW" else SR.level("BP-108"))]
+
+
+def select_ltx_worker(shot: dict) -> dict:
+    """Route a video shot to the appropriate Modal MODAL1 LTX worker (ic_lora layout vs standard first/last-frame)."""
+    has_layout = bool(shot.get("blender_layout_mp4") or shot.get("layout_mp4") or shot.get("use_ic_lora"))
+    return {
+        "account": "MODAL1",
+        "worker_module": (
+            "explainer_engine.training.pods.ltx.modal_layout_jobs"
+            if has_layout
+            else "explainer_engine.training.pods.ltx.modal_ltx_jobs"
+        ),
+        "mode": "ic_lora_layout" if has_layout else "first_last_frame",
+        "requires_blender_previs": bool(shot.get("needs_blender_previs") or has_layout),
+    }

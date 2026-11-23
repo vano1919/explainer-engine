@@ -98,6 +98,7 @@ def _overnight_isolated(request, tmp_path, monkeypatch):
     with the ``real_overnight`` fixture (tests/unit/test_spend_caps_overnight.py)."""
     from explainer_engine.core import spend_caps as SC
     monkeypatch.setenv("EXPLAINER_OVERNIGHT_DIR", str(tmp_path / "overnight_default"))
+    monkeypatch.setenv("EXPLAINER_ENVELOPE_LEDGER", str(tmp_path / "envelope_ledger_default.json"))
     if "real_overnight" not in request.fixturenames:
         monkeypatch.setattr(SC, "overnight_reserve", lambda *a, **k: None)
         monkeypatch.setattr(SC, "overnight_settle", lambda *a, **k: None)

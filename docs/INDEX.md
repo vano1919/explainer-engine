@@ -122,4 +122,5 @@ Machine-readable sources of truth: `explainer_engine/design/palette.json` (colou
 - `rules_registry/10_MUSIC_AND_AMBIENCE_HIERARCHY.md` — 5-layer sound mix hierarchy, -24dB ambience bed, sidechain ducking.
 - `rules_registry/11_VOICE_ACTING_AND_LIPSYNC_SPINE.md` — Character voice contrast, 24fps word timing spine, selective lip-sync.
 - `rules_registry/12_FINAL_ASSEMBLY_AND_PACKAGING.md` — 3-minute chunked review assembly, color grade LUT, YouTube CTR packaging.
-
+- `docs/BLENDER_SCENE.md` — Blender grey-box layout scenes (`blender_scene/1`, T0/T0b, validators V1–V12).
+- `docs/LTX_LAYOUT_JOBS.md` — LTX IC-LoRA Layout-To-Render Modal A100 worker (`modal_layout_jobs.py`, D-132).

@@ -20,10 +20,22 @@
     "total_usd": 5.9,
     "decided": "the creator, 2026-10-29 18:40 UTC, message cmsg_01Hnu5zB86sjUj5GtTgaUkPW4xWey2wgkHN9je3d8CGH7U: a clear yes to the paid tests within $5.90 in total; the split 0.50 / 3.00 / 2.40 inside that total is the OR-24 plan thread's (confirmed by the coordinator 2026-10-29 23:24 UTC); each test starts only after the coordinator's go after the final Fable xhigh static audit",
     "plan": "project files explainer-engine/blueprint_2026-10-29/paid/PAID_TESTS_PLAN.md (OR-23, confirmed by the OR-24 plan thread)",
-    "p12a_smoke": {"runpod_usd": 0.5, "for": "five small pods: the live smoke of the wrapper and the live drills of every stop path (pods 0.40 hard)"},
-    "p12b_two_runs": {"runpod_usd": 3.0, "for": "one pod: MVA views + host collage (Qwen-Image-2.1), LTX plain vs Layout-To-Render (pod 2.40 hard)"},
-    "p12e_hosts": {"runpod_usd": 1.77, "for": "DROPPED 2026-10-31 (no permanent hosts, D-89): host sheets void; the money is unassigned until the creator reassigns it (0.38 of the former 2.40 went to p12b_measure)"},
-    "p12b_measure": {"runpod_usd": 0.63, "for": "one measurement pod of P12b's fixed setup (install + base model download, no GPU work); pod hard 0.50 (raised from 0.30/0.38 on the creator's \"გადადი\" 2026-11-01 07:41 UTC: SECURE A40 instead of a COMMUNITY card, no cheap COMMUNITY stock); the creator's YES on the card of 2026-10-31 06:50 UTC, tapped 2026-11-01 06:10 UTC (grant up to 0.95, 0.38 used)"}
+    "p12a_smoke": {
+      "runpod_usd": 0.5,
+      "for": "five small pods: the live smoke of the wrapper and the live drills of every stop path (pods 0.40 hard)"
+    },
+    "p12b_two_runs": {
+      "runpod_usd": 3.0,
+      "for": "one pod: MVA views + host collage (Qwen-Image-2.1), LTX plain vs Layout-To-Render (pod 2.40 hard)"
+    },
+    "p12e_hosts": {
+      "runpod_usd": 1.77,
+      "for": "DROPPED 2026-10-31 (no permanent hosts, D-89): host sheets void; the money is unassigned until the creator reassigns it (0.38 of the former 2.40 went to p12b_measure)"
+    },
+    "p12b_measure": {
+      "runpod_usd": 0.63,
+      "for": "one measurement pod of P12b's fixed setup (install + base model download, no GPU work); pod hard 0.50 (raised from 0.30/0.38 on the creator's \"გადადი\" 2026-11-01 07:41 UTC: SECURE A40 instead of a COMMUNITY card, no cheap COMMUNITY stock); the creator's YES on the card of 2026-10-31 06:50 UTC, tapped 2026-11-01 06:10 UTC (grant up to 0.95, 0.38 used)"
+    }
   },
   "runpod": {
     "per_pod_usd": 10.0,
@@ -40,7 +52,10 @@
       "u4duqrdhsy77cr",
       "onuaeup37xsmk5",
       "ixuendp5qoiu1e",
-    "w4f1yaxxidnotl", "lmeb5qu5gdak0o", "9twmhywjhuu5s4", "r4w729gcrlx4wv",
+      "w4f1yaxxidnotl",
+      "lmeb5qu5gdak0o",
+      "9twmhywjhuu5s4",
+      "r4w729gcrlx4wv",
       "gqscbgeuwti8gz",
       "gtrcntkwsoh5rb",
       "emvtki74neqpl7",
@@ -84,7 +99,8 @@
       "ys4qcp04yp4nym",
       "wnrcpyh9f2xl2c",
       "udfnfnuo6eim89",
-      "jibqiezqtwsqls", "3n1q879dwpe1k6",
+      "jibqiezqtwsqls",
+      "3n1q879dwpe1k6",
       "0t2re35vf6f3sq"
     ],
     "keep_network_volumes": []
@@ -92,12 +108,31 @@
   "claude_api": {
     "_doc": "The Claude API credit (explainer_engine/llm/claude_api.py, docs/LLM_API.md). max_usd is the whole credit; the client stops at 80 % of it and of each job. A job without a line here is refused. approval is the recorded word that allows real calls.",
     "max_usd": 50.0,
-    "jobs": {"J1": 0.0, "J1b": 0.0, "final_review": 0.0, "change_plan": 0.0, "fix_desk": 0.0, "result_check": 0.0,
-      "J2a": 0.0, "J2b": 0.0, "J3": 0.0, "J4": 0.0, "J5": 0.0, "J6": 0.0, "plan_v2": 0.0, "reserve": 0.0,
-      "research_vs_main": 0.0, "build_loop": 0.0, "plan_revision": 0.0,
-      "opus_code": 40.0, "fable_medium": 0.0, "opus_high_review": 0.0, "opus_tech_check": 10.0},
+    "jobs": {
+      "J1": 0.0,
+      "J1b": 0.0,
+      "final_review": 0.0,
+      "change_plan": 0.0,
+      "fix_desk": 0.0,
+      "result_check": 0.0,
+      "J2a": 0.0,
+      "J2b": 0.0,
+      "J3": 0.0,
+      "J4": 0.0,
+      "J5": 0.0,
+      "J6": 0.0,
+      "plan_v2": 0.0,
+      "reserve": 0.0,
+      "research_vs_main": 0.0,
+      "build_loop": 0.0,
+      "plan_revision": 0.0,
+      "opus_code": 40.0,
+      "fable_medium": 0.0,
+      "opus_high_review": 0.0,
+      "opus_tech_check": 10.0
+    },
     "approval": {
-    "owner_budget_2026_11_21": "Claude code writing $40 plus a separate Opus medium technical check $10 = $50 total; owner message cmsg_01Hnu5zB86sjUj5GtTgaUkPWU86xfQSP7W7oPE2qg2ka7R (2026-11-21 21:48 UTC), relayed by coordinator",
+      "owner_budget_2026_11_21": "Claude code writing $40 plus a separate Opus medium technical check $10 = $50 total; owner message cmsg_01Hnu5zB86sjUj5GtTgaUkPWU86xfQSP7W7oPE2qg2ka7R (2026-11-21 21:48 UTC), relayed by coordinator",
       "by": "vano (credit, his word) + the OR-24 plan thread verdict",
       "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWMWfhemnwjz2KZddCLNHbGL; project files blueprint_2026-10-29/CLAUDE_API_PLAN_OR24.md",
       "at": "2026-10-29"
@@ -126,7 +161,10 @@
       "max_usd": 20.0,
       "decided": "the creator, 2026-11-22 20:28 UTC: the whole night at $20 in total, all technical questions answered by the coordinator; message cmsg_01Hnu5zB86sjUj5GtTgaUkPWCVmDsU4aSBNwFZQaqdSRLV",
       "lines": {
-        "test_film_v4_modal": {"modal_usd": 2.0, "for": "the Test Film v4 Modal run (the coordinator's note of the same date)"}
+        "test_film_v4_modal": {
+          "modal_usd": 2.0,
+          "for": "the Test Film v4 Modal run (the coordinator's note of the same date)"
+        }
       }
     }
   },
@@ -154,5 +192,24 @@
     "tests_total_usd": 3.0,
     "for": "the cheaper-video-generator test (training/pods/bakeoff/plan_cheap_2026-11-12.json): open models that run on Modal (LTX-2.5 at smaller sizes, HunyuanVideo 1.5 480p) on the battle pictures; each run at most 1.2, all runs together at most 3.0 (the ledger stops reservations at 80 %, $2.40); API-only models are not in it",
     "decided": "the creator, 2026-11-12 22:21 UTC, message cmsg_01Hnu5zB86sjUj5GtTgaUkPWBzaDXEQGLrQnKpeqMBwkj9: \"გაქვს მოდალზე 3 დოლარის ლიმიტი იმ მოდელებზე რაც მოდალზე მუშაობს\" ($3 on Modal for the models that run on Modal)"
+  },
+  "orchestration_envelopes": {
+    "_doc": "Pre-authorized independent engineering budget envelopes (owner 2026-11-23): Modal MODAL1 $20.00, DeepSeek $4.50, Claude API $50.00 (combined max $74.50). Budgets are independent and non-transferable.",
+    "combined_max_usd": 74.5,
+    "services": {
+      "modal_modal1": {
+        "max_usd": 20.0,
+        "account": "MODAL1"
+      },
+      "deepseek": {
+        "max_usd": 4.5,
+        "account": "official_deepseek_api"
+      },
+      "claude_api": {
+        "max_usd": 50.0,
+        "account": "anthropic_api"
+      }
+    },
+    "decided": "owner 2026-11-23 (Master Autonomous Orchestration Directive: $20 MODAL1 / $4.50 DeepSeek / $50 Claude API)"
   }
 }

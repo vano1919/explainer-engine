@@ -49,7 +49,7 @@ def test_the_night_refuses_a_call_that_passes_twenty_dollars(real_overnight, tmp
 def test_a_settle_replaces_the_reservation_by_the_actual_amount(real_overnight, tmp_path, monkeypatch):
     from explainer_engine.core import spend_caps as SC
     monkeypatch.setenv("EXPLAINER_OVERNIGHT_DIR", str(tmp_path / "night"))
-    SC.overnight_reserve("deepseek", "u1", 6.0)
-    SC.overnight_settle("deepseek", "u1", 0.5, 6.0)        # actual 0.5 replaces the 6.0 reservation
+    SC.overnight_reserve("deepseek", "u1", 4.0)
+    SC.overnight_settle("deepseek", "u1", 0.5, 4.0)        # actual 0.5 replaces the 6.0 reservation
     assert round(SC.overnight_spent(), 6) == 0.5
     SC.overnight_reserve("claude_api", "u2", 19.0)         # 0.5 + 19 = 19.5, inside 20

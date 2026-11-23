@@ -258,7 +258,7 @@ def stage_ab(w: Work, force: bool) -> None:
 def stage_final(w: Work, force: bool) -> Path:
     out = w.p("final", "demo_overlay_2min.mp4")
     lst = w.p("final", "concat.txt")
-    lst.write_text("".join(f"file '{w.p('comp', f'comp_{s['no']:02d}.mp4')}'\n" for s in D.SHOTS))
+    lst.write_text("".join(f"file '{w.p('comp', 'comp_%02d.mp4' % s['no'])}'\n" for s in D.SHOTS))
     cmd = ["ffmpeg", "-v", "error", "-y", "-f", "concat", "-safe", "0", "-i", str(lst), "-i", str(w.p("sound", "mix.wav")), "-vf", GRADE, "-map", "0:v", "-map", "1:a",
            "-c:v", "libx264", "-preset", "medium", "-crf", "16", "-pix_fmt", "yuv420p", "-r", str(FPS), "-c:a", "aac", "-b:a", "256k", "-shortest", str(out)]
     t = time.time()

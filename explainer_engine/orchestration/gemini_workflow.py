@@ -247,3 +247,6 @@ if __name__ == "__main__":
         "wan22_matrix": WAN22_CAPABILITY_MATRIX,
         "chunks_12min": chunk_bounds_for_duration(720.0, 180.0),
     }, indent=2, ensure_ascii=False))
+
+# Unification policy (2026-11-23): 10/30/60 is an earlier hypothesis only; visual mix is chosen flexibly per film.
+FLEXIBLE_VISUAL_COMPOSITION = True

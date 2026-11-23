@@ -4,9 +4,15 @@ A run ledger may hold lower caps than the file, never higher; ``$EXPLAINER_SPEND
 
 from __future__ import annotations
 
+import contextlib
 import json
 import os
 from pathlib import Path
+
+try:
+    import fcntl
+except ImportError:  # pragma: no cover - Windows fallback
+    fcntl = None  # type: ignore[assignment]
 
 PATH = Path(__file__).resolve().parents[2] / "config" / "spend_caps.json"
 
@@ -103,19 +109,48 @@ def _overnight_append(name: str, row: dict) -> None:
         f.write(json.dumps(row, ensure_ascii=False) + "\n")
 
 
+_ENVELOPE_SERVICE_MAP = {
+    "deepseek": "deepseek",
+    "deepseek_api": "deepseek",
+    "claude_api": "claude_api",
+    "anthropic": "claude_api",
+    "modal": "modal_modal1",
+    "modal_ltx": "modal_modal1",
+    "modal1": "modal_modal1",
+    "modal_modal1": "modal_modal1",
+}
+
+
+def _envelope_service_for(service: str) -> str | None:
+    mapped = _ENVELOPE_SERVICE_MAP.get(service)
+    if not mapped:
+        return None
+    env_services = (load().get("orchestration_envelopes") or {}).get("services") or {}
+    return mapped if mapped in env_services else None
+
+
 def overnight_reserve(service: str, uid: str, estimate: float, name: str = OVERNIGHT) -> None:
     """Refuse a paid call unless the night's booked spend plus this call's estimate stays within the night's max_usd
-    (the creator 2026-11-22: $20 in total, every service). On success the estimate is booked under uid."""
+    and (when configured) the service's independent orchestration envelope. On success both are booked under uid."""
     n = overnight(name)
     spent = overnight_spent(name)
     if spent + estimate > float(n["max_usd"]) + 1e-9:
         raise OverCeiling(f"{service}: the night has ${spent:.4f} booked and this call estimates ${estimate:.4f}, which would pass "
                           f"its ${float(n['max_usd']):g} ceiling (config/spend_caps.json overnight); stop and ask the creator")
+    env_svc = _envelope_service_for(service)
+    if env_svc is not None:
+        envelope_reserve(env_svc, uid, estimate)
     _overnight_append(name, {"service": service, "uid": uid, "usd": round(estimate, 6), "kind": "reserve"})
 
 
 def overnight_settle(service: str, uid: str, actual: float, reserved: float, name: str = OVERNIGHT) -> None:
-    """Replace uid's reservation by the actual USD: a correction row of actual - reserved (0 when the call was not charged)."""
+    """Replace uid's reservation by the actual USD in both overnight and orchestration envelope ledgers."""
+    env_svc = _envelope_service_for(service)
+    if env_svc is not None:
+        try:
+            envelope_settle(env_svc, uid, actual)
+        except OverCeiling:
+            pass
     _overnight_append(name, {"service": service, "uid": uid, "usd": round(actual - reserved, 6), "kind": "settle"})
 
 
@@ -192,3 +227,99 @@ def modal_ltx(episode: bool = False) -> dict:
         raise OverCeiling("no modal_ltx per_episode_usd in config/spend_caps.json: an episode's LTX runs wait for the creator's "
                           "episode line, set after rung L3 (zero approved episode budget)")
     return m
+
+
+def _envelope_ledger_path() -> Path:
+    env = os.environ.get("EXPLAINER_ENVELOPE_LEDGER")
+    if env:
+        return Path(env)
+    return Path(__file__).resolve().parents[2] / "jobs" / "orchestrator" / "envelope_ledger.json"
+
+
+def envelope_limit(service: str) -> float:
+    """Return the independent aggregate USD ceiling for an orchestration envelope service."""
+    env = load().get("orchestration_envelopes", {})
+    services = env.get("services") or {}
+    row = services.get(service)
+    if not isinstance(row, dict) or not isinstance(row.get("max_usd"), (int, float)) or isinstance(row.get("max_usd"), bool):
+        raise OverCeiling(f"no orchestration_envelopes.services.{service}.max_usd in config/spend_caps.json")
+    combined = float(env.get("combined_max_usd", 0.0))
+    total_defined = sum(float(r["max_usd"]) for r in services.values() if isinstance(r, dict) and "max_usd" in r)
+    if combined > 0 and total_defined > combined + 1e-9:
+        raise OverCeiling(f"orchestration envelopes sum to {total_defined:g} USD, above combined_max_usd {combined:g}")
+    return float(row["max_usd"])
+
+
+def envelope_status() -> dict:
+    """Return actual spent, reserved, and remaining USD per independent envelope."""
+    env_cfg = load().get("orchestration_envelopes", {})
+    services = env_cfg.get("services") or {}
+    lp = _envelope_ledger_path()
+    ledger = json.loads(lp.read_text(encoding="utf-8")) if lp.exists() else {"entries": []}
+    out = {}
+    for svc, cfg in services.items():
+        spent = sum(float(e.get("actual_usd", 0.0)) for e in ledger.get("entries", []) if e.get("service") == svc and e.get("state") == "SETTLED")
+        reserved = sum(float(e.get("reserved_usd", 0.0)) for e in ledger.get("entries", []) if e.get("service") == svc and e.get("state") == "RESERVED")
+        lim = float(cfg["max_usd"])
+        out[svc] = {
+            "max_usd": lim,
+            "spent_usd": round(spent, 6),
+            "reserved_usd": round(reserved, 6),
+            "remaining_usd": round(max(0.0, lim - spent - reserved), 6),
+        }
+    return out
+
+
+@contextlib.contextmanager
+def _envelope_lock(lp: Path):
+    lp.parent.mkdir(parents=True, exist_ok=True)
+    lock_path = lp.with_suffix(lp.suffix + ".lock")
+    with lock_path.open("a+", encoding="utf-8") as lf:
+        if fcntl is not None:
+            fcntl.flock(lf.fileno(), fcntl.LOCK_EX)
+        try:
+            yield
+        finally:
+            if fcntl is not None:
+                fcntl.flock(lf.fileno(), fcntl.LOCK_UN)
+
+
+def _atomic_write_json(path: Path, data: dict) -> None:
+    tmp = path.with_suffix(path.suffix + f".tmp.{os.getpid()}")
+    tmp.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+    os.replace(tmp, path)
+
+
+def envelope_reserve(service: str, task_id: str, max_estimated_usd: float) -> dict:
+    """Fail-closed, file-locked reservation against the service's independent aggregate envelope."""
+    if max_estimated_usd < 0:
+        raise OverCeiling("negative reservation is invalid")
+    lim = envelope_limit(service)
+    lp = _envelope_ledger_path()
+    with _envelope_lock(lp):
+        ledger = json.loads(lp.read_text(encoding="utf-8")) if lp.exists() else {"entries": []}
+        spent = sum(float(e.get("actual_usd", 0.0)) for e in ledger.get("entries", []) if e.get("service") == service and e.get("state") == "SETTLED")
+        reserved = sum(float(e.get("reserved_usd", 0.0)) for e in ledger.get("entries", []) if e.get("service") == service and e.get("state") == "RESERVED")
+        if spent + reserved + max_estimated_usd > lim + 1e-9:
+            raise OverCeiling(
+                f"{service}: spent ${spent:.4f} + reserved ${reserved:.4f} + "
+                f"request ${max_estimated_usd:.4f} exceeds independent ceiling ${lim:.2f}"
+            )
+        entry = {"task_id": task_id, "service": service, "reserved_usd": round(float(max_estimated_usd), 6), "actual_usd": 0.0, "state": "RESERVED"}
+        ledger["entries"].append(entry)
+        _atomic_write_json(lp, ledger)
+        return entry
+
+
+def envelope_settle(service: str, task_id: str, actual_usd: float) -> dict:
+    """File-locked settlement of a reserved envelope entry with provider-reported actual USD."""
+    lp = _envelope_ledger_path()
+    with _envelope_lock(lp):
+        ledger = json.loads(lp.read_text(encoding="utf-8")) if lp.exists() else {"entries": []}
+        for e in reversed(ledger.get("entries", [])):
+            if e.get("service") == service and e.get("task_id") == task_id and e.get("state") == "RESERVED":
+                e["actual_usd"] = round(float(actual_usd), 6)
+                e["state"] = "SETTLED"
+                _atomic_write_json(lp, ledger)
+                return e
+    raise OverCeiling(f"no open RESERVED envelope entry for {service}/{task_id}")

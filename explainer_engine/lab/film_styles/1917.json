@@ -1,0 +1,30 @@
+{
+  "schema": "explainer.film_style_card",
+  "film": "1917 (2019)",
+  "draft": true,
+  "draft_note": "Draft from the coordinator's general knowledge, not checked against a source (brief 2026-11-20). Numbers marked in 'unverified' are placeholders for the creator to confirm; no number here is measured. The card holds camera language only: Blender does not plan colour or light.",
+  "camera_moves": {
+    "allowed": ["follow_behind", "follow_beside", "slow_dolly"],
+    "forbidden": ["fast_cuts", "whip_pan", "handheld_shake"]
+  },
+  "camera_height_m": {"min": 1.5, "max": 1.7},
+  "lens_mm": [28, 35, 50, 85],
+  "cut_rhythm": "long continuous takes; when it must cut, few cuts with slow moves that hand their movement over",
+  "size_classes": {"close_min_frac": 0.6, "medium_min_frac": 0.3},
+  "transition": {
+    "min_angle_deg": 30,
+    "min_size_steps": 1,
+    "axis_neutral_m": 0.3,
+    "still_speed_mps": 0.1,
+    "handoff_max_direction_deg": 45,
+    "handoff_max_speed_ratio": 2.0
+  },
+  "unverified": [
+    "camera_height_m: 1.5-1.7 m eye height (brief draft)",
+    "lens_mm: the T0 list, not 1917's real lenses",
+    "transition.min_angle_deg: the general 30-degree rule; 1917's own limit is unchecked",
+    "size_classes: close/medium/wide cut-offs as share of frame height are the engineer's placeholder",
+    "transition.min_size_steps, axis_neutral_m, still_speed_mps, handoff_max_direction_deg, handoff_max_speed_ratio: engineer's placeholders so V11/V12 can run"
+  ],
+  "prompt_line": "1917 (2019): a camera that stays on one soldier's heels at eye height, moving slowly and never cutting away."
+}
