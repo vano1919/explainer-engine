@@ -1,0 +1,133 @@
+{
+ "schema": "explainer.blender_scene",
+ "version": 2,
+ "scene_id": "t0b_c1",
+ "place": "no_mans_land",
+ "film_style": "1917",
+ "axis": [
+  "private",
+  "german"
+ ],
+ "fps": 24,
+ "clip_frames": 241,
+ "size": [
+  1280,
+  704
+ ],
+ "people": [
+  {
+   "id": "private",
+   "side": "british",
+   "hero_id": "british_private",
+   "track": [
+    {
+     "frame": 0,
+     "pos": [
+      -0.5,
+      2
+     ],
+     "heading": 0,
+     "pose": "stand"
+    },
+    {
+     "frame": 204,
+     "pos": [
+      -0.5,
+      14
+     ],
+     "heading": 0,
+     "pose": "stand"
+    }
+   ]
+  },
+  {
+   "id": "german",
+   "side": "german",
+   "hero_id": "german_soldier",
+   "track": [
+    {
+     "frame": 0,
+     "pos": [
+      0.5,
+      34
+     ],
+     "heading": 180,
+     "pose": "stand"
+    },
+    {
+     "frame": 204,
+     "pos": [
+      0.5,
+      26
+     ],
+     "heading": 180,
+     "pose": "stand"
+    }
+   ]
+  }
+ ],
+ "cameras": [
+  {
+   "id": "c_follow",
+   "path": [
+    {
+     "frame": 0,
+     "pos": [
+      0.6,
+      -2.0,
+      1.6
+     ],
+     "heading": -6,
+     "pitch": 0,
+     "lens": 35,
+     "ease": "linear"
+    },
+    {
+     "frame": 200,
+     "pos": [
+      0.6,
+      10.0,
+      1.6
+     ],
+     "heading": -6,
+     "pitch": 0,
+     "lens": 35,
+     "ease": "out"
+    },
+    {
+     "frame": 222,
+     "pos": [
+      0.6,
+      10.69,
+      1.6
+     ],
+     "heading": -6,
+     "pitch": 0,
+     "lens": 35
+    },
+    {
+     "frame": 240,
+     "pos": [
+      0.6,
+      10.69,
+      1.6
+     ],
+     "heading": -6,
+     "pitch": 0,
+     "lens": 35
+    }
+   ]
+  }
+ ],
+ "cuts": [
+  {
+   "camera": "c_follow",
+   "frame_in": 0,
+   "frame_out": 240,
+   "focus": [
+    "private"
+   ],
+   "long_take": true
+  }
+ ]
+}
