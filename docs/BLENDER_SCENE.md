@@ -1,6 +1,6 @@
 # Blender layout scenes (blender_scene/1)
 
-Lab only, free (Blender CPU), nothing here is imported by an episode run. Plan: `blender_series_plan_2026-11-20/PLAN_BLENDER_LTX_SERIES_2026-11-20_ka_v5.md`
+Lab only, free (Blender CPU), nothing here is imported by an episode run. Plan (D-132): `blender_series_plan_2026-11-20/PLAN_BLENDER_LTX_SERIES_2026-11-20_ka_v5.md`
 (sections 2, 3, 4) in the project files. A scene spec turns into a grey 241-frame layout video that a later, paid layout-to-render step
 may follow; that step needs its own OR-23 plan, OR-34 audit and the creator's recorded word and is not part of this document.
 
