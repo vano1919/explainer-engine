@@ -1,3 +1,14 @@
+# =============================================================================
+# COMPATIBILITY NOTE (2026-11-04)
+# An imported TODO incorrectly referred to BlindCheckReport/BlindChecker/guesses
+# and /4 prompt stripping; those symbols and requirements are not established here.
+# The actual Python 3.11 parse risk was quote reuse in the nested f-string used
+# to build style_key below. Keep the style-entry expression outside the outer
+# f-string. PEP 701 permits same-quote reuse starting in Python 3.12:
+# https://docs.python.org/3/whatsnew/3.12.html#pep-701-syntactic-formalization-of-f-strings
+# Confirm the project's minimum Python version from CI/runtime metadata.
+# =============================================================================
+
 """Blind description check (KG-23..KG-27, docs/KEYFRAME_GATE.md): the style spec every picture is held to, a describer that
 looks at a picture WITHOUT its prompt, and a code comparison of that description with the scene contract. stdlib only.
 
@@ -33,7 +44,8 @@ STYLE_SCORE_MIN = 0.557
 def describe_rules(spec: dict) -> str:
     """The describer's instructions; the style item and the ``style`` answer key exist only when a spec is given."""
     style_rule = f"7. Answer each style item with yes, no or ?: {json.dumps(spec, ensure_ascii=False)}\n" if spec else ""
-    style_key = f'\n  "style": {{{", ".join(f'"{k}": "yes|no|?"' for k in spec)}}},' if spec else ""
+    style_entries = ", ".join(f'"{k}": "yes|no|?"' for k in spec)
+    style_key = f'\n  "style": {{{style_entries}}},' if spec else ""
     return f"""You describe one picture for a checker that never sees it. You are NOT told what the picture was meant to show.
 Rules:
 1. Describe only what is visible. Never guess a story, a name or an intention.

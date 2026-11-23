@@ -1,3 +1,4 @@
+
 """The provider interface (D-70 stage D). stdlib only.
 
 An adapter knows its models (price per picture by size, reference limit, version string), prices a request BEFORE it is

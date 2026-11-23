@@ -1,0 +1,133 @@
+name: Orchestrator Drive Bridge
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "*/5 * * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: orchestrator-drive-bridge
+  cancel-in-progress: false
+
+jobs:
+  run-task:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+      MODAL_TOKEN_ID: ${{ secrets.MODAL_TOKEN_ID }}
+      MODAL_TOKEN_SECRET: ${{ secrets.MODAL_TOKEN_SECRET }}
+      MODAL1_TOKEN_ID: ${{ secrets.MODAL1_TOKEN_ID }}
+      MODAL1_TOKEN_SECRET: ${{ secrets.MODAL1_TOKEN_SECRET }}
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      HUGGING_FACE_HUB_TOKEN: ${{ secrets.HUGGING_FACE_HUB_TOKEN }}
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: integration/explainer-engine-unification
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Fetch active_task.json from Drive
+        id: fetch
+        run: |
+          curl -fsSL -L "https://drive.google.com/uc?export=download&id=1HvWqPP4m8V1NcPy_SezxkeQwQ1x62iTO" -o /tmp/active_task.json
+          python - <<'PY'
+          import json, os, pathlib
+          task = json.loads(pathlib.Path("/tmp/active_task.json").read_text(encoding="utf-8"))
+          tid = task["task_id"]
+          done = pathlib.Path(f"docs/orchestrator/results/{tid}.json").exists()
+          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+              f.write(f"task_id={tid}\n")
+              f.write(f"already_done={'true' if done else 'false'}\n")
+          print(f"Task: {tid}, already_done={done}")
+          PY
+      - name: Install FFmpeg and dependencies
+        if: steps.fetch.outputs.already_done == 'false'
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install --upgrade pip -q
+          python -m pip install -r requirements.txt -q
+      - name: Execute Drive task
+        if: steps.fetch.outputs.already_done == 'false'
+        run: |
+          python - <<'PY'
+          import json, os, pathlib, subprocess, sys
+
+          task = json.loads(pathlib.Path("/tmp/active_task.json").read_text(encoding="utf-8"))
+          tid = task["task_id"]
+          mode = task["mode"]
+          out_dir = pathlib.Path("docs/orchestrator/results")
+          out_dir.mkdir(parents=True, exist_ok=True)
+          result = {"task_id": tid, "mode": mode, "exit_code": 0}
+
+          if task.get("brief_text"):
+              bp = pathlib.Path("docs/orchestrator/briefs") / f"{tid}.md"
+              bp.parent.mkdir(parents=True, exist_ok=True)
+              bp.write_text(task["brief_text"], encoding="utf-8")
+              task["brief_path"] = str(bp)
+
+          if mode == "preflight-check":
+              names = ["ANTHROPIC_API_KEY","EE_ANTHROPIC_API_KEY","DEEPSEEK_API_KEY","MODAL_TOKEN_ID","MODAL_TOKEN_SECRET","MODAL1_TOKEN_ID","MODAL1_TOKEN_SECRET","HF_TOKEN","HUGGING_FACE_HUB_TOKEN","GEMINI_API_KEY","ELEVENLABS_API_KEY"]
+              result["secrets_present"] = {n: bool(os.environ.get(n)) for n in names}
+              p1 = [invalid URL]([sys.executable, "-m", "explainer_engine.docs_lint"], capture_output=True, text=True)
+              p2 = [invalid URL]([sys.executable, "-m", "pytest", "-q", "-m", "not system and not media"], capture_output=True, text=True)
+              result["docs_lint_rc"] = p1.returncode
+              result["docs_lint_tail"] = (p1.stdout + p1.stderr)[-1000:]
+              result["pytest_rc"] = p2.returncode
+              result["pytest_tail"] = (p2.stdout + p2.stderr)[-2000:]
+              result["exit_code"] = 0 if (p1.returncode == 0 and p2.returncode == 0) else 1
+          elif mode in ("opus-code", "deepseek-code"):
+              mod = "explainer_engine.llm.opus_code" if mode == "opus-code" else "explainer_engine.llm.deepseek_api"
+              cmd = [sys.executable, "-m", mod, "code", "--brief", task["brief_path"], "--max-usd", str(task["max_usd"])]
+              if task.get("files"):
+                  cmd += ["--files"] + list(task["files"])
+              if task.get("test_cmd"):
+                  cmd += ["--test", task["test_cmd"]]
+              if mode == "deepseek-code" and task.get("model"):
+                  cmd += ["--model", task["model"]]
+              if mode == "opus-code":
+                  cmd += ["--card-ref", task.get("card_ref", "cmsg_owner_approved_2026_11_23")]
+              if task.get("dry_run", True):
+                  cmd += ["--dry-run"]
+              p = [invalid URL](cmd, capture_output=True, text=True)
+              result["exit_code"] = p.returncode
+              result["stdout"] = p.stdout[-4000:]
+              result["stderr"] = p.stderr[-2000:]
+          elif mode == "deepseek-review":
+              cmd = [sys.executable, "-m", "explainer_engine.llm.deepseek_api", "review", "--brief", task["brief_path"], "--diff", task["diff_path"], "--max-usd", str(task["max_usd"]), "--model", task.get("model", "pro")]
+              if task.get("dry_run", True):
+                  cmd += ["--dry-run"]
+              p = [invalid URL](cmd, capture_output=True, text=True)
+              result["exit_code"] = p.returncode
+              result["stdout"] = p.stdout[-4000:]
+              result["stderr"] = p.stderr[-2000:]
+
+          (out_dir / f"{tid}.json").write_text(json.dumps(result, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+          print(json.dumps(result, indent=2))
+          PY
+      - name: Commit results and accepted changes
+        if: steps.fetch.outputs.already_done == 'false'
+        run: |
+          git config [invalid URL] "vano1919"
+          git config [invalid URL] "122537395+vano1919@users.noreply.github.com"
+          git add docs/orchestrator/
+          if [ "${{ steps.fetch.outputs.already_done }}" = "false" ]; then
+            COMMIT_ON_PASS=$(python -c 'import json; t=json.load(open("/tmp/active_task.json")); print("true" if t.get("commit_on_pass") and not t.get("dry_run", True) else "false")')
+            if [ "$COMMIT_ON_PASS" = "true" ]; then
+              git add -A
+            fi
+          fi
+          if [ -n "$(git status --porcelain)" ]; then
+            git commit -m "chore(orchestrator): result for ${{ steps.fetch.outputs.task_id }} [skip ci]"
+            git push origin HEAD:integration/explainer-engine-unification
+          fi

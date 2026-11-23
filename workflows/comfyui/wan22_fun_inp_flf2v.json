@@ -1,0 +1,112 @@
+{
+  "_meta": {
+    "workflow_id": "wan22_fun_inp_flf2v_v1",
+    "stage": "stage3_video",
+    "supported_modes": ["WAN_I2V", "WAN_FLF2V"],
+    "supported_tiers": ["wan22_fun_5b_inp", "wan22_fun_14b_inp"],
+    "description": "Parameterized local ComfyUI API workflow for WanFunInpaintToVideo supporting single start frame (WAN_I2V) and start+end bridged frames (WAN_FLF2V) across 5B and 14B tiers (D-123)."
+  },
+  "1": {
+    "class_type": "UNETLoader",
+    "inputs": {
+      "unet_name": "{{checkpoint_file}}",
+      "weight_dtype": "default"
+    }
+  },
+  "2": {
+    "class_type": "CLIPLoader",
+    "inputs": {
+      "clip_name": "text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors",
+      "type": "wan"
+    }
+  },
+  "3": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "vae/Wan2.2_VAE.safetensors"
+    }
+  },
+  "4": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "{{start_image_path}}"
+    }
+  },
+  "5": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "{{end_image_path}}"
+    }
+  },
+  "6": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "clip": ["2", 0],
+      "text": "{{motion_prompt}}"
+    }
+  },
+  "7": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "clip": ["2", 0],
+      "text": "{{negative_prompt}}"
+    }
+  },
+  "8": {
+    "class_type": "WanImageToVideo",
+    "inputs": {
+      "positive": ["6", 0],
+      "negative": ["7", 0],
+      "vae": ["3", 0],
+      "start_image": ["4", 0],
+      "width": "{{width}}",
+      "height": "{{height}}",
+      "length": "{{num_frames}}",
+      "batch_size": 1
+    }
+  },
+  "9": {
+    "class_type": "WanFunInpaintToVideo",
+    "inputs": {
+      "positive": ["6", 0],
+      "negative": ["7", 0],
+      "vae": ["3", 0],
+      "start_image": ["4", 0],
+      "end_image": ["5", 0],
+      "width": "{{width}}",
+      "height": "{{height}}",
+      "length": "{{num_frames}}",
+      "batch_size": 1
+    }
+  },
+  "10": {
+    "class_type": "KSampler",
+    "inputs": {
+      "model": ["1", 0],
+      "positive": ["9", 0],
+      "negative": ["9", 1],
+      "latent_image": ["9", 2],
+      "seed": "{{seed}}",
+      "steps": "{{steps}}",
+      "cfg": "{{cfg_scale}}",
+      "sampler_name": "uni_pc",
+      "scheduler": "simple",
+      "denoise": 1.0
+    }
+  },
+  "11": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": ["10", 0],
+      "vae": ["3", 0]
+    }
+  },
+  "12": {
+    "class_type": "SaveVideo",
+    "inputs": {
+      "images": ["11", 0],
+      "fps": "{{fps}}",
+      "filename_prefix": "{{output_prefix}}"
+    }
+  }
+}

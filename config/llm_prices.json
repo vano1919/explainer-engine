@@ -13,6 +13,13 @@
       "cache_read": 0.25,
       "fallbacks": "default"
     },
+    "claude-fable-5-2": {
+      "in": 10.0,
+      "out": 50.0,
+      "cache_read": 0.25,
+      "fallbacks": "default",
+      "note": "copied from claude-fable-5-1 (conservative) until the 5.2 price is checked on the pricing page"
+    },
     "claude-opus-5-5": {
       "in": 4.0,
       "out": 20.0,

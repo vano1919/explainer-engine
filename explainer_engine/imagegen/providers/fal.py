@@ -1,3 +1,4 @@
+
 """fal.ai queue API: Seedream 4.5 (text-to-image, and the edit endpoint with up to 10 input pictures) and Qwen-Image-Edit-2511
 (an editor, 1-3 inputs). stdlib only.
 

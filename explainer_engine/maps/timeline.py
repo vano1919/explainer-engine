@@ -1,3 +1,4 @@
+
 """Words to frames: the spine is the clock of every map and HUD item (word lock, CMP-04).
 
 An item starts at the first frame of its trigger word; each event starts at the first frame of its own word, counted from the

@@ -1,3 +1,4 @@
+
 """The shot router (P6, CN-02): ``film_shots/2`` -> one ``shot_spec/1`` per renderable shot, plus ``shots/route.json``
 (``shot_route/1``), all DERIVED: a spec is never written by hand and a stale one is refused by its inputs' sha256.
 
@@ -16,6 +17,16 @@ from ``config/cloud_pins.json`` ``models`` through ``cloud/pins.load`` (CR-18). 
 not decided: its lane is refused, nothing is guessed (OR-22). The seed of attempt N is ``SEEDS[N-1]`` (BP-165 ``max_tries`` tries).
 
     python -m explainer_engine.edit.router <film_shots.json> <job folder> --job-id ID [--comp M.json] [--spine S.json] [--attempt N]
+
+Routes of ``film_shots/3`` (D-116, 2026-11-06): ``recipe_plan`` maps every shot's ``route`` (written by ``visual/lanes.py``) to its
+recipe and the inputs that recipe will read; it writes no spec yet (the J2/J4 spec writer comes with the step-3 pod code):
+
+    J2  ltx_layout/1     Blender clay layout clip + Qwen first frame + prompt -> LTX Layout-To-Render (models.video_ltx_layout_lora)
+    J4  ltx_restyle/1    Blender layout passes (colour, depth, line) + Qwen first frame -> LTX restyle (models.video_ltx_control)
+    J5  assemble_25d/1   the scene_assets manifest + the Blender scene: Qwen assets on 2.5D cards, rendered by Blender; never LTX
+    H   python_helper/1  the visual_comp_manifest items of the shot (as shot_route/2)
+
+CN-08 (BP-139's 8k+1 frames and sizes in 32) binds the clips of the two ``ltx_*`` recipes only.
 """
 
 from __future__ import annotations
@@ -40,6 +51,16 @@ LORA_KEY = "xworld_v2"
 HAS_STILL = {"KEYFRAME_LTX", "DIALOGUE_CU", "STILL_HOLD"}
 HAS_VIDEO = {"KEYFRAME_LTX", "DIALOGUE_CU", "ATMOS_BROLL"}
 HAS_COMP = {"MAP", "COMPENSATOR"}
+# D-116: film_shots/3 route -> recipe, the inputs it reads, and the config/cloud_pins.json models keys it will be pinned by
+ROUTE_RECIPE = {"J2": "ltx_layout/1", "J4": "ltx_restyle/1", "J5": "assemble_25d/1", "H": "python_helper/1"}
+RECIPE_INPUTS = {
+    "ltx_layout/1": ("layout.clay.mp4", "first_frame.png", "prompt"),
+    "ltx_restyle/1": ("layout.colour.mp4", "layout.depth.mp4", "layout.line.mp4", "first_frame.png", "prompt"),
+    "assemble_25d/1": ("scene_assets.json", "blender_scene"),
+    "python_helper/1": ("visual_comp_manifest",),
+}
+RECIPE_PINS = {"ltx_layout/1": ("video_ltx", "video_ltx_layout_lora"), "ltx_restyle/1": ("video_ltx", "video_ltx_control"),
+               "assemble_25d/1": ("keyframe",), "python_helper/1": ()}
 
 
 def _rel(job: Path, path: Path) -> str:
@@ -183,6 +204,37 @@ def route(film_shots_path: Path | str, job_dir: Path | str, *, job_id: str, pins
     out = {"schema": "shot_route/1", "job_id": job_id, "fps": fps, "derived_from": derived, "routes": routes}
     C.validate(out, job)
     write_json_atomic(job / "shots" / "route.json", out)
+    return out
+
+
+def recipe_plan(doc: dict) -> list[dict]:
+    """One entry per shot of a ``film_shots/3`` document (D-116): ``shot_id``, ``lane``, ``route``, ``recipe``, the ``inputs`` the
+    recipe reads, the ``pins`` keys it is pinned by and, for an ``ltx_*`` recipe, its ``clips`` (``film_shots.ltx_clips``). A shot
+    with no route is refused (plan it with ``visual/lanes.py`` first); a J5 or H shot never gets an LTX recipe; a CN-08 FAIL on a
+    clip of an ``ltx_*`` recipe stops the plan."""
+    if doc.get("schema") != film_shots.V3:
+        raise ContractError(f"recipe_plan reads {film_shots.V3}, not {doc.get('schema')!r} (film_shots/2 goes through route())")
+    C.validate(doc)
+    out = []
+    for shot in doc["shots"]:
+        sid, r = shot["id"], shot.get("route")
+        if r not in ROUTE_RECIPE:
+            raise ContractError(f"{sid}: no D-116 route ({r!r}): plan the episode with visual/lanes.py first")
+        recipe = ROUTE_RECIPE[r]
+        entry = {"shot_id": sid, "lane": shot["lane"], "route": r, "recipe": recipe, "inputs": list(RECIPE_INPUTS[recipe]),
+                 "pins": list(RECIPE_PINS[recipe]), "clips": []}
+        if C.ltx_recipe(recipe):
+            clips = film_shots.ltx_clips(shot)
+            for n, c in enumerate(clips, 1):
+                frames = c.get("frames")
+                if frames is not None:
+                    bad = [f for f in C._geometry(c["width"], c["height"], frames, f"{sid}.clip{n}") if f["severity"] == "FAIL"]
+                    if bad:
+                        raise ContractError("; ".join(f"{f['rule']} {f['where']}: {f['detail']}" for f in bad))
+            entry["clips"] = clips
+        elif film_shots.ltx_clips(shot) or shot.get("ltx_clips"):
+            raise ContractError(f"{sid}: a {r} shot has LTX clips; only J2 and J4 shots are LTX generations (D-116)")
+        out.append(entry)
     return out
 
 

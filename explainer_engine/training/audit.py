@@ -1,3 +1,4 @@
+
 """Before a LoRA pod starts: the dataset audit and the config check (docs/LORA_TRAINING.md LT-01..LT-15). Free, local.
 
 Every finding is ``{"rule": "LT-xx", "status": "FAIL"|"WARN"|"INFO", "msg": ...}``; any FAIL means no pod. The numbers come

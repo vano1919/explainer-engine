@@ -1,3 +1,4 @@
+
 """Labelled values: every parameter that is a choice (not a fact) carries an evidence label.
 
 A labelled value is ``{"value": ..., "status": <label>, "note": "..."}``. QA reads the labels; reports show them.

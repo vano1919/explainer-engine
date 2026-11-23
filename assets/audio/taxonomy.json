@@ -1,0 +1,34 @@
+{
+  "schema": "sound_taxonomy/1",
+  "about": "The sound library's classification dimensions (LIB-02, docs/SOUND_LIBRARY.md). Every library item carries a 'catalog' block whose values come from these lists; an item may carry several values per dimension. The top level follows Freesound's Broad Sound Taxonomy (MTG/BroadSoundTaxonomy, 5 top-level categories: music, instrument samples, speech, sound effects, soundscapes); the other dimensions are this channel's historical, cinematic and production extension.",
+  "dimensions": {
+    "bst": ["music", "instrument_samples", "speech", "sound_effects", "soundscapes"],
+    "sound_category": ["ambience", "foley", "spot_sfx", "natural_elements", "human", "animals", "weapons", "vehicles", "mechanical",
+                       "impacts", "transitions", "music", "instrument_samples", "soundscapes", "cinematic_textures", "interface"],
+    "genres": ["historical_documentary", "ancient_warfare", "medieval_warfare", "exploration", "political_drama", "historical_city",
+               "village", "marketplace", "castle", "military_camp", "map_sequence", "suspense", "tragedy", "victory",
+               "peaceful_environment", "harbor", "battlefield", "sea_voyage", "ritual", "prehistoric", "wilderness", "storm",
+               "explainer_overlay", "modern"],
+    "usage": ["background_layer", "foreground_action", "synced_foley", "distant_layer", "transition", "emotional_accent",
+              "musical_bed", "narrative_support"],
+    "mood": ["epic", "dark", "tense", "peaceful", "mysterious", "tragic", "heroic", "aggressive", "reflective", "neutral", "joyful"],
+    "distance": ["close", "medium", "distant"],
+    "space": ["interior", "exterior"],
+    "width": ["wide", "narrow"],
+    "materials": ["wood", "metal", "stone", "leather", "cloth", "fire", "water", "earth", "paper", "air", "flesh", "plant", "glass",
+                  "electronic"],
+    "historical_era": ["any", "prehistoric", "ancient", "bronze_age", "classical", "medieval", "early_modern", "modern"],
+    "environment": ["plain", "forest", "mountain", "desert", "river", "sea", "coast", "cave", "village", "town", "market", "castle",
+                    "camp", "harbor", "battlefield", "church", "interior", "sky", "map", "any"],
+    "intensity": [1, 2, 3, 4, 5]
+  },
+  "era_order": ["prehistoric", "ancient", "bronze_age", "classical", "medieval", "early_modern", "modern"],
+  "episode_eras": {
+    "prehistoric_pleistocene": "prehistoric",
+    "bronze_age": "bronze_age",
+    "ancient_classical": "classical",
+    "medieval": "medieval",
+    "napoleonic_1815": "early_modern",
+    "modern_20th_century": "modern"
+  }
+}

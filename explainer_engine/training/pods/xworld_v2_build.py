@@ -1,3 +1,4 @@
+
 """Builds the xworld_v2 training folders and config on the pod (D-80; ვანო 2026-10-26 13:26 Tbilisi, the round plan):
 * ``new/``: the 210 new-world pictures (xworld_v2_data.py), captions ``xworld style, ...``, repeated NEW_REPEATS times;
 * ``pairs/target`` + ``pairs/control``: the cross-shot pairs (357, less those that move to another place) of xworld_v1 (shot -> next shot; the 234 within-shot ones are dropped)

@@ -1,3 +1,4 @@
+
 """The xworld_v2 layout test S3 (D-75; the Opus thread's plan /mnt/project-files/xworld_v2/S3_LAYOUT_PLAN_2026-10-26.md):
 every shot of a scene is a camera inside ONE fixed 3D blockout of the set (the studio layout/previs practice); the model is
 shown the shot's layout as an extra reference image. QwenImage21Pipeline has no control input, so the layout is just another

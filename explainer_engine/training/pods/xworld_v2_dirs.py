@@ -1,3 +1,4 @@
+
 """Direction views and line sketches of a place (round 3a, Opus plan sections 11-13, 2026-10-26): two extra pictures that give the grid
 what a text line cannot, the whole place around the camera.
 

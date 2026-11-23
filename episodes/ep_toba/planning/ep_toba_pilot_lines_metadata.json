@@ -1,0 +1,227 @@
+[
+  {
+    "shot_id": "S01_SH001",
+    "line_id": "S01_L001",
+    "speaker": "narrator_main",
+    "text": "Eight billion people.",
+    "start_s": 0.0,
+    "end_s": 2.0,
+    "dur_s": 2.0
+  },
+  {
+    "shot_id": "S01_SH002",
+    "line_id": "S01_L002",
+    "speaker": "narrator_main",
+    "text": "Today, our species floods every continent with electric light, yet a single volcanic trap almost erased our bloodline.",
+    "start_s": 2.0,
+    "end_s": 6.8,
+    "dur_s": 4.8
+  },
+  {
+    "shot_id": "S01_SH003",
+    "line_id": "S01_L003",
+    "speaker": "narrator_main",
+    "text": "Yet seventy-four thousand years ago, every living ancestor of modern humanity could have sheltered inside one narrow valley.",
+    "start_s": 6.8,
+    "end_s": 12.399999999999999,
+    "dur_s": 5.599999999999999
+  },
+  {
+    "shot_id": "S01_SH004",
+    "line_id": "S01_L004",
+    "speaker": "char_sena_74000bce",
+    "text": "The sun is vanishing, Kael.",
+    "start_s": 12.399999999999999,
+    "end_s": 14.599999999999998,
+    "dur_s": 2.1999999999999993
+  },
+  {
+    "shot_id": "S01_SH005",
+    "line_id": "S01_L005",
+    "speaker": "char_sena_74000bce",
+    "text": "Feel this dust, Kael. Warm ash falls like snow, yet it cuts the skin.",
+    "start_s": 14.599999999999998,
+    "end_s": 17.999999999999996,
+    "dur_s": 3.3999999999999986
+  },
+  {
+    "shot_id": "S01_SH006",
+    "line_id": "S01_L006",
+    "speaker": "narrator_main",
+    "text": "What settled onto her palm in northwestern Ethiopia was not woodsmoke, nor desert sand, but razor-sharp shards of volcanic glass.",
+    "start_s": 17.999999999999996,
+    "end_s": 24.199999999999996,
+    "dur_s": 6.199999999999999
+  },
+  {
+    "shot_id": "S01_SH007",
+    "line_id": "S01_L007",
+    "speaker": "char_kael_74000bce",
+    "text": "The eastern mountains are quiet. Nothing burns there.",
+    "start_s": 24.199999999999996,
+    "end_s": 26.999999999999996,
+    "dur_s": 2.8
+  },
+  {
+    "shot_id": "S01_SH008",
+    "line_id": "S01_L008",
+    "speaker": "narrator_main",
+    "text": "Kael was right about the local peaks, because the killer lay four thousand miles away.",
+    "start_s": 26.999999999999996,
+    "end_s": 31.599999999999994,
+    "dur_s": 4.599999999999998
+  },
+  {
+    "shot_id": "S01_SH009",
+    "line_id": "S01_L009",
+    "speaker": "narrator_main",
+    "text": "Across the Indian Ocean, an island had just ruptured with a violence Earth had not seen in two million years.",
+    "start_s": 31.599999999999994,
+    "end_s": 37.99999999999999,
+    "dur_s": 6.399999999999999
+  },
+  {
+    "shot_id": "S02_SH001",
+    "line_id": "S02_L001",
+    "speaker": "narrator_main",
+    "text": "Beneath northern Sumatra, five colossal chambers of silica-rich rhyolite magma had been pressurizing for centuries like a planetary landmine.",
+    "start_s": 37.99999999999999,
+    "end_s": 43.79999999999999,
+    "dur_s": 5.799999999999997
+  },
+  {
+    "shot_id": "S02_SH002",
+    "line_id": "S02_L002",
+    "speaker": "narrator_main",
+    "text": "Then the roof failed.",
+    "start_s": 43.79999999999999,
+    "end_s": 45.89999999999999,
+    "dur_s": 2.1
+  },
+  {
+    "shot_id": "S02_SH003",
+    "line_id": "S02_L003",
+    "speaker": "narrator_main",
+    "text": "When Mount Toba detonated seventy-four thousand years ago, it registered Category Eight on the Volcanic Explosivity Index, shattering the ceiling of geological history.",
+    "start_s": 45.89999999999999,
+    "end_s": 53.29999999999999,
+    "dur_s": 7.399999999999999
+  },
+  {
+    "shot_id": "S02_SH004",
+    "line_id": "S02_L004",
+    "speaker": "narrator_main",
+    "text": "Compare it to Mount Saint Helens in nineteen eighty: Toba was ten thousand times larger.",
+    "start_s": 53.29999999999999,
+    "end_s": 58.49999999999999,
+    "dur_s": 5.2
+  },
+  {
+    "shot_id": "S02_SH005",
+    "line_id": "S02_L005",
+    "speaker": "narrator_main",
+    "text": "Every ten minutes, the vent hurled a full cubic kilometer of pulverized rock into the sky, sustaining that fury for two weeks.",
+    "start_s": 58.49999999999999,
+    "end_s": 65.3,
+    "dur_s": 6.8
+  },
+  {
+    "shot_id": "S02_SH006",
+    "line_id": "S02_L006",
+    "speaker": "narrator_main",
+    "text": "Nothing within hundreds of miles survived.",
+    "start_s": 65.3,
+    "end_s": 68.3,
+    "dur_s": 3.0
+  },
+  {
+    "shot_id": "S02_SH007",
+    "line_id": "S02_L007",
+    "speaker": "narrator_main",
+    "text": "In total, two thousand eight hundred cubic kilometers of dense magma tore out of the earth, leaving a hundred-kilometer crater behind.",
+    "start_s": 68.3,
+    "end_s": 74.8,
+    "dur_s": 6.5
+  },
+  {
+    "shot_id": "S02_SH008",
+    "line_id": "S02_L008",
+    "speaker": "narrator_main",
+    "text": "Superheated co-ignimbrite columns punched thirty-two kilometers upward, piercing straight through the tropopause into the dry stratosphere.",
+    "start_s": 74.8,
+    "end_s": 80.2,
+    "dur_s": 5.4
+  },
+  {
+    "shot_id": "S02_SH009",
+    "line_id": "S02_L009",
+    "speaker": "narrator_main",
+    "text": "Yet lava was not the weapon.",
+    "start_s": 80.2,
+    "end_s": 82.8,
+    "dur_s": 2.5999999999999943
+  },
+  {
+    "shot_id": "S02_SH010",
+    "line_id": "S02_L010",
+    "speaker": "narrator_main",
+    "text": "Had Toba erupted in winter, winds would have dumped its ash harmlessly into the southern ocean\u2014but Toba erupted in summer.",
+    "start_s": 82.8,
+    "end_s": 89.39999999999999,
+    "dur_s": 6.599999999999994
+  },
+  {
+    "shot_id": "S02_SH011",
+    "line_id": "S02_L011",
+    "speaker": "narrator_main",
+    "text": "Caught by the northern summer monsoon, the stratospheric plume locked onto a collision course with the heart of the ancient world.",
+    "start_s": 89.39999999999999,
+    "end_s": 95.6,
+    "dur_s": 6.2
+  },
+  {
+    "shot_id": "S02_SH012",
+    "line_id": "S02_L012",
+    "speaker": "narrator_main",
+    "text": "And inside that cloud rode a chemical payload capable of switching off the sun across the entire planet.",
+    "start_s": 95.6,
+    "end_s": 102.0,
+    "dur_s": 6.4
+  },
+  {
+    "shot_id": "S03_SH001",
+    "line_id": "S03_L001",
+    "speaker": "narrator_main",
+    "text": "Within hours, noon across the Indian subcontinent darkened into a suffocating, pitch-black midnight laced with volcanic lightning.",
+    "start_s": 102.0,
+    "end_s": 107.8,
+    "dur_s": 5.799999999999997
+  },
+  {
+    "shot_id": "S03_SH002",
+    "line_id": "S03_L002",
+    "speaker": "narrator_main",
+    "text": "Fifteen centimeters of abrasive tephra blanketed the entire peninsula, while river valleys choked under ash drifts six meters deep.",
+    "start_s": 107.8,
+    "end_s": 114.39999999999999,
+    "dur_s": 6.599999999999994
+  },
+  {
+    "shot_id": "S03_SH003",
+    "line_id": "S03_L003",
+    "speaker": "narrator_main",
+    "text": "Water turned to toxic sludge.",
+    "start_s": 114.39999999999999,
+    "end_s": 116.99999999999999,
+    "dur_s": 2.5999999999999943
+  },
+  {
+    "shot_id": "S03_SH004",
+    "line_id": "S03_L004",
+    "speaker": "narrator_main",
+    "text": "Fluorine and sulfuric acid leached into streams, stripping leaves from trees and blinding grazing herds before they could flee the valleys.",
+    "start_s": 116.99999999999999,
+    "end_s": 120.0,
+    "dur_s": 3.000000000000014
+  }
+]

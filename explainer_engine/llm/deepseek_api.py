@@ -21,6 +21,7 @@ import argparse
 import datetime
 import difflib
 import json
+import uuid
 import os
 import re
 import shlex
@@ -170,6 +171,10 @@ class Worker:
 
     def _log(self, model: str, served: str, usage: dict, usd: float, uncertain: bool) -> None:
         self.job_usd += usd
+        night = getattr(self, "_night", None)
+        if night:
+            spend_caps.overnight_settle("deepseek", night[0], usd, night[1])
+            self._night = None
         self.ledger.parent.mkdir(parents=True, exist_ok=True)
         line = {"ts": self.now().astimezone(UTC).isoformat(), "job": self.job, "model": model, "served": served, "usage": usage,
                 "usd": round(usd, 6), "uncertain": uncertain}
@@ -193,6 +198,9 @@ class Worker:
         key = self.key or os.environ.get(self.cfg["key_env"])
         if not key:
             raise NotApproved(f"{self.cfg['key_env']} is not set: nothing was sent")
+        uid = uuid.uuid4().hex[:12]
+        spend_caps.overnight_reserve("deepseek", uid, worst)   # the night's $20 in every service, before the first byte is sent
+        self._night = (uid, worst)
         body: dict[str, Any] = {"model": self.cfg["models"][model]["id"], "messages": messages, "stream": True, "max_tokens": max_tokens,
                                 "stream_options": {"include_usage": True}, "thinking": {"type": "enabled" if think else "disabled"}}
         if think:

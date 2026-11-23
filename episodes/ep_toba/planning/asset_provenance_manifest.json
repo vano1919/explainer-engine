@@ -1,0 +1,3201 @@
+{
+  "schema": "episode_asset_provenance/1",
+  "episode_id": "ep_toba",
+  "verified_assets_count": 160,
+  "pilot_shot_keyframes_count": 30,
+  "quarantined_foreign_assets_count": 49,
+  "quarantined_foreign_assets": [
+    {
+      "asset_id": "REF_01_Battlefield_Chiaroscuro_Anchor",
+      "episode_scope": "ep_waterloo",
+      "rejection_reason": "Cross-episode contamination blocked: asset 'REF_01_Battlefield_Chiaroscuro_Anchor' belongs to episode_scope='ep_waterloo', active episode is 'ep_toba'."
+    },
+    {
+      "asset_id": "REF_02_Interior_Character_Chiaroscuro_Anchor",
+      "episode_scope": "ep_waterloo",
+      "rejection_reason": "Cross-episode contamination blocked: asset 'REF_02_Interior_Character_Chiaroscuro_Anchor' belongs to episode_scope='ep_waterloo', active episode is 'ep_toba'."
+    },
+    {
+      "asset_id": "REF_03_Dynamic_Action_Chiaroscuro_Anchor",
+      "episode_scope": "ep_waterloo",
+      "rejection_reason": "Cross-episode contamination blocked: asset 'REF_03_Dynamic_Action_Chiaroscuro_Anchor' belongs to episode_scope='ep_waterloo', active episode is 'ep_toba'."
+    },
+    {
+      "asset_id": "waterloo_watermarked_img_10488066985452487441",
+      "episode_scope": "ep_waterloo",
+      "rejection_reason": "Cross-episode contamination blocked: asset 'waterloo_watermarked_img_10488066985452487441' belongs to episode_scope='ep_waterloo', active episode is 'ep_toba'."
+    },
+    {
+      "asset_id": "waterloo_watermarked_img_10561131188481629680",
+      "episode_scope": "ep_waterloo",
+      "rejection_reason": "Cross-episode contamination blocked: asset 'waterloo_watermarked_img_10561131188481629680' belongs to episode_scope='ep_waterloo', active episode is 'ep_toba'."
+    },
+    {
+      "asset_id": "waterloo_watermarked_img_10620224911943238966",
+      "episode_scope": "ep_waterloo",
+      "rejection_reason": "Cross-episode contamination blocked: asset 'waterloo_watermarked_img_10620224911943238966' belongs to episode_scope='ep_waterloo', active episode is 'ep_toba'."
+    },
+    {
+      "asset_id": "waterloo_watermarked_img_10752990763734445834",
+      "episode_scope": "ep_waterloo",
+      "rejection_reason": "Cross-episode contamination blocked: asset 'waterloo_watermarked_img_10752990763734445834' belongs to episode_scope='ep_waterloo', active episode is 'ep_toba'."
+    },
+    {
+      "asset_id": "waterloo_watermarked_img_10769193954744468268",
+      "episode_scope": "ep_waterloo",
+      "rejection_reason": "Cross-episode contamination blocked: asset 'waterloo_watermarked_img_10769193954744468268' belongs to episode_scope='ep_waterloo', active episode is 'ep_toba'."
+    },
+    {
+      "asset_id": "waterloo_watermarked_img_10850471096406468761",
+      "episode_scope": "ep_waterloo",
+      "rejection_reason": "Cross-episode contamination blocked: asset 'waterloo_watermarked_img_10850471096406468761' belongs to episode_scope='ep_waterloo', active episode is 'ep_toba'."
+    },
+    {
+      "asset_id": "waterloo_watermarked_img_10963120367756674279",
+      "episode_scope": "ep_waterloo",
+      "rejection_reason": "Cross-episode contamination blocked: asset 'waterloo_watermarked_img_10963120367756674279' belongs to episode_scope='ep_waterloo', active episode is 'ep_toba'."
+    }
+  ],
+  "assets": [
+    {
+      "asset_id": "S01_SH001_start",
+      "original_filename": "watermarked_img_13232033694587067788.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "geographic_tags": [
+        "sumatra",
+        "indian_ocean",
+        "east_africa",
+        "shinfa_metema"
+      ],
+      "domain_tags": [
+        "prehistoric_survival",
+        "volcanic_winter",
+        "paleolithic"
+      ],
+      "subject": "Prehistoric hand shielding campfire spark in dark basalt cave (74,000 BCE)",
+      "description": "Prehistoric hand shielding campfire spark in dark basalt cave (74,000 BCE)",
+      "source_origin": "google_drive_and_workspace_verified_toba_batch",
+      "shared_ok": false,
+      "file_path": "assets/generated/images/S01_SH001_start.jpg",
+      "sha256": "58c502472b92202b7a00694dc1aac2ed1f505c08da12bcc0128e2dfddf4dfea4",
+      "bytes": 711662,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "S01_SH002_start",
+      "original_filename": "watermarked_img_12143445086144238037.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "geographic_tags": [
+        "sumatra",
+        "indian_ocean",
+        "east_africa",
+        "shinfa_metema"
+      ],
+      "domain_tags": [
+        "prehistoric_survival",
+        "volcanic_winter",
+        "paleolithic"
+      ],
+      "subject": "Prehistoric basalt cave hearth overlooking modern Earth glowing with electric city lights",
+      "description": "Prehistoric basalt cave hearth overlooking modern Earth glowing with electric city lights",
+      "source_origin": "google_drive_and_workspace_verified_toba_batch",
+      "shared_ok": false,
+      "file_path": "assets/generated/images/S01_SH002_start.jpg",
+      "sha256": "12bdeffa49ebe7433ebb04c242d96d89f12f6450f33da4eb6d05b366c0fd558b",
+      "bytes": 723889,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "S01_SH003_start",
+      "original_filename": "watermarked_img_16773944511903411100.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "geographic_tags": [
+        "sumatra",
+        "indian_ocean",
+        "east_africa",
+        "shinfa_metema"
+      ],
+      "domain_tags": [
+        "prehistoric_survival",
+        "volcanic_winter",
+        "paleolithic"
+      ],
+      "subject": "Homo sapiens clan huddled around campfire inside narrow Rift valley cave shelter",
+      "description": "Homo sapiens clan huddled around campfire inside narrow Rift valley cave shelter",
+      "source_origin": "google_drive_and_workspace_verified_toba_batch",
+      "shared_ok": false,
+      "file_path": "assets/generated/images/S01_SH003_start.jpg",
+      "sha256": "03208b775c5b642e01482f31773dff67329362b8d4af9074a06bd33abaa72e24",
+      "bytes": 795129,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "S01_SH003_end",
+      "original_filename": "watermarked_img_7313489960193501108.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "geographic_tags": [
+        "sumatra",
+        "indian_ocean",
+        "east_africa",
+        "shinfa_metema"
+      ],
+      "domain_tags": [
+        "prehistoric_survival",
+        "volcanic_winter",
+        "paleolithic"
+      ],
+      "subject": "Close view of prehistoric survivors around cave hearth fire",
+      "description": "Close view of prehistoric survivors around cave hearth fire",
+      "source_origin": "google_drive_and_workspace_verified_toba_batch",
+      "shared_ok": false,
+      "file_path": "assets/generated/images/S01_SH003_end.jpg",
+      "sha256": "b87ec1b5600e12d0afdd4d33f79b9e9ce1090a419d4043fe37beccc03215a743",
+      "bytes": 817661,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "S01_SH004_start",
+      "original_filename": "watermarked_img_11605662247163687128.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "geographic_tags": [
+        "sumatra",
+        "indian_ocean",
+        "east_africa",
+        "shinfa_metema"
+      ],
+      "domain_tags": [
+        "prehistoric_survival",
+        "volcanic_winter",
+        "paleolithic"
+      ],
+      "subject": "Sena looking up at the vanishing sun in the Ethiopian gorge as volcanic ash falls",
+      "description": "Sena looking up at the vanishing sun in the Ethiopian gorge as volcanic ash falls",
+      "source_origin": "google_drive_and_workspace_verified_toba_batch",
+      "shared_ok": false,
+      "file_path": "assets/generated/images/S01_SH004_start.jpg",
+      "sha256": "7244157e4bf0dad610d6cca849ab3bc0e01d1163cfd2419e3c29ed6579b44e95",
+      "bytes": 773604,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "S01_SH005_start",
+      "original_filename": "watermarked_img_12958730292326335287.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "geographic_tags": [
+        "sumatra",
+        "indian_ocean",
+        "east_africa",
+        "shinfa_metema"
+      ],
+      "domain_tags": [
+        "prehistoric_survival",
+        "volcanic_winter",
+        "paleolithic"
+      ],
+      "subject": "Extreme close-up of Sena palm catching warm falling volcanic ash and glass shards",
+      "description": "Extreme close-up of Sena palm catching warm falling volcanic ash and glass shards",
+      "source_origin": "google_drive_and_workspace_verified_toba_batch",
+      "shared_ok": false,
+      "file_path": "assets/generated/images/S01_SH005_start.jpg",
+      "sha256": "e32a7e66d31f990cb841426e2520e7dcea812649ec885b1e534e9188245735ef",
+      "bytes": 747015,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "S01_SH006_start",
+      "original_filename": "watermarked_img_5163580721707956224.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "geographic_tags": [
+        "sumatra",
+        "indian_ocean",
+        "east_africa",
+        "shinfa_metema"
+      ],
+      "domain_tags": [
+        "prehistoric_survival",
+        "volcanic_winter",
+        "paleolithic"
+      ],
+      "subject": "Macro view of razor-sharp volcanic glass shards settled on dark basalt riverbed",
+      "description": "Macro view of razor-sharp volcanic glass shards settled on dark basalt riverbed",
+      "source_origin": "google_drive_and_workspace_verified_toba_batch",
+      "shared_ok": false,
+      "file_path": "assets/generated/images/S01_SH006_start.jpg",
+      "sha256": "73ffaac5398679a1febe5f49d788cdfba546635c65feab16ca09a90110e712ee",
+      "bytes": 924958,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "S01_SH007_start",
+      "original_filename": "watermarked_img_164196087559096600.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "geographic_tags": [
+        "sumatra",
+        "indian_ocean",
+        "east_africa",
+        "shinfa_metema"
+      ],
+      "domain_tags": [
+        "prehistoric_survival",
+        "volcanic_winter",
+        "paleolithic"
+      ],
+      "subject": "Kael holding fire-hardened wooden spear looking toward quiet eastern mountains",
+      "description": "Kael holding fire-hardened wooden spear looking toward quiet eastern mountains",
+      "source_origin": "google_drive_and_workspace_verified_toba_batch",
+      "shared_ok": false,
+      "file_path": "assets/generated/images/S01_SH007_start.jpg",
+      "sha256": "3c9564d5385e858088a773197ad7dd282b312ee53f517b0761d2f7c0265b0398",
+      "bytes": 825300,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "S01_SH008_start",
+      "original_filename": "watermarked_img_14740917366706695649.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "geographic_tags": [
+        "sumatra",
+        "indian_ocean",
+        "east_africa",
+        "shinfa_metema"
+      ],
+      "domain_tags": [
+        "prehistoric_survival",
+        "volcanic_winter",
+        "paleolithic"
+      ],
+      "subject": "Relief map of Indian Ocean basin between East Africa and northern Sumatra",
+      "description": "Relief map of Indian Ocean basin between East Africa and northern Sumatra",
+      "source_origin": "google_drive_and_workspace_verified_toba_batch",
+      "shared_ok": false,
+      "file_path": "assets/generated/images/S01_SH008_start.jpg",
+      "sha256": "c1649b5f1a63e266e23309a6ca42895675210c828fdcc3964e7a35db07c0cf63",
+      "bytes": 925173,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "S01_SH009_start",
+      "original_filename": "watermarked_img_3225465901015417239.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "geographic_tags": [
+        "sumatra",
+        "indian_ocean",
+        "east_africa",
+        "shinfa_metema"
+      ],
+      "domain_tags": [
+        "prehistoric_survival",
+        "volcanic_winter",
+        "paleolithic"
+      ],
+      "subject": "Mount Toba island rupturing across the Indian Ocean with shockwave and volcanic lightning",
+      "description": "Mount Toba island rupturing across the Indian Ocean with shockwave and volcanic lightning",
+      "source_origin": "google_drive_and_workspace_verified_toba_batch",
+      "shared_ok": false,
+      "file_path": "assets/generated/images/S01_SH009_start.jpg",
+      "sha256": "3e8a1ffdbd63084a22333efe092dcd29ce9f3f9aef0773b06bb902df757fcf9e",
+      "bytes": 823820,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "S01_SH009_end",
+      "original_filename": "watermarked_img_11459068458443339875.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "geographic_tags": [
+        "sumatra",
+        "indian_ocean",
+        "east_africa",
+        "shinfa_metema"
+      ],
+      "domain_tags": [
+        "prehistoric_survival",
+        "volcanic_winter",
+        "paleolithic"
+      ],
+      "subject": "Colossal eruption column and pyroclastic surge over northern Sumatra coast",
+      "description": "Colossal eruption column and pyroclastic surge over northern Sumatra coast",
+      "source_origin": "google_drive_and_workspace_verified_toba_batch",
+      "shared_ok": false,
+      "file_path": "assets/generated/images/S01_SH009_end.jpg",
+      "sha256": "a35220b5ce81743567cea8df4a0fb1e226c55d2c604de16c1c5257d5c2e535a6",
+      "bytes": 799456,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "S02_SH001_start",
+      "original_filename": "watermarked_img_5313583777295614266.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "geographic_tags": [
+        "sumatra",
+        "indian_ocean",
+        "east_africa",
+        "shinfa_metema"
+      ],
+      "domain_tags": [
+        "prehistoric_survival",
+        "volcanic_winter",
+        "paleolithic"
+      ],
+      "subject": "Geological relief cross-section of five silica-rich rhyolite magma chambers beneath Sumatra",
+      "description": "Geological relief cross-section of five silica-rich rhyolite magma chambers beneath Sumatra",
+      "source_origin": "google_drive_and_workspace_verified_toba_batch",
+      "shared_ok": false,
+      "file_path": "assets/generated/images/S02_SH001_start.jpg",
+      "sha256": "5159712f13f3824b1351d68348fff700ea8a448f28e023a57c3b6cf633b8b55a",
+      "bytes": 882192,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "S02_SH002_start",
+      "original_filename": "watermarked_img_18442776981737503190.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "geographic_tags": [
+        "sumatra",
+        "indian_ocean",
+        "east_africa",
+        "shinfa_metema"
+      ],
+      "domain_tags": [
+        "prehistoric_survival",
+        "volcanic_winter",
+        "paleolithic"
+      ],
+      "subject": "Caldera roof failing as massive basalt blocks fracture over incandescent magma",
+      "description": "Caldera roof failing as massive basalt blocks fracture over incandescent magma",
+      "source_origin": "google_drive_and_workspace_verified_toba_batch",
+      "shared_ok": false,
+      "file_path": "assets/generated/images/S02_SH002_start.jpg",
+      "sha256": "286a241a26b18c44f52af640b1f282b288062852a9655e48ab385a0cbdb1f7fd",
+      "bytes": 847276,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "S02_SH003_start",
+      "original_filename": "watermarked_img_12716748116130437203.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "geographic_tags": [
+        "sumatra",
+        "indian_ocean",
+        "east_africa",
+        "shinfa_metema"
+      ],
+      "domain_tags": [
+        "prehistoric_survival",
+        "volcanic_winter",
+        "paleolithic"
+      ],
+      "subject": "Mount Toba VEI-8 detonation with blinding magma fountain and volcanic lightning",
+      "description": "Mount Toba VEI-8 detonation with blinding magma fountain and volcanic lightning",
+      "source_origin": "google_drive_and_workspace_verified_toba_batch",
+      "shared_ok": false,
+      "file_path": "assets/generated/images/S02_SH003_start.jpg",
+      "sha256": "7793be32304e38298ae2e6e7c9953b6e7b575aa4442b119a20e926d65fdb3df2",
+      "bytes": 844739,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "S02_SH003_end",
+      "original_filename": "watermarked_img_15453646441250495311.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "geographic_tags": [
+        "sumatra",
+        "indian_ocean",
+        "east_africa",
+        "shinfa_metema"
+      ],
+      "domain_tags": [
+        "prehistoric_survival",
+        "volcanic_winter",
+        "paleolithic"
+      ],
+      "subject": "Expanding shockwave and burning jungle around Mount Toba super-eruption",
+      "description": "Expanding shockwave and burning jungle around Mount Toba super-eruption",
+      "source_origin": "google_drive_and_workspace_verified_toba_batch",
+      "shared_ok": false,
+      "file_path": "assets/generated/images/S02_SH003_end.jpg",
+      "sha256": "a5c553b77e3147c52f6f7d0af9ae3f5a5b2c86c23535b6d774df9665ffbff8cd",
+      "bytes": 823670,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "S02_SH004_start",
+      "original_filename": "watermarked_img_10644198845833779793.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "geographic_tags": [
+        "sumatra",
+        "indian_ocean",
+        "east_africa",
+        "shinfa_metema"
+      ],
+      "domain_tags": [
+        "prehistoric_survival",
+        "volcanic_winter",
+        "paleolithic"
+      ],
+      "subject": "Scale comparison monolith and towering Mount Toba eruption cloud",
+      "description": "Scale comparison monolith and towering Mount Toba eruption cloud",
+      "source_origin": "google_drive_and_workspace_verified_toba_batch",
+      "shared_ok": false,
+      "file_path": "assets/generated/images/S02_SH004_start.jpg",
+      "sha256": "6331f2d958dd4a28105027b1c74881b6ef220178106e2ae71842646bc6c092e2",
+      "bytes": 836456,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "S02_SH005_start",
+      "original_filename": "watermarked_img_18038123231463812164.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "geographic_tags": [
+        "sumatra",
+        "indian_ocean",
+        "east_africa",
+        "shinfa_metema"
+      ],
+      "domain_tags": [
+        "prehistoric_survival",
+        "volcanic_winter",
+        "paleolithic"
+      ],
+      "subject": "Supersonic volcanic vent hurling pulverized rock and magma into the sky",
+      "description": "Supersonic volcanic vent hurling pulverized rock and magma into the sky",
+      "source_origin": "google_drive_and_workspace_verified_toba_batch",
+      "shared_ok": false,
+      "file_path": "assets/generated/images/S02_SH005_start.jpg",
+      "sha256": "b5fb77ddad4ab084adc5d435136299627ba84d0b0a609ee57aeb850d117c20a4",
+      "bytes": 738380,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "S02_SH006_start",
+      "original_filename": "watermarked_img_12198830246212731310.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "geographic_tags": [
+        "sumatra",
+        "indian_ocean",
+        "east_africa",
+        "shinfa_metema"
+      ],
+      "domain_tags": [
+        "prehistoric_survival",
+        "volcanic_winter",
+        "paleolithic"
+      ],
+      "subject": "Pyroclastic density current flattening and incinerating Sumatra coastline",
+      "description": "Pyroclastic density current flattening and incinerating Sumatra coastline",
+      "source_origin": "google_drive_and_workspace_verified_toba_batch",
+      "shared_ok": false,
+      "file_path": "assets/generated/images/S02_SH006_start.jpg",
+      "sha256": "2cddda209041022c894a96f1afb0642c305bc8a0075a4b0e33d0f1493270d499",
+      "bytes": 984329,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "S02_SH007_start",
+      "original_filename": "watermarked_img_4913449254070338935.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "geographic_tags": [
+        "sumatra",
+        "indian_ocean",
+        "east_africa",
+        "shinfa_metema"
+      ],
+      "domain_tags": [
+        "prehistoric_survival",
+        "volcanic_winter",
+        "paleolithic"
+      ],
+      "subject": "100-kilometer collapsed Mount Toba caldera crater boiling with ash and steam",
+      "description": "100-kilometer collapsed Mount Toba caldera crater boiling with ash and steam",
+      "source_origin": "google_drive_and_workspace_verified_toba_batch",
+      "shared_ok": false,
+      "file_path": "assets/generated/images/S02_SH007_start.jpg",
+      "sha256": "dac100406517655c5d4366ef361492328d48d221a83bef30bb944dd794c9b912",
+      "bytes": 817153,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "S02_SH008_start",
+      "original_filename": "watermarked_img_8971100121613937499.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "geographic_tags": [
+        "sumatra",
+        "indian_ocean",
+        "east_africa",
+        "shinfa_metema"
+      ],
+      "domain_tags": [
+        "prehistoric_survival",
+        "volcanic_winter",
+        "paleolithic"
+      ],
+      "subject": "32-kilometer co-ignimbrite ash column punching through the white tropopause into stratosphere",
+      "description": "32-kilometer co-ignimbrite ash column punching through the white tropopause into stratosphere",
+      "source_origin": "google_drive_and_workspace_verified_toba_batch",
+      "shared_ok": false,
+      "file_path": "assets/generated/images/S02_SH008_start.jpg",
+      "sha256": "2d6e2203dd549d3c87d61d1b62af4d9ce14ce86e5f838809c671cbc92713efc7",
+      "bytes": 762186,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "S02_SH008_end",
+      "original_filename": "watermarked_img_15544935808581708742.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "geographic_tags": [
+        "sumatra",
+        "indian_ocean",
+        "east_africa",
+        "shinfa_metema"
+      ],
+      "domain_tags": [
+        "prehistoric_survival",
+        "volcanic_winter",
+        "paleolithic"
+      ],
+      "subject": "Orbital view of stratospheric umbrella cloud spreading over Sumatra and Indian Ocean",
+      "description": "Orbital view of stratospheric umbrella cloud spreading over Sumatra and Indian Ocean",
+      "source_origin": "google_drive_and_workspace_verified_toba_batch",
+      "shared_ok": false,
+      "file_path": "assets/generated/images/S02_SH008_end.jpg",
+      "sha256": "0bdf8465832b1306e5c4456dc357e13bf2e51a162120cf8b3f2c0eaad5bbbd1f",
+      "bytes": 727752,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "S02_SH009_start",
+      "original_filename": "watermarked_img_11895275518695218853.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "geographic_tags": [
+        "sumatra",
+        "indian_ocean",
+        "east_africa",
+        "shinfa_metema"
+      ],
+      "domain_tags": [
+        "prehistoric_survival",
+        "volcanic_winter",
+        "paleolithic"
+      ],
+      "subject": "Roiling golden-amber and black sulfur dioxide aerosol clouds in the stratosphere",
+      "description": "Roiling golden-amber and black sulfur dioxide aerosol clouds in the stratosphere",
+      "source_origin": "google_drive_and_workspace_verified_toba_batch",
+      "shared_ok": false,
+      "file_path": "assets/generated/images/S02_SH009_start.jpg",
+      "sha256": "d37291f0f0bff184945e9aaca4d0ae51042051e3e1d3b01e62ca8dd07d44704c",
+      "bytes": 844347,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "S02_SH010_start",
+      "original_filename": "watermarked_img_1317318004317268232.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "geographic_tags": [
+        "sumatra",
+        "indian_ocean",
+        "east_africa",
+        "shinfa_metema"
+      ],
+      "domain_tags": [
+        "prehistoric_survival",
+        "volcanic_winter",
+        "paleolithic"
+      ],
+      "subject": "Summer monsoon wind relief map curving northwest from Sumatra across Indian Ocean",
+      "description": "Summer monsoon wind relief map curving northwest from Sumatra across Indian Ocean",
+      "source_origin": "google_drive_and_workspace_verified_toba_batch",
+      "shared_ok": false,
+      "file_path": "assets/generated/images/S02_SH010_start.jpg",
+      "sha256": "ea5232314b9fca473c3aa9dc2fc7298bf207fd24764846114a567a7eec681b3d",
+      "bytes": 974505,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "S02_SH011_start",
+      "original_filename": "watermarked_img_1354042207930195596.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "geographic_tags": [
+        "sumatra",
+        "indian_ocean",
+        "east_africa",
+        "shinfa_metema"
+      ],
+      "domain_tags": [
+        "prehistoric_survival",
+        "volcanic_winter",
+        "paleolithic"
+      ],
+      "subject": "Stratospheric ash wall driven by northern summer monsoon across the ocean",
+      "description": "Stratospheric ash wall driven by northern summer monsoon across the ocean",
+      "source_origin": "google_drive_and_workspace_verified_toba_batch",
+      "shared_ok": false,
+      "file_path": "assets/generated/images/S02_SH011_start.jpg",
+      "sha256": "5c3505fd22484adc88ebacd248cd9a36368ccbf3c871ebc114b4b2e7a6a3b28f",
+      "bytes": 722197,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "S02_SH012_start",
+      "original_filename": "watermarked_img_18023869114938784062.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "geographic_tags": [
+        "sumatra",
+        "indian_ocean",
+        "east_africa",
+        "shinfa_metema"
+      ],
+      "domain_tags": [
+        "prehistoric_survival",
+        "volcanic_winter",
+        "paleolithic"
+      ],
+      "subject": "Sulfuric aerosol plume approaching the sun above the tropical coastline",
+      "description": "Sulfuric aerosol plume approaching the sun above the tropical coastline",
+      "source_origin": "google_drive_and_workspace_verified_toba_batch",
+      "shared_ok": false,
+      "file_path": "assets/generated/images/S02_SH012_start.jpg",
+      "sha256": "02d16dc7a777929c446d1a0f41b123978757fb0f156bf495e5d683f8882485a6",
+      "bytes": 889826,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "S02_SH012_end",
+      "original_filename": "watermarked_img_9053185786818683520.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "geographic_tags": [
+        "sumatra",
+        "indian_ocean",
+        "east_africa",
+        "shinfa_metema"
+      ],
+      "domain_tags": [
+        "prehistoric_survival",
+        "volcanic_winter",
+        "paleolithic"
+      ],
+      "subject": "Volcanic aerosol veil switching off and eclipsing the sun into darkness",
+      "description": "Volcanic aerosol veil switching off and eclipsing the sun into darkness",
+      "source_origin": "google_drive_and_workspace_verified_toba_batch",
+      "shared_ok": false,
+      "file_path": "assets/generated/images/S02_SH012_end.jpg",
+      "sha256": "c4eab9da5acce5b7595cb2bede6c2d7998e55ba6dbd5405bd549e57df070fee2",
+      "bytes": 660673,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "S03_SH001_start",
+      "original_filename": "watermarked_img_10720474457864288093.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "geographic_tags": [
+        "sumatra",
+        "indian_ocean",
+        "east_africa",
+        "shinfa_metema"
+      ],
+      "domain_tags": [
+        "prehistoric_survival",
+        "volcanic_winter",
+        "paleolithic"
+      ],
+      "subject": "Noon across Indian subcontinent darkened into pitch-black volcanic midnight with lightning",
+      "description": "Noon across Indian subcontinent darkened into pitch-black volcanic midnight with lightning",
+      "source_origin": "google_drive_and_workspace_verified_toba_batch",
+      "shared_ok": false,
+      "file_path": "assets/generated/images/S03_SH001_start.jpg",
+      "sha256": "2415aaa03c8968d5b9d4ef3e0a6755557e7faa0f007bec02315dadd8437a917e",
+      "bytes": 938220,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "S03_SH002_start",
+      "original_filename": "watermarked_img_13579600279138495317.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "geographic_tags": [
+        "sumatra",
+        "indian_ocean",
+        "east_africa",
+        "shinfa_metema"
+      ],
+      "domain_tags": [
+        "prehistoric_survival",
+        "volcanic_winter",
+        "paleolithic"
+      ],
+      "subject": "River valley choked under six-meter-deep grey tephra and volcanic ash drifts",
+      "description": "River valley choked under six-meter-deep grey tephra and volcanic ash drifts",
+      "source_origin": "google_drive_and_workspace_verified_toba_batch",
+      "shared_ok": false,
+      "file_path": "assets/generated/images/S03_SH002_start.jpg",
+      "sha256": "1481f0880679ba3e10b068bae4fe425a86ad11135ae0b8300be7251a93f98344",
+      "bytes": 858788,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "S03_SH003_start",
+      "original_filename": "watermarked_img_15407586115160507673.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "geographic_tags": [
+        "sumatra",
+        "indian_ocean",
+        "east_africa",
+        "shinfa_metema"
+      ],
+      "domain_tags": [
+        "prehistoric_survival",
+        "volcanic_winter",
+        "paleolithic"
+      ],
+      "subject": "Stream choked with toxic volcanic ash sludge and dead fish",
+      "description": "Stream choked with toxic volcanic ash sludge and dead fish",
+      "source_origin": "google_drive_and_workspace_verified_toba_batch",
+      "shared_ok": false,
+      "file_path": "assets/generated/images/S03_SH003_start.jpg",
+      "sha256": "9d3a2c8447f45197ed8c636bec394adbfebb6ecd79fd44fab0b439c8620104be",
+      "bytes": 916231,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "S03_SH004_start",
+      "original_filename": "watermarked_img_2300494807488663637.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "geographic_tags": [
+        "sumatra",
+        "indian_ocean",
+        "east_africa",
+        "shinfa_metema"
+      ],
+      "domain_tags": [
+        "prehistoric_survival",
+        "volcanic_winter",
+        "paleolithic"
+      ],
+      "subject": "Acid rain stripping leaves from trees in darkened valley",
+      "description": "Acid rain stripping leaves from trees in darkened valley",
+      "source_origin": "google_drive_and_workspace_verified_toba_batch",
+      "shared_ok": false,
+      "file_path": "assets/generated/images/S03_SH004_start.jpg",
+      "sha256": "77b3e53eab79066ae32dd3259f050c6df773da637a80e665d1182ac338028e2c",
+      "bytes": 855160,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "char_kael_74000bce",
+      "original_filename": "watermarked_img_164196087559096600.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce"
+      ],
+      "subject": "Kael, 45-year-old Late Pleistocene East African spear-hunter",
+      "description": "Kael, 45-year-old Late Pleistocene East African spear-hunter",
+      "file_path": "assets/reference/characters/char_kael_74000bce.jpg",
+      "sha256": "3c9564d5385e858088a773197ad7dd282b312ee53f517b0761d2f7c0265b0398",
+      "bytes": 825300,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "char_sena_74000bce",
+      "original_filename": "watermarked_img_12366665803820139527.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce"
+      ],
+      "subject": "Sena, 26-year-old Late Pleistocene master stone artisan flaking microliths",
+      "description": "Sena, 26-year-old Late Pleistocene master stone artisan flaking microliths",
+      "file_path": "assets/reference/characters/char_sena_74000bce.jpg",
+      "sha256": "fea90467dac3e10e31255ae6c2382a925482db53906182b0e9cbf8192cc9f4ca",
+      "bytes": 838605,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "char_thar_74000bce",
+      "original_filename": "watermarked_img_10435076430659733142.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce"
+      ],
+      "subject": "Thar, leader of Southern Rift refugee band carrying ostrich eggshell flasks",
+      "description": "Thar, leader of Southern Rift refugee band carrying ostrich eggshell flasks",
+      "file_path": "assets/reference/characters/char_thar_74000bce.jpg",
+      "sha256": "e2768ad9261fd327b5657926f58264598b8a1e7582445c5715b33445ee343bd3",
+      "bytes": 976146,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_10012675908465154843",
+      "original_filename": "watermarked_img_10012675908465154843.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_10012675908465154843.jpg",
+      "sha256": "7fd30aa789071c250ea158809cfe837fff6749fa173081dc060ada8f982d36bc",
+      "bytes": 978730,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_1004806852398378923",
+      "original_filename": "watermarked_img_1004806852398378923.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_1004806852398378923.jpg",
+      "sha256": "2d8571801c25c62f2f743977cff2c1048c1b4914ffad77ccb2467b27755dcfac",
+      "bytes": 867820,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_1008149400350367239",
+      "original_filename": "watermarked_img_1008149400350367239.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_1008149400350367239.jpg",
+      "sha256": "6a103e7e1036199a39331bf73d225c99f18887185c9a200c4f38dd9d15761930",
+      "bytes": 828465,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_10391798591067899296",
+      "original_filename": "watermarked_img_10391798591067899296.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_10391798591067899296.jpg",
+      "sha256": "42a7fb9f17abbcf46eb79b6a654f525aece91cc37a767d337d7fe93df56b2f9b",
+      "bytes": 822619,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_10398040928157399235",
+      "original_filename": "watermarked_img_10398040928157399235.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_10398040928157399235.jpg",
+      "sha256": "b188b7c525b7b2fb3942085f3ff47aed09d34b70d666d062cf8a54cb907e9fa1",
+      "bytes": 844842,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_10435076430659733142",
+      "original_filename": "watermarked_img_10435076430659733142.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_10435076430659733142.jpg",
+      "sha256": "e2768ad9261fd327b5657926f58264598b8a1e7582445c5715b33445ee343bd3",
+      "bytes": 976146,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_10644198845833779793",
+      "original_filename": "watermarked_img_10644198845833779793.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_10644198845833779793.jpg",
+      "sha256": "6331f2d958dd4a28105027b1c74881b6ef220178106e2ae71842646bc6c092e2",
+      "bytes": 836456,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_10720474457864288093",
+      "original_filename": "watermarked_img_10720474457864288093.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_10720474457864288093.jpg",
+      "sha256": "2415aaa03c8968d5b9d4ef3e0a6755557e7faa0f007bec02315dadd8437a917e",
+      "bytes": 938220,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_10736909743527965774",
+      "original_filename": "watermarked_img_10736909743527965774.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_10736909743527965774.jpg",
+      "sha256": "1f1ed76297e573d05955ba60850b7e0b056a6279c220b79fc834719a89030ea1",
+      "bytes": 856294,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_10786222916573381349",
+      "original_filename": "watermarked_img_10786222916573381349.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_10786222916573381349.jpg",
+      "sha256": "4229ba12967bdab44e6b8a666c8c52eb7afc47744af50e43686bf0d31a46cabb",
+      "bytes": 894613,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_10843393970887460476",
+      "original_filename": "watermarked_img_10843393970887460476.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_10843393970887460476.jpg",
+      "sha256": "845299c71e79802076a88ee038b8bd79c9012d70a00620a27613dcd8103f8ffe",
+      "bytes": 964855,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_10922126766878924212",
+      "original_filename": "watermarked_img_10922126766878924212.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_10922126766878924212.jpg",
+      "sha256": "0dc0451f5da2e8921606f2c28accebaaef4fc4c84d497d653ad3424390237edb",
+      "bytes": 957653,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_11000250898976680876",
+      "original_filename": "watermarked_img_11000250898976680876.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_11000250898976680876.jpg",
+      "sha256": "ed4c4f3ef6d4d25ffe8bdef2a69077e46f7b9118e8341dbe405e8fdccc991aeb",
+      "bytes": 841206,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_11023338762100648411",
+      "original_filename": "watermarked_img_11023338762100648411.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_11023338762100648411.jpg",
+      "sha256": "a1e77ee382a0ef9f6168a9d7021744658b19c606201c8eb2fd26e7b4b7b80753",
+      "bytes": 1094004,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_11149813934044232541",
+      "original_filename": "watermarked_img_11149813934044232541.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_11149813934044232541.jpg",
+      "sha256": "69c4482f6fbcdd419c67a4c22c892db3a6619f73207c26119af5615b1516f0d1",
+      "bytes": 979192,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_11154939172312913364",
+      "original_filename": "watermarked_img_11154939172312913364.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_11154939172312913364.jpg",
+      "sha256": "e39fb4b16c7dd663eec61bb77586e224a3772c9e55675611efafe88d0b2a9319",
+      "bytes": 861334,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_11291528598590695260",
+      "original_filename": "watermarked_img_11291528598590695260.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_11291528598590695260.jpg",
+      "sha256": "7c737bd2b92fb5158dd0536e96246550a78cd861e5ab0ccf474b4b1a3022eb18",
+      "bytes": 940287,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_11459068458443339875",
+      "original_filename": "watermarked_img_11459068458443339875.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_11459068458443339875.jpg",
+      "sha256": "a35220b5ce81743567cea8df4a0fb1e226c55d2c604de16c1c5257d5c2e535a6",
+      "bytes": 799456,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_11605662247163687128",
+      "original_filename": "watermarked_img_11605662247163687128.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_11605662247163687128.jpg",
+      "sha256": "7244157e4bf0dad610d6cca849ab3bc0e01d1163cfd2419e3c29ed6579b44e95",
+      "bytes": 773604,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_11624514576507651000",
+      "original_filename": "watermarked_img_11624514576507651000.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_11624514576507651000.jpg",
+      "sha256": "33735ae05386501339672f8364b29d61974ad9ccbb47509e611cf61d69f91ad4",
+      "bytes": 646603,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_11895275518695218853",
+      "original_filename": "watermarked_img_11895275518695218853.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_11895275518695218853.jpg",
+      "sha256": "d37291f0f0bff184945e9aaca4d0ae51042051e3e1d3b01e62ca8dd07d44704c",
+      "bytes": 844347,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_12143445086144238037",
+      "original_filename": "watermarked_img_12143445086144238037.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_12143445086144238037.jpg",
+      "sha256": "12bdeffa49ebe7433ebb04c242d96d89f12f6450f33da4eb6d05b366c0fd558b",
+      "bytes": 723889,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_12198830246212731310",
+      "original_filename": "watermarked_img_12198830246212731310.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_12198830246212731310.jpg",
+      "sha256": "2cddda209041022c894a96f1afb0642c305bc8a0075a4b0e33d0f1493270d499",
+      "bytes": 984329,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_12366665803820139527",
+      "original_filename": "watermarked_img_12366665803820139527.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_12366665803820139527.jpg",
+      "sha256": "fea90467dac3e10e31255ae6c2382a925482db53906182b0e9cbf8192cc9f4ca",
+      "bytes": 838605,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_12716748116130437203",
+      "original_filename": "watermarked_img_12716748116130437203.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_12716748116130437203.jpg",
+      "sha256": "7793be32304e38298ae2e6e7c9953b6e7b575aa4442b119a20e926d65fdb3df2",
+      "bytes": 844739,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_12763727136307696514",
+      "original_filename": "watermarked_img_12763727136307696514.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_12763727136307696514.jpg",
+      "sha256": "688424bcc547fc31e73a12a34f0fec7b77b8125fc4d7d959d70c03e4b28db594",
+      "bytes": 708810,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_12958730292326335287",
+      "original_filename": "watermarked_img_12958730292326335287.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_12958730292326335287.jpg",
+      "sha256": "e32a7e66d31f990cb841426e2520e7dcea812649ec885b1e534e9188245735ef",
+      "bytes": 747015,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_13043316479584774405",
+      "original_filename": "watermarked_img_13043316479584774405.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_13043316479584774405.jpg",
+      "sha256": "efc878bf7e4da08691d23df2d1deaa8ac8444a099cd36dae827bcc1d8b53e43f",
+      "bytes": 893809,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_13120883118299138364",
+      "original_filename": "watermarked_img_13120883118299138364.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_13120883118299138364.jpg",
+      "sha256": "62f2b6a072acd8928bcfc09b0569e942d1cc1b4eaa2b57856cfa055b14ed2f1e",
+      "bytes": 1284711,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_1317318004317268232",
+      "original_filename": "watermarked_img_1317318004317268232.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_1317318004317268232.jpg",
+      "sha256": "ea5232314b9fca473c3aa9dc2fc7298bf207fd24764846114a567a7eec681b3d",
+      "bytes": 974505,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_13180406506384625525",
+      "original_filename": "watermarked_img_13180406506384625525.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_13180406506384625525.jpg",
+      "sha256": "bb5e829a5839d83a9fbcc0e295fc2ebec73443bdb6488c8d9efc8696280991a5",
+      "bytes": 1087201,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_13232033694587067788",
+      "original_filename": "watermarked_img_13232033694587067788.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_13232033694587067788.jpg",
+      "sha256": "58c502472b92202b7a00694dc1aac2ed1f505c08da12bcc0128e2dfddf4dfea4",
+      "bytes": 711662,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_1354042207930195596",
+      "original_filename": "watermarked_img_1354042207930195596.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_1354042207930195596.jpg",
+      "sha256": "5c3505fd22484adc88ebacd248cd9a36368ccbf3c871ebc114b4b2e7a6a3b28f",
+      "bytes": 722197,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_13579600279138495317",
+      "original_filename": "watermarked_img_13579600279138495317.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_13579600279138495317.jpg",
+      "sha256": "1481f0880679ba3e10b068bae4fe425a86ad11135ae0b8300be7251a93f98344",
+      "bytes": 858788,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_13736364147812334318",
+      "original_filename": "watermarked_img_13736364147812334318.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_13736364147812334318.jpg",
+      "sha256": "44f754e0c79c75cc4d5213be2c3dc229543048f581a356d0a4c196779777cd66",
+      "bytes": 863544,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_13773038680096172945",
+      "original_filename": "watermarked_img_13773038680096172945.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_13773038680096172945.jpg",
+      "sha256": "14cd48364b6bc04bf39074c8a68eb93bf6f34c2d1164f03d0090085a8f866cf3",
+      "bytes": 843572,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_13915326291931838316",
+      "original_filename": "watermarked_img_13915326291931838316.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_13915326291931838316.jpg",
+      "sha256": "5c872aa68044d46fa9829de556bb60219fe9679bf79cb8bda27df059af84af34",
+      "bytes": 756310,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_13989313640350755032",
+      "original_filename": "watermarked_img_13989313640350755032.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_13989313640350755032.jpg",
+      "sha256": "18dfddc57a608fbde0ffab0822728fae77a40d6373f004661403dc1cffad7f31",
+      "bytes": 791993,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_14099021027737865385",
+      "original_filename": "watermarked_img_14099021027737865385.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_14099021027737865385.jpg",
+      "sha256": "610660e7212005203b0020855898ebab66313c781f522ff3f72ab41384bcd089",
+      "bytes": 974098,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_14167755843176833157",
+      "original_filename": "watermarked_img_14167755843176833157.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_14167755843176833157.jpg",
+      "sha256": "ba9acba8f32ba4c01d61f340069035cc5c5f4ede1f51109bda5c87bca4b9196e",
+      "bytes": 778259,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_14417796615665988936",
+      "original_filename": "watermarked_img_14417796615665988936.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_14417796615665988936.jpg",
+      "sha256": "c869d7b5d0f0e889b85c8e77ad211dffcabe3f6cd87accf38e3554b7e425d2c2",
+      "bytes": 870528,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_14571868769502657291",
+      "original_filename": "watermarked_img_14571868769502657291.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_14571868769502657291.jpg",
+      "sha256": "fdbf3163cfd161e5a0e627ad967ae5f66ff8f433a5d460b3464c35617e3f135a",
+      "bytes": 927659,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_14740917366706695649",
+      "original_filename": "watermarked_img_14740917366706695649.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_14740917366706695649.jpg",
+      "sha256": "c1649b5f1a63e266e23309a6ca42895675210c828fdcc3964e7a35db07c0cf63",
+      "bytes": 925173,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_14899051156508876164",
+      "original_filename": "watermarked_img_14899051156508876164.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_14899051156508876164.jpg",
+      "sha256": "3d7a13c16efb127806688f50f15980517ff93a0b33d571ea73e8854b00a75cb6",
+      "bytes": 835874,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_1492824962363950984",
+      "original_filename": "watermarked_img_1492824962363950984.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_1492824962363950984.jpg",
+      "sha256": "67216b4e512ff1960eca0fc9a9e44b7e1b8ecd15140937b08986b7d1c895d439",
+      "bytes": 690620,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_15047832698420908292",
+      "original_filename": "watermarked_img_15047832698420908292.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_15047832698420908292.jpg",
+      "sha256": "57430ad681f23780f61342786bbe8dbb57c1aba212df760e6d953da8fe99943d",
+      "bytes": 916773,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_15152493133476916990",
+      "original_filename": "watermarked_img_15152493133476916990.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_15152493133476916990.jpg",
+      "sha256": "ec12b3c4e02d8f7be44d993f892f72d95c651b4f9052b44ace7d97240ab75446",
+      "bytes": 835718,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_15407586115160507673",
+      "original_filename": "watermarked_img_15407586115160507673.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_15407586115160507673.jpg",
+      "sha256": "9d3a2c8447f45197ed8c636bec394adbfebb6ecd79fd44fab0b439c8620104be",
+      "bytes": 916231,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_15453646441250495311",
+      "original_filename": "watermarked_img_15453646441250495311.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_15453646441250495311.jpg",
+      "sha256": "a5c553b77e3147c52f6f7d0af9ae3f5a5b2c86c23535b6d774df9665ffbff8cd",
+      "bytes": 823670,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_15474786057421550405",
+      "original_filename": "watermarked_img_15474786057421550405.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_15474786057421550405.jpg",
+      "sha256": "5c34ec675f71bc888775ab9c99a75dc171dda6287f9c17c9c9a62228d913b391",
+      "bytes": 1233160,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_15544935808581708742",
+      "original_filename": "watermarked_img_15544935808581708742.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_15544935808581708742.jpg",
+      "sha256": "0bdf8465832b1306e5c4456dc357e13bf2e51a162120cf8b3f2c0eaad5bbbd1f",
+      "bytes": 727752,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_15586001238863748659",
+      "original_filename": "watermarked_img_15586001238863748659.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_15586001238863748659.jpg",
+      "sha256": "bab2b2c6f4d21c758952aa57078cc6ccc4a104a58129ef88110dc8721ffc6e55",
+      "bytes": 793469,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_16072209490904618776",
+      "original_filename": "watermarked_img_16072209490904618776.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_16072209490904618776.jpg",
+      "sha256": "a3070d993fbc921a18a4e058237ea4e391c51cdc807fb3d61a611daeb18a1f32",
+      "bytes": 930387,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_16146679470962274423",
+      "original_filename": "watermarked_img_16146679470962274423.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_16146679470962274423.jpg",
+      "sha256": "b1b6c404c05efb95c7caaba1844cb9656f4b3be6570eefe0a8cb0a7b80839ff4",
+      "bytes": 767287,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_164196087559096600",
+      "original_filename": "watermarked_img_164196087559096600.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_164196087559096600.jpg",
+      "sha256": "3c9564d5385e858088a773197ad7dd282b312ee53f517b0761d2f7c0265b0398",
+      "bytes": 825300,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_16521624706247891955",
+      "original_filename": "watermarked_img_16521624706247891955.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_16521624706247891955.jpg",
+      "sha256": "2b8e2438b4a813ee4a7af3ac2eb2dfab9eff9f733fbde3541d79cdce6e5d3f0b",
+      "bytes": 1100609,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_16590293223080399721",
+      "original_filename": "watermarked_img_16590293223080399721.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_16590293223080399721.jpg",
+      "sha256": "1576404b8633f1624032cb5c42d834baec01251599c1138534d84f224f70b163",
+      "bytes": 743507,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_16773944511903411100",
+      "original_filename": "watermarked_img_16773944511903411100.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_16773944511903411100.jpg",
+      "sha256": "03208b775c5b642e01482f31773dff67329362b8d4af9074a06bd33abaa72e24",
+      "bytes": 795129,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_17611035558282411275",
+      "original_filename": "watermarked_img_17611035558282411275.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_17611035558282411275.jpg",
+      "sha256": "41572796f1b4b3a8a832c9bf85454808c9f7bae693a0f66e44c4e7d770ecd163",
+      "bytes": 793200,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_17638301973500511052",
+      "original_filename": "watermarked_img_17638301973500511052.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_17638301973500511052.jpg",
+      "sha256": "cfb419c859c41ce3e5646a6031b39ca77d7b8a7d2dbde512deb2278780a0836c",
+      "bytes": 734250,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_17775246598672874375",
+      "original_filename": "watermarked_img_17775246598672874375.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_17775246598672874375.jpg",
+      "sha256": "62bff6393c4b7e2b1be4a4b4837d2dce9c1d127578ad0ccab2214a451370dda2",
+      "bytes": 798220,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_17810130786868525290",
+      "original_filename": "watermarked_img_17810130786868525290.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_17810130786868525290.jpg",
+      "sha256": "5b37b819e06f78dfe751c79deed153e0b4f181d65e70b4c8a2506e5b75770fe9",
+      "bytes": 886420,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_18023869114938784062",
+      "original_filename": "watermarked_img_18023869114938784062.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_18023869114938784062.jpg",
+      "sha256": "02d16dc7a777929c446d1a0f41b123978757fb0f156bf495e5d683f8882485a6",
+      "bytes": 889826,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_18038123231463812164",
+      "original_filename": "watermarked_img_18038123231463812164.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_18038123231463812164.jpg",
+      "sha256": "b5fb77ddad4ab084adc5d435136299627ba84d0b0a609ee57aeb850d117c20a4",
+      "bytes": 738380,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_18098042186166389206",
+      "original_filename": "watermarked_img_18098042186166389206.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_18098042186166389206.jpg",
+      "sha256": "f7c4549924ecb20503725f53d87fe5e4241504263812c172abb87bb1c73cb79f",
+      "bytes": 899220,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_1844192445284757751",
+      "original_filename": "watermarked_img_1844192445284757751.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_1844192445284757751.jpg",
+      "sha256": "a871daa6ba966d7b33a2beaa7e74fd2fb752b59ab2787a50353c7cf5e6900640",
+      "bytes": 940033,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_18442776981737503190",
+      "original_filename": "watermarked_img_18442776981737503190.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_18442776981737503190.jpg",
+      "sha256": "286a241a26b18c44f52af640b1f282b288062852a9655e48ab385a0cbdb1f7fd",
+      "bytes": 847276,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_2300494807488663637",
+      "original_filename": "watermarked_img_2300494807488663637.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_2300494807488663637.jpg",
+      "sha256": "77b3e53eab79066ae32dd3259f050c6df773da637a80e665d1182ac338028e2c",
+      "bytes": 855160,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_235030497301786675",
+      "original_filename": "watermarked_img_235030497301786675.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_235030497301786675.jpg",
+      "sha256": "b975d0ac811bebc76d82290ccd1f4210ff935e2a50466db280a5c3035b76ace5",
+      "bytes": 720789,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_2377415942055836531",
+      "original_filename": "watermarked_img_2377415942055836531.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_2377415942055836531.jpg",
+      "sha256": "5248946862a96267e28b56c50b1ae2505661f29c16ca7c340d99fa6d713e7d55",
+      "bytes": 818796,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_2401745603465664910",
+      "original_filename": "watermarked_img_2401745603465664910.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_2401745603465664910.jpg",
+      "sha256": "e8bd2df1f8ededf58eb5ba4aeb9b1af0d31f5c5a4a88480c132ac4d5a25a0e67",
+      "bytes": 927582,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_2494256101245162437",
+      "original_filename": "watermarked_img_2494256101245162437.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_2494256101245162437.jpg",
+      "sha256": "09b5115736edca800bbdc45f3fa23fbc22c5ba0ead62d97b8385692a0e957cb9",
+      "bytes": 950313,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_2497989288720112195",
+      "original_filename": "watermarked_img_2497989288720112195.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_2497989288720112195.jpg",
+      "sha256": "c4269796aa14b25655efa3d7c7d3d41adecb8f82510993b1e3ae90a855e7c88f",
+      "bytes": 965579,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_2702476704447166617",
+      "original_filename": "watermarked_img_2702476704447166617.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_2702476704447166617.jpg",
+      "sha256": "f9bcf7e96755b38111a054b62c7a329f6bd29ceff07d5afe139383da1380989f",
+      "bytes": 816340,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_2751379941625169352",
+      "original_filename": "watermarked_img_2751379941625169352.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_2751379941625169352.jpg",
+      "sha256": "ba26e3155d28507852309a0ba154277dddd87b524127d98ba3e27bd8d637445d",
+      "bytes": 877385,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_2753212142233217682",
+      "original_filename": "watermarked_img_2753212142233217682.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_2753212142233217682.jpg",
+      "sha256": "db474dfce66c06ab5493e1bb12330865ae49805300f20e8dc6df4832b0289627",
+      "bytes": 1002673,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_2783457574029052128",
+      "original_filename": "watermarked_img_2783457574029052128.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_2783457574029052128.jpg",
+      "sha256": "9f844dece651f5ffb0be10284643f7464af85c003d7a9ade672b9e5536fc1724",
+      "bytes": 733613,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_3223292515914475623",
+      "original_filename": "watermarked_img_3223292515914475623.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_3223292515914475623.jpg",
+      "sha256": "db5a8d624153d7903c33a03ace629a78aedc4ee05a3b70236ddf85cf2d6ee635",
+      "bytes": 901013,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_3225465901015417239",
+      "original_filename": "watermarked_img_3225465901015417239.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_3225465901015417239.jpg",
+      "sha256": "3e8a1ffdbd63084a22333efe092dcd29ce9f3f9aef0773b06bb902df757fcf9e",
+      "bytes": 823820,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_3362106520808922252",
+      "original_filename": "watermarked_img_3362106520808922252.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_3362106520808922252.jpg",
+      "sha256": "14912043e03eb3075c805587e627155d2df91add038a99121927c42edb018f9b",
+      "bytes": 829645,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_3373503237558458076",
+      "original_filename": "watermarked_img_3373503237558458076.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_3373503237558458076.jpg",
+      "sha256": "59c93ca4cc38cc6a70dffc1fd611df6442ec88204ca873cb00aadd224b665890",
+      "bytes": 927112,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_3618229480363782154",
+      "original_filename": "watermarked_img_3618229480363782154.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_3618229480363782154.jpg",
+      "sha256": "777f5e1979d0e62d15de4e9b1c48b9211d5a0ec2df4de7955fee45e0902cb2c4",
+      "bytes": 894653,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_3876463031979447511",
+      "original_filename": "watermarked_img_3876463031979447511.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_3876463031979447511.jpg",
+      "sha256": "8951a499468ab9d0ac29a3ab20ca720618b50af1d4a2f19efbee6335e40a96e3",
+      "bytes": 1009476,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_4087811029340905080",
+      "original_filename": "watermarked_img_4087811029340905080.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_4087811029340905080.jpg",
+      "sha256": "f9e6a9b8eb821dce198e910700ea4ce633fca3f3a9a779b35b13aae69505ee4e",
+      "bytes": 799917,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_4177141034592386310",
+      "original_filename": "watermarked_img_4177141034592386310.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_4177141034592386310.jpg",
+      "sha256": "d98826d419d9508e2d0b02f29adcfa6d13cfd65656731b89df1db73de282cad3",
+      "bytes": 774474,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_4177593992116025321",
+      "original_filename": "watermarked_img_4177593992116025321.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_4177593992116025321.jpg",
+      "sha256": "558bd2ae01145ce689cc8fcd131d0b20f2d14e4f8a7a4eb1627cfdcafecfdd12",
+      "bytes": 843788,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_4397159685458557400",
+      "original_filename": "watermarked_img_4397159685458557400.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_4397159685458557400.jpg",
+      "sha256": "67d721bd6a4ed1fb7bd3bbbe45d5c562b78c612f364588d47482837897910e84",
+      "bytes": 927976,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_4569443620110251201",
+      "original_filename": "watermarked_img_4569443620110251201.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_4569443620110251201.jpg",
+      "sha256": "75f6e2856c8e26120798a9863a176aab87a4881d69b1b55f011cc55dda087a7d",
+      "bytes": 944110,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_460205689663994775",
+      "original_filename": "watermarked_img_460205689663994775.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_460205689663994775.jpg",
+      "sha256": "792bc93329fe4f8d1beb62d4d47467a04dea83449b6677ada2a411c6293ef105",
+      "bytes": 911938,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_4739864752927979712",
+      "original_filename": "watermarked_img_4739864752927979712.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_4739864752927979712.jpg",
+      "sha256": "a915ffd9110e2fadcd142099fc9950b0a9c38d78adb115d0748707a8bdc24b71",
+      "bytes": 715804,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_4913449254070338935",
+      "original_filename": "watermarked_img_4913449254070338935.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_4913449254070338935.jpg",
+      "sha256": "dac100406517655c5d4366ef361492328d48d221a83bef30bb944dd794c9b912",
+      "bytes": 817153,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_5006777590497744622",
+      "original_filename": "watermarked_img_5006777590497744622.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_5006777590497744622.jpg",
+      "sha256": "4c65b6370ffe7439b6010f5f219416051a2824f85128090c7919a611ef57ebda",
+      "bytes": 937038,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_5163580721707956224",
+      "original_filename": "watermarked_img_5163580721707956224.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_5163580721707956224.jpg",
+      "sha256": "73ffaac5398679a1febe5f49d788cdfba546635c65feab16ca09a90110e712ee",
+      "bytes": 924958,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_5313583777295614266",
+      "original_filename": "watermarked_img_5313583777295614266.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_5313583777295614266.jpg",
+      "sha256": "5159712f13f3824b1351d68348fff700ea8a448f28e023a57c3b6cf633b8b55a",
+      "bytes": 882192,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_5344831825615423240",
+      "original_filename": "watermarked_img_5344831825615423240.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_5344831825615423240.jpg",
+      "sha256": "c025d8ccac64cf032def12e7744f71eec673ffbcce72594423d88e5bdd6456c0",
+      "bytes": 972663,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_5417893981528771487",
+      "original_filename": "watermarked_img_5417893981528771487.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_5417893981528771487.jpg",
+      "sha256": "7c34a474184bf5b8a171dc180a28a8f929d3c00c8318e2b161a93b970eeac217",
+      "bytes": 1026987,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_558072719122682413",
+      "original_filename": "watermarked_img_558072719122682413.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_558072719122682413.jpg",
+      "sha256": "f611a61212f07ad746f8606801785e8fb5d3d726e373454cbba7a719dd71a56e",
+      "bytes": 894358,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_5587385340837682942",
+      "original_filename": "watermarked_img_5587385340837682942.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_5587385340837682942.jpg",
+      "sha256": "13c1142818c7aa9558fe0730b2630746320795de129671773fa83d1ab8188fa4",
+      "bytes": 826607,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_5641351285414883786",
+      "original_filename": "watermarked_img_5641351285414883786.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_5641351285414883786.jpg",
+      "sha256": "6cb917ed06e2be028422bddc55550a8ebd261f59d2c38d36daba08cd17bd804c",
+      "bytes": 933302,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_5782807220273877907",
+      "original_filename": "watermarked_img_5782807220273877907.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_5782807220273877907.jpg",
+      "sha256": "c99936c34670af03c2fa34772bf9b44af93c67a5502f7fa19e45335bee7c7ec7",
+      "bytes": 936467,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_5883964786505197104",
+      "original_filename": "watermarked_img_5883964786505197104.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_5883964786505197104.jpg",
+      "sha256": "aa3ad24259c40cfc2c4eb11a879ac8df4953fee7284130eb0578254429c8213b",
+      "bytes": 892283,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_60048806721024494",
+      "original_filename": "watermarked_img_60048806721024494.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_60048806721024494.jpg",
+      "sha256": "ea3aac9fec46d822b75f9d3f0c86171b3ff1e45519b7abf4bd1b93724258bab4",
+      "bytes": 865066,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_6069525583708036244",
+      "original_filename": "watermarked_img_6069525583708036244.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_6069525583708036244.jpg",
+      "sha256": "3519b9f318b2f6e94c95fc0f849043f74a2a0b06900f8c8003dcbff44f91ca89",
+      "bytes": 976853,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_607847661621808494",
+      "original_filename": "watermarked_img_607847661621808494.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_607847661621808494.jpg",
+      "sha256": "51befe764eaa3f0467f063fba80f2ec8486a570c0a1ad2a8144c84c617bc54fb",
+      "bytes": 777920,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_6107514537466822994",
+      "original_filename": "watermarked_img_6107514537466822994.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_6107514537466822994.jpg",
+      "sha256": "abfc5ab4ccf8e8b2cb04f81fa3d2b99acca9e2fcf8ad45e28d2a7de612053f18",
+      "bytes": 984295,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_6109153825146449321",
+      "original_filename": "watermarked_img_6109153825146449321.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_6109153825146449321.jpg",
+      "sha256": "18dc1c7eb595c94474a297711bef732558d71d5165bbe97686d01c0966427ae4",
+      "bytes": 869629,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_6430160888033453982",
+      "original_filename": "watermarked_img_6430160888033453982.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_6430160888033453982.jpg",
+      "sha256": "2db0410d28db1804eda1094eafd4d758ecab9e29e07d52971df7467b8f3a5d6c",
+      "bytes": 1066128,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_64878914970591972",
+      "original_filename": "watermarked_img_64878914970591972.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_64878914970591972.jpg",
+      "sha256": "2b1fedd94b802b5d68d746c2c3fee4fd01f4c124919464225634e43d88052be4",
+      "bytes": 733741,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_6700494023747499447",
+      "original_filename": "watermarked_img_6700494023747499447.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_6700494023747499447.jpg",
+      "sha256": "a2d45874af8b46185cd0f685e7172b8b0c59720ed16d2fc6bdff57a90c21b168",
+      "bytes": 716923,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_6751193672242810816",
+      "original_filename": "watermarked_img_6751193672242810816.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_6751193672242810816.jpg",
+      "sha256": "fb064dac60c2dcd0d7a97f488837ad7cee550d444818320419d83d40c6224536",
+      "bytes": 801837,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_6774168184282626030",
+      "original_filename": "watermarked_img_6774168184282626030.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_6774168184282626030.jpg",
+      "sha256": "ba82ec29fb126efdd61011446a8998873c1d1f83d3410a5040ddbec1581879ff",
+      "bytes": 791392,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_7129382415130963491",
+      "original_filename": "watermarked_img_7129382415130963491.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_7129382415130963491.jpg",
+      "sha256": "828b42d6eeb18eb4e2e1398ab48a92806762027effd3b54de4eab7b98ce64678",
+      "bytes": 864743,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_7313489960193501108",
+      "original_filename": "watermarked_img_7313489960193501108.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_7313489960193501108.jpg",
+      "sha256": "b87ec1b5600e12d0afdd4d33f79b9e9ce1090a419d4043fe37beccc03215a743",
+      "bytes": 817661,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_7345795369262339247",
+      "original_filename": "watermarked_img_7345795369262339247.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_7345795369262339247.jpg",
+      "sha256": "ea798ce181b00cd7f72b3da733387b15c288c3630e663154e9c0c1f6f710f51f",
+      "bytes": 963144,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_7963194740825293142",
+      "original_filename": "watermarked_img_7963194740825293142.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_7963194740825293142.jpg",
+      "sha256": "06889f5afffb7086ee6c0912f1cefff45fbb0d17c2c1078b3a86379deb51eb6b",
+      "bytes": 758897,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_8327812267323521877",
+      "original_filename": "watermarked_img_8327812267323521877.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_8327812267323521877.jpg",
+      "sha256": "9bb181f04a1b113caf02e17eb1d44a46e8d6c6df80b80fbc63dc621e012b97a8",
+      "bytes": 971940,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_8388785351138499692",
+      "original_filename": "watermarked_img_8388785351138499692.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_8388785351138499692.jpg",
+      "sha256": "8570482ae15125a124ff7b2e076e3f3e24699e39febdae898afdce92f0e043db",
+      "bytes": 645517,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_8901945320770681989",
+      "original_filename": "watermarked_img_8901945320770681989.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_8901945320770681989.jpg",
+      "sha256": "5cc000dd751747e952c41db9a9998fe2e201e3cd5e8c8f68ba200fc367f03a2f",
+      "bytes": 961507,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_896886109740683180",
+      "original_filename": "watermarked_img_896886109740683180.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_896886109740683180.jpg",
+      "sha256": "c082de189ce35ccb8567da32a5dd1c7516b10551509276abf37042ce3e6f3213",
+      "bytes": 775893,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_8971100121613937499",
+      "original_filename": "watermarked_img_8971100121613937499.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_8971100121613937499.jpg",
+      "sha256": "2d6e2203dd549d3c87d61d1b62af4d9ce14ce86e5f838809c671cbc92713efc7",
+      "bytes": 762186,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_9053185786818683520",
+      "original_filename": "watermarked_img_9053185786818683520.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_9053185786818683520.jpg",
+      "sha256": "c4eab9da5acce5b7595cb2bede6c2d7998e55ba6dbd5405bd549e57df070fee2",
+      "bytes": 660673,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_906207514416727859",
+      "original_filename": "watermarked_img_906207514416727859.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_906207514416727859.jpg",
+      "sha256": "9b63c516aeffbd1ab3a96a6d888418a49af6213ba2df5ea5b7a93f3633c81553",
+      "bytes": 736482,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_9097798504851109281",
+      "original_filename": "watermarked_img_9097798504851109281.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_9097798504851109281.jpg",
+      "sha256": "f9c20cc5871703c43d875e93f97af6323c3c55d07fbb16f451abefad3809f2e5",
+      "bytes": 878015,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_9516994821306100414",
+      "original_filename": "watermarked_img_9516994821306100414.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_9516994821306100414.jpg",
+      "sha256": "9b4ee371ab4fcd2e26604493024aff0765d3688f3a5aca537e2b06af1315d89d",
+      "bytes": 852857,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_9522029482574444075",
+      "original_filename": "watermarked_img_9522029482574444075.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_9522029482574444075.jpg",
+      "sha256": "2f052312dfe62ea178e339e35144eb82246fe60cc2e9dc817eb310d99cf09457",
+      "bytes": 729461,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_984695459084132733",
+      "original_filename": "watermarked_img_984695459084132733.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_984695459084132733.jpg",
+      "sha256": "db188dcb72cec16e7e29f3ba8a25088fc8dc91d1dd182c30b277c6289453c3df",
+      "bytes": 960788,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    },
+    {
+      "asset_id": "toba_full_watermarked_img_9989111863352716567",
+      "original_filename": "watermarked_img_9989111863352716567.jpg",
+      "episode_scope": "ep_toba",
+      "historical_period": "prehistoric_pleistocene",
+      "era_tags": [
+        "prehistoric_pleistocene",
+        "74000_bce",
+        "toba_eruption"
+      ],
+      "subject": "Prehistoric 74,000 BCE Toba episode keyframe",
+      "file_path": "assets/generated/images/full_127/watermarked_img_9989111863352716567.jpg",
+      "sha256": "190812fcf7794b58e006b8dd930cbdfbbbde248f0386a228b2888e6a2e6291c9",
+      "bytes": 988901,
+      "verified": true,
+      "imported_at": "2026-11-11T19:01:52Z"
+    }
+  ]
+}

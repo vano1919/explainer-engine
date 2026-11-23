@@ -1,3 +1,4 @@
+
 """The stage D model pilot (D-70; the creator's card of 2026-10-22): the same six shots on every candidate, four takes each,
 priced before anything is sent, run only with the creator's recorded approval, every picture cached and logged, one
 collage per candidate for the creator's eyes (OR-16). stdlib + PIL for the collage.

@@ -1,0 +1,22 @@
+{
+  "styles": [
+    {
+      "name": "card",
+      "cap_height_pct": 9.0,
+      "background": "solid dark card",
+      "visual_meaning": "Large text on a solid dark card that sits clearly over the map."
+    },
+    {
+      "name": "outline",
+      "cap_height_pct": 8.0,
+      "background": "none, outlined text",
+      "visual_meaning": "Outlined text with no background, staying legible without hiding the map."
+    },
+    {
+      "name": "lower_third",
+      "cap_height_pct": 7.0,
+      "background": "full-width bar",
+      "visual_meaning": "A full-width lower-third bar with smaller text for a broadcast-style caption."
+    }
+  ]
+}

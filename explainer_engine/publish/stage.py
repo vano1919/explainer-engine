@@ -1,3 +1,4 @@
+
 """``publish stage``: upload an episode's long video and its Shorts as unlisted (or private), never public (D-57).
 
 Order: the publish checklist (PC rules, read on the episode folder: approval #2, the rulebook's final_qa stamp and the

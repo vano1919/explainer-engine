@@ -1,0 +1,41 @@
+{
+  "option": "provisional",
+  "filters": {
+    "blackdetect": {"d": 0.1, "pix_th": 0.10},
+    "freezedetect": {"n": 0.003, "d": 0.5},
+    "basis": "PROVISIONAL: house values, no source; freezes shorter than freezedetect.d are not counted; the owner sets them on rendered samples"
+  },
+  "video": {
+    "sharpness_unit": "laplacian_var_over_gray_var_0_1",
+    "min_width": 1920,
+    "min_height": 1080,
+    "fps_min": 23.9,
+    "fps_max": 60.1,
+    "min_bitrate_kbps": 4000,
+    "max_black_frame_ratio": 0.02,
+    "max_frozen_frame_ratio": 0.05,
+    "min_sharpness": 0.02,
+    "sharpness_basis": "GUESS: floor at 0.02, rounded down from the lowest of 24 existing project samples (0.0241, measured 2026-11-22 in laplacian_var_over_gray_var_0_1); catches blank or badly blurred output only. Not a quality threshold; the owner sets it on approved samples.",
+    "no_melt": {
+      "residual_motion_per_frame_max": 0.05,
+      "residual_drift_max": 0.2,
+      "unit": "fraction_of_frame_height",
+      "basis": "PROVISIONAL: house proposals T9 and T10 of QUALITY_SPEC.md (plans_2026-11-21), no source; compensation of the camera move is not yet defined, so these numbers are not yet measured. The owner approves on rendered samples."
+    }
+  },
+  "audio": {
+    "lufs_min": -16.5,
+    "lufs_max": -13.5,
+    "true_peak_max_db": -1.0,
+    "max_clipped_samples_ratio": 0.0001,
+    "min_speech_to_noise_db": 20.0,
+    "max_silence_ratio": 0.4
+  },
+  "photo": {
+    "sharpness_unit": "laplacian_var_over_gray_var_0_1",
+    "min_width": 1920,
+    "min_height": 1080,
+    "min_sharpness": 0.02,
+    "sharpness_basis": "GUESS: floor at 0.02, rounded down from the lowest of 24 existing project samples (0.0241, measured 2026-11-22 in laplacian_var_over_gray_var_0_1); catches blank or badly blurred output only. Not a quality threshold; the owner sets it on approved samples."
+  }
+}

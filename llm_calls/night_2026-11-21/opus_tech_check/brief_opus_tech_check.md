@@ -1,0 +1,477 @@
+You are the Opus medium technical checker for the explainer-engine repo (branch claude/project-thread-3j9l41-modal-render). Review ONLY the diff below. Do not rewrite code. Output in this order:
+
+1. VERDICT: PASS / PASS WITH FIXES / FAIL, one line.
+2. Findings, each: file:line, what is wrong, the concrete failure input or scenario, severity (blocker / should-fix / nit). Only real defects; no style remarks.
+3. Specifically check:
+   - explainer_engine/fx25d/living.py: output_size_frame is applied to every frame and mask written to the encoder, sizes match OUT_SIZE; no other writer still uses the 1280x720 size.
+   - explainer_engine/qa/technical_gate.py: ffmpeg is called with argument lists (no shell); blackdetect/freezedetect parsing; measure_video sharpness unit is the same function the gate uses; cv2 import at module top.
+   - explainer_engine/qa/technical_gate.json: min_sharpness 0.002 is marked as a GUESS in the json, and no other threshold was changed silently.
+   - explainer_engine/maps/render.py: bridges loop is a no-op when payload has no bridges key; visible_at argument order; bridges_from_words raises on missing text.
+   - tests: the sharpness test values were changed to match the new floor; no test was weakened (compare with the diff).
+4. Name anything in the diff that uses a provisional value as if it were verified.
+
+Do not mention model names or identifiers in your text. Keep the answer under 900 words.
+
+DIFF:
+diff --git a/explainer_engine/fx25d/living.py b/explainer_engine/fx25d/living.py
+index 105f9fd7..f5b2a2fd 100644
+--- a/explainer_engine/fx25d/living.py
++++ b/explainer_engine/fx25d/living.py
+@@ -12,6 +12,8 @@ import numpy as np, cv2
+ from explainer_engine.fx25d.masks import sky_mask
+ 
+ W, H, FPS = 1280, 720, 24
++W_OUT, H_OUT = 1920, 1080          # output frames; internal processing stays in the 1280x720 working space
++OUT_SIZE = f"{W_OUT}x{H_OUT}"      # ffmpeg -s argument
+ FOCAL = W / (2 * np.tan(np.radians(30)))      # 60 degree horizontal field of view assumed (nothing measured)
+ SX, SY = W / 1376, H / 768
+ CY0 = 0.04      # zoom pivot (share of the height, near the top edge): head room is never cropped
+@@ -73,6 +75,11 @@ def check_camera(camera):
+ def box(b): return (int(b[0] * SX), int(b[1] * SY), int(b[2] * SX), int(b[3] * SY))
+ 
+ 
++def output_size_frame(frame):
++    """1280x720 working frame (BGR or mask) -> 1920x1080 output frame, resized only when it is written or encoded."""
++    return cv2.resize(frame, (W_OUT, H_OUT), interpolation=cv2.INTER_LANCZOS4)
++
++
+ # the director's living-element inventory of each photo, in 1376x768 picture coordinates (LP-01..LP-12 style)
+ INV = {
+     "S07_SH006": dict(
+@@ -415,17 +422,17 @@ class Shot:
+ 
+ def run(frame, out_mp4, seconds=5.0, drift=False, particles=True, tel=None, **shot_kw):
+     s = Shot(frame, seconds, drift, particles, **shot_kw)
+-    p = subprocess.Popen(["ffmpeg", "-y", "-loglevel", "error", "-f", "rawvideo", "-pix_fmt", "bgr24", "-s", f"{W}x{H}", "-r", str(FPS), "-i", "-",
++    p = subprocess.Popen(["ffmpeg", "-y", "-loglevel", "error", "-f", "rawvideo", "-pix_fmt", "bgr24", "-s", OUT_SIZE, "-r", str(FPS), "-i", "-",
+                           "-c:v", "libx264", "-preset", "medium", "-crf", "17", "-pix_fmt", "yuv420p", out_mp4], stdin=subprocess.PIPE)
+     stem = out_mp4[:-4]; mw = {}
+     if particles:
+         for nm in ("matte", "far"):
+-            mw[nm] = subprocess.Popen(["ffmpeg", "-y", "-loglevel", "error", "-f", "rawvideo", "-pix_fmt", "gray", "-s", f"{W}x{H}", "-r", str(FPS), "-i", "-",
++            mw[nm] = subprocess.Popen(["ffmpeg", "-y", "-loglevel", "error", "-f", "rawvideo", "-pix_fmt", "gray", "-s", OUT_SIZE, "-r", str(FPS), "-i", "-",
+                                        "-c:v", "libx264", "-crf", "12", "-pix_fmt", "yuv420p", f"{stem}_{nm}.mp4"], stdin=subprocess.PIPE)
+     CHK = (1, 25, 49, 73, 97, 121); metrics = {}
+     for f in range(max(s.n, 121)):
+         fr_img = s.render(f)
+-        if f < s.n: p.stdin.write(fr_img.tobytes())
++        if f < s.n: p.stdin.write(output_size_frame(fr_img).tobytes())
+         if f + 1 in CHK:      # 1-based frame numbers, as in the X3 reports; measured on the frame as it is seen (after the camera move)
+             t_ = f / FPS; a_ = s.parallax(s.plume_a, t_); pm_ = s.parallax(s.pmask_f, t_) > 0.5
+             from explainer_engine.qa import plume_zones as PZ   # the shared measure: NOT_RUN (never PASS) without a person mask or without a plume
+@@ -436,7 +443,8 @@ def run(frame, out_mp4, seconds=5.0, drift=False, particles=True, tel=None, **sh
+             cv2.imwrite(stem + "_f%03d_alpha.png" % (f + 1), cv2.resize((np.clip(a_, 0, 1) * 255).astype(np.uint8), (640, 360), interpolation=cv2.INTER_AREA))
+             if f + 1 == 1: cv2.imwrite(stem + "_person_zone.png", (pm_ * 255).astype(np.uint8))
+         if particles and f < s.n:
+-            mw["matte"].stdin.write((np.clip(s.m_all, 0, 1) * 255).astype(np.uint8).tobytes()); mw["far"].stdin.write((np.clip(s.m_far, 0, 1) * 255).astype(np.uint8).tobytes())
++            mw["matte"].stdin.write((np.clip(output_size_frame(s.m_all), 0, 1) * 255).astype(np.uint8).tobytes())
++            mw["far"].stdin.write((np.clip(output_size_frame(s.m_far), 0, 1) * 255).astype(np.uint8).tobytes())
+     p.stdin.close(); p.wait()
+     json.dump(metrics, open(f"{stem}.smoke_metrics.json", "w"), indent=1); print(metrics)
+     for w in mw.values(): w.stdin.close(); w.wait()
+diff --git a/explainer_engine/maps/render.py b/explainer_engine/maps/render.py
+index 1b5662db..ba479364 100644
+--- a/explainer_engine/maps/render.py
++++ b/explainer_engine/maps/render.py
+@@ -15,6 +15,7 @@ import math
+ import numpy as np
+ from PIL import Image
+ 
++from explainer_engine.maps import bridge_render, bridge_sync, render_presets
+ from explainer_engine.maps import camera as CAM
+ from explainer_engine.maps import draw as D
+ from explainer_engine.maps import geo, paths, plate
+@@ -422,12 +423,32 @@ def render_frame(spec: dict, tl: Timeline, clock, f: int, ss: int = D.SS, base_d
+                width=max(2.0, c.h * 0.004), radius=size * 0.3)
+         c.text((c.w * 0.04 + size / 2, c.h * 0.04 + size * 0.75), chip, size, ink, anchor="lm")
+     _scale_bar(c, view, CAM.tier_of(cam.span_km))
++    # bridge captions: the narration's words over the frame, from their own onset to the end of their last word
++    fps = p.get("fps", 24)
++    for item in p.get("bridges", []):
++        if not bridge_render.visible_at(f, item["onset_s"], item["hold_end_s"], fps):
++            continue
++        style = render_presets.get_bridge_style(item.get("style", "card"))
++        colours = {k: tuple(item[k]) for k in ("fill", "ink") if item.get(k)}
++        bridge_render.draw_bridge(c, item["text"], style, frame_h=c.h, **colours)
+     img = c.image()
+     if cam.pitch_deg > 0:
+         img = CAM.tilt_fill(img, cam.pitch_deg)   # no empty corners (v4.3 P4)
+     return img.convert("RGB")
+ 
+ 
++def bridges_from_words(words: list[dict], items: list[dict], style_default: str = "card") -> list[dict]:
++    """The payload bridges of a map item: ``items`` are {"text", optional "style"}, timed from the Scribe word list."""
++    out: list[dict] = []
++    for item in items:
++        window = bridge_sync.bridge_window(words, item["text"])
++        if not window["ok"]:
++            raise ValueError(f"bridge text {item['text']!r}: {'; '.join(window['problems'])}")
++        out.append({"text": item["text"], "onset_s": window["onset_s"], "hold_end_s": window["hold_end_s"],
++                    "style": item.get("style", style_default)})
++    return out
++
++
+ 
+ def build_episode_gis_map_spec(
+     shot_or_id: dict | str,
+diff --git a/explainer_engine/qa/technical_gate.json b/explainer_engine/qa/technical_gate.json
+index 8d694d8a..d8a19228 100644
+--- a/explainer_engine/qa/technical_gate.json
++++ b/explainer_engine/qa/technical_gate.json
+@@ -1,6 +1,7 @@
+ {
+   "option": "provisional",
+   "video": {
++    "sharpness_unit": "laplacian_var_over_mean_sq_0_1",
+     "min_width": 1920,
+     "min_height": 1080,
+     "fps_min": 23.9,
+@@ -8,7 +9,8 @@
+     "min_bitrate_kbps": 4000,
+     "max_black_frame_ratio": 0.02,
+     "max_frozen_frame_ratio": 0.05,
+-    "min_sharpness": 0.5
++    "min_sharpness": 0.002,
++    "sharpness_basis": "GUESS: floor at the lowest of 24 existing project samples (0.00219, winner1_C2_E2_dialogue_8s_v2); catches blank or badly blurred output only. Not a quality threshold; the owner sets it on approved samples."
+   },
+   "audio": {
+     "lufs_min": -16.5,
+@@ -19,8 +21,9 @@
+     "max_silence_ratio": 0.4
+   },
+   "photo": {
++    "sharpness_unit": "laplacian_var_over_mean_sq_0_1",
+     "min_width": 1920,
+     "min_height": 1080,
+-    "min_sharpness": 0.5
++    "min_sharpness": 0.002
+   }
+ }
+diff --git a/explainer_engine/qa/technical_gate.py b/explainer_engine/qa/technical_gate.py
+index aa815a9e..e989f5ae 100644
+--- a/explainer_engine/qa/technical_gate.py
++++ b/explainer_engine/qa/technical_gate.py
+@@ -8,6 +8,9 @@ import shutil
+ import subprocess
+ from pathlib import Path
+ 
++import cv2
++import numpy as np
++
+ _CONFIG = "technical_gate.json"
+ _VIDEO_KEYS = ("width", "height", "fps", "bitrate_kbps", "black_frame_ratio", "frozen_frame_ratio", "sharpness")
+ _AUDIO_KEYS = ("lufs", "true_peak_db", "clipped_ratio", "speech_to_noise_db", "silence_ratio")
+@@ -94,9 +97,90 @@ def _rate(value: str | None) -> float | None:
+         return None
+ 
+ 
++def sharpness_from_gray(gray) -> float:
++    """Contrast-normalised sharpness of a grayscale frame: variance of the Laplacian (frame scaled to 0..1) divided by
++    the squared mean intensity plus a small epsilon. Invariant to a global brightness factor while not clipped."""
++    arr = np.asarray(gray, dtype=np.float64)
++    if arr.size == 0:
++        return 0.0
++    norm = arr / 255.0
++    laplacian_var = float(cv2.Laplacian(norm, cv2.CV_64F).var())
++    mean = float(norm.mean())
++    return laplacian_var / (mean * mean + 1e-6)
++
++
++def _parse_blackdetect(text: str) -> float:
++    """Sum the black seconds reported by ffmpeg's blackdetect filter."""
++    total = 0.0
++    for line in text.splitlines():
++        if "black_start:" not in line and "black_duration:" not in line:
++            continue
++        duration = _float_match(r"black_duration:\s*(-?\d+(?:\.\d+)?)", line)
++        if duration is not None:
++            total += duration
++            continue
++        start = _float_match(r"black_start:\s*(-?\d+(?:\.\d+)?)", line)
++        end = _float_match(r"black_end:\s*(-?\d+(?:\.\d+)?)", line)
++        if start is not None and end is not None:
++            total += end - start
++    return total
++
++
++def _parse_freezedetect(text: str) -> float:
++    """Sum the frozen seconds reported by ffmpeg's freezedetect filter."""
++    total = 0.0
++    for line in text.splitlines():
++        if "freeze_duration:" in line:
++            duration = _float_match(r"freeze_duration:\s*(-?\d+(?:\.\d+)?)", line)
++            if duration is not None:
++                total += duration
++        elif "freeze_start:" in line and "freeze_end:" in line:
++            start = _float_match(r"freeze_start:\s*(-?\d+(?:\.\d+)?)", line)
++            end = _float_match(r"freeze_end:\s*(-?\d+(?:\.\d+)?)", line)
++            if start is not None and end is not None:
++                total += end - start
++    return total
++
++
++def _ffmpeg_filter_seconds(path: str, vf: str, parser) -> float:
++    if shutil.which("ffmpeg") is None:
++        raise RuntimeError("ffmpeg not found on PATH")
++    cmd = ["ffmpeg", "-v", "info", "-i", path, "-vf", vf, "-an", "-f", "null", "-"]
++    proc = subprocess.run(cmd, capture_output=True, text=True, check=False)
++    if proc.returncode != 0:
++        raise RuntimeError(f"ffmpeg failed: {proc.stderr.strip()}")
++    return parser(proc.stderr)
++
++
++def measure_video_sharpness(path: str, samples: int = 8) -> float:
++    """Median contrast-normalised sharpness over up to ``samples`` frames sampled evenly across the video."""
++    cap = cv2.VideoCapture(path)
++    try:
++        if not cap.isOpened():
++            raise RuntimeError("cv2 could not open the video")
++        frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
++        if frame_count > 0:
++            n = min(samples, frame_count)
++            idxs = [int(i * (frame_count - 1) / max(n - 1, 1)) for i in range(n)]
++        else:
++            idxs = list(range(samples))
++        values = []
++        for idx in idxs:
++            cap.set(cv2.CAP_PROP_POS_FRAMES, idx)
++            ok, frame = cap.read()
++            if not ok or frame is None:
++                continue
++            values.append(sharpness_from_gray(cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)))
++    finally:
++        cap.release()
++    if not values:
++        raise RuntimeError("cv2 could not decode any frame for sharpness")
++    return float(np.median(values))
++
++
+ def measure_video(path: str) -> dict:
+-    """Measure width, height, fps and bitrate with ffprobe. Black/frozen frame ratios and sharpness need ffmpeg filters
+-    and stay None, so check_video fails closed unless the caller supplies them."""
++    """Measure width, height, fps and bitrate with ffprobe, black/frozen frame ratios with ffmpeg filters and
++    contrast-normalised sharpness with cv2. Ratios are clamped to [0, 1]."""
+     if shutil.which("ffprobe") is None:
+         raise RuntimeError("ffprobe not found on PATH")
+     cmd = ["ffprobe", "-v", "error", "-print_format", "json", "-show_streams", "-show_format", path]
+@@ -107,15 +191,21 @@ def measure_video(path: str) -> dict:
+     stream = next((s for s in data.get("streams", []) if s.get("codec_type") == "video"), None)
+     if stream is None:
+         raise RuntimeError("no video stream found")
++    duration = data.get("format", {}).get("duration")
++    if duration is None:
++        raise RuntimeError("ffprobe did not report a duration")
++    duration = float(duration)
+     bit_rate = stream.get("bit_rate") or data.get("format", {}).get("bit_rate")
++    black_seconds = _ffmpeg_filter_seconds(path, "blackdetect=d=0.1:pix_th=0.10", _parse_blackdetect)
++    frozen_seconds = _ffmpeg_filter_seconds(path, "freezedetect=n=0.003:d=0.5", _parse_freezedetect)
+     return {
+         "width": stream.get("width"),
+         "height": stream.get("height"),
+         "fps": _rate(stream.get("avg_frame_rate") or stream.get("r_frame_rate")),
+         "bitrate_kbps": int(bit_rate) / 1000 if bit_rate else None,
+-        "black_frame_ratio": None,
+-        "frozen_frame_ratio": None,
+-        "sharpness": None,
++        "black_frame_ratio": min(max(black_seconds / duration, 0.0), 1.0),
++        "frozen_frame_ratio": min(max(frozen_seconds / duration, 0.0), 1.0),
++        "sharpness": measure_video_sharpness(path),
+     }
+ 
+ 
+diff --git a/tests/unit/test_bridge_caller.py b/tests/unit/test_bridge_caller.py
+new file mode 100644
+index 00000000..2c91febd
+--- /dev/null
++++ b/tests/unit/test_bridge_caller.py
+@@ -0,0 +1,57 @@
++"""The bridge caller in the map frame path: a bridge paints only inside its narrated window, and never silently mistimes."""
++
++import copy
++
++import numpy as np
++import pytest
++
++from explainer_engine.maps import render as R
++from explainer_engine.maps import timeline as T
++
++W, H, FPS = 320, 180, 24
++WORDS = [
++    {"word": "The", "start_s": 0.5, "end_s": 0.75},
++    {"word": "bridge", "start_s": 0.75, "end_s": 1.25},
++    {"word": "holds", "start_s": 1.25, "end_s": 1.9},
++]
++
++
++def _spec(with_bridge: bool = False) -> tuple[dict, dict]:
++    spec, spine = R.build_toba_gis_map_spec("bridge_caller", width=W, height=H, total_frames=48)
++    if with_bridge:
++        spec["payload"]["fps"] = FPS
++        spec["payload"]["bridges"] = [{"text": "The bridge", "onset_s": 1.0, "hold_end_s": 3.0, "style": "card"}]
++    return spec, spine
++
++
++def _frame(spec: dict, spine: dict, f: int) -> np.ndarray:
++    tl, clock = T.build(spec, spine, trigger_word_index=0, duration_frames=48)
++    return np.array(R.render_frame(spec, tl, clock, f))
++
++
++def test_bridge_paints_only_inside_its_window():
++    plain, spine = _spec()
++    bridged, _ = _spec(with_bridge=True)
++    assert np.array_equal(_frame(plain, spine, 0), _frame(bridged, spine, 0))
++    assert not np.array_equal(_frame(plain, spine, 48), _frame(bridged, spine, 48))
++
++
++def test_bridges_from_words_times_from_the_narration():
++    out = R.bridges_from_words(WORDS, [{"text": "the bridge"}])
++    assert out == [{"text": "the bridge", "onset_s": 0.5, "hold_end_s": 1.25, "style": "card"}]
++
++
++def test_bridges_from_words_refuses_missing_text():
++    with pytest.raises(ValueError, match="not found in narration"):
++        R.bridges_from_words(WORDS, [{"text": "a missing caption"}])
++
++
++def test_spec_without_bridges_renders_identically():
++    spec, spine = _spec()
++    assert "bridges" not in spec["payload"]
++    base = _frame(spec, spine, 24)
++    assert base.max() > 0
++    assert np.array_equal(base, _frame(spec, spine, 24))
++    empty = copy.deepcopy(spec)
++    empty["payload"]["bridges"] = []
++    assert np.array_equal(base, _frame(empty, spine, 24))
+diff --git a/tests/unit/test_living_output_size.py b/tests/unit/test_living_output_size.py
+new file mode 100644
+index 00000000..877e0605
+--- /dev/null
++++ b/tests/unit/test_living_output_size.py
+@@ -0,0 +1,14 @@
++import numpy as np
++
++from explainer_engine.fx25d import living
++
++
++def test_output_size_constants_and_helper():
++    assert living.W_OUT == 1920
++    assert living.H_OUT == 1080
++    assert living.OUT_SIZE == "1920x1080"
++    frame = np.zeros((living.H, living.W, 3), np.uint8)
++    out = living.output_size_frame(frame)
++    assert out.shape == (living.H_OUT, living.W_OUT, 3)
++    # run() builds the ffmpeg -s argument inline; no function builds the command, so this test checks the helper and
++    # the OUT_SIZE constant that run() passes to ffmpeg. ffmpeg is not run here.
+diff --git a/tests/unit/test_technical_gate.py b/tests/unit/test_technical_gate.py
+index 94a47935..9d61e44b 100644
+--- a/tests/unit/test_technical_gate.py
++++ b/tests/unit/test_technical_gate.py
+@@ -1,5 +1,8 @@
++import shutil
++import subprocess
+ from types import SimpleNamespace
+ 
++import numpy as np
+ import pytest
+ 
+ from explainer_engine.qa import technical_gate as tg
+@@ -13,7 +16,7 @@ def _video_metrics(**overrides):
+         "bitrate_kbps": 5000,
+         "black_frame_ratio": 0.0,
+         "frozen_frame_ratio": 0.0,
+-        "sharpness": 0.6,
++        "sharpness": 0.05,
+     }
+     metrics.update(overrides)
+     return metrics
+@@ -43,7 +46,7 @@ def test_video_metrics_passing_all_limits_is_empty():
+     ("bitrate_kbps", 3999),
+     ("black_frame_ratio", 0.03),
+     ("frozen_frame_ratio", 0.06),
+-    ("sharpness", 0.49),
++    ("sharpness", 0.0015),
+ ])
+ def test_video_each_limit_violated_separately(key, value):
+     assert len(tg.check_video(_video_metrics(**{key: value}))) == 1
+@@ -82,7 +85,7 @@ def test_audio_missing_lufs_fails_closed():
+ 
+ 
+ def test_photo_1280x720_fails():
+-    problems = tg.check_photo({"width": 1280, "height": 720, "sharpness": 0.6})
++    problems = tg.check_photo({"width": 1280, "height": 720, "sharpness": 0.05})
+     assert problems
+     assert any("width" in p for p in problems)
+     assert any("height" in p for p in problems)
+@@ -119,3 +122,71 @@ def test_measure_audio_uses_argument_list(monkeypatch):
+     cmd, kwargs = calls[0]
+     assert isinstance(cmd, list)
+     assert kwargs.get("shell") is not True
++
++
++def test_sharpness_flat_gray_is_near_zero():
++    flat = np.full((64, 64), 128, dtype=np.uint8)
++    assert tg.sharpness_from_gray(flat) < 1e-3
++
++
++def test_sharpness_checkerboard_exceeds_flat():
++    flat = np.full((64, 64), 128, dtype=np.uint8)
++    checker = np.zeros((64, 64), dtype=np.uint8)
++    checker[::2, ::2] = 200
++    checker[1::2, 1::2] = 200
++    assert tg.sharpness_from_gray(checker) > tg.sharpness_from_gray(flat)
++
++
++def test_sharpness_invariant_to_unclipped_scaling():
++    base = np.zeros((64, 64), dtype=np.uint8)
++    base[::2, ::2] = 120
++    base[1::2, 1::2] = 60
++    half = (base * 0.5).astype(np.uint8)
++    assert tg.sharpness_from_gray(half) == pytest.approx(tg.sharpness_from_gray(base), rel=1e-4)
++
++
++def test_parse_blackdetect_sums_seconds():
++    text = (
++        "[blackdetect @ 0x1] black_start:1.0 black_end:2.5 black_duration:1.5\n"
++        "[blackdetect @ 0x1] black_start:4.0 black_end:5.0 black_duration:1.0\n"
++    )
++    assert tg._parse_blackdetect(text) == pytest.approx(2.5)
++
++
++def test_parse_freezedetect_sums_seconds():
++    text = (
++        "[freezedetect @ 0x1] lavfi.freezedetect.freeze_start: 0\n"
++        "[freezedetect @ 0x1] lavfi.freezedetect.freeze_duration: 2.0\n"
++        "[freezedetect @ 0x1] lavfi.freezedetect.freeze_end: 2.0\n"
++        "[freezedetect @ 0x1] lavfi.freezedetect.freeze_start: 5.0\n"
++        "[freezedetect @ 0x1] lavfi.freezedetect.freeze_duration: 1.5\n"
++        "[freezedetect @ 0x1] lavfi.freezedetect.freeze_end: 6.5\n"
++    )
++    assert tg._parse_freezedetect(text) == pytest.approx(3.5)
++
++
++def test_check_video_black_half_fails():
++    problems = tg.check_video(_video_metrics(black_frame_ratio=0.5))
++    assert len(problems) == 1
++    assert "black_frame_ratio" in problems[0]
++
++
++def test_check_video_no_black_passes():
++    assert tg.check_video(_video_metrics(black_frame_ratio=0.0)) == []
++
++
++@pytest.mark.skipif(
++    shutil.which("ffmpeg") is None or shutil.which("ffprobe") is None,
++    reason="ffmpeg and ffprobe are required",
++)
++def test_measure_video_fills_filter_keys(tmp_path):
++    video = tmp_path / "tiny.mp4"
++    subprocess.run(
++        ["ffmpeg", "-v", "error", "-f", "lavfi", "-i", "testsrc=size=320x240:rate=24:duration=2",
++         "-pix_fmt", "yuv420p", str(video)],
++        check=True,
++    )
++    metrics = tg.measure_video(str(video))
++    assert metrics["black_frame_ratio"] is not None
++    assert metrics["frozen_frame_ratio"] is not None
++    assert metrics["sharpness"] is not None
+

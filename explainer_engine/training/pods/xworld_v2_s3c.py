@@ -1,3 +1,4 @@
+
 """The xworld_v2 depth-ControlNet test S3c (D-75; the Opus thread's plan /mnt/project-files/xworld_v2/S3C_CONTROLNET_PLAN_2026-10-26.md).
 
 Qwen-Image-2.1-Fun-Controlnet-Union (alibaba-pai; the control branch only, `control_img_in` + 16 `control_blocks`, loaded with

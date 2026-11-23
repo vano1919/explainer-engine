@@ -1,0 +1,17 @@
+{
+ "clip": "S07_SH008 synthetic 1s 1920x1080 (living.py, 1280x720 working space upscaled)",
+ "metrics": {
+  "width": 1920,
+  "height": 1080,
+  "fps": 24.0,
+  "bitrate_kbps": 3721.296,
+  "black_frame_ratio": 0.0,
+  "frozen_frame_ratio": 0.666667,
+  "sharpness": 0.00015191963787393074
+ },
+ "problems": [
+  "bitrate_kbps below minimum 4000",
+  "frozen_frame_ratio above maximum 0.05",
+  "sharpness below minimum 0.5"
+ ]
+}

@@ -152,6 +152,10 @@ def test_a_timed_out_paid_request_is_not_retried_and_keeps_its_reservation(tmp_p
         sent.append(req)
         raise TimeoutError("timed out")
     monkeypatch.setattr(urllib.request, "urlopen", urlopen)
+    # v4.3: the real route is off by default and checks the model's dated entry (tested in test_v43_picture_intake.py)
+    monkeypatch.setenv(G.API_SWITCH, "on")
+    import explainer_engine.core.model_lifecycle_guard as MLG
+    monkeypatch.setattr(MLG, "assert_fresh_for_paid_run", lambda m, today=None, data=None: m)
     run = Run.open(tmp_path / "run.json", caps={"gemini_usd": 6.0})
     c = G.GeminiClient(tmp_path / "g", key="k", cap_usd=6.0, run=run)
     with pytest.raises(G.ChargeUncertain):

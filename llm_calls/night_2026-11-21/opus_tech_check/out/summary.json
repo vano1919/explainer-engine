@@ -1,0 +1,8 @@
+{
+  "night_modal_render_review": {
+    "ok": false,
+    "error": "night_modal_render_review: hit max_tokens 6000 (paid $0.1613, recorded, not cached)",
+    "truncated": true
+  },
+  "_ledger_total_usd": 0.161292
+}

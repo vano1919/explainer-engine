@@ -1,0 +1,102 @@
+{
+ "schema": "scene_assets/1",
+ "episode": "route_test_2026-11",
+ "style": {
+  "base": "Qwen/Qwen-Image-2.1",
+  "lora": "xworld_v2",
+  "lora_weight": 0.7
+ },
+ "scenes": {
+  "S01": {
+   "backdrop_360": {
+    "asset": "A1",
+    "size": [
+     2048,
+     1024
+    ],
+    "yaw_deg": 0,
+    "prompt": "xworld style, empty tent camp at dusk, white canvas tents around a campfire, a wooden table with a map under an awning, warm firelight under a dusk sky",
+    "loras": [
+     {
+      "id": "xworld_v2",
+      "weight": 0.7
+     },
+     {
+      "id": "qwen-image-2.1-360-panorama-outpaint",
+      "weight": 0.8
+     }
+    ],
+    "file": {
+     "path": "assets/S01/A1.png",
+     "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    }
+   },
+   "heroes": [
+    {
+     "hero": "H1",
+     "sheet": "sheet.h1",
+     "height_m": 1.78,
+     "prompt": "xworld style, the broad commander with a grey beard, a dented steel helmet and a red cloak, standing, seen from the front, neutral face, flat ambient lighting, no cast shadows, plain neutral background",
+     "lighting_note": "dramatic rim light",
+     "angles": {
+      "front": {
+       "base": null,
+       "mouth_half": null,
+       "mouth_open": null,
+       "blink": null
+      },
+      "3q_left": {
+       "base": null
+      },
+      "3q_right": {
+       "base": null
+      },
+      "back": {
+       "base": null
+      }
+     }
+    },
+    {
+     "hero": "H3",
+     "sheet": "sheet.h3",
+     "height_m": 1.78,
+     "prompt": "xworld style, the thin elder with a long white beard and a wooden staff, standing, seen from the front, neutral face, flat ambient lighting, no cast shadows, plain neutral background",
+     "lighting_note": "flat ambient lighting, no cast shadows",
+     "angles": {
+      "front": {
+       "base": null,
+       "mouth_half": null,
+       "mouth_open": null,
+       "blink": null
+      },
+      "3q_left": {
+       "base": null
+      },
+      "3q_right": {
+       "base": null
+      },
+      "back": {
+       "base": null
+      }
+     }
+    }
+   ],
+   "props": [
+    {
+     "id": "prop.table",
+     "prompt": "xworld style, a wooden camp table with a map on it, flat ambient lighting, no cast shadows",
+     "height_m": 0.8,
+     "file": null
+    }
+   ],
+   "light_variant": "dusk",
+   "defects": [
+    {
+     "asset": "sheet.h1",
+     "fix": "the helmet's left rivet is missing",
+     "instruction": "change nothing else, fix: add the left rivet of the helmet"
+    }
+   ]
+  }
+ }
+}

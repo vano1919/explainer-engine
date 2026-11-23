@@ -1,0 +1,50 @@
+{
+ "f1": {
+  "person_share": 0.0,
+  "person_share_status": "PASS",
+  "plume_area_share": 0.04544379340277778,
+  "plume_area_share_status": "PASS",
+  "plume_mean_alpha": 0.00774,
+  "in_clip": true
+ },
+ "f25": {
+  "person_share": 0.0,
+  "person_share_status": "PASS",
+  "plume_area_share": 0.042646484375,
+  "plume_area_share_status": "PASS",
+  "plume_mean_alpha": 0.00612,
+  "in_clip": false
+ },
+ "f49": {
+  "person_share": 0.0,
+  "person_share_status": "PASS",
+  "plume_area_share": 0.037135416666666664,
+  "plume_area_share_status": "PASS",
+  "plume_mean_alpha": 0.00794,
+  "in_clip": false
+ },
+ "f73": {
+  "person_share": 0.0,
+  "person_share_status": "PASS",
+  "plume_area_share": 0.047065972222222224,
+  "plume_area_share_status": "PASS",
+  "plume_mean_alpha": 0.01382,
+  "in_clip": false
+ },
+ "f97": {
+  "person_share": 0.0,
+  "person_share_status": "PASS",
+  "plume_area_share": 0.053072916666666664,
+  "plume_area_share_status": "PASS",
+  "plume_mean_alpha": 0.01874,
+  "in_clip": false
+ },
+ "f121": {
+  "person_share": 0.0,
+  "person_share_status": "PASS",
+  "plume_area_share": 0.057528211805555556,
+  "plume_area_share_status": "PASS",
+  "plume_mean_alpha": 0.02213,
+  "in_clip": false
+ }
+}

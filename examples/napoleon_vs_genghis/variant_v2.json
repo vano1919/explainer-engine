@@ -1,5 +1,5 @@
 {
- "_doc": "The tactical variant (V2, profile B) of the Napoleon example as the stage 1b planner would write it: template D's clock and its 16 windows, with the blocks of each window (docs/SCRIPT_ENGINE.md VP). `python -m explainer_engine.scripting.variant_plan napoleon --write` joins it with V1 (rebuilt from film_shots.json) into script_variants.json.",
+ "_doc": "The tactical variant (V2, profile B) of the Napoleon example as the stage 1b planner would write it: template D's clock and its 16 windows, with the blocks of each window (docs/SCRIPT_ENGINE.md VP). `python -m explainer_engine.scripting.variant_plan napoleon --write` joins it with V1 (rebuilt from film_shots.json) into script_variants.json. Planned words per block (no text exists yet): seconds x BP-01's wpm_target / 60, a played scene block as character words, every other block as narrator words (ICW-00, 2026-11-05).",
  "title": "The two armies as two systems",
  "logline": "The same fight, told through what each army could do: range, speed, supply and command, with played scenes at the turns.",
  "outline": [
@@ -18,17 +18,26 @@
     {
      "category": "scene",
      "seconds": 6,
-     "who": "hero"
+     "who": "hero",
+     "words": {
+      "character": 17
+     }
     },
     {
      "category": "compensator",
      "seconds": 3,
-     "archetype": 8
+     "archetype": 8,
+     "words": {
+      "narrator": 8
+     }
     },
     {
      "category": "scene",
      "seconds": 3,
-     "who": "hero"
+     "who": "hero",
+     "words": {
+      "character": 8
+     }
     }
    ]
   },
@@ -39,7 +48,10 @@
     {
      "category": "compensator",
      "seconds": 24,
-     "archetype": 9
+     "archetype": 9,
+     "words": {
+      "narrator": 68
+     }
     }
    ]
   },
@@ -50,17 +62,26 @@
     {
      "category": "map_pure",
      "seconds": 15,
-     "archetype": 1
+     "archetype": 1,
+     "words": {
+      "narrator": 42
+     }
     },
     {
      "category": "scene",
      "seconds": 6,
-     "who": "hero"
+     "who": "hero",
+     "words": {
+      "character": 17
+     }
     },
     {
      "category": "compensator",
      "seconds": 18,
-     "archetype": 5
+     "archetype": 5,
+     "words": {
+      "narrator": 51
+     }
     }
    ]
   },
@@ -71,22 +92,34 @@
     {
      "category": "map_pure",
      "seconds": 20,
-     "archetype": 2
+     "archetype": 2,
+     "words": {
+      "narrator": 57
+     }
     },
     {
      "category": "scene",
      "seconds": 40,
-     "who": "hero"
+     "who": "hero",
+     "words": {
+      "character": 113
+     }
     },
     {
      "category": "compensator",
      "seconds": 30,
-     "archetype": 7
+     "archetype": 7,
+     "words": {
+      "narrator": 85
+     }
     },
     {
      "category": "scene",
      "seconds": 6,
-     "who": "hero"
+     "who": "hero",
+     "words": {
+      "character": 17
+     }
     }
    ]
   },
@@ -97,7 +130,10 @@
     {
      "category": "compensator",
      "seconds": 22,
-     "archetype": 9
+     "archetype": 9,
+     "words": {
+      "narrator": 62
+     }
     }
    ]
   },
@@ -108,22 +144,34 @@
     {
      "category": "map_pure",
      "seconds": 24,
-     "archetype": 4
+     "archetype": 4,
+     "words": {
+      "narrator": 68
+     }
     },
     {
      "category": "scene",
      "seconds": 40,
-     "who": "hero"
+     "who": "hero",
+     "words": {
+      "character": 113
+     }
     },
     {
      "category": "compensator",
      "seconds": 30,
-     "archetype": 6
+     "archetype": 6,
+     "words": {
+      "narrator": 85
+     }
     },
     {
      "category": "scene",
      "seconds": 10,
-     "who": "hero"
+     "who": "hero",
+     "words": {
+      "character": 28
+     }
     }
    ]
   },
@@ -134,17 +182,26 @@
     {
      "category": "compensator",
      "seconds": 22,
-     "archetype": 11
+     "archetype": 11,
+     "words": {
+      "narrator": 62
+     }
     },
     {
      "category": "scene",
      "seconds": 6,
-     "who": "hero"
+     "who": "hero",
+     "words": {
+      "character": 17
+     }
     },
     {
      "category": "compensator",
      "seconds": 21,
-     "archetype": 8
+     "archetype": 8,
+     "words": {
+      "narrator": 60
+     }
     }
    ]
   },
@@ -155,22 +212,34 @@
     {
      "category": "map_pure",
      "seconds": 33,
-     "archetype": 3
+     "archetype": 3,
+     "words": {
+      "narrator": 94
+     }
     },
     {
      "category": "scene",
      "seconds": 40,
-     "who": "hero"
+     "who": "hero",
+     "words": {
+      "character": 113
+     }
     },
     {
      "category": "compensator",
      "seconds": 24,
-     "archetype": 6
+     "archetype": 6,
+     "words": {
+      "narrator": 68
+     }
     },
     {
      "category": "scene",
      "seconds": 6,
-     "who": "hero"
+     "who": "hero",
+     "words": {
+      "character": 17
+     }
     }
    ]
   },
@@ -181,17 +250,26 @@
     {
      "category": "compensator",
      "seconds": 24,
-     "archetype": 5
+     "archetype": 5,
+     "words": {
+      "narrator": 68
+     }
     },
     {
      "category": "scene",
      "seconds": 6,
-     "who": "hero"
+     "who": "hero",
+     "words": {
+      "character": 17
+     }
     },
     {
      "category": "compensator",
      "seconds": 24,
-     "archetype": 10
+     "archetype": 10,
+     "words": {
+      "narrator": 68
+     }
     }
    ]
   },
@@ -202,27 +280,42 @@
     {
      "category": "map_pure",
      "seconds": 30,
-     "archetype": 2
+     "archetype": 2,
+     "words": {
+      "narrator": 85
+     }
     },
     {
      "category": "scene",
      "seconds": 45,
-     "who": "hero"
+     "who": "hero",
+     "words": {
+      "character": 128
+     }
     },
     {
      "category": "compensator",
      "seconds": 30,
-     "archetype": 7
+     "archetype": 7,
+     "words": {
+      "narrator": 85
+     }
     },
     {
      "category": "scene",
      "seconds": 8,
-     "who": "hero"
+     "who": "hero",
+     "words": {
+      "character": 23
+     }
     },
     {
      "category": "compensator",
      "seconds": 35,
-     "archetype": 11
+     "archetype": 11,
+     "words": {
+      "narrator": 99
+     }
     }
    ]
   },
@@ -233,11 +326,17 @@
     {
      "category": "scene",
      "seconds": 30,
-     "who": "hero"
+     "who": "hero",
+     "words": {
+      "character": 85
+     }
     },
     {
      "category": "hold",
-     "seconds": 5
+     "seconds": 5,
+     "words": {
+      "narrator": 14
+     }
     }
    ]
   },
@@ -248,17 +347,26 @@
     {
      "category": "map_pure",
      "seconds": 20,
-     "archetype": 4
+     "archetype": 4,
+     "words": {
+      "narrator": 57
+     }
     },
     {
      "category": "scene",
      "seconds": 6,
-     "who": "hero"
+     "who": "hero",
+     "words": {
+      "character": 17
+     }
     },
     {
      "category": "compensator",
      "seconds": 14,
-     "archetype": 10
+     "archetype": 10,
+     "words": {
+      "narrator": 40
+     }
     }
    ]
   },
@@ -269,22 +377,34 @@
     {
      "category": "compensator",
      "seconds": 15,
-     "archetype": 6
+     "archetype": 6,
+     "words": {
+      "narrator": 42
+     }
     },
     {
      "category": "scene",
      "seconds": 40,
-     "who": "hero"
+     "who": "hero",
+     "words": {
+      "character": 113
+     }
     },
     {
      "category": "compensator",
      "seconds": 36,
-     "archetype": 8
+     "archetype": 8,
+     "words": {
+      "narrator": 102
+     }
     },
     {
      "category": "scene",
      "seconds": 10,
-     "who": "hero"
+     "who": "hero",
+     "words": {
+      "character": 28
+     }
     }
    ]
   },
@@ -295,17 +415,26 @@
     {
      "category": "compensator",
      "seconds": 27,
-     "archetype": 12
+     "archetype": 12,
+     "words": {
+      "narrator": 76
+     }
     },
     {
      "category": "scene",
      "seconds": 6,
-     "who": "hero"
+     "who": "hero",
+     "words": {
+      "character": 17
+     }
     },
     {
      "category": "compensator",
      "seconds": 14,
-     "archetype": 5
+     "archetype": 5,
+     "words": {
+      "narrator": 40
+     }
     }
    ]
   },
@@ -316,7 +445,10 @@
     {
      "category": "scene",
      "seconds": 12,
-     "who": "hero"
+     "who": "hero",
+     "words": {
+      "character": 34
+     }
     }
    ]
   },
@@ -327,7 +459,10 @@
     {
      "category": "compensator",
      "seconds": 14,
-     "archetype": 8
+     "archetype": 8,
+     "words": {
+      "narrator": 40
+     }
     }
    ]
   }

@@ -1,0 +1,212 @@
+{
+  "schema": "p14_extra_jobs/1",
+  "code": {
+    "url": "https://github.com/Lightricks/LTX-2",
+    "sha": "e98f6d927d83c92ef2be6aec76c8440b19306e39"
+  },
+  "jobs": [
+    {
+      "id": "X1.S03-02.ltx25.i2v.s42",
+      "question": "J1: does plain LTX-2.5 image-to-video from the duel's Qwen first frame (no layout video) hold the look and the two heroes?",
+      "recipe": "ltx_i2v/1",
+      "pipeline": "distilled",
+      "shot_id": "S03-02",
+      "clip_id": "S03-02",
+      "base": "ltx25",
+      "variant": "i2v",
+      "model": {
+        "key": "video_ltx",
+        "id": "Lightricks/LTX-2.5",
+        "revision": "49b093a39c19169a8a81721dcc541e07e945232f",
+        "sha256": "31eb3cad89b9e54e99dd3baf286f70825ac4f6c660a70d9184d895be76d7bff4"
+      },
+      "text_encoder": null,
+      "lora": null,
+      "frames": 121,
+      "fps": 24,
+      "width": 1920,
+      "height": 1088,
+      "seed": 42,
+      "first_frame": {
+        "path": "route_test_2026-11/step3/first_frames/S03-02.png",
+        "sha256": null,
+        "pose": "start"
+      },
+      "conditioning": [],
+      "attention_mask": null,
+      "chain_from": null,
+      "prompt": "Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The broad commander circles with the sword raised, then swings the broadsword down in a wide arc, and holds the sword low after the swing. His teeth are bared shows on the face. The young scout ducks under the blade and steps back. Nobody speaks. Boots scrape on stone.",
+      "stage2_ic": false,
+      "output": "route_test_2026-11/step3/ltx/X1.S03-02.ltx25.i2v.s42.mp4"
+    },
+    {
+      "id": "X2.S02-02.c1.ltx25.line_inv.s42",
+      "shot_id": "S02-02",
+      "clip_id": "S02-02.c1",
+      "route": "J4",
+      "recipe": "ltx_restyle/1",
+      "base": "ltx25",
+      "variant": "line_inv",
+      "model": {
+        "key": "video_ltx",
+        "id": "Lightricks/LTX-2.5",
+        "revision": "49b093a39c19169a8a81721dcc541e07e945232f",
+        "sha256": "31eb3cad89b9e54e99dd3baf286f70825ac4f6c660a70d9184d895be76d7bff4"
+      },
+      "text_encoder": null,
+      "lora": {
+        "key": "video_ltx_layout_lora",
+        "id": "Lightricks/LTX-2.5-22b-IC-LoRA-Layout-To-Render",
+        "revision": "bd765d5592f0ae78457162852a353b6a375cb00f",
+        "file": "ltx-2.5-22b-ic-lora-layout-to-render-1.0.safetensors",
+        "sha256": "77567d81d71b4df558d622dffc0ec218ba1e22c69b2932f6fa12f34772697eae",
+        "strength": 1.0
+      },
+      "frames": 145,
+      "fps": 24,
+      "width": 1920,
+      "height": 1088,
+      "seed": 42,
+      "first_frame": {
+        "path": "route_test_2026-11/step3/first_frames/S02-02.c1.png",
+        "sha256": null,
+        "pose": "start",
+        "prompt": "xworld style, two armies of lanky soldiers face each other across a shallow river, spears lowered, banners snapping, spray rising, low golden sun through grey clouds"
+      },
+      "conditioning": [
+        {
+          "pass": "line",
+          "path": "route_test_2026-11/layouts/battle/line/battle_c1_line.mp4",
+          "sha256": null,
+          "derive": "invert",
+          "strength": 1.0
+        }
+      ],
+      "attention_mask": null,
+      "chain_from": null,
+      "prompt": "Restyle the layout video as hand-drawn 2D ink cartoon animation: bold black ink outlines, chalky painterly texture, muted earthy colours with vivid glowing accents. Keep every shape, crowd position and the camera path of the layout exactly; add no new objects.",
+      "stage2_ic": true,
+      "output": "route_test_2026-11/step3/ltx/X2.S02-02.c1.ltx25.line_inv.s42.mp4",
+      "question": "does the Layout-To-Render LoRA take the inverted line pass as its layout video (instead of the colour pass), and how does it compare with E1?"
+    },
+    {
+      "id": "X5.S02-02.c1.ltx25.colour2k.s42",
+      "shot_id": "S02-02",
+      "clip_id": "S02-02.c1",
+      "route": "J4",
+      "recipe": "ltx_restyle/1",
+      "base": "ltx25",
+      "variant": "colour_2k",
+      "model": {
+        "key": "video_ltx",
+        "id": "Lightricks/LTX-2.5",
+        "revision": "49b093a39c19169a8a81721dcc541e07e945232f",
+        "sha256": "31eb3cad89b9e54e99dd3baf286f70825ac4f6c660a70d9184d895be76d7bff4"
+      },
+      "text_encoder": null,
+      "lora": {
+        "key": "video_ltx_layout_lora",
+        "id": "Lightricks/LTX-2.5-22b-IC-LoRA-Layout-To-Render",
+        "revision": "bd765d5592f0ae78457162852a353b6a375cb00f",
+        "file": "ltx-2.5-22b-ic-lora-layout-to-render-1.0.safetensors",
+        "sha256": "77567d81d71b4df558d622dffc0ec218ba1e22c69b2932f6fa12f34772697eae",
+        "strength": 1.0
+      },
+      "frames": 145,
+      "fps": 24,
+      "width": 2560,
+      "height": 1472,
+      "seed": 42,
+      "first_frame": {
+        "path": "route_test_2026-11/step3/first_frames/S02-02.c1.png",
+        "sha256": null,
+        "pose": "start",
+        "prompt": "xworld style, two armies of lanky soldiers face each other across a shallow river, spears lowered, banners snapping, spray rising, low golden sun through grey clouds"
+      },
+      "conditioning": [
+        {
+          "pass": "colour",
+          "path": "route_test_2026-11/layouts/battle/colour/battle_c1_colour.mp4",
+          "sha256": null,
+          "derive": "scale_2k",
+          "strength": 1.0
+        }
+      ],
+      "attention_mask": null,
+      "chain_from": null,
+      "prompt": "Restyle the layout video as hand-drawn 2D ink cartoon animation: bold black ink outlines, chalky painterly texture, muted earthy colours with vivid glowing accents. Keep every shape, crowd position and the camera path of the layout exactly; add no new objects.",
+      "stage2_ic": true,
+      "output": "route_test_2026-11/step3/ltx/X5.S02-02.c1.ltx25.colour2k.s42.mp4",
+      "size_note": "2560x1440 is not on the two-stage distilled grid (height and width divisible by 64: 1440/64 = 22.5); 2560x1472 is the nearest LTX-legal size that covers 16:9 2K, cut to 2560x1440 later (16 rows top and bottom)",
+      "question": "what does one LTX-2.5 clip cost in seconds at native 2K against 1920x1088 (E1, same seed)?"
+    },
+    {
+      "id": "X3.S01-02.ltx25.i2v.s42",
+      "question": "V3 dialogue as LTX-2.5 audio+video from the J5 first frame with its native voice, against the J5 2.5D render of the same shot (stage G)",
+      "recipe": "ltx_a2v_native/1 (route_alt LTX_A2V of V3)",
+      "pipeline": "distilled",
+      "shot_id": "S01-02",
+      "clip_id": "S01-02",
+      "base": "ltx25",
+      "variant": "i2v",
+      "model": {
+        "key": "video_ltx",
+        "id": "Lightricks/LTX-2.5",
+        "revision": "49b093a39c19169a8a81721dcc541e07e945232f",
+        "sha256": "31eb3cad89b9e54e99dd3baf286f70825ac4f6c660a70d9184d895be76d7bff4"
+      },
+      "text_encoder": null,
+      "lora": null,
+      "frames": 121,
+      "fps": 24,
+      "width": 1920,
+      "height": 1088,
+      "seed": 42,
+      "first_frame": {
+        "path": "route_test_2026-11/step3/first_frames/S01-02.j5.png",
+        "sha256": null,
+        "pose": "start"
+      },
+      "conditioning": [],
+      "attention_mask": null,
+      "chain_from": null,
+      "prompt": "Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing. Static shot. In a tent camp at dusk by warm firelight, the old elder with a long white beard, a blue robe and a wooden staff leans on his staff and says slowly and with certainty: \"He will cross at dawn.\" The broad commander with a grey beard and a red cloak stands at the map table with his fists on it and listens. A slow, dry old man's voice. A quiet fire crackles.",
+      "stage2_ic": false,
+      "output": "route_test_2026-11/step3/ltx/X3.S01-02.ltx25.i2v.s42.mp4"
+    },
+    {
+      "id": "X6.S04-01.ltx25.i2v.s42",
+      "question": "STILL_3D: one Qwen still of the travel shot with a free camera move (FFmpeg, CPU) against an LTX-2.5 image-to-video of the same still",
+      "recipe": "ltx_i2v/1",
+      "pipeline": "distilled",
+      "shot_id": "S04-01",
+      "clip_id": "S04-01",
+      "base": "ltx25",
+      "variant": "i2v",
+      "model": {
+        "key": "video_ltx",
+        "id": "Lightricks/LTX-2.5",
+        "revision": "49b093a39c19169a8a81721dcc541e07e945232f",
+        "sha256": "31eb3cad89b9e54e99dd3baf286f70825ac4f6c660a70d9184d895be76d7bff4"
+      },
+      "text_encoder": null,
+      "lora": null,
+      "frames": 121,
+      "fps": 24,
+      "width": 1920,
+      "height": 1088,
+      "seed": 42,
+      "first_frame": {
+        "path": "route_test_2026-11/step3/first_frames/S04-01.png",
+        "sha256": null,
+        "pose": "start"
+      },
+      "conditioning": [],
+      "attention_mask": null,
+      "chain_from": null,
+      "prompt": "Hand-drawn 2D cartoon animation with bold black ink outlines, chalky painterly texture, muted earthy colours. A long column of lanky soldiers trudges forward along a muddy road in heavy rain, heads bowed, banners drooping, rain streaking the air, the camera pushing slowly in. Nobody speaks. Rain hiss and squelching boots.",
+      "stage2_ic": false,
+      "output": "route_test_2026-11/step3/ltx/X6.S04-01.ltx25.i2v.s42.mp4"
+    }
+  ]
+}

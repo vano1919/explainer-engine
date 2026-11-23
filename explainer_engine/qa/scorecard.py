@@ -1,3 +1,4 @@
+
 """The seven-point test every video passes (PRODUCTION_RULES gate 9, creator 2026-10-16). numpy + stdlib.
 
 1 narration tone and sync  2 sound effects and sync  3 pictures fit the topic  4 pictures fit the topic's clichés
@@ -11,6 +12,8 @@ cause, fix the general rule (not only this video), run again.
 The folder holds ``production_script.json``, ``words.json``, ``timed.json`` (else the script is timed on the words) and, after
 the render, ``assemble_report.json`` (the mix's measured loudness and verdicts, BP-50 / BP-51) and the pictures. Check 6 then
 counts the D-43 editing rules (``production/validate.check_timed``), not the legacy shot rules.
+A Blender episode's ``clip.qa_report.json`` (``blender/validate``, the render validator of roadmap section 13) adds its
+failed rows to check 5: a FAIL row fails it, a REVIEW row makes it REVIEW.
 """
 
 from __future__ import annotations
@@ -91,8 +94,10 @@ def masking(sound_events: list[dict], words: list[dict]) -> list[dict]:
             and any(w["s"] < e["at"] + e.get("dur", 0.0) and e["at"] < w["e"] for w in words)]
 
 
-def score(shots, words, text, look, *, pic_stats=None, judge=None, audio=None, sound_events=None, timed_findings=None) -> list[dict]:
+def score(shots, words, text, look, *, pic_stats=None, judge=None, audio=None, sound_events=None, timed_findings=None,
+          render_qa=None) -> list[dict]:
     """shots/words as in shot_rules; text = plain narration; pic_stats {picture: stats}; judge {picture: verdict};
+    render_qa = the Blender render validator's ``qa_report/1`` (``blender/validate``, BP-174 / BP-173), read into check 5;
     audio = ``assemble_report.json``'s ``audio`` (lufs, true_peak and their verdicts, voice_lufs / ldr_lu / ldr_verdict,
     voice_lu / music_lu / bed_lu when the stems were measured, the older *_rms_db); sound_events [{id, at}] on the video clock;
     timed_findings = ``validate.check_timed`` of a D-43 episode (check 6 counts them instead of the legacy shot rules)."""
@@ -146,6 +151,9 @@ def score(shots, words, text, look, *, pic_stats=None, judge=None, audio=None, s
                          "one engine, one look thread, one grade; side-by-side sheet: the creator looks"], human=True))
     else:
         rows.append(row(5, "pictures fit each other", "REVIEW", ["no picture statistics"]))
+    if render_qa:
+        rows[-1]["status"], ev = render_rows(render_qa, rows[-1]["status"])
+        rows[-1]["evidence"] += ev
 
     ds = [s["end"] - s["start"] for s in shots]
     hard = sum(1 for s in shots if s.get("transition", "cut") == "cut") / max(1, len(shots))
@@ -168,6 +176,27 @@ def score(shots, words, text, look, *, pic_stats=None, judge=None, audio=None, s
           "fun, interesting, easy to follow, makes you stay: the creator watches the whole video once, no pausing"]
     rows.append(row(7, "the whole video: fun, interesting, easy to follow, sticky", "REVIEW", ev, human=True))
     return rows
+
+
+def render_rows(report: dict, st: str) -> tuple[str, list[str]]:
+    """Check 5's rows from the Blender render validator's report: a failed FAIL row (frames, size, fps, black, frozen) fails the
+    check, a failed REVIEW row (flicker, line art, line weight) makes it REVIEW; INFO rows are calibration numbers only."""
+    checks = report.get("checks", [])
+    fails = [c for c in checks if c["severity"] == "FAIL" and not c["passed"]]
+    revs = [c for c in checks if c["severity"] == "REVIEW" and not c["passed"]]
+    ev = [f"render validator ({report.get('stage')}, BP-174 / BP-173): {len(checks)} rows, {len(fails)} FAIL, {len(revs)} REVIEW"]
+    ev += [f"{c['check_id']}: {c['measured']} (threshold {c['threshold']})" for c in fails + revs][:8]
+    return worst([st, "FAIL" if fails else "REVIEW" if revs else "PASS"]), ev
+
+
+def render_report(folder: Path) -> dict | None:
+    """The job's ``clip.qa_report.json`` when the Blender render validator wrote it (its rows cite BP-174 or BP-173); the legacy
+    route's clip report (``training/video_qa``) is not this one."""
+    path = _find(Path(folder), "clip.qa_report.json")
+    doc = _json(path) if path else None
+    if doc and any(c.get("rule") in ("BP-174", "BP-173") for c in doc.get("checks", [])):
+        return doc
+    return None
 
 
 def audio_rows(audio: dict, ev: list[str], st: str) -> tuple[list[str], str]:
@@ -256,7 +285,7 @@ def episode_inputs(folder: Path) -> dict:
     return {"shots": timed["shots"], "words": words_doc["words"], "text": S.narration_text(doc), "look": doc.get("look", {}),
             "pic_stats": pic_stats or None, "judge": judge or None, "audio": audio,
             "sound_events": [{"id": e["sound"], "at": e["start"], "dur": e["end"] - e["start"]} for e in sfx] if sfx else None,
-            "timed_findings": V.check_timed(timed, doc, picture_dirs=pic_dirs)}
+            "timed_findings": V.check_timed(timed, doc, picture_dirs=pic_dirs), "render_qa": render_report(folder)}
 
 
 def run(folder: Path) -> list[dict]:

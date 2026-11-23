@@ -1,0 +1,46 @@
+{
+ "schema": "asset_library/1",
+ "items": [
+  {
+   "id": "plate.tent",
+   "kind": "plate",
+   "file": "assets/plates/tent.png",
+   "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "bytes": 1000,
+   "tags": [
+    "napoleonic"
+   ],
+   "description": "fixture",
+   "bible_version": "1.5",
+   "made_with": {
+    "provider": "third_party",
+    "model": "",
+    "model_version": "",
+    "prompt": "",
+    "params": {},
+    "seed": null,
+    "refs": [],
+    "lora": null,
+    "cost_usd": 0
+   },
+   "licence": {
+    "status": "own_drawn",
+    "note": "drawn for the channel"
+   },
+   "approval": {
+    "status": "approved",
+    "by": "creator",
+    "at": "2026-11-05",
+    "note": ""
+   },
+   "lineage": {
+    "parent": null
+   },
+   "origin": {
+    "episode": "",
+    "created": "2026-11-05",
+    "source": "fixture"
+   }
+  }
+ ]
+}

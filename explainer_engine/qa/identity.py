@@ -1,3 +1,4 @@
+
 """P8 identity and sync QA of a rendered shot (BP-133, CRAFT-ANI-15/16). Free, CPU, REVIEW only (BP-133 is a hypothesis).
 
 - Identity: the cosine between a hero sheet and the frames of a shot, with the CLIP embedder of ``training/embed.py`` (no new

@@ -1,0 +1,52 @@
+{
+ "schema": "gemini_task_config/1",
+ "about": "Settings of the Gemini Task route (GC-20..GC-27, explainer_engine/gemini_task). The one home of the Drive root, the batch defaults and the style pack table (one style anchor per shot type, GC-21). Engineering defaults set by the A2 build (2026-11-12) unless a line names the creator.",
+ "drive_root": "CrossWorld",
+ "drive_root_note": "the project's existing Drive folder (the creator, 2026-11-12 15:25 UTC: the Drive folder already exists); a folder name only, never a link",
+ "batch_size_default": 6,
+ "batch_size_note": "six pictures per answer (the creator, 2026-11-12 15:20 UTC) until the T0 record sets another number (spec section 6)",
+ "max_references": 6,
+ "max_references_note": "attachments of one picture: the tool's limit is not published (spec F10), 6 is ours (GC-02); T0/T1 measure it",
+ "max_attachments_per_message": 10,
+ "max_attachments_note": "files attached to one batch message (the union of its pictures' references): not published and not measured (spec F10); 10 is an engineering default until T0/T1 measure it",
+ "t0_record": "config/gemini_t0_record.json",
+ "main_style": {
+  "id": "main",
+  "file": "assets/style/main_style_5709.png",
+  "drive_name": "main_style_5709.png",
+  "sha256": "db719b00bdfacc0446986598da3b33ee005eeb67bda9260c35ff973bceb8739e",
+  "role": "image 1 of every style anchor, portrait, full body and place (GC-21)"
+ },
+ "style_pack": {
+  "about": "Image 1 of a scene picture is the style anchor of its shot type (GC-21, spec Q4). An anchor is used only when approved (the creator picks after T0, spec section 6): status 'approved' with its sha256 and the creator's message id. 'match' is tried in this order; the first rule that fits the shot wins; a shot may name its own 'shot_type'.",
+  "types": [
+   {"type": "D", "label": "special moment: hands and objects, no face", "candidate": "t0_D2", "drive_name": "style_D.jpg",
+    "file": null, "sha256": null, "status": "candidate", "approved_by": null,
+    "match": {"max_people": 0, "sizes": ["close_up", "extreme_close_up", "medium_close_up"]}},
+   {"type": "C", "label": "action with people, medium-wide", "candidate": "t0_C3", "drive_name": "style_C.jpg",
+    "file": null, "sha256": null, "status": "candidate", "approved_by": null,
+    "match": {"min_people": 1, "shot_roles": ["action"]}},
+   {"type": "F", "label": "night exterior: moon and one torch", "candidate": "t0_F", "drive_name": "style_F.jpg",
+    "file": null, "sha256": null, "status": "candidate", "approved_by": null,
+    "match": {"sizes": ["extreme_wide", "wide", "medium_wide"], "light_words": ["night", "moon", "moonlight", "moonlit"]}},
+   {"type": "A", "label": "wide view: tiny figures, the place carries the frame", "candidate": "v9 P_A",
+    "source": "hf://datasets/vano1919/tmr-artifacts/explainer-engine/reference_round_1/v9/P_A.jpg", "drive_name": "style_A.jpg",
+    "file": null, "sha256": null, "status": "candidate", "approved_by": null,
+    "match": {"sizes": ["extreme_wide", "wide"]}},
+   {"type": "B", "label": "firelit close-up of a face", "candidate": "t0_B2", "drive_name": "style_B.jpg",
+    "file": null, "sha256": null, "status": "candidate", "approved_by": null,
+    "match": {"min_people": 1, "sizes": ["close_up", "extreme_close_up", "medium_close_up"]}},
+   {"type": "G", "label": "a group of three or more, medium-wide at dusk", "candidate": "t0_G", "drive_name": "style_G.jpg",
+    "file": null, "sha256": null, "status": "candidate", "approved_by": null,
+    "match": {"min_people": 3, "sizes": ["medium", "medium_wide"]}},
+   {"type": "E", "label": "people talking or working, medium", "candidate": "t0_E", "drive_name": "style_E.jpg",
+    "file": null, "sha256": null, "status": "candidate", "approved_by": null,
+    "match": {"sizes": ["medium", "medium_wide"]}}
+  ]
+ },
+ "reference_sizes": {
+  "about": "Which of a hero's two references a scene picture attaches (Q7): the portrait always (the face), the full body too when the shot shows bodies",
+  "full_body_sizes": ["medium_wide", "wide", "extreme_wide"],
+  "full_body_types": ["C", "G"]
+ }
+}

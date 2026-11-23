@@ -1,3 +1,4 @@
+
 """The publish checklist (PC-01..PC-09, docs/QA_SPECIFICATION.md; audit 2026-10-19 M6): what the creator types into Studio,
 checked for free before approval #2. Nothing here uploads (invariant 4). stdlib + jsonschema.
 

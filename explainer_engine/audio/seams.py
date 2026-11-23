@@ -1,3 +1,4 @@
+
 """Seams between read chunks (ED-01): the chunks of one read come back at different loudness (Episode 1: -33.5 to -27.9 LUFS,
 a 5.6 dB spread that showed as jumps at the joins, worst in Day 1). Every chunk is brought to the median gated loudness
 before the join and gets a short fade at both edges inside its silence, so a join adds no click and no word moves.

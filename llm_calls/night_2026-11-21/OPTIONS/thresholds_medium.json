@@ -1,0 +1,16 @@
+{
+  "option": "medium",
+  "primary_line_width_pct": 0.5,
+  "secondary_line_width_pct": 0.25,
+  "label_cap_height_pct": 2.5,
+  "label_contrast_ratio": 4.5,
+  "green_hue_min_deg": 80,
+  "green_hue_max_deg": 160,
+  "green_saturation_min_pct": 35,
+  "bridge_onset_tol_frames": 1,
+  "bridge_cap_height_min_pct": 8.0,
+  "bridge_hold_min_s": 1.0,
+  "residual_motion_per_frame_max_pct": 0.05,
+  "residual_displacement_shot_max_pct": 0.2,
+  "visual_meaning": "Balanced, readable diagrams with standard line weights and comfortable label contrast."
+}

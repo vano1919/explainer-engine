@@ -1,3 +1,4 @@
+
 """Free checks of every new-world picture before Claude's look and ვანო's pick (ვანო 2026-10-26 12:30 Tbilisi: "check every
 picture while generating, give it a score, find what is wrong, throw it away and generate it again").
 

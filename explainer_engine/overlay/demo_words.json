@@ -1,0 +1,1214 @@
+[
+ {
+  "no": 1,
+  "text": "Seventy-four thousand years ago, a family sat by a fire, and the sky was about to change.",
+  "seconds": 6.478,
+  "speed": 0.95,
+  "words": [
+   {
+    "word": "seventy",
+    "start_s": 0.0,
+    "end_s": 0.66,
+    "heard": true
+   },
+   {
+    "word": "four",
+    "start_s": 0.66,
+    "end_s": 0.84,
+    "heard": true
+   },
+   {
+    "word": "thousand",
+    "start_s": 0.84,
+    "end_s": 1.32,
+    "heard": true
+   },
+   {
+    "word": "years",
+    "start_s": 1.32,
+    "end_s": 1.68,
+    "heard": true
+   },
+   {
+    "word": "ago",
+    "start_s": 1.68,
+    "end_s": 2.16,
+    "heard": true
+   },
+   {
+    "word": "a",
+    "start_s": 2.76,
+    "end_s": 2.76,
+    "heard": true
+   },
+   {
+    "word": "family",
+    "start_s": 2.76,
+    "end_s": 3.02,
+    "heard": true
+   },
+   {
+    "word": "sat",
+    "start_s": 3.02,
+    "end_s": 3.28,
+    "heard": true
+   },
+   {
+    "word": "by",
+    "start_s": 3.28,
+    "end_s": 3.58,
+    "heard": true
+   },
+   {
+    "word": "a",
+    "start_s": 3.58,
+    "end_s": 3.72,
+    "heard": true
+   },
+   {
+    "word": "fire",
+    "start_s": 3.72,
+    "end_s": 4.02,
+    "heard": true
+   },
+   {
+    "word": "and",
+    "start_s": 4.46,
+    "end_s": 4.6,
+    "heard": true
+   },
+   {
+    "word": "the",
+    "start_s": 4.6,
+    "end_s": 4.78,
+    "heard": true
+   },
+   {
+    "word": "sky",
+    "start_s": 4.78,
+    "end_s": 5.12,
+    "heard": true
+   },
+   {
+    "word": "was",
+    "start_s": 5.12,
+    "end_s": 5.4,
+    "heard": true
+   },
+   {
+    "word": "about",
+    "start_s": 5.4,
+    "end_s": 5.68,
+    "heard": true
+   },
+   {
+    "word": "to",
+    "start_s": 5.68,
+    "end_s": 5.9,
+    "heard": true
+   },
+   {
+    "word": "change",
+    "start_s": 5.9,
+    "end_s": 6.38,
+    "heard": true
+   }
+  ]
+ },
+ {
+  "no": 2,
+  "text": "Far to the east, on the island of Sumatra, a mountain called Toba was waking. Everything within a hundred and fifty miles would be gone by morning.",
+  "seconds": 10.268,
+  "speed": 0.95,
+  "words": [
+   {
+    "word": "far",
+    "start_s": 0.0,
+    "end_s": 0.34,
+    "heard": true
+   },
+   {
+    "word": "to",
+    "start_s": 0.34,
+    "end_s": 0.52,
+    "heard": true
+   },
+   {
+    "word": "the",
+    "start_s": 0.52,
+    "end_s": 0.7,
+    "heard": true
+   },
+   {
+    "word": "east",
+    "start_s": 0.7,
+    "end_s": 1.16,
+    "heard": true
+   },
+   {
+    "word": "on",
+    "start_s": 1.44,
+    "end_s": 1.54,
+    "heard": true
+   },
+   {
+    "word": "the",
+    "start_s": 1.54,
+    "end_s": 1.74,
+    "heard": true
+   },
+   {
+    "word": "island",
+    "start_s": 1.74,
+    "end_s": 2.02,
+    "heard": true
+   },
+   {
+    "word": "of",
+    "start_s": 2.02,
+    "end_s": 2.28,
+    "heard": true
+   },
+   {
+    "word": "sumatra",
+    "start_s": 2.28,
+    "end_s": 2.86,
+    "heard": true
+   },
+   {
+    "word": "a",
+    "start_s": 2.86,
+    "end_s": 3.54,
+    "heard": true
+   },
+   {
+    "word": "mountain",
+    "start_s": 3.54,
+    "end_s": 3.82,
+    "heard": true
+   },
+   {
+    "word": "called",
+    "start_s": 3.82,
+    "end_s": 4.32,
+    "heard": true
+   },
+   {
+    "word": "toba",
+    "start_s": 4.32,
+    "end_s": 4.9,
+    "heard": true
+   },
+   {
+    "word": "was",
+    "start_s": 4.9,
+    "end_s": 5.18,
+    "heard": true
+   },
+   {
+    "word": "waking",
+    "start_s": 5.18,
+    "end_s": 5.7,
+    "heard": true
+   },
+   {
+    "word": "everything",
+    "start_s": 6.48,
+    "end_s": 6.68,
+    "heard": true
+   },
+   {
+    "word": "within",
+    "start_s": 6.68,
+    "end_s": 7.0,
+    "heard": true
+   },
+   {
+    "word": "a",
+    "start_s": 7.0,
+    "end_s": 7.16,
+    "heard": true
+   },
+   {
+    "word": "hundred",
+    "start_s": 7.16,
+    "end_s": 7.38,
+    "heard": true
+   },
+   {
+    "word": "and",
+    "start_s": 7.38,
+    "end_s": 7.76,
+    "heard": true
+   },
+   {
+    "word": "fifty",
+    "start_s": 7.76,
+    "end_s": 8.06,
+    "heard": true
+   },
+   {
+    "word": "miles",
+    "start_s": 8.06,
+    "end_s": 8.48,
+    "heard": true
+   },
+   {
+    "word": "would",
+    "start_s": 8.48,
+    "end_s": 8.96,
+    "heard": true
+   },
+   {
+    "word": "be",
+    "start_s": 8.96,
+    "end_s": 9.26,
+    "heard": true
+   },
+   {
+    "word": "gone",
+    "start_s": 9.26,
+    "end_s": 9.5,
+    "heard": true
+   },
+   {
+    "word": "by",
+    "start_s": 9.5,
+    "end_s": 9.8,
+    "heard": true
+   },
+   {
+    "word": "morning",
+    "start_s": 9.8,
+    "end_s": 10.1,
+    "heard": true
+   }
+  ]
+ },
+ {
+  "no": 3,
+  "text": "They never heard its name. Their home was the Shinfa valley, in what is now Ethiopia.",
+  "seconds": 5.596,
+  "speed": 0.95,
+  "words": [
+   {
+    "word": "they",
+    "start_s": 0.0,
+    "end_s": 0.26,
+    "heard": true
+   },
+   {
+    "word": "never",
+    "start_s": 0.26,
+    "end_s": 0.56,
+    "heard": true
+   },
+   {
+    "word": "heard",
+    "start_s": 0.56,
+    "end_s": 0.76,
+    "heard": true
+   },
+   {
+    "word": "its",
+    "start_s": 0.76,
+    "end_s": 1.02,
+    "heard": true
+   },
+   {
+    "word": "name",
+    "start_s": 1.02,
+    "end_s": 1.52,
+    "heard": true
+   },
+   {
+    "word": "their",
+    "start_s": 1.94,
+    "end_s": 2.02,
+    "heard": true
+   },
+   {
+    "word": "home",
+    "start_s": 2.02,
+    "end_s": 2.36,
+    "heard": true
+   },
+   {
+    "word": "was",
+    "start_s": 2.36,
+    "end_s": 2.6,
+    "heard": true
+   },
+   {
+    "word": "the",
+    "start_s": 2.6,
+    "end_s": 2.8,
+    "heard": true
+   },
+   {
+    "word": "shinfa",
+    "start_s": 2.8,
+    "end_s": 3.14,
+    "heard": true
+   },
+   {
+    "word": "valley",
+    "start_s": 3.14,
+    "end_s": 3.44,
+    "heard": true
+   },
+   {
+    "word": "in",
+    "start_s": 3.9,
+    "end_s": 4.02,
+    "heard": true
+   },
+   {
+    "word": "what",
+    "start_s": 4.02,
+    "end_s": 4.18,
+    "heard": true
+   },
+   {
+    "word": "is",
+    "start_s": 4.18,
+    "end_s": 4.38,
+    "heard": true
+   },
+   {
+    "word": "now",
+    "start_s": 4.38,
+    "end_s": 4.76,
+    "heard": true
+   },
+   {
+    "word": "ethiopia",
+    "start_s": 4.76,
+    "end_s": 5.24,
+    "heard": true
+   }
+  ]
+ },
+ {
+  "no": 4,
+  "text": "How big was it? Mount St. Helens threw out one cubic kilometer of rock. Tambora, the worst in recorded history, a hundred and fifty. Toba: nearly three thousand.",
+  "seconds": 10.832,
+  "speed": 1.056,
+  "words": [
+   {
+    "word": "how",
+    "start_s": 0.0,
+    "end_s": 0.28,
+    "heard": true
+   },
+   {
+    "word": "big",
+    "start_s": 0.28,
+    "end_s": 0.5,
+    "heard": true
+   },
+   {
+    "word": "was",
+    "start_s": 0.5,
+    "end_s": 0.72,
+    "heard": true
+   },
+   {
+    "word": "it",
+    "start_s": 0.72,
+    "end_s": 1.12,
+    "heard": true
+   },
+   {
+    "word": "mount",
+    "start_s": 1.34,
+    "end_s": 1.4,
+    "heard": true
+   },
+   {
+    "word": "st",
+    "start_s": 1.4,
+    "end_s": 1.66,
+    "heard": true
+   },
+   {
+    "word": "helens",
+    "start_s": 1.76,
+    "end_s": 2.04,
+    "heard": true
+   },
+   {
+    "word": "threw",
+    "start_s": 2.04,
+    "end_s": 2.3,
+    "heard": true
+   },
+   {
+    "word": "out",
+    "start_s": 2.3,
+    "end_s": 2.58,
+    "heard": true
+   },
+   {
+    "word": "one",
+    "start_s": 2.58,
+    "end_s": 2.9,
+    "heard": true
+   },
+   {
+    "word": "cubic",
+    "start_s": 2.9,
+    "end_s": 3.2,
+    "heard": true
+   },
+   {
+    "word": "kilometer",
+    "start_s": 3.2,
+    "end_s": 3.88,
+    "heard": true
+   },
+   {
+    "word": "of",
+    "start_s": 3.88,
+    "end_s": 4.12,
+    "heard": true
+   },
+   {
+    "word": "rock",
+    "start_s": 4.12,
+    "end_s": 4.46,
+    "heard": true
+   },
+   {
+    "word": "tambora",
+    "start_s": 5.06,
+    "end_s": 5.52,
+    "heard": true
+   },
+   {
+    "word": "the",
+    "start_s": 5.68,
+    "end_s": 5.8,
+    "heard": true
+   },
+   {
+    "word": "worst",
+    "start_s": 5.8,
+    "end_s": 6.02,
+    "heard": true
+   },
+   {
+    "word": "in",
+    "start_s": 6.02,
+    "end_s": 6.2,
+    "heard": true
+   },
+   {
+    "word": "recorded",
+    "start_s": 6.2,
+    "end_s": 6.6,
+    "heard": true
+   },
+   {
+    "word": "history",
+    "start_s": 6.6,
+    "end_s": 7.28,
+    "heard": true
+   },
+   {
+    "word": "a",
+    "start_s": 7.44,
+    "end_s": 7.48,
+    "heard": true
+   },
+   {
+    "word": "hundred",
+    "start_s": 7.48,
+    "end_s": 7.7,
+    "heard": true
+   },
+   {
+    "word": "and",
+    "start_s": 7.7,
+    "end_s": 8.1,
+    "heard": true
+   },
+   {
+    "word": "fifty",
+    "start_s": 8.1,
+    "end_s": 8.52,
+    "heard": true
+   },
+   {
+    "word": "toba",
+    "start_s": 8.94,
+    "end_s": 9.48,
+    "heard": true
+   },
+   {
+    "word": "nearly",
+    "start_s": 9.6,
+    "end_s": 9.9,
+    "heard": true
+   },
+   {
+    "word": "three",
+    "start_s": 9.9,
+    "end_s": 10.34,
+    "heard": true
+   },
+   {
+    "word": "thousand",
+    "start_s": 10.34,
+    "end_s": 10.6,
+    "heard": true
+   }
+  ]
+ },
+ {
+  "no": 5,
+  "text": "The fire still burned. The children still slept.",
+  "seconds": 3.323,
+  "speed": 0.95,
+  "words": [
+   {
+    "word": "the",
+    "start_s": 0.0,
+    "end_s": 0.3,
+    "heard": true
+   },
+   {
+    "word": "fire",
+    "start_s": 0.3,
+    "end_s": 0.54,
+    "heard": true
+   },
+   {
+    "word": "still",
+    "start_s": 0.54,
+    "end_s": 1.08,
+    "heard": true
+   },
+   {
+    "word": "burned",
+    "start_s": 1.08,
+    "end_s": 1.5,
+    "heard": true
+   },
+   {
+    "word": "the",
+    "start_s": 1.98,
+    "end_s": 2.08,
+    "heard": true
+   },
+   {
+    "word": "children",
+    "start_s": 2.08,
+    "end_s": 2.32,
+    "heard": true
+   },
+   {
+    "word": "still",
+    "start_s": 2.32,
+    "end_s": 2.86,
+    "heard": true
+   },
+   {
+    "word": "slept",
+    "start_s": 2.86,
+    "end_s": 3.08,
+    "heard": true
+   }
+  ]
+ },
+ {
+  "no": 6,
+  "text": "But the ash was already traveling, four thousand miles of sky between the mountain and this valley.",
+  "seconds": 6.474,
+  "speed": 0.95,
+  "words": [
+   {
+    "word": "but",
+    "start_s": 0.0,
+    "end_s": 0.2,
+    "heard": true
+   },
+   {
+    "word": "the",
+    "start_s": 0.2,
+    "end_s": 0.42,
+    "heard": true
+   },
+   {
+    "word": "ash",
+    "start_s": 0.42,
+    "end_s": 0.72,
+    "heard": true
+   },
+   {
+    "word": "was",
+    "start_s": 0.72,
+    "end_s": 1.12,
+    "heard": true
+   },
+   {
+    "word": "already",
+    "start_s": 1.12,
+    "end_s": 1.46,
+    "heard": true
+   },
+   {
+    "word": "traveling",
+    "start_s": 1.46,
+    "end_s": 1.96,
+    "heard": true
+   },
+   {
+    "word": "four",
+    "start_s": 2.56,
+    "end_s": 2.82,
+    "heard": true
+   },
+   {
+    "word": "thousand",
+    "start_s": 2.82,
+    "end_s": 3.2,
+    "heard": true
+   },
+   {
+    "word": "miles",
+    "start_s": 3.2,
+    "end_s": 3.52,
+    "heard": true
+   },
+   {
+    "word": "of",
+    "start_s": 3.52,
+    "end_s": 3.84,
+    "heard": true
+   },
+   {
+    "word": "sky",
+    "start_s": 3.84,
+    "end_s": 4.16,
+    "heard": true
+   },
+   {
+    "word": "between",
+    "start_s": 4.16,
+    "end_s": 4.58,
+    "heard": true
+   },
+   {
+    "word": "the",
+    "start_s": 4.58,
+    "end_s": 4.82,
+    "heard": true
+   },
+   {
+    "word": "mountain",
+    "start_s": 4.82,
+    "end_s": 5.12,
+    "heard": true
+   },
+   {
+    "word": "and",
+    "start_s": 5.12,
+    "end_s": 5.78,
+    "heard": true
+   },
+   {
+    "word": "this",
+    "start_s": 5.78,
+    "end_s": 6.04,
+    "heard": true
+   },
+   {
+    "word": "valley",
+    "start_s": 6.04,
+    "end_s": 6.3,
+    "heard": true
+   }
+  ]
+ },
+ {
+  "no": 7,
+  "text": "First it fell on India, burying the tools of the people at Jwalapuram under a gray blanket. Then the cloud kept going west.",
+  "seconds": 9.03,
+  "speed": 0.95,
+  "words": [
+   {
+    "word": "first",
+    "start_s": 0.0,
+    "end_s": 0.46,
+    "heard": true
+   },
+   {
+    "word": "it",
+    "start_s": 0.46,
+    "end_s": 0.7,
+    "heard": true
+   },
+   {
+    "word": "fell",
+    "start_s": 0.7,
+    "end_s": 0.92,
+    "heard": true
+   },
+   {
+    "word": "on",
+    "start_s": 0.92,
+    "end_s": 1.22,
+    "heard": true
+   },
+   {
+    "word": "india",
+    "start_s": 1.22,
+    "end_s": 1.76,
+    "heard": true
+   },
+   {
+    "word": "burying",
+    "start_s": 2.16,
+    "end_s": 2.26,
+    "heard": true
+   },
+   {
+    "word": "the",
+    "start_s": 2.26,
+    "end_s": 2.64,
+    "heard": true
+   },
+   {
+    "word": "tools",
+    "start_s": 2.64,
+    "end_s": 2.9,
+    "heard": true
+   },
+   {
+    "word": "of",
+    "start_s": 2.9,
+    "end_s": 3.14,
+    "heard": true
+   },
+   {
+    "word": "the",
+    "start_s": 3.14,
+    "end_s": 3.3,
+    "heard": true
+   },
+   {
+    "word": "people",
+    "start_s": 3.3,
+    "end_s": 3.6,
+    "heard": true
+   },
+   {
+    "word": "at",
+    "start_s": 3.6,
+    "end_s": 3.9,
+    "heard": true
+   },
+   {
+    "word": "jwalapuram",
+    "start_s": 3.9,
+    "end_s": 5.06,
+    "heard": true
+   },
+   {
+    "word": "under",
+    "start_s": 5.06,
+    "end_s": 5.34,
+    "heard": true
+   },
+   {
+    "word": "a",
+    "start_s": 5.34,
+    "end_s": 5.68,
+    "heard": true
+   },
+   {
+    "word": "gray",
+    "start_s": 5.68,
+    "end_s": 5.86,
+    "heard": true
+   },
+   {
+    "word": "blanket",
+    "start_s": 5.86,
+    "end_s": 6.3,
+    "heard": true
+   },
+   {
+    "word": "then",
+    "start_s": 6.84,
+    "end_s": 7.1,
+    "heard": true
+   },
+   {
+    "word": "the",
+    "start_s": 7.1,
+    "end_s": 7.38,
+    "heard": true
+   },
+   {
+    "word": "cloud",
+    "start_s": 7.38,
+    "end_s": 7.68,
+    "heard": true
+   },
+   {
+    "word": "kept",
+    "start_s": 7.68,
+    "end_s": 8.08,
+    "heard": true
+   },
+   {
+    "word": "going",
+    "start_s": 8.08,
+    "end_s": 8.48,
+    "heard": true
+   },
+   {
+    "word": "west",
+    "start_s": 8.48,
+    "end_s": 8.92,
+    "heard": true
+   }
+  ]
+ },
+ {
+  "no": 8,
+  "text": "Morning came late.",
+  "seconds": 1.463,
+  "speed": 0.95,
+  "words": [
+   {
+    "word": "morning",
+    "start_s": 0.0,
+    "end_s": 0.46,
+    "heard": true
+   },
+   {
+    "word": "came",
+    "start_s": 0.46,
+    "end_s": 0.96,
+    "heard": true
+   },
+   {
+    "word": "late",
+    "start_s": 0.96,
+    "end_s": 1.28,
+    "heard": true
+   }
+  ]
+ },
+ {
+  "no": 9,
+  "text": "For six years, some scientists think, the summers stayed cold.",
+  "seconds": 4.145,
+  "speed": 0.95,
+  "words": [
+   {
+    "word": "for",
+    "start_s": 0.0,
+    "end_s": 0.26,
+    "heard": true
+   },
+   {
+    "word": "six",
+    "start_s": 0.26,
+    "end_s": 0.56,
+    "heard": true
+   },
+   {
+    "word": "years",
+    "start_s": 0.56,
+    "end_s": 1.08,
+    "heard": true
+   },
+   {
+    "word": "some",
+    "start_s": 1.24,
+    "end_s": 1.44,
+    "heard": true
+   },
+   {
+    "word": "scientists",
+    "start_s": 1.44,
+    "end_s": 1.86,
+    "heard": true
+   },
+   {
+    "word": "think",
+    "start_s": 1.86,
+    "end_s": 2.46,
+    "heard": true
+   },
+   {
+    "word": "the",
+    "start_s": 2.82,
+    "end_s": 2.86,
+    "heard": true
+   },
+   {
+    "word": "summers",
+    "start_s": 2.86,
+    "end_s": 3.2,
+    "heard": true
+   },
+   {
+    "word": "stayed",
+    "start_s": 3.2,
+    "end_s": 3.6,
+    "heard": true
+   },
+   {
+    "word": "cold",
+    "start_s": 3.6,
+    "end_s": 4.02,
+    "heard": true
+   }
+  ]
+ },
+ {
+  "no": 10,
+  "text": "The warmth dropped, year after year, and only slowly climbed back.",
+  "seconds": 4.411,
+  "speed": 0.95,
+  "words": [
+   {
+    "word": "the",
+    "start_s": 0.0,
+    "end_s": 0.32,
+    "heard": true
+   },
+   {
+    "word": "warmth",
+    "start_s": 0.32,
+    "end_s": 0.64,
+    "heard": true
+   },
+   {
+    "word": "dropped",
+    "start_s": 0.64,
+    "end_s": 1.08,
+    "heard": true
+   },
+   {
+    "word": "year",
+    "start_s": 1.4,
+    "end_s": 1.62,
+    "heard": true
+   },
+   {
+    "word": "after",
+    "start_s": 1.62,
+    "end_s": 1.92,
+    "heard": true
+   },
+   {
+    "word": "year",
+    "start_s": 1.92,
+    "end_s": 2.34,
+    "heard": true
+   },
+   {
+    "word": "and",
+    "start_s": 2.6,
+    "end_s": 2.84,
+    "heard": true
+   },
+   {
+    "word": "only",
+    "start_s": 2.84,
+    "end_s": 3.14,
+    "heard": true
+   },
+   {
+    "word": "slowly",
+    "start_s": 3.14,
+    "end_s": 3.62,
+    "heard": true
+   },
+   {
+    "word": "climbed",
+    "start_s": 3.62,
+    "end_s": 3.92,
+    "heard": true
+   },
+   {
+    "word": "back",
+    "start_s": 3.92,
+    "end_s": 4.38,
+    "heard": true
+   }
+  ]
+ },
+ {
+  "no": 11,
+  "text": "Yet here, nobody vanished. They changed what they ate: fewer antelope, more fish.",
+  "seconds": 5.337,
+  "speed": 0.95,
+  "words": [
+   {
+    "word": "yet",
+    "start_s": 0.0,
+    "end_s": 0.34,
+    "heard": true
+   },
+   {
+    "word": "here",
+    "start_s": 0.34,
+    "end_s": 0.7,
+    "heard": true
+   },
+   {
+    "word": "nobody",
+    "start_s": 0.72,
+    "end_s": 0.98,
+    "heard": true
+   },
+   {
+    "word": "vanished",
+    "start_s": 0.98,
+    "end_s": 1.54,
+    "heard": true
+   },
+   {
+    "word": "they",
+    "start_s": 2.0,
+    "end_s": 2.22,
+    "heard": true
+   },
+   {
+    "word": "changed",
+    "start_s": 2.22,
+    "end_s": 2.56,
+    "heard": true
+   },
+   {
+    "word": "what",
+    "start_s": 2.56,
+    "end_s": 2.82,
+    "heard": true
+   },
+   {
+    "word": "they",
+    "start_s": 2.82,
+    "end_s": 3.02,
+    "heard": true
+   },
+   {
+    "word": "ate",
+    "start_s": 3.02,
+    "end_s": 3.58,
+    "heard": true
+   },
+   {
+    "word": "fewer",
+    "start_s": 3.72,
+    "end_s": 4.02,
+    "heard": true
+   },
+   {
+    "word": "antelope",
+    "start_s": 4.02,
+    "end_s": 4.62,
+    "heard": true
+   },
+   {
+    "word": "more",
+    "start_s": 4.64,
+    "end_s": 4.88,
+    "heard": true
+   },
+   {
+    "word": "fish",
+    "start_s": 4.88,
+    "end_s": 5.2,
+    "heard": true
+   }
+  ]
+ },
+ {
+  "no": 12,
+  "text": "Seventy-four thousand years later, eight billion of us carry their story.",
+  "seconds": 4.825,
+  "speed": 0.95,
+  "words": [
+   {
+    "word": "seventy",
+    "start_s": 0.0,
+    "end_s": 0.64,
+    "heard": true
+   },
+   {
+    "word": "four",
+    "start_s": 0.64,
+    "end_s": 0.86,
+    "heard": true
+   },
+   {
+    "word": "thousand",
+    "start_s": 0.86,
+    "end_s": 1.3,
+    "heard": true
+   },
+   {
+    "word": "years",
+    "start_s": 1.3,
+    "end_s": 1.68,
+    "heard": true
+   },
+   {
+    "word": "later",
+    "start_s": 1.68,
+    "end_s": 2.14,
+    "heard": true
+   },
+   {
+    "word": "eight",
+    "start_s": 2.64,
+    "end_s": 2.76,
+    "heard": true
+   },
+   {
+    "word": "billion",
+    "start_s": 2.76,
+    "end_s": 3.06,
+    "heard": true
+   },
+   {
+    "word": "of",
+    "start_s": 3.06,
+    "end_s": 3.26,
+    "heard": true
+   },
+   {
+    "word": "us",
+    "start_s": 3.26,
+    "end_s": 3.72,
+    "heard": true
+   },
+   {
+    "word": "carry",
+    "start_s": 3.72,
+    "end_s": 4.0,
+    "heard": true
+   },
+   {
+    "word": "their",
+    "start_s": 4.0,
+    "end_s": 4.34,
+    "heard": true
+   },
+   {
+    "word": "story",
+    "start_s": 4.34,
+    "end_s": 4.7,
+    "heard": true
+   }
+  ]
+ }
+]

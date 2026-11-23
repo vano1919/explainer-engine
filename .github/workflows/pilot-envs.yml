@@ -1,0 +1,154 @@
+name: Pilot environments
+
+# The pilot's three new environments (the creator, 2026-11-06 17:15 UTC, card 17:17; blender/pilot_stills.py ENV_LAYOUTS): the castle
+# courtyard with the commander and the scout crossing it, a column marching on a dirt road, a night camp at a forest edge. One 2560x1440
+# frame each from world_layouts.json (layouts pilot_courtyard / pilot_march / pilot_camp, every shot holds only its in_shot list), then
+# one job merges them into the vault's pilot_stills.json (``pilot_stills extend``: the room and the battle are not re-rendered) and cuts
+# a contact sheet of the stills that start a clip. Free: no pod, no paid call (D-114). The HF upload is a separate, recorded step.
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - "icw/20-pilot-envs"
+    paths:
+      - "explainer_engine/blender/pilot_stills.py"
+      - "explainer_engine/blender/world_layouts.json"
+      - "explainer_engine/blender/world_kits.py"
+      - "explainer_engine/blender/light_presets.json"
+      - ".github/workflows/pilot-envs.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pilot-envs-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  stills:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {layout: pilot_courtyard, look: "v01_reference_soft3d"}
+          - {layout: pilot_march, look: "v01_reference_soft3d"}
+          - {layout: pilot_camp, look: "q1_c2_native_skin@night_camp"}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Install the validator, Pillow and Blender's runtime libraries (Mesa EGL, no GPU)
+        run: |
+          python -m pip install "jsonschema==4.26.0" "pillow==12.3.0" "numpy>=2.0"
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends libegl1 libegl-mesa0 libgl1 libgl1-mesa-dri libgbm1 libxi6 libxrender1 \
+            libxfixes3 libxkbcommon0 libsm6 libxext6 libx11-6 fonts-dejavu-core ffmpeg
+      - name: Read the Blender pin
+        id: pin
+        run: |
+          python - >> "$GITHUB_OUTPUT" <<'PY'
+          import json
+          b = json.load(open("config/cloud_pins.json"))["blender"]
+          a = b["archives"]["linux-x64"]
+          print(f"version={b['version']}")
+          print(f"url={a['url']}")
+          print(f"sha256={a['sha256']}")
+          print(f"name={a['url'].rsplit('/', 1)[-1]}")
+          PY
+      - name: Cache the pinned archive (keyed by its sha256)
+        uses: actions/cache@v4
+        with:
+          path: ~/blender-archive
+          key: blender-${{ steps.pin.outputs.sha256 }}
+      - name: Download the archive when it is not cached
+        run: |
+          mkdir -p ~/blender-archive
+          f=~/blender-archive/${{ steps.pin.outputs.name }}
+          [ -s "$f" ] || curl --fail --location --retry 3 --silent --show-error --output "$f" "${{ steps.pin.outputs.url }}"
+      - name: Install Blender (refused unless the archive's sha256 is the pin)
+        id: install
+        run: |
+          bin=$(python -m explainer_engine.blender.project install --dest "$RUNNER_TEMP/blender" \
+                --archive ~/blender-archive/${{ steps.pin.outputs.name }} | tail -n 1)
+          echo "bin=$bin" >> "$GITHUB_OUTPUT"
+          python -m explainer_engine.blender.project resolve --binary "$bin"
+      - name: Cache the CC0 assets (keyed by the registered hashes)
+        uses: actions/cache@v4
+        with:
+          path: tools/assets_cache
+          key: world-kit-assets-${{ hashFiles('explainer_engine/blender/world_kits.json', 'explainer_engine/blender/style_sheet_assets.json', 'explainer_engine/blender/character_assets.json') }}
+      - name: Fetch the look assets, the characters and the kit pieces (kept only at the registered sha256)
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}   # the vault is private; without it the pieces are rebuilt from the free packs (pillow is pinned for it)
+        run: |
+          python -m explainer_engine.blender.style_sheets fetch
+          python -m explainer_engine.blender.characters fetch
+          python -m explainer_engine.blender.world_kits fetch
+      - name: Render the still (2560x1440, one frame)
+        run: |
+          python -m explainer_engine.blender.world_kits poc --layout "${{ matrix.layout }}" --frames 1 --out env --binary "${{ steps.install.outputs.bin }}" \
+            --scale 1.0 --variants "${{ matrix.look }}" --device cpu
+      - name: Collect the logs
+        if: always()
+        run: |
+          mkdir -p out
+          cp -r env/looks.json env/frames out/ 2>/dev/null || true
+          for d in env/work/*/; do [ -f "$d/blender.log" ] && cp "$d/blender.log" "out/$(basename "$d").blender.log"; done || true
+          ls -laR out | head -40
+      - name: Upload the still
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pilot-env-${{ matrix.layout }}
+          path: out/
+          if-no-files-found: error
+          retention-days: 30
+
+  merge:
+    needs: stills
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Install the validator and Pillow
+        run: python -m pip install "jsonschema==4.26.0" "pillow==12.3.0" "numpy>=2.0"
+      - name: Download the three stills
+        uses: actions/download-artifact@v4
+        with:
+          pattern: pilot-env-*
+          path: envs
+      - name: Fetch the vault's manifest and the three base stills (the room's two-shot and close-up, the battle's frame 0)
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          mkdir -p base
+          for f in pilot_stills.json room_two_shot.png room_close_host.png battle_f000_colour.png; do
+            curl --fail --location --retry 3 --silent --show-error -H "Authorization: Bearer $HF_TOKEN" -o "base/$f" \
+              "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/route_test_2026-11/pilot/blender/$f"
+          done
+          ls -la base
+      - name: Merge the manifest and cut the contact sheet
+        run: |
+          python -m explainer_engine.blender.pilot_stills extend --base base/pilot_stills.json --out pilot_envs \
+            --env pilot_courtyard=envs/pilot-env-pilot_courtyard --env pilot_march=envs/pilot-env-pilot_march --env pilot_camp=envs/pilot-env-pilot_camp
+          python -m explainer_engine.blender.pilot_stills sheet --base pilot_envs/pilot_stills.json --stills pilot_envs --stills base \
+            --out pilot_envs/contact_sheet.png
+          ls -la pilot_envs
+      - name: Upload the merged stills, manifest and sheet
+        uses: actions/upload-artifact@v4
+        with:
+          name: pilot-envs-${{ github.sha }}
+          path: pilot_envs/
+          if-no-files-found: error
+          retention-days: 30
