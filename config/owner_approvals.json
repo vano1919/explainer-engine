@@ -1,0 +1,5 @@
+{
+  "schema_version": "owner_approvals/1",
+  "_doc": "Explicit owner approval registry for paid provider operations. Must never contain fabricated, default, or placeholder entries. Each approval binds to a full 64-character SHA-256 operation manifest.",
+  "approvals": {}
+}

@@ -194,7 +194,9 @@
     "decided": "the creator, 2026-11-12 22:21 UTC, message cmsg_01Hnu5zB86sjUj5GtTgaUkPWBzaDXEQGLrQnKpeqMBwkj9: \"გაქვს მოდალზე 3 დოლარის ლიმიტი იმ მოდელებზე რაც მოდალზე მუშაობს\" ($3 on Modal for the models that run on Modal)"
   },
   "orchestration_envelopes": {
-    "_doc": "Pre-authorized independent engineering budget envelopes (owner 2026-11-23): Modal MODAL1 $20.00, DeepSeek $4.50, Claude API $50.00 (combined max $74.50). Budgets are independent and non-transferable.",
+    "_doc": "Legacy orchestration budget envelopes (unverified without owner_approvals.json record; disabled by default and never overrides stricter modal_ltx, modal_render, or overnight caps).",
+    "enabled": false,
+    "verified_owner_evidence": false,
     "combined_max_usd": 74.5,
     "services": {
       "modal_modal1": {

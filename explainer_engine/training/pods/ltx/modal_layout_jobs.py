@@ -49,7 +49,7 @@ LAUNCH_PATH = LTX_DIR / "launch_layout_a100.json"
 WORKER_REL = "explainer_engine/training/pods/ltx/modal_layout_jobs.py"
 SHARED_GATES = Path("/mnt/project-files/explainer-engine/final_plan_2026-11-19/ab_gates")
 NIGHT_LEDGER = Path(os.environ.get("EE_NIGHT_LEDGER") or
-                    "/mnt/project-files/explainer-engine/final_plan_2026-11-19/modal_stage/NIGHT_LEDGER_2026-11-19.json")
+                    (Path.home() / ".explainer_engine" / "night_ledger.sqlite3"))
 SECRET_NAME = "custom-secret"      # the owner's second account holds his HF token under this name; the key inside is HF_TOKEN
 GO = re.compile(r"^(cmsg_\w+):([0-9a-f]{12})$")
 VOL = "/w"

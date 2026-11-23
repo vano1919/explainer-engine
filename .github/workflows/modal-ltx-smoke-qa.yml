@@ -4,13 +4,25 @@ on:
   workflow_dispatch:
     inputs:
       plan_path:
-        description: "LTX scene plan JSON path"
+        description: "Repository-relative LTX scene plan JSON path"
+        type: string
         required: true
         default: "explainer_engine/training/pods/ltx/scenes/battle_2026-11-12.json"
       picture_path:
-        description: "Start keyframe PNG path"
+        description: "Repository-relative start keyframe PNG path"
+        type: string
         required: true
         default: "assets/style/main_style_5709.png"
+      approval_id:
+        description: "Explicit owner approval ID registered in config/owner_approvals.json (required only when check_only=false)"
+        type: string
+        required: false
+        default: ""
+      check_only:
+        description: "Run free local preflight + L0 unit checks only (no paid calls)"
+        type: boolean
+        required: true
+        default: true
 
 permissions:
   contents: read
@@ -23,30 +35,80 @@ jobs:
   ltx-smoke-and-qa:
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    env:
-      MODAL1_TOKEN_ID: ${{ secrets.MODAL1_TOKEN_ID }}
-      MODAL1_TOKEN_SECRET: ${{ secrets.MODAL1_TOKEN_SECRET }}
-      HF_TOKEN: ${{ secrets.HF_TOKEN }}
-      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+    environment: modal-paid-approval
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
           cache: pip
-      - name: Install FFmpeg, project dependencies, and Modal CLI
+      - name: Install FFmpeg and project dependencies
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y -qq ffmpeg
           python -m pip install --upgrade pip -q
           python -m pip install -r requirements.txt modal -q
-      - name: Run MODAL1 LTX L0-L3 smoke + Gemini multimodal QA
+      - name: Run validated LTX smoke + QA runner
+        env:
+          INPUT_PLAN_PATH: ${{ inputs.plan_path }}
+          INPUT_PICTURE_PATH: ${{ inputs.picture_path }}
+          INPUT_APPROVAL_ID: ${{ inputs.approval_id }}
+          INPUT_CHECK_ONLY: ${{ inputs.check_only }}
+          MODAL1_TOKEN_ID: ${{ secrets.MODAL1_TOKEN_ID }}
+          MODAL1_TOKEN_SECRET: ${{ secrets.MODAL1_TOKEN_SECRET }}
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          EE_DURABLE_LEDGER_PATH: ${{ vars.EE_DURABLE_LEDGER_PATH }}
         run: |
-          python scripts/run_modal_ltx_smoke_and_qa.py \
-            --plan "${{ inputs.plan_path }}" \
-            --picture "${{ inputs.picture_path }}" \
-            --out-dir /tmp/ltx_smoke_out
-      - name: Upload smoke clip and Gemini QA report
+          python - <<'PY'
+          import os
+          import pathlib
+          import subprocess
+          import sys
+
+          REPO_ROOT = pathlib.Path.cwd().resolve()
+
+          def check_rel(raw: str, allowed_exts: set[str], label: str) -> str:
+              if not raw or len(raw) > 256:
+                  sys.exit(f"Invalid {label}: empty or too long")
+              p = pathlib.Path(raw)
+              if p.is_absolute():
+                  sys.exit(f"Absolute {label} is forbidden: {raw!r}")
+              resolved = (REPO_ROOT / p).resolve()
+              if not resolved.is_relative_to(REPO_ROOT) or not resolved.is_file():
+                  sys.exit(f"{label} must exist inside repo root: {raw!r}")
+              if resolved.suffix.lower() not in allowed_exts:
+                  sys.exit(f"Unsupported extension for {label}: {resolved.suffix!r}")
+              return str(resolved.relative_to(REPO_ROOT))
+
+          plan_rel = check_rel(os.environ.get("INPUT_PLAN_PATH", "").strip(), {".json"}, "plan_path")
+          pic_rel = check_rel(os.environ.get("INPUT_PICTURE_PATH", "").strip(), {".png", ".jpg", ".jpeg"}, "picture_path")
+          check_only = os.environ.get("INPUT_CHECK_ONLY", "true").strip().lower() == "true"
+          approval_id = os.environ.get("INPUT_APPROVAL_ID", "").strip()
+
+          cmd = [
+              sys.executable,
+              "scripts/run_modal_ltx_smoke_and_qa.py",
+              "--plan",
+              plan_rel,
+              "--picture",
+              pic_rel,
+              "--out-dir",
+              "/tmp/ltx_smoke_out",
+          ]
+          if check_only:
+              cmd.append("--check-only")
+          else:
+              if not approval_id:
+                  sys.exit("Live paid run requires explicit approval_id registered in config/owner_approvals.json")
+              if not os.environ.get("EE_DURABLE_LEDGER_PATH"):
+                  sys.exit("CI paid run refused: EE_DURABLE_LEDGER_PATH durable backend variable is not configured")
+              cmd += ["--card-ref", approval_id]
+
+          proc = subprocess.run(cmd)
+          sys.exit(proc.returncode)
+          PY
+      - name: Upload smoke clip and QA report artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
