@@ -1,0 +1,51 @@
+# SOURCE: v-color-grading-skill
+
+repo: https://github.com/kajisho5/color-grading-skill
+path: .
+commit: 92da7062a682b66173e40c03dae35b24020aafbc
+commit_date: 2026-11-19
+retrieved: 2026-11-19
+author: kajisho5
+licence: MIT (LICENSE)
+stars_seen: not obtainable (GitHub API blocked in the session)
+stage: S15
+tool: tools/vendor_skill.py (byte-for-byte copy; upstream files are never edited)
+name_clash: upstream frontmatter name 'color-grading' differs from folder 'v-color-grading-skill'; Claude Code uses the folder name
+excluded:
+  - --exclude brand: 7 files (brand)
+  - --exclude tests: 20 files (tests)
+  - larger than 1048576 bytes: 1 files (assets)
+  - skip-dir: 115 files (.git, .github)
+
+files:
+fc2ac6dc4b22f6f2d8825c85dda7589b81cf6b2b6b421e8c3f5fe7c3b8821bfd  .fetched
+d8125f44b8b8b216a610d9cd1c008c83cfaa44376e85a8f612ec5f616072a5df  .gitattributes
+49510eb501746744882cbe078a1c06b4df2e0b7b278fbefb6a84eceb3a904b3b  .gitignore
+0797b6b6ccad4bdfed15c5920009ff44f7b0c1e213cd6d6648c5fe588f3efce2  CHANGELOG.md
+13c5b1d2e8703527408b9a61d86fd0453b2550923e5b9e987e18086b19e50a42  ECOSYSTEM_ROADMAP.md
+7522b29e4d6e90f2a8fab15f07d224b1064c70692a872be9996ac1a88cf474e9  LICENSE
+d18445e1f6496e9329d429ba41ee1b794f1d8b2b0b530d1c31a779198e498139  README.md
+1162d635fad8f682bcee5af9fa12d1eddec32f17a23b342d11067af9c95c47ab  SECURITY.md
+3d727f8b1a9be5d1b5cc6bea8064c8c98151f762fdcf6c4986bf8babf36c8260  SKILL.md
+ca7d2c612c6bf31b1e7e0dc6d1745bd8beef624f81dbb67e4f69b3f75bdfd93f  contract/contract.json
+097ab5581712292bf541f1bb36b7e559ae3a3a405ce7acc8389396ecff4ba805  contract/generate.py
+e5dde1e80a216508324a894427ddec7a76a4f877da51a83ce6357d5cc62b7818  docs/architecture.md
+d3681fb445533c362d8fb3be105ff86de7cea472c0f6c2adb42ff78432f18b88  docs/decisions.md
+d78e57376737eeacdfc54eeecbdef24948ca2edf30089d8a37c3332bbfa97647  docs/ffmpeg-skill.md
+911fab4010179bb7b2461f4832abad23c101e328f6bdc1a8feb5e2a06ab1b79a  docs/security.md
+549631172051e4df2bacdb9eec47573b18b6c1d8584db8891f0ad8a5077fe718  docs/testing.md
+67a01f57354be5dae95297c008a95bf168f99e82779534d5320bddfde48f5a54  pyproject.toml
+d7bab44043b6bd891e72a1290f9540d890f3aa20d3b172c94bc1d64dbdfb25e2  src/color_grading/__init__.py
+a9483dd4457cec185251aadfc9df54a4599cd8f9e948dbdbb2e058645e1d2735  src/color_grading/adapter.py
+302a1abd932ce4c2e3cefcf787ffdaf30ac8730e83c11e448d480205a0e04017  src/color_grading/canonical.py
+54cfe9aa9093fa72fd819a4dc4fb9afe9ace7309a1dd25b027080574d8c67591  src/color_grading/cli.py
+f896a1a00fc44d192c932122d22356e18e5023faacf6d178c988156b8a1f45f7  src/color_grading/contract.py
+53d59927512ccaa727fcb55384d86d57399d293f66aa1fb76146da131ab20591  src/color_grading/doctor.py
+62b19c3bab92533d439ac94e02451b200b5f99fcae036d6cd10cd839fea231ad  src/color_grading/errors.py
+53c7675a9c8a43af204fa7a84843309b567f472b282f95b031156985404d8d9e  src/color_grading/executor.py
+989cbaca93cdf3f2ab99c6ba4fa5540375eae74636f0e2bb651054212b35ebff  src/color_grading/graph.py
+9ef31b720ab6e65eedc224788915fdaac9ebfee122c01bfc344631842aea7b04  src/color_grading/legalize.py
+4fdab6c3c3c5678912a56e39a046d6b77b67f6a32546ac9ab0b729d3b2b460cc  src/color_grading/match.py
+f99dd9fbfb8e86893facb004b7756545e6152330dadd0cd45acd8be707ca5ffa  src/color_grading/model.py
+65dddf72c951f21da20f71e6d6d2e14754a3b7dae3ee9f16adeea77f26693be0  src/color_grading/ocio.py
+03baf01c76aa5eca2879e2afdb42250bc947c8bd4971e421852f87ebfc508a1d  src/color_grading/security.py
