@@ -11,9 +11,17 @@ Coordinates and executes active Skills across production stages with:
 """
 from __future__ import annotations
 
+import contextlib
 import datetime
+import hashlib
 import importlib
 import json
+import uuid
+
+try:
+    import fcntl
+except ImportError:  # pragma: no cover - Windows fallback
+    fcntl = None  # type: ignore[assignment]
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any, Callable
@@ -70,7 +78,7 @@ def load_registry(path: Path | None = None) -> dict[str, Any]:
 
 
 def _exec_blender_previs(payload: dict[str, Any]) -> dict[str, Any]:
-    """Validate a blender_scene/1 spec using the real lab.scene_spec module."""
+    """Validate a blender_scene/1 spec; emit PASS only when real rendered reference frames exist on disk."""
     from explainer_engine.lab import scene_spec as SS
 
     spec_path = payload.get("scene_spec_path")
@@ -83,31 +91,65 @@ def _exec_blender_previs(payload: dict[str, Any]) -> dict[str, Any]:
     errors = SS.validate(spec) if hasattr(SS, "validate") else []
     if errors:
         raise ContractError(f"Blender previs spec validation failed: {errors}")
-    return {"status": "PASS", "outputs": ["blender_reference_frames"], "scene_id": spec.get("scene_id", "unknown")}
+    rendered = [Path(p) for p in (payload.get("rendered_frames") or [])]
+    if rendered and all(p.is_file() for p in rendered):
+        return {
+            "status": "PASS",
+            "outputs": ["blender_reference_frames"],
+            "scene_id": spec.get("scene_id", "unknown"),
+            "rendered_count": len(rendered),
+        }
+    return {
+        "status": "VALIDATED",
+        "outputs": [],
+        "scene_id": spec.get("scene_id", "unknown"),
+        "notes": "Spec validated only; invoke explainer_engine.lab.scene_render to produce frames before PASS",
+    }
 
 
 def _exec_gemini_images(payload: dict[str, Any]) -> dict[str, Any]:
-    """Record Gemini reference-image provenance manifest (interactive or API backed)."""
+    """Record Gemini reference-image provenance manifest; emit PASS only when real image files & manifest exist."""
     out_path = payload.get("provenance_path")
     images = list(payload.get("images") or [])
+    verified_images = [p for p in images if isinstance(p, (str, Path)) and Path(p).is_file()]
     manifest = {
         "schema_version": "image_provenance/1",
         "mode": payload.get("generation_mode", "interactive_gemini_chat"),
-        "images": images,
+        "images": [str(p) for p in verified_images],
         "ts": datetime.datetime.now(UTC).isoformat(),
     }
-    if out_path:
+    if out_path and verified_images:
         write_json_atomic(Path(out_path), manifest)
-    return {"status": "PASS", "outputs": ["scene_images", "image_provenance"], "count": len(images)}
+        return {
+            "status": "PASS",
+            "outputs": ["scene_images", "image_provenance"],
+            "count": len(verified_images),
+        }
+    return {
+        "status": "VALIDATED",
+        "outputs": [],
+        "count": len(verified_images),
+        "notes": "No verified on-disk images + provenance_path supplied; cannot mark PASS",
+    }
 
 
 def _exec_ltx_video(payload: dict[str, Any]) -> dict[str, Any]:
-    """Select and validate the LTX worker route (modal_layout_jobs vs modal_ltx_jobs on MODAL1)."""
+    """Select the LTX worker route (MODAL1); emit PASS only when an ingested video_clip_record/1 exists on disk."""
     from explainer_engine.episode.router import select_ltx_worker
 
     shot = payload.get("shot") or {}
     worker = select_ltx_worker(shot)
-    return {"status": "PASS", "outputs": ["ltx_video_clips"], "worker": worker}
+    rec_path = payload.get("clip_record_path")
+    if rec_path and Path(rec_path).is_file():
+        rec = json.loads(Path(rec_path).read_text(encoding="utf-8"))
+        if rec.get("schema") == "video_clip_record/1" and rec.get("status") != "FAIL":
+            return {"status": "PASS", "outputs": ["ltx_video_clips"], "worker": worker, "clip_record_path": str(rec_path)}
+    return {
+        "status": "PLANNED",
+        "outputs": [],
+        "worker": worker,
+        "notes": "Worker selected only; run approved Modal LTX launch + videolane.ingest before PASS",
+    }
 
 
 def _exec_perceptual_qa(payload: dict[str, Any]) -> dict[str, Any]:
@@ -268,17 +310,28 @@ class SkillOrchestrator:
         if stage_id not in self._executors:
             raise ContractError(f"No executable Python handler registered for stage {stage_id!r}")
         res = self._executors[stage_id](payload)
+        raw_status = str(res.get("status") or "NOT_RUN").upper()
+        actual_outputs = list(res.get("outputs") or [])
         if ledger_path is not None:
             self.record_execution(
                 ledger_path,
                 stage_id=stage_id,
                 skills_used=list(st.get("skills", [])),
                 inputs=list(st.get("required_inputs", [])),
-                outputs=list(res.get("outputs") or st.get("expected_outputs", [])),
-                status=str(res.get("status", "PASS")),
+                outputs=actual_outputs,
+                status=raw_status,
                 notes=str(res.get("notes", "")),
             )
         return res
+
+    def _plan_fingerprint(self, plan: OrchestrationPlan, stage_payloads: dict[str, dict[str, Any]]) -> str:
+        blob = {
+            "stages": [s.stage_id for s in plan.stages],
+            "registry_version": self.registry.get("schema_version"),
+            "registry_stages": {s.stage_id: self._stages[s.stage_id] for s in plan.stages},
+            "payloads": {s.stage_id: stage_payloads.get(s.stage_id, {}) for s in plan.stages},
+        }
+        return hashlib.sha256(json.dumps(blob, sort_keys=True, default=str).encode("utf-8")).hexdigest()
 
     def run_plan(
         self,
@@ -289,21 +342,29 @@ class SkillOrchestrator:
         checkpoint_path: Path | None = None,
         allow_gaps: bool = False,
     ) -> dict[str, Any]:
-        """Execute all ready stages in topological order with crash-safe checkpoint persistence."""
+        """Execute all ready stages in topological order with hash-bound crash-safe checkpoint persistence."""
         if not plan.ready and not (allow_gaps and not plan.blocked_missing_inputs):
             raise ContractError(
                 f"Plan is not ready: missing_inputs={plan.blocked_missing_inputs}, "
                 f"implementation_gaps={plan.blocked_implementation_gaps}"
             )
+        plan_hash = self._plan_fingerprint(plan, stage_payloads)
         done_stages: set[str] = set()
         results: dict[str, Any] = {}
         if checkpoint_path and checkpoint_path.exists():
             cp = json.loads(checkpoint_path.read_text(encoding="utf-8"))
-            done_stages = set(cp.get("completed_stages", []))
-            results = dict(cp.get("results", {}))
+            if cp.get("plan_hash") == plan_hash:
+                done_stages = set(cp.get("completed_stages", []))
+                results = dict(cp.get("results", {}))
+
+        status_rank = {"FAIL": 4, "ERROR": 4, "NEEDS_REVIEW": 3, "REVIEW": 3, "NOT_RUN": 2, "PLANNED": 1, "VALIDATED": 1, "PASS": 0}
+        worst_status = "PASS"
 
         for st in plan.stages:
             if st.stage_id in done_stages:
+                prev_st = str((results.get(st.stage_id) or {}).get("status", "PASS")).upper()
+                if status_rank.get(prev_st, 3) > status_rank.get(worst_status, 0):
+                    worst_status = prev_st
                 continue
             res = self.run_stage(
                 st.stage_id,
@@ -312,15 +373,25 @@ class SkillOrchestrator:
                 allow_gaps=allow_gaps,
             )
             results[st.stage_id] = res
-            if str(res.get("status", "PASS")).upper() in ("FAIL", "ERROR"):
+            st_status = str(res.get("status") or "NOT_RUN").upper()
+            if st_status in ("FAIL", "ERROR"):
                 if checkpoint_path:
-                    write_json_atomic(checkpoint_path, {"completed_stages": sorted(done_stages), "results": results, "failed_stage": st.stage_id})
+                    write_json_atomic(
+                        checkpoint_path,
+                        {"plan_hash": plan_hash, "completed_stages": sorted(done_stages), "results": results, "failed_stage": st.stage_id},
+                    )
                 return {"status": "FAIL", "failed_stage": st.stage_id, "completed_stages": sorted(done_stages), "results": results}
-            done_stages.add(st.stage_id)
+            if status_rank.get(st_status, 3) > status_rank.get(worst_status, 0):
+                worst_status = st_status if st_status in status_rank else "NEEDS_REVIEW"
+            if st_status == "PASS":
+                done_stages.add(st.stage_id)
             if checkpoint_path:
-                write_json_atomic(checkpoint_path, {"completed_stages": sorted(done_stages), "results": results, "failed_stage": None})
+                write_json_atomic(
+                    checkpoint_path,
+                    {"plan_hash": plan_hash, "completed_stages": sorted(done_stages), "results": results, "failed_stage": None},
+                )
 
-        return {"status": "PASS", "completed_stages": sorted(done_stages), "results": results}
+        return {"status": worst_status, "completed_stages": sorted(done_stages), "results": results}
 
     def audit_correspondence(self, *, allow_gaps: bool = False) -> dict[str, Any]:
         """Verify Skill directories exist, Python modules import, and fail closed on unresolved gaps."""
@@ -373,19 +444,29 @@ class SkillOrchestrator:
             raise ContractError(f"Unknown stage_id: {stage_id!r}")
         for sk in skills_used:
             self.assert_not_retired(sk)
-        records: list[dict[str, Any]] = []
-        if ledger_path.exists():
-            records = json.loads(ledger_path.read_text(encoding="utf-8")).get("executions", [])
-        entry = {
-            "ts": datetime.datetime.now(UTC).isoformat(),
-            "stage_id": stage_id,
-            "skills_used": list(skills_used),
-            "inputs": list(inputs),
-            "outputs": list(outputs),
-            "status": status,
-            "notes": notes,
-        }
-        records.append(entry)
-        payload = {"schema_version": "skill_execution_record/1", "executions": records}
-        write_json_atomic(ledger_path, payload)
-        return entry
+        ledger_path.parent.mkdir(parents=True, exist_ok=True)
+        lock_path = ledger_path.with_suffix(ledger_path.suffix + ".lock")
+        with lock_path.open("a+", encoding="utf-8") as lf:
+            if fcntl is not None:
+                fcntl.flock(lf.fileno(), fcntl.LOCK_EX)
+            try:
+                records: list[dict[str, Any]] = []
+                if ledger_path.exists():
+                    records = json.loads(ledger_path.read_text(encoding="utf-8")).get("executions", [])
+                entry = {
+                    "run_id": uuid.uuid4().hex[:12],
+                    "ts": datetime.datetime.now(UTC).isoformat(),
+                    "stage_id": stage_id,
+                    "skills_used": list(skills_used),
+                    "inputs": list(inputs),
+                    "outputs": list(outputs),
+                    "status": status,
+                    "notes": notes,
+                }
+                records.append(entry)
+                payload = {"schema_version": "skill_execution_record/1", "executions": records}
+                write_json_atomic(ledger_path, payload)
+                return entry
+            finally:
+                if fcntl is not None:
+                    fcntl.flock(lf.fileno(), fcntl.LOCK_UN)

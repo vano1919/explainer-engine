@@ -299,13 +299,25 @@ def build_perceptual_qa_report(
 
     open_high = [d for d in defect_list if d.severity == "high" and d.status == "OPEN"]
     tech_pass = bool(technical_metrics.get("passed", False))
+    signal_only = (
+        bool(visual_assessment.get("signal_only"))
+        or bool(audio_assessment.get("signal_only"))
+        or reviewer_model == "signal_sanity_only"
+    )
+    editorial_state = str(editorial_assessment.get("cinematic_quality", "")).lower()
+    editorial_needs_review = editorial_state in ("needs_review", "not_run")
+    editorial_failed = editorial_state == "fail"
 
-    if open_high or not tech_pass:
+    technical_status = "PASS" if tech_pass else "FAIL"
+    if open_high or not tech_pass or editorial_failed:
         verdict = "FAIL"
-    elif any(d.status == "OPEN" for d in defect_list):
+        perceptual_status = "FAIL"
+    elif signal_only or editorial_needs_review or any(d.status == "OPEN" for d in defect_list):
         verdict = "NEEDS_REVIEW"
+        perceptual_status = "NEEDS_REVIEW"
     else:
         verdict = "PASS"
+        perceptual_status = "PASS"
 
     report = {
         "schema_version": "perceptual_qa_report/1",
@@ -313,6 +325,8 @@ def build_perceptual_qa_report(
         "artifact_path": artifact_path,
         "reviewer_model": reviewer_model,
         "verdict": verdict,
+        "technical_status": technical_status,
+        "perceptual_status": perceptual_status,
         "temporal_frames_inspected": [asdict(f) for f in sampled_frames],
         "audio_inspection_mode": audio_inspection_mode,
         "technical_metrics": technical_metrics,

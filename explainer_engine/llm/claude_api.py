@@ -386,6 +386,9 @@ def redact(text: str) -> tuple[str, int]:
 
 
 def check_secret_path(path: str | Path, where: str = "file") -> None:
+    raw = Path(str(path))
+    if raw.is_absolute():
+        raise SecretInPrompt(f"{where}: {path} is an absolute path outside repository root; nothing was sent")
     p = Path(os.path.normpath(str(path)))
     if p.parts and p.parts[0] == ".." or SKIP_DIRS & set(p.parts) or secret_name(p.name) or any(secret_name(x) for x in p.parts):
         raise SecretInPrompt(f"{where}: {path} is a secret-like, tools/ or .git path; nothing was sent")

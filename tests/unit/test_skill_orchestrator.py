@@ -67,10 +67,13 @@ def test_real_stage_execution_for_blender_previs_and_ltx_routing(tmp_path: Path)
 
     t0_spec = Path("explainer_engine/lab/specs/t0/t0_a1.json")
     r_prev = orch.run_stage("S4_blender_previs", {"scene_spec_path": str(t0_spec)}, ledger_path=ledger)
-    assert r_prev["status"] == "PASS"
+    assert r_prev["status"] == "VALIDATED"
+    assert r_prev["outputs"] == []
 
     r_ltx = orch.run_stage("S6_ltx_video", {"shot": {"use_ic_lora": True}}, ledger_path=ledger)
     assert r_ltx["worker"]["account"] == "MODAL1"
+    assert r_ltx["status"] == "PLANNED"
+    assert r_ltx["outputs"] == []
     assert r_ltx["worker"]["worker_module"] == "explainer_engine.training.pods.ltx.modal_layout_jobs"
 
     r_std = select_ltx_worker({"shot_id": "s1"})

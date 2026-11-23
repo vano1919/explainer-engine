@@ -37,7 +37,7 @@ from explainer_engine.core import spend_caps
 from explainer_engine.core.errors import EngineError
 from explainer_engine.core.ledger import STOP_FRACTION
 from explainer_engine.core.store import write_json_atomic, write_text_atomic
-from explainer_engine.llm.claude_api import check_secret_path, check_secrets, redact
+from explainer_engine.llm.claude_api import SecretInPrompt, check_secret_path, check_secrets, redact
 
 ROOT = Path(__file__).resolve().parents[2]
 UTC = datetime.timezone.utc
@@ -325,11 +325,15 @@ def run_test(cmd: str, root: Path, timeout: float) -> tuple[bool, str]:
 
 
 def pack(files: list[str], root: Path, cfg: dict) -> str:
+    root_resolved = root.resolve()
     parts = []
     for rel in files:
         norm = os.path.normpath(rel).replace("\\", "/")
         check_secret_path(norm)
-        parts.append(f"=== FILE: {norm} ===\n{(root / norm).read_text(encoding='utf-8')}\n=== END {norm} ===\n")
+        target = (root_resolved / norm).resolve()
+        if not target.is_relative_to(root_resolved):
+            raise SecretInPrompt(f"file: {rel} escapes repository root; nothing was sent")
+        parts.append(f"=== FILE: {norm} ===\n{target.read_text(encoding='utf-8')}\n=== END {norm} ===\n")
     return "\n".join(parts)
 
 
