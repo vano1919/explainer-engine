@@ -192,3 +192,77 @@ def modal_ltx(episode: bool = False) -> dict:
         raise OverCeiling("no modal_ltx per_episode_usd in config/spend_caps.json: an episode's LTX runs wait for the creator's "
                           "episode line, set after rung L3 (zero approved episode budget)")
     return m
+
+
+def _envelope_ledger_path() -> Path:
+    env = os.environ.get("EXPLAINER_ENVELOPE_LEDGER")
+    if env:
+        return Path(env)
+    return Path(__file__).resolve().parents[2] / "jobs" / "orchestrator" / "envelope_ledger.json"
+
+
+def envelope_limit(service: str) -> float:
+    """Return the independent aggregate USD ceiling for an orchestration envelope service."""
+    env = load().get("orchestration_envelopes", {})
+    services = env.get("services") or {}
+    row = services.get(service)
+    if not isinstance(row, dict) or not isinstance(row.get("max_usd"), (int, float)) or isinstance(row.get("max_usd"), bool):
+        raise OverCeiling(f"no orchestration_envelopes.services.{service}.max_usd in config/spend_caps.json")
+    combined = float(env.get("combined_max_usd", 0.0))
+    total_defined = sum(float(r["max_usd"]) for r in services.values() if isinstance(r, dict) and "max_usd" in r)
+    if combined > 0 and total_defined > combined + 1e-9:
+        raise OverCeiling(f"orchestration envelopes sum to {total_defined:g} USD, above combined_max_usd {combined:g}")
+    return float(row["max_usd"])
+
+
+def envelope_status() -> dict:
+    """Return actual spent, reserved, and remaining USD per independent envelope."""
+    env_cfg = load().get("orchestration_envelopes", {})
+    services = env_cfg.get("services") or {}
+    lp = _envelope_ledger_path()
+    ledger = json.loads(lp.read_text(encoding="utf-8")) if lp.exists() else {"entries": []}
+    out = {}
+    for svc, cfg in services.items():
+        spent = sum(float(e.get("actual_usd", 0.0)) for e in ledger.get("entries", []) if e.get("service") == svc and e.get("state") == "SETTLED")
+        reserved = sum(float(e.get("reserved_usd", 0.0)) for e in ledger.get("entries", []) if e.get("service") == svc and e.get("state") == "RESERVED")
+        lim = float(cfg["max_usd"])
+        out[svc] = {
+            "max_usd": lim,
+            "spent_usd": round(spent, 6),
+            "reserved_usd": round(reserved, 6),
+            "remaining_usd": round(max(0.0, lim - spent - reserved), 6),
+        }
+    return out
+
+
+def envelope_reserve(service: str, task_id: str, max_estimated_usd: float) -> dict:
+    """Fail-closed reservation against the service's independent aggregate envelope."""
+    if max_estimated_usd < 0:
+        raise OverCeiling("negative reservation is invalid")
+    lim = envelope_limit(service)
+    st = envelope_status()[service]
+    if st["spent_usd"] + st["reserved_usd"] + max_estimated_usd > lim + 1e-9:
+        raise OverCeiling(
+            f"{service}: spent ${st['spent_usd']:.4f} + reserved ${st['reserved_usd']:.4f} + "
+            f"request ${max_estimated_usd:.4f} exceeds independent ceiling ${lim:.2f}"
+        )
+    lp = _envelope_ledger_path()
+    lp.parent.mkdir(parents=True, exist_ok=True)
+    ledger = json.loads(lp.read_text(encoding="utf-8")) if lp.exists() else {"entries": []}
+    entry = {"task_id": task_id, "service": service, "reserved_usd": round(float(max_estimated_usd), 6), "actual_usd": 0.0, "state": "RESERVED"}
+    ledger["entries"].append(entry)
+    lp.write_text(json.dumps(ledger, indent=2) + "\n", encoding="utf-8")
+    return entry
+
+
+def envelope_settle(service: str, task_id: str, actual_usd: float) -> dict:
+    """Settle a reserved envelope entry with provider-reported actual USD."""
+    lp = _envelope_ledger_path()
+    ledger = json.loads(lp.read_text(encoding="utf-8")) if lp.exists() else {"entries": []}
+    for e in reversed(ledger.get("entries", [])):
+        if e.get("service") == service and e.get("task_id") == task_id and e.get("state") == "RESERVED":
+            e["actual_usd"] = round(float(actual_usd), 6)
+            e["state"] = "SETTLED"
+            lp.write_text(json.dumps(ledger, indent=2) + "\n", encoding="utf-8")
+            return e
+    raise OverCeiling(f"no open RESERVED envelope entry for {service}/{task_id}")

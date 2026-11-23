@@ -412,6 +412,7 @@ def main(argv: list[str] | None = None) -> int:
         p.add_argument("--max-usd", required=True, type=float, help="the job's own hard limit")
         p.add_argument("--job", default=None)
         p.add_argument("--dry-run", action="store_true", help="print the worst-case estimate, send nothing")
+        p.add_argument("--max-tokens", type=int, default=None, help="hard max output tokens per round")
         p.add_argument("--out", required=name == "text", type=Path)
         if name != "review":
             p.add_argument("--files", nargs="*", default=[])
@@ -439,9 +440,12 @@ def main(argv: list[str] | None = None) -> int:
         files = getattr(a, "files", [])
         if a.dry_run:
             chars = len(brief) + sum((ROOT / f).stat().st_size for f in files) + (a.diff.stat().st_size if a.cmd == "review" else 0)
-            one = worst_usd(a.model, chars, cfg["limits"]["max_output_tokens"], cfg)
-            print(json.dumps({"job": job, "model": a.model, "input_chars": chars, "worst_usd_per_round": round(one, 4),
-                              "peak_now": is_peak(datetime.datetime.now(UTC), cfg)}))
+            mtok = min(int(a.max_tokens or cfg["limits"]["max_output_tokens"]), cfg["limits"]["max_output_tokens"])
+            one = worst_usd(a.model, chars, mtok, cfg)
+            print(json.dumps({"job": job, "model": a.model, "input_chars": chars,
+                              "input_tokens_estimate": int(chars / cfg["limits"]["chars_per_token"]),
+                              "max_output_tokens": mtok, "token_count_basis": "upper_bound_estimate_chars_per_token",
+                              "worst_usd_per_round": round(one, 4), "peak_now": is_peak(datetime.datetime.now(UTC), cfg)}))
             return 0
         w = Worker(job=job, max_usd=a.max_usd, cfg=cfg)
         if a.cmd == "code":
