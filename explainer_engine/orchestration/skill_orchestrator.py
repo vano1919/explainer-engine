@@ -163,7 +163,7 @@ def _exec_perceptual_qa(payload: dict[str, Any]) -> dict[str, Any]:
         Path(video_path),
         out_dir=Path(payload.get("qa_out_dir", Path(video_path).parent / "qa")),
         use_gemini=bool(payload.get("use_gemini", False)),
-        reviewer_model=str(payload.get("reviewer_model", "gemini-4-neon")),
+        reviewer_model=str(payload.get("reviewer_model", PQA.DEFAULT_GEMINI_QA_MODEL)),
     )
     return {"status": report["verdict"], "outputs": ["technical_qa_report", "perceptual_qa_report"], "report": report}
 

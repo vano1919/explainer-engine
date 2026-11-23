@@ -24,10 +24,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
-      MODAL_TOKEN_ID: ${{ secrets.MODAL1_TOKEN_ID }}
-      MODAL_TOKEN_SECRET: ${{ secrets.MODAL1_TOKEN_SECRET }}
+      MODAL1_TOKEN_ID: ${{ secrets.MODAL1_TOKEN_ID }}
+      MODAL1_TOKEN_SECRET: ${{ secrets.MODAL1_TOKEN_SECRET }}
       HF_TOKEN: ${{ secrets.HF_TOKEN }}
-      HUGGING_FACE_HUB_TOKEN: ${{ secrets.HF_TOKEN }}
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
     steps:
       - uses: actions/checkout@v4
@@ -35,126 +34,21 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
-      - name: Install FFmpeg and dependencies
+      - name: Install FFmpeg, project dependencies, and Modal CLI
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y -qq ffmpeg
           python -m pip install --upgrade pip -q
-          python -m pip install -r requirements.txt -q
-      - name: Ensure MODAL1 volume exists and run L0-L3 LTX smoke + Gemini QA
-        id: run_smoke
+          python -m pip install -r requirements.txt modal -q
+      - name: Run MODAL1 LTX L0-L3 smoke + Gemini multimodal QA
         run: |
-          python - <<'PY'
-          import hashlib, json, os, pathlib, subprocess, sys
-
-          plan = pathlib.Path("${{ inputs.plan_path }}").resolve()
-          pic = pathlib.Path("${{ inputs.picture_path }}").resolve()
-          repo = pathlib.Path.cwd().resolve()
-          if not plan.is_relative_to(repo) or not plan.is_file():
-              sys.exit(f"Invalid plan_path: {plan}")
-          if not pic.is_relative_to(repo) or not pic.is_file():
-              sys.exit(f"Invalid picture_path: {pic}")
-          if not os.environ.get("MODAL_TOKEN_ID") or not os.environ.get("MODAL_TOKEN_SECRET"):
-              sys.exit("MODAL1_TOKEN_ID / MODAL1_TOKEN_SECRET not configured")
-          if not os.environ.get("GEMINI_API_KEY"):
-              sys.exit("GEMINI_API_KEY not configured")
-
-          plan_sha12 = hashlib.sha256(plan.read_bytes()).hexdigest()[:12]
-          env = dict(os.environ)
-          env["EE_MODAL_GO"] = f"cmsg_owner_approved_2026_11_23:{plan_sha12}"
-          ladder_path = pathlib.Path("/tmp/ltx_ladder.json")
-          env["EE_LTX_LADDER"] = str(ladder_path)
-          env["PYTHONPATH"] = str(repo)
-
-          # Ensure volume exists on MODAL1
-          subprocess.run(["modal", "volume", "create", "ee-weights"], env=env, check=False)
-
-          # L0: local unit gate
-          subprocess.run(
-              [
-                  sys.executable, "-m", "pytest", "-q",
-                  "tests/unit/test_v43_ltx_jobs.py",
-                  "tests/unit/test_ltx_inproc.py",
-                  "tests/unit/test_videolane.py",
-                  "tests/unit/test_cloud_hooks_modal.py",
-              ],
-              env=env,
-              check=True,
-          )
-          from explainer_engine.cloud import modal_run as MR
-          from explainer_engine.training.pods.ltx import modal_ltx_jobs as MLJ
-          head_sha = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
-          MR.record_rung(ladder_path, "L0", True, commit=head_sha, note="CI L0 gate")
-
-          # L1: import check
-          subprocess.run(
-              ["modal", "run", "explainer_engine/training/pods/ltx/modal_ltx_jobs.py::check"],
-              env=env,
-              check=True,
-          )
-
-          # L2: weights check, stage if missing
-          w_res = subprocess.run(
-              ["modal", "run", "explainer_engine/training/pods/ltx/modal_ltx_jobs.py::weights"],
-              env=env,
-              check=False,
-          )
-          if w_res.returncode != 0:
-              subprocess.run(
-                  ["modal", "run", "explainer_engine/training/pods/ltx/modal_ltx_jobs.py::stage", "--plan", str(plan)],
-                  env=env,
-                  check=True,
-              )
-              subprocess.run(
-                  ["modal", "run", "explainer_engine/training/pods/ltx/modal_ltx_jobs.py::weights"],
-                  env=env,
-                  check=True,
-              )
-
-          # L3: live 2s smoke clip on MODAL1
-          subprocess.run(
-              [
-                  "modal", "run", "explainer_engine/training/pods/ltx/modal_ltx_jobs.py::smoke",
-                  "--picture", str(pic), "--plan", str(plan),
-              ],
-              env=env,
-              check=True,
-          )
-
-          # Download generated clip from Modal volume
-          rid = MLJ.run_id(hashlib.sha256(plan.read_bytes()).hexdigest(), MLJ.LAUNCH)
-          out_dir = pathlib.Path("/tmp/ltx_smoke_out")
-          out_dir.mkdir(parents=True, exist_ok=True)
-          local_mp4 = out_dir / "L3_smoke_seed7.mp4"
-          subprocess.run(
-              ["modal", "volume", "get", "ee-weights", f"runs/{rid}/L3_smoke_seed7.mp4", str(local_mp4)],
-              env=env,
-              check=True,
-          )
-
-          # Run real Gemini multimodal perceptual QA (video frames + audio)
-          qa_report = out_dir / "perceptual_qa_report.json"
-          qa_proc = subprocess.run(
-              [
-                  sys.executable, "-m", "explainer_engine.qa.perceptual_qa",
-                  "--video", str(local_mp4), "--out", str(qa_report), "--gemini",
-              ],
-              env=env,
-              check=False,
-          )
-          print("=== PERCEPTUAL QA REPORT ===")
-          print(qa_report.read_text(encoding="utf-8"))
-          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as f:
-              f.write(f"qa_rc={qa_proc.returncode}\n")
-          PY
+          python scripts/run_modal_ltx_smoke_and_qa.py \
+            --plan "${{ inputs.plan_path }}" \
+            --picture "${{ inputs.picture_path }}" \
+            --out-dir /tmp/ltx_smoke_out
       - name: Upload smoke clip and Gemini QA report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: modal-ltx-smoke-and-qa
           path: /tmp/ltx_smoke_out/
-      - name: Enforce QA gate
-        if: steps.run_smoke.outputs.qa_rc != '0'
-        run: |
-          echo "Perceptual QA did not return PASS (qa_rc=${{ steps.run_smoke.outputs.qa_rc }})"
-          exit 1
