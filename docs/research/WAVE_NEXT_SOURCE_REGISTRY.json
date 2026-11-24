@@ -1,5 +1,5 @@
 {
-  "schema_version": "wave_next_source_registry/1",
+  "schema_version": "wave_next_source_registry/2",
   "generated_at": "2026-11-24",
   "total_sources": 65,
   "sources": [
@@ -9,7 +9,14 @@
       "url": "https://huggingface.co/Lightricks/LTX-2.5-22b-IC-LoRA-Pixel-Spatial-Upscaler",
       "category": "huggingface_model_or_dataset",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "huggingface_model_or_dataset",
+      "official_or_third_party": "official",
+      "license": "LTX Community License (check Hugging Face model card before commercial deployment)",
+      "version_or_commit": "LTX-2.5 22B release family (verified 2026-11-24)",
+      "claim_supported": "LTX-2.5 8n+1 frame buckets, photo-first I2V/FLF2V/IC-LoRA conditioning architecture",
+      "verification_limitations": "Live H100 inference blocked at $0.00 pending explicit owner approval",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-002",
@@ -17,15 +24,29 @@
       "url": "https://huggingface.co/Lightricks/LTX-2.5-22b-IC-LoRA-Refine-Details",
       "category": "huggingface_model_or_dataset",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "huggingface_model_or_dataset",
+      "official_or_third_party": "official",
+      "license": "LTX Community License (check Hugging Face model card before commercial deployment)",
+      "version_or_commit": "LTX-2.5 22B release family (verified 2026-11-24)",
+      "claim_supported": "LTX-2.5 8n+1 frame buckets, photo-first I2V/FLF2V/IC-LoRA conditioning architecture",
+      "verification_limitations": "Live H100 inference blocked at $0.00 pending explicit owner approval",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-003",
-      "title": "SeedVR2 vs Real-ESRGAN ბენჩმარკი",
+      "title": "SeedVR2 vs Real-ESRGAN \u10d1\u10d4\u10dc\u10e9\u10db\u10d0\u10e0\u10d9\u10d8",
       "url": "https://pixedi.com/lab/seedvr2-vs-esrgan-4090",
       "category": "official_docs_or_paper",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "official_docs_or_paper",
+      "official_or_third_party": "third_party",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for SeedVR2 vs Real-ESRGAN \u10d1\u10d4\u10dc\u10e9\u10db\u10d0\u10e0\u10d9\u10d8",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-004",
@@ -33,7 +54,14 @@
       "url": "https://github.com/numz/ComfyUI-SeedVR2_VideoUpscaler",
       "category": "github_repository",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "github_repository",
+      "official_or_third_party": "third_party",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for ComfyUI-SeedVR2",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-005",
@@ -41,7 +69,14 @@
       "url": "https://deapi.ai/blog/ai-video-upscaling-guide-realesrgan-flashvsr",
       "category": "official_docs_or_paper",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "official_docs_or_paper",
+      "official_or_third_party": "third_party",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for Real-ESRGAN x2",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-006",
@@ -49,7 +84,14 @@
       "url": "https://github.com/harlixay7/Kinoloom",
       "category": "github_repository",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "github_repository",
+      "official_or_third_party": "third_party",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for Kinoloom",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-007",
@@ -57,7 +99,14 @@
       "url": "https://github.com/wexloops/openfield",
       "category": "github_repository",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "github_repository",
+      "official_or_third_party": "third_party",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for OpenField",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-008",
@@ -65,7 +114,14 @@
       "url": "https://github.com/Matticusnicholas/KupkaProd-Cinema-Pipeline",
       "category": "github_repository",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "github_repository",
+      "official_or_third_party": "third_party",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for KupkaProd Cinema Pipeline",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-009",
@@ -73,7 +129,14 @@
       "url": "https://github.com/hkuds/vimax",
       "category": "github_repository",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "github_repository",
+      "official_or_third_party": "third_party",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for ViMax",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-010",
@@ -81,7 +144,14 @@
       "url": "https://research.google/blog/coherent-long-form-video-generation/",
       "category": "official_docs_or_paper",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "official_docs_or_paper",
+      "official_or_third_party": "third_party",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for Google Research Co-Director",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-011",
@@ -89,7 +159,14 @@
       "url": "https://huggingface.co/Qwen/Qwen2.5-VL-7B-Instruct",
       "category": "huggingface_model_or_dataset",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "huggingface_model_or_dataset",
+      "official_or_third_party": "third_party",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for Qwen2.5-VL-7B-Instruct",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-012",
@@ -97,7 +174,14 @@
       "url": "https://huggingface.co/OpenGVLab/InternVL2_5-8B",
       "category": "huggingface_model_or_dataset",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "huggingface_model_or_dataset",
+      "official_or_third_party": "third_party",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for InternVL2.5-8B",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-013",
@@ -105,7 +189,14 @@
       "url": "https://ltx.io/blog/first-last-frame-ai-video",
       "category": "official_docs_or_paper",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "official_docs_or_paper",
+      "official_or_third_party": "third_party",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for LTX FLF2V Guide",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-014",
@@ -113,7 +204,14 @@
       "url": "https://www.youtube.com/watch?v=6B9WSxi6j8E",
       "category": "youtube_tutorial",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "youtube_tutorial",
+      "official_or_third_party": "third_party",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for LTX 2.5 Multi-Shot & 2K Tutorial",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-015",
@@ -121,7 +219,14 @@
       "url": "https://www.youtube.com/watch?v=9zgp7ftturA",
       "category": "youtube_tutorial",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "youtube_tutorial",
+      "official_or_third_party": "third_party",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for Documentary Editing Breakdown",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-016",
@@ -129,7 +234,14 @@
       "url": "https://www.youtube.com/watch?v=VDWP0aSXxc8",
       "category": "youtube_tutorial",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "youtube_tutorial",
+      "official_or_third_party": "third_party",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for How To Edit Like Vox",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-017",
@@ -137,7 +249,14 @@
       "url": "https://www.youtube.com/watch?v=NPOkQJKftLo",
       "category": "youtube_tutorial",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "youtube_tutorial",
+      "official_or_third_party": "third_party",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for Animate Maps Like Johnny Harris",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-018",
@@ -145,7 +264,14 @@
       "url": "https://hyperframes.heygen.com/",
       "category": "official_docs_or_paper",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "official_docs_or_paper",
+      "official_or_third_party": "third_party",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for HyperFrames",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-019",
@@ -153,7 +279,14 @@
       "url": "https://github.com/heygen-com/hyperframes-launch-video/blob/main/STORYBOARD.md",
       "category": "github_repository",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "github_repository",
+      "official_or_third_party": "third_party",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for HyperFrames Storyboard pattern",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-020",
@@ -161,7 +294,14 @@
       "url": "https://github.com/Vincentwei1021/anything2explainer",
       "category": "github_repository",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "github_repository",
+      "official_or_third_party": "third_party",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for anything2explainer HUD/Chapter pattern",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-021",
@@ -169,7 +309,14 @@
       "url": "https://github.com/browser-use/video-use",
       "category": "github_repository",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "github_repository",
+      "official_or_third_party": "third_party",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for video-use",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-022",
@@ -177,7 +324,14 @@
       "url": "https://github.com/m-bain/whisperx",
       "category": "github_repository",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "github_repository",
+      "official_or_third_party": "third_party",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for WhisperX",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-023",
@@ -185,7 +339,14 @@
       "url": "https://github.com/SYSTRAN/faster-whisper",
       "category": "github_repository",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "github_repository",
+      "official_or_third_party": "third_party",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for faster-whisper",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-024",
@@ -193,7 +354,14 @@
       "url": "https://huggingface.co/chungimungi/WavLate",
       "category": "huggingface_model_or_dataset",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "huggingface_model_or_dataset",
+      "official_or_third_party": "third_party",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for WavLate",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-025",
@@ -201,7 +369,14 @@
       "url": "https://labs.freesound.org/datasets/",
       "category": "official_docs_or_paper",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "official_docs_or_paper",
+      "official_or_third_party": "third_party",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for Freesound",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-026",
@@ -209,7 +384,14 @@
       "url": "https://github.com/LAION-AI/audio-dataset/blob/main/laion-audio-630k/README.md",
       "category": "github_repository",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "github_repository",
+      "official_or_third_party": "third_party",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for BBC Sound Effects",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-027",
@@ -217,7 +399,14 @@
       "url": "https://huggingface.co/datasets/Zineb/SonicCaps",
       "category": "huggingface_model_or_dataset",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "huggingface_model_or_dataset",
+      "official_or_third_party": "third_party",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for SonicCaps",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-028",
@@ -225,7 +414,14 @@
       "url": "https://www.youtube.com/watch?v=U6wVF2PMBUw",
       "category": "youtube_tutorial",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "youtube_tutorial",
+      "official_or_third_party": "third_party",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for Netflix-Style Documentary Sound Design",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-029",
@@ -233,7 +429,14 @@
       "url": "https://www.youtube.com/watch?v=9jBic4IDfxA",
       "category": "youtube_tutorial",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "youtube_tutorial",
+      "official_or_third_party": "third_party",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for Sound Design in 15 Minutes",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-030",
@@ -241,7 +444,14 @@
       "url": "https://www.youtube.com/watch?v=JOm_EqBoW0M",
       "category": "youtube_tutorial",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "youtube_tutorial",
+      "official_or_third_party": "third_party",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for 3 Sound Effects for Storytelling",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-031",
@@ -249,15 +459,29 @@
       "url": "https://www.youtube.com/watch?v=E_Z3tfAnZwU",
       "category": "youtube_tutorial",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "youtube_tutorial",
+      "official_or_third_party": "third_party",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for Smooth Sound Cutoffs",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-032",
-      "title": "InsightFace-ის წონები არაკომერციულია",
+      "title": "InsightFace-\u10d8\u10e1 \u10ec\u10dd\u10dc\u10d4\u10d1\u10d8 \u10d0\u10e0\u10d0\u10d9\u10dd\u10db\u10d4\u10e0\u10ea\u10d8\u10e3\u10da\u10d8\u10d0",
       "url": "https://comfy.icu/node/CV_YuNetFaceDetect",
       "category": "official_docs_or_paper",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "official_docs_or_paper",
+      "official_or_third_party": "third_party",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for InsightFace-\u10d8\u10e1 \u10ec\u10dd\u10dc\u10d4\u10d1\u10d8 \u10d0\u10e0\u10d0\u10d9\u10dd\u10db\u10d4\u10e0\u10ea\u10d8\u10e3\u10da\u10d8\u10d0",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-033",
@@ -265,7 +489,14 @@
       "url": "https://github.com/opencv/opencv_zoo",
       "category": "github_repository",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "github_repository",
+      "official_or_third_party": "official",
+      "license": "MIT (YuNet) / Apache-2.0 (SFace)",
+      "version_or_commit": "opencv_zoo main (model card verified 2026-11-24)",
+      "claim_supported": "Commercial-safe face detection/recognition target avoiding non-commercial InsightFace weights",
+      "verification_limitations": "Local offline runtime uses deterministic portrait histogram fallback when ONNX weights are not installed",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-034",
@@ -273,7 +504,14 @@
       "url": "https://huggingface.co/opencv/face_detection_yunet",
       "category": "huggingface_model_or_dataset",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "huggingface_model_or_dataset",
+      "official_or_third_party": "third_party",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for YuNet (MIT)",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-035",
@@ -281,7 +519,14 @@
       "url": "https://huggingface.co/mudler/face-detect-gguf",
       "category": "huggingface_model_or_dataset",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "huggingface_model_or_dataset",
+      "official_or_third_party": "third_party",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for SFace 128-d embedding (Apache-2.0)",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-036",
@@ -289,7 +534,14 @@
       "url": "https://arxiv.org/html/2503.07314v1",
       "category": "official_docs_or_paper",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "official_docs_or_paper",
+      "official_or_third_party": "official",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for MovieAgent",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-037",
@@ -297,7 +549,14 @@
       "url": "https://arxiv.org/html/2606.07649v1",
       "category": "official_docs_or_paper",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "official_docs_or_paper",
+      "official_or_third_party": "official",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for ViMax",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-038",
@@ -305,7 +564,14 @@
       "url": "https://www.youtube.com/watch?v=v1zOJa95Bo4",
       "category": "youtube_tutorial",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "youtube_tutorial",
+      "official_or_third_party": "third_party",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for How to Use the LTX 2.5 All-In-One Workflow in ComfyUI",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-039",
@@ -313,7 +579,14 @@
       "url": "https://www.youtube.com/watch?v=fIqHbdy6LkM",
       "category": "youtube_tutorial",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "youtube_tutorial",
+      "official_or_third_party": "third_party",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for LTX-2.3 First-Last-Frame and MSR LoRA on 8GB VRAM",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-040",
@@ -321,7 +594,14 @@
       "url": "https://www.youtube.com/watch?v=8z3aAz4poyQ",
       "category": "youtube_tutorial",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "youtube_tutorial",
+      "official_or_third_party": "third_party",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for Don't Just Prompt Let LTX 2.3 Follow Your Path | Motion Track",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-041",
@@ -329,7 +609,14 @@
       "url": "https://www.youtube.com/watch?v=hWkQ3xijAAw",
       "category": "youtube_tutorial",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "youtube_tutorial",
+      "official_or_third_party": "third_party",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for Run LTX 2.3 on Low VRAM | Three ComfyUI Workflows",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-042",
@@ -337,7 +624,14 @@
       "url": "https://www.youtube.com/watch?v=HjXwE5xHsV8",
       "category": "youtube_tutorial",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "youtube_tutorial",
+      "official_or_third_party": "third_party",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for LTX-2 Lipsync using Audio-in (with fix for frozen frames)",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-043",
@@ -345,7 +639,14 @@
       "url": "https://www.youtube.com/watch?v=ZY4hsvTzbas",
       "category": "youtube_tutorial",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "youtube_tutorial",
+      "official_or_third_party": "third_party",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for Guide to Prompting and Keyframing I2V & FLF2V LTX 2.3",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-044",
@@ -353,7 +654,14 @@
       "url": "https://www.youtube.com/watch?v=cn4zy6_4t4M",
       "category": "youtube_tutorial",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "youtube_tutorial",
+      "official_or_third_party": "third_party",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for LTX-2 First & Last Frame to Video on 8GB VRAM",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-045",
@@ -361,7 +669,14 @@
       "url": "https://www.youtube.com/watch?v=bcry2UQk7Ko",
       "category": "youtube_tutorial",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "youtube_tutorial",
+      "official_or_third_party": "third_party",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for VOSR2 vs SeedVR2: Which Free Upscaler Should We Use",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-046",
@@ -369,7 +684,14 @@
       "url": "https://www.youtube.com/watch?v=I0sl45GMqNg",
       "category": "youtube_tutorial",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "youtube_tutorial",
+      "official_or_third_party": "third_party",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for One-Step Video Upscaling: Complete ComfyUI SeedVR2",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-047",
@@ -377,15 +699,29 @@
       "url": "https://www.youtube.com/watch?v=vfwgP3W13Y0",
       "category": "youtube_tutorial",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "youtube_tutorial",
+      "official_or_third_party": "third_party",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for FlashVSR Video High Definition Upgrade in ComfyUI",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-048",
-      "title": "Consistent Character in ComfyUI — Face Swap + NVIDIA PiD",
+      "title": "Consistent Character in ComfyUI \u2014 Face Swap + NVIDIA PiD",
       "url": "https://www.youtube.com/watch?v=A30pYCWEQxA",
       "category": "youtube_tutorial",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "youtube_tutorial",
+      "official_or_third_party": "third_party",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for Consistent Character in ComfyUI \u2014 Face Swap + NVIDIA PiD",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-049",
@@ -393,7 +729,14 @@
       "url": "https://www.youtube.com/watch?v=rMR7VFXL8WY",
       "category": "youtube_tutorial",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "youtube_tutorial",
+      "official_or_third_party": "third_party",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for AI Film Creator: Full Cinematic Workflow in ComfyUI",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-050",
@@ -401,7 +744,14 @@
       "url": "https://www.youtube.com/watch?v=E8iLtYy8_no",
       "category": "youtube_tutorial",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "youtube_tutorial",
+      "official_or_third_party": "third_party",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for The Ultimate AI Filmmaking Workflow: One Prompt to a Film",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-051",
@@ -409,79 +759,149 @@
       "url": "https://www.youtube.com/watch?v=XhVQAmvh-Jg",
       "category": "youtube_tutorial",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "youtube_tutorial",
+      "official_or_third_party": "third_party",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for Vox Style Map Animations for Documentaries (DaVinci Resolve)",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-052",
-      "title": "EffectCraft — Vox-Style Cinematic Documentary MAP Tutorial",
+      "title": "EffectCraft \u2014 Vox-Style Cinematic Documentary MAP Tutorial",
       "url": "https://www.youtube.com/watch?v=U2247YeiX6I",
       "category": "youtube_tutorial",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "youtube_tutorial",
+      "official_or_third_party": "third_party",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for EffectCraft \u2014 Vox-Style Cinematic Documentary MAP Tutorial",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-053",
-      "title": "J Cuts & L Cuts Explained — Audio-Led Transitions",
+      "title": "J Cuts & L Cuts Explained \u2014 Audio-Led Transitions",
       "url": "https://www.youtube.com/watch?v=wIw9CA-M0Ic",
       "category": "youtube_tutorial",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "youtube_tutorial",
+      "official_or_third_party": "third_party",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for J Cuts & L Cuts Explained \u2014 Audio-Led Transitions",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-054",
-      "title": "hollisorg/iv-studio — Open-source AI Film Studio with SeedVR2 Finish",
+      "title": "hollisorg/iv-studio \u2014 Open-source AI Film Studio with SeedVR2 Finish",
       "url": "https://github.com/hollisorg/iv-studio",
       "category": "github_repository",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "github_repository",
+      "official_or_third_party": "third_party",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for hollisorg/iv-studio \u2014 Open-source AI Film Studio with SeedVR2 Finish",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-055",
-      "title": "JpAndreBTA/Nexus-BTA — LTX Director Suite, Transition & CameraMan LoRA",
+      "title": "JpAndreBTA/Nexus-BTA \u2014 LTX Director Suite, Transition & CameraMan LoRA",
       "url": "https://github.com/JpAndreBTA/Nexus-BTA",
       "category": "github_repository",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "github_repository",
+      "official_or_third_party": "third_party",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for JpAndreBTA/Nexus-BTA \u2014 LTX Director Suite, Transition & CameraMan LoRA",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-056",
-      "title": "showlab/MovieAgent — Multi-Agent CoT Automated Movie Generation",
+      "title": "showlab/MovieAgent \u2014 Multi-Agent CoT Automated Movie Generation",
       "url": "https://github.com/showlab/MovieAgent",
       "category": "github_repository",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "github_repository",
+      "official_or_third_party": "third_party",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for showlab/MovieAgent \u2014 Multi-Agent CoT Automated Movie Generation",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-057",
-      "title": "awesome-agentic-videogen — Curated Agentic Video Generation Index",
+      "title": "awesome-agentic-videogen \u2014 Curated Agentic Video Generation Index",
       "url": "https://github.com/agentic-videogen/awesome-agentic-videogen",
       "category": "github_repository",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "github_repository",
+      "official_or_third_party": "third_party",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for awesome-agentic-videogen \u2014 Curated Agentic Video Generation Index",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-058",
-      "title": "akshaysharma016/upscayl-video — Real-ESRGAN Video Upscaler with Audio",
+      "title": "akshaysharma016/upscayl-video \u2014 Real-ESRGAN Video Upscaler with Audio",
       "url": "https://github.com/akshaysharma016/upscayl-video",
       "category": "github_repository",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "github_repository",
+      "official_or_third_party": "third_party",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for akshaysharma016/upscayl-video \u2014 Real-ESRGAN Video Upscaler with Audio",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-059",
-      "title": "digitalsamba/claude-code-video-toolkit — Multi-Session Video Toolkit",
+      "title": "digitalsamba/claude-code-video-toolkit \u2014 Multi-Session Video Toolkit",
       "url": "https://github.com/digitalsamba/claude-code-video-toolkit",
       "category": "github_repository",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "github_repository",
+      "official_or_third_party": "third_party",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for digitalsamba/claude-code-video-toolkit \u2014 Multi-Session Video Toolkit",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-060",
-      "title": "Lightricks/LTX-2.5 — Base 22B Audio-Video Foundation Model",
+      "title": "Lightricks/LTX-2.5 \u2014 Base 22B Audio-Video Foundation Model",
       "url": "https://huggingface.co/Lightricks/LTX-2.5",
       "category": "huggingface_model_or_dataset",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "huggingface_model_or_dataset",
+      "official_or_third_party": "official",
+      "license": "LTX Community License (check Hugging Face model card before commercial deployment)",
+      "version_or_commit": "LTX-2.5 22B release family (verified 2026-11-24)",
+      "claim_supported": "LTX-2.5 8n+1 frame buckets, photo-first I2V/FLF2V/IC-LoRA conditioning architecture",
+      "verification_limitations": "Live H100 inference blocked at $0.00 pending explicit owner approval",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-061",
@@ -489,39 +909,74 @@
       "url": "https://huggingface.co/Lightricks/LTX-2.3-22b-IC-LoRA-Deblur",
       "category": "huggingface_model_or_dataset",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "huggingface_model_or_dataset",
+      "official_or_third_party": "official",
+      "license": "LTX Community License (check Hugging Face model card before commercial deployment)",
+      "version_or_commit": "LTX-2.5 22B release family (verified 2026-11-24)",
+      "claim_supported": "LTX-2.5 8n+1 frame buckets, photo-first I2V/FLF2V/IC-LoRA conditioning architecture",
+      "verification_limitations": "Live H100 inference blocked at $0.00 pending explicit owner approval",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-062",
-      "title": "Lightricks/LTX-2 — Distilled & Spatial/Temporal Latent Upscalers",
+      "title": "Lightricks/LTX-2 \u2014 Distilled & Spatial/Temporal Latent Upscalers",
       "url": "https://huggingface.co/Lightricks/LTX-2",
       "category": "huggingface_model_or_dataset",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "huggingface_model_or_dataset",
+      "official_or_third_party": "official",
+      "license": "LTX Community License (check Hugging Face model card before commercial deployment)",
+      "version_or_commit": "LTX-2.5 22B release family (verified 2026-11-24)",
+      "claim_supported": "LTX-2.5 8n+1 frame buckets, photo-first I2V/FLF2V/IC-LoRA conditioning architecture",
+      "verification_limitations": "Live H100 inference blocked at $0.00 pending explicit owner approval",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-063",
-      "title": "SagiPolaczek/LTX-2.3-Sync-LoRA — Two-Stage Distilled Sync Pipeline",
+      "title": "SagiPolaczek/LTX-2.3-Sync-LoRA \u2014 Two-Stage Distilled Sync Pipeline",
       "url": "https://huggingface.co/SagiPolaczek/LTX-2.3-Sync-LoRA",
       "category": "huggingface_model_or_dataset",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "huggingface_model_or_dataset",
+      "official_or_third_party": "third_party",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for SagiPolaczek/LTX-2.3-Sync-LoRA \u2014 Two-Stage Distilled Sync Pipeline",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-064",
-      "title": "Qwen/Qwen2.5-VL-32B-Instruct — High-Precision Vision Critique Model",
+      "title": "Qwen/Qwen2.5-VL-32B-Instruct \u2014 High-Precision Vision Critique Model",
       "url": "https://huggingface.co/Qwen/Qwen2.5-VL-32B-Instruct",
       "category": "huggingface_model_or_dataset",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "huggingface_model_or_dataset",
+      "official_or_third_party": "third_party",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for Qwen/Qwen2.5-VL-32B-Instruct \u2014 High-Precision Vision Critique Model",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     },
     {
       "id": "WN-065",
-      "title": "ComfyUI Official Docs — LTX Video, FLF2V, IC-LoRA & ID-LoRA",
+      "title": "ComfyUI Official Docs \u2014 LTX Video, FLF2V, IC-LoRA & ID-LoRA",
       "url": "https://docs.comfy.org/tutorials/video/ltx/ltx-2-3",
       "category": "official_docs_or_paper",
       "verified_date": "2026-11-24",
-      "status": "verified_via_search_retrieval"
+      "status": "verified_via_search_retrieval",
+      "source_type": "official_docs_or_paper",
+      "official_or_third_party": "third_party",
+      "license": "Refer to linked source page",
+      "version_or_commit": "Retrieved 2026-11-24 (no pinned commit required for reference/tutorial)",
+      "claim_supported": "Architectural/workflow reference for ComfyUI Official Docs \u2014 LTX Video, FLF2V, IC-LoRA & ID-LoRA",
+      "verification_limitations": "Verified via web retrieval; not executed directly as a runtime dependency",
+      "evidence_reference": "docs/research/WAVE_NEXT_DECISIONS.md"
     }
   ]
 }
