@@ -426,9 +426,13 @@ def invoke_gemini_multimodal_qa(
     ledger_path: Path | None = None,
 ) -> dict[str, Any]:
     """Send temporal frames + audio WAV inline to Gemini multimodal API using x-goog-api-key header."""
-    key = api_key or os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
-    if not key and transport is None:
-        raise ContractError("GEMINI_API_KEY is not set: cannot run live multimodal perceptual QA")
+    if transport is not None:
+        # Custom transport is strictly isolated for offline test mocks: never forward real API keys
+        key = "MOCK_TEST_KEY"
+    else:
+        key = api_key or os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
+        if not key:
+            raise ContractError("GEMINI_API_KEY is not set: cannot run live multimodal perceptual QA")
 
     # Enforce spend cap before any live API call
     reserved_item: str | None = None

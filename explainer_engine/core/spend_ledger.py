@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import contextlib
 import datetime
+import math
 import os
 import sqlite3
 from pathlib import Path
@@ -100,7 +101,14 @@ def reserve(
     """Atomically reserve ``estimate_usd`` for ``item_id`` under ``cap_usd * stop_fraction``."""
     if not service or not item_id:
         raise OverCeiling("service and item_id must be non-empty")
-    if estimate_usd < 0 or cap_usd <= 0:
+    if (
+        isinstance(estimate_usd, bool)
+        or isinstance(cap_usd, bool)
+        or isinstance(stop_fraction, bool)
+        or not (math.isfinite(estimate_usd) and math.isfinite(cap_usd) and math.isfinite(stop_fraction))
+        or estimate_usd < 0
+        or cap_usd <= 0
+    ):
         raise OverCeiling(f"Invalid spending parameters: estimate={estimate_usd}, cap={cap_usd}")
     if not (0 < stop_fraction <= 1.0):
         raise OverCeiling(f"Invalid stop_fraction: {stop_fraction}")
@@ -186,8 +194,8 @@ def settle(
     ledger_path: Path | None = None,
 ) -> dict[str, Any]:
     """Atomically settle ``item_id``. Persists actual spend and blocks service on OVERRUN."""
-    if actual_usd < 0:
-        raise OverCeiling("actual_usd cannot be negative")
+    if isinstance(actual_usd, bool) or not isinstance(actual_usd, (int, float)) or not math.isfinite(actual_usd) or actual_usd < 0:
+        raise OverCeiling(f"actual_usd must be a finite non-negative number, got {actual_usd!r}")
     path = ledger_path or default_ledger_path()
     conn = _connect(path)
     try:

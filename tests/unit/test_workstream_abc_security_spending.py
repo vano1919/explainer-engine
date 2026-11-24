@@ -245,3 +245,70 @@ def test_night_budget_uses_transactional_ledger_and_enforces_cap(tmp_path: Path,
     NB.settle(lp, "smoke_1", 0.40)
     with pytest.raises(NB.NightCapExceeded):
         NB.reserve(lp, "smoke_huge", 5.00, "too big")
+
+
+def test_blockers_ac_modal_workers_refuse_unregistered_go_cards():
+    from explainer_engine.training.pods.ltx import modal_layout_jobs as MLAY
+    from explainer_engine.training.pods.ltx import modal_ltx_jobs as MLJ
+
+    plan_sha = "a" * 64
+    forged_env = {
+        "EE_MODAL_GO": f"cmsg_forged_1234:{plan_sha[:12]}",
+        "EE_MODAL_APPROVAL_MANIFEST_SHA256": "b" * 64,
+    }
+    with pytest.raises(SystemExit, match="owner approval verification failed"):
+        MLJ.verify_worker_approval(forged_env, plan_sha=plan_sha, operation_mode="modal-ltx-smoke", requested_usd=0.5)
+    with pytest.raises(SystemExit, match="owner approval verification failed"):
+        MLAY.verify_worker_approval(forged_env, plan_sha=plan_sha, operation_mode="modal-layout-weights", requested_usd=0.32)
+
+
+def test_blocker_b_workflow_check_only_step_has_zero_secrets():
+    raw = (REPO_ROOT / ".github" / "workflows" / "modal-ltx-smoke-qa.yml").read_text(encoding="utf-8")
+    wf = yaml.safe_load(raw)
+    steps = next(iter(wf["jobs"].values()))["steps"]
+    check_step = next(s for s in steps if "check-only" in s.get("name", "").lower())
+    step_env = check_step.get("env") or {}
+    for k, v in step_env.items():
+        assert "secrets." not in str(v), f"Secret leaked to check_only step: {k}={v}"
+
+
+def test_blocker_d_stage_cost_accounted_for():
+    from explainer_engine.training.pods.ltx import modal_ltx_jobs as MLJ
+
+    assert MLJ.stage_hard_bill_usd() == 0.32
+    script = (REPO_ROOT / "scripts" / "run_modal_ltx_smoke_and_qa.py").read_text(encoding="utf-8")
+    assert "MLJ.stage_hard_bill_usd()" in script
+
+
+def test_blocker_e_night_budget_ci_fail_closed_and_durable_path(tmp_path: Path, monkeypatch):
+    monkeypatch.setenv("CI", "true")
+    monkeypatch.delenv("EE_DURABLE_LEDGER_PATH", raising=False)
+    with pytest.raises(SL.LedgerPersistenceError):
+        NB.default_night_ledger_path()
+
+    durable = tmp_path / "durable.sqlite3"
+    monkeypatch.setenv("EE_DURABLE_LEDGER_PATH", str(durable))
+    assert NB.default_night_ledger_path() == durable
+
+
+def test_blocker_h_approvals_and_ledger_reject_nan_and_inf(tmp_path: Path):
+    digest = "a" * 64
+    for bad_val in (float("nan"), float("inf"), float("-inf")):
+        with pytest.raises(AP.ApprovalError):
+            AP.verify_approval(
+                "cmsg_valid_0001",
+                provider="modal_modal1",
+                operation_mode="modal-ltx-smoke",
+                manifest_sha256=digest,
+                requested_usd=bad_val,
+            )
+        with pytest.raises(SC.OverCeiling):
+            SL.reserve("modal", "nan_item", bad_val, cap_usd=1.5, ledger_path=tmp_path / "l.sqlite3")
+
+
+def test_blocker_i_worker_night_settle_propagates_errors(tmp_path: Path, monkeypatch):
+    from explainer_engine.training.pods.ltx import modal_ltx_jobs as MLJ
+
+    monkeypatch.delenv("CI", raising=False)
+    with pytest.raises(SystemExit, match="NIGHT LEDGER SETTLE FAILED"):
+        MLJ.night_settle("nonexistent_item_xyz", 0.5, path=tmp_path / "empty.sqlite3")

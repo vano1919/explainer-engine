@@ -165,17 +165,19 @@ def _exec_ltx_video(payload: dict[str, Any]) -> dict[str, Any]:
         rec_status = str(rec.get("status") or "").upper()
         if rec.get("schema") == "video_clip_record/1" and rec_status == "PASS":
             clip_ref = rec.get("clip_path") or rec.get("path") or rec.get("video_path")
-            if clip_ref:
-                clip_p = Path(clip_ref)
-                if not clip_p.is_file() or clip_p.stat().st_size == 0:
-                    raise ContractError(f"video_clip_record/1 clip file missing or empty: {clip_p}")
-                expected_sha = rec.get("sha256")
-                if expected_sha:
-                    actual_sha = hashlib.sha256(clip_p.read_bytes()).hexdigest()
-                    if actual_sha != expected_sha:
-                        raise ContractError(
-                            f"video_clip_record/1 SHA-256 mismatch for {clip_p}: expected {expected_sha}, got {actual_sha}"
-                        )
+            if not clip_ref:
+                raise ContractError("video_clip_record/1 PASS requires a non-empty clip_path/path/video_path")
+            clip_p = Path(clip_ref)
+            if not clip_p.is_file() or clip_p.stat().st_size == 0:
+                raise ContractError(f"video_clip_record/1 clip file missing or empty: {clip_p}")
+            expected_sha = rec.get("sha256")
+            if not isinstance(expected_sha, str) or len(expected_sha) != 64:
+                raise ContractError("video_clip_record/1 PASS requires a valid 64-character sha256 digest")
+            actual_sha = hashlib.sha256(clip_p.read_bytes()).hexdigest()
+            if actual_sha != expected_sha:
+                raise ContractError(
+                    f"video_clip_record/1 SHA-256 mismatch for {clip_p}: expected {expected_sha}, got {actual_sha}"
+                )
             return {"status": "PASS", "outputs": ["ltx_video_clips"], "worker": worker, "clip_record_path": str(rec_path)}
     return {
         "status": "PLANNED",

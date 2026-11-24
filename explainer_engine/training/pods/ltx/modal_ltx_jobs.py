@@ -278,6 +278,14 @@ def hf_path(launch: dict, job: dict, name: str) -> str:
     return f"{launch['hf_out']}/{job['run_id']}/{job['shot_id']}/{name}"
 
 
+STAGE_CPU_RATE_USD_PER_H = 0.32
+
+
+def stage_hard_bill_usd(timeout_s: int = 3600) -> float:
+    """Upper-bound USD estimate for CPU weight staging on Modal."""
+    return round(float(timeout_s) * STAGE_CPU_RATE_USD_PER_H / 3600.0, 4)
+
+
 def go_gate(env=os.environ, plan_sha: str | None = None):
     """EE_MODAL_GO = ``<the creator's message id>:<sha256[:12] of the plan he said yes to>`` (final audit B10)."""
     v = env.get("EE_MODAL_GO", "")
@@ -288,6 +296,34 @@ def go_gate(env=os.environ, plan_sha: str | None = None):
     if not plan_sha or m.group(2) != plan_sha[:12]:
         raise SystemExit("EE_MODAL_GO names another plan than this job's (OR-23); nothing was started")
     return v
+
+
+def verify_worker_approval(
+    env=os.environ,
+    *,
+    plan_sha: str,
+    operation_mode: str,
+    requested_usd: float,
+    registry_path: Path | None = None,
+) -> dict:
+    """Fail-closed owner approval verification directly inside the Modal worker entrypoint."""
+    from explainer_engine.core import approvals
+
+    go_val = go_gate(env=env, plan_sha=plan_sha)
+    card_id = go_val.split(":", 1)[0]
+    manifest_sha = str(env.get("EE_MODAL_APPROVAL_MANIFEST_SHA256") or "").strip()
+    effective_mode = str(env.get("EE_MODAL_OPERATION_MODE") or operation_mode).strip()
+    try:
+        return approvals.verify_approval(
+            card_id,
+            provider="modal_modal1",
+            operation_mode=effective_mode,
+            manifest_sha256=manifest_sha,
+            requested_usd=requested_usd,
+            registry_path=registry_path,
+        )
+    except approvals.ApprovalError as exc:
+        raise SystemExit(f"owner approval verification failed: {exc}; nothing was started") from None
 
 
 def ladder_gate(rung: str, path=None, launch=None):
@@ -496,6 +532,7 @@ def night_settle(item: str, usd: float, path=None) -> None:
         NB.settle(path or NIGHT_LEDGER, item, usd)
     except NB.NightCapExceeded as exc:
         print("NIGHT LEDGER SETTLE FAILED:", exc, flush=True)
+        raise SystemExit(f"NIGHT LEDGER SETTLE FAILED: {exc}") from None
 
 
 def claim_launch(spec: dict, now=time.time) -> None:
@@ -1591,9 +1628,19 @@ if modal is not None:
     @app.local_entrypoint()
     def stage(plan: str = "", with_kind: bool = False):
         preflight(LAUNCH)
-        print("GO card", go_gate(plan_sha=_sha(plan)), "stage timeout", STAGE_TIMEOUT_S, "s", flush=True)
+        plan_sha = _sha(plan)
+        stage_est = stage_hard_bill_usd(STAGE_TIMEOUT_S)
+        verify_worker_approval(plan_sha=plan_sha, operation_mode="modal-ltx-stage-and-smoke", requested_usd=stage_est)
+        print("GO card", go_gate(plan_sha=plan_sha), "stage timeout", STAGE_TIMEOUT_S, "s", flush=True)
         ladder_gate("L2")
-        bad = weights_stage.remote(LAUNCH, with_kind)
+        stage_item = f"ltx_stage_{run_id(plan_sha, LAUNCH)}_{worker_sha()[:8]}"
+        night_reserve(stage_item, stage_est, "L2 weights stage")
+        t_stage = time.time()
+        try:
+            bad = weights_stage.remote(LAUNCH, with_kind)
+        finally:
+            wall = time.time() - t_stage
+            night_settle(stage_item, round(wall * STAGE_CPU_RATE_USD_PER_H / 3600.0, 4))
         print("stage", bad or "all files on the Volume, sha256 match")
         if bad:
             raise SystemExit("the weights stage-in is not complete:\n" + "\n".join(bad))
@@ -1610,6 +1657,8 @@ if modal is not None:
     def smoke(picture: str = "", plan: str = ""):
         preflight(LAUNCH)
         plan_sha = _sha(plan)
+        smoke_est = hard_bill_usd(LAUNCH, TIMEOUTS[0])
+        verify_worker_approval(plan_sha=plan_sha, operation_mode="modal-ltx-smoke", requested_usd=smoke_est)
         print("GO card", go_gate(plan_sha=plan_sha), "smoke timeout", TIMEOUTS[0], "s", flush=True)
         ladder_gate("L3")
         smoke_item = f"ltx_smoke_{run_id(plan_sha, LAUNCH)}_{worker_sha()[:8]}"   # a repeat on FIXED bytes is a new item; the same bytes stay refused
@@ -1644,6 +1693,11 @@ if modal is not None:
         why = kind_l2_problems(spec, LAUNCH, MR.load_ladder(LADDER_PATH))
         if why:
             raise SystemExit("\n".join(why))
+        verify_worker_approval(
+            plan_sha=spec["plan_sha256"],
+            operation_mode="modal-ltx-main",
+            requested_usd=hard_bill_usd(LAUNCH, TIMEOUTS[1]),
+        )
         print("GO card", go_gate(plan_sha=spec["plan_sha256"]), "timeout", TIMEOUTS[1], "s", flush=True)
         ladder_gate("L4")
         night_item = f"ltx_main_{spec['run_id']}"

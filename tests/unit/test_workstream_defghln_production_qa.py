@@ -217,3 +217,41 @@ def test_obsolete_stubs_and_duplicate_retired_skills_removed_and_cohesive_engine
         {"shots": [{"shot_id": "S1", "camera_spec": {"camera_move": "orbit"}}], "segments": [], "audio_lines": []}
     )
     assert any(i["rule"] == "KP-V4-CAMERA" and "orbit" in i["detail"] for i in issues)
+
+
+def test_blocker_f_perceptual_qa_custom_transport_never_receives_real_api_key(tmp_path: Path, monkeypatch):
+    monkeypatch.setenv("GEMINI_API_KEY", "AIzaSyREAL_SECRET_KEY_SHOULD_NEVER_LEAK")
+    vid = _make_local_mp4(tmp_path / "m.mp4", moving=True, stereo_noise=True)
+    seen_headers: dict[str, str] = {}
+
+    def spy_transport(_url: str, _body: dict, headers: dict) -> dict:
+        seen_headers.update(headers)
+        return {"candidates": [{"finishReason": "SAFETY", "content": {"parts": []}}]}
+
+    PQA.evaluate_clip_perceptual(vid, out_dir=tmp_path / "qa_spy", use_gemini=True, transport=spy_transport)
+    assert seen_headers.get("x-goog-api-key") == "MOCK_TEST_KEY"
+    assert "REAL_SECRET" not in seen_headers.get("x-goog-api-key", "")
+
+
+def test_blocker_g_ltx_video_pass_refuses_missing_clip_path_and_missing_or_bad_sha256(tmp_path: Path):
+    orch = SkillOrchestrator()
+    clip_p = tmp_path / "clip.mp4"
+    clip_p.write_bytes(b"real-video-bytes")
+
+    # Missing clip_path
+    rec_no_clip = tmp_path / "no_clip.json"
+    rec_no_clip.write_text(json.dumps({"schema": "video_clip_record/1", "status": "PASS", "sha256": "a" * 64}), encoding="utf-8")
+    with pytest.raises(ContractError, match="clip_path"):
+        orch.run_stage("S6_ltx_video", {"shot": {"shot_id": "s1"}, "clip_record_path": str(rec_no_clip)})
+
+    # Missing sha256
+    rec_no_sha = tmp_path / "no_sha.json"
+    rec_no_sha.write_text(json.dumps({"schema": "video_clip_record/1", "status": "PASS", "clip_path": str(clip_p)}), encoding="utf-8")
+    with pytest.raises(ContractError, match="sha256"):
+        orch.run_stage("S6_ltx_video", {"shot": {"shot_id": "s1"}, "clip_record_path": str(rec_no_sha)})
+
+    # Mismatched sha256
+    rec_bad_sha = tmp_path / "bad_sha.json"
+    rec_bad_sha.write_text(json.dumps({"schema": "video_clip_record/1", "status": "PASS", "clip_path": str(clip_p), "sha256": "0" * 64}), encoding="utf-8")
+    with pytest.raises(ContractError, match="SHA-256 mismatch"):
+        orch.run_stage("S6_ltx_video", {"shot": {"shot_id": "s1"}, "clip_record_path": str(rec_bad_sha)})

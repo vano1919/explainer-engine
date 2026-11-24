@@ -4,25 +4,25 @@ on:
   workflow_dispatch:
     inputs:
       plan_path:
-        description: "Repository-relative LTX scene plan JSON path"
-        type: string
+        description: "Repo-relative JSON plan path"
         required: true
-        default: "explainer_engine/training/pods/ltx/scenes/battle_2026-11-12.json"
+        default: "explainer_engine/training/pods/bakeoff/battle_2026-11-12.json"
+        type: string
       picture_path:
-        description: "Repository-relative start keyframe PNG path"
-        type: string
+        description: "Repo-relative reference PNG/JPG path"
         required: true
-        default: "assets/style/main_style_5709.png"
-      approval_id:
-        description: "Explicit owner approval ID registered in config/owner_approvals.json (required only when check_only=false)"
+        default: "tests/fixtures/real_media/frame_01.png"
         type: string
+      approval_id:
+        description: "Owner approval ID from config/owner_approvals.json (required only when check_only is false)"
         required: false
         default: ""
+        type: string
       check_only:
-        description: "Run free local preflight + L0 unit checks only (no paid calls)"
-        type: boolean
+        description: "Run free preflight and full L0 unit gate only ($0.00 spend, zero paid credentials)"
         required: true
         default: true
+        type: boolean
 
 permissions:
   contents: read
@@ -34,26 +34,71 @@ concurrency:
 jobs:
   ltx-smoke-and-qa:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
     environment: modal-paid-approval
+    timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
-          cache: pip
+          python-version: "3.11"
       - name: Install FFmpeg and project dependencies
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y -qq ffmpeg
           python -m pip install --upgrade pip -q
           python -m pip install -r requirements.txt modal -q
-      - name: Run validated LTX smoke + QA runner
+      - name: Run check-only L0 preflight (zero paid credentials)
+        if: ${{ inputs.check_only }}
+        env:
+          INPUT_PLAN_PATH: ${{ inputs.plan_path }}
+          INPUT_PICTURE_PATH: ${{ inputs.picture_path }}
+        run: |
+          python - <<'PY'
+          import os
+          import pathlib
+          import subprocess
+          import sys
+
+          REPO_ROOT = pathlib.Path.cwd().resolve()
+
+          def check_rel(raw: str, allowed_exts: set[str], label: str) -> str:
+              if not raw or len(raw) > 256:
+                  sys.exit(f"Invalid {label}: empty or too long")
+              p = pathlib.Path(raw)
+              if p.is_absolute():
+                  sys.exit(f"Absolute {label} is forbidden: {raw!r}")
+              resolved = (REPO_ROOT / p).resolve()
+              if not resolved.is_relative_to(REPO_ROOT) or not resolved.is_file():
+                  sys.exit(f"{label} must exist inside repo root: {raw!r}")
+              if resolved.suffix.lower() not in allowed_exts:
+                  sys.exit(f"Unsupported extension for {label}: {resolved.suffix!r}")
+              return str(resolved.relative_to(REPO_ROOT))
+
+          plan_rel = check_rel(os.environ.get("INPUT_PLAN_PATH", "").strip(), {".json"}, "plan_path")
+          pic_rel = check_rel(os.environ.get("INPUT_PICTURE_PATH", "").strip(), {".png", ".jpg", ".jpeg"}, "picture_path")
+
+          cmd = [
+              sys.executable,
+              "scripts/run_modal_ltx_smoke_and_qa.py",
+              "--plan",
+              plan_rel,
+              "--picture",
+              pic_rel,
+              "--out-dir",
+              "/tmp/ltx_smoke_out",
+              "--check-only",
+          ]
+          proc = subprocess.run(cmd)
+          sys.exit(proc.returncode)
+          PY
+      - name: Run approval-gated paid Modal LTX smoke + QA
+        if: ${{ !inputs.check_only }}
         env:
           INPUT_PLAN_PATH: ${{ inputs.plan_path }}
           INPUT_PICTURE_PATH: ${{ inputs.picture_path }}
           INPUT_APPROVAL_ID: ${{ inputs.approval_id }}
-          INPUT_CHECK_ONLY: ${{ inputs.check_only }}
           MODAL1_TOKEN_ID: ${{ secrets.MODAL1_TOKEN_ID }}
           MODAL1_TOKEN_SECRET: ${{ secrets.MODAL1_TOKEN_SECRET }}
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
@@ -83,8 +128,12 @@ jobs:
 
           plan_rel = check_rel(os.environ.get("INPUT_PLAN_PATH", "").strip(), {".json"}, "plan_path")
           pic_rel = check_rel(os.environ.get("INPUT_PICTURE_PATH", "").strip(), {".png", ".jpg", ".jpeg"}, "picture_path")
-          check_only = os.environ.get("INPUT_CHECK_ONLY", "true").strip().lower() == "true"
           approval_id = os.environ.get("INPUT_APPROVAL_ID", "").strip()
+
+          if not approval_id:
+              sys.exit("Live paid run requires explicit approval_id registered in config/owner_approvals.json")
+          if not os.environ.get("EE_DURABLE_LEDGER_PATH"):
+              sys.exit("CI paid run refused: EE_DURABLE_LEDGER_PATH durable backend variable is not configured")
 
           cmd = [
               sys.executable,
@@ -95,16 +144,9 @@ jobs:
               pic_rel,
               "--out-dir",
               "/tmp/ltx_smoke_out",
+              "--card-ref",
+              approval_id,
           ]
-          if check_only:
-              cmd.append("--check-only")
-          else:
-              if not approval_id:
-                  sys.exit("Live paid run requires explicit approval_id registered in config/owner_approvals.json")
-              if not os.environ.get("EE_DURABLE_LEDGER_PATH"):
-                  sys.exit("CI paid run refused: EE_DURABLE_LEDGER_PATH durable backend variable is not configured")
-              cmd += ["--card-ref", approval_id]
-
           proc = subprocess.run(cmd)
           sys.exit(proc.returncode)
           PY

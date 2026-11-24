@@ -14,7 +14,12 @@ class NightCapExceeded(spend_caps.OverCeiling):
 
 
 def default_night_ledger_path() -> Path:
-    """Return the configurable persistent night ledger path (no hard-coded /mnt/project-files default)."""
+    """Return the durable night ledger path; in CI fails closed unless EE_DURABLE_LEDGER_PATH is set."""
+    durable = os.environ.get("EE_DURABLE_LEDGER_PATH")
+    if durable:
+        return Path(durable).expanduser()
+    if os.environ.get("CI") or os.environ.get("GITHUB_ACTIONS"):
+        return spend_ledger.default_ledger_path()
     env_p = os.environ.get("EE_NIGHT_LEDGER")
     if env_p:
         return Path(env_p).expanduser()

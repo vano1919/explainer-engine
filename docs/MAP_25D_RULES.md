@@ -57,7 +57,7 @@ Written 2026-11-22 from the owner's recorded decisions and the repo state. Propo
 
 - Direction from the owner: a new rule applies to the skills, the code, and past videos.
 - Status: MISSING as a repo rule.
-- The skills (`.claude/skills/cartography`, `animation-principles`, `shot-visuals`) do not yet state these rules.
+- The active skill (`.claude/skills/cartography`; note `animation-principles` and `shot-visuals` are archived under `.claude/skills/_archive/`) does not yet state these rules.
 - Past videos have no re-check.
 - The coverage table is `llm_calls/night_2026-11-21/MAP_25D_RULES_COVERAGE_2026-11-22.md`.
 

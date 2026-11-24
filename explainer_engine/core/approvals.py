@@ -4,6 +4,7 @@ from __future__ import annotations
 import datetime
 import hashlib
 import json
+import math
 import re
 from pathlib import Path
 from typing import Any
@@ -58,6 +59,8 @@ def verify_approval(
         raise ApprovalError(f"Invalid approval_id format: {approval_id!r}")
     if not SHA256_RE.fullmatch(manifest_sha256):
         raise ApprovalError("Approval binding requires a full 64-character lowercase SHA-256 manifest hash")
+    if isinstance(requested_usd, bool) or not isinstance(requested_usd, (int, float)) or not math.isfinite(requested_usd):
+        raise ApprovalError(f"requested_usd must be a finite number, got {requested_usd!r}")
     if requested_usd < 0:
         raise ApprovalError("requested_usd cannot be negative")
 
@@ -82,7 +85,7 @@ def verify_approval(
         )
 
     max_usd = rec.get("max_usd")
-    if not isinstance(max_usd, (int, float)) or isinstance(max_usd, bool) or max_usd <= 0:
+    if not isinstance(max_usd, (int, float)) or isinstance(max_usd, bool) or not math.isfinite(max_usd) or max_usd <= 0:
         raise ApprovalError(f"Approval {approval_id!r} has invalid max_usd")
     if requested_usd > float(max_usd) + 1e-9:
         raise ApprovalError(

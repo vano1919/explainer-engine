@@ -153,10 +153,28 @@ def main(argv: list[str] | None = None) -> int:
     out_dir.mkdir(parents=True, exist_ok=True)
     ladder_path = out_dir / "ltx_ladder.json"
     env["EE_LTX_LADDER"] = str(ladder_path)
-    env.setdefault("EE_NIGHT_LEDGER", str(NB.default_night_ledger_path()))
+    if not args.check_only:
+        env["EE_NIGHT_LEDGER"] = str(NB.default_night_ledger_path())
 
-    # L0: full local unit gate with zero -k exclusions and zero paid env leakage
-    l0_env = {k: v for k, v in env.items() if k != "EE_MODAL_GO"}
+    # L0: full local unit gate with zero -k exclusions and zero paid credential leakage
+    paid_env_keys = {
+        "EE_MODAL_GO",
+        "MODAL_TOKEN_ID",
+        "MODAL_TOKEN_SECRET",
+        "MODAL1_TOKEN_ID",
+        "MODAL1_TOKEN_SECRET",
+        "HF_TOKEN",
+        "HUGGING_FACE_HUB_TOKEN",
+        "GEMINI_API_KEY",
+        "GOOGLE_API_KEY",
+        "ANTHROPIC_API_KEY",
+        "DEEPSEEK_API_KEY",
+        "ELEVENLABS_API_KEY",
+        "RUNPOD_API_KEY",
+        "BFL_API_KEY",
+        "FAL_KEY",
+    }
+    l0_env = {k: v for k, v in env.items() if k not in paid_env_keys}
     print(f"[L0] Running full LTX unit gate on HEAD {head_sha[:12]}...")
     subprocess.run(
         [
@@ -181,7 +199,9 @@ def main(argv: list[str] | None = None) -> int:
 
     # Strict approval verification bound to 64-character SHA-256 operation manifest BEFORE any paid side effect
     op_mode = "modal-ltx-stage-and-smoke" if args.stage_weights else "modal-ltx-smoke"
-    est_usd = MLJ.hard_bill_usd(MLJ.LAUNCH, MLJ.TIMEOUTS[0])
+    smoke_est = MLJ.hard_bill_usd(MLJ.LAUNCH, MLJ.TIMEOUTS[0])
+    stage_est = MLJ.stage_hard_bill_usd() if args.stage_weights else 0.0
+    est_usd = round(smoke_est + stage_est, 4)
     manifest = build_operation_manifest(
         head_sha=head_sha,
         plan=plan,
@@ -205,6 +225,9 @@ def main(argv: list[str] | None = None) -> int:
 
     plan_sha = manifest["plan_sha256"]
     env["EE_MODAL_GO"] = f"{args.card_ref}:{plan_sha[:12]}"
+    env["EE_MODAL_APPROVAL_MANIFEST_SHA256"] = manifest_sha256
+    env["EE_MODAL_OPERATION_MODE"] = op_mode
+    env["EE_MODAL_ESTIMATED_USD"] = f"{est_usd:.4f}"
 
     # Verify Modal secret safely (no CLI token args, no --force overwrite)
     _verify_modal_secret_present()
