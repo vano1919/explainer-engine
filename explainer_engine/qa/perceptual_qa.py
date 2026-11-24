@@ -586,6 +586,7 @@ def evaluate_clip_perceptual(
     reviewer_model: str = DEFAULT_GEMINI_QA_MODEL,
     transport: Callable[..., dict[str, Any]] | None = None,
     ledger_path: Path | None = None,
+    identity_checks: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     """Run full frame extraction + audio extraction + signal sanity + optional live Gemini multimodal review."""
     duration_s = probe_duration_s(video_path)
@@ -625,7 +626,46 @@ def evaluate_clip_perceptual(
         mode = "waveform_and_loudness_fallback"
         model_label = "signal_sanity_only"
 
-    return build_perceptual_qa_report(
+    identity_results: list[dict[str, Any]] = []
+    if identity_checks:
+        from explainer_engine.qa import identity_lock as IL
+
+        for idx, spec in enumerate(identity_checks):
+            f_idx = min(max(0, int(spec.get("frame_index", 0))), len(frames) - 1)
+            cand = Path(spec["candidate_image"]) if spec.get("candidate_image") else Path(frames[f_idx].path)
+            res = IL.check_cross_scene_identity(
+                Path(spec["reference_image"]),
+                cand,
+                character_id=str(spec.get("character_id", f"char_{idx}")),
+                pose_tag=str(spec.get("pose_tag", "frontal")),
+                face_width_ratio=float(spec.get("face_width_ratio", 0.18)),
+                threshold=float(spec.get("threshold", IL.DEFAULT_SIMILARITY_REVIEW_THRESHOLD)),
+                mandatory=bool(spec.get("mandatory", True)),
+                allow_missing_reference_status=True,
+            )
+            identity_results.append(res)
+            if res["status"] == "FAIL":
+                all_defects.append(
+                    DefectRecord(
+                        defect_id=f"ID-LOCK-{res['character_id'].upper()}",
+                        domain="visual",
+                        severity="high",
+                        description=str(res.get("reason", "Mandatory identity lock check failed")),
+                        segment_ref=f"{frames[f_idx].timestamp_s}s",
+                    )
+                )
+            elif res["status"] in ("REVIEW", "MISSING_REFERENCE"):
+                all_defects.append(
+                    DefectRecord(
+                        defect_id=f"ID-LOCK-REVIEW-{res['character_id'].upper()}",
+                        domain="visual",
+                        severity="medium",
+                        description=str(res.get("reason", "Identity check requires review")),
+                        segment_ref=f"{frames[f_idx].timestamp_s}s",
+                    )
+                )
+
+    report = build_perceptual_qa_report(
         artifact_path=str(video_path),
         reviewer_model=model_label,
         sampled_frames=frames,
@@ -635,8 +675,11 @@ def evaluate_clip_perceptual(
         technical_metrics=sig_metrics,
         defects=all_defects,
         audio_inspection_mode=mode,
-        out_path=out_dir / "perceptual_qa_report.json",
+        out_path=None,
     )
+    report["identity_lock_checks"] = identity_results
+    write_json_atomic(out_dir / "perceptual_qa_report.json", report)
+    return report
 
 
 def main(argv: list[str] | None = None) -> int:

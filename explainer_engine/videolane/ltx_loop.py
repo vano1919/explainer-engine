@@ -81,6 +81,10 @@ class ShotLoopStep:
     upscaled_clip_path: str | None = None
     extracted_tail_frame_path: str | None = None
     upscaled_tail_frame_path: str | None = None
+    video_upscaler_backend: str | None = None
+    still_upscaler_backend: str | None = None
+    upscaled_clip_sha256: str | None = None
+    upscaled_tail_sha256: str | None = None
     notes: list[str] = field(default_factory=list)
 
 
@@ -204,7 +208,9 @@ def run_continuous_shot_loop(
     video_generator: Callable[[dict[str, Any]], Path],
     qa_reviewer: Callable[[Path, dict[str, Any]], dict[str, Any]],
     tail_extractor: Callable[[Path], Path],
-    upscaler_2k: Callable[[Path, str], Path],
+    upscaler_2k: Callable[[Path, str], Path] | None = None,
+    still_upscaler: Any = None,
+    video_upscaler: Any = None,
     acting_style: str = "restrained historical documentary realism, natural micro-expressions, steady posture",
     max_retries: int = 2,
     upscaler_backend: str = "realesrgan_x2",
@@ -281,13 +287,42 @@ def run_continuous_shot_loop(
                 break
             notes.append(f"attempt {attempt}: QA={qa_verdict} ({qa_res.get('reason', 'unspecified')})")
 
+        from explainer_engine.videolane.adapters import LocalFFmpeg2KVideoUpscaler, LocalStillUpscaler
+
+        eff_video_up = video_upscaler if video_upscaler is not None else (None if upscaler_2k is not None else LocalFFmpeg2KVideoUpscaler())
+        eff_still_up = still_upscaler if still_upscaler is not None else (None if upscaler_2k is not None else LocalStillUpscaler())
+
         upscaled_clip: Path | None = None
         extracted_tail: Path | None = None
         upscaled_tail: Path | None = None
+        vid_up_backend: str | None = None
+        still_up_backend: str | None = None
+        upscaled_clip_sha: str | None = None
+        upscaled_tail_sha: str | None = None
         if qa_verdict == "PASS" and clip_path is not None:
-            upscaled_clip = upscaler_2k(clip_path, upscaler_backend)
+            if eff_video_up is not None:
+                v_out = clip_path.with_name(f"{clip_path.stem}_2k{clip_path.suffix or '.mp4'}")
+                v_meta = eff_video_up.upscale_video(clip_path, v_out)
+                upscaled_clip = Path(v_meta["output_path"])
+                vid_up_backend = str(v_meta.get("backend", getattr(eff_video_up, "backend_name", "video_upscaler")))
+                upscaled_clip_sha = str(v_meta.get("sha256") or (sha256_file(upscaled_clip) if upscaled_clip.is_file() else ""))
+            elif upscaler_2k is not None:
+                upscaled_clip = upscaler_2k(clip_path, upscaler_backend)
+                vid_up_backend = upscaler_backend
+                upscaled_clip_sha = sha256_file(upscaled_clip) if upscaled_clip.is_file() else None
+
             extracted_tail = tail_extractor(clip_path)
-            upscaled_tail = upscaler_2k(extracted_tail, upscaler_backend)
+            if eff_still_up is not None:
+                s_out = extracted_tail.with_name(f"{extracted_tail.stem}_2k.png")
+                s_meta = eff_still_up.upscale_still(extracted_tail, s_out)
+                upscaled_tail = Path(s_meta["output_path"])
+                still_up_backend = str(s_meta.get("backend", getattr(eff_still_up, "backend_name", "still_upscaler")))
+                upscaled_tail_sha = str(s_meta.get("sha256") or (sha256_file(upscaled_tail) if upscaled_tail.is_file() else ""))
+            elif upscaler_2k is not None:
+                upscaled_tail = upscaler_2k(extracted_tail, upscaler_backend)
+                still_up_backend = upscaler_backend
+                upscaled_tail_sha = sha256_file(upscaled_tail) if upscaled_tail.is_file() else None
+
             prev_upscaled_tail = upscaled_tail
             prev_scene_id = scene_id
         else:
@@ -309,6 +344,10 @@ def run_continuous_shot_loop(
             upscaled_clip_path=str(upscaled_clip) if upscaled_clip else None,
             extracted_tail_frame_path=str(extracted_tail) if extracted_tail else None,
             upscaled_tail_frame_path=str(upscaled_tail) if upscaled_tail else None,
+            video_upscaler_backend=vid_up_backend,
+            still_upscaler_backend=still_up_backend,
+            upscaled_clip_sha256=upscaled_clip_sha,
+            upscaled_tail_sha256=upscaled_tail_sha,
             notes=notes,
         )
         steps.append(step)

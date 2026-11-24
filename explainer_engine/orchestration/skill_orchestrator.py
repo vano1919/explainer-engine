@@ -197,6 +197,23 @@ def _exec_ltx_video(payload: dict[str, Any]) -> dict[str, Any]:
     from explainer_engine.episode.router import select_ltx_worker
     from explainer_engine.videolane import ltx_loop as LL
 
+    if payload.get("modal_request") is not None:
+        from explainer_engine.videolane.adapters import GovernedModalLTXRequest
+
+        mreq = payload["modal_request"]
+        if not isinstance(mreq, GovernedModalLTXRequest):
+            mreq = GovernedModalLTXRequest(**mreq)
+        reservation = mreq.validate_and_reserve(
+            registry_path=payload.get("approval_registry_path"),
+            ledger_path=payload.get("spend_ledger_path"),
+        )
+        return {
+            "status": "AUTHORIZED",
+            "outputs": [],
+            "reservation": reservation,
+            "notes": "Paid Modal LTX request authorized and reserved; remote GPU execution remains explicit",
+        }
+
     if payload.get("loop_shots") is not None:
         loop_res = LL.run_continuous_shot_loop(
             payload["loop_shots"],
@@ -204,7 +221,9 @@ def _exec_ltx_video(payload: dict[str, Any]) -> dict[str, Any]:
             video_generator=payload["video_generator"],
             qa_reviewer=payload["qa_reviewer"],
             tail_extractor=payload["tail_extractor"],
-            upscaler_2k=payload["upscaler_2k"],
+            upscaler_2k=payload.get("upscaler_2k"),
+            still_upscaler=payload.get("still_upscaler"),
+            video_upscaler=payload.get("video_upscaler"),
             acting_style=str(payload.get("acting_style", "restrained documentary realism")),
             upscaler_backend=str(payload.get("upscaler_backend", "realesrgan_x2")),
         )
@@ -256,6 +275,7 @@ def _exec_perceptual_qa(payload: dict[str, Any]) -> dict[str, Any]:
         out_dir=Path(payload.get("qa_out_dir", Path(video_path).parent / "qa")),
         use_gemini=bool(payload.get("use_gemini", False)),
         reviewer_model=str(payload.get("reviewer_model", PQA.DEFAULT_GEMINI_QA_MODEL)),
+        identity_checks=payload.get("identity_checks"),
     )
     return {"status": report["verdict"], "outputs": ["technical_qa_report", "perceptual_qa_report"], "report": report}
 
@@ -434,6 +454,7 @@ class SkillOrchestrator:
         *,
         ledger_path: Path | None = None,
         checkpoint_path: Path | None = None,
+        state_path: Path | None = None,
         allow_gaps: bool = False,
     ) -> dict[str, Any]:
         """Execute all ready stages in topological order with hash-bound crash-safe checkpoint persistence."""
@@ -457,6 +478,23 @@ class SkillOrchestrator:
                 done_stages = set(cp.get("completed_stages", []))
                 results = dict(cp.get("results", {}))
 
+        from explainer_engine.core.execution_gateway import ProductionStateMachine
+
+        effective_state_path = state_path or (checkpoint_path.with_name("production_state.json") if checkpoint_path else None)
+        sm: ProductionStateMachine | None = None
+        if effective_state_path is not None:
+            ordered_ids = tuple(s.stage_id for s in plan.stages)
+            deps_map = {
+                s.stage_id: tuple(d for d in self._stages[s.stage_id].get("depends_on", []) if d in ordered_ids)
+                for s in plan.stages
+            }
+            sm = ProductionStateMachine(
+                effective_state_path,
+                episode_id=str(plan.episode_id if hasattr(plan, "episode_id") else "orchestrated"),
+                ordered_stages=ordered_ids,
+                stage_dependencies=deps_map,
+            )
+
         status_rank = {"FAIL": 4, "ERROR": 4, "NEEDS_REVIEW": 3, "REVIEW": 3, "NOT_RUN": 2, "PLANNED": 1, "VALIDATED": 1, "PASS": 0}
         worst_status = "PASS"
 
@@ -466,6 +504,8 @@ class SkillOrchestrator:
                 if status_rank.get(prev_st, 3) > status_rank.get(worst_status, 0):
                     worst_status = prev_st
                 continue
+            if sm is not None:
+                sm.mark_stage_started(st.stage_id, input_fingerprints={"plan_hash": plan_hash})
             res = self.run_stage(
                 st.stage_id,
                 stage_payloads.get(st.stage_id, {}),
@@ -474,6 +514,28 @@ class SkillOrchestrator:
             )
             results[st.stage_id] = res
             st_status = str(res.get("status") or "NOT_RUN").upper()
+            if sm is not None:
+                out_files = [
+                    Path(v)
+                    for v in (
+                        res.get("clip_record_path"),
+                        (res.get("report") or {}).get("artifact_path") if isinstance(res.get("report"), dict) else None,
+                        checkpoint_path,
+                        ledger_path,
+                    )
+                    if isinstance(v, (str, Path)) and Path(v).is_file()
+                ]
+                if st_status == "PASS" and not out_files:
+                    marker = effective_state_path.parent / f"{st.stage_id}_result.json"
+                    write_json_atomic(marker, {"stage_id": st.stage_id, "status": st_status, "outputs": res.get("outputs", [])})
+                    out_files = [marker]
+                sm_status = st_status if st_status in ("PASS", "REVIEW", "FAIL", "NOT_RUN") else ("FAIL" if st_status == "ERROR" else "REVIEW")
+                sm.record_stage_completion(
+                    st.stage_id,
+                    status=sm_status,
+                    output_paths=out_files,
+                    input_fingerprints={"plan_hash": plan_hash},
+                )
             if st_status != "PASS":
                 halted_status = "FAIL" if st_status in ("FAIL", "ERROR") else (st_status if st_status in status_rank else "NEEDS_REVIEW")
                 if checkpoint_path:
