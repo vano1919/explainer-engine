@@ -1,0 +1,527 @@
+{
+  "schema_version": "wave_next_source_registry/1",
+  "generated_at": "2026-11-24",
+  "total_sources": 65,
+  "sources": [
+    {
+      "id": "WN-001",
+      "title": "LTX-2.5-22b-IC-LoRA-Pixel-Spatial-Upscaler",
+      "url": "https://huggingface.co/Lightricks/LTX-2.5-22b-IC-LoRA-Pixel-Spatial-Upscaler",
+      "category": "huggingface_model_or_dataset",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-002",
+      "title": "LTX-2.5-22b-IC-LoRA-Refine-Details",
+      "url": "https://huggingface.co/Lightricks/LTX-2.5-22b-IC-LoRA-Refine-Details",
+      "category": "huggingface_model_or_dataset",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-003",
+      "title": "SeedVR2 vs Real-ESRGAN ბენჩმარკი",
+      "url": "https://pixedi.com/lab/seedvr2-vs-esrgan-4090",
+      "category": "official_docs_or_paper",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-004",
+      "title": "ComfyUI-SeedVR2",
+      "url": "https://github.com/numz/ComfyUI-SeedVR2_VideoUpscaler",
+      "category": "github_repository",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-005",
+      "title": "Real-ESRGAN x2",
+      "url": "https://deapi.ai/blog/ai-video-upscaling-guide-realesrgan-flashvsr",
+      "category": "official_docs_or_paper",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-006",
+      "title": "Kinoloom",
+      "url": "https://github.com/harlixay7/Kinoloom",
+      "category": "github_repository",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-007",
+      "title": "OpenField",
+      "url": "https://github.com/wexloops/openfield",
+      "category": "github_repository",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-008",
+      "title": "KupkaProd Cinema Pipeline",
+      "url": "https://github.com/Matticusnicholas/KupkaProd-Cinema-Pipeline",
+      "category": "github_repository",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-009",
+      "title": "ViMax",
+      "url": "https://github.com/hkuds/vimax",
+      "category": "github_repository",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-010",
+      "title": "Google Research Co-Director",
+      "url": "https://research.google/blog/coherent-long-form-video-generation/",
+      "category": "official_docs_or_paper",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-011",
+      "title": "Qwen2.5-VL-7B-Instruct",
+      "url": "https://huggingface.co/Qwen/Qwen2.5-VL-7B-Instruct",
+      "category": "huggingface_model_or_dataset",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-012",
+      "title": "InternVL2.5-8B",
+      "url": "https://huggingface.co/OpenGVLab/InternVL2_5-8B",
+      "category": "huggingface_model_or_dataset",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-013",
+      "title": "LTX FLF2V Guide",
+      "url": "https://ltx.io/blog/first-last-frame-ai-video",
+      "category": "official_docs_or_paper",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-014",
+      "title": "LTX 2.5 Multi-Shot & 2K Tutorial",
+      "url": "https://www.youtube.com/watch?v=6B9WSxi6j8E",
+      "category": "youtube_tutorial",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-015",
+      "title": "Documentary Editing Breakdown",
+      "url": "https://www.youtube.com/watch?v=9zgp7ftturA",
+      "category": "youtube_tutorial",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-016",
+      "title": "How To Edit Like Vox",
+      "url": "https://www.youtube.com/watch?v=VDWP0aSXxc8",
+      "category": "youtube_tutorial",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-017",
+      "title": "Animate Maps Like Johnny Harris",
+      "url": "https://www.youtube.com/watch?v=NPOkQJKftLo",
+      "category": "youtube_tutorial",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-018",
+      "title": "HyperFrames",
+      "url": "https://hyperframes.heygen.com/",
+      "category": "official_docs_or_paper",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-019",
+      "title": "HyperFrames Storyboard pattern",
+      "url": "https://github.com/heygen-com/hyperframes-launch-video/blob/main/STORYBOARD.md",
+      "category": "github_repository",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-020",
+      "title": "anything2explainer HUD/Chapter pattern",
+      "url": "https://github.com/Vincentwei1021/anything2explainer",
+      "category": "github_repository",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-021",
+      "title": "video-use",
+      "url": "https://github.com/browser-use/video-use",
+      "category": "github_repository",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-022",
+      "title": "WhisperX",
+      "url": "https://github.com/m-bain/whisperx",
+      "category": "github_repository",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-023",
+      "title": "faster-whisper",
+      "url": "https://github.com/SYSTRAN/faster-whisper",
+      "category": "github_repository",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-024",
+      "title": "WavLate",
+      "url": "https://huggingface.co/chungimungi/WavLate",
+      "category": "huggingface_model_or_dataset",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-025",
+      "title": "Freesound",
+      "url": "https://labs.freesound.org/datasets/",
+      "category": "official_docs_or_paper",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-026",
+      "title": "BBC Sound Effects",
+      "url": "https://github.com/LAION-AI/audio-dataset/blob/main/laion-audio-630k/README.md",
+      "category": "github_repository",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-027",
+      "title": "SonicCaps",
+      "url": "https://huggingface.co/datasets/Zineb/SonicCaps",
+      "category": "huggingface_model_or_dataset",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-028",
+      "title": "Netflix-Style Documentary Sound Design",
+      "url": "https://www.youtube.com/watch?v=U6wVF2PMBUw",
+      "category": "youtube_tutorial",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-029",
+      "title": "Sound Design in 15 Minutes",
+      "url": "https://www.youtube.com/watch?v=9jBic4IDfxA",
+      "category": "youtube_tutorial",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-030",
+      "title": "3 Sound Effects for Storytelling",
+      "url": "https://www.youtube.com/watch?v=JOm_EqBoW0M",
+      "category": "youtube_tutorial",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-031",
+      "title": "Smooth Sound Cutoffs",
+      "url": "https://www.youtube.com/watch?v=E_Z3tfAnZwU",
+      "category": "youtube_tutorial",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-032",
+      "title": "InsightFace-ის წონები არაკომერციულია",
+      "url": "https://comfy.icu/node/CV_YuNetFaceDetect",
+      "category": "official_docs_or_paper",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-033",
+      "title": "OpenCV Zoo",
+      "url": "https://github.com/opencv/opencv_zoo",
+      "category": "github_repository",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-034",
+      "title": "YuNet (MIT)",
+      "url": "https://huggingface.co/opencv/face_detection_yunet",
+      "category": "huggingface_model_or_dataset",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-035",
+      "title": "SFace 128-d embedding (Apache-2.0)",
+      "url": "https://huggingface.co/mudler/face-detect-gguf",
+      "category": "huggingface_model_or_dataset",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-036",
+      "title": "MovieAgent",
+      "url": "https://arxiv.org/html/2503.07314v1",
+      "category": "official_docs_or_paper",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-037",
+      "title": "ViMax",
+      "url": "https://arxiv.org/html/2606.07649v1",
+      "category": "official_docs_or_paper",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-038",
+      "title": "How to Use the LTX 2.5 All-In-One Workflow in ComfyUI",
+      "url": "https://www.youtube.com/watch?v=v1zOJa95Bo4",
+      "category": "youtube_tutorial",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-039",
+      "title": "LTX-2.3 First-Last-Frame and MSR LoRA on 8GB VRAM",
+      "url": "https://www.youtube.com/watch?v=fIqHbdy6LkM",
+      "category": "youtube_tutorial",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-040",
+      "title": "Don't Just Prompt Let LTX 2.3 Follow Your Path | Motion Track",
+      "url": "https://www.youtube.com/watch?v=8z3aAz4poyQ",
+      "category": "youtube_tutorial",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-041",
+      "title": "Run LTX 2.3 on Low VRAM | Three ComfyUI Workflows",
+      "url": "https://www.youtube.com/watch?v=hWkQ3xijAAw",
+      "category": "youtube_tutorial",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-042",
+      "title": "LTX-2 Lipsync using Audio-in (with fix for frozen frames)",
+      "url": "https://www.youtube.com/watch?v=HjXwE5xHsV8",
+      "category": "youtube_tutorial",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-043",
+      "title": "Guide to Prompting and Keyframing I2V & FLF2V LTX 2.3",
+      "url": "https://www.youtube.com/watch?v=ZY4hsvTzbas",
+      "category": "youtube_tutorial",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-044",
+      "title": "LTX-2 First & Last Frame to Video on 8GB VRAM",
+      "url": "https://www.youtube.com/watch?v=cn4zy6_4t4M",
+      "category": "youtube_tutorial",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-045",
+      "title": "VOSR2 vs SeedVR2: Which Free Upscaler Should We Use",
+      "url": "https://www.youtube.com/watch?v=bcry2UQk7Ko",
+      "category": "youtube_tutorial",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-046",
+      "title": "One-Step Video Upscaling: Complete ComfyUI SeedVR2",
+      "url": "https://www.youtube.com/watch?v=I0sl45GMqNg",
+      "category": "youtube_tutorial",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-047",
+      "title": "FlashVSR Video High Definition Upgrade in ComfyUI",
+      "url": "https://www.youtube.com/watch?v=vfwgP3W13Y0",
+      "category": "youtube_tutorial",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-048",
+      "title": "Consistent Character in ComfyUI — Face Swap + NVIDIA PiD",
+      "url": "https://www.youtube.com/watch?v=A30pYCWEQxA",
+      "category": "youtube_tutorial",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-049",
+      "title": "AI Film Creator: Full Cinematic Workflow in ComfyUI",
+      "url": "https://www.youtube.com/watch?v=rMR7VFXL8WY",
+      "category": "youtube_tutorial",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-050",
+      "title": "The Ultimate AI Filmmaking Workflow: One Prompt to a Film",
+      "url": "https://www.youtube.com/watch?v=E8iLtYy8_no",
+      "category": "youtube_tutorial",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-051",
+      "title": "Vox Style Map Animations for Documentaries (DaVinci Resolve)",
+      "url": "https://www.youtube.com/watch?v=XhVQAmvh-Jg",
+      "category": "youtube_tutorial",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-052",
+      "title": "EffectCraft — Vox-Style Cinematic Documentary MAP Tutorial",
+      "url": "https://www.youtube.com/watch?v=U2247YeiX6I",
+      "category": "youtube_tutorial",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-053",
+      "title": "J Cuts & L Cuts Explained — Audio-Led Transitions",
+      "url": "https://www.youtube.com/watch?v=wIw9CA-M0Ic",
+      "category": "youtube_tutorial",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-054",
+      "title": "hollisorg/iv-studio — Open-source AI Film Studio with SeedVR2 Finish",
+      "url": "https://github.com/hollisorg/iv-studio",
+      "category": "github_repository",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-055",
+      "title": "JpAndreBTA/Nexus-BTA — LTX Director Suite, Transition & CameraMan LoRA",
+      "url": "https://github.com/JpAndreBTA/Nexus-BTA",
+      "category": "github_repository",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-056",
+      "title": "showlab/MovieAgent — Multi-Agent CoT Automated Movie Generation",
+      "url": "https://github.com/showlab/MovieAgent",
+      "category": "github_repository",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-057",
+      "title": "awesome-agentic-videogen — Curated Agentic Video Generation Index",
+      "url": "https://github.com/agentic-videogen/awesome-agentic-videogen",
+      "category": "github_repository",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-058",
+      "title": "akshaysharma016/upscayl-video — Real-ESRGAN Video Upscaler with Audio",
+      "url": "https://github.com/akshaysharma016/upscayl-video",
+      "category": "github_repository",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-059",
+      "title": "digitalsamba/claude-code-video-toolkit — Multi-Session Video Toolkit",
+      "url": "https://github.com/digitalsamba/claude-code-video-toolkit",
+      "category": "github_repository",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-060",
+      "title": "Lightricks/LTX-2.5 — Base 22B Audio-Video Foundation Model",
+      "url": "https://huggingface.co/Lightricks/LTX-2.5",
+      "category": "huggingface_model_or_dataset",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-061",
+      "title": "Lightricks/LTX-2.3-22b-IC-LoRA-Deblur",
+      "url": "https://huggingface.co/Lightricks/LTX-2.3-22b-IC-LoRA-Deblur",
+      "category": "huggingface_model_or_dataset",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-062",
+      "title": "Lightricks/LTX-2 — Distilled & Spatial/Temporal Latent Upscalers",
+      "url": "https://huggingface.co/Lightricks/LTX-2",
+      "category": "huggingface_model_or_dataset",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-063",
+      "title": "SagiPolaczek/LTX-2.3-Sync-LoRA — Two-Stage Distilled Sync Pipeline",
+      "url": "https://huggingface.co/SagiPolaczek/LTX-2.3-Sync-LoRA",
+      "category": "huggingface_model_or_dataset",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-064",
+      "title": "Qwen/Qwen2.5-VL-32B-Instruct — High-Precision Vision Critique Model",
+      "url": "https://huggingface.co/Qwen/Qwen2.5-VL-32B-Instruct",
+      "category": "huggingface_model_or_dataset",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    },
+    {
+      "id": "WN-065",
+      "title": "ComfyUI Official Docs — LTX Video, FLF2V, IC-LoRA & ID-LoRA",
+      "url": "https://docs.comfy.org/tutorials/video/ltx/ltx-2-3",
+      "category": "official_docs_or_paper",
+      "verified_date": "2026-11-24",
+      "status": "verified_via_search_retrieval"
+    }
+  ]
+}
