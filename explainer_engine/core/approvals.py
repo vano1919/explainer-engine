@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import datetime
 import hashlib
+import hmac
 import json
 import math
 import re
@@ -110,3 +111,30 @@ def verify_approval(
         raise ApprovalError(f"Approval {approval_id!r} is missing owner_evidence")
 
     return dict(rec, approval_id=approval_id)
+
+
+def compute_approval_hmac(proof: dict[str, Any], *, signing_key: str) -> str:
+    """Compute a deterministic HMAC-SHA256 over the canonical security fields of an approval proof."""
+    if not signing_key or len(signing_key) < 16:
+        raise ApprovalError("signing_key must be at least 16 characters")
+    canonical = {
+        "approval_id": proof.get("approval_id"),
+        "provider": proof.get("provider"),
+        "operation_mode": proof.get("operation_mode"),
+        "manifest_sha256": proof.get("manifest_sha256"),
+        "max_usd": round(float(proof.get("max_usd", 0.0)), 6),
+        "expires_at": proof.get("expires_at"),
+        "owner_evidence": proof.get("owner_evidence"),
+        "operation_id": proof.get("operation_id"),
+    }
+    msg = json.dumps(canonical, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+    return hmac.new(signing_key.encode("utf-8"), msg, hashlib.sha256).hexdigest()
+
+
+def sign_approval_proof(proof: dict[str, Any], *, signing_key: str, operation_id: str) -> dict[str, Any]:
+    """Attach a unique operation_id and HMAC-SHA256 signature for remote worker verification."""
+    if not operation_id or not isinstance(operation_id, str):
+        raise ApprovalError("operation_id must be a non-empty string")
+    signed = dict(proof, operation_id=operation_id)
+    signed["approval_hmac"] = compute_approval_hmac(signed, signing_key=signing_key)
+    return signed

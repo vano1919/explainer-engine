@@ -57,7 +57,13 @@ def faction(side: str) -> tuple[int, int, int]:
 
 @lru_cache(maxsize=64)
 def font(px: int, face: str = "ui") -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
-    if face == "map" and MAP_FONT.exists():
+    if face == "map":
+        if not MAP_FONT.is_file():
+            from explainer_engine.core.errors import ContractError
+
+            raise ContractError(
+                f"Approved map font not found on disk: {MAP_FONT}; silent fallback to ComicNeue/Bangers/PIL default is prohibited"
+            )
         f = ImageFont.truetype(str(MAP_FONT), max(8, int(px)))
         try:
             f.set_variation_by_name("SemiBold")

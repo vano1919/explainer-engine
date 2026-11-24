@@ -353,24 +353,63 @@ def check_stop_payload(event: Any, *, root: Path | None = None) -> dict[str, Any
     return {"decision": "allow", "reason": "ok", "summary": res.get("summary")}
 
 
+def record_post_bash_audit(event: Any, *, root: Path | None = None) -> dict[str, Any]:
+    """Record governed Bash execution telemetry into jobs/gateway_audit.jsonl."""
+    if not isinstance(event, dict):
+        return {"decision": "deny", "reason": "GATEWAY-DENY[malformed_payload]: post-bash payload must be a JSON object"}
+    import datetime as _dt
+    import hashlib as _hashlib
+
+    ti_raw = event.get("tool_input")
+    tr_raw = event.get("tool_response")
+    ti: dict[str, Any] = ti_raw if isinstance(ti_raw, dict) else {}
+    tr: dict[str, Any] = tr_raw if isinstance(tr_raw, dict) else {}
+    cmd = str(ti.get("command") or "")
+    base_root = root or Path(os.environ.get("CLAUDE_PROJECT_DIR") or Path.cwd())
+    audit_path = base_root / "jobs" / "gateway_audit.jsonl"
+    audit_path.parent.mkdir(parents=True, exist_ok=True)
+    row = {
+        "ts": _dt.datetime.now(_dt.UTC).isoformat(),
+        "hook": "gateway_hook:post-bash",
+        "command_sha256": _hashlib.sha256(cmd.encode("utf-8")).hexdigest(),
+        "command_preview": cmd[:160],
+        "exit_code": tr.get("exit_code"),
+    }
+    with audit_path.open("a", encoding="utf-8") as f:
+        f.write(json.dumps(row, ensure_ascii=False) + "\n")
+    return {"decision": "allow", "reason": "recorded", "audit_path": str(audit_path)}
+
+
 def main(argv: list[str] | None = None) -> int:
-    args = sys.argv[1:] if argv is None else argv
-    mode = args[0] if args else "pre-bash"
-    raw = sys.stdin.read().strip()
-    if not raw:
-        res = {"decision": "deny", "reason": "GATEWAY-DENY[empty_payload]: empty stdin payload rejected (fail-closed)"}
-    else:
-        try:
-            payload = json.loads(raw)
-        except ValueError as exc:
-            res = {"decision": "deny", "reason": f"GATEWAY-DENY[invalid_json]: {exc}"}
+    try:
+        args = sys.argv[1:] if argv is None else argv
+        mode = args[0] if args else "pre-bash"
+        project_root = Path(os.environ.get("CLAUDE_PROJECT_DIR") or Path.cwd())
+        raw = sys.stdin.read().strip()
+        if not raw:
+            res = {"decision": "deny", "reason": "GATEWAY-DENY[empty_payload]: empty stdin payload rejected (fail-closed)"}
         else:
-            res = check_stop_payload(payload) if mode == "stop" else check_hook_payload(payload)
-    print(json.dumps(res))
-    if res["decision"] != "allow":
-        print(res["reason"], file=sys.stderr)
+            try:
+                payload = json.loads(raw)
+            except ValueError as exc:
+                res = {"decision": "deny", "reason": f"GATEWAY-DENY[invalid_json]: {exc}"}
+            else:
+                if mode == "stop":
+                    res = check_stop_payload(payload, root=project_root)
+                elif mode == "post-bash":
+                    res = record_post_bash_audit(payload, root=project_root)
+                else:
+                    res = check_hook_payload(payload)
+        print(json.dumps(res))
+        if res["decision"] != "allow":
+            print(res["reason"], file=sys.stderr)
+            return 2
+        return 0
+    except Exception as exc:
+        err = f"GATEWAY-DENY[hook_exception]: fail-closed on {type(exc).__name__}: {exc}"
+        print(json.dumps({"decision": "deny", "reason": err}))
+        print(err, file=sys.stderr)
         return 2
-    return 0
 
 
 if __name__ == "__main__":

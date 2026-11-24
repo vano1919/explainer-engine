@@ -480,32 +480,45 @@ class SkillOrchestrator:
 
         from explainer_engine.core.execution_gateway import ProductionStateMachine
 
-        effective_state_path = state_path or (checkpoint_path.with_name("production_state.json") if checkpoint_path else None)
-        sm: ProductionStateMachine | None = None
-        if effective_state_path is not None:
-            ordered_ids = tuple(s.stage_id for s in plan.stages)
-            deps_map = {
-                s.stage_id: tuple(d for d in self._stages[s.stage_id].get("depends_on", []) if d in ordered_ids)
-                for s in plan.stages
-            }
-            sm = ProductionStateMachine(
-                effective_state_path,
-                episode_id=str(plan.episode_id if hasattr(plan, "episode_id") else "orchestrated"),
-                ordered_stages=ordered_ids,
-                stage_dependencies=deps_map,
+        effective_state_path = (
+            state_path
+            or (checkpoint_path.with_name("production_state.json") if checkpoint_path else None)
+            or (ledger_path.with_name("production_state.json") if ledger_path else None)
+            or (ROOT / "jobs" / "orchestrator_state" / f"{plan_hash[:16]}_production_state.json")
+        )
+        ordered_ids = tuple(s.stage_id for s in plan.stages)
+        deps_map = {
+            s.stage_id: tuple(
+                d
+                for d in (
+                    self._stages[s.stage_id].get("dependencies")
+                    or self._stages[s.stage_id].get("depends_on")
+                    or []
+                )
+                if d in ordered_ids
             )
+            for s in plan.stages
+        }
+        sm = ProductionStateMachine(
+            effective_state_path,
+            episode_id=str(plan.episode_id if hasattr(plan, "episode_id") else "orchestrated"),
+            ordered_stages=ordered_ids,
+            stage_dependencies=deps_map,
+        )
 
         status_rank = {"FAIL": 4, "ERROR": 4, "NEEDS_REVIEW": 3, "REVIEW": 3, "NOT_RUN": 2, "PLANNED": 1, "VALIDATED": 1, "PASS": 0}
         worst_status = "PASS"
 
         for st in plan.stages:
             if st.stage_id in done_stages:
-                prev_st = str((results.get(st.stage_id) or {}).get("status", "PASS")).upper()
-                if status_rank.get(prev_st, 3) > status_rank.get(worst_status, 0):
-                    worst_status = prev_st
-                continue
-            if sm is not None:
-                sm.mark_stage_started(st.stage_id, input_fingerprints={"plan_hash": plan_hash})
+                fresh_ok, _ = sm.is_stage_fresh(st.stage_id, input_fingerprints={"plan_hash": plan_hash})
+                if fresh_ok:
+                    prev_st = str((results.get(st.stage_id) or {}).get("status", "PASS")).upper()
+                    if status_rank.get(prev_st, 3) > status_rank.get(worst_status, 0):
+                        worst_status = prev_st
+                    continue
+                done_stages.discard(st.stage_id)
+            sm.mark_stage_started(st.stage_id, input_fingerprints={"plan_hash": plan_hash})
             res = self.run_stage(
                 st.stage_id,
                 stage_payloads.get(st.stage_id, {}),
@@ -514,28 +527,31 @@ class SkillOrchestrator:
             )
             results[st.stage_id] = res
             st_status = str(res.get("status") or "NOT_RUN").upper()
-            if sm is not None:
-                out_files = [
-                    Path(v)
-                    for v in (
-                        res.get("clip_record_path"),
-                        (res.get("report") or {}).get("artifact_path") if isinstance(res.get("report"), dict) else None,
-                        checkpoint_path,
-                        ledger_path,
-                    )
-                    if isinstance(v, (str, Path)) and Path(v).is_file()
-                ]
-                if st_status == "PASS" and not out_files:
-                    marker = effective_state_path.parent / f"{st.stage_id}_result.json"
-                    write_json_atomic(marker, {"stage_id": st.stage_id, "status": st_status, "outputs": res.get("outputs", [])})
-                    out_files = [marker]
-                sm_status = st_status if st_status in ("PASS", "REVIEW", "FAIL", "NOT_RUN") else ("FAIL" if st_status == "ERROR" else "REVIEW")
-                sm.record_stage_completion(
-                    st.stage_id,
-                    status=sm_status,
-                    output_paths=out_files,
-                    input_fingerprints={"plan_hash": plan_hash},
-                )
+            cand_paths: list[Any] = [
+                res.get("clip_record_path"),
+                res.get("provenance_path"),
+                res.get("output_path"),
+                (res.get("report") or {}).get("artifact_path") if isinstance(res.get("report"), dict) else None,
+            ]
+            if isinstance(res.get("loop_result"), dict):
+                for step in res["loop_result"].get("steps") or []:
+                    if isinstance(step, dict):
+                        cand_paths.extend([step.get("upscaled_clip_path"), step.get("upscaled_tail_frame_path"), step.get("clip_path")])
+            for k_out in ("provenance_path", "clip_record_path", "video_path"):
+                if k_out in (stage_payloads.get(st.stage_id) or {}):
+                    cand_paths.append(stage_payloads[st.stage_id][k_out])
+            out_files = list(dict.fromkeys(Path(v) for v in cand_paths if isinstance(v, (str, Path)) and Path(v).is_file()))
+            if st_status == "PASS" and not out_files:
+                marker = effective_state_path.parent / f"{st.stage_id}_result.json"
+                write_json_atomic(marker, {"stage_id": st.stage_id, "status": st_status, "outputs": res.get("outputs", [])})
+                out_files = [marker]
+            sm_status = st_status if st_status in ("PASS", "REVIEW", "FAIL", "NOT_RUN") else ("FAIL" if st_status == "ERROR" else "REVIEW")
+            sm.record_stage_completion(
+                st.stage_id,
+                status=sm_status,
+                output_paths=out_files,
+                input_fingerprints={"plan_hash": plan_hash},
+            )
             if st_status != "PASS":
                 halted_status = "FAIL" if st_status in ("FAIL", "ERROR") else (st_status if st_status in status_rank else "NEEDS_REVIEW")
                 if checkpoint_path:

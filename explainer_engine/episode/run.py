@@ -161,12 +161,18 @@ def fingerprint(ep: Episode, stage: str) -> str:
 
 
 def state(ep: Episode) -> list[dict]:
-    """Every stage: its record's verdict, fresh or stale, rehearsal or not."""
+    """Every stage: its record's verdict, authoritative SHA-256 freshness, rehearsal or not."""
+    sm = ep.state_machine()
+    sm_stages = sm.data.get("stages") or {}
+    cfg = {"size": list(ep.size), "fps": ep.fps}
     out = []
     for s in STAGES:
         rec = read_record(ep.root, s)
+        sm_ok = False
+        if s in sm_stages:
+            sm_ok, _ = sm.is_stage_fresh(s, input_fingerprints=_stage_inputs(ep, s), config=cfg)
         out.append({"stage": s, "gate": GATES[s], "status": rec["verdict"]["status"] if rec else None,
-                    "fresh": bool(rec) and rec.get("fingerprint") == fingerprint(ep, s),
+                    "fresh": bool(rec) and rec.get("fingerprint") == fingerprint(ep, s) and sm_ok,
                     "rehearsal": bool(rec and rec.get("rehearsal")), "at": rec.get("at") if rec else None})
     return out
 
@@ -296,7 +302,7 @@ def run_to(ep: Episode, last: str) -> list[dict]:
         rec = read_record(ep.root, s)
         in_fps = _stage_inputs(ep, s)
         cfg = {"size": list(ep.size), "fps": ep.fps}
-        sm_fresh = True
+        sm_fresh = False
         if s in (sm.data.get("stages") or {}):
             sm_fresh, _ = sm.is_stage_fresh(s, input_fingerprints=in_fps, config=cfg)
         if rec and not ep.force and rec.get("fingerprint") == fingerprint(ep, s) and sm_fresh:
@@ -1059,36 +1065,69 @@ def stage_qa(ep: Episode, rehearsal: bool):
 
         id_results = []
         for idx, spec in enumerate(id_specs):
+            char_id = str(spec.get("character_id", f"char_{idx}"))
+            mandatory = bool(spec.get("mandatory", True))
             ref_p = Path(spec["reference_image"])
             if not ref_p.is_absolute():
                 ref_p = ep.root / ref_p
             cand_raw = spec.get("candidate_image")
+            cand_p: Path | None = None
             if cand_raw:
                 cand_p = Path(cand_raw)
                 if not cand_p.is_absolute():
                     cand_p = ep.root / cand_p
-            else:
-                cand_p = Path(records[0]["source_start_keyframe"]) if records and records[0].get("source_start_keyframe") else ref_p
+            elif records and records[0].get("source_start_keyframe"):
+                cand_p = Path(records[0]["source_start_keyframe"])
+
+            # Never substitute reference_image as candidate_image (zero self-comparison PASS)
+            if cand_p is None or not cand_p.is_file() or (ref_p.is_file() and cand_p.resolve() == ref_p.resolve()):
+                reason = (
+                    f"Missing distinct rendered candidate image for {char_id!r} (self-comparison against reference prohibited)"
+                )
+                id_results.append({
+                    "schema": "identity_lock_check/1",
+                    "character_id": char_id,
+                    "status": "FAIL" if mandatory else "NOT_RUN",
+                    "failure_kind": "missing_or_self_candidate",
+                    "mandatory": mandatory,
+                    "reason": reason,
+                })
+                identity_rows.append(G.row(f"identity_lock_{char_id}", False if mandatory else None, reason, None))
+                continue
+
             res_id = IL.check_cross_scene_identity(
                 ref_p,
                 cand_p,
-                character_id=str(spec.get("character_id", f"char_{idx}")),
+                character_id=char_id,
                 pose_tag=str(spec.get("pose_tag", "frontal")),
                 face_width_ratio=float(spec.get("face_width_ratio", 0.18)),
                 threshold=float(spec.get("threshold", IL.DEFAULT_SIMILARITY_REVIEW_THRESHOLD)),
-                mandatory=bool(spec.get("mandatory", True)),
+                mandatory=mandatory,
                 allow_missing_reference_status=True,
             )
             id_results.append(res_id)
             if res_id["status"] == "PASS":
-                identity_rows.append(G.row(f"identity_lock_{res_id['character_id']}", True, res_id["reason"], res_id["similarity"]))
+                identity_rows.append(G.row(f"identity_lock_{char_id}", True, res_id["reason"], res_id["similarity"]))
             elif res_id["status"] == "NOT_APPLICABLE":
-                identity_rows.append(G.row(f"identity_lock_{res_id['character_id']}", True, res_id["reason"], "NOT_APPLICABLE"))
+                if mandatory and not bool(spec.get("allow_not_applicable_pass", False)):
+                    identity_rows.append(G.row(f"identity_lock_{char_id}", False, res_id["reason"], "NOT_APPLICABLE", level=G.REVIEW))
+                else:
+                    identity_rows.append(G.row(f"identity_lock_{char_id}", True, res_id["reason"], "NOT_APPLICABLE"))
             elif res_id["status"] in ("REVIEW", "MISSING_REFERENCE"):
-                identity_rows.append(G.row(f"identity_lock_{res_id['character_id']}", False, res_id["reason"], res_id["similarity"], level=G.REVIEW))
+                identity_rows.append(G.row(f"identity_lock_{char_id}", False, res_id["reason"], res_id["similarity"], level=G.REVIEW))
             else:
-                identity_rows.append(G.row(f"identity_lock_{res_id['character_id']}", False, res_id["reason"], res_id["similarity"]))
+                identity_rows.append(G.row(f"identity_lock_{char_id}", False, res_id["reason"], res_id["similarity"]))
         write_json_atomic(ep.path("qa/identity_lock_report.json"), {"checks": id_results})
+    elif ep.manifest.get("canonical_characters"):
+        identity_rows.append(
+            G.row(
+                "identity_lock_configured",
+                False,
+                "Episode declares canonical_characters but has no planning/identity_checks.json configured",
+                0,
+                level=G.REVIEW,
+            )
+        )
 
     acc = dict(acc, gates=list(acc["gates"]) + realism_rows + identity_rows)
     if realism_rows or identity_rows:

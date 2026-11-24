@@ -1,6 +1,8 @@
 """End-to-end tests and real local FFmpeg render-inspect-correct-rerender verification for Wave Next Framework."""
 from __future__ import annotations
 
+import hashlib
+import json
 import subprocess
 import sys
 import wave
@@ -190,10 +192,31 @@ def test_real_local_render_inspect_correct_rerender_loop_with_bridges_2k_upscale
     assert qa_v2["technical_metrics"]["audio_channels"] == 2
     assert len(qa_v2["temporal_frames_inspected"]) == 8
 
-    # 4. Post-assembly visual-aware sound spotting + SHA-256 invalidation check
+    # 4. Post-assembly visual-aware sound spotting + verified on-disk WAV asset + SHA-256 invalidation check
+    sfx_lib = tmp_path / "sfx_lib"
+    (sfx_lib / "foley").mkdir(parents=True, exist_ok=True)
+    sfx_wav = _make_tone_wav(sfx_lib / "foley" / "whoosh_v1.wav", value=0.25, seconds=0.2)
+    sfx_sha = hashlib.sha256(sfx_wav.read_bytes()).hexdigest()
+    (sfx_lib / "manifest.json").write_text(
+        json.dumps({
+            "version": 1,
+            "items": [{
+                "id": "whoosh_v1",
+                "file": "foley/whoosh_v1.wav",
+                "tags": ["whoosh", "ambience_swell"],
+                "seconds": 0.2,
+                "sample_rate": 24000,
+                "sha256": sfx_sha,
+                "licence": {"status": "cc0", "type": "cc0", "commercial_use": True, "attribution_required": False},
+            }],
+        }),
+        encoding="utf-8",
+    )
     events = PAS.detect_visual_event_timestamps(Path(up_vid["output_path"]), tmp_path / "spot_work", diff_threshold=0.005)
-    cues = [{"source": "free_library", "visual_timestamp_s": e["visual_timestamp_s"]} for e in events] or [{"source": "free_library", "visual_timestamp_s": 0.5}]
-    spot = PAS.build_spotting_record(Path(up_vid["output_path"]), cues, out_path=tmp_path / "spotting.json")
+    if not events:
+        events = [{"visual_timestamp_s": 0.5, "frame_delta": 0.1, "suggested_cue": "whoosh"}]
+    cues = PAS.resolve_spotted_cues(Path(up_vid["output_path"]), events, sfx_lib)
+    spot = PAS.build_spotting_record(Path(up_vid["output_path"]), cues, out_path=tmp_path / "spotting.json", require_verified_assets=True)
     assert spot["validation"]["status"] == "PASS"
     assert PAS.is_spotting_fresh(spot, Path(up_vid["output_path"])) is True
     assert PAS.is_spotting_fresh(spot, v1_frozen) is False  # different video invalidates spotting!

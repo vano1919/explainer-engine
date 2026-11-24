@@ -90,6 +90,10 @@
           {
             "type": "command",
             "command": "cd \"$CLAUDE_PROJECT_DIR\" && \"$(command -v python3 || command -v python)\" -m explainer_engine.governance.hooks post-bash"
+          },
+          {
+            "type": "command",
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && \"$(command -v python3 || command -v python)\" -m explainer_engine.governance.gateway_hook post-bash"
           }
         ]
       }

@@ -299,13 +299,23 @@ def go_gate(env=os.environ, plan_sha: str | None = None):
 
 
 
+_SEEN_REMOTE_OPERATION_IDS: set[str] = set()
+
+
 def verify_remote_approval_payload(
     approval_proof: dict | None,
     *,
     operation_mode: str,
+    expected_manifest_sha256: str | None = None,
+    estimated_max_usd: float | None = None,
+    signing_key: str | None = None,
+    registry_path: Path | None = None,
 ) -> dict:
-    """Enforce owner approval proof directly inside every remote Modal worker function."""
+    """Enforce cryptographically or registry-authenticated owner approval proof inside remote Modal workers."""
     import datetime as _dt
+    import hashlib as _hashlib
+    import hmac as _hmac
+
     if not isinstance(approval_proof, dict):
         raise RuntimeError("Remote worker refused: missing owner approval_proof payload")
     aid = approval_proof.get("approval_id")
@@ -316,12 +326,20 @@ def verify_remote_approval_payload(
     msha = approval_proof.get("manifest_sha256")
     if not isinstance(msha, str) or not re.fullmatch(r"^[0-9a-f]{64}$", msha):
         raise RuntimeError("Remote worker refused: missing valid 64-char manifest_sha256")
+    if expected_manifest_sha256 is not None and msha != expected_manifest_sha256:
+        raise RuntimeError(
+            f"Remote worker refused: manifest_sha256 mismatch ({msha} != {expected_manifest_sha256})"
+        )
     mode = approval_proof.get("operation_mode")
     if mode != operation_mode and not (operation_mode == "modal-ltx-smoke" and mode == "modal-ltx-stage-and-smoke"):
         raise RuntimeError(f"Remote worker refused: operation_mode mismatch ({mode!r} != {operation_mode!r})")
     max_usd = approval_proof.get("max_usd")
     if isinstance(max_usd, bool) or not isinstance(max_usd, (int, float)) or not math.isfinite(max_usd) or max_usd <= 0:
         raise RuntimeError(f"Remote worker refused: invalid max_usd {max_usd!r}")
+    if estimated_max_usd is not None and float(max_usd) + 1e-9 < float(estimated_max_usd):
+        raise RuntimeError(
+            f"Remote worker refused: approval max_usd ${float(max_usd):.4f} < required ${float(estimated_max_usd):.4f}"
+        )
     ev = approval_proof.get("owner_evidence")
     if not isinstance(ev, str) or not ev.strip():
         raise RuntimeError("Remote worker refused: missing owner_evidence")
@@ -333,6 +351,58 @@ def verify_remote_approval_payload(
         exp = exp.replace(tzinfo=_dt.UTC)
     if _dt.datetime.now(_dt.UTC) >= exp:
         raise RuntimeError(f"Remote worker refused: approval {aid!r} expired at {exp_raw}")
+
+    # Replay protection: require unique operation_id
+    op_id = approval_proof.get("operation_id")
+    if not isinstance(op_id, str) or len(op_id.strip()) < 8:
+        raise RuntimeError("Remote worker refused: missing unique operation_id for replay protection")
+    if op_id in _SEEN_REMOTE_OPERATION_IDS:
+        raise RuntimeError(f"Remote worker refused: replayed operation_id {op_id!r}")
+
+    # Authenticity check: MUST verify either HMAC-SHA256 signature OR authoritative owner_approvals.json registry
+    authenticated = False
+    key = signing_key if signing_key is not None else os.environ.get("OWNER_APPROVAL_SIGNING_KEY")
+    provided_hmac = approval_proof.get("approval_hmac")
+    if key and isinstance(provided_hmac, str) and re.fullmatch(r"^[0-9a-f]{64}$", provided_hmac):
+        canonical = {
+            "approval_id": aid,
+            "provider": approval_proof.get("provider"),
+            "operation_mode": mode,
+            "manifest_sha256": msha,
+            "max_usd": round(float(max_usd), 6),
+            "expires_at": exp_raw,
+            "owner_evidence": ev,
+            "operation_id": op_id,
+        }
+        msg = json.dumps(canonical, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+        expected_sig = _hmac.new(key.encode("utf-8"), msg, _hashlib.sha256).hexdigest()
+        if _hmac.compare_digest(provided_hmac, expected_sig):
+            authenticated = True
+        else:
+            raise RuntimeError("Remote worker refused: forged or invalid approval_hmac signature")
+
+    if not authenticated:
+        reg_p = registry_path or (Path(__file__).resolve().parents[4] / "config" / "owner_approvals.json")
+        if reg_p.is_file():
+            reg_data = json.loads(reg_p.read_text(encoding="utf-8"))
+            reg_rec = (reg_data.get("approvals") or {}).get(aid)
+            if (
+                isinstance(reg_rec, dict)
+                and reg_rec.get("provider") == "modal_modal1"
+                and reg_rec.get("manifest_sha256") == msha
+                and reg_rec.get("operation_mode") == mode
+                and float(reg_rec.get("max_usd") or 0) >= float(max_usd)
+                and reg_rec.get("expires_at") == exp_raw
+                and reg_rec.get("owner_evidence") == ev
+            ):
+                authenticated = True
+
+    if not authenticated:
+        raise RuntimeError(
+            "Remote worker refused: unauthenticated/forged approval_proof (neither valid HMAC signature nor matching owner_approvals.json entry)"
+        )
+
+    _SEEN_REMOTE_OPERATION_IDS.add(op_id)
     return approval_proof
 
 

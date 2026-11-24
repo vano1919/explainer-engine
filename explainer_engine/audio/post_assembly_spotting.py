@@ -201,7 +201,10 @@ def resolve_sound_asset(
     rel_file = chosen.get("file")
     if not rel_file:
         raise ContractError(f"Sound asset {chosen.get('id')!r} has no 'file' field")
-    wav_path = (lib / str(rel_file)).resolve()
+    lib_resolved = lib.resolve()
+    wav_path = (lib_resolved / str(rel_file)).resolve()
+    if not wav_path.is_relative_to(lib_resolved):
+        raise ContractError(f"Sound asset path escapes sound library root: {rel_file!r}")
     if not wav_path.is_file():
         raise ContractError(f"Sound asset file missing on disk: {wav_path}")
 
