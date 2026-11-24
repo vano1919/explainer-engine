@@ -49,7 +49,7 @@ LAUNCH_PATH = LTX_DIR / "launch_layout_a100.json"
 WORKER_REL = "explainer_engine/training/pods/ltx/modal_layout_jobs.py"
 SHARED_GATES = Path("/mnt/project-files/explainer-engine/final_plan_2026-11-19/ab_gates")
 NIGHT_LEDGER = Path(os.environ.get("EE_NIGHT_LEDGER") or
-                    "/mnt/project-files/explainer-engine/final_plan_2026-11-19/modal_stage/NIGHT_LEDGER_2026-11-19.json")
+                    (Path.home() / ".explainer_engine" / "night_ledger.sqlite3"))
 SECRET_NAME = "custom-secret"      # the owner's second account holds his HF token under this name; the key inside is HF_TOKEN
 GO = re.compile(r"^(cmsg_\w+):([0-9a-f]{12})$")
 VOL = "/w"
@@ -233,6 +233,34 @@ def go_gate(env=os.environ, plan_sha: str | None = None) -> str:
     return v
 
 
+def verify_worker_approval(
+    env=os.environ,
+    *,
+    plan_sha: str,
+    operation_mode: str,
+    requested_usd: float,
+    registry_path: Path | None = None,
+) -> dict:
+    """Fail-closed owner approval verification directly inside modal_layout_jobs entrypoints."""
+    from explainer_engine.core import approvals
+
+    go_val = go_gate(env=env, plan_sha=plan_sha)
+    card_id = go_val.split(":", 1)[0]
+    manifest_sha = str(env.get("EE_MODAL_APPROVAL_MANIFEST_SHA256") or "").strip()
+    effective_mode = str(env.get("EE_MODAL_OPERATION_MODE") or operation_mode).strip()
+    try:
+        return approvals.verify_approval(
+            card_id,
+            provider="modal_modal1",
+            operation_mode=effective_mode,
+            manifest_sha256=manifest_sha,
+            requested_usd=requested_usd,
+            registry_path=registry_path,
+        )
+    except approvals.ApprovalError as exc:
+        raise SystemExit(f"owner approval verification failed: {exc}; nothing was started") from None
+
+
 def offer_problems(launch: dict, entry: str, env=os.environ, now=None) -> list[str]:
     """CH-07: a passing ``paid_offer/1`` that names THIS worker and rung and chose the card the launch runs on (``cloud/cheapest.
     offer_problems``, called, not edited)."""
@@ -286,7 +314,10 @@ def settle_launch(run, item: str, wall_s: float, rate: float) -> float:
 def night_reserve(item: str, usd: float, why: str = ""):
     from explainer_engine.cloud import night_budget as NB
     from explainer_engine.core import spend_caps
-    if not isinstance((spend_caps.modal() or {}).get("night_total_usd"), (int, float)):
+    cfg = spend_caps.load()
+    has_night = isinstance((cfg.get("modal") or {}).get("night_total_usd"), (int, float))
+    has_env = "modal_modal1" in ((cfg.get("orchestration_envelopes") or {}).get("services") or {})
+    if not (has_night or has_env):
         return
     try:
         NB.reserve(NIGHT_LEDGER, item, usd, why)
@@ -300,6 +331,7 @@ def night_settle(item: str, usd: float):
         NB.settle(NIGHT_LEDGER, item, usd)
     except NB.NightCapExceeded as exc:
         print("NIGHT LEDGER SETTLE FAILED:", exc, flush=True)
+        raise SystemExit(f"NIGHT LEDGER SETTLE FAILED: {exc}") from None
 
 
 def ladder_gate(rung: str, launch: dict):
@@ -811,9 +843,18 @@ if modal is not None:
     def weights(plan: str = "", hash_base: bool = False):
         """L2 (CPU, a few cents, capped by ``launch.stage.cap_usd``): the IC-LoRA onto the Volume, every pinned file checked. Never on the GPU."""
         preflight(LAUNCH, paid=False)
-        print("GO", go_gate(plan_sha=_sha(plan)), "stage timeout", stage_timeout(LAUNCH), "s", flush=True)
+        plan_sha = _sha(plan)
+        stage_cap = float((LAUNCH.get("stage") or {}).get("cap_usd", 0.32))
+        verify_worker_approval(plan_sha=plan_sha, operation_mode="modal-layout-weights", requested_usd=stage_cap)
+        print("GO", go_gate(plan_sha=plan_sha), "stage timeout", stage_timeout(LAUNCH), "s", flush=True)
         ladder_gate("L2", LAUNCH)
-        res = weights_stage.remote(LAUNCH, hash_base)
+        item = f"layout_weights_{plan_sha[:12]}"
+        night_reserve(item, stage_cap, "L2 layout weights stage")
+        t0 = time.time()
+        try:
+            res = weights_stage.remote(LAUNCH, hash_base)
+        finally:
+            night_settle(item, round((time.time() - t0) * 0.32 / 3600.0, 4))
         print("weights", res or "IC-LoRA staged, every pinned file present, hashes match")
         record("L2", not res, LAUNCH, problems=res, hash_base=bool(hash_base))
 
@@ -822,7 +863,10 @@ if modal is not None:
         preflight(LAUNCH, entry=entry)
         cap = LAUNCH["caps"][{"smoke": "smoke_usd", "main": "run_usd", "chain": "chain_usd"}[kind]]
         t = {"smoke": _t_smoke, "main": _t_run, "chain": _t_chain}[kind]
-        print("GO", go_gate(plan_sha=_sha(plan)), "timeout", t, "s on", LAUNCH["gpu"], flush=True)
+        plan_sha = _sha(plan)
+        hard_est = round((t + LAUNCH["caps"]["cold_start_s"]) * stated_rate(LAUNCH) / 3600, 4)
+        verify_worker_approval(plan_sha=plan_sha, operation_mode=f"modal-layout-{kind}", requested_usd=hard_est)
+        print("GO", go_gate(plan_sha=plan_sha), "timeout", t, "s on", LAUNCH["gpu"], flush=True)
         ladder_gate(rung, LAUNCH)
         spec = _spec(plan, batch, kind, cap)
         _batch_on_hf(spec)

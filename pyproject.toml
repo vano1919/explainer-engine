@@ -1,0 +1,88 @@
+[build-system]
+requires = ["setuptools>=69.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "explainer-engine"
+version = "4.3.0"
+description = "Automated historical documentary and What-If cinematic video production pipeline with multimodal QA and strict spending controls."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "numpy>=2.0",
+  "jsonschema>=4.18",
+  "pyyaml>=6.0",
+  "pillow>=10.0",
+  "opencv-python-headless>=4.9",
+  "onnxruntime>=1.17",
+  "scipy>=1.11",
+  "scenedetect>=0.6",
+  "scikit-image>=0.22",
+  "imagehash>=4.3",
+  "anthropic>=2.3",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.0",
+  "pytest-timeout>=2.3",
+  "pytest-cov>=5.0",
+  "ruff>=0.6",
+  "basedpyright>=1.18",
+  "hypothesis>=6.100",
+]
+
+[tool.setuptools.packages.find]
+include = ["explainer_engine*"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 120
+exclude = [
+  ".git",
+  ".venv",
+  "venv",
+  "jobs",
+  "tools",
+  ".claude/skills/v-*",
+  ".claude/skills/_archive",
+]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "SIM", "PLW1510", "RUF100"]
+ignore = ["E501"]
+
+[tool.basedpyright]
+pythonVersion = "3.11"
+typeCheckingMode = "basic"
+include = [
+  "explainer_engine/core/approvals.py",
+  "explainer_engine/core/camera_vocab.py",
+  "explainer_engine/core/spend_ledger.py",
+  "explainer_engine/governance/owner_requirements.py",
+  "explainer_engine/governance/agent_skills_lint.py",
+  "explainer_engine/qa/perceptual_qa.py",
+  "explainer_engine/qa/prompt_eval.py",
+  "explainer_engine/videolane/ltx_loop.py",
+  "explainer_engine/scripting/docudrama_structure.py",
+  "explainer_engine/episode/style_bible.py",
+]
+exclude = [".venv", "venv", "jobs", "tools"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests", "examples/syndicate_wars_ep1"]
+timeout = 120
+markers = [
+  "unit: fast tests, no models, no network, no renderer",
+  "integration: several stages with fake TTS/renderer",
+  "system: real Kokoro / real Remotion (opt-in, slow)",
+  "media: needs media files that are not in git (the sound library WAVs); skipped where they are absent",
+]
+
+[tool.coverage.run]
+source = ["explainer_engine"]
+omit = ["*/tests/*", "*/__pycache__/*"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true

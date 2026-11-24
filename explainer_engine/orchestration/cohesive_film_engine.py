@@ -11,15 +11,16 @@ Enforces and audits rules across:
 - 4 Production Levels:
   1. `TEXT_SCRIPT` (Dramaturgy, causal chain, hooks, sentence burstiness, dialogue staging)
   2. `AUDIO_SOUNDSCAPE` (5-layer sound hierarchy, unbroken -24 dB ambience glue, foley grounding, voice spine)
-  3. `VIDEO_VISUALS` (90% unified Chiaroscuro cinema [60% video + 30% collage] + 10% Python YouTube Info-Graphics [maps, troop movements, diagrams, counters])
-  4. `EDITING_COHESION` (AV duration sync, J-cut/L-cut split edits, WAN-CHAIN-MINUS-5, unified LUT + 35mm film grain across 3-min chunks)
+  3. `VIDEO_VISUALS` (flexible story-driven visual mix across active v4.3 routes: `video` on Modal LTX-2.5, `still_25d` Gemini + 2.5D, and `map_action` MapLibre/Python cartography — no hardcoded 10/30/60 quota)
+  4. `EDITING_COHESION` (AV duration sync, J-cut/L-cut split edits, seamless tail chaining, unified LUT + film grain across 3-min chunks)
 """
 from __future__ import annotations
 
 import statistics
 from collections import Counter
-from typing import Any, Dict, List
+from typing import Any
 
+from explainer_engine.core.camera_vocab import ALLOWED_CAMERA_MOVES
 
 TIER_1_INVARIANT_MANDATORY = "TIER_1_INVARIANT_MANDATORY"
 TIER_2_STORY_BOUNDED_DYNAMIC = "TIER_2_STORY_BOUNDED_DYNAMIC"
@@ -27,7 +28,7 @@ TIER_3_THEMATIC_ADVISORY = "TIER_3_THEMATIC_ADVISORY"
 
 
 # Master machine-readable registry of all 68 3-Tier rules across all 12 components (100% 1-to-1 parity with docs/rules_registry/01..12)
-THREE_TIER_RULE_CATALOG: List[Dict[str, Any]] = [
+THREE_TIER_RULE_CATALOG: list[dict[str, Any]] = [
     # --- 01_DRAMATURGY_AND_SCRIPTWRITING ---
     {"id": "DR-T1-01", "tier": TIER_1_INVARIANT_MANDATORY, "level": "TEXT_SCRIPT", "component": "01_DRAMATURGY", "rule_code": "ST-V4-CAUSE", "description": "5-phase causal spine (Z1..Z5) and unbroken cause_from_segment_id -> effect_to_segment_id chain"},
     {"id": "DR-T1-02", "tier": TIER_1_INVARIANT_MANDATORY, "level": "TEXT_SCRIPT", "component": "01_DRAMATURGY", "rule_code": "YT-01-HOOK", "description": "First 12 seconds open with a high-stakes paradox or dramatic question"},
@@ -70,15 +71,15 @@ THREE_TIER_RULE_CATALOG: List[Dict[str, Any]] = [
     {"id": "LT-T3-01", "tier": TIER_3_THEMATIC_ADVISORY, "level": "VIDEO_VISUALS", "component": "05_LIGHTING", "rule_code": "ADV-ATMOSPHERIC-PARTICLES", "description": "Adapt volumetric particles (cannon smoke, candle dust motes, volcanic ash) to era and setting"},
 
     # --- 06_COLLAGE_AND_COMPOSING_STILLS ---
-    {"id": "CL-T1-01", "tier": TIER_1_INVARIANT_MANDATORY, "level": "VIDEO_VISUALS", "component": "06_COLLAGE", "rule_code": "KP-V4-PARALLAX", "description": "Every 30% COLLAGE_STILL shot defines a valid parallax_preset and unified chiaroscuro style"},
+    {"id": "CL-T1-01", "tier": TIER_1_INVARIANT_MANDATORY, "level": "VIDEO_VISUALS", "component": "06_COLLAGE", "rule_code": "KP-V4-PARALLAX", "description": "Every still_25d / COLLAGE_STILL shot defines a valid parallax_preset and unified visual style"},
     {"id": "CL-T1-02", "tier": TIER_1_INVARIANT_MANDATORY, "level": "VIDEO_VISUALS", "component": "06_COLLAGE", "rule_code": "KP-V4-NO-DUPLICATE-PROMPT", "description": "Every shot has a unique scene prompt (zero single-photo crop padding)"},
-    {"id": "CL-T1-03", "tier": TIER_1_INVARIANT_MANDATORY, "level": "EDITING_COHESION", "component": "06_COLLAGE", "rule_code": "CF-COLLAGE-GOOGLE-VIDEO-INTEGRATION", "description": "30% COLLAGE_STILL shots animate via Google Video API (gemini-omni-1.2-flash) and receive unified LUT + 35mm grain"},
+    {"id": "CL-T1-03", "tier": TIER_1_INVARIANT_MANDATORY, "level": "EDITING_COHESION", "component": "06_COLLAGE", "rule_code": "CF-COLLAGE-25D-INTEGRATION", "description": "still_25d shots animate via deterministic 2.5D living motion (fx25d.living) and receive unified LUT + film grain"},
     {"id": "CL-T2-01", "tier": TIER_2_STORY_BOUNDED_DYNAMIC, "level": "VIDEO_VISUALS", "component": "06_COLLAGE", "rule_code": "CF-COLLAGE-SHARE-BOUNDS", "bounds": {"collage_min": 0.20, "collage_max": 0.40}},
     {"id": "CL-T3-01", "tier": TIER_3_THEMATIC_ADVISORY, "level": "VIDEO_VISUALS", "component": "06_COLLAGE", "rule_code": "ADV-PARALLAX-PRESET-MOOD", "description": "Match parallax_preset (dolly_in, dolly_out, pan_horizontal, zoom_focus) to narrative reveal"},
 
-    # --- 07_TACTILE_RELIEF_MAPS_AND_WAR_TABLES (10% PYTHON YOUTUBE INFO-GRAPHICS LAYER) ---
-    {"id": "MP-T1-01", "tier": TIER_1_INVARIANT_MANDATORY, "level": "VIDEO_VISUALS", "component": "07_MAPS", "rule_code": "KP-V4-MODE", "description": "10% maps, troop movements, diagrams, and number counters use TACTILE_MAP mode with Python deterministic rendering"},
-    {"id": "MP-T1-02", "tier": TIER_1_INVARIANT_MANDATORY, "level": "VIDEO_VISUALS", "component": "07_MAPS", "rule_code": "CF-PYTHON-INFOGRAPHIC-CLARITY", "description": "10% layer renders in clean YouTube-docudrama style via Python (exact numbers, clear troop vectors, zero AI garbled text)"},
+    # --- 07_TACTILE_RELIEF_MAPS_AND_WAR_TABLES (FLEXIBLE MAPLIBRE / PYTHON CARTOGRAPHY LAYER) ---
+    {"id": "MP-T1-01", "tier": TIER_1_INVARIANT_MANDATORY, "level": "VIDEO_VISUALS", "component": "07_MAPS", "rule_code": "KP-V4-MODE", "description": "Maps, troop movements, diagrams, and number counters use map_action / MapLibre + Python deterministic rendering"},
+    {"id": "MP-T1-02", "tier": TIER_1_INVARIANT_MANDATORY, "level": "VIDEO_VISUALS", "component": "07_MAPS", "rule_code": "CF-PYTHON-INFOGRAPHIC-CLARITY", "description": "Cartography layer renders cleanly via MapLibre/Python (exact numbers, clear troop vectors, zero AI garbled text)"},
     {"id": "MP-T2-01", "tier": TIER_2_STORY_BOUNDED_DYNAMIC, "level": "VIDEO_VISUALS", "component": "07_MAPS", "rule_code": "CF-MAP-SHARE-BOUNDS", "bounds": {"map_min": 0.05, "map_max": 0.20}},
     {"id": "MP-T3-01", "tier": TIER_3_THEMATIC_ADVISORY, "level": "VIDEO_VISUALS", "component": "07_MAPS", "rule_code": "ADV-INFOGRAPHIC-SUBTYPE-SELECTION", "description": "Select tactical_map_and_troop_movement, demographic_or_casualty_counter, comparative_data_diagram, or timeline by beat"},
 
@@ -86,7 +87,7 @@ THREE_TIER_RULE_CATALOG: List[Dict[str, Any]] = [
     {"id": "WN-T1-01", "tier": TIER_1_INVARIANT_MANDATORY, "level": "VIDEO_VISUALS", "component": "08_AI_VIDEO", "rule_code": "KP-V4-ACTION", "description": "Exactly 1 primary physical action per AI video shot (primary_action_count == 1)"},
     {"id": "WN-T1-02", "tier": TIER_1_INVARIANT_MANDATORY, "level": "VIDEO_VISUALS", "component": "08_AI_VIDEO", "rule_code": "CF-ACTION-STATE-TRANSITION", "description": "Every shot specifies concrete action_start_state and action_end_state"},
     {"id": "WN-T1-03", "tier": TIER_1_INVARIANT_MANDATORY, "level": "EDITING_COHESION", "component": "08_AI_VIDEO", "rule_code": "WAN-CHAIN-MINUS-5", "description": "Video shots > 5.0s automatically chain Sub-Clip A + Sub-Clip B via frame[-5]"},
-    {"id": "WN-T1-04", "tier": TIER_1_INVARIANT_MANDATORY, "level": "VIDEO_VISUALS", "component": "08_AI_VIDEO", "rule_code": "PV-THREE-TIER-VIDEO-ROUTING-LAW", "description": "10% Maps/Diagrams/Numbers -> Python Info-Graphics; 30% Collages + Simple/Medium 60% Video -> Google Video API; Heavy 60% Action/FLF2V/Chain Video -> Wan 2.1/2.2 GPU"},
+    {"id": "WN-T1-04", "tier": TIER_1_INVARIANT_MANDATORY, "level": "VIDEO_VISUALS", "component": "08_AI_VIDEO", "rule_code": "PV-THREE-TIER-VIDEO-ROUTING-LAW", "description": "Flexible story-driven v4.3 routing (no hardcoded 10/30/60 quota): map_action -> MapLibre/Python; still_25d -> Gemini refs + fx25d.living; video -> Modal LTX-2.5 (MODAL1)"},
     {"id": "WN-T2-01", "tier": TIER_2_STORY_BOUNDED_DYNAMIC, "level": "VIDEO_VISUALS", "component": "08_AI_VIDEO", "rule_code": "CF-VISUAL-MIX-BOUNDS", "bounds": {"video_min": 0.50, "video_max": 0.70, "collage_min": 0.20, "collage_max": 0.40, "map_min": 0.05, "map_max": 0.20}},
     {"id": "WN-T3-01", "tier": TIER_3_THEMATIC_ADVISORY, "level": "VIDEO_VISUALS", "component": "08_AI_VIDEO", "rule_code": "KP-V4-CONTROL", "description": "Use WAN_CONTROL single control_modality (depth, openpose, canny, camera_preset) when structural conditioning is needed"},
 
@@ -122,14 +123,14 @@ THREE_TIER_RULE_CATALOG: List[Dict[str, Any]] = [
 ]
 
 
-def check_cohesive_film_invariants_and_bounds(doc: Dict[str, Any]) -> List[Dict[str, Any]]:
+def check_cohesive_film_invariants_and_bounds(doc: dict[str, Any]) -> list[dict[str, Any]]:
     """Run all Tier 1 (Invariant) and Tier 2 (Story-Bounded Dynamic) Cohesive Film checks
     across Text, Audio, Video, and Editing levels."""
-    out: List[Dict[str, Any]] = []
+    out: list[dict[str, Any]] = []
     shots = doc.get("shots", [])
     segments = doc.get("segments", [])
     audio_lines = doc.get("audio_lines", [])
-    line_map = {l.get("line_id"): l for l in audio_lines if l.get("line_id")}
+    line_map = {ln.get("line_id"): ln for ln in audio_lines if ln.get("line_id")}
 
     # 0. Tier 1 Segment Bridge & Tier 2 Segment Shot-Count Bounds (DR-T1-03, DR-T2-02)
     for idx, seg in enumerate(segments):
@@ -205,8 +206,21 @@ def check_cohesive_film_invariants_and_bounds(doc: Dict[str, Any]) -> List[Dict[
                 "detail": f"Shot {sid} is missing lighting_and_time required for Chiaroscuro lighting continuity (LT-T1-03)",
             })
 
+    # 2b. Tier 1 Camera Vocabulary Alignment (shared explainer_engine.core.camera_vocab)
+    for sh in shots:
+        cam_move = (sh.get("camera_spec") or {}).get("camera_move")
+        if cam_move is not None and cam_move not in ALLOWED_CAMERA_MOVES:
+            out.append({
+                "rule": "KP-V4-CAMERA",
+                "tier": TIER_1_INVARIANT_MANDATORY,
+                "level": "VIDEO_VISUALS",
+                "severity": "FAIL",
+                "where": sh.get("shot_id", "?"),
+                "detail": f"Invalid camera_move {cam_move!r}; must be one of {ALLOWED_CAMERA_MOVES}",
+            })
+
     # 3. Tier 1 Editing/Camera Cohesion: 30-Degree / Shot-Size Change Anti-Jump-Cut Law (CF-NO-JUMP-CUT)
-    for prev_sh, curr_sh in zip(shots, shots[1:]):
+    for prev_sh, curr_sh in zip(shots, shots[1:], strict=False):
         if prev_sh.get("segment_id") != curr_sh.get("segment_id"):
             continue
         if prev_sh.get("location_id") != curr_sh.get("location_id"):
@@ -276,18 +290,18 @@ def check_cohesive_film_invariants_and_bounds(doc: Dict[str, Any]) -> List[Dict[
     return out
 
 
-def build_cohesive_film_edl(script_doc: Dict[str, Any]) -> Dict[str, Any]:
-    """Build the 4-Level Cohesive Film Edit Decision List (EDL) that binds 10% Python info-graphics,
-    30% Google-animated collages, and 60% Google/Wan 2.2 clips into a single seamless film."""
+def build_cohesive_film_edl(script_doc: dict[str, Any]) -> dict[str, Any]:
+    """Build the 4-Level Cohesive Film Edit Decision List (EDL) binding flexible v4.3 routes
+    (map_action, still_25d, and Modal LTX-2.5 video clips) into a single seamless film."""
     from explainer_engine.aivideo.wan_optimizer import plan_story_driven_shot_render
     from explainer_engine.audio.sfx_planner import build_g4_audio_fx_plan
 
     shots = script_doc.get("shots", [])
     audio_lines = script_doc.get("audio_lines", [])
-    line_map = {l.get("line_id"): l for l in audio_lines if l.get("line_id")}
+    line_map = {ln.get("line_id"): ln for ln in audio_lines if ln.get("line_id")}
     sfx_plan = build_g4_audio_fx_plan(script_doc)
 
-    edl_entries: List[Dict[str, Any]] = []
+    edl_entries: list[dict[str, Any]] = []
     cursor_sec = 0.0
     j_l_cut_bridges_count = 0
     frame_minus_5_chains_count = 0
@@ -347,9 +361,9 @@ def build_cohesive_film_edl(script_doc: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
-def audit_cohesive_film_3tier(script_doc: Dict[str, Any]) -> Dict[str, Any]:
+def audit_cohesive_film_3tier(script_doc: dict[str, Any]) -> dict[str, Any]:
     """Run the complete 3-Tier, 4-Level Cohesive Film audit on a production_script.json."""
-    from explainer_engine.scripting import shot_prompt_lint, scene_lint
+    from explainer_engine.scripting import scene_lint, shot_prompt_lint
 
     base_issues = shot_prompt_lint.check_v4_script(script_doc) + scene_lint.lint_v4(script_doc)
     cohesive_issues = check_cohesive_film_invariants_and_bounds(script_doc)
@@ -362,7 +376,7 @@ def audit_cohesive_film_3tier(script_doc: Dict[str, Any]) -> Dict[str, Any]:
 
     shot_durs = [float(s.get("target_duration_seconds", 0.0)) for s in shots] or [0.0]
     seg_durs = [float(s.get("target_duration_seconds", 0.0)) for s in segments] or [0.0]
-    word_counts = [len(str(l.get("text", "")).split()) for l in audio_lines] or [0]
+    word_counts = [len(str(ln.get("text", "")).split()) for ln in audio_lines] or [0]
 
     edl = build_cohesive_film_edl(script_doc)
 
@@ -397,12 +411,12 @@ def audit_cohesive_film_3tier(script_doc: Dict[str, Any]) -> Dict[str, Any]:
 
 def verify_real_api_media_renders(
     video_path: str | None = None,
-    contact_sheet_paths: List[str] | None = None,
+    contact_sheet_paths: list[str] | None = None,
     receipts_json_path: str | None = None,
     require_rendered_media: bool = False,
     expected_shots_count: int = 1,
     expected_voice_lines_count: int = 1,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Forensic validator (PV-NO-FAKE-OFFLINE-RENDER, PK-T1-04, D-129/D-130) that fails closed:
     1. Missing or nonexistent `video_path` or `receipts_json_path` immediately FAILs when media verification is active.
     2. Distinguishes container bitrate/audio properties (`media_container_verified`) from cryptographic/structured
@@ -414,7 +428,7 @@ def verify_real_api_media_renders(
     import subprocess as _sp
     from pathlib import Path as _Path
 
-    issues: List[Dict[str, Any]] = []
+    issues: list[dict[str, Any]] = []
     media_container_verified = False
     provider_execution_verified = False
 

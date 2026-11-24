@@ -1240,7 +1240,7 @@
       "enforced_by": [
         "explainer_engine/edit/motion_lint.py:BP-28",
         "explainer_engine/design/palette.py:TEXT_MIN",
-        ".claude/skills/shot-visuals/SKILL.md",
+        ".claude/skills/_archive/shot-visuals/SKILL.md",
         ".claude/skills/_archive/shot-visuals/SKILL.md"
       ],
       "supersedes": [
@@ -1508,7 +1508,7 @@
       ],
       "enforced_by": [
         "explainer_engine/production/faces.py:BP-34",
-        ".claude/skills/shot-visuals/SKILL.md",
+        ".claude/skills/_archive/shot-visuals/SKILL.md",
         ".claude/skills/_archive/shot-visuals/SKILL.md"
       ],
       "supersedes": [

@@ -34,8 +34,12 @@ defaults (REVIEW, D-59) until the owner confirms them on a free round.
 from __future__ import annotations
 import math
 import re
-from explainer_engine.production import direction as D
-from explainer_engine.production import living as LV
+from explainer_engine.fx25d import living as LV
+
+try:
+    from explainer_engine.production import direction as D  # type: ignore[attr-defined]
+except ImportError:  # legacy module removed upstream; fail cleanly if invoked
+    D = None  # type: ignore[assignment]
 from explainer_engine.standards import sourced_rules as SR
 CRITERIA = ("1 open_sky", "2 light", "3 picture", "4 words", "5 neighbours", "scene")
 RATE_MIN, RATE_MAX = float(SR.T("BP-21", "rate_min_per_s")), float(SR.T("BP-21", "rate_max_per_s"))

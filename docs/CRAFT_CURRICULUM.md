@@ -32,9 +32,9 @@ P4, P4b, P5, P6, P7, P8, P9, P10). Until then a row is ticked by the critic or b
 <!-- craft-index:begin -->
 | department | skill | checklist | ids | code / critic / eye / manual | sourced rules |
 |---|---|---|---|---|---|
-| animation | `animation-principles` | `standards/craft_checklists/animation.json` | CRAFT-ANI-01..16 (16) | 3 / 0 / 13 / 0 | BP-23, BP-107, BP-109, BP-132, BP-133 |
+| animation | `_archive` | `standards/craft_checklists/animation.json` | CRAFT-ANI-01..16 (16) | 3 / 0 / 13 / 0 | BP-23, BP-107, BP-109, BP-132, BP-133 |
 | cartography | `cartography` | `standards/craft_checklists/cartography.json` | CRAFT-CART-01..08 (8) | 4 / 2 / 2 / 0 | BP-124, BP-125 |
-| cinematography | `shot-visuals` | `standards/craft_checklists/cinematography.json` | CRAFT-CIN-01..11 (11) | 5 / 4 / 2 / 0 | BP-30, BP-103, BP-126, BP-127 |
+| cinematography | `_archive` | `standards/craft_checklists/cinematography.json` | CRAFT-CIN-01..11 (11) | 5 / 4 / 2 / 0 | BP-30, BP-103, BP-126, BP-127 |
 | editing_colour | `video-editing-architect` | `standards/craft_checklists/editing_colour.json` | CRAFT-EDC-01..12 (12) | 7 / 2 / 3 / 0 | BP-25, BP-31, BP-128, BP-129, BP-130, BP-131 |
 | motion_graphics | `video-editing-architect` | `standards/craft_checklists/motion_graphics.json` | CRAFT-MOG-01..15 (15) | 6 / 6 / 3 / 0 | BP-07, BP-28, BP-38, BP-54, BP-93, BP-134 |
 | packaging | `shorts-for-video` | `standards/craft_checklists/packaging.json` | CRAFT-PKG-01..10 (10) | 3 / 2 / 2 / 3 | BP-11, BP-12, BP-29, BP-48, BP-135, BP-136, BP-137 |

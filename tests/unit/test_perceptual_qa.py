@@ -72,7 +72,7 @@ def test_gemini_multimodal_reviewer_receives_frames_and_audio_and_enforces_verdi
         return {"candidates": [{"content": {"parts": [{"text": json.dumps(ans)}]}}]}
 
     rep = evaluate_clip_perceptual(vid, out_dir=tmp_path / "qa_mm", use_gemini=True, transport=fake_gemini)
-    assert seen["mimes"].count("image/png") == 3
+    assert seen["mimes"].count("image/png") >= 8
     assert "audio/wav" in seen["mimes"]
     assert rep["audio_inspection_mode"] == "direct_listening"
     assert rep["verdict"] == "FAIL"
