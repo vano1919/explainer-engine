@@ -66,6 +66,12 @@ include = [
   "explainer_engine/videolane/ltx_loop.py",
   "explainer_engine/scripting/docudrama_structure.py",
   "explainer_engine/episode/style_bible.py",
+  "explainer_engine/core/execution_gateway.py",
+  "explainer_engine/videolane/adapters.py",
+  "explainer_engine/overlay/bridge_compiler.py",
+  "explainer_engine/qa/identity_lock.py",
+  "explainer_engine/audio/post_assembly_spotting.py",
+  "explainer_engine/governance/gateway_hook.py",
 ]
 exclude = [".venv", "venv", "jobs", "tools"]
 

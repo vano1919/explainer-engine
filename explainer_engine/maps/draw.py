@@ -21,7 +21,19 @@ from explainer_engine.design import palette as PAL
 
 ROOT = Path(__file__).resolve().parents[2]
 FONT_FILES = [ROOT / "assets" / "fonts" / "ComicNeue-Bold.ttf", ROOT / "assets" / "fonts" / "Bangers-Regular.ttf"]
-MAP_FONT = ROOT / "assets" / "fonts" / "Inter.ttf"   # map lettering: never a comic face on a map (v4.3 P4, cartography skill)
+def _resolve_map_font() -> Path:
+    for cand in (
+        ROOT / "assets" / "fonts" / "LiberationSerif-Regular.ttf",
+        Path("/usr/share/fonts/truetype/liberation/LiberationSerif-Regular.ttf"),
+        Path("/usr/share/fonts/truetype/liberation2/LiberationSerif-Regular.ttf"),
+        ROOT / "assets" / "fonts" / "Inter.ttf",
+    ):
+        if cand.is_file():
+            return cand
+    return ROOT / "assets" / "fonts" / "LiberationSerif-Regular.ttf"
+
+
+MAP_FONT = _resolve_map_font()   # approved Liberation Serif map typography (resolves Inter vs Liberation Serif drift)
 SS = 2  # supersampling of a drawn frame: edges are smooth and the downsample is deterministic
 
 
