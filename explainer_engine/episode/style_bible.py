@@ -6,6 +6,7 @@ inherits a single coherent artistic identity instead of drifting across disconne
 """
 from __future__ import annotations
 
+import re
 from typing import Any
 
 from explainer_engine.core.camera_vocab import ALLOWED_CAMERA_MOVES
@@ -67,6 +68,10 @@ def validate_film_style_bible(bible: dict[str, Any]) -> list[str]:
         pal = vis.get("palette_hex")
         if not isinstance(pal, list) or len(pal) < 3:
             errors.append("visual_identity.palette_hex must list at least 3 hex colors")
+        else:
+            bad_hex = [c for c in pal if not isinstance(c, str) or not re.fullmatch(r"#[0-9A-Fa-f]{3}(?:[0-9A-Fa-f]{3})?", c)]
+            if bad_hex:
+                errors.append(f"visual_identity.palette_hex contains invalid hex color(s): {bad_hex}")
 
     return errors
 

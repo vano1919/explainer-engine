@@ -222,42 +222,60 @@ def test_skill_orchestrator_executes_s2_docudrama_s3_style_bible_and_s6_ltx_loop
     orch = SkillOrchestrator()
     assert {"S2_story_and_script", "S3_film_direction", "S6_ltx_video"} <= set(orch._executors)
 
-    # S2 structural validation
-    s2 = orch.run_stage(
+    plan = {
+        "scenes": [
+            {"scene_id": "D1", "scene_role": "dramatic_showcase", "primary_route": "video", "duration_s": 80.0, "dialogue_turns": 5},
+            {"scene_id": "D2", "scene_role": "dramatic_showcase", "primary_route": "video", "duration_s": 90.0, "dialogue_turns": 6},
+        ]
+    }
+    # S2 without on-disk artifacts returns VALIDATED + empty outputs (never fake PASS)
+    s2_val = orch.run_stage("S2_story_and_script", {"episode_plan": plan}, allow_gaps=True)
+    assert s2_val["status"] == "VALIDATED"
+    assert s2_val["outputs"] == []
+
+    # S2 with real on-disk artifacts returns PASS + outputs
+    sc_f = tmp_path / "approved_script.json"
+    br_f = tmp_path / "beat_bridge_plan.json"
+    sc_f.write_text("{}", encoding="utf-8")
+    br_f.write_text("{}", encoding="utf-8")
+    s2_pass = orch.run_stage(
         "S2_story_and_script",
-        {
-            "episode_plan": {
-                "scenes": [
-                    {"scene_id": "D1", "scene_role": "dramatic_showcase", "primary_route": "video", "duration_s": 80.0, "dialogue_turns": 5},
-                    {"scene_id": "D2", "scene_role": "dramatic_showcase", "primary_route": "video", "duration_s": 90.0, "dialogue_turns": 6},
-                ]
-            }
-        },
+        {"episode_plan": plan, "approved_script_path": str(sc_f), "beat_bridge_plan_path": str(br_f)},
         allow_gaps=True,
     )
-    assert s2["status"] == "PASS"
+    assert s2_pass["status"] == "PASS"
+    assert s2_pass["outputs"] == ["approved_script", "beat_bridge_plan"]
 
-    # S3 style bible compilation
-    s3 = orch.run_stage(
-        "S3_film_direction",
-        {
-            "style_bible": {
-                "schema": "film_style_bible/1",
-                "film_id": "ep1",
-                "title": "Test",
-                "era": "1914",
-                "visual_identity": {"look_words": "oil ink", "palette_hex": ["#111111", "#222222", "#333333"]},
-                "map_aesthetic": {"style_preset": "dark_relief"},
-                "photo_direction": {"lighting": "lantern"},
-                "acting_and_motion": {
-                    "acting_register": "restrained_documentary_realism",
-                    "motion_discipline": "steady natural posture",
-                    "preferred_camera_moves": ["truck"],
-                },
-                "visual_bridges": {"typography": "Liberation Serif"},
-                "sound_palette": {"ambience_character": "rain"},
-            }
+    bible = {
+        "schema": "film_style_bible/1",
+        "film_id": "ep1",
+        "title": "Test",
+        "era": "1914",
+        "visual_identity": {"look_words": "oil ink", "palette_hex": ["#111111", "#222222", "#333333"]},
+        "map_aesthetic": {"style_preset": "dark_relief"},
+        "photo_direction": {"lighting": "lantern"},
+        "acting_and_motion": {
+            "acting_register": "restrained_documentary_realism",
+            "motion_discipline": "steady natural posture",
+            "preferred_camera_moves": ["truck"],
         },
+        "visual_bridges": {"typography": "Liberation Serif"},
+        "sound_palette": {"ambience_character": "rain"},
+    }
+    # S3 without on-disk artifacts returns VALIDATED + empty outputs
+    s3_val = orch.run_stage("S3_film_direction", {"style_bible": bible})
+    assert s3_val["status"] == "VALIDATED"
+    assert s3_val["outputs"] == []
+    assert "ltx_acting_motion_directive" in s3_val["directives"]
+
+    # S3 with real on-disk artifacts returns PASS + outputs
+    sp_f = tmp_path / "shot_plan.json"
+    cc_f = tmp_path / "continuity_cards.json"
+    sp_f.write_text("{}", encoding="utf-8")
+    cc_f.write_text("{}", encoding="utf-8")
+    s3_pass = orch.run_stage(
+        "S3_film_direction",
+        {"style_bible": bible, "shot_plan_path": str(sp_f), "continuity_cards_path": str(cc_f)},
     )
-    assert s3["status"] == "PASS"
-    assert "ltx_acting_motion_directive" in s3["directives"]
+    assert s3_pass["status"] == "PASS"
+    assert s3_pass["outputs"] == ["shot_plan", "continuity_cards"]

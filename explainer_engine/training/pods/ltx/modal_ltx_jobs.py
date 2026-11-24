@@ -298,6 +298,44 @@ def go_gate(env=os.environ, plan_sha: str | None = None):
     return v
 
 
+
+def verify_remote_approval_payload(
+    approval_proof: dict | None,
+    *,
+    operation_mode: str,
+) -> dict:
+    """Enforce owner approval proof directly inside every remote Modal worker function."""
+    import datetime as _dt
+    if not isinstance(approval_proof, dict):
+        raise RuntimeError("Remote worker refused: missing owner approval_proof payload")
+    aid = approval_proof.get("approval_id")
+    if not isinstance(aid, str) or not re.fullmatch(r"^cmsg_[A-Za-z0-9_-]{8,128}$", aid):
+        raise RuntimeError(f"Remote worker refused: invalid approval_id {aid!r}")
+    if approval_proof.get("provider") != "modal_modal1":
+        raise RuntimeError(f"Remote worker refused: invalid provider {approval_proof.get('provider')!r}")
+    msha = approval_proof.get("manifest_sha256")
+    if not isinstance(msha, str) or not re.fullmatch(r"^[0-9a-f]{64}$", msha):
+        raise RuntimeError("Remote worker refused: missing valid 64-char manifest_sha256")
+    mode = approval_proof.get("operation_mode")
+    if mode != operation_mode and not (operation_mode == "modal-ltx-smoke" and mode == "modal-ltx-stage-and-smoke"):
+        raise RuntimeError(f"Remote worker refused: operation_mode mismatch ({mode!r} != {operation_mode!r})")
+    max_usd = approval_proof.get("max_usd")
+    if isinstance(max_usd, bool) or not isinstance(max_usd, (int, float)) or not math.isfinite(max_usd) or max_usd <= 0:
+        raise RuntimeError(f"Remote worker refused: invalid max_usd {max_usd!r}")
+    ev = approval_proof.get("owner_evidence")
+    if not isinstance(ev, str) or not ev.strip():
+        raise RuntimeError("Remote worker refused: missing owner_evidence")
+    exp_raw = approval_proof.get("expires_at")
+    if not isinstance(exp_raw, str) or not exp_raw.strip():
+        raise RuntimeError("Remote worker refused: missing expires_at")
+    exp = _dt.datetime.fromisoformat(exp_raw)
+    if exp.tzinfo is None:
+        exp = exp.replace(tzinfo=_dt.UTC)
+    if _dt.datetime.now(_dt.UTC) >= exp:
+        raise RuntimeError(f"Remote worker refused: approval {aid!r} expired at {exp_raw}")
+    return approval_proof
+
+
 def verify_worker_approval(
     env=os.environ,
     *,
@@ -1589,7 +1627,8 @@ if modal is not None:
 
     @app.function(image=image, cpu=(float(STAGE_CPU),) * 2, memory=(STAGE_MEM_GIB * 1024,) * 2, timeout=STAGE_TIMEOUT_S,
                   retries=0, volumes={"/w": vol}, secrets=secrets)
-    def weights_stage(launch: dict, with_kind: bool = False):
+    def weights_stage(launch: dict, with_kind: bool = False, approval_proof: dict | None = None):
+        verify_remote_approval_payload(approval_proof, operation_mode="modal-ltx-stage-and-smoke")
         bad = stage_weights(launch, with_kind=with_kind)
         vol.commit()
         return bad
@@ -1599,7 +1638,8 @@ if modal is not None:
                       memory=(LAUNCH["memory_gib"] * 1024,) * 2, retries=0, volumes={"/w": vol}, secrets=secrets,
                       scaledown_window=LAUNCH["scaledown_window_s"], startup_timeout=LAUNCH["startup_timeout_s"])
 
-        def _remote_body(job, launch, timeout_s):
+        def _remote_body(job, launch, timeout_s, *, operation_mode: str = "modal-ltx-smoke"):
+            verify_remote_approval_payload(job.get("approval_proof"), operation_mode=operation_mode)
             from huggingface_hub import HfApi
             bad = container_gate(job, launch)
             if bad:
@@ -1609,11 +1649,11 @@ if modal is not None:
 
         @app.function(timeout=TIMEOUTS[0], **GPU_KW)
         def ltx_smoke(job: dict, launch: dict):
-            return _remote_body(job, launch, TIMEOUTS[0])
+            return _remote_body(job, launch, TIMEOUTS[0], operation_mode="modal-ltx-smoke")
 
         @app.function(timeout=TIMEOUTS[1], **GPU_KW)
         def ltx_main(job: dict, launch: dict):
-            return _remote_body(job, launch, TIMEOUTS[1])
+            return _remote_body(job, launch, TIMEOUTS[1], operation_mode="modal-ltx-main")
 
     @app.local_entrypoint()
     def check():
@@ -1630,14 +1670,14 @@ if modal is not None:
         preflight(LAUNCH)
         plan_sha = _sha(plan)
         stage_est = stage_hard_bill_usd(STAGE_TIMEOUT_S)
-        verify_worker_approval(plan_sha=plan_sha, operation_mode="modal-ltx-stage-and-smoke", requested_usd=stage_est)
+        approval_proof = verify_worker_approval(plan_sha=plan_sha, operation_mode="modal-ltx-stage-and-smoke", requested_usd=stage_est)
         print("GO card", go_gate(plan_sha=plan_sha), "stage timeout", STAGE_TIMEOUT_S, "s", flush=True)
         ladder_gate("L2")
         stage_item = f"ltx_stage_{run_id(plan_sha, LAUNCH)}_{worker_sha()[:8]}"
         night_reserve(stage_item, stage_est, "L2 weights stage")
         t_stage = time.time()
         try:
-            bad = weights_stage.remote(LAUNCH, with_kind)
+            bad = weights_stage.remote(LAUNCH, with_kind, approval_proof=approval_proof)
         finally:
             wall = time.time() - t_stage
             night_settle(stage_item, round(wall * STAGE_CPU_RATE_USD_PER_H / 3600.0, 4))
@@ -1658,7 +1698,7 @@ if modal is not None:
         preflight(LAUNCH)
         plan_sha = _sha(plan)
         smoke_est = hard_bill_usd(LAUNCH, TIMEOUTS[0])
-        verify_worker_approval(plan_sha=plan_sha, operation_mode="modal-ltx-smoke", requested_usd=smoke_est)
+        approval_proof = verify_worker_approval(plan_sha=plan_sha, operation_mode="modal-ltx-smoke", requested_usd=smoke_est)
         print("GO card", go_gate(plan_sha=plan_sha), "smoke timeout", TIMEOUTS[0], "s", flush=True)
         ladder_gate("L3")
         smoke_item = f"ltx_smoke_{run_id(plan_sha, LAUNCH)}_{worker_sha()[:8]}"   # a repeat on FIXED bytes is a new item; the same bytes stay refused
@@ -1667,7 +1707,7 @@ if modal is not None:
         nat = native_spec(LAUNCH, SMOKE_JOB["seconds"])
         job = dict(SMOKE_JOB, fps=nat["fps"], width=nat["width"], height=nat["height"], start_bytes=pic,
                    start_sha256=hashlib.sha256(pic).hexdigest(), run_id=run_id(plan_sha, LAUNCH), launch_sha=launch_sha(LAUNCH),
-                   worker_sha=worker_sha(), nonce=uuid.uuid4().hex[:12], cheapest_waive=waivers())
+                   worker_sha=worker_sha(), nonce=uuid.uuid4().hex[:12], cheapest_waive=waivers(), approval_proof=approval_proof)
         t_smoke = time.time()
         try:
             res = ltx_smoke.remote(job, LAUNCH)
@@ -1693,7 +1733,7 @@ if modal is not None:
         why = kind_l2_problems(spec, LAUNCH, MR.load_ladder(LADDER_PATH))
         if why:
             raise SystemExit("\n".join(why))
-        verify_worker_approval(
+        approval_proof = verify_worker_approval(
             plan_sha=spec["plan_sha256"],
             operation_mode="modal-ltx-main",
             requested_usd=hard_bill_usd(LAUNCH, TIMEOUTS[1]),
@@ -1705,7 +1745,7 @@ if modal is not None:
         claim_launch(spec)
         t0, res = time.time(), None
         try:
-            res = ltx_main.remote(dict(spec, worker_sha=worker_sha(), nonce=uuid.uuid4().hex[:12], cheapest_waive=waivers()),
+            res = ltx_main.remote(dict(spec, worker_sha=worker_sha(), nonce=uuid.uuid4().hex[:12], cheapest_waive=waivers(), approval_proof=approval_proof),
                                   LAUNCH)
         finally:
             wall = time.time() - t0

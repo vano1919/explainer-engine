@@ -27,6 +27,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import os
 import re
 import shutil
@@ -231,6 +232,44 @@ def go_gate(env=os.environ, plan_sha: str | None = None) -> str:
     if not plan_sha or m.group(2) != plan_sha[:12]:
         raise SystemExit("EE_MODAL_GO names another plan than this one (OR-23); nothing was started")
     return v
+
+
+
+def verify_remote_approval_payload(
+    approval_proof: dict | None,
+    *,
+    operation_mode: str,
+) -> dict:
+    """Enforce owner approval proof directly inside every remote Modal worker function."""
+    import datetime as _dt
+    if not isinstance(approval_proof, dict):
+        raise RuntimeError("Remote worker refused: missing owner approval_proof payload")
+    aid = approval_proof.get("approval_id")
+    if not isinstance(aid, str) or not re.fullmatch(r"^cmsg_[A-Za-z0-9_-]{8,128}$", aid):
+        raise RuntimeError(f"Remote worker refused: invalid approval_id {aid!r}")
+    if approval_proof.get("provider") != "modal_modal1":
+        raise RuntimeError(f"Remote worker refused: invalid provider {approval_proof.get('provider')!r}")
+    msha = approval_proof.get("manifest_sha256")
+    if not isinstance(msha, str) or not re.fullmatch(r"^[0-9a-f]{64}$", msha):
+        raise RuntimeError("Remote worker refused: missing valid 64-char manifest_sha256")
+    mode = approval_proof.get("operation_mode")
+    if mode != operation_mode and not (operation_mode == "modal-ltx-smoke" and mode == "modal-ltx-stage-and-smoke"):
+        raise RuntimeError(f"Remote worker refused: operation_mode mismatch ({mode!r} != {operation_mode!r})")
+    max_usd = approval_proof.get("max_usd")
+    if isinstance(max_usd, bool) or not isinstance(max_usd, (int, float)) or not math.isfinite(max_usd) or max_usd <= 0:
+        raise RuntimeError(f"Remote worker refused: invalid max_usd {max_usd!r}")
+    ev = approval_proof.get("owner_evidence")
+    if not isinstance(ev, str) or not ev.strip():
+        raise RuntimeError("Remote worker refused: missing owner_evidence")
+    exp_raw = approval_proof.get("expires_at")
+    if not isinstance(exp_raw, str) or not exp_raw.strip():
+        raise RuntimeError("Remote worker refused: missing expires_at")
+    exp = _dt.datetime.fromisoformat(exp_raw)
+    if exp.tzinfo is None:
+        exp = exp.replace(tzinfo=_dt.UTC)
+    if _dt.datetime.now(_dt.UTC) >= exp:
+        raise RuntimeError(f"Remote worker refused: approval {aid!r} expired at {exp_raw}")
+    return approval_proof
 
 
 def verify_worker_approval(
@@ -792,7 +831,8 @@ if modal is not None:
 
     @app.function(cpu=(float(_st["cpu"]),) * 2, memory=(_st["memory_gib"] * 1024,) * 2, timeout=stage_timeout(LAUNCH), volumes={VOL: vol},
                   image=image, retries=0, secrets=secrets)
-    def weights_stage(launch: dict, hash_base: bool = False):
+    def weights_stage(launch: dict, hash_base: bool = False, approval_proof: dict | None = None):
+        verify_remote_approval_payload(approval_proof, operation_mode="modal-layout-weights")
         bad = stage_weights(launch, hash_base=hash_base)
         vol.commit()
         return bad
@@ -802,21 +842,22 @@ if modal is not None:
                    volumes={VOL: vol}, secrets=secrets, scaledown_window=LAUNCH["scaledown_window_s"],
                    startup_timeout=LAUNCH["startup_timeout_s"], max_containers=1)
 
-    def _remote(spec, launch, timeout_s):
+    def _remote(spec, launch, timeout_s, *, operation_mode: str = "modal-layout-smoke"):
+        verify_remote_approval_payload(spec.get("approval_proof"), operation_mode=operation_mode)
         from huggingface_hub import HfApi
         return body(spec, launch, timeout_s=timeout_s, commit=vol.commit, reload=vol.reload, api=HfApi(token=_tok()))
 
     @app.function(timeout=_t_smoke, name="layout_smoke", **_gpu_kw)
     def smoke_fn(spec: dict, launch: dict):
-        return _remote(spec, launch, _t_smoke)
+        return _remote(spec, launch, _t_smoke, operation_mode="modal-layout-smoke")
 
     @app.function(timeout=_t_run, name="layout_main", **_gpu_kw)
     def main_fn(spec: dict, launch: dict):
-        return _remote(spec, launch, _t_run)
+        return _remote(spec, launch, _t_run, operation_mode="modal-layout-main")
 
     @app.function(timeout=_t_chain, name="layout_chain", **_gpu_kw)
     def chain_fn(spec: dict, launch: dict):
-        return _remote(spec, launch, _t_chain)
+        return _remote(spec, launch, _t_chain, operation_mode="modal-layout-chain")
 
     def _spec(plan: str, batch: str, kind: str, cap: float) -> dict:
         plan_sha, bsha = _sha(plan), _sha(batch)
@@ -845,14 +886,14 @@ if modal is not None:
         preflight(LAUNCH, paid=False)
         plan_sha = _sha(plan)
         stage_cap = float((LAUNCH.get("stage") or {}).get("cap_usd", 0.32))
-        verify_worker_approval(plan_sha=plan_sha, operation_mode="modal-layout-weights", requested_usd=stage_cap)
+        approval_proof = verify_worker_approval(plan_sha=plan_sha, operation_mode="modal-layout-weights", requested_usd=stage_cap)
         print("GO", go_gate(plan_sha=plan_sha), "stage timeout", stage_timeout(LAUNCH), "s", flush=True)
         ladder_gate("L2", LAUNCH)
         item = f"layout_weights_{plan_sha[:12]}"
         night_reserve(item, stage_cap, "L2 layout weights stage")
         t0 = time.time()
         try:
-            res = weights_stage.remote(LAUNCH, hash_base)
+            res = weights_stage.remote(LAUNCH, hash_base, approval_proof=approval_proof)
         finally:
             night_settle(item, round((time.time() - t0) * 0.32 / 3600.0, 4))
         print("weights", res or "IC-LoRA staged, every pinned file present, hashes match")
@@ -865,10 +906,10 @@ if modal is not None:
         t = {"smoke": _t_smoke, "main": _t_run, "chain": _t_chain}[kind]
         plan_sha = _sha(plan)
         hard_est = round((t + LAUNCH["caps"]["cold_start_s"]) * stated_rate(LAUNCH) / 3600, 4)
-        verify_worker_approval(plan_sha=plan_sha, operation_mode=f"modal-layout-{kind}", requested_usd=hard_est)
+        approval_proof = verify_worker_approval(plan_sha=plan_sha, operation_mode=f"modal-layout-{kind}", requested_usd=hard_est)
         print("GO", go_gate(plan_sha=plan_sha), "timeout", t, "s on", LAUNCH["gpu"], flush=True)
         ladder_gate(rung, LAUNCH)
-        spec = _spec(plan, batch, kind, cap)
+        spec = dict(_spec(plan, batch, kind, cap), approval_proof=approval_proof)
         _batch_on_hf(spec)
         item = f"layout_{kind}_{spec['run_id']}"
         run = reserve_launch(ledger, item, cap, LAUNCH["caps"]["ledger_line_usd"])

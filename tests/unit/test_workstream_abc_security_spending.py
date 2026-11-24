@@ -312,3 +312,37 @@ def test_blocker_i_worker_night_settle_propagates_errors(tmp_path: Path, monkeyp
     monkeypatch.delenv("CI", raising=False)
     with pytest.raises(SystemExit, match="NIGHT LEDGER SETTLE FAILED"):
         MLJ.night_settle("nonexistent_item_xyz", 0.5, path=tmp_path / "empty.sqlite3")
+
+
+def test_remote_worker_boundary_refuses_missing_or_expired_approval_proof():
+    from explainer_engine.training.pods.ltx import modal_layout_jobs as MLAY
+    from explainer_engine.training.pods.ltx import modal_ltx_jobs as MLJ
+
+    # Missing proof refused at remote boundary
+    with pytest.raises(RuntimeError, match="missing owner approval_proof"):
+        MLJ.verify_remote_approval_payload(None, operation_mode="modal-ltx-smoke")
+    with pytest.raises(RuntimeError, match="missing owner approval_proof"):
+        MLAY.verify_remote_approval_payload(None, operation_mode="modal-layout-weights")
+
+    # Expired proof refused at remote boundary
+    expired = {
+        "approval_id": "cmsg_expired_0001",
+        "provider": "modal_modal1",
+        "operation_mode": "modal-ltx-smoke",
+        "manifest_sha256": "a" * 64,
+        "max_usd": 1.5,
+        "owner_evidence": "old",
+        "expires_at": "2020-01-01T00:00:00Z",
+    }
+    with pytest.raises(RuntimeError, match="expired"):
+        MLJ.verify_remote_approval_payload(expired, operation_mode="modal-ltx-smoke")
+
+    # Confirm both remote worker files invoke verify_remote_approval_payload inside remote functions
+    for rel in ("explainer_engine/training/pods/ltx/modal_ltx_jobs.py", "explainer_engine/training/pods/ltx/modal_layout_jobs.py"):
+        src = (REPO_ROOT / rel).read_text(encoding="utf-8")
+        assert src.count("verify_remote_approval_payload(") >= 3, f"Remote boundary check missing in {rel}"
+
+
+def test_spend_ledger_rejects_non_numeric_string_with_over_ceiling(tmp_path: Path):
+    with pytest.raises(SC.OverCeiling):
+        SL.reserve("modal", "bad_str", "1.0", cap_usd=1.5, ledger_path=tmp_path / "l.sqlite3")  # type: ignore[arg-type]

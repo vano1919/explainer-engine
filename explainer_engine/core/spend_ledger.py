@@ -105,6 +105,9 @@ def reserve(
         isinstance(estimate_usd, bool)
         or isinstance(cap_usd, bool)
         or isinstance(stop_fraction, bool)
+        or not isinstance(estimate_usd, (int, float))
+        or not isinstance(cap_usd, (int, float))
+        or not isinstance(stop_fraction, (int, float))
         or not (math.isfinite(estimate_usd) and math.isfinite(cap_usd) and math.isfinite(stop_fraction))
         or estimate_usd < 0
         or cap_usd <= 0

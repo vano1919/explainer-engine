@@ -78,7 +78,7 @@ def load_registry(path: Path | None = None) -> dict[str, Any]:
 
 
 def _exec_story_and_script(payload: dict[str, Any]) -> dict[str, Any]:
-    """Validate docudrama episode structure (2-3 dramatic 1-2min scenes + visual bridges) when episode_plan is provided."""
+    """Validate docudrama episode structure; emit PASS + outputs ONLY when real artifact files exist on disk."""
     from explainer_engine.scripting import docudrama_structure as DS
 
     plan = payload.get("episode_plan")
@@ -87,18 +87,36 @@ def _exec_story_and_script(payload: dict[str, Any]) -> dict[str, Any]:
     rep = DS.validate_docudrama_structure(plan, is_full_episode=bool(payload.get("is_full_episode", True)))
     if rep["status"] != "PASS":
         return {"status": "FAIL", "outputs": [], "report": rep}
-    return {"status": "PASS", "outputs": ["approved_script", "beat_bridge_plan"], "report": rep}
+    script_p = payload.get("approved_script_path")
+    bridge_p = payload.get("beat_bridge_plan_path")
+    if script_p and bridge_p and Path(script_p).is_file() and Path(bridge_p).is_file():
+        return {"status": "PASS", "outputs": ["approved_script", "beat_bridge_plan"], "report": rep}
+    return {
+        "status": "VALIDATED",
+        "outputs": [],
+        "report": rep,
+        "notes": "Episode structure validated; provide on-disk approved_script_path and beat_bridge_plan_path for PASS",
+    }
 
 
 def _exec_film_direction(payload: dict[str, Any]) -> dict[str, Any]:
-    """Validate and compile unified Film Style Bible directives for maps, photos, LTX acting/motion, bridges, and sound."""
+    """Validate & compile Film Style Bible directives; emit PASS + outputs ONLY when real artifact files exist."""
     from explainer_engine.episode import style_bible as SB
 
     bible = payload.get("style_bible")
     if bible is None:
         return {"status": "VALIDATED", "outputs": [], "notes": "No style_bible provided for directive compilation"}
     directives = SB.render_layer_directives(bible)
-    return {"status": "PASS", "outputs": ["shot_plan", "continuity_cards"], "directives": directives}
+    shot_p = payload.get("shot_plan_path")
+    cards_p = payload.get("continuity_cards_path")
+    if shot_p and cards_p and Path(shot_p).is_file() and Path(cards_p).is_file():
+        return {"status": "PASS", "outputs": ["shot_plan", "continuity_cards"], "directives": directives}
+    return {
+        "status": "VALIDATED",
+        "outputs": [],
+        "directives": directives,
+        "notes": "Style bible directives compiled; provide on-disk shot_plan_path and continuity_cards_path for PASS",
+    }
 
 
 def _exec_blender_previs(payload: dict[str, Any]) -> dict[str, Any]:

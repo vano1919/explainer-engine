@@ -121,6 +121,15 @@ def validate_docudrama_structure(
                     ),
                 }
             )
+        elif route not in ("map_action", "still_25d"):
+            issues.append(
+                {
+                    "code": "DOCU-NON-DRAMATIC-ROUTE",
+                    "severity": "FAIL",
+                    "scene_id": sid,
+                    "detail": f"Non-dramatic scene {sid} has invalid primary_route {route!r}; expected 'map_action' or 'still_25d'.",
+                }
+            )
         dur = float(sc.get("duration_s", 0.0))
         bridges = [b for b in (sc.get("visual_bridges") or []) if isinstance(b, dict)]
         for b in bridges:
@@ -149,6 +158,19 @@ def validate_docudrama_structure(
                         ),
                     }
                 )
+            ts_list = sorted(float(b["timestamp_s"]) for b in bridges if isinstance(b.get("timestamp_s"), (int, float)))
+            if ts_list:
+                points = [0.0, *ts_list, dur]
+                max_gap = max(points[i + 1] - points[i] for i in range(len(points) - 1))
+                if max_gap > NARRATION_BRIDGE_MAX_GAP_S + 1e-6:
+                    issues.append(
+                        {
+                            "code": "DOCU-BRIDGE-GAP",
+                            "severity": "FAIL",
+                            "scene_id": sid,
+                            "detail": f"Narration scene {sid} has a {max_gap:.1f}s gap without a visual bridge (max {NARRATION_BRIDGE_MAX_GAP_S:.0f}s).",
+                        }
+                    )
 
     return {
         "status": "PASS" if not issues else "FAIL",
