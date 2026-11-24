@@ -11,7 +11,6 @@ Coordinates and executes active Skills across production stages with:
 """
 from __future__ import annotations
 
-import contextlib
 import datetime
 import hashlib
 import importlib
@@ -22,9 +21,10 @@ try:
     import fcntl
 except ImportError:  # pragma: no cover - Windows fallback
     fcntl = None  # type: ignore[assignment]
+from collections.abc import Callable
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
 from explainer_engine.core.errors import ContractError
 from explainer_engine.core.store import write_json_atomic
@@ -32,7 +32,7 @@ from explainer_engine.core.store import write_json_atomic
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_REGISTRY = Path(__file__).resolve().parent / "skill_registry.json"
 SKILLS_DIR = ROOT / ".claude" / "skills"
-UTC = datetime.timezone.utc
+UTC = datetime.UTC
 
 StageExecutor = Callable[[dict[str, Any]], dict[str, Any]]
 
@@ -77,15 +77,36 @@ def load_registry(path: Path | None = None) -> dict[str, Any]:
     return data
 
 
+def _exec_story_and_script(payload: dict[str, Any]) -> dict[str, Any]:
+    """Validate docudrama episode structure (2-3 dramatic 1-2min scenes + visual bridges) when episode_plan is provided."""
+    from explainer_engine.scripting import docudrama_structure as DS
+
+    plan = payload.get("episode_plan")
+    if plan is None:
+        return {"status": "VALIDATED", "outputs": [], "notes": "No episode_plan provided for structural validation"}
+    rep = DS.validate_docudrama_structure(plan, is_full_episode=bool(payload.get("is_full_episode", True)))
+    if rep["status"] != "PASS":
+        return {"status": "FAIL", "outputs": [], "report": rep}
+    return {"status": "PASS", "outputs": ["approved_script", "beat_bridge_plan"], "report": rep}
+
+
+def _exec_film_direction(payload: dict[str, Any]) -> dict[str, Any]:
+    """Validate and compile unified Film Style Bible directives for maps, photos, LTX acting/motion, bridges, and sound."""
+    from explainer_engine.episode import style_bible as SB
+
+    bible = payload.get("style_bible")
+    if bible is None:
+        return {"status": "VALIDATED", "outputs": [], "notes": "No style_bible provided for directive compilation"}
+    directives = SB.render_layer_directives(bible)
+    return {"status": "PASS", "outputs": ["shot_plan", "continuity_cards"], "directives": directives}
+
+
 def _exec_blender_previs(payload: dict[str, Any]) -> dict[str, Any]:
     """Validate a blender_scene/1 spec; emit PASS only when real rendered reference frames exist on disk."""
     from explainer_engine.lab import scene_spec as SS
 
     spec_path = payload.get("scene_spec_path")
-    if spec_path:
-        spec = json.loads(Path(spec_path).read_text(encoding="utf-8"))
-    else:
-        spec = payload.get("scene_spec")
+    spec = json.loads(Path(spec_path).read_text(encoding="utf-8")) if spec_path else payload.get("scene_spec")
     if not isinstance(spec, dict):
         raise ContractError("S4_blender_previs requires scene_spec or scene_spec_path")
     SS.check_schema(spec)
@@ -154,8 +175,26 @@ def _exec_gemini_images(payload: dict[str, Any]) -> dict[str, Any]:
 
 
 def _exec_ltx_video(payload: dict[str, Any]) -> dict[str, Any]:
-    """Select the LTX worker route (MODAL1); emit PASS only when an ingested video_clip_record/1 exists on disk."""
+    """Execute photo-first LTX loop when loop_shots+callables are supplied, or verify ingested video_clip_record/1."""
     from explainer_engine.episode.router import select_ltx_worker
+    from explainer_engine.videolane import ltx_loop as LL
+
+    if payload.get("loop_shots") is not None:
+        loop_res = LL.run_continuous_shot_loop(
+            payload["loop_shots"],
+            vision_observer=payload["vision_observer"],
+            video_generator=payload["video_generator"],
+            qa_reviewer=payload["qa_reviewer"],
+            tail_extractor=payload["tail_extractor"],
+            upscaler_2k=payload["upscaler_2k"],
+            acting_style=str(payload.get("acting_style", "restrained documentary realism")),
+            upscaler_backend=str(payload.get("upscaler_backend", "realesrgan_x2")),
+        )
+        return {
+            "status": loop_res["status"],
+            "outputs": ["ltx_video_clips"] if loop_res["status"] == "PASS" else [],
+            "loop_result": loop_res,
+        }
 
     shot = payload.get("shot") or {}
     worker = select_ltx_worker(shot)
@@ -212,6 +251,8 @@ class SkillOrchestrator:
         self._stages: dict[str, dict[str, Any]] = {s["stage_id"]: s for s in self.registry["stages"]}
         self._retired: set[str] = set(self.registry.get("retired_skills", []))
         self._executors: dict[str, StageExecutor] = {
+            "S2_story_and_script": _exec_story_and_script,
+            "S3_film_direction": _exec_film_direction,
             "S4_blender_previs": _exec_blender_previs,
             "S5_gemini_images": _exec_gemini_images,
             "S6_ltx_video": _exec_ltx_video,

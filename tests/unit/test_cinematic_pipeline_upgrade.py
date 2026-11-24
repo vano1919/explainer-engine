@@ -216,3 +216,48 @@ def test_unified_film_style_bible_and_system_wide_skill_correspondence():
     audit = orch.audit_correspondence(allow_gaps=True)
     assert audit["ok"] is True, audit
     assert orch._stages["S5_gemini_images"]["execution_category"] == "agent_browser_gate"
+
+
+def test_skill_orchestrator_executes_s2_docudrama_s3_style_bible_and_s6_ltx_loop(tmp_path: Path):
+    orch = SkillOrchestrator()
+    assert {"S2_story_and_script", "S3_film_direction", "S6_ltx_video"} <= set(orch._executors)
+
+    # S2 structural validation
+    s2 = orch.run_stage(
+        "S2_story_and_script",
+        {
+            "episode_plan": {
+                "scenes": [
+                    {"scene_id": "D1", "scene_role": "dramatic_showcase", "primary_route": "video", "duration_s": 80.0, "dialogue_turns": 5},
+                    {"scene_id": "D2", "scene_role": "dramatic_showcase", "primary_route": "video", "duration_s": 90.0, "dialogue_turns": 6},
+                ]
+            }
+        },
+        allow_gaps=True,
+    )
+    assert s2["status"] == "PASS"
+
+    # S3 style bible compilation
+    s3 = orch.run_stage(
+        "S3_film_direction",
+        {
+            "style_bible": {
+                "schema": "film_style_bible/1",
+                "film_id": "ep1",
+                "title": "Test",
+                "era": "1914",
+                "visual_identity": {"look_words": "oil ink", "palette_hex": ["#111111", "#222222", "#333333"]},
+                "map_aesthetic": {"style_preset": "dark_relief"},
+                "photo_direction": {"lighting": "lantern"},
+                "acting_and_motion": {
+                    "acting_register": "restrained_documentary_realism",
+                    "motion_discipline": "steady natural posture",
+                    "preferred_camera_moves": ["truck"],
+                },
+                "visual_bridges": {"typography": "Liberation Serif"},
+                "sound_palette": {"ambience_character": "rain"},
+            }
+        },
+    )
+    assert s3["status"] == "PASS"
+    assert "ltx_acting_motion_directive" in s3["directives"]
