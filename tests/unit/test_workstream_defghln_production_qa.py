@@ -200,3 +200,20 @@ def test_cast_sheet_help_renders_without_percent_formatting_error():
     )
     assert proc.returncode == 0, proc.stderr
     assert "80 %" in proc.stdout
+
+
+def test_obsolete_stubs_and_duplicate_retired_skills_removed_and_cohesive_engine_aligned():
+    from explainer_engine.orchestration import cohesive_film_engine as CFE
+
+    assert not (REPO_ROOT / "explainer_engine" / "video").exists()
+    assert not (REPO_ROOT / "explainer_engine" / "orchestration" / "gemini_workflow.py").exists()
+    assert not (REPO_ROOT / ".claude" / "skills" / "shot-visuals").exists()
+    assert not (REPO_ROOT / ".claude" / "skills" / "animation-principles").exists()
+    assert (REPO_ROOT / ".claude" / "skills" / "_archive" / "shot-visuals" / "SKILL.md").is_file()
+
+    src = (REPO_ROOT / "explainer_engine" / "orchestration" / "cohesive_film_engine.py").read_text(encoding="utf-8")
+    assert "gemini-omni-1.2-flash" not in src
+    issues = CFE.check_cohesive_film_invariants_and_bounds(
+        {"shots": [{"shot_id": "S1", "camera_spec": {"camera_move": "orbit"}}], "segments": [], "audio_lines": []}
+    )
+    assert any(i["rule"] == "KP-V4-CAMERA" and "orbit" in i["detail"] for i in issues)
