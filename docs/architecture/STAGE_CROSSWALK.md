@@ -14,7 +14,7 @@ Authoritative mapping across the three stage vocabularies in `explainer-engine`:
 | `script` | `S2_story_and_script` | `episode_stage` | `S2 story structure`, `S3 narration and hook` | Implemented (`story_lint`, `stage_guard`); `beat_level_bridge_selector_automation` gap tracked |
 | `sound_plan` | `S3_film_direction` | `episode_stage` | `S4 director's book, shot list`, `S5 shot prompts`, `S6 storyboards, consistency` | Implemented (`episode_film`, `production.build_shot`, `episode.sound_plan`) |
 | `pictures` (optional previs) | `S4_blender_previs` | `conditional_worker` | `S6 storyboards, consistency` | Implemented spec validation (`lab.scene_spec.check_schema` / `validate_spec`); Blender render requires local `bpy` |
-| `pictures` | `S5_gemini_images` | `human_gate` | `S7 pictures` | Interactive Gemini chat turn packs + verified image decode/dimension/SHA-256 provenance (`unattended_chat_interface_bridge` gap tracked) |
+| `pictures` | `S5_gemini_images` | `agent_browser_gate` | `S7 pictures` | Agent-driven browser Gemini turn packs + verified image decode/dimension/SHA-256 provenance (`unattended_chat_interface_bridge` gap tracked) |
 | `clips` | `S6_ltx_video` | `route_worker` | `S8 character acting`, `S9 video clips (D-132)` | Modal LTX-2.5 (`MODAL1`) worker + strict `video_clip_record/1` (`PASS` + SHA-256) ingestion; paid GPU launch requires explicit owner approval |
 | `clips` | `S7_maps_and_25d` | `conditional_worker` | `S10 2.5D and maps (D-131)` | Implemented (`maps.maplibre_spec`, `production.build_map_shot`, `fx25d.living`, `core.camera_vocab`) |
 | `voice`, `sound` | `S8_audio_and_sound` | `episode_stage` | `S11 voice`, `S12 word timing`, `S13 sound design and mix` | Implemented (`audio.level`, `audio.layers`, `audio.val_stem_levels`); ElevenLabs live TTS requires credentials & ledger |
@@ -31,3 +31,6 @@ Cross-agent operational skills live under `.agents/skills/*/SKILL.md` and are va
 - `spending-and-approvals`
 - `prompt-evaluation`
 - `security-and-workflows`
+- `ltx-cinematography`
+- `youtube-docudrama-editing`
+- `film-style-bible`

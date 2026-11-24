@@ -80,7 +80,8 @@
       "python_modules": [
         "explainer_engine.scripting.story_lint",
         "explainer_engine.scripting.stage_guard",
-        "explainer_engine.scripting.stated_theme"
+        "explainer_engine.scripting.stated_theme",
+        "explainer_engine.scripting.docudrama_structure"
       ],
       "required_inputs": [
         "research_dossier",
@@ -116,7 +117,8 @@
       ],
       "python_modules": [
         "explainer_engine.episode_film",
-        "explainer_engine.production.build_shot"
+        "explainer_engine.production.build_shot",
+        "explainer_engine.episode.style_bible"
       ],
       "required_inputs": [
         "approved_script",
@@ -195,7 +197,7 @@
       "implementation_gaps": [
         "unattended_chat_interface_bridge"
       ],
-      "execution_category": "human_gate"
+      "execution_category": "agent_browser_gate"
     },
     {
       "stage_id": "S6_ltx_video",
@@ -219,7 +221,8 @@
       "python_modules": [
         "explainer_engine.training.pods.ltx.modal_ltx_jobs",
         "explainer_engine.training.pods.ltx.modal_layout_jobs",
-        "explainer_engine.qa.ltx_prompt_lint"
+        "explainer_engine.qa.ltx_prompt_lint",
+        "explainer_engine.videolane.ltx_loop"
       ],
       "required_inputs": [
         "scene_images",

@@ -114,7 +114,7 @@ def test_skill_orchestrator_strict_contracts_and_halt_on_non_pass(tmp_path: Path
     # Every stage in skill_registry.json has an explicit execution_category
     for st in orch.registry["stages"]:
         assert st.get("execution_category") in {
-            "planning_only", "human_gate", "episode_stage", "route_worker", "conditional_worker", "not_implemented"
+            "planning_only", "human_gate", "agent_browser_gate", "episode_stage", "route_worker", "conditional_worker", "not_implemented"
         }
 
     # Image provenance verifies decodable image, dimensions, and SHA-256

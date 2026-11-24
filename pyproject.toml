@@ -63,6 +63,9 @@ include = [
   "explainer_engine/governance/agent_skills_lint.py",
   "explainer_engine/qa/perceptual_qa.py",
   "explainer_engine/qa/prompt_eval.py",
+  "explainer_engine/videolane/ltx_loop.py",
+  "explainer_engine/scripting/docudrama_structure.py",
+  "explainer_engine/episode/style_bible.py",
 ]
 exclude = [".venv", "venv", "jobs", "tools"]
 
