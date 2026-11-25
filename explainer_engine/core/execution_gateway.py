@@ -354,8 +354,10 @@ class ProductionStateMachine:
         item_id: str,
         registry_path: Path | None = None,
         ledger_path: Path | None = None,
+        replay_db_path: Path | None = None,
+        operation_id: str | None = None,
     ) -> dict[str, Any]:
-        """Centralized fail-closed gateway enforcing owner approval + SQLite spend reservation."""
+        """Centralized fail-closed gateway enforcing owner approval + HMAC/replay + SQLite spend reservation."""
         manifest_sha = approvals.canonical_manifest_sha256(manifest)
         proof = approvals.verify_approval(
             approval_id,
@@ -365,12 +367,26 @@ class ProductionStateMachine:
             requested_usd=estimated_usd,
             registry_path=registry_path,
         )
-        operation_id = f"op_{uuid.uuid4().hex}"
+        op_id = operation_id or f"op_{uuid.uuid4().hex}"
+        replay_db = replay_db_path or (
+            Path(os.environ["EE_APPROVAL_REPLAY_DB"]) if os.environ.get("EE_APPROVAL_REPLAY_DB") else None
+        )
+        if replay_db is not None:
+            if approvals.is_operation_consumed(op_id, db_path=replay_db):
+                raise approvals.ApprovalError(f"Replay detected: operation_id {op_id!r} was already consumed")
+            approvals.record_consumed_operation(
+                op_id,
+                approval_id=str(proof["approval_id"]),
+                manifest_sha256=manifest_sha,
+                db_path=replay_db,
+            )
         hmac_key = (os.environ.get("OWNER_APPROVAL_SIGNING_KEY") or os.environ.get("EE_APPROVAL_HMAC_KEY") or "").strip()
         if hmac_key:
-            proof = approvals.sign_approval_proof(proof, signing_key=hmac_key, operation_id=operation_id)
+            proof = approvals.sign_approval_proof(proof, signing_key=hmac_key, operation_id=op_id)
+            if not approvals.verify_approval_hmac(proof, signing_key=hmac_key):
+                raise approvals.ApprovalError("Approval proof HMAC verification failed")
         else:
-            proof = dict(proof, operation_id=operation_id)
+            proof = dict(proof, operation_id=op_id)
         reservation = spend_ledger.reserve(
             provider,
             item_id,

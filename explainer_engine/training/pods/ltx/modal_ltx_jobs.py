@@ -310,6 +310,7 @@ def verify_remote_approval_payload(
     estimated_max_usd: float | None = None,
     signing_key: str | None = None,
     registry_path: Path | None = None,
+    replay_db_path: Path | None = None,
 ) -> dict:
     """Enforce cryptographically or registry-authenticated owner approval proof inside remote Modal workers."""
     import datetime as _dt
@@ -358,25 +359,37 @@ def verify_remote_approval_payload(
         raise RuntimeError("Remote worker refused: missing unique operation_id for replay protection")
     if op_id in _SEEN_REMOTE_OPERATION_IDS:
         raise RuntimeError(f"Remote worker refused: replayed operation_id {op_id!r}")
+    _replay_db = replay_db_path or (
+        Path(os.environ["EE_APPROVAL_REPLAY_DB"]) if os.environ.get("EE_APPROVAL_REPLAY_DB") else None
+    )
+    if _replay_db is not None:
+        from explainer_engine.core import approvals as _approvals
+        if _approvals.is_operation_consumed(op_id, db_path=_replay_db):
+            raise RuntimeError(f"Remote worker refused: replayed operation_id {op_id!r} in persistent ledger")
 
     # Authenticity check: MUST verify either HMAC-SHA256 signature OR authoritative owner_approvals.json registry
     authenticated = False
     key = signing_key if signing_key is not None else (os.environ.get("OWNER_APPROVAL_SIGNING_KEY") or os.environ.get("EE_APPROVAL_HMAC_KEY"))
     provided_hmac = approval_proof.get("approval_hmac")
     if key and isinstance(provided_hmac, str) and re.fullmatch(r"^[0-9a-f]{64}$", provided_hmac):
-        canonical = {
-            "approval_id": aid,
-            "provider": approval_proof.get("provider"),
-            "operation_mode": mode,
-            "manifest_sha256": msha,
-            "max_usd": round(float(max_usd), 6),
-            "expires_at": exp_raw,
-            "owner_evidence": ev,
-            "operation_id": op_id,
-        }
-        msg = json.dumps(canonical, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
-        expected_sig = _hmac.new(key.encode("utf-8"), msg, _hashlib.sha256).hexdigest()
-        if _hmac.compare_digest(provided_hmac, expected_sig):
+        try:
+            from explainer_engine.core import approvals as _approvals
+            hmac_ok = _approvals.verify_approval_hmac(approval_proof, signing_key=key)
+        except ImportError:
+            canonical = {
+                "approval_id": aid,
+                "provider": approval_proof.get("provider"),
+                "operation_mode": mode,
+                "manifest_sha256": msha,
+                "max_usd": round(float(max_usd), 6),
+                "expires_at": exp_raw,
+                "owner_evidence": ev,
+                "operation_id": op_id,
+            }
+            msg = json.dumps(canonical, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+            expected_sig = _hmac.new(key.encode("utf-8"), msg, _hashlib.sha256).hexdigest()
+            hmac_ok = _hmac.compare_digest(provided_hmac, expected_sig)
+        if hmac_ok:
             authenticated = True
         else:
             raise RuntimeError("Remote worker refused: forged or invalid approval_hmac signature")
@@ -403,6 +416,14 @@ def verify_remote_approval_payload(
             "Remote worker refused: unauthenticated/forged approval_proof (neither valid HMAC signature nor matching owner_approvals.json entry)"
         )
 
+    if _replay_db is not None:
+        from explainer_engine.core import approvals as _approvals
+        try:
+            _approvals.record_consumed_operation(
+                op_id, approval_id=aid, manifest_sha256=msha, db_path=_replay_db
+            )
+        except Exception as exc:
+            raise RuntimeError(f"Remote worker refused: {exc}") from exc
     _SEEN_REMOTE_OPERATION_IDS.add(op_id)
     return approval_proof
 

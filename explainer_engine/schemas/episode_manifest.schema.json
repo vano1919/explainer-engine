@@ -413,8 +413,45 @@
       "type": "boolean"
     },
     "character_references": {
-      "type": "object",
-      "additionalProperties": true
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "character_id",
+          "reference_image"
+        ],
+        "properties": {
+          "character_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "reference_image": {
+            "type": "string",
+            "minLength": 1
+          },
+          "candidate_image": {
+            "type": "string",
+            "minLength": 1
+          },
+          "pose_tag": {
+            "type": "string"
+          },
+          "face_width_ratio": {
+            "type": "number",
+            "minimum": 0.0,
+            "maximum": 1.0
+          },
+          "threshold": {
+            "type": "number",
+            "minimum": 0.0,
+            "maximum": 1.0
+          },
+          "mandatory": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": true
+      }
     }
   }
 }

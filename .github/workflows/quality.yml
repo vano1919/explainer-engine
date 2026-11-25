@@ -34,11 +34,11 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -r requirements.txt pytest-timeout ruff basedpyright
       - name: Lint code with Ruff
-        run: ruff check explainer_engine/core/approvals.py explainer_engine/core/execution_gateway.py explainer_engine/core/spend_ledger.py explainer_engine/governance/gateway_hook.py explainer_engine/videolane/adapters.py explainer_engine/videolane/ltx_loop.py explainer_engine/overlay/bridge_compiler.py explainer_engine/qa/identity_lock.py explainer_engine/qa/perceptual_qa.py explainer_engine/audio/post_assembly_spotting.py tests/unit/test_production_framework_integration.py tests/unit/test_wave_next_framework.py
+        run: ruff check explainer_engine/core/approvals.py explainer_engine/core/execution_gateway.py explainer_engine/core/spend_ledger.py explainer_engine/governance/gateway_hook.py explainer_engine/videolane/adapters.py explainer_engine/videolane/ltx_loop.py explainer_engine/overlay/bridge_compiler.py explainer_engine/qa/identity_lock.py explainer_engine/qa/perceptual_qa.py explainer_engine/audio/post_assembly_spotting.py tests/unit/test_production_framework_integration.py tests/unit/test_wave_next_framework.py tests/unit/test_episode_run.py tests/unit/test_wave10_audit_hardening.py
       - name: Type-check with BasedPyright
         run: basedpyright
       - name: Run production framework & governance integration tests
-        run: PYTHONPATH=tests/unit:. python -m pytest -q tests/unit/test_production_framework_integration.py tests/unit/test_wave_next_framework.py tests/unit/test_governance_hooks.py tests/unit/test_episode_run.py
+        run: PYTHONPATH=tests/unit:. python -m pytest -q tests/unit/test_production_framework_integration.py tests/unit/test_wave_next_framework.py tests/unit/test_governance_hooks.py tests/unit/test_episode_run.py tests/unit/test_wave10_audit_hardening.py
       - name: Run non-system tests
         run: python -m pytest -q -m "not system and not media"
       - name: Lint documentation and rules

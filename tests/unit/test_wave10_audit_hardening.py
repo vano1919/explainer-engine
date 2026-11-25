@@ -261,7 +261,7 @@ def test_episode_manifest_schema_accepts_runner_keys_and_av_report_handles_none_
     toba["fps"] = 24
     toba["render_size"] = [1920, 1080]
     toba["enable_post_assembly_spotting"] = True
-    toba["character_references"] = {"hero": {"reference_image": "assets/ref.png"}}
+    toba["character_references"] = [{"character_id": "hero", "reference_image": "assets/ref.png"}]
     jsonschema.validate(toba, schema)
 
     md = AVR.markdown(
@@ -288,3 +288,162 @@ def test_episode_manifest_schema_accepts_runner_keys_and_av_report_handles_none_
         }
     )
     assert "n/a" in md
+
+
+def test_manifest_character_references_array_schema_and_run_stage_qa_compat(tmp_path: Path) -> None:
+    """Fix 1: character_references validates as array in episode_manifest.schema.json and works in run.py."""
+    import jsonschema
+
+    schema = json.loads(Path("explainer_engine/schemas/episode_manifest.schema.json").read_text(encoding="utf-8"))
+    ref_img = tmp_path / "ref.png"
+    cand_img = tmp_path / "cand.png"
+    from PIL import Image
+
+    Image.new("RGB", (64, 64), (120, 80, 60)).save(ref_img)
+    Image.new("RGB", (64, 64), (125, 84, 63)).save(cand_img)
+
+    manifest = {
+        "schema_version": "episode_manifest/4",
+        "episode_id": "ep_char_ref_test",
+        "title": "Test",
+        "character_references": [
+            {
+                "character_id": "tribune",
+                "reference_image": str(ref_img),
+                "candidate_image": str(cand_img),
+                "mandatory": True,
+            }
+        ],
+    }
+    validator = jsonschema.Draft202012Validator(schema)
+    errs = [e.message for e in validator.iter_errors(manifest) if "character_references" in list(e.path)]
+    assert not errs, errs
+
+
+def test_authorize_paid_action_and_modal_worker_replay_db_and_hmac(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Fix 2: verify_approval_hmac + SQLite replay ledger wired into execution_gateway and modal workers."""
+    import datetime as dt
+
+    from explainer_engine.core import approvals, execution_gateway
+    from explainer_engine.training.pods.ltx import modal_layout_jobs, modal_ltx_jobs
+
+    monkeypatch.setenv("OWNER_APPROVAL_SIGNING_KEY", "test-secret-key-phase1")
+    manifest = {"job": "smoke_test", "frames": 24}
+    msha = approvals.canonical_manifest_sha256(manifest)
+    exp = (dt.datetime.now(dt.UTC) + dt.timedelta(hours=1)).isoformat()
+    reg_path = tmp_path / "owner_approvals.json"
+    reg_path.write_text(
+        json.dumps(
+            {
+                "schema_version": "owner_approvals/1",
+                "approvals": {
+                    "cmsg_phase1test0001": {
+                        "provider": "modal_modal1",
+                        "operation_mode": "modal-ltx-smoke",
+                        "manifest_sha256": msha,
+                        "max_usd": 5.0,
+                        "expires_at": exp,
+                        "owner_evidence": "owner approved in chat",
+                    }
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+    gw = execution_gateway.ProductionStateMachine(tmp_path / "state.json", episode_id="ep_replay")
+    replay_db = tmp_path / "gateway_replay.db"
+    auth = gw.authorize_paid_action(
+        approval_id="cmsg_phase1test0001",
+        provider="modal_modal1",
+        operation_mode="modal-ltx-smoke",
+        manifest=manifest,
+        estimated_usd=1.0,
+        cap_usd=10.0,
+        item_id="item_1",
+        registry_path=reg_path,
+        ledger_path=tmp_path / "spend.db",
+        replay_db_path=replay_db,
+        operation_id="op_fixed_replay_001",
+    )
+    assert approvals.verify_approval_hmac(auth["approval_proof"], signing_key="test-secret-key-phase1")
+    assert approvals.is_operation_consumed("op_fixed_replay_001", db_path=replay_db)
+    with pytest.raises(approvals.ApprovalError, match="Replay detected"):
+        gw.authorize_paid_action(
+            approval_id="cmsg_phase1test0001",
+            provider="modal_modal1",
+            operation_mode="modal-ltx-smoke",
+            manifest=manifest,
+            estimated_usd=1.0,
+            cap_usd=10.0,
+            item_id="item_2",
+            registry_path=reg_path,
+            ledger_path=tmp_path / "spend.db",
+            replay_db_path=replay_db,
+            operation_id="op_fixed_replay_001",
+        )
+
+    worker_db = tmp_path / "worker_replay.db"
+    proof = auth["approval_proof"]
+    modal_ltx_jobs._SEEN_REMOTE_OPERATION_IDS.discard(proof["operation_id"])
+    verified = modal_ltx_jobs.verify_remote_approval_payload(
+        proof,
+        operation_mode="modal-ltx-smoke",
+        expected_manifest_sha256=msha,
+        estimated_max_usd=1.0,
+        signing_key="test-secret-key-phase1",
+        replay_db_path=worker_db,
+    )
+    assert verified["approval_id"] == "cmsg_phase1test0001"
+    # Even if in-memory set is cleared (simulating cold container restart), persistent replay DB blocks replay!
+    modal_ltx_jobs._SEEN_REMOTE_OPERATION_IDS.discard(proof["operation_id"])
+    with pytest.raises(RuntimeError, match="replayed operation_id"):
+        modal_ltx_jobs.verify_remote_approval_payload(
+            proof,
+            operation_mode="modal-ltx-smoke",
+            expected_manifest_sha256=msha,
+            estimated_max_usd=1.0,
+            signing_key="test-secret-key-phase1",
+            replay_db_path=worker_db,
+        )
+    modal_layout_jobs._SEEN_REMOTE_OPERATION_IDS.discard(proof["operation_id"])
+    with pytest.raises(RuntimeError, match="replayed operation_id"):
+        modal_layout_jobs.verify_remote_approval_payload(
+            proof,
+            operation_mode="modal-ltx-smoke",
+            expected_manifest_sha256=msha,
+            estimated_max_usd=1.0,
+            signing_key="test-secret-key-phase1",
+            replay_db_path=worker_db,
+        )
+
+
+def test_review_stage_empty_outputs_is_not_fresh(tmp_path: Path) -> None:
+    """Fix 3: REVIEW stage recorded with empty output_paths fails closed in verify_stage_outputs and is_stage_fresh."""
+    from explainer_engine.core import execution_gateway
+
+    gw = execution_gateway.ProductionStateMachine(tmp_path / "state.json", episode_id="ep_review")
+    gw.record_stage_completion("script", status="REVIEW", output_paths=[])
+    ok_out, errs = gw.verify_stage_outputs("script")
+    assert not ok_out and any("no recorded verifiable output hashes" in e for e in errs)
+    fresh, reasons = gw.is_stage_fresh("script")
+    assert not fresh and any("no recorded verifiable output hashes" in r for r in reasons)
+
+
+def test_perceptual_qa_evaluate_and_cli_expose_analysis_mode(tmp_path: Path) -> None:
+    """Fix 4: evaluate_clip_perceptual and CLI --mode expose multi_scene analysis_mode."""
+    import inspect
+    import subprocess
+
+    from explainer_engine.qa import perceptual_qa
+
+    sig = inspect.signature(perceptual_qa.evaluate_clip_perceptual)
+    assert "analysis_mode" in sig.parameters
+    assert sig.parameters["analysis_mode"].default == "single_shot"
+    # Verify CLI accepts --mode multi_scene in help output
+    proc = subprocess.run(
+        [sys.executable, "-m", "explainer_engine.qa.perceptual_qa", "--help"],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert "--mode" in proc.stdout and "multi_scene" in proc.stdout

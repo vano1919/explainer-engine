@@ -654,12 +654,15 @@ def evaluate_clip_perceptual(
     transport: Callable[..., dict[str, Any]] | None = None,
     ledger_path: Path | None = None,
     identity_checks: list[dict[str, Any]] | None = None,
+    analysis_mode: str = "single_shot",
 ) -> dict[str, Any]:
     """Run full frame extraction + audio extraction + signal sanity + optional live Gemini multimodal review."""
     duration_s = probe_duration_s(video_path)
     frames = sample_video_frames(video_path, out_dir / "frames", count=frame_count)
     wav_path = extract_audio_wav(video_path, out_dir / f"{video_path.stem}_audio.wav")
-    sig_metrics, sig_defects = analyze_clip_signals(frames, wav_path, duration_s=duration_s)
+    sig_metrics, sig_defects = analyze_clip_signals(
+        frames, wav_path, duration_s=duration_s, analysis_mode=analysis_mode
+    )
 
     if use_gemini:
         mm = invoke_gemini_multimodal_qa(
@@ -756,6 +759,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--frames", type=int, default=DEFAULT_FRAME_COUNT)
     ap.add_argument("--gemini", action="store_true", help="opt-in paid Gemini multimodal review")
     ap.add_argument("--model", default=DEFAULT_GEMINI_QA_MODEL)
+    ap.add_argument("--mode", choices=["single_shot", "multi_scene"], default="single_shot")
     args = ap.parse_args(argv)
     out = args.out_dir or (args.video.parent / "qa")
     rep = evaluate_clip_perceptual(
@@ -764,6 +768,7 @@ def main(argv: list[str] | None = None) -> int:
         frame_count=args.frames,
         use_gemini=args.gemini,
         reviewer_model=args.model,
+        analysis_mode=args.mode,
     )
     print(json.dumps({"verdict": rep["verdict"], "technical_status": rep["technical_status"], "perceptual_status": rep["perceptual_status"], "editorial_status": rep["editorial_status"], "creator_signoff_status": rep["creator_signoff_status"], "report": str(out / "perceptual_qa_report.json")}))
     return 0 if rep["verdict"] == "PASS" else 1

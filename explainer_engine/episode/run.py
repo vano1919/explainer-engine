@@ -972,9 +972,9 @@ def stage_assemble(ep: Episode, rehearsal: bool):
         spot_rec = PAS.build_spotting_record(master, cues, out_path=spot_out, require_verified_assets=True)
         sound_plan_p = ep.path("audio/sound_plan.json")
         if sound_plan_p.is_file():
-            PAS.integrate_spotted_cues_into_sound_plan(sound_plan_p, spot_rec)
+            PAS.integrate_spotted_cues_into_sound_plan(sound_plan_p, spot_rec, preview_video=master)
         spotted_wav = ep.path("audio/stems/mix_spotted.wav")
-        mix_info = PAS.mix_spotted_cues_onto_audio(mix, spot_rec, spotted_wav)
+        mix_info = PAS.mix_spotted_cues_onto_audio(mix, spot_rec, spotted_wav, preview_video=master)
         if mix_info["cues_mixed"] > 0:
             remux_tmp = ep.path(f"renders/final/{ep.manifest['episode_id']}_spotted.mp4")
             subprocess.run(
@@ -1056,7 +1056,16 @@ def stage_qa(ep: Episode, rehearsal: bool):
         write_text_atomic(ep.path("qa/av_event_report.md"), AVR.markdown(rep_av))
     identity_rows = []
     id_cfg_p = ep.path("planning/identity_checks.json")
-    id_specs = list(ep.manifest.get("character_references") or [])
+    raw_char_refs = ep.manifest.get("character_references")
+    if isinstance(raw_char_refs, dict):
+        id_specs = [
+            {"character_id": k, **(v if isinstance(v, dict) else {"reference_image": str(v)})}
+            for k, v in raw_char_refs.items()
+        ]
+    elif isinstance(raw_char_refs, list):
+        id_specs = list(raw_char_refs)
+    else:
+        id_specs = []
     if not id_specs and id_cfg_p.is_file():
         id_doc = json.loads(id_cfg_p.read_text(encoding="utf-8"))
         id_specs = list(id_doc.get("checks") or (id_doc if isinstance(id_doc, list) else []))
