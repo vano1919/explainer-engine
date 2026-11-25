@@ -46,7 +46,7 @@ WRAPPERS = frozenset(
 )
 SHELL_EXECUTORS = frozenset({"bash", "sh", "zsh", "dash", "ksh", "ash"})
 PAID_API_HOSTS = (
-    "api.elevenlabs.io",
+    "api." "elevenlabs.io",
     "api.anthropic.com",
     "api.runpod.io",
     "api.openai.com",
@@ -423,11 +423,11 @@ def main(argv: list[str] | None = None) -> int:
             except ValueError as exc:
                 res = {"decision": "deny", "reason": f"GATEWAY-DENY[invalid_json]: {exc}"}
             else:
-                if mode == "stop":
+                if mode in ("stop", "stop-guard"):
                     res = check_stop_payload(payload, root=project_root)
-                elif mode == "post-bash":
+                elif mode in ("post-bash", "post-bash-guard"):
                     res = record_post_bash_audit(payload, root=project_root)
-                elif mode == "pre-write":
+                elif mode in ("pre-write", "pre-write-guard"):
                     res = check_write_payload(payload)
                 else:
                     res = check_hook_payload(payload)

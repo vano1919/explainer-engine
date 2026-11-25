@@ -65,7 +65,7 @@ EPISODE_RUNNER_DEPENDENCIES: dict[str, tuple[str, ...]] = {
 }
 
 PASSING_STATES = frozenset({"PASS", "REVIEW"})
-RECORDABLE_STATES = frozenset({"PASS", "REVIEW", "FAIL", "NOT_RUN"})
+RECORDABLE_STATES = frozenset({"PASS", "REVIEW", "FAIL", "NOT_RUN", "INCOMPLETE"})
 
 
 def sha256_file(path: Path) -> str:

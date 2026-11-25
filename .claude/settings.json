@@ -23,7 +23,7 @@
           },
           {
             "type": "command",
-            "command": "cd \"$CLAUDE_PROJECT_DIR\" && \"$(command -v python3 || command -v python)\" -m explainer_engine.governance.gateway_hook pre-bash"
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && \"$(command -v python3 || command -v python)\" -m explainer_engine.governance.gateway_hook pre-bash-guard"
           }
         ]
       },
@@ -36,7 +36,7 @@
           },
           {
             "type": "command",
-            "command": "cd \"$CLAUDE_PROJECT_DIR\" && \"$(command -v python3 || command -v python)\" -m explainer_engine.governance.gateway_hook pre-write"
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && \"$(command -v python3 || command -v python)\" -m explainer_engine.governance.gateway_hook pre-write-guard"
           }
         ]
       },
@@ -73,7 +73,7 @@
           },
           {
             "type": "command",
-            "command": "cd \"$CLAUDE_PROJECT_DIR\" && \"$(command -v python3 || command -v python)\" -m explainer_engine.governance.gateway_hook stop"
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && \"$(command -v python3 || command -v python)\" -m explainer_engine.governance.gateway_hook stop-guard"
           }
         ]
       }
@@ -97,7 +97,7 @@
           },
           {
             "type": "command",
-            "command": "cd \"$CLAUDE_PROJECT_DIR\" && \"$(command -v python3 || command -v python)\" -m explainer_engine.governance.gateway_hook post-bash"
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && \"$(command -v python3 || command -v python)\" -m explainer_engine.governance.gateway_hook post-bash-guard"
           }
         ]
       }
