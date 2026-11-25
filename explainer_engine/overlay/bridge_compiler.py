@@ -146,25 +146,41 @@ def render_bridge_overlay_png(
     img = Image.new("RGBA", (w, h), (0, 0, 0, 0))
     draw = ImageDraw.Draw(img)
 
-    bg_rgba = _hex_to_rgba(str(item.get("bg_hex", "#1B2228")), alpha=220)
-    acc_rgba = _hex_to_rgba(str(item.get("accent_hex", "#C8A97E")), alpha=255)
+    bg_rgba = _hex_to_rgba(str(item.get("bg_hex", "#14191F")), alpha=232)
+    acc_rgba = _hex_to_rgba(str(item.get("accent_hex", "#A6382E")), alpha=255)
+    sub_rgba = (228, 220, 204, 245)
 
-    margin_x = int(w * 0.05)
-    box_h = int(h * 0.14)
-    y0 = h - box_h - int(h * 0.07)
+    title_text = str(item.get("text", "")).strip()
+    sub = str(item.get("subtext", "")).strip()
+    title_font, _, _ = _load_verified_font(max(22, int(h * 0.036)), font_path=font_path)
+    sub_font, _, _ = _load_verified_font(max(15, int(h * 0.023)), font_path=font_path)
+
+    tb = draw.textbbox((0, 0), title_text, font=title_font) if title_text else (0, 0, 0, 0)
+    sb = draw.textbbox((0, 0), sub, font=sub_font) if sub else (0, 0, 0, 0)
+    content_w = max(tb[2] - tb[0], sb[2] - sb[0])
+    pad_left = 26
+    pad_right = 34
+
+    margin_x = int(w * 0.045)
+    box_h = int(h * (0.125 if sub else 0.085))
+    y0 = h - box_h - int(h * 0.065)
     x0 = margin_x
-    x1 = min(w - margin_x, int(w * 0.56))
+    min_w = int(w * 0.24)
+    max_w = w - 2 * margin_x
+    box_w = max(min_w, min(max_w, content_w + pad_left + pad_right))
+    x1 = x0 + box_w
     y1 = y0 + box_h
 
-    draw.rectangle([x0, y0, x1, y1], fill=bg_rgba)
-    draw.rectangle([x0, y0, x0 + max(6, int(w * 0.005)), y1], fill=acc_rgba)
+    # Soft drop shadow + dark translucent editorial card + subtle warm hairline border + accent bar
+    draw.rectangle([x0 + 5, y0 + 6, x1 + 5, y1 + 6], fill=(0, 0, 0, 110))
+    draw.rectangle([x0, y0, x1, y1], fill=bg_rgba, outline=(240, 232, 214, 52), width=1)
+    bar_w = max(6, int(w * 0.0055))
+    draw.rectangle([x0, y0, x0 + bar_w, y1], fill=acc_rgba)
 
-    title_font, _, _ = _load_verified_font(max(22, int(h * 0.038)), font_path=font_path)
-    sub_font, _, _ = _load_verified_font(max(16, int(h * 0.024)), font_path=font_path)
-    draw.text((x0 + 22, y0 + 16), str(item.get("text", "")), font=title_font, fill=(248, 250, 252, 255))
-    sub = str(item.get("subtext", "")).strip()
+    title_y = y0 + int(box_h * (0.16 if sub else 0.26))
+    draw.text((x0 + pad_left, title_y), title_text, font=title_font, fill=(250, 248, 242, 255))
     if sub:
-        draw.text((x0 + 22, y0 + int(box_h * 0.55)), sub, font=sub_font, fill=acc_rgba)
+        draw.text((x0 + pad_left, y0 + int(box_h * 0.56)), sub, font=sub_font, fill=sub_rgba)
 
     out_png.parent.mkdir(parents=True, exist_ok=True)
     img.save(out_png, format="PNG")
@@ -190,20 +206,31 @@ def composite_bridges_onto_video(
     cmd = ["ffmpeg", "-y", "-v", "error", "-i", str(base_video)]
     pngs: list[Path] = []
     png_hashes: dict[str, str] = {}
+    fps_val = int(overlay_spec.get("fps", 24))
     for idx, item in enumerate(items):
         p = render_bridge_overlay_png(item, work_dir / f"bridge_{idx:02d}.png", size=size, font_path=font_path)
         pngs.append(p)
         png_hashes[str(p)] = _sha256(p)
-        cmd += ["-i", str(p)]
+        dur = max(0.2, float(item["end_s"]) - float(item["start_s"]))
+        cmd += ["-loop", "1", "-framerate", str(fps_val), "-t", f"{dur:.3f}", "-i", str(p)]
 
     filters: list[str] = []
     prev_label = "[0:v]"
     for idx, item in enumerate(items):
         in_lbl = f"[{idx + 1}:v]"
+        fade_lbl = f"[ov{idx + 1}]"
         out_lbl = f"[v{idx + 1}]"
         s = float(item["start_s"])
         e = float(item["end_s"])
-        filters.append(f"{prev_label}{in_lbl}overlay=0:0:enable='between(t,{s:.3f},{e:.3f})'{out_lbl}")
+        dur = max(0.2, e - s)
+        fade_d = min(0.30, dur * 0.25)
+        fade_out_st = max(0.0, dur - fade_d)
+        filters.append(
+            f"{in_lbl}format=rgba,fade=t=in:st=0:d={fade_d:.3f}:alpha=1,"
+            f"fade=t=out:st={fade_out_st:.3f}:d={fade_d:.3f}:alpha=1,"
+            f"setpts=PTS+{s:.3f}/TB{fade_lbl}"
+        )
+        filters.append(f"{prev_label}{fade_lbl}overlay=0:0:eof_action=pass:enable='between(t,{s:.3f},{e:.3f})'{out_lbl}")
         prev_label = out_lbl
 
     out_video.parent.mkdir(parents=True, exist_ok=True)
