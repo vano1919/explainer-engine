@@ -32,9 +32,9 @@ jobs:
       - name: Install project dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install -r requirements.txt ruff basedpyright
+          python -m pip install -r requirements.txt pytest-timeout ruff basedpyright
       - name: Lint code with Ruff
-        run: ruff check explainer_engine/core/execution_gateway.py explainer_engine/governance/gateway_hook.py explainer_engine/videolane/adapters.py explainer_engine/overlay/bridge_compiler.py explainer_engine/qa/identity_lock.py explainer_engine/audio/post_assembly_spotting.py tests/unit/test_production_framework_integration.py tests/unit/test_wave_next_framework.py
+        run: ruff check explainer_engine/core/approvals.py explainer_engine/core/execution_gateway.py explainer_engine/core/spend_ledger.py explainer_engine/governance/gateway_hook.py explainer_engine/videolane/adapters.py explainer_engine/videolane/ltx_loop.py explainer_engine/overlay/bridge_compiler.py explainer_engine/qa/identity_lock.py explainer_engine/qa/perceptual_qa.py explainer_engine/audio/post_assembly_spotting.py tests/unit/test_production_framework_integration.py tests/unit/test_wave_next_framework.py
       - name: Type-check with BasedPyright
         run: basedpyright
       - name: Run production framework & governance integration tests

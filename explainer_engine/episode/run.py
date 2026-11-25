@@ -26,7 +26,7 @@ import time
 from pathlib import Path
 
 from explainer_engine.core.errors import ConfigError, ContractError
-from explainer_engine.core.store import write_json_atomic, write_text_atomic
+from explainer_engine.core.store import replace_file, write_json_atomic, write_text_atomic
 from explainer_engine.episode import timing as TM
 from explainer_engine.qa import gates as G
 
@@ -940,7 +940,7 @@ def stage_assemble(ep: Episode, rehearsal: bool):
         write_json_atomic(spec_p, spec)
         bridged_tmp = ep.path(f"renders/final/{ep.manifest['episode_id']}_bridged.mp4")
         comp = BC.composite_bridges_onto_video(master, spec, bridged_tmp, work_dir=ep.path("editing/bridge_pngs"))
-        bridged_tmp.replace(master)
+        replace_file(bridged_tmp, master)
         comp["output_video"] = str(master)
         res["bridge_overlay"] = comp
         out_meta["overlay_spec"] = str(spec_p.relative_to(ep.root))
@@ -982,7 +982,7 @@ def stage_assemble(ep: Episode, rehearsal: bool):
                  "-map", "0:v:0", "-map", "1:a:0", "-c:v", "copy", "-c:a", "aac", "-shortest", str(remux_tmp)],
                 check=True, capture_output=True, text=True, timeout=180,
             )
-            remux_tmp.replace(master)
+            replace_file(remux_tmp, master)
         res["post_assembly_spotting"] = {"record": str(spot_out.relative_to(ep.root)), "mix": mix_info}
         out_meta["post_assembly_spotting"] = str(spot_out.relative_to(ep.root))
         out_meta["spotted_mix_wav"] = str(spotted_wav.relative_to(ep.root))
@@ -1076,8 +1076,12 @@ def stage_qa(ep: Episode, rehearsal: bool):
                 cand_p = Path(cand_raw)
                 if not cand_p.is_absolute():
                     cand_p = ep.root / cand_p
-            elif records and records[0].get("source_start_keyframe"):
-                cand_p = Path(records[0]["source_start_keyframe"])
+            else:
+                for rec in records:
+                    shot_chars = set(rec.get("character_ids") or [])
+                    if (char_id in shot_chars or not shot_chars) and rec.get("source_start_keyframe"):
+                        cand_p = Path(rec["source_start_keyframe"])
+                        break
 
             # Never substitute reference_image as candidate_image (zero self-comparison PASS)
             if cand_p is None or not cand_p.is_file() or (ref_p.is_file() and cand_p.resolve() == ref_p.resolve()):

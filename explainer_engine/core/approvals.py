@@ -7,6 +7,7 @@ import hmac
 import json
 import math
 import re
+import sqlite3
 from pathlib import Path
 from typing import Any
 
@@ -138,3 +139,71 @@ def sign_approval_proof(proof: dict[str, Any], *, signing_key: str, operation_id
     signed = dict(proof, operation_id=operation_id)
     signed["approval_hmac"] = compute_approval_hmac(signed, signing_key=signing_key)
     return signed
+
+
+def verify_approval_hmac(proof: dict[str, Any], *, signing_key: str) -> bool:
+    """Constant-time verification of an approval proof's HMAC-SHA256 signature."""
+    provided = str(proof.get("approval_hmac") or "").strip().lower()
+    if not SHA256_RE.fullmatch(provided):
+        return False
+    expected = compute_approval_hmac(proof, signing_key=signing_key)
+    return hmac.compare_digest(provided, expected)
+
+
+def _connect_replay_db(db_path: Path) -> sqlite3.Connection:
+    db_path.parent.mkdir(parents=True, exist_ok=True)
+    conn = sqlite3.connect(str(db_path), timeout=30.0, isolation_level=None)
+    conn.execute("PRAGMA busy_timeout=15000")
+    conn.execute("PRAGMA journal_mode=WAL")
+    conn.execute("PRAGMA synchronous=FULL")
+    conn.execute(
+        """
+        CREATE TABLE IF NOT EXISTS consumed_operations (
+            operation_id TEXT PRIMARY KEY,
+            approval_id TEXT NOT NULL,
+            manifest_sha256 TEXT NOT NULL,
+            consumed_at TEXT NOT NULL
+        )
+        """
+    )
+    return conn
+
+
+def is_operation_consumed(operation_id: str, *, db_path: Path) -> bool:
+    """Return True if operation_id has already been consumed in the persistent replay ledger."""
+    if not operation_id or not isinstance(operation_id, str):
+        raise ApprovalError("operation_id must be a non-empty string")
+    if not db_path.is_file():
+        return False
+    conn = _connect_replay_db(db_path)
+    try:
+        row = conn.execute("SELECT 1 FROM consumed_operations WHERE operation_id = ?", (operation_id,)).fetchone()
+        return row is not None
+    finally:
+        conn.close()
+
+
+def record_consumed_operation(
+    operation_id: str,
+    *,
+    approval_id: str,
+    manifest_sha256: str,
+    db_path: Path,
+) -> None:
+    """Atomically record a single-use operation_id; raises ApprovalError on replay."""
+    if not operation_id or not isinstance(operation_id, str):
+        raise ApprovalError("operation_id must be a non-empty string")
+    conn = _connect_replay_db(db_path)
+    try:
+        conn.execute("BEGIN IMMEDIATE")
+        try:
+            conn.execute(
+                "INSERT INTO consumed_operations (operation_id, approval_id, manifest_sha256, consumed_at) VALUES (?, ?, ?, ?)",
+                (operation_id, approval_id, manifest_sha256, datetime.datetime.now(UTC).isoformat()),
+            )
+            conn.execute("COMMIT")
+        except sqlite3.IntegrityError as exc:
+            conn.execute("ROLLBACK")
+            raise ApprovalError(f"Replay detected: operation_id {operation_id!r} was already consumed") from exc
+    finally:
+        conn.close()

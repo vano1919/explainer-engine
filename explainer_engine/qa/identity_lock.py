@@ -95,6 +95,27 @@ def check_cross_scene_identity(
     ref_sha = _sha256(ref_p)
     cand_sha = _sha256(cand_p)
 
+    if ref_p.resolve() == cand_p.resolve() or ref_sha == cand_sha:
+        return {
+            "schema": "identity_lock_check/1",
+            "character_id": character_id,
+            "status": "FAIL",
+            "failure_kind": "self_comparison_forbidden",
+            "mandatory": mandatory,
+            "reference_path": str(ref_p),
+            "reference_sha256": ref_sha,
+            "candidate_path": str(cand_p),
+            "candidate_sha256": cand_sha,
+            "similarity": None,
+            "threshold": threshold,
+            "reason": (
+                f"Self-comparison prohibited for {character_id!r}: candidate image matches reference "
+                "path or SHA-256 identically"
+            ),
+            "backend": "self_comparison_guard",
+            "license_safe": True,
+        }
+
     if pose_tag in NON_FRONTAL_POSES or face_width_ratio < MIN_FACE_WIDTH_RATIO:
         return {
             "schema": "identity_lock_check/1",

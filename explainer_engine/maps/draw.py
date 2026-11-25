@@ -20,13 +20,14 @@ from PIL import Image, ImageDraw, ImageFont
 from explainer_engine.design import palette as PAL
 
 ROOT = Path(__file__).resolve().parents[2]
-FONT_FILES = [ROOT / "assets" / "fonts" / "ComicNeue-Bold.ttf", ROOT / "assets" / "fonts" / "Bangers-Regular.ttf"]
+FONT_FILES = [ROOT / "assets" / "fonts" / "LiberationSerif-Regular.ttf"]
+
+
 def _resolve_map_font() -> Path:
     for cand in (
         ROOT / "assets" / "fonts" / "LiberationSerif-Regular.ttf",
         Path("/usr/share/fonts/truetype/liberation/LiberationSerif-Regular.ttf"),
         Path("/usr/share/fonts/truetype/liberation2/LiberationSerif-Regular.ttf"),
-        ROOT / "assets" / "fonts" / "Inter.ttf",
     ):
         if cand.is_file():
             return cand
@@ -56,24 +57,20 @@ def faction(side: str) -> tuple[int, int, int]:
 
 
 @lru_cache(maxsize=64)
-def font(px: int, face: str = "ui") -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
-    if face == "map":
-        if not MAP_FONT.is_file():
-            from explainer_engine.core.errors import ContractError
+def font(px: int, face: str = "map") -> ImageFont.FreeTypeFont:
+    if not MAP_FONT.is_file():
+        from explainer_engine.core.errors import ContractError
 
-            raise ContractError(
-                f"Approved map font not found on disk: {MAP_FONT}; silent fallback to ComicNeue/Bangers/PIL default is prohibited"
-            )
-        f = ImageFont.truetype(str(MAP_FONT), max(8, int(px)))
+        raise ContractError(
+            f"Approved map font not found on disk: {MAP_FONT}; silent fallback to ComicNeue/Bangers/Inter/PIL default is prohibited"
+        )
+    f = ImageFont.truetype(str(MAP_FONT), max(8, int(px)))
+    if face == "map":
         try:
             f.set_variation_by_name("SemiBold")
         except (OSError, ValueError):   # a FreeType without variation support keeps the default instance
             pass
-        return f
-    for path in FONT_FILES:
-        if path.exists():
-            return ImageFont.truetype(str(path), max(8, int(px)))
-    return ImageFont.load_default(size=max(8, int(px)))
+    return f
 
 
 def ease_in_out(u: float) -> float:

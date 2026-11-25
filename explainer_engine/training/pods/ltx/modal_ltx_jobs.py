@@ -361,7 +361,7 @@ def verify_remote_approval_payload(
 
     # Authenticity check: MUST verify either HMAC-SHA256 signature OR authoritative owner_approvals.json registry
     authenticated = False
-    key = signing_key if signing_key is not None else os.environ.get("OWNER_APPROVAL_SIGNING_KEY")
+    key = signing_key if signing_key is not None else (os.environ.get("OWNER_APPROVAL_SIGNING_KEY") or os.environ.get("EE_APPROVAL_HMAC_KEY"))
     provided_hmac = approval_proof.get("approval_hmac")
     if key and isinstance(provided_hmac, str) and re.fullmatch(r"^[0-9a-f]{64}$", provided_hmac):
         canonical = {
@@ -382,7 +382,8 @@ def verify_remote_approval_payload(
             raise RuntimeError("Remote worker refused: forged or invalid approval_hmac signature")
 
     if not authenticated:
-        reg_p = registry_path or (Path(__file__).resolve().parents[4] / "config" / "owner_approvals.json")
+        _parents = Path(__file__).resolve().parents
+        reg_p = registry_path or ((_parents[4] if len(_parents) > 4 else Path(__file__).resolve().parent) / "config" / "owner_approvals.json")
         if reg_p.is_file():
             reg_data = json.loads(reg_p.read_text(encoding="utf-8"))
             reg_rec = (reg_data.get("approvals") or {}).get(aid)
@@ -421,8 +422,9 @@ def verify_worker_approval(
     card_id = go_val.split(":", 1)[0]
     manifest_sha = str(env.get("EE_MODAL_APPROVAL_MANIFEST_SHA256") or "").strip()
     effective_mode = str(env.get("EE_MODAL_OPERATION_MODE") or operation_mode).strip()
+    import uuid as _uuid
     try:
-        return approvals.verify_approval(
+        proof_rec = approvals.verify_approval(
             card_id,
             provider="modal_modal1",
             operation_mode=effective_mode,
@@ -430,6 +432,11 @@ def verify_worker_approval(
             requested_usd=requested_usd,
             registry_path=registry_path,
         )
+        op_id = f"op_{_uuid.uuid4().hex}"
+        hmac_key = str(env.get("OWNER_APPROVAL_SIGNING_KEY") or env.get("EE_APPROVAL_HMAC_KEY") or "").strip()
+        if hmac_key:
+            return approvals.sign_approval_proof(proof_rec, signing_key=hmac_key, operation_id=op_id)
+        return dict(proof_rec, operation_id=op_id)
     except approvals.ApprovalError as exc:
         raise SystemExit(f"owner approval verification failed: {exc}; nothing was started") from None
 

@@ -68,6 +68,14 @@ INLINE_PAID_BYPASS_PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = (
 )
 
 
+def _norm_exe(token: str) -> str:
+    name = Path(token).name.lower()
+    for suf in (".exe", ".cmd", ".bat"):
+        if name.endswith(suf):
+            return name[: -len(suf)]
+    return name
+
+
 def _split_shell_commands(cmd: str, *, _depth: int = 0) -> tuple[list[list[str]], bool]:
     """Tokenize a shell command into argument lists, recursing into subshells and shell -c wrappers.
 
@@ -136,7 +144,7 @@ def _split_shell_commands(cmd: str, *, _depth: int = 0) -> tuple[list[list[str]]
         stripped = _strip_env_and_wrappers(argv)
         if not stripped:
             continue
-        exe = Path(stripped[0]).name.lower()
+        exe = _norm_exe(stripped[0])
         if exe in SHELL_EXECUTORS:
             c_idx = next((i for i, a in enumerate(stripped[:-1]) if re.fullmatch(r"-[a-zA-Z]*c", a)), None)
             if c_idx is not None:
@@ -165,7 +173,7 @@ def _strip_env_and_wrappers(argv: list[str]) -> list[str]:
         if "=" in tok and not tok.startswith("-") and tok.split("=", 1)[0].replace("_", "").isalnum():
             i += 1
             continue
-        base = Path(tok).name.lower()
+        base = _norm_exe(tok)
         if base in WRAPPERS:
             i += 1
             # Skip wrapper flags and timeout duration / env KEY=VAL args
@@ -203,7 +211,7 @@ def _check_single_argv(argv: list[str]) -> list[str]:
     if not cmd:
         return violations
 
-    exe = Path(cmd[0]).name.lower()
+    exe = _norm_exe(cmd[0])
     args = cmd[1:]
     joined = " ".join(cmd)
 
@@ -224,7 +232,7 @@ def _check_single_argv(argv: list[str]) -> list[str]:
             violations.append("GATEWAY-DENY[destructive_git_reset]: `git reset --hard` is prohibited by execution gateway")
 
     # 3. Direct HTTP clients hitting paid external AI APIs
-    if exe in ("curl", "wget", "http", "httpie"):
+    if exe in ("curl", "wget", "http", "httpie", "invoke-webrequest", "iwr", "irm", "invoke-restmethod"):
         low = joined.lower()
         for host in PAID_API_HOSTS:
             if host in low:
@@ -267,7 +275,7 @@ def check_shell_command_for_gateway_bypass(command: str) -> list[str]:
         if cfg_path in norm_cmd:
             esc = re.escape(cfg_path)
             if (
-                re.search(rf"(?:>>?|tee|mv|rm|sed\s+-[a-zA-Z]*i|truncate|write_text|open\()[^\n]*{esc}", norm_cmd)
+                re.search(rf"(?:>>?|\btee\b|\bmv\b|\brm\b|\bsed\s+-[a-zA-Z]*i|\btruncate\b|\.write_text\(|open\(|set-content|add-content|out-file)[^\n]*{esc}", norm_cmd, re.I)
                 or re.search(rf"\bcp\b[^|;&\n]*\s['\"]?\S*{esc}['\"]?\s*(?:[;&|\n]|$)", norm_cmd)
             ):
                 violations.append(f"GATEWAY-DENY[approval_registry_tampering]: shell write to {cfg_path} is prohibited")
@@ -325,6 +333,27 @@ def check_hook_payload(event: Any) -> dict[str, Any]:
     violations = check_shell_command_for_gateway_bypass(cmd)
     if violations:
         return {"decision": "deny", "reason": "; ".join(violations)}
+    return {"decision": "allow", "reason": "ok"}
+
+
+
+def check_write_payload(event: Any) -> dict[str, Any]:
+    """Evaluate a Claude Code PreToolUse Write/Edit event payload fail-closed."""
+    if not isinstance(event, dict):
+        return {"decision": "deny", "reason": "GATEWAY-DENY[malformed_payload]: hook payload must be a JSON object"}
+    tool_input = event.get("tool_input")
+    if not isinstance(tool_input, dict):
+        return {"decision": "deny", "reason": "GATEWAY-DENY[malformed_payload]: missing or non-object tool_input"}
+    raw_path = tool_input.get("file_path") or tool_input.get("path")
+    if not isinstance(raw_path, str) or not raw_path.strip():
+        return {"decision": "deny", "reason": "GATEWAY-DENY[malformed_payload]: missing or non-string tool_input.file_path"}
+    norm = raw_path.replace("\\", "/").strip()
+    for cfg_path in PROTECTED_GATEWAY_CONFIGS:
+        if norm == cfg_path or norm.endswith("/" + cfg_path):
+            return {
+                "decision": "deny",
+                "reason": f"GATEWAY-DENY[protected_config_write]: direct Write/Edit to {cfg_path} is prohibited",
+            }
     return {"decision": "allow", "reason": "ok"}
 
 
@@ -398,6 +427,8 @@ def main(argv: list[str] | None = None) -> int:
                     res = check_stop_payload(payload, root=project_root)
                 elif mode == "post-bash":
                     res = record_post_bash_audit(payload, root=project_root)
+                elif mode == "pre-write":
+                    res = check_write_payload(payload)
                 else:
                     res = check_hook_payload(payload)
         print(json.dumps(res))

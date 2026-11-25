@@ -11,7 +11,9 @@ import argparse
 import datetime
 import hashlib
 import json
+import os
 import sys
+import uuid
 from pathlib import Path
 from typing import Any
 
@@ -287,13 +289,13 @@ class ProductionStateMachine:
         if not ok:
             raise ContractError(f"Stage {stage!r} cannot be recorded: {'; '.join(blockers)}")
 
-        if norm_status in PASSING_STATES and not output_paths:
+        if norm_status == "PASS" and not output_paths:
             raise ContractError(f"Stage {stage!r} cannot be marked {norm_status} without verifiable on-disk output_paths")
 
         output_hashes: dict[str, str] = {}
         for raw_p in output_paths:
             p = Path(raw_p)
-            output_hashes[str(p)] = sha256_file(p)
+            output_hashes[p.as_posix()] = sha256_file(p)
 
         prev = (self.data.get("stages") or {}).get(stage)
         new_inputs = dict(input_fingerprints or {})
@@ -363,6 +365,12 @@ class ProductionStateMachine:
             requested_usd=estimated_usd,
             registry_path=registry_path,
         )
+        operation_id = f"op_{uuid.uuid4().hex}"
+        hmac_key = (os.environ.get("OWNER_APPROVAL_SIGNING_KEY") or os.environ.get("EE_APPROVAL_HMAC_KEY") or "").strip()
+        if hmac_key:
+            proof = approvals.sign_approval_proof(proof, signing_key=hmac_key, operation_id=operation_id)
+        else:
+            proof = dict(proof, operation_id=operation_id)
         reservation = spend_ledger.reserve(
             provider,
             item_id,

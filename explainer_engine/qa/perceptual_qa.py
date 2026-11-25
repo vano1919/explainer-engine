@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import argparse
 import base64
+import contextlib
 import datetime
 import hashlib
 import json
@@ -203,11 +204,35 @@ def extract_audio_wav(video_path: Path, out_wav: Path) -> Path | None:
     return out_wav
 
 
+def _measure_ebur128_lufs(wav_path: Path) -> tuple[float | None, float | None]:
+    """Measure integrated LUFS and true peak (dBTP) using FFmpeg ebur128 filter."""
+    cmd = [
+        "ffmpeg", "-hide_banner", "-nostats", "-i", str(wav_path),
+        "-af", "ebur128=peak=true", "-f", "null", "-",
+    ]
+    p = subprocess.run(cmd, capture_output=True, text=True, check=False, timeout=60)
+    if p.returncode != 0:
+        return None, None
+    lufs: float | None = None
+    true_peak: float | None = None
+    for line in p.stderr.splitlines():
+        s = line.strip()
+        if s.startswith("I:") and "LUFS" in s:
+            with contextlib.suppress(ValueError):
+                lufs = float(s.split("I:", 1)[1].split("LUFS", 1)[0].strip())
+        elif s.startswith("Peak:") and "dBFS" in s:
+            with contextlib.suppress(ValueError):
+                true_peak = float(s.split("Peak:", 1)[1].split("dBFS", 1)[0].strip())
+    return lufs, true_peak
+
+
 def analyze_clip_signals(
     frames: list[SampledFrame],
     wav_path: Path | None,
     *,
     duration_s: float | None = None,
+    analysis_mode: str = "single_shot",
+    scene_cut_diff_threshold: float = 0.25,
 ) -> tuple[dict[str, Any], list[DefectRecord]]:
     """Deterministic signal sanity check catching frozen video, melt/warp drift, silence, clipping, and pure tones."""
     defects: list[DefectRecord] = []
@@ -215,9 +240,22 @@ def analyze_clip_signals(
     diffs = [float(np.abs(arrs[i + 1] - arrs[i]).mean()) for i in range(len(arrs) - 1)]
     mean_frame_diff = float(np.mean(diffs)) if diffs else 0.0
 
-    # Estimate residual motion / drift for technical_gate.check_no_melt
-    residual_motion_per_frame = float(np.max(diffs)) if diffs else 0.0
-    residual_drift = float(np.abs(arrs[-1] - arrs[0]).mean()) if len(arrs) >= 2 else 0.0
+    # Separate single-shot continuity from multi-scene assembled masters with intentional hard cuts
+    detected_scene_cuts = [i for i, d in enumerate(diffs) if d >= scene_cut_diff_threshold]
+    if analysis_mode == "multi_scene" and detected_scene_cuts:
+        intra_diffs = [d for d in diffs if d < scene_cut_diff_threshold]
+        residual_motion_per_frame = float(np.max(intra_diffs)) if intra_diffs else 0.0
+        # Compute worst intra-scene start-to-end drift across cut-separated segments
+        seg_bounds = [0, *[c + 1 for c in detected_scene_cuts], len(arrs)]
+        seg_drifts = [
+            float(np.abs(arrs[b - 1] - arrs[a]).mean())
+            for a, b in zip(seg_bounds, seg_bounds[1:], strict=False)
+            if b - a >= 2
+        ]
+        residual_drift = float(max(seg_drifts)) if seg_drifts else 0.0
+    else:
+        residual_motion_per_frame = float(np.max(diffs)) if diffs else 0.0
+        residual_drift = float(np.abs(arrs[-1] - arrs[0]).mean()) if len(arrs) >= 2 else 0.0
     melt_problems = TG.check_no_melt(
         {
             "residual_motion_per_frame": residual_motion_per_frame,
@@ -318,8 +356,26 @@ def analyze_clip_signals(
                 )
             )
 
+    integrated_lufs: float | None = None
+    true_peak_dbtp: float | None = None
+    if wav_path is not None and wav_path.exists():
+        integrated_lufs, true_peak_dbtp = _measure_ebur128_lufs(wav_path)
+    if stereo_balance_db is not None and abs(stereo_balance_db) > 6.0:
+        defects.append(
+            DefectRecord(
+                defect_id="SIG-AUD-STEREO-IMBALANCE",
+                domain="audio",
+                severity="medium",
+                description=f"Stereo L/R imbalance {stereo_balance_db:.2f} dB exceeds 6.0 dB broadcast limit.",
+                segment_ref="full_clip",
+            )
+        )
+    hook_frames = [f for f in frames if f.timestamp_s <= 30.0]
+    hook_changes = sum(1 for i in range(len(hook_frames) - 1) if diffs[i] >= 0.02) if len(hook_frames) >= 2 else 0
     metrics = {
         "passed": not any(d.severity == "high" for d in defects),
+        "analysis_mode": analysis_mode,
+        "detected_scene_cuts": len(detected_scene_cuts),
         "mean_frame_diff": round(mean_frame_diff, 5),
         "residual_motion_per_frame": round(residual_motion_per_frame, 5),
         "residual_drift": round(residual_drift, 5),
@@ -330,7 +386,18 @@ def analyze_clip_signals(
         "audio_peak_dbfs": peak_dbfs,
         "audio_clipping_samples": clipping_samples,
         "audio_stereo_balance_db": stereo_balance_db,
+        "audio_integrated_lufs": integrated_lufs,
+        "audio_true_peak_dbtp": true_peak_dbtp,
         "audio_spectral_top3_ratio": round(spectral_top3_ratio, 4),
+        "youtube_editorial_checks": {
+            "target_lufs": -14.0,
+            "measured_lufs": integrated_lufs,
+            "lufs_in_youtube_band": (integrated_lufs is not None and -17.0 <= integrated_lufs <= -12.0),
+            "true_peak_dbtp": true_peak_dbtp,
+            "true_peak_compliant": (true_peak_dbtp is None or true_peak_dbtp <= -1.0),
+            "stereo_balance_compliant": (stereo_balance_db is None or abs(stereo_balance_db) <= 6.0),
+            "hook_30s_visual_changes": hook_changes,
+        },
         "temporal_coverage": compute_uninspected_coverage(frames, duration_s=duration_s),
     }
     return metrics, defects

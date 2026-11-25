@@ -323,10 +323,15 @@ def integrate_spotted_cues_into_sound_plan(
     spotting_record: dict[str, Any],
     *,
     out_path: Path | None = None,
+    preview_video: Path | None = None,
 ) -> dict[str, Any]:
     """Merge approved, verified spotted cues into the episode sound plan JSON."""
     if not sound_plan_path.is_file():
         raise ContractError(f"Sound plan file not found: {sound_plan_path}")
+    if preview_video is not None and not is_spotting_fresh(spotting_record, preview_video):
+        raise ContractError(
+            f"Stale post-assembly spotting record: assembled_video_sha256 does not match {preview_video}"
+        )
     plan = json.loads(sound_plan_path.read_text(encoding="utf-8"))
     accepted = [
         c
@@ -354,17 +359,40 @@ def _read_pcm16_mono(wav_path: Path) -> tuple[np.ndarray, int]:
     return data, sr
 
 
+def _read_pcm16_frames(wav_path: Path) -> tuple[np.ndarray, int, int]:
+    with wave.open(str(wav_path), "rb") as wf:
+        sr = wf.getframerate()
+        ch = wf.getnchannels()
+        sw = wf.getsampwidth()
+        if sw != 2:
+            raise ContractError(f"Expected 16-bit PCM WAV, got {sw * 8}-bit: {wav_path}")
+        raw = np.frombuffer(wf.readframes(wf.getnframes()), dtype="<i2").astype(np.float32) / 32768.0
+    return raw.reshape(-1, ch), sr, ch
+
+
 def mix_spotted_cues_onto_audio(
     base_wav: Path,
     spotting_record: dict[str, Any],
     out_wav: Path,
+    *,
+    preview_video: Path | None = None,
+    require_stereo_48k: bool = False,
 ) -> dict[str, Any]:
     """Mix approved spotted sound assets onto ``base_wav`` at their exact visual timestamps, preserving channels."""
     if not base_wav.is_file():
         raise ContractError(f"Base audio WAV not found: {base_wav}")
+    if preview_video is not None and not is_spotting_fresh(spotting_record, preview_video):
+        raise ContractError(
+            f"Stale post-assembly spotting record: assembled_video_sha256 does not match {preview_video}"
+        )
     with wave.open(str(base_wav), "rb") as wf:
         base_sr = wf.getframerate()
         base_ch = wf.getnchannels()
+        base_sw = wf.getsampwidth()
+        if base_sw != 2:
+            raise ContractError(f"Base audio WAV must be 16-bit PCM, got {base_sw * 8}-bit")
+        if require_stereo_48k and (base_sr != 48000 or base_ch != 2):
+            raise ContractError(f"Base audio WAV must be 48000 Hz 2-channel stereo, got {base_sr} Hz {base_ch}ch")
         raw_base = np.frombuffer(wf.readframes(wf.getnframes()), dtype="<i2").astype(np.float32) / 32768.0
     mixed = raw_base.reshape(-1, base_ch).copy()
     n_frames = mixed.shape[0]
@@ -380,14 +408,15 @@ def mix_spotted_cues_onto_audio(
         if len(expected_sha) != 64 or sha256_file(asset_p) != expected_sha:
             raise ContractError(f"Spotted cue {cue.get('cue_id')} failed SHA-256 check before mixing")
 
-        sfx_sig, sfx_sr = _read_pcm16_mono(asset_p)
+        sfx_frames, sfx_sr, sfx_ch = _read_pcm16_frames(asset_p)
         if sfx_sr != base_sr:
-            new_len = max(1, int(round(len(sfx_sig) * base_sr / sfx_sr)))
-            sfx_sig = np.interp(
-                np.linspace(0, len(sfx_sig) - 1, new_len, dtype=np.float32),
-                np.arange(len(sfx_sig), dtype=np.float32),
-                sfx_sig,
-            ).astype(np.float32)
+            new_len = max(1, int(round(sfx_frames.shape[0] * base_sr / sfx_sr)))
+            x_new = np.linspace(0, max(0, sfx_frames.shape[0] - 1), new_len, dtype=np.float32)
+            x_old = np.arange(sfx_frames.shape[0], dtype=np.float32)
+            sfx_frames = np.stack(
+                [np.interp(x_new, x_old, sfx_frames[:, c]).astype(np.float32) for c in range(sfx_ch)],
+                axis=1,
+            )
 
         gain = float(10.0 ** (float(cue.get("gain_db", -9.0)) / 20.0))
         start_idx = int(round(float(cue["visual_timestamp_s"]) * base_sr))
@@ -395,9 +424,14 @@ def mix_spotted_cues_onto_audio(
             raise ContractError(
                 f"Spotted cue {cue.get('cue_id')} timestamp {cue['visual_timestamp_s']}s out of base audio bounds"
             )
-        end_idx = min(n_frames, start_idx + len(sfx_sig))
+        end_idx = min(n_frames, start_idx + sfx_frames.shape[0])
         seg_len = end_idx - start_idx
-        mixed[start_idx:end_idx, :] += (sfx_sig[:seg_len] * gain)[:, None]
+        if sfx_ch == base_ch:
+            mixed[start_idx:end_idx, :] += sfx_frames[:seg_len, :] * gain
+        elif sfx_ch == 1:
+            mixed[start_idx:end_idx, :] += sfx_frames[:seg_len, :1] * gain
+        else:
+            mixed[start_idx:end_idx, :] += sfx_frames[:seg_len, :].mean(axis=1, keepdims=True) * gain
         placed.append(
             {
                 "cue_id": cue.get("cue_id"),

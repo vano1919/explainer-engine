@@ -32,7 +32,7 @@ MAX_CHAIN_DEPTH = 3
 TARGET_2K_WIDTH = 2560
 TARGET_2K_HEIGHT = 1440
 LTX_MODES = frozenset({"new_keyframe_i2v", "last_frame_continuation", "flf2v", "ic_lora_layout"})
-UPSCALER_BACKENDS = frozenset({"realesrgan_x2", "seedvr2_4n1", "lanczos_cas_fallback"})
+UPSCALER_BACKENDS = frozenset({"realesrgan_x2", "seedvr2_4n1", "lanczos_cas_fallback", "local_lanczos_unsharp_still", "ffmpeg_2k_lanczos_cas"})
 
 
 @dataclass(frozen=True)

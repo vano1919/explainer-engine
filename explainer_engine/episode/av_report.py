@@ -106,7 +106,8 @@ def markdown(rep: dict) -> str:
              "| event | shot | op | frames | decision | class | asset | onset off (ms) | audible | warnings |",
              "|---|---|---|---|---|---|---|---|---|---|"]
     for e in rep["events"]:
-        lines.append(f"| {e['event_id']} | {e['shot_id']} | {e['op']} | {e['frames'][0]}-{e['frames'][1]} | {e['decision']} | "
+        frames_txt = f"{e['frames'][0]}-{e['frames'][1]}" if e.get("frames") else "n/a"
+        lines.append(f"| {e['event_id']} | {e['shot_id']} | {e['op']} | {frames_txt} | {e['decision']} | "
                      f"{e['class'] or ''} | {', '.join(e['assets'])} | {'' if e['onset_off_ms'] is None else e['onset_off_ms']} | "
                      f"{e['audible'] or ''} | {'; '.join(e['warnings'])[:120]} |")
     return "\n".join(lines) + "\n"
