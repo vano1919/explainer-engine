@@ -1,0 +1,163 @@
+{
+  "schema_version": "cc0_audio_library/1",
+  "sample_rate": 48000,
+  "channels": 2,
+  "assets": {
+    "dry_daylight_valley": {
+      "path": "assets/audio/library/dry_daylight_valley.wav",
+      "category": "ambience",
+      "scene_environment": "dry_daylight_valley",
+      "license": "CC0-1.0",
+      "commercial_use": true,
+      "sample_rate": 48000,
+      "channels": 2,
+      "duration_s": 12.0,
+      "sha256": "6d4de7299e299a8bfa6b069b4393cc0318d6e2afc0f156891678c17ebd89dae0",
+      "description": "Dry open daylight river valley breeze"
+    },
+    "map_table_war_room": {
+      "path": "assets/audio/library/map_table_war_room.wav",
+      "category": "ambience",
+      "scene_environment": "map_table_war_room",
+      "license": "CC0-1.0",
+      "commercial_use": true,
+      "sample_rate": 48000,
+      "channels": 2,
+      "duration_s": 12.0,
+      "sha256": "448661f9205125ff0d96b642f008fd5ddddac89aee398610b6d702b34401f06d",
+      "description": "Quiet stone/wood war room interior tone for map sequences"
+    },
+    "night_rain_camp": {
+      "path": "assets/audio/library/night_rain_camp.wav",
+      "category": "ambience",
+      "scene_environment": "night_rain_camp",
+      "license": "CC0-1.0",
+      "commercial_use": true,
+      "sample_rate": 48000,
+      "channels": 2,
+      "duration_s": 12.0,
+      "sha256": "da998a2ae1c75ab183ab6e8106849add5b36e3555614344af0a5b9f04957212e",
+      "description": "Night forest rainfall \u2014 strictly restricted to rain scenes"
+    },
+    "torchlit_tent": {
+      "path": "assets/audio/library/torchlit_tent.wav",
+      "category": "ambience",
+      "scene_environment": "torchlit_tent",
+      "license": "CC0-1.0",
+      "commercial_use": true,
+      "sample_rate": 48000,
+      "channels": 2,
+      "duration_s": 12.0,
+      "sha256": "af1c49c1c2f87274efe383602821b71d7a6f069ec82f241c4617bd451984430e",
+      "description": "Command tent interior with subtle torch crackle"
+    },
+    "windy_ridge": {
+      "path": "assets/audio/library/windy_ridge.wav",
+      "category": "ambience",
+      "scene_environment": "windy_ridge",
+      "license": "CC0-1.0",
+      "commercial_use": true,
+      "sample_rate": 48000,
+      "channels": 2,
+      "duration_s": 12.0,
+      "sha256": "f23ec2b033b7f4de9064d97fff8aaa3373a2d61bbcb93788b7c0ff2fadb3b096",
+      "description": "High forest ridge wind before ambush"
+    },
+    "alpine_blizzard": {
+      "path": "assets/audio/library/alpine_blizzard.wav",
+      "category": "ambience",
+      "scene_environment": "alpine_blizzard",
+      "license": "CC0-1.0",
+      "commercial_use": true,
+      "sample_rate": 48000,
+      "channels": 2,
+      "duration_s": 12.0,
+      "sha256": "50bb9342f8fd5d4a69b21b0b57effbbd80542d7365a3c586382d56fb90a4038e",
+      "description": "High-altitude Alpine winter wind"
+    },
+    "roman_colonnade_dusk": {
+      "path": "assets/audio/library/roman_colonnade_dusk.wav",
+      "category": "ambience",
+      "scene_environment": "roman_colonnade_dusk",
+      "license": "CC0-1.0",
+      "commercial_use": true,
+      "sample_rate": 48000,
+      "channels": 2,
+      "duration_s": 12.0,
+      "sha256": "74a1c1bf4c3da3ec480e4b022d0e61286db9890d1e9ac7f7973fcc2b0e17166f",
+      "description": "Quiet twilight colonnade overlooking ancient city"
+    },
+    "parchment_unfold": {
+      "path": "assets/audio/library/parchment_unfold.wav",
+      "category": "map_sfx",
+      "scene_environment": "map_table_war_room",
+      "license": "CC0-1.0",
+      "commercial_use": true,
+      "sample_rate": 48000,
+      "channels": 2,
+      "duration_s": 0.55,
+      "sha256": "d2783175e65569e9eecf46c60501b14e2b1af6ceccb4d366cc4ab3ea0adb39f0",
+      "description": "Map reveal parchment unfold rustle"
+    },
+    "ink_arrow_sweep": {
+      "path": "assets/audio/library/ink_arrow_sweep.wav",
+      "category": "map_sfx",
+      "scene_environment": "map_table_war_room",
+      "license": "CC0-1.0",
+      "commercial_use": true,
+      "sample_rate": 48000,
+      "channels": 2,
+      "duration_s": 0.7,
+      "sha256": "09d1c8bcd28f594bbab0170a5c2e20485470ce3a351a92c26f1bd7a3963c5688",
+      "description": "Tactical route arrow drawing sweep"
+    },
+    "camp_pin_stamp": {
+      "path": "assets/audio/library/camp_pin_stamp.wav",
+      "category": "map_sfx",
+      "scene_environment": "map_table_war_room",
+      "license": "CC0-1.0",
+      "commercial_use": true,
+      "sample_rate": 48000,
+      "channels": 2,
+      "duration_s": 0.28,
+      "sha256": "9cfcb4f231833c94d57094d723b734f7a533c5f4b01c0f8c5dbb7a2618d7e64f",
+      "description": "Wooden marker stamp when a location pin lands"
+    },
+    "troop_march_pulse": {
+      "path": "assets/audio/library/troop_march_pulse.wav",
+      "category": "map_sfx",
+      "scene_environment": "map_table_war_room",
+      "license": "CC0-1.0",
+      "commercial_use": true,
+      "sample_rate": 48000,
+      "channels": 2,
+      "duration_s": 0.85,
+      "sha256": "2d59f5027499d71076e7162edb29b0a961b71fcccb0610ea639454ea0ce5e90e",
+      "description": "Muffled troop movement pulse"
+    },
+    "cinematic_whoosh": {
+      "path": "assets/audio/library/cinematic_whoosh.wav",
+      "category": "transition_sfx",
+      "scene_environment": "any",
+      "license": "CC0-1.0",
+      "commercial_use": true,
+      "sample_rate": 48000,
+      "channels": 2,
+      "duration_s": 0.5,
+      "sha256": "040cf541364d2136de34a802bc169bef2efc08918456a4bb7e15174c82badbe7",
+      "description": "Subtle documentary scene transition whoosh"
+    },
+    "doc_strings_tense": {
+      "path": "assets/audio/library/doc_strings_tense.wav",
+      "category": "music",
+      "scene_environment": "any",
+      "license": "CC0-1.0",
+      "commercial_use": true,
+      "sample_rate": 48000,
+      "channels": 2,
+      "duration_s": 12.0,
+      "sha256": "bb48693ea9a2aaf08823b790bdb250e647971da8bc0fcc694bc1416d3d7c3f35",
+      "description": "Subtle dark documentary string pad"
+    }
+  }
+}

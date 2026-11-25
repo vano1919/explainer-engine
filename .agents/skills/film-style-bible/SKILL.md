@@ -5,15 +5,18 @@ description: Aggregate and enforce one unified Film Style Bible across maps, Gem
 # Unified Film Style Bible
 
 ## Purpose
-Prevent visual, tonal, or acting drift between MapLibre maps, Gemini reference photos, 2.5D living stills, LTX-2.5 video clips, YouTube visual bridges, and audio mixes by compiling all layer directives from a single `film_style_bible/1` document (`explainer_engine.episode.style_bible`).
+Prevent visual, tonal, or acting drift between maps, reference photos, 2.5D living stills, video clips, YouTube visual bridges, and audio mixes by compiling all layer directives from a single `film_style_bible/1` document (`explainer_engine.episode.style_bible`).
+
+## Precedence Rule (Supersedes Legacy Infographic Palette)
+The active episode's `film_style_bible/1` realistic cinema palette and unified post-grade (`explainer_engine.finish.cinema_grade`) **strictly supersede** legacy flat/cartoon tokens in `explainer_engine/design/palette.json` for all historical docudrama productions. Maps, 2.5D scenes, stills, and visual bridges MUST share one unified filmic contrast curve, color temperature, subtle 35mm grain, and soft optical vignette.
 
 ## Required Sections
-1. `visual_identity`: era look words, minimum 3-color `palette_hex`, film grain/grade target.
-2. `map_aesthetic`: MapLibre style preset, typography (`Liberation Serif` or era-matched font), tactical vector colors.
+1. `visual_identity`: era look words, minimum 3-color `palette_hex`, film grain/grade target (`cinema_grade`).
+2. `map_aesthetic`: real Natural Earth shaded relief + bathymetry tinted to the episode film palette, `Liberation Serif` typography, non-overlapping dark translucent cartographic pins/badges, smooth eased camera moves, and synced map-action SFX.
 3. `photo_direction`: lighting discipline, lens grammar (`35mm`/`50mm`), composition framing rules.
-4. `acting_and_motion`: `acting_register` (`restrained_documentary_realism`, `intimate_chamber_drama`, `gritty_field_chronicle`, or `stylized_graphic_noir`), `motion_discipline`, and `preferred_camera_moves` (strictly from `explainer_engine.core.camera_vocab.ALLOWED_CAMERA_MOVES`).
-5. `visual_bridges`: typography pair, accent color, on-word kinetic reveal pacing.
-6. `sound_palette`: ambience bed character, music mood, grounded physical foley standard.
+4. `acting_and_motion`: `acting_register` (`restrained_documentary_realism`, `intimate_chamber_drama`, `gritty_field_chronicle`, or `stylized_graphic_noir`), continuous Depthflow-style zero-tear 2.5D parallax (zero static opening shots, zero fake procedural fire blobs), and `preferred_camera_moves` (strictly from `explainer_engine.core.camera_vocab.ALLOWED_CAMERA_MOVES`).
+5. `visual_bridges`: `Liberation Serif` typography, tight dynamic `textbbox` sizing, smooth alpha fade-in/fade-out, unified film grade.
+6. `sound_palette`: strictly scene-locked `scene_environment` ambience (never constant unrelated rain across dry/map scenes), synchronized CC0 map-action SFX, subtle ducked documentary underscore, and ITU-R BS.1770-4 `-14.0 LUFS` / `<= -1.0 dBTP` mastering.
 
 ## Usage
-Call `validate_film_style_bible(bible)` before production starts and inject `render_layer_directives(bible)` into map specs, Gemini browser photo turn-packs, LTX photo-grounded prompts, and sound plans.
+Call `validate_film_style_bible(bible)` before production starts and inject `render_layer_directives(bible)` into map specs, photo turn-packs, 2.5D renders, visual bridges, and scene-locked sound plans.
