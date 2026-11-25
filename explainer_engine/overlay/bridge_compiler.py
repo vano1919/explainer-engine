@@ -85,7 +85,7 @@ def compile_bridges_to_overlay_spec(
     resolved_font, font_sha = resolve_approved_font_path(font_path)
 
     vis = (style_bible or {}).get("visual_identity") or {}
-    vb = (style_bible or {}).get("visual_bridges") or {}
+    vb = (style_bible or {}).get("visual_bridges") or (style_bible or {}).get("visual_bible") or {}
     palette = vis.get("palette_hex") or ["#1B2228", "#6B5A45", "#C8A97E"]
     accent = vb.get("accent_hex") or palette[-1]
     typography = vb.get("typography") or "Liberation Serif"
@@ -95,8 +95,18 @@ def compile_bridges_to_overlay_spec(
         kind = str(b.get("kind", ""))
         if kind not in VALID_VISUAL_BRIDGE_KINDS:
             raise ContractError(f"Unsupported visual bridge kind: {kind!r}")
-        start_s = float(b.get("timestamp_s", idx * 5.0))
-        dur_s = float(b.get("duration_s", 3.0))
+        if "timestamp_s" in b:
+            start_s = float(b["timestamp_s"])
+        elif "start_s" in b:
+            start_s = float(b["start_s"])
+        else:
+            start_s = idx * 5.0
+        if "duration_s" in b:
+            dur_s = float(b["duration_s"])
+        elif "end_s" in b:
+            dur_s = float(b["end_s"]) - start_s
+        else:
+            dur_s = 3.0
         if start_s < 0 or dur_s <= 0:
             raise ContractError(f"Bridge {idx} has invalid timing: start_s={start_s}, duration_s={dur_s}")
         end_s = round(start_s + dur_s, 3)
@@ -243,6 +253,8 @@ def composite_bridges_onto_video(
         "0:a?",
         "-c:v",
         "libx264",
+        "-preset",
+        "veryfast",
         "-crf",
         "18",
         "-pix_fmt",
@@ -251,7 +263,7 @@ def composite_bridges_onto_video(
         "copy",
         str(out_video),
     ]
-    subprocess.run(cmd, check=True, capture_output=True, text=True, timeout=180)
+    subprocess.run(cmd, check=True, capture_output=True, text=True, timeout=600)
     digest = _sha256(out_video)
     return {
         "renderer": "pil_ffmpeg_overlay",

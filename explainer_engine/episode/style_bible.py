@@ -113,3 +113,55 @@ def render_layer_directives(bible: dict[str, Any]) -> dict[str, str]:
             f"foley: {snd.get('foley_realism', 'grounded physical foley, library-first')}."
         ),
     }
+
+
+SUPER_REALISTIC_BIBLE_PATH = "config/super_realistic_film_bible.json"
+_NEGATION_CLAUSE_RE = re.compile(r"\b(?:no|never|not|without|zero|avoid)\b[^,.;\n]*", re.I)
+FORBIDDEN_LEGACY_STYLE_TOKENS: tuple[str, ...] = (
+    "cartoon",
+    "comic",
+    "anime",
+    "manga",
+    "cel-shaded",
+    "cel shaded",
+    "clay",
+    "3d render",
+    "pixar",
+    "disney",
+    "flat vector",
+    "neon",
+    "glossy cgi",
+    "storybook",
+    "painted look",
+    "painterly illustration",
+    "comicneue",
+    "bangers",
+    "main_style_5709",
+)
+
+
+def load_super_realistic_film_bible(repo_root: str | Any | None = None) -> dict[str, Any]:
+    """Load the authoritative Super-Realistic 35mm Film Style Bible JSON."""
+    import json
+    from pathlib import Path
+
+    root = Path(repo_root) if repo_root else Path(__file__).resolve().parents[2]
+    p = root / SUPER_REALISTIC_BIBLE_PATH
+    bible = json.loads(p.read_text(encoding="utf-8"))
+    errs = validate_film_style_bible(bible)
+    if errs:
+        raise ContractError(f"Super-realistic film bible invalid: {errs}")
+    return bible
+
+
+def lint_super_realistic_prompt(prompt: str, *, extra_forbidden: tuple[str, ...] = ()) -> list[str]:
+    """Reject any affirmative legacy cartoon/comic/illustrated/CGI token in active cinema prompts."""
+    if not isinstance(prompt, str) or not prompt.strip():
+        return ["Prompt must be a non-empty string"]
+    affirmative = _NEGATION_CLAUSE_RE.sub(" ", prompt).lower()
+    tokens = FORBIDDEN_LEGACY_STYLE_TOKENS + tuple(extra_forbidden)
+    violations: list[str] = []
+    for tok in tokens:
+        if re.search(rf"(?<![a-z0-9]){re.escape(tok.lower())}(?![a-z0-9])", affirmative):
+            violations.append(f"Forbidden legacy non-realistic style token {tok!r} found in active cinema prompt")
+    return violations

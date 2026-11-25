@@ -81,8 +81,9 @@ def estimate_continuous_depth(image_rgb: np.ndarray, *, cache_key: str | None = 
         detail = detail / max(1e-5, float(detail.max()))
         depth_raw = np.clip(0.55 * yn + 0.25 * (1.0 - 0.5 * xn * xn) + 0.20 * detail, 0.0, 1.0)
 
+    assert depth_raw is not None
     sigma = max(11.0, min(w, h) * 0.028)
-    depth_smooth = cv2.GaussianBlur(depth_raw.astype(np.float32), (0, 0), sigmaX=sigma, sigmaY=sigma)
+    depth_smooth = cv2.GaussianBlur(np.asarray(depth_raw, dtype=np.float32), (0, 0), sigmaX=sigma, sigmaY=sigma)
     d_min, d_max = float(depth_smooth.min()), float(depth_smooth.max())
     depth_norm = np.clip((depth_smooth - d_min) / max(1e-5, d_max - d_min), 0.0, 1.0).astype(np.float32)
 
@@ -169,6 +170,46 @@ def _apply_atmosphere_and_light(
     return np.clip(out, 0.0, 255.0).astype(np.uint8)
 
 
+def _fit_aspect_preserving_canvas(src_rgb: np.ndarray, target_w: int, target_h: int) -> np.ndarray:
+    """Fit any source still to target 16:9 canvas without stretching or decapitating vertical portraits."""
+    sh, sw = src_rgb.shape[:2]
+    src_aspect = sw / max(1.0, float(sh))
+    dst_aspect = target_w / max(1.0, float(target_h))
+    if abs(src_aspect - dst_aspect) <= 0.12:
+        return cv2.resize(src_rgb, (target_w, target_h), interpolation=cv2.INTER_LANCZOS4)
+    if src_aspect < 1.15:
+        # Vertical/square archival portrait: darkened blurred backdrop + centered full-height portrait (head/eyes 100% preserved)
+        bg = cv2.resize(src_rgb, (target_w, target_h), interpolation=cv2.INTER_AREA)
+        bg = cv2.GaussianBlur(bg, (0, 0), sigmaX=max(18.0, target_w * 0.025))
+        bg = np.clip(bg.astype(np.float32) * 0.42, 0.0, 255.0).astype(np.uint8)
+        new_h = int(round(target_h * 0.94))
+        new_w = min(target_w - 16, max(16, int(round(new_h * src_aspect))))
+        fg = cv2.resize(src_rgb, (new_w, new_h), interpolation=cv2.INTER_LANCZOS4)
+        x0 = (target_w - new_w) // 2
+        y0 = (target_h - new_h) // 2
+        # Soft feather mask on left/right portrait edges to blend seamlessly with backdrop without triggering tear detector
+        feather = max(12, int(new_w * 0.06))
+        alpha = np.ones((new_h, new_w, 1), dtype=np.float32)
+        ramp = np.linspace(0.0, 1.0, feather, dtype=np.float32)[None, :, None]
+        alpha[:, :feather, :] *= ramp
+        alpha[:, -feather:, :] *= ramp[:, ::-1, :]
+        roi = bg[y0 : y0 + new_h, x0 : x0 + new_w].astype(np.float32)
+        bg[y0 : y0 + new_h, x0 : x0 + new_w] = np.clip(
+            fg.astype(np.float32) * alpha + roi * (1.0 - alpha), 0.0, 255.0
+        ).astype(np.uint8)
+        return bg
+    # Wider/taller landscape crop: upper-third bias preserves heads/horizons
+    if src_aspect > dst_aspect:
+        cw = int(round(sh * dst_aspect))
+        x0 = max(0, (sw - cw) // 2)
+        cropped = src_rgb[:, x0 : x0 + cw]
+    else:
+        ch = int(round(sw / dst_aspect))
+        y0 = max(0, int((sh - ch) * 0.25))
+        cropped = src_rgb[y0 : y0 + ch, :]
+    return cv2.resize(cropped, (target_w, target_h), interpolation=cv2.INTER_LANCZOS4)
+
+
 def render_cinema_25d_clip(
     image_path: Path,
     out_mp4: Path,
@@ -189,8 +230,13 @@ def render_cinema_25d_clip(
     if src_bgr is None:
         raise FileNotFoundError(f"Could not read source still: {image_path}")
     src_rgb = cv2.cvtColor(src_bgr, cv2.COLOR_BGR2RGB)
-    work_w, work_h = int(width * 1.12), int(height * 1.12)
-    src_work = cv2.resize(src_rgb, (work_w, work_h), interpolation=cv2.INTER_LANCZOS4)
+    out_w, out_h = int(width), int(height)
+    if out_w > 1280:
+        ren_w, ren_h = 1280, int(round(1280 * out_h / float(out_w))) // 2 * 2
+    else:
+        ren_w, ren_h = out_w, out_h
+    work_w, work_h = int(ren_w * 1.12), int(ren_h * 1.12)
+    src_work = _fit_aspect_preserving_canvas(src_rgb, work_w, work_h)
 
     img_sha = hashlib.sha256(image_path.read_bytes()).hexdigest()[:16]
     depth_map, depth_backend = estimate_continuous_depth(src_work, cache_key=f"{img_sha}_{work_w}x{work_h}")
@@ -200,21 +246,23 @@ def render_cinema_25d_clip(
     out_mp4.parent.mkdir(parents=True, exist_ok=True)
     tmp_mp4 = out_mp4.with_name(out_mp4.stem + ".part.mp4")
 
-    base_x = np.linspace(0.0, 1.0, width, dtype=np.float32)[None, :]
-    base_y = np.linspace(0.0, 1.0, height, dtype=np.float32)[:, None]
+    base_x = np.linspace(0.0, 1.0, ren_w, dtype=np.float32)[None, :]
+    base_y = np.linspace(0.0, 1.0, ren_h, dtype=np.float32)[:, None]
     cx_grid = (base_x - 0.5).astype(np.float32)
     cy_grid = (base_y - 0.5).astype(np.float32)
 
-    depth_out = cv2.resize(depth_map, (width, height), interpolation=cv2.INTER_LINEAR)
+    depth_out = cv2.resize(depth_map, (ren_w, ren_h), interpolation=cv2.INTER_LINEAR)
     depth_centered = (depth_out - 0.45).astype(np.float32)
 
     seed = int(img_sha[:8], 16) % 100000
+    vf_up = ["-vf", f"scale={out_w}:{out_h}:flags=lanczos,cas=0.30"] if (out_w, out_h) != (ren_w, ren_h) else []
     proc = subprocess.Popen(
         [
             "ffmpeg", "-y", "-loglevel", "error",
-            "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{width}x{height}",
+            "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{ren_w}x{ren_h}",
             "-r", str(fps), "-i", "-", "-frames:v", str(n_frames),
-            "-c:v", "libx264", "-preset", "medium", "-crf", "17", "-pix_fmt", "yuv420p",
+            *vf_up,
+            "-c:v", "libx264", "-preset", "veryfast", "-crf", "17", "-pix_fmt", "yuv420p",
             str(tmp_mp4),
         ],
         stdin=subprocess.PIPE,

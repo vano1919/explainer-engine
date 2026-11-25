@@ -7,8 +7,8 @@ description: Aggregate and enforce one unified Film Style Bible across maps, Gem
 ## Purpose
 Prevent visual, tonal, or acting drift between maps, reference photos, 2.5D living stills, video clips, YouTube visual bridges, and audio mixes by compiling all layer directives from a single `film_style_bible/1` document (`explainer_engine.episode.style_bible`).
 
-## Precedence Rule (Supersedes Legacy Infographic Palette)
-The active episode's `film_style_bible/1` realistic cinema palette and unified post-grade (`explainer_engine.finish.cinema_grade`) **strictly supersede** legacy flat/cartoon tokens in `explainer_engine/design/palette.json` for all historical docudrama productions. Maps, 2.5D scenes, stills, and visual bridges MUST share one unified filmic contrast curve, color temperature, subtle 35mm grain, and soft optical vignette.
+## Precedence Rule (Supersedes Legacy Infographic & Storybook Palettes — Antigravity + Claude Code)
+`config/super_realistic_film_bible.json` and the active episode's `film_style_bible/1` realistic 35mm cinema palette + unified post-grade (`explainer_engine.finish.cinema_grade`, `assets/luts/historical_docudrama_35mm.cube`) **strictly supersede** legacy flat/cartoon/storybook tokens in `explainer_engine/design/palette.json` and `config/visual_style_presets.json` (`main_style_5709.png`, `ComicNeue`, `Bangers`). Every active prompt MUST pass `lint_super_realistic_prompt()`. Maps, 2.5D scenes, LTX-2.5 clips, stills, and visual bridges MUST share one unified filmic contrast curve, color temperature, subtle 35mm grain, and soft optical vignette.
 
 ## Required Sections
 1. `visual_identity`: era look words, minimum 3-color `palette_hex`, film grain/grade target (`cinema_grade`).

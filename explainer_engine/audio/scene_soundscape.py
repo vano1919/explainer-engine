@@ -68,20 +68,42 @@ def _spectral_centroid_hz(seg: np.ndarray) -> float:
     return round(float(np.sum(freqs * mag) / denom), 1) if denom > 1e-9 else 0.0
 
 
+def _smooth_duck_envelope(speech_bus: np.ndarray, *, duck_db: float = -11.5) -> np.ndarray:
+    """Compute a smooth per-sample ducking gain curve (1.0 when silent, 10^(duck_db/20) under speech)."""
+    mono = np.abs(speech_bus.mean(axis=1))
+    # 80ms RMS window with smooth attack/release via decimated convolution
+    hop = max(1, int(0.02 * SAMPLE_RATE))  # 20ms blocks
+    n_blocks = (mono.size + hop - 1) // hop
+    padded = np.pad(mono, (0, n_blocks * hop - mono.size))
+    rms = np.sqrt(np.mean(padded.reshape(n_blocks, hop) ** 2, axis=1))
+    active = (rms > 0.012).astype(np.float64)
+    # Smooth over 14 blocks (~280ms) for silky broadcast sidechain release
+    kernel = np.hanning(15)
+    kernel /= max(1e-9, kernel.sum())
+    smooth = np.convolve(active, kernel, mode="same")
+    smooth = np.clip(smooth * 1.4, 0.0, 1.0)
+    duck_lin = 10.0 ** (duck_db / 20.0)
+    gain_blocks = 1.0 - (1.0 - duck_lin) * smooth
+    return np.repeat(gain_blocks, hop)[: mono.size]
+
+
 def build_scene_locked_soundscape(
     shots: list[dict[str, Any]],
     out_wav: Path,
     *,
     sfx_cues: list[dict[str, Any]] | None = None,
+    narration_tracks: list[dict[str, Any]] | None = None,
+    diegetic_tracks: list[dict[str, Any]] | None = None,
     total_duration_s: float | None = None,
     library_manifest_path: Path = DEFAULT_LIBRARY_MANIFEST,
     music_bed: str | None = "doc_strings_tense",
     music_gain_db: float = -12.0,
+    duck_db: float = -11.5,
     target_lufs: float = -14.0,
     true_peak_ceiling_db: float = -1.2,
     report_path: Path | None = None,
 ) -> dict[str, Any]:
-    """Build a mastered 48kHz stereo WAV strictly locked to each shot's ``scene_environment``."""
+    """Build a mastered 48kHz stereo WAV strictly locked to each shot's ``scene_environment`` with sidechain ducking."""
     manifest = json.loads(library_manifest_path.read_text(encoding="utf-8"))
     assets = manifest.get("assets") or {}
 
@@ -100,7 +122,9 @@ def build_scene_locked_soundscape(
 
     dur_s = total_duration_s if total_duration_s is not None else max(float(s["end_s"]) for s in shots)
     total_n = int(round(dur_s * SAMPLE_RATE))
-    mix = np.zeros((total_n, 2), dtype=np.float64)
+    bed_bus = np.zeros((total_n, 2), dtype=np.float64)
+    sfx_bus = np.zeros((total_n, 2), dtype=np.float64)
+    speech_bus = np.zeros((total_n, 2), dtype=np.float64)
 
     # 1. Layer scene-locked ambience per shot with smooth 0.55s equal-power crossfades
     xfade_n = int(0.55 * SAMPLE_RATE)
@@ -121,7 +145,7 @@ def build_scene_locked_soundscape(
             ramp = np.sin(np.linspace(0.0, np.pi * 0.5, fn))
             env[:fn] = ramp
             env[-fn:] = ramp[::-1]
-        mix[st_idx:en_idx] += amb * env[:, None]
+        bed_bus[st_idx:en_idx] += amb * env[:, None]
         shot_telemetry.append(
             {
                 "shot_id": s.get("shot_id"),
@@ -132,7 +156,7 @@ def build_scene_locked_soundscape(
             }
         )
 
-    # 2. Subtle organic documentary underscore bed (ducked cleanly beneath ambience & SFX)
+    # 2. Subtle organic documentary underscore bed
     if music_bed and music_bed in assets:
         mus = _loop_segment(load_verified(music_bed), total_n)
         mus *= 10.0 ** (music_gain_db / 20.0)
@@ -140,7 +164,7 @@ def build_scene_locked_soundscape(
         if fade_edge > 1:
             mus[:fade_edge] *= np.linspace(0.0, 1.0, fade_edge)[:, None]
             mus[-fade_edge:] *= np.linspace(1.0, 0.0, fade_edge)[:, None]
-        mix += mus
+        bed_bus += mus
 
     # 3. Mix synchronized CC0 map-action & transition SFX cues at exact timeline offsets
     mixed_cues: list[dict[str, Any]] = []
@@ -155,7 +179,7 @@ def build_scene_locked_soundscape(
         end_idx = min(total_n, st_idx + sfx_data.shape[0])
         take = end_idx - st_idx
         if take > 0:
-            mix[st_idx:end_idx] += sfx_data[:take]
+            sfx_bus[st_idx:end_idx] += sfx_data[:take]
             mixed_cues.append(
                 {
                     "cue_id": cue.get("cue_id", sfx_name),
@@ -165,7 +189,64 @@ def build_scene_locked_soundscape(
                 }
             )
 
-    # 4. ITU-R BS.1770-4 loudness normalization via pyloudnorm + soft ceiling limiter (<= -1.2 dBTP)
+    # 4. Mix narrator tracks (free rehearsal_tts) + diegetic LTX speech/foley tracks with 35ms anti-pop fades (BP-188)
+    narrator_total_s = 0.0
+    dialogue_total_s = 0.0
+    mixed_speech: list[dict[str, Any]] = []
+    anti_pop_n = int(0.035 * SAMPLE_RATE)
+
+    def _layer_speech(tracks: list[dict[str, Any]] | None, role: str) -> float:
+        dur_acc = 0.0
+        for tr in tracks or []:
+            wp = Path(tr["wav_path"])
+            if not wp.is_file():
+                continue
+            seg = _read_stereo_float(wp)
+            max_dur = tr.get("duration_s")
+            if max_dur is not None:
+                seg = seg[: int(round(float(max_dur) * SAMPLE_RATE))]
+            if seg.shape[0] < 16:
+                continue
+            gain_db = float(tr.get("gain_db", 0.0))
+            seg = seg * (10.0 ** (gain_db / 20.0))
+            fn = min(anti_pop_n, seg.shape[0] // 4)
+            if fn > 1:
+                ramp = np.linspace(0.0, 1.0, fn)[:, None]
+                seg[:fn] *= ramp
+                seg[-fn:] *= ramp[::-1]
+            t_s = max(0.0, float(tr.get("start_s", 0.0)))
+            st_idx = int(round(t_s * SAMPLE_RATE))
+            if st_idx >= total_n:
+                continue
+            end_idx = min(total_n, st_idx + seg.shape[0])
+            take = end_idx - st_idx
+            speech_bus[st_idx:end_idx] += seg[:take]
+            seg_s = round(take / float(SAMPLE_RATE), 3)
+            if bool(tr.get("counts_as_speech", True)):
+                dur_acc += seg_s
+            mixed_speech.append(
+                {
+                    "role": role,
+                    "label": tr.get("label", wp.stem),
+                    "start_s": round(t_s, 3),
+                    "duration_s": seg_s,
+                    "gain_db": gain_db,
+                    "rehearsal_tts": bool(tr.get("rehearsal_tts", role == "narrator")),
+                }
+            )
+        return round(dur_acc, 3)
+
+    narrator_total_s = _layer_speech(narration_tracks, "narrator")
+    dialogue_total_s = _layer_speech(diegetic_tracks, "diegetic")
+
+    # Apply smooth sidechain ducking to ambience + music whenever narrator/dialogue speaks
+    if mixed_speech:
+        duck_env = _smooth_duck_envelope(speech_bus, duck_db=duck_db)
+        mix = bed_bus * duck_env[:, None] + sfx_bus + speech_bus
+    else:
+        mix = bed_bus + sfx_bus
+
+    # 5. ITU-R BS.1770-4 loudness normalization via pyloudnorm + soft ceiling limiter (<= -1.0 dBTP)
     meter = pyln.Meter(SAMPLE_RATE)
     loudness_before = float(meter.integrated_loudness(mix))
     if np.isfinite(loudness_before):
@@ -173,8 +254,12 @@ def build_scene_locked_soundscape(
     ceiling_lin = 10.0 ** (true_peak_ceiling_db / 20.0)
     peak_lin = float(np.max(np.abs(mix)))
     if peak_lin > ceiling_lin:
-        # Soft-knee limiter preserving loudness while strictly enforcing <= -1.2 dBTP
         mix = np.tanh(mix / ceiling_lin) * ceiling_lin
+        # Re-check loudness after limiting so we stay tightly within -14.0 +/- 0.5 LUFS
+        loud_mid = float(meter.integrated_loudness(mix))
+        if np.isfinite(loud_mid) and abs(loud_mid - target_lufs) > 0.35:
+            adj = 10.0 ** ((target_lufs - loud_mid) / 20.0)
+            mix = np.clip(mix * adj, -ceiling_lin, ceiling_lin)
     loudness_after = float(meter.integrated_loudness(mix))
     peak_dbfs = round(20.0 * float(np.log10(max(float(np.max(np.abs(mix))), 1e-9))), 2)
 
@@ -189,6 +274,9 @@ def build_scene_locked_soundscape(
             1 for c in mixed_cues if row["start_s"] - 0.15 <= c["timestamp_s"] <= row["end_s"] + 0.15
         )
 
+    total_speech_s = narrator_total_s + dialogue_total_s
+    narrator_ratio = round(narrator_total_s / total_speech_s, 3) if total_speech_s > 0 else 0.0
+
     wav_sha = _write_stereo_wav(out_wav, mix)
     report = {
         "schema_version": "scene_soundscape_report/1",
@@ -200,8 +288,12 @@ def build_scene_locked_soundscape(
         "integrated_lufs": round(loudness_after, 2),
         "peak_dbfs": peak_dbfs,
         "target_lufs": target_lufs,
+        "narrator_s": narrator_total_s,
+        "dialogue_s": dialogue_total_s,
+        "narrator_ratio": narrator_ratio,
         "shots": shot_telemetry,
         "sfx_cues": mixed_cues,
+        "speech_tracks": mixed_speech,
     }
     if report_path is not None:
         report_path.parent.mkdir(parents=True, exist_ok=True)

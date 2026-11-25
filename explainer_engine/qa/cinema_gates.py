@@ -16,22 +16,39 @@ import numpy as np
 
 
 def _read_frames_at_times(video_path: Path, times_s: list[float]) -> list[np.ndarray]:
+    if not times_s:
+        return []
     cap = cv2.VideoCapture(str(video_path))
     if not cap.isOpened():
         raise FileNotFoundError(f"Could not open video: {video_path}")
     fps = cap.get(cv2.CAP_PROP_FPS) or 24.0
     total = int(cap.get(cv2.CAP_PROP_FRAME_COUNT) or 0)
-    frames: list[np.ndarray] = []
+    target_idxs = [max(0, min(max(0, total - 1), int(round(ts * fps)))) for ts in times_s]
+    unique_sorted = sorted(set(target_idxs))
+    max_idx = unique_sorted[-1] if unique_sorted else 0
+    wanted = set(unique_sorted)
+    decoded: dict[int, np.ndarray] = {}
     try:
-        for ts in times_s:
-            idx = max(0, min(max(0, total - 1), int(round(ts * fps))))
-            cap.set(cv2.CAP_PROP_POS_FRAMES, idx)
-            ok, bgr = cap.read()
-            if ok and bgr is not None:
-                frames.append(cv2.cvtColor(bgr, cv2.COLOR_BGR2RGB))
+        # Sequential grab avoids expensive H.264 GOP random seeks on 2K files
+        if len(unique_sorted) <= 2 and total > 600:
+            for idx in unique_sorted:
+                cap.set(cv2.CAP_PROP_POS_FRAMES, idx)
+                ok, bgr = cap.read()
+                if ok and bgr is not None:
+                    decoded[idx] = cv2.cvtColor(bgr, cv2.COLOR_BGR2RGB)
+        else:
+            cur = 0
+            while cur <= max_idx:
+                if not cap.grab():
+                    break
+                if cur in wanted:
+                    ok, bgr = cap.retrieve()
+                    if ok and bgr is not None:
+                        decoded[cur] = cv2.cvtColor(bgr, cv2.COLOR_BGR2RGB)
+                cur += 1
     finally:
         cap.release()
-    return frames
+    return [decoded[i] for i in target_idxs if i in decoded]
 
 
 def check_no_static_shots(
@@ -43,6 +60,9 @@ def check_no_static_shots(
     """Fail if any 2.5D shot exhibits frozen/static motion (including opening 0–2s of Shot 1)."""
     findings: list[str] = []
     details: list[dict[str, Any]] = []
+    # Batch all frame timestamps for one fast single-pass video decode
+    shot_meta: list[tuple[dict[str, Any], int, int]] = []
+    all_times: list[float] = []
     for shot in shot_windows:
         if shot.get("kind", "25d") != "25d":
             continue
@@ -51,9 +71,14 @@ def check_no_static_shots(
         dur = en - st
         if dur < 1.2:
             continue
-        # Measure early window (0.15s -> 1.35s) and mid window
         t_samples = [st + 0.15, st + min(1.35, dur * 0.45), st + min(2.6, dur * 0.80)]
-        frs = _read_frames_at_times(video_path, t_samples)
+        start_idx = len(all_times)
+        all_times.extend(t_samples)
+        shot_meta.append((shot, start_idx, len(t_samples)))
+
+    all_frs = _read_frames_at_times(video_path, all_times) if all_times else []
+    for shot, s_idx, cnt in shot_meta:
+        frs = all_frs[s_idx : s_idx + cnt]
         if len(frs) < 2:
             findings.append(f"{shot.get('shot_id')}: insufficient frames sampled")
             continue
@@ -158,5 +183,125 @@ def check_audio_scene_consistency(soundscape_report: dict[str, Any]) -> dict[str
         "integrated_lufs": lufs,
         "peak_dbfs": peak,
         "spectral_centroid_span_hz": centroid_span,
+        "findings": findings,
+    }
+
+
+def check_cross_cut_color_parity(
+    video_path: Path,
+    cut_times_s: list[float],
+    *,
+    max_channel_delta: float = 55.0,
+    max_saturation_delta: float = 0.35,
+) -> dict[str, Any]:
+    """Measure cross-cut color/saturation harmony between LTX, 2.5D, and Map shots (unified film grade check)."""
+    findings: list[str] = []
+    cuts: list[dict[str, Any]] = []
+    all_times: list[float] = []
+    for ct in cut_times_s:
+        all_times.extend([max(0.0, ct - 0.12), ct + 0.12])
+    all_frs = _read_frames_at_times(video_path, all_times) if all_times else []
+    for i, ct in enumerate(cut_times_s):
+        frs = all_frs[i * 2 : i * 2 + 2]
+        if len(frs) < 2:
+            continue
+        a = frs[0].astype(np.float32)
+        b = frs[1].astype(np.float32)
+        # Measure warm-cool ratio delta (R-B balance) & mean saturation delta rather than brightness alone
+        wb_a = float(a[..., 0].mean() - a[..., 2].mean())
+        wb_b = float(b[..., 0].mean() - b[..., 2].mean())
+        wb_delta = abs(wb_a - wb_b)
+        sat_a = float(cv2.cvtColor(frs[0], cv2.COLOR_RGB2HSV)[..., 1].mean() / 255.0)
+        sat_b = float(cv2.cvtColor(frs[1], cv2.COLOR_RGB2HSV)[..., 1].mean() / 255.0)
+        sat_delta = abs(sat_a - sat_b)
+        ok = wb_delta <= max_channel_delta and sat_delta <= max_saturation_delta
+        cuts.append(
+            {
+                "cut_s": round(ct, 3),
+                "wb_rb_delta": round(wb_delta, 2),
+                "sat_delta": round(sat_delta, 3),
+                "passed": ok,
+            }
+        )
+        if not ok:
+            findings.append(
+                f"cut@{ct:.2f}s: visual discontinuity across cut (wb_delta={wb_delta:.1f}, sat_delta={sat_delta:.3f})"
+            )
+    return {"status": "PASS" if not findings else "FAIL", "cuts": cuts, "findings": findings}
+
+
+def check_master_delivery_specs(
+    video_path: Path,
+    *,
+    expected_width: int = 2560,
+    expected_height: int = 1440,
+    expected_fps: float = 24.0,
+    expected_sr: int = 48000,
+    expected_channels: int = 2,
+    audio_report: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    """L3 machine forensics: verify 2K 2560x1440 @ 24fps yuv420p, 48kHz stereo, -14.0 +/- 0.5 LUFS, <= -1.0 dBTP."""
+    import json
+    import subprocess
+
+    raw = subprocess.check_output(
+        [
+            "ffprobe",
+            "-v",
+            "error",
+            "-show_entries",
+            "format=duration,size:stream=codec_type,width,height,pix_fmt,r_frame_rate,sample_rate,channels",
+            "-of",
+            "json",
+            str(video_path),
+        ],
+        text=True,
+    )
+    probe = json.loads(raw)
+    streams = probe.get("streams") or []
+    v_streams = [s for s in streams if s.get("codec_type") == "video"]
+    a_streams = [s for s in streams if s.get("codec_type") == "audio"]
+    findings: list[str] = []
+    if not v_streams:
+        findings.append("Missing video stream")
+    if not a_streams:
+        findings.append("Missing audio stream")
+
+    v = v_streams[0] if v_streams else {}
+    a = a_streams[0] if a_streams else {}
+    w = int(v.get("width", 0))
+    h = int(v.get("height", 0))
+    pix = str(v.get("pix_fmt", ""))
+    num, _, den = str(v.get("r_frame_rate", "0/1")).partition("/")
+    fps = float(num) / max(1.0, float(den or 1.0))
+    sr = int(a.get("sample_rate", 0))
+    ch = int(a.get("channels", 0))
+
+    if (w, h) != (expected_width, expected_height):
+        findings.append(f"Resolution {w}x{h} != {expected_width}x{expected_height} (DEF-08)")
+    if pix != "yuv420p":
+        findings.append(f"Pixel format {pix!r} != 'yuv420p'")
+    if abs(fps - expected_fps) > 0.1:
+        findings.append(f"FPS {fps:.2f} != {expected_fps:.2f}")
+    if sr != expected_sr or ch != expected_channels:
+        findings.append(f"Audio format {sr}Hz/{ch}ch != {expected_sr}Hz/{expected_channels}ch")
+
+    if audio_report is not None:
+        lufs = float(audio_report.get("integrated_lufs", -99.0))
+        peak = float(audio_report.get("peak_dbfs", 0.0))
+        if not (-14.5 <= lufs <= -13.5):
+            findings.append(f"Integrated loudness {lufs:.2f} LUFS outside strict -14.0 +/- 0.5 LUFS target")
+        if peak > -1.0:
+            findings.append(f"True peak {peak:.2f} dBFS exceeds -1.0 dBTP ceiling")
+
+    return {
+        "status": "PASS" if not findings else "FAIL",
+        "width": w,
+        "height": h,
+        "fps": round(fps, 3),
+        "pix_fmt": pix,
+        "sample_rate": sr,
+        "channels": ch,
+        "duration_s": round(float((probe.get("format") or {}).get("duration", 0.0)), 3),
         "findings": findings,
     }

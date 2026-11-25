@@ -22,7 +22,10 @@ tmp/
 # local models, binaries and keys (setup.ps1 downloads models; keys are created by hand)
 tools/
 *.onnx
+*.onnx_data
 *.gguf
+assets/maps/relief/*.tif
+assets/maps/relief/*.tfw
 .env
 *api_key*
 *token*.json

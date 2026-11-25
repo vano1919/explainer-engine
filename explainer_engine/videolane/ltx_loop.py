@@ -365,3 +365,91 @@ def run_continuous_shot_loop(
         "target_resolution": f"{TARGET_2K_WIDTH}x{TARGET_2K_HEIGHT}",
         "steps": [asdict(s) for s in steps],
     }
+
+
+MAX_LTX_ACTION_SECONDS = 6.0
+MIN_LTX_ACTION_SECONDS = 4.0
+_ACTION_TRANSFORMATION_WORDS = (
+    "ignit", "light", "lights up", "lit", "open", "advance", "erupt", "draw",
+    "unsheathe", "raise", "launch", "signal", "spark", "flame", "catch", "burn", "rise",
+)
+_AFTER_STATE_RED_FLAGS = ("already lit", "already blazing", "already burning", "already open", "fully blazing", "already ignited", "roaring flames at start")
+_HELD_PROP_WORDS = ("torch", "sword", "staff", "spear", "shield", "scroll", "map", "lantern", "cup", "dagger", "helmet", "banner", "bow")
+_PROP_END_STATE_CUES = ("remains in", "stays in", "held firmly", "still holds", "keeps holding", "places ", "sets down", "lowers ", "sheathes ", "grips ", "resting ")
+
+
+def validate_anchor_binding(shot: dict[str, Any], anchor_registry: dict[str, dict[str, str]]) -> list[str]:
+    """DEF-01 & DEF-02: Enforce SHA-256-locked character & location anchor ImagePaths on every scene keyframe."""
+    errors: list[str] = []
+    sid = str(shot.get("shot_id", "unknown"))
+    required_anchors = list(shot.get("character_anchors") or []) + (
+        [shot["location_anchor"]] if shot.get("location_anchor") else []
+    )
+    if not required_anchors:
+        errors.append(f"{sid}: shot declares zero character/location anchors (Anchor-First law violated)")
+        return errors
+
+    refs_used = [str(Path(p)) for p in (shot.get("reference_image_paths") or [])]
+    for aid in required_anchors:
+        meta = anchor_registry.get(str(aid))
+        if not meta:
+            errors.append(f"{sid}: anchor {aid!r} missing from locked anchor_registry")
+            continue
+        ap = Path(meta["path"])
+        if not ap.is_file():
+            errors.append(f"{sid}: anchor file missing on disk: {ap}")
+            continue
+        actual = sha256_file(ap)
+        if actual != meta.get("sha256"):
+            errors.append(f"{sid}: anchor {aid!r} SHA-256 mismatch (drift detected)")
+        if str(ap) not in refs_used and ap.name not in [Path(r).name for r in refs_used]:
+            errors.append(f"{sid}: anchor {aid!r} ({ap.name}) was not passed in reference_image_paths (ImagePaths)")
+    return errors
+
+
+def lint_before_state_keyframe(shot: dict[str, Any]) -> list[str]:
+    """DEF-04: Transformation/action shots MUST start from a pre-action initial state, never the outcome."""
+    errors: list[str] = []
+    sid = str(shot.get("shot_id", "unknown"))
+    motion = str(shot.get("motion_prompt", "")).lower()
+    keyframe_desc = str(shot.get("start_frame_description") or shot.get("image_prompt") or "").lower()
+    is_transform = any(w in motion for w in _ACTION_TRANSFORMATION_WORDS)
+    if is_transform and keyframe_desc:
+        for flag in _AFTER_STATE_RED_FLAGS:
+            if flag in keyframe_desc:
+                errors.append(
+                    f"{sid}: Before-State violation — action prompt transforms scene but start frame already depicts outcome ({flag!r})"
+                )
+    return errors
+
+
+def enforce_ltx_action_clip_contract(editorial_seconds: float, motion_prompt: str) -> dict[str, Any]:
+    """DEF-05: Enforce 4.0-6.0s LTX-2.5 action clip ceiling (97-145 frames) and explicit prop end-state continuity."""
+    from explainer_engine.episode.style_bible import lint_super_realistic_prompt
+
+    errors: list[str] = []
+    if editorial_seconds > MAX_LTX_ACTION_SECONDS + 1e-6:
+        errors.append(
+            f"LTX clip duration {editorial_seconds:.2f}s exceeds {MAX_LTX_ACTION_SECONDS:.1f}s object-permanence ceiling (DEF-05)"
+        )
+    if editorial_seconds < 2.0:
+        errors.append(f"LTX clip duration {editorial_seconds:.2f}s is below minimum 2.0s")
+
+    low = motion_prompt.lower()
+    props_found = [p for p in _HELD_PROP_WORDS if p in low]
+    has_end_state = any(c in low for c in _PROP_END_STATE_CUES)
+    if props_found and not has_end_state:
+        errors.append(
+            f"Held prop(s) {props_found} present without explicit prop end-state continuity clause "
+            "(e.g., 'remains in his hand', 'keeps holding', 'lowers the torch') (DEF-05)"
+        )
+
+    errors.extend(lint_super_realistic_prompt(motion_prompt))
+    frames = quantize_ltx_frames(editorial_seconds, fps=DEFAULT_FPS)
+    return {
+        "status": "PASS" if not errors else "FAIL",
+        "editorial_seconds": round(editorial_seconds, 3),
+        "ltx_frames": frames,
+        "held_props": props_found,
+        "errors": errors,
+    }

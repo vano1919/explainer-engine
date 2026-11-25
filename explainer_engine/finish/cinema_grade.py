@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from functools import lru_cache
+from pathlib import Path
 
 import numpy as np
 
@@ -69,3 +70,110 @@ def apply_unified_film_grade(
         x = x + g * (0.35 + 0.65 * mid_weight)
 
     return np.clip(x * 255.0 + 0.5, 0.0, 255.0).astype(np.uint8)
+
+
+DEFAULT_LUT_PATH = "assets/luts/historical_docudrama_35mm.cube"
+
+
+def grade_and_upscale_video_2k(
+    src_mp4: Path,
+    out_mp4: Path,
+    *,
+    width: int = 2560,
+    height: int = 1440,
+    fps: int = 24,
+    lut_path: Path | None = None,
+    grain_strength: int = 4,
+    vignette_angle: str = "PI/5",
+    cas_strength: float = 0.35,
+) -> dict[str, object]:
+    """Conform any LTX/2.5D/Map clip to 2K 2560x1440 @ 24fps under the exact unified 35mm cinema LUT, grain, and vignette."""
+    import hashlib
+    import subprocess
+
+    src = Path(src_mp4)
+    dst = Path(out_mp4)
+    dst.parent.mkdir(parents=True, exist_ok=True)
+    repo_root = Path(__file__).resolve().parents[2]
+    lut = Path(lut_path) if lut_path is not None else (repo_root / DEFAULT_LUT_PATH)
+
+    # Probe source aspect to perform exact centered 16:9 crop without stretching (e.g. 1280x704 -> 1252x704)
+    wh = subprocess.check_output(
+        [
+            "ffprobe",
+            "-v",
+            "error",
+            "-select_streams",
+            "v:0",
+            "-show_entries",
+            "stream=width,height",
+            "-of",
+            "csv=p=0:s=x",
+            str(src),
+        ],
+        text=True,
+    ).strip()
+    sw, sh = (int(v) for v in wh.split("x")[:2])
+    if sw * height > sh * width:
+        cw, ch = (round(sh * width / height) // 2) * 2, sh
+    elif sw * height < sh * width:
+        cw, ch = sw, (round(sw * height / width) // 2) * 2
+    else:
+        cw, ch = sw, sh
+
+    vf_parts = [f"crop={cw}:{ch}:(in_w-out_w)/2:(in_h-out_h)/2", f"scale={width}:{height}:flags=lanczos"]
+    if cas_strength > 0:
+        vf_parts.append(f"cas={cas_strength:.2f}")
+    if lut.is_file():
+        # Escape colons/backslashes for ffmpeg filtergraph
+        lut_esc = str(lut.resolve()).replace("\\", "/").replace(":", "\\:")
+        vf_parts.append(f"lut3d=file='{lut_esc}'")
+    if vignette_angle:
+        vf_parts.append(f"vignette=angle={vignette_angle}")
+    if grain_strength > 0:
+        vf_parts.append(f"noise=alls={int(grain_strength)}:allf=t")
+    vf_parts.extend([f"fps={fps}", "format=yuv420p"])
+
+    subprocess.run(
+        [
+            "ffmpeg",
+            "-y",
+            "-v",
+            "error",
+            "-i",
+            str(src),
+            "-vf",
+            ",".join(vf_parts),
+            "-c:v",
+            "libx264",
+            "-preset",
+            "veryfast",
+            "-crf",
+            "17",
+            "-pix_fmt",
+            "yuv420p",
+            "-c:a",
+            "aac",
+            "-ar",
+            "48000",
+            "-ac",
+            "2",
+            "-b:a",
+            "256k",
+            str(dst),
+        ],
+        check=True,
+    )
+    h = hashlib.sha256()
+    with dst.open("rb") as f:
+        for chunk in iter(lambda: f.read(1 << 20), b""):
+            h.update(chunk)
+    return {
+        "input_path": str(src),
+        "output_path": str(dst),
+        "width": width,
+        "height": height,
+        "fps": fps,
+        "lut_used": str(lut) if lut.is_file() else None,
+        "sha256": h.hexdigest(),
+    }
