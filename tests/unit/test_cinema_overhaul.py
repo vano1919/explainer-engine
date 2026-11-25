@@ -88,6 +88,7 @@ def test_cinema_gates_catch_static_shot_and_midframe_tear(tmp_path: Path) -> Non
     assert t_qa["status"] == "FAIL" and t_qa["findings"]
 
 
+@pytest.mark.media
 def test_scene_soundscape_and_audio_scene_consistency_gate(tmp_path: Path) -> None:
     shots = [
         {"shot_id": "s1_dry", "kind": "25d", "scene_environment": "dry_daylight_valley", "start_s": 0.0, "end_s": 2.0},

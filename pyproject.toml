@@ -20,6 +20,7 @@ dependencies = [
   "scikit-image>=0.22",
   "imagehash>=4.3",
   "anthropic>=2.3",
+  "pyloudnorm>=0.1.1",
 ]
 
 [project.optional-dependencies]
