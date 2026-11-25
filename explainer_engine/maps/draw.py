@@ -216,7 +216,7 @@ class Canvas:
         else:
             self.d.rectangle(box, fill=fill, outline=outline, width=max(1, self.px(width)) if outline else 0)
 
-    face = "ui"   # "map": the map face (Inter); set by the map renderers
+    face = "map"  # Liberation Serif editorial map typography
 
     def text(self, xy, s: str, size: float, fill, anchor: str = "la", stroke: float = 0, stroke_fill=None):
         from explainer_engine.maps.render_presets import label_scale  # MAP_PRESET switch; 1.0 when unset
