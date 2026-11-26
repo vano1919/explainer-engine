@@ -320,6 +320,81 @@ def validate_chained_handoff_plan(
     }
 
 
+def find_exact_handoff_frame(
+    parent_mp4: Path,
+    child_mp4: Path,
+    *,
+    search_tail_frames: int = 36,
+) -> dict[str, Any]:
+    """Locate the exact parent frame index ``F_ext`` matching frame 0 of a chained child clip.
+
+    Returns ``play_parent_frames = max(1, F_ext)`` so trimming the parent clip to
+    ``0 .. F_ext - 1`` yields a seamless chained cut directly into child frame 0
+    (zero jump cut, zero duplicated freeze frame).
+    """
+    import cv2
+    import numpy as np
+    from skimage.metrics import structural_similarity as ssim
+
+    cap_c = cv2.VideoCapture(str(child_mp4))
+    ok_c, bgr_c = cap_c.read()
+    cap_c.release()
+    if not ok_c or bgr_c is None:
+        raise RuntimeError(f"Could not read frame 0 of chained child clip: {child_mp4}")
+    gc = cv2.cvtColor(cv2.resize(bgr_c, (320, 180), interpolation=cv2.INTER_AREA), cv2.COLOR_BGR2GRAY)
+    gc_blur = cv2.GaussianBlur(gc, (9, 9), 2.5)
+    gc_small = cv2.resize(gc, (32, 18), interpolation=cv2.INTER_AREA).astype(np.float32).ravel()
+
+    cap_p = cv2.VideoCapture(str(parent_mp4))
+    total = int(cap_p.get(cv2.CAP_PROP_FRAME_COUNT) or 0)
+    fps = float(cap_p.get(cv2.CAP_PROP_FPS) or 24.0)
+    search_start = max(0, total - max(1, int(search_tail_frames)))
+    best_idx = max(1, total - 1)
+    best_raw = -1.0
+    best_smooth = -1.0
+    best_corr = -1.0
+    cur = 0
+    try:
+        while cur < total:
+            if not cap_p.grab():
+                break
+            if cur >= search_start:
+                ok_p, bgr_p = cap_p.retrieve()
+                if ok_p and bgr_p is not None:
+                    gp = cv2.cvtColor(cv2.resize(bgr_p, (320, 180), interpolation=cv2.INTER_AREA), cv2.COLOR_BGR2GRAY)
+                    raw_val = ssim(gp, gc, data_range=255)
+                    raw_f = float(raw_val[0] if isinstance(raw_val, tuple) else raw_val)
+                    if raw_f > best_raw:
+                        gp_blur = cv2.GaussianBlur(gp, (9, 9), 2.5)
+                        sm_val = ssim(gp_blur, gc_blur, data_range=255)
+                        sm_f = float(sm_val[0] if isinstance(sm_val, tuple) else sm_val)
+                        gp_small = cv2.resize(gp, (32, 18), interpolation=cv2.INTER_AREA).astype(np.float32).ravel()
+                        denom = float(np.std(gp_small) * np.std(gc_small))
+                        corr_f = (
+                            float(np.corrcoef(gp_small, gc_small)[0, 1]) if denom > 1e-6 else 1.0
+                        )
+                        best_raw = raw_f
+                        best_smooth = sm_f
+                        best_corr = corr_f
+                        best_idx = cur
+            cur += 1
+    finally:
+        cap_p.release()
+
+    play_frames = max(1, best_idx)
+    return {
+        "parent_mp4": str(parent_mp4),
+        "child_mp4": str(child_mp4),
+        "handoff_frame_idx": int(best_idx),
+        "play_parent_frames": int(play_frames),
+        "handoff_time_s": round(play_frames / max(1.0, fps), 4),
+        "fps": round(fps, 3),
+        "raw_ssim": round(best_raw, 4),
+        "smooth_ssim": round(best_smooth, 4),
+        "layout_corr": round(best_corr, 4),
+    }
+
+
 def build_helios_60s_benchmark_spec(
     *,
     prompt: str,
@@ -422,6 +497,7 @@ __all__ = [
     "build_helios_60s_benchmark_spec",
     "extract_clean_extend_frame",
     "extract_exact_handoff_frame",
+    "find_exact_handoff_frame",
     "plan_dramatic_scene_sequence",
     "upscale_ltx_clip_to_2k",
     "validate_chained_handoff_plan",

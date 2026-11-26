@@ -1569,6 +1569,257 @@ def check_docudrama_70_30_balance(
     }
 
 
+def check_pts_monotonicity(
+    video_path: Path,
+    *,
+    expected_fps: float = 24.0,
+    max_dt_jitter_s: float = 0.006,
+) -> dict[str, Any]:
+    """Verify presentation-order PTS monotonicity and zero concat-seam timestamp gaps via ffprobe."""
+    import subprocess
+
+    if not video_path.is_file():
+        return {"status": "FAIL", "findings": [f"Video missing: {video_path}"]}
+    out = subprocess.check_output(
+        [
+            "ffprobe",
+            "-v",
+            "error",
+            "-select_streams",
+            "v:0",
+            "-show_entries",
+            "packet=pts_time",
+            "-of",
+            "csv=p=0",
+            str(video_path),
+        ],
+        text=True,
+    )
+    pts_vals: list[float] = []
+    for line in out.splitlines():
+        s = line.strip().split(",")[0].strip()
+        if not s or s == "N/A":
+            continue
+        try:
+            pts_vals.append(float(s))
+        except ValueError:
+            continue
+    if len(pts_vals) < 2:
+        return {"status": "FAIL", "packet_count": len(pts_vals), "findings": ["Insufficient video PTS packets"]}
+
+    # Sort into presentation order (handles H.264 B-frame decode reordering cleanly)
+    pts_sorted = sorted(pts_vals)
+    dts = np.diff(np.asarray(pts_sorted, dtype=np.float64))
+    target_dt = 1.0 / max(1.0, float(expected_fps))
+    duplicates = int(np.sum(dts <= 1e-6))
+    anomalies = [
+        {"frame_idx": int(i), "pts_s": round(pts_sorted[i], 4), "dt_s": round(float(dts[i]), 5)}
+        for i in range(len(dts))
+        if abs(float(dts[i]) - target_dt) > max_dt_jitter_s
+    ]
+    findings: list[str] = []
+    if duplicates > 0:
+        findings.append(f"Found {duplicates} duplicate presentation PTS timestamps")
+    if anomalies:
+        findings.append(
+            f"Found {len(anomalies)} concat-seam PTS interval anomalies (> {max_dt_jitter_s * 1000:.1f}ms from {target_dt * 1000:.2f}ms); "
+            f"first={anomalies[0]}"
+        )
+    return {
+        "status": "PASS" if not findings else "FAIL",
+        "packet_count": len(pts_sorted),
+        "duplicate_pts_count": duplicates,
+        "min_dt_s": round(float(np.min(dts)), 6),
+        "max_dt_s": round(float(np.max(dts)), 6),
+        "anomaly_count": len(anomalies),
+        "anomalies": anomalies[:20],
+        "findings": findings,
+    }
+
+
+def check_visual_audit_clean(
+    shot_windows: list[dict[str, Any]],
+    visual_audit_path: Path,
+) -> dict[str, Any]:
+    """Fail-closed check ensuring zero visually REJECTED clips leak into a master timeline."""
+    import json
+
+    if not visual_audit_path.is_file():
+        return {"status": "FAIL", "findings": [f"Missing clip visual audit JSON: {visual_audit_path}"]}
+    data = json.loads(visual_audit_path.read_text(encoding="utf-8"))
+    clips_obj = data.get("clips")
+    rejected: set[str] = set()
+    if isinstance(clips_obj, dict):
+        for sid, info in clips_obj.items():
+            verdict = str(
+                (info.get("verdict") or info.get("decision") or info.get("status") or "")
+                if isinstance(info, dict)
+                else info
+            ).upper()
+            if "REJECT" in verdict:
+                rejected.add(str(sid))
+    elif isinstance(clips_obj, list):
+        for item in clips_obj:
+            if not isinstance(item, dict):
+                continue
+            sid = str(item.get("shot_id") or item.get("clip_id") or "")
+            verdict = str(item.get("verdict") or item.get("decision") or item.get("status") or "").upper()
+            if sid and "REJECT" in verdict:
+                rejected.add(sid)
+
+    leaked: list[str] = []
+    for sh in shot_windows:
+        sid = str(sh.get("shot_id") or "")
+        src_stem = Path(str(sh.get("source_path") or "")).stem
+        if sid in rejected or src_stem in rejected:
+            leaked.append(sid or src_stem)
+
+    findings = [f"Visually REJECTED clip leaked into master timeline: {sid}" for sid in leaked]
+    return {
+        "status": "PASS" if not findings else "FAIL",
+        "rejected_pool_count": len(rejected),
+        "leaked_rejected_clips": leaked,
+        "findings": findings,
+    }
+
+
+def check_silence_drop_effectiveness(
+    master_wav: Path,
+    silence_drops: list[dict[str, Any]],
+    *,
+    voice_wav: Path | None = None,
+    max_master_rms_dbfs: float = -32.0,
+    max_voice_rms_dbfs: float = -38.0,
+) -> dict[str, Any]:
+    """Verify every configured cinema silence drop actually creates silence and is not masked by narration."""
+    import soundfile as sf
+
+    if not silence_drops:
+        return {"status": "PASS", "checked_drops": 0, "drops": [], "findings": []}
+    if not master_wav.is_file():
+        return {"status": "FAIL", "findings": [f"Missing master audio WAV: {master_wav}"]}
+
+    mix, sr = sf.read(str(master_wav), dtype="float32", always_2d=True)
+    voice = None
+    if voice_wav is not None and voice_wav.is_file():
+        voice, v_sr = sf.read(str(voice_wav), dtype="float32", always_2d=True)
+        if v_sr != sr:
+            voice = None
+
+    drops_report: list[dict[str, Any]] = []
+    findings: list[str] = []
+    for sd in silence_drops:
+        t0 = max(0.0, float(sd.get("time_s", 0.0)))
+        dur_sd = max(0.05, float(sd.get("duration_s", 0.4)))
+        s0 = max(0, min(len(mix) - 1, int(round(t0 * sr))))
+        s1 = max(s0 + 1, min(len(mix), int(round((t0 + dur_sd) * sr))))
+        m_rms_db = float(20.0 * np.log10(float(np.sqrt(np.mean(mix[s0:s1] ** 2)) + 1e-12)))
+        v_rms_db = -240.0
+        if voice is not None and s0 < len(voice):
+            v_seg = voice[s0 : min(len(voice), s1)]
+            if len(v_seg) > 0:
+                v_rms_db = float(20.0 * np.log10(float(np.sqrt(np.mean(v_seg ** 2)) + 1e-12)))
+
+        voice_masked = v_rms_db > max_voice_rms_dbfs
+        too_loud = m_rms_db > max_master_rms_dbfs
+        ok = (not voice_masked) and (not too_loud)
+        drops_report.append(
+            {
+                "time_s": round(t0, 3),
+                "duration_s": round(dur_sd, 3),
+                "master_rms_dbfs": round(m_rms_db, 2),
+                "voice_rms_dbfs": round(v_rms_db, 2),
+                "voice_masked": voice_masked,
+                "passed": ok,
+            }
+        )
+        if voice_masked:
+            findings.append(
+                f"Silence drop @{t0:.2f}s (+{dur_sd:.2f}s) masked by active narration (voice_rms={v_rms_db:.1f} dBFS > {max_voice_rms_dbfs:.1f} dBFS)"
+            )
+        elif too_loud:
+            findings.append(
+                f"Silence drop @{t0:.2f}s (+{dur_sd:.2f}s) failed to duck master (master_rms={m_rms_db:.1f} dBFS > {max_master_rms_dbfs:.1f} dBFS)"
+            )
+
+    return {
+        "status": "PASS" if not findings else "FAIL",
+        "checked_drops": len(drops_report),
+        "drops": drops_report,
+        "findings": findings,
+    }
+
+
+def check_word_to_shot_sync(
+    shot_windows: list[dict[str, Any]],
+    word_timestamps: list[dict[str, Any]],
+    anchors: list[dict[str, Any]],
+    *,
+    max_drift_s: float = 1.8,
+) -> dict[str, Any]:
+    """Verify key spoken nouns land inside (or within ``max_drift_s`` of) their matching hero shots.
+
+    Each anchor dict specifies ``{"keyword": "bronze", "shot_id": "v4_c3_bronze_forge_pour"}``
+    with optional ``min_time_s`` / ``max_time_s`` search bounds.
+    """
+    by_sid = {str(s.get("shot_id") or ""): s for s in shot_windows}
+    checked: list[dict[str, Any]] = []
+    findings: list[str] = []
+
+    for anc in anchors:
+        kw = str(anc.get("keyword") or "").strip().lower()
+        sid = str(anc.get("shot_id") or "").strip()
+        if not kw or sid not in by_sid:
+            findings.append(f"Invalid word-to-shot anchor {anc!r} (shot_id missing from timeline)")
+            continue
+        sh = by_sid[sid]
+        sh_st, sh_en = float(sh.get("start_s", 0.0)), float(sh.get("end_s", 0.0))
+        min_t = float(anc.get("min_time_s", 0.0))
+        max_t = float(anc.get("max_time_s", 1e9))
+
+        matches = [
+            float(w["start_s"])
+            for w in word_timestamps
+            if min_t <= float(w.get("start_s", -1.0)) <= max_t
+            and kw in str(w.get("word", "")).lower()
+        ]
+        if not matches:
+            findings.append(f"Anchor keyword {kw!r} for shot {sid} not found in word_timestamps")
+            continue
+
+        # Pick the spoken occurrence closest to the target shot window
+        def _dist(wt: float, lo: float = sh_st, hi: float = sh_en) -> float:
+            if lo <= wt <= hi:
+                return 0.0
+            return min(abs(wt - lo), abs(wt - hi))
+
+        best_wt = min(matches, key=_dist)
+        drift = _dist(best_wt)
+        ok = drift <= max_drift_s
+        checked.append(
+            {
+                "keyword": kw,
+                "shot_id": sid,
+                "word_time_s": round(best_wt, 3),
+                "shot_window_s": [round(sh_st, 3), round(sh_en, 3)],
+                "drift_s": round(drift, 3),
+                "passed": ok,
+            }
+        )
+        if not ok:
+            findings.append(
+                f"Word-to-shot sync lag for {kw!r} (@{best_wt:.2f}s) vs shot {sid} "
+                f"[{sh_st:.2f}s-{sh_en:.2f}s]: drift={drift:.2f}s > {max_drift_s:.2f}s"
+            )
+
+    return {
+        "status": "PASS" if not findings else "FAIL",
+        "anchors_checked": len(checked),
+        "anchors": checked,
+        "findings": findings,
+    }
+
+
 def run_full_cinema_audit(
     video_path: Path,
     *,
@@ -1591,6 +1842,11 @@ def run_full_cinema_audit(
     sfx_events: list[dict[str, Any]] | None = None,
     narration_waves: list[tuple[float, float]] | None = None,
     verify_ffmpeg_true_peak: bool = False,
+    visual_audit_path: Path | None = None,
+    master_audio_wav: Path | None = None,
+    silence_drops: list[dict[str, Any]] | None = None,
+    word_timestamps: list[dict[str, Any]] | None = None,
+    word_shot_anchors: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     """Run every deterministic L3 gate PLUS optional v3.2/v4.0 contracts & fail-closed AI Media Critic."""
     from explainer_engine.qa.ai_critic_gate import verify_ai_critic_verdict
@@ -1644,6 +1900,21 @@ def run_full_cinema_audit(
     if enforce_v4_contracts:
         results["no_jump_cuts"] = check_no_jump_cuts(video_path, shot_windows)
         results["docudrama_70_30_balance"] = bal or check_docudrama_70_30_balance(shot_windows, utterances)
+        results["pts_monotonicity"] = check_pts_monotonicity(video_path, expected_fps=float(delivery.get("fps", 24.0) or 24.0))
+        if visual_audit_path is not None:
+            results["visual_audit_clean"] = check_visual_audit_clean(shot_windows, visual_audit_path)
+        if master_audio_wav is not None and silence_drops:
+            results["silence_drop_effectiveness"] = check_silence_drop_effectiveness(
+                master_audio_wav,
+                silence_drops,
+                voice_wav=voice_audio_path,
+            )
+        if word_timestamps and word_shot_anchors:
+            results["word_to_shot_sync"] = check_word_to_shot_sync(
+                shot_windows,
+                word_timestamps,
+                word_shot_anchors,
+            )
 
     if require_ai_critic:
         if ai_critic_verdict_path is None:

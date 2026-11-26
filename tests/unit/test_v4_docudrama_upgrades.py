@@ -349,4 +349,232 @@ def test_docudrama_70_30_balance_and_dramatic_narration_exemption() -> None:
     assert bal_fail["status"] == "FAIL", bal_fail
 
 
+def test_nonperiodic_ambience_breaks_loop_periodicity_and_mix_silence_drop_guard(tmp_path: Path) -> None:
+    import pytest
+    import soundfile as sf
+
+    from explainer_engine.audio.broadcast_cinema_mix import (
+        _loop_nonperiodic_ambience,
+        mix_broadcast_cinema_audio,
+    )
+
+    sr = 48000
+    # Short 2.0s ambience with a crisp transient crackle spike at 0.3s
+    src = np.random.default_rng(42).normal(0.0, 0.015, size=(sr * 2, 2)).astype(np.float32)
+    src[int(0.3 * sr) : int(0.305 * sr), 0] += 0.65
+    ext = _loop_nonperiodic_ambience(src, sr * 10, seed=19)
+    assert ext.shape == (sr * 10, 2)
+    # Periodic tiling would correlate ~1.0 at exact lag=2.0s; non-periodic slicing breaks exact beat lock
+    a = ext[: sr * 6, 0]
+    b = ext[sr * 2 : sr * 8, 0]
+    corr = float(np.corrcoef(a, b)[0, 1])
+    assert abs(corr) < 0.5, f"Expected broken periodicity at 2.0s lag, got corr={corr:.3f}"
+
+    # Verify silence_drop_diagnostics & strict_silence_drops catches voice-masked drop
+    t = np.linspace(0.0, 6.0, sr * 6, endpoint=False, dtype=np.float32)
+    voice = (0.18 * np.sin(2.0 * np.pi * 220.0 * t)).astype(np.float32)
+    # Make 2.0s..3.0s silent in voice, 4.0s..5.0s active in voice
+    voice[sr * 2 : sr * 3] = 0.0
+    voice_p = tmp_path / "voice.wav"
+    amb_p = tmp_path / "fire_crackle_hearth.wav"
+    mus_p = tmp_path / "musopen_adagio.wav"
+    sf.write(str(voice_p), np.stack([voice, voice], axis=1), sr)
+    sf.write(str(amb_p), src, sr)
+    sf.write(str(mus_p), np.random.default_rng(7).normal(0.0, 0.05, size=(sr * 6, 2)).astype(np.float32), sr)
+
+    rep = mix_broadcast_cinema_audio(
+        total_duration_s=6.0,
+        voice_wav=voice_p,
+        music_acts=[{"start_s": 0.0, "end_s": 6.0, "wav_path": str(mus_p), "level_dbfs": -25.0}],
+        scene_ambiences=[{"start_s": 0.0, "end_s": 6.0, "wav_path": str(amb_p), "level_dbfs": -28.0}],
+        sfx_events=[{"time_s": 1.0, "wav_path": str(amb_p), "ltx_snapped": True, "ltx_snap_delta_ms": 18.0}],
+        silence_drops=[
+            {"time_s": 2.2, "duration_s": 0.42, "depth_db": -36.0},
+            {"time_s": 4.2, "duration_s": 0.42, "depth_db": -36.0},
+        ],
+        out_wav=tmp_path / "mix.wav",
+    )
+    assert rep["true_peak_dbtp"] <= -1.45, rep
+    assert rep["ltx_snapped_sfx_count"] == 1
+    assert rep["shots"][0]["scene_environment"] == "fire_crackle_hearth"
+    assert rep["shots"][0]["shot_id"] != "shot"
+    diags = rep["silence_drop_diagnostics"]
+    assert len(diags) == 2
+    assert diags[0]["effective"] is True and diags[0]["voice_overlap"] is False
+    assert diags[1]["voice_overlap"] is True and diags[1]["effective"] is False
+
+    with pytest.raises(ValueError, match="Cinema silence drop masked"):
+        mix_broadcast_cinema_audio(
+            total_duration_s=6.0,
+            voice_wav=voice_p,
+            music_acts=[{"start_s": 0.0, "end_s": 6.0, "wav_path": str(mus_p), "level_dbfs": -25.0}],
+            scene_ambiences=[{"start_s": 0.0, "end_s": 6.0, "wav_path": str(amb_p), "level_dbfs": -28.0}],
+            sfx_events=[],
+            silence_drops=[{"time_s": 4.2, "duration_s": 0.42, "depth_db": -36.0}],
+            out_wav=tmp_path / "mix_strict.wav",
+            strict_silence_drops=True,
+        )
+
+
+def test_editorial_graphics_rejects_duplicate_stat_and_avoids_face_zones(monkeypatch: Any, tmp_path: Path) -> None:
+    import pytest
+
+    from explainer_engine.overlay.editorial_graphics import (
+        EditorialGraphicSpec,
+        _build_editorial_html,
+        _resolve_safe_floating_origin,
+    )
+
+    _ensure_vendor_dir(monkeypatch, tmp_path)
+    bad = EditorialGraphicSpec(
+        graphic_id="dup_stat",
+        template="handdrawn_stat_underline",
+        title="-30°C",
+        subtitle="Sub-zero floor",
+        duration_s=3.0,
+        meta={"start_val": 0, "end_val": -30, "suffix": "°C"},
+    )
+    with pytest.raises(ValueError, match="duplicates counter value"):
+        bad.validate()
+
+    # Face-zone avoidance shifts floating callout away from a protected face bbox
+    safe_x, safe_y = _resolve_safe_floating_origin(
+        1100,
+        320,
+        avoid_zones=[(950, 200, 1550, 620)],
+    )
+    assert not (safe_x < 1550 and safe_x + 520 > 950 and safe_y < 620 and safe_y + 165 > 200)
+
+    # Boxless floating scrim & position-aware corner scrim
+    doc_float = _build_editorial_html(
+        EditorialGraphicSpec(
+            graphic_id="chalk_safe",
+            template="chalk_circle_callout",
+            title="THE HEARTH",
+            subtitle="Safe from the frost",
+            duration_s=3.0,
+            meta={"avoid_zones": [(1000, 200, 1600, 650)]},
+        ),
+        width=1920,
+        height=1080,
+    )
+    assert "floating-scrim" in doc_float
+
+    doc_br = _build_editorial_html(
+        EditorialGraphicSpec(
+            graphic_id="stat_br",
+            template="handdrawn_stat_underline",
+            title="USABLE CALORIES",
+            subtitle="Unlocked in minutes",
+            position="bottom_right",
+            duration_s=3.0,
+            meta={"start_val": 1, "end_val": 2, "suffix": "×"},
+        ),
+        width=1920,
+        height=1080,
+    )
+    assert "at 82% 88%" in doc_br
+
+
+def test_find_exact_handoff_frame_core_api(tmp_path: Path) -> None:
+    from explainer_engine.videolane.multishot_scene_director import find_exact_handoff_frame
+
+    rng = np.random.default_rng(11)
+    base = np.zeros((180, 320, 3), dtype=np.uint8)
+    for k in range(30):
+        cv2.circle(base, (int(rng.integers(20, 300)), int(rng.integers(20, 160))), 14, (40 + k * 6, 90, 180), -1)
+
+    parent_frames: list[np.ndarray] = []
+    for i in range(24):
+        m = np.array([[1.0, 0.0, float(i * 3)], [0.0, 1.0, 0.0]], dtype=np.float32)
+        parent_frames.append(cv2.warpAffine(base, m, (320, 180), borderMode=cv2.BORDER_REFLECT))
+
+    # Child starts at parent frame index 19!
+    child_frames = parent_frames[19:] + [parent_frames[-1]] * 5
+    p_mp4 = tmp_path / "parent.mp4"
+    c_mp4 = tmp_path / "child.mp4"
+    _write_mp4(p_mp4, parent_frames, fps=24)
+    _write_mp4(c_mp4, child_frames, fps=24)
+
+    res = find_exact_handoff_frame(p_mp4, c_mp4, search_tail_frames=12)
+    assert res["handoff_frame_idx"] == 19, res
+    assert res["play_parent_frames"] == 19
+    assert res["smooth_ssim"] >= 0.90
+
+
+def test_shift_canvas_seamless_has_no_vertical_seam() -> None:
+    from explainer_engine.publish.youtube_ab_packaging import shift_canvas_seamless
+
+    # Smooth horizontal gradient image
+    grad = np.tile(np.linspace(60, 210, 640, dtype=np.uint8)[None, :, None], (360, 1, 3))
+    shifted = shift_canvas_seamless(grad, shift_x=90, width=640, height=360, feather_px=120)
+    assert shifted.shape == (360, 640, 3)
+    # Check max single-column horizontal derivative near the shift boundary x=90 (no hard seam!)
+    row = shifted[180, 60:220, 0].astype(np.float32)
+    max_step = float(np.max(np.abs(np.diff(row))))
+    assert max_step < 4.5, f"Hard vertical seam detected: max_step={max_step:.2f}"
+
+
+def test_phase3_forensic_gates_pts_visual_audit_silence_and_word_sync(tmp_path: Path) -> None:
+    import json
+
+    import soundfile as sf
+
+    from explainer_engine.qa.cinema_gates import (
+        check_pts_monotonicity,
+        check_silence_drop_effectiveness,
+        check_visual_audit_clean,
+        check_word_to_shot_sync,
+    )
+
+    # 1. PTS monotonicity on clean 24fps mp4
+    frames = [np.full((120, 160, 3), i * 8 % 255, dtype=np.uint8) for i in range(24)]
+    mp4 = tmp_path / "clean24.mp4"
+    _write_mp4(mp4, frames, fps=24)
+    pts_res = check_pts_monotonicity(mp4, expected_fps=24.0)
+    assert pts_res["status"] == "PASS", pts_res
+
+    # 2. Visual audit leak gate
+    cva_path = tmp_path / "cva.json"
+    cva_path.write_text(
+        json.dumps({"clips": {"ltx_01": {"verdict": "KEEP"}, "ltx_03": {"verdict": "REJECT"}}}),
+        encoding="utf-8",
+    )
+    assert check_visual_audit_clean([{"shot_id": "ltx_01"}], cva_path)["status"] == "PASS"
+    leak = check_visual_audit_clean([{"shot_id": "ltx_01"}, {"shot_id": "ltx_03"}], cva_path)
+    assert leak["status"] == "FAIL" and "ltx_03" in leak["leaked_rejected_clips"]
+
+    # 3. Silence drop effectiveness gate
+    sr = 48000
+    master = np.full((sr * 4, 2), 0.12, dtype=np.float32)
+    voice = np.zeros((sr * 4, 2), dtype=np.float32)
+    master[sr * 1 : int(sr * 1.5)] = 0.0005  # clean silence drop
+    voice[sr * 2 : sr * 3] = 0.15  # voice masks second drop
+    m_wav = tmp_path / "m.wav"
+    v_wav = tmp_path / "v.wav"
+    sf.write(str(m_wav), master, sr)
+    sf.write(str(v_wav), voice, sr)
+
+    sd_ok = check_silence_drop_effectiveness(m_wav, [{"time_s": 1.02, "duration_s": 0.42}], voice_wav=v_wav)
+    assert sd_ok["status"] == "PASS", sd_ok
+    sd_bad = check_silence_drop_effectiveness(m_wav, [{"time_s": 2.2, "duration_s": 0.42}], voice_wav=v_wav)
+    assert sd_bad["status"] == "FAIL" and sd_bad["drops"][0]["voice_masked"] is True
+
+    # 4. Word-to-shot sync gate
+    shots = [
+        {"shot_id": "bronze_forge", "start_s": 291.0, "end_s": 295.0},
+        {"shot_id": "orbital_earth", "start_s": 295.0, "end_s": 300.0},
+    ]
+    words_ok = [{"word": "bronze", "start_s": 291.8}, {"word": "space", "start_s": 295.4}]
+    words_lag = [{"word": "bronze", "start_s": 286.0}, {"word": "space", "start_s": 295.4}]
+    anchors = [
+        {"keyword": "bronze", "shot_id": "bronze_forge"},
+        {"keyword": "space", "shot_id": "orbital_earth"},
+    ]
+    assert check_word_to_shot_sync(shots, words_ok, anchors, max_drift_s=1.5)["status"] == "PASS"
+    sync_fail = check_word_to_shot_sync(shots, words_lag, anchors, max_drift_s=1.5)
+    assert sync_fail["status"] == "FAIL", sync_fail
+
+
+
 

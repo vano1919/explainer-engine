@@ -284,3 +284,46 @@ def export_youtube_studio_ab_bundle(
         "mockup_png": str(mockup_png),
         "variants": rendered,
     }
+
+
+def shift_canvas_seamless(
+    img_bgr: Any,
+    shift_x: int,
+    *,
+    width: int = 1920,
+    height: int = 1080,
+    feather_px: int = 260,
+    edge_darken: float = 0.48,
+) -> Any:
+    """Shift a thumbnail hero frame horizontally with a wide feathered edge-outpaint blend.
+
+    Prevents hard vertical seams (e.g. ``canvas[:, :shift] = blur(...)``) when creating
+    left/right negative space for bold YouTube thumbnail typography.
+    """
+    import cv2
+    import numpy as np
+
+    resized = cv2.resize(img_bgr, (width, height), interpolation=cv2.INTER_LANCZOS4).astype(np.float32)
+    s = int(shift_x)
+    if s == 0:
+        return resized.astype(np.uint8)
+
+    abs_s = min(width // 2, abs(s))
+    # Build a smooth reflected+blurred ambient backdrop across the full width
+    pad_l = abs_s if s > 0 else 0
+    pad_r = abs_s if s < 0 else 0
+    reflected = cv2.copyMakeBorder(resized, 0, 0, pad_l, pad_r, borderType=cv2.BORDER_REFLECT_101)
+    shifted_base = reflected[:, :width].copy() if s > 0 else reflected[:, pad_r : pad_r + width].copy()
+
+    blurred_bg = cv2.GaussianBlur(shifted_base, (61, 61), 24.0) * float(edge_darken)
+
+    # Smoothstep cosine feather across [abs_s .. abs_s + feather_px] (ZERO vertical discontinuity!)
+    fw = max(32, min(width - abs_s - 1, int(feather_px)))
+    x = np.arange(width, dtype=np.float32)
+    if s > 0:
+        t = np.clip((x - float(abs_s)) / float(fw), 0.0, 1.0)
+    else:
+        t = np.clip((float(width - abs_s) - x) / float(fw), 0.0, 1.0)
+    alpha = (t * t * (3.0 - 2.0 * t))[None, :, None]
+    out = blurred_bg * (1.0 - alpha) + shifted_base * alpha
+    return np.clip(out, 0, 255).astype(np.uint8)

@@ -65,6 +65,54 @@ class EditorialGraphicSpec:
             )
         if self.duration_s < 1.0:
             raise ValueError(f"Editorial graphic duration_s must be >= 1.0s, got {self.duration_s}")
+        if self.template == "handdrawn_stat_underline" and "end_val" in self.meta:
+            end_v = float(self.meta["end_val"])
+            prefix = str(self.meta.get("prefix", ""))
+            suffix = str(self.meta.get("suffix", ""))
+            rendered_stat = f"{prefix}{int(round(end_v)):,}{suffix}".strip().lower()
+            compact_stat = rendered_stat.replace(" ", "").replace(",", "")
+            compact_title = self.title.strip().lower().replace(" ", "").replace(",", "")
+            if compact_title == compact_stat or (compact_stat and compact_title.startswith(compact_stat)):
+                raise ValueError(
+                    f"handdrawn_stat_underline title {self.title!r} duplicates counter value "
+                    f"{rendered_stat!r}; use a descriptive label instead of repeating the number"
+                )
+
+
+def _resolve_safe_floating_origin(
+    lx: int,
+    ly: int,
+    avoid_zones: list[Any] | None,
+    *,
+    note_w: int = 520,
+    note_h: int = 165,
+) -> tuple[int, int]:
+    """Shift a floating callout origin away from protected face/subject bounding boxes (1920x1080 space)."""
+    zones: list[tuple[int, int, int, int]] = []
+    for z in avoid_zones or []:
+        if isinstance(z, (list, tuple)) and len(z) == 4:
+            zones.append((int(z[0]), int(z[1]), int(z[2]), int(z[3])))
+    if not zones:
+        return max(60, min(1920 - note_w - 40, lx)), max(70, min(1080 - note_h - 40, ly))
+
+    def _overlaps(x0: int, y0: int) -> bool:
+        x1, y1 = x0 + note_w, y0 + note_h
+        return any(not (x1 <= zx0 or x0 >= zx1 or y1 <= zy0 or y0 >= zy1) for zx0, zy0, zx1, zy1 in zones)
+
+    candidates = [
+        (lx, ly),
+        (lx, 760),
+        (96, 760),
+        (1320, 760),
+        (96, 110),
+        (1320, 110),
+    ]
+    for cx, cy in candidates:
+        cx_c = max(60, min(1920 - note_w - 40, cx))
+        cy_c = max(70, min(1080 - note_h - 40, cy))
+        if not _overlaps(cx_c, cy_c):
+            return cx_c, cy_c
+    return max(60, min(1920 - note_w - 40, lx)), max(70, min(1080 - note_h - 40, ly))
 
 
 def _build_editorial_html(spec: EditorialGraphicSpec, *, width: int, height: int) -> str:
@@ -95,6 +143,15 @@ def _build_editorial_html(spec: EditorialGraphicSpec, *, width: int, height: int
         "center": "stage-center",
     }
     stage_cls = pos_map.get(spec.position, "stage-bottom-left")
+    scrim_anchor_map = {
+        "bottom_left": "18% 88%",
+        "bottom_right": "82% 88%",
+        "bottom_center": "50% 88%",
+        "top_left": "18% 14%",
+        "center": "50% 50%",
+    }
+    corner_scrim_anchor = scrim_anchor_map.get(spec.position, "18% 88%")
+    resolved_meta = dict(spec.meta)
 
     if spec.template == "editorial_chapter_slate":
         body_html = f"""
@@ -112,10 +169,16 @@ def _build_editorial_html(spec: EditorialGraphicSpec, *, width: int, height: int
         cy = int(spec.meta.get("cy", 540))
         rx = int(spec.meta.get("rx", 180))
         ry = int(spec.meta.get("ry", 120))
-        lx = int(spec.meta.get("label_x", min(1320, cx + rx + 85)))
-        ly = int(spec.meta.get("label_y", max(150, cy - ry - 20)))
+        raw_lx = int(spec.meta.get("label_x", min(1320, cx + rx + 85)))
+        raw_ly = int(spec.meta.get("label_y", max(150, cy - ry - 20)))
+        lx, ly = _resolve_safe_floating_origin(raw_lx, raw_ly, spec.meta.get("avoid_zones"))
+        resolved_meta["label_x"] = lx
+        resolved_meta["label_y"] = ly
+        scrim_x = round((lx + 240) / 19.2, 1)
+        scrim_y = round((ly + 75) / 10.8, 1)
         body_html = f"""
         <div id="stage" class="stage-full">
+          <div class="floating-scrim" style="background: radial-gradient(ellipse 34% 22% at {scrim_x}% {scrim_y}%, rgba(4,7,12,0.74) 0%, rgba(4,7,12,0.34) 55%, rgba(4,7,12,0) 100%);"></div>
           <svg id="rough-svg" class="full-svg" viewBox="0 0 1920 1080" width="1920" height="1080"></svg>
           <div class="floating-note" id="bbox-root" style="left:{lx}px; top:{ly}px;">
             <div class="eyebrow mono">{eyebrow}</div>
@@ -154,10 +217,16 @@ def _build_editorial_html(spec: EditorialGraphicSpec, *, width: int, height: int
           </div>
         </div>"""
     elif spec.template == "rough_arrow_pointer":
-        lx = int(spec.meta.get("label_x", 1180))
-        ly = int(spec.meta.get("label_y", 340))
+        raw_lx = int(spec.meta.get("label_x", 1180))
+        raw_ly = int(spec.meta.get("label_y", 340))
+        lx, ly = _resolve_safe_floating_origin(raw_lx, raw_ly, spec.meta.get("avoid_zones"))
+        resolved_meta["label_x"] = lx
+        resolved_meta["label_y"] = ly
+        scrim_x = round((lx + 240) / 19.2, 1)
+        scrim_y = round((ly + 75) / 10.8, 1)
         body_html = f"""
         <div id="stage" class="stage-full">
+          <div class="floating-scrim" style="background: radial-gradient(ellipse 34% 22% at {scrim_x}% {scrim_y}%, rgba(4,7,12,0.74) 0%, rgba(4,7,12,0.34) 55%, rgba(4,7,12,0) 100%);"></div>
           <svg id="rough-svg" class="full-svg" viewBox="0 0 1920 1080" width="1920" height="1080"></svg>
           <div class="floating-note" id="bbox-root" style="left:{lx}px; top:{ly}px;">
             <div class="eyebrow mono">{eyebrow}</div>
@@ -177,7 +246,7 @@ def _build_editorial_html(spec: EditorialGraphicSpec, *, width: int, height: int
           </div>
         </div>"""
 
-    meta_js = json.dumps(spec.meta)
+    meta_js = json.dumps(resolved_meta)
 
     return f"""<!doctype html>
 <html>
@@ -211,7 +280,11 @@ html, body {{
 }}
 .corner-scrim {{
   position: absolute; inset: 0;
-  background: radial-gradient(ellipse 56% 38% at 18% 88%, rgba(4,7,12,0.72) 0%, rgba(4,7,12,0.28) 54%, rgba(4,7,12,0) 100%);
+  background: radial-gradient(ellipse 56% 38% at {corner_scrim_anchor}, rgba(4,7,12,0.72) 0%, rgba(4,7,12,0.28) 54%, rgba(4,7,12,0) 100%);
+  opacity: 0;
+}}
+.floating-scrim {{
+  position: absolute; inset: 0; z-index: 1; pointer-events: none;
   opacity: 0;
 }}
 .whisper-scrim {{
@@ -239,7 +312,7 @@ html, body {{
 }}
 .rough-rule {{ display: block; margin: 14px auto 6px; overflow: visible; filter: drop-shadow(0 3px 10px rgba(0,0,0,0.85)); }}
 
-.full-svg {{ position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: visible; filter: drop-shadow(0 4px 14px rgba(0,0,0,0.88)); }}
+.full-svg {{ position: absolute; inset: 0; width: 1920px; height: 1080px; z-index: 2; overflow: visible; filter: drop-shadow(0 4px 14px rgba(0,0,0,0.88)); }}
 .floating-note {{ position: absolute; max-width: 560px; z-index: 3; }}
 .float-title {{
   font-family: {theme["font_sans"]}; font-size: 38px; font-weight: 700; line-height: 1.15;
@@ -339,7 +412,7 @@ if (template === "editorial_chapter_slate") {{
 }}
 
 const tl = gsap.timeline({{ paused: true }});
-const scrimEl = document.querySelector(".soft-scrim, .corner-scrim, .whisper-scrim");
+const scrimEl = document.querySelector(".soft-scrim, .corner-scrim, .whisper-scrim, .floating-scrim");
 if (scrimEl) tl.to(scrimEl, {{ opacity: 1, duration: 0.45, ease: "power2.out" }}, 0);
 
 if (template === "handdrawn_stat_underline") {{

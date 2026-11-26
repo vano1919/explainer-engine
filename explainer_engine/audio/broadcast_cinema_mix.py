@@ -56,6 +56,52 @@ def _loop_seamless(buf: np.ndarray, target_n: int, xfade_n: int = 24000) -> np.n
     return out[:target_n]
 
 
+def _loop_nonperiodic_ambience(
+    buf: np.ndarray,
+    target_n: int,
+    *,
+    xfade_n: int = 28800,
+    seed: int = 17,
+) -> np.ndarray:
+    """Extend a short ambience bed without creating a periodic rhythmic loop cadence.
+
+    Slices varying window lengths (55%-88% of source) at deterministic pseudo-random
+    offsets, alternates stereo channels on odd slices, and blends seams with long
+    equal-power crossfades so fire crackles / wind gusts never repeat on a fixed beat.
+    """
+    src_n = len(buf)
+    if src_n >= target_n:
+        return buf[:target_n].copy()
+    if src_n < 12000:
+        return _loop_seamless(buf, target_n, xfade_n=min(xfade_n, src_n // 3))
+
+    rng = np.random.default_rng(seed)
+    xf = max(2400, min(xfade_n, src_n // 4))
+
+    # Start with a clean first chunk (75%-95% of source)
+    first_len = max(xf * 2 + 1, int(src_n * float(rng.uniform(0.75, 0.95))))
+    out = buf[: min(src_n, first_len)].copy()
+    slice_idx = 1
+    while len(out) < target_n:
+        win_len = max(xf * 2 + 1, int(src_n * float(rng.uniform(0.55, 0.88))))
+        win_len = min(src_n, win_len)
+        max_start = max(0, src_n - win_len)
+        start = int(rng.integers(0, max_start + 1)) if max_start > 0 else 0
+        chunk = buf[start : start + win_len].copy()
+        if slice_idx % 2 == 1 and chunk.shape[1] == 2:
+            # Stereo L/R swap breaks spatial crackle periodicity while preserving timbre & RMS
+            chunk = chunk[:, ::-1].copy()
+        xf_cur = min(xf, len(out) // 2, len(chunk) // 2)
+        if xf_cur < 100:
+            out = np.concatenate([out, chunk], axis=0)
+        else:
+            t_cur = np.linspace(0.0, np.pi * 0.5, xf_cur, dtype=np.float32)[:, None]
+            overlap = out[-xf_cur:] * np.cos(t_cur) + chunk[:xf_cur] * np.sin(t_cur)
+            out = np.concatenate([out[:-xf_cur], overlap, chunk[xf_cur:]], axis=0)
+        slice_idx += 1
+    return out[:target_n]
+
+
 def _normalize_rms_db(x: np.ndarray, target_dbfs: float) -> np.ndarray:
     rms = float(np.sqrt(np.mean(x * x)) + 1e-9)
     cur_db = 20.0 * np.log10(rms)
@@ -140,14 +186,15 @@ def mix_broadcast_cinema_audio(
     min_music_raw_duration_s: float = 0.0,
     sr: int = 48000,
     target_lufs: float = -14.0,
-    true_peak_ceiling_db: float = -1.2,
+    true_peak_ceiling_db: float = -1.5,
+    strict_silence_drops: bool = False,
 ) -> dict[str, Any]:
     """Mix 6-layer 48kHz stereo broadcast documentary master with <1.0 dB pumping and exact -14.0 LUFS.
 
     Layers:
     1. Voice (ElevenLabs Odom polished)
     2. Continuous Musical Score (multi-minute >=45s real recordings with vocal-pocket EQ + Cinema Silence Drops)
-    3. Scene-Locked Ambience (0.45s equal-power J/L crossfades + Cinema Silence Drops)
+    3. Scene-Locked Ambience (non-periodic crossfaded loop + 0.45s J/L crossfades + Cinema Silence Drops)
     4. Stabilized LTX Native Diegetic Foley (85Hz HPF + light afftdn + 0.40s J/L crossfades)
     5. LTX-Synced CC0 Punch SFX (capped <= -8.5 dB rel voice, +-3% pitch variety)
     6. 40-80 Hz Sub-Bass Cinematic Impacts (real CC0 bandpassed impacts)
@@ -211,10 +258,10 @@ def mix_broadcast_cinema_audio(
     if silence_drops:
         music_buf = apply_cinema_silence_drops(music_buf, sr, silence_drops)
 
-    # 3. Scene-Locked Ambiences with smooth J/L-cut overlaps (0.35-0.80s)
+    # 3. Scene-Locked Ambiences with non-periodic looping + smooth J/L-cut overlaps (0.35-0.80s)
     amb_buf = np.zeros((n_total, 2), dtype=np.float32)
     shot_reports: list[dict[str, Any]] = []
-    for sh in scene_ambiences:
+    for idx_amb, sh in enumerate(scene_ambiences):
         st = max(0.0, float(sh["start_s"]))
         en = min(total_duration_s, float(sh["end_s"]))
         lead = float(sh.get("j_cut_lead_s", 0.35))
@@ -231,7 +278,7 @@ def mix_broadcast_cinema_audio(
                 hp_hz=float(sh.get("hp_hz", 55.0)),
                 lp_hz=float(sh.get("lp_hz", 6800.0)),
             )
-            seg = _loop_seamless(raw, seg_n)
+            seg = _loop_nonperiodic_ambience(raw, seg_n, seed=17 + idx_amb * 31)
             seg = _normalize_rms_db(seg, float(sh.get("level_dbfs", -32.0)))
             fn = min(seg_n // 3, int(round(0.45 * sr)))
             if fn > 10:
@@ -246,11 +293,12 @@ def mix_broadcast_cinema_audio(
             cent = 0.0
 
         sfx_in_shot = sum(1 for e in sfx_events if st - 0.25 <= float(e["time_s"]) <= en + 0.25)
+        inferred_env = p.stem if p.stem else "ambience"
         shot_reports.append(
             {
-                "shot_id": sh.get("shot_id", "shot"),
-                "kind": sh.get("kind", "25d"),
-                "scene_environment": sh.get("scene_environment", "tundra_wind"),
+                "shot_id": str(sh.get("shot_id") or f"amb_{idx_amb + 1:02d}_{inferred_env}"),
+                "kind": str(sh.get("kind") or "ambience_zone"),
+                "scene_environment": str(sh.get("scene_environment") or inferred_env),
                 "start_s": round(st, 3),
                 "end_s": round(en, 3),
                 "sfx_count_in_shot": sfx_in_shot,
@@ -442,6 +490,41 @@ def mix_broadcast_cinema_audio(
 
     sf.write(str(out_wav), mix, sr, subtype="PCM_24")
 
+    silence_drop_diagnostics: list[dict[str, Any]] = []
+    for sd in silence_drops or []:
+        t0 = max(0.0, float(sd.get("time_s", 0.0)))
+        dur_sd = max(0.05, float(sd.get("duration_s", 0.4)))
+        s0 = max(0, min(n_total - 1, int(round(t0 * sr))))
+        s1 = max(s0 + 1, min(n_total, int(round((t0 + dur_sd) * sr))))
+        m_rms_db = float(20.0 * np.log10(float(np.sqrt(np.mean(mix[s0:s1] ** 2)) + 1e-12)))
+        v_rms_db = float(20.0 * np.log10(float(np.sqrt(np.mean(voice_buf[s0:s1] ** 2)) + 1e-12)))
+        voice_overlap = v_rms_db > -38.0
+        effective = (m_rms_db <= -32.0) and (not voice_overlap)
+        silence_drop_diagnostics.append(
+            {
+                "time_s": round(t0, 3),
+                "duration_s": round(dur_sd, 3),
+                "master_rms_dbfs": round(m_rms_db, 2),
+                "voice_rms_dbfs": round(v_rms_db, 2),
+                "voice_overlap": voice_overlap,
+                "effective": effective,
+            }
+        )
+    if strict_silence_drops:
+        bad_drops = [d for d in silence_drop_diagnostics if not d["effective"]]
+        if bad_drops:
+            raise ValueError(
+                f"Cinema silence drop masked by voice or insufficiently quiet: {bad_drops}"
+            )
+
+    ltx_snapped_sfx_count = sum(
+        1
+        for e in sfx_events
+        if bool(e.get("ltx_snapped"))
+        or bool(e.get("snapped_to_ltx"))
+        or abs(float(e.get("ltx_snap_delta_ms", 0.0) or 0.0)) > 0.0
+    )
+
     report = {
         "schema": "broadcast_cinema_audio_mix/2",
         "layers": 6 if ltx_layer_active else 5,
@@ -456,8 +539,10 @@ def mix_broadcast_cinema_audio(
         "max_pause_pumping_swing_db": round(pump_swing_db, 2),
         "ltx_diegetic_layer_active": ltx_layer_active,
         "silence_drop_count": len(silence_drops or []),
+        "silence_drop_diagnostics": silence_drop_diagnostics,
         "music_act_count": len(music_acts),
         "sfx_event_count": len(sfx_events),
+        "ltx_snapped_sfx_count": ltx_snapped_sfx_count,
         "shots": shot_reports,
     }
     out_wav.with_suffix(".mix_report.json").write_text(json.dumps(report, indent=2), encoding="utf-8")
