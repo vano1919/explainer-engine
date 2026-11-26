@@ -157,7 +157,9 @@ def run_governed_ltx_batch(
         sm_env["EE_MODAL_APPROVAL_MANIFEST_SHA256"] = smoke_msha
         sm_env["EE_MODAL_OPERATION_MODE"] = "modal-ltx-smoke"
         sm_item = f"l3_smoke_{batch_id}_{int(time.time())}"
-        runner.reserve_modal_spend(sm_item, 0.45, why=f"L3 smoke calibration for {batch_id}")
+        sm_timeout_s = MLJ.TIMEOUTS[0] if MLJ.TIMEOUTS is not None else 210
+        sm_est_usd = round(MLJ.hard_bill_usd(MLJ.LAUNCH, sm_timeout_s) + 0.05, 4)
+        runner.reserve_modal_spend(sm_item, sm_est_usd, why=f"L3 smoke calibration for {batch_id}")
         t_sm = time.time()
         try:
             subprocess.run(

@@ -171,8 +171,23 @@ def _grade_relief_plate_paleo(
     return WORLD_RELIEF_CACHE, land_ratio
 
 
-def _load_geojson_world(filename: str, *, include_east_wrap: bool = True) -> dict[str, Any]:
-    """Load full-world Natural Earth vector GeoJSON (plus optional +360° antimeridian wrap copy)."""
+def _geom_intersects_bbox(coords: Any, w: float, s: float, e: float, n: float) -> bool:
+    if not coords:
+        return False
+    if isinstance(coords[0], (int, float)):
+        lon, lat = float(coords[0]), float(coords[1])
+        return (w <= lon <= e) and (s <= lat <= n)
+    return any(_geom_intersects_bbox(c, w, s, e, n) for c in coords)
+
+
+def _load_geojson_world(
+    filename: str,
+    *,
+    include_east_wrap: bool = True,
+    clip_bounds: tuple[float, float, float, float] | None = None,
+    pad_deg: float = 38.0,
+) -> dict[str, Any]:
+    """Load Natural Earth vector GeoJSON (plus optional +360° wrap), clipped to viewport + margin for fast WebGL2 MSAA."""
     p = NE_GEOJSON_DIR / filename
     if not p.is_file():
         return {"type": "FeatureCollection", "features": []}
@@ -195,6 +210,14 @@ def _load_geojson_world(filename: str, *, include_east_wrap: bool = True) -> dic
                 }
             )
         feats.extend(wrapped)
+    if clip_bounds is not None:
+        bw, bs, be, bn = clip_bounds
+        cw, cs, ce, cn = bw - pad_deg, max(-85.0, bs - pad_deg), be + pad_deg, min(85.0, bn + pad_deg)
+        feats = [
+            f
+            for f in feats
+            if f.get("geometry") and _geom_intersects_bbox(f["geometry"].get("coordinates"), cw, cs, ce, cn)
+        ]
     return {"type": "FeatureCollection", "features": feats}
 
 
@@ -218,9 +241,11 @@ def _build_maplibre_html(
     assert _ok
     relief_uri = "data:image/jpeg;base64," + base64.b64encode(_jpg_buf.tobytes()).decode("ascii")
 
-    coast_geo = _load_geojson_world("ne_50m_coastline.geojson", include_east_wrap=True)
-    rivers_geo = _load_geojson_world("ne_50m_rivers_lake_centerlines.geojson", include_east_wrap=True)
-    grat_geo = _load_geojson_world("ne_50m_graticules_15.geojson", include_east_wrap=True)
+    coast_geo = _load_geojson_world("ne_50m_coastline.geojson", include_east_wrap=True, clip_bounds=spec.relief_bounds)
+    rivers_geo = _load_geojson_world(
+        "ne_50m_rivers_lake_centerlines.geojson", include_east_wrap=True, clip_bounds=spec.relief_bounds
+    )
+    grat_geo = _load_geojson_world("ne_50m_graticules_15.geojson", include_east_wrap=True, clip_bounds=spec.relief_bounds)
     glacier_geo: dict[str, Any] = {"type": "FeatureCollection", "features": []}
 
     # Smooth organic Pleistocene Last Glacial Maximum ice sheet polygons
@@ -268,9 +293,10 @@ def _build_maplibre_html(
 html, body {{
   width: {width}px; height: {height}px; overflow: hidden; background: #09131E;
   font-family: {theme["font_sans"]}; color: {theme["text_primary"]};
+  -webkit-font-smoothing: antialiased;
 }}
 #map {{ position: absolute; inset: 0; width: 100%; height: 100%; }}
-#overlay-canvas {{ position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; }}
+#overlay-canvas {{ position: absolute; inset: 0; width: {width}px; height: {height}px; pointer-events: none; z-index: 5; }}
 #hud-layer {{
   position: absolute; top: 0; left: 0; width: 1920px; height: 1080px;
   transform: scale({scale:.6f}); transform-origin: top left;
@@ -278,22 +304,21 @@ html, body {{
 }}
 .vignette {{
   position: absolute; inset: 0; pointer-events: none; z-index: 8;
-  background: radial-gradient(ellipse 84% 78% at 50% 50%, rgba(0,0,0,0) 56%, rgba(4,7,12,0.62) 100%);
+  background: radial-gradient(ellipse 84% 78% at 50% 50%, rgba(0,0,0,0) 56%, rgba(4,7,12,0.58) 100%);
 }}
 .hud-title-card {{
   position: absolute; top: 44px; left: 54px; max-width: 680px;
-  padding: 18px 28px 20px;
-  background: linear-gradient(155deg, rgba(10,16,24,0.84) 0%, rgba(6,10,16,0.90) 100%);
-  border: 1px solid rgba(232,240,248,0.22); border-radius: 8px;
-  box-shadow: 0 18px 48px rgba(0,0,0,0.62), inset 0 1px 0 rgba(255,255,255,0.12);
-  backdrop-filter: blur(14px);
-}}
-.hud-title-card::before {{
-  content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-  background: linear-gradient(90deg, {theme["accent_amber"]} 0%, {theme["accent_glacial"]} 65%, transparent 100%);
+  padding: 16px 26px 18px;
+  background: linear-gradient(155deg, rgba(8,13,20,0.88) 0%, rgba(5,9,15,0.92) 100%);
+  border-left: 3px solid {theme["accent_amber"]};
+  border-top: 1px solid rgba(232,240,248,0.16);
+  border-right: 1px solid rgba(232,240,248,0.12);
+  border-bottom: 1px solid rgba(232,240,248,0.12);
+  border-radius: 4px;
+  box-shadow: 0 18px 44px rgba(0,0,0,0.55);
 }}
 .hud-era {{
-  font-family: {theme["font_mono"]}; font-size: 16px; font-weight: 600; letter-spacing: 0.22em;
+  font-family: {theme["font_mono"]}; font-size: 15px; font-weight: 600; letter-spacing: 0.22em;
   color: {theme["accent_amber"]}; text-transform: uppercase; margin-bottom: 6px;
 }}
 .hud-h1 {{
@@ -301,21 +326,22 @@ html, body {{
   letter-spacing: 0.08em; color: #F7F9FC; line-height: 1.14;
 }}
 .hud-sub {{
-  font-family: {theme["font_sans"]}; font-size: 19px; font-weight: 500; color: #DCE6F2; margin-top: 7px;
+  font-family: {theme["font_sans"]}; font-size: 18px; font-weight: 500; color: #DCE6F2; margin-top: 6px;
 }}
 .hud-telemetry {{
-  position: absolute; top: 44px; right: 54px; display: flex; align-items: center; gap: 18px;
-  padding: 14px 22px; background: rgba(7,12,19,0.88);
-  border: 1px solid rgba(232,240,248,0.24); border-radius: 8px;
-  font-family: {theme["font_mono"]}; font-size: 16px; font-weight: 600; color: #9ED6F2;
-  backdrop-filter: blur(12px);
+  position: absolute; top: 44px; right: 54px; display: flex; align-items: center; gap: 16px;
+  padding: 12px 20px; background: rgba(7,12,19,0.88);
+  border: 1px solid rgba(232,240,248,0.18); border-radius: 4px;
+  font-family: {theme["font_mono"]}; font-size: 15px; font-weight: 600; color: #9ED6F2;
+  font-variant-numeric: tabular-nums;
 }}
-.compass-svg {{ width: 42px; height: 42px; }}
+.compass-svg {{ width: 40px; height: 40px; flex-shrink: 0; }}
 .hud-scale {{
   position: absolute; bottom: 44px; right: 54px;
-  padding: 12px 20px; background: rgba(7,12,19,0.86);
-  border: 1px solid rgba(232,240,248,0.22); border-radius: 6px;
+  padding: 10px 18px; background: rgba(7,12,19,0.80);
+  border: 1px solid rgba(232,240,248,0.18); border-radius: 4px;
   font-family: {theme["font_mono"]}; font-size: 15px; font-weight: 600; color: #DCE6F2;
+  font-variant-numeric: tabular-nums;
   display: flex; flex-direction: column; align-items: flex-end; gap: 6px;
 }}
 .scale-bar-line {{
@@ -328,7 +354,7 @@ html, body {{
 </head>
 <body>
 <div id="map"></div>
-<canvas id="overlay-canvas" width="{width}" height="{height}"></canvas>
+<canvas id="overlay-canvas"></canvas>
 <div class="vignette"></div>
 <div id="hud-layer">
   <div class="hud-title-card" id="map-title-bbox">
@@ -338,14 +364,14 @@ html, body {{
   </div>
   <div class="hud-telemetry">
     <svg class="compass-svg" viewBox="0 0 48 48" fill="none">
-      <circle cx="24" cy="24" r="20" stroke="rgba(124,196,232,0.45)" stroke-width="1.4"/>
+      <circle cx="24" cy="24" r="20" stroke="rgba(124,196,232,0.45)" stroke-width="1.5"/>
       <polygon points="24,6 28,24 24,20 20,24" fill="{theme["accent_amber"]}"/>
       <polygon points="24,42 28,24 24,28 20,24" fill="rgba(232,240,248,0.52)"/>
       <text x="24" y="5" fill="#F5F7FA" font-size="9" font-weight="700" font-family="IBM Plex Mono" text-anchor="middle">N</text>
     </svg>
     <div>
       <div id="coord-readout">52.00° N  /  38.00° E</div>
-      <div style="font-size:13px;color:#B8C9DC;margin-top:3px;letter-spacing:0.12em;">PLEISTOCENE LGM RELIEF</div>
+      <div style="font-size:12px;color:#B8C9DC;margin-top:3px;letter-spacing:0.12em;">PLEISTOCENE LGM RELIEF</div>
     </div>
   </div>
   <div class="hud-scale">
@@ -365,6 +391,7 @@ const GLACIER_GEO = {json.dumps(glacier_geo)};
 const PALEO_GEO = {json.dumps(paleo_geo)};
 const W = {width}, H = {height};
 const SCALE = H / 1080.0;
+const DPR = Math.max(2, window.devicePixelRatio || 2);
 
 const styleObj = {{
   version: 8,
@@ -400,14 +427,14 @@ const styleObj = {{
     {{ id: "relief-main-layer", type: "raster", source: "relief_main", paint: {{ "raster-opacity": 1.0, "raster-resampling": "linear" }} }},
     {{ id: "relief-east-layer", type: "raster", source: "relief_east", paint: {{ "raster-opacity": 1.0, "raster-resampling": "linear" }} }},
     {{ id: "paleo-land-fill", type: "fill", source: "paleo_land", paint: {{ "fill-color": "#4A5A63", "fill-opacity": 0.84 }} }},
-    {{ id: "paleo-land-rim", type: "line", source: "paleo_land", paint: {{ "line-color": "#D4A362", "line-width": 1.8, "line-opacity": 0.72, "line-dasharray": [4, 3] }} }},
-    {{ id: "grat-layer", type: "line", source: "graticules", paint: {{ "line-color": "rgba(160,198,224,0.12)", "line-width": 0.85 }} }},
-    {{ id: "glacier-glow", type: "line", source: "glaciers", paint: {{ "line-color": "#BCE4FA", "line-width": 10.0, "line-opacity": 0.22, "line-blur": 8.0 }} }},
+    {{ id: "paleo-land-rim", type: "line", source: "paleo_land", paint: {{ "line-color": "#D4A362", "line-width": 2.4, "line-blur": 0.7, "line-opacity": 0.78 }} }},
+    {{ id: "grat-layer", type: "line", source: "graticules", paint: {{ "line-color": "rgba(160,198,224,0.08)", "line-width": 1.8, "line-blur": 0.9 }} }},
+    {{ id: "glacier-glow", type: "line", source: "glaciers", paint: {{ "line-color": "#BCE4FA", "line-width": 12.0, "line-opacity": 0.24, "line-blur": 9.0 }} }},
     {{ id: "glacier-fill", type: "fill", source: "glaciers", paint: {{ "fill-color": "#D4EEFC", "fill-opacity": 0.30 }} }},
-    {{ id: "glacier-rim", type: "line", source: "glaciers", paint: {{ "line-color": "#9CD2F0", "line-width": 1.4, "line-opacity": 0.62, "line-dasharray": [5, 3] }} }},
-    {{ id: "rivers-layer", type: "line", source: "rivers", paint: {{ "line-color": "#589BC2", "line-width": 1.25, "line-opacity": 0.56 }} }},
-    {{ id: "coast-glow", type: "line", source: "coastline", paint: {{ "line-color": "#7CC4E8", "line-width": 3.0, "line-opacity": 0.20, "line-blur": 3.0 }} }},
-    {{ id: "coast-line", type: "line", source: "coastline", paint: {{ "line-color": "#A2CBE0", "line-width": 1.2, "line-opacity": 0.76 }} }}
+    {{ id: "glacier-rim", type: "line", source: "glaciers", paint: {{ "line-color": "#9CD2F0", "line-width": 2.4, "line-blur": 0.8, "line-opacity": 0.68 }} }},
+    {{ id: "rivers-layer", type: "line", source: "rivers", paint: {{ "line-color": "#589BC2", "line-width": 2.0, "line-blur": 0.65, "line-opacity": 0.54 }} }},
+    {{ id: "coast-glow", type: "line", source: "coastline", paint: {{ "line-color": "#7CC4E8", "line-width": 4.4, "line-opacity": 0.20, "line-blur": 3.2 }} }},
+    {{ id: "coast-line", type: "line", source: "coastline", paint: {{ "line-color": "#A2CBE0", "line-width": 2.1, "line-blur": 0.6, "line-opacity": 0.80 }} }}
   ]
 }};
 
@@ -416,8 +443,10 @@ const map = new maplibregl.Map({{
   style: styleObj,
   center: [SPEC.start_camera.center_lon, SPEC.start_camera.center_lat],
   zoom: SPEC.start_camera.zoom,
-  pitch: SPEC.start_camera.pitch || 26,
+  pitch: SPEC.start_camera.pitch || 24,
   bearing: SPEC.start_camera.bearing || 0,
+  antialias: true,
+  pixelRatio: DPR,
   renderWorldCopies: true,
   interactive: false,
   attributionControl: false,
@@ -434,7 +463,7 @@ const builtRoutes = (SPEC.routes || []).map((r) => {{
   const curved = r.coords.length >= 3 ? turf.bezierSpline(line, {{ resolution: 6000, sharpness: 0.75 }}) : line;
   const totalKm = turf.length(curved, {{ units: "kilometers" }});
   const pts = [];
-  const N = 160;
+  const N = 220;
   for (let i = 0; i <= N; i++) {{
     const pt = turf.along(curved, (totalKm * i) / N, {{ units: "kilometers" }});
     pts.push(pt.geometry.coordinates);
@@ -442,47 +471,163 @@ const builtRoutes = (SPEC.routes || []).map((r) => {{
   return {{ ...r, pts }};
 }});
 
-function easeInOutCubic(x) {{
-  return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+// Quintic smootherstep: zero velocity AND zero acceleration at endpoints -> silk-smooth motion
+function smootherstep(x) {{
+  const u = Math.max(0, Math.min(1, x));
+  return u * u * u * (u * (u * 6 - 15) + 10);
 }}
 
-const ctx = document.getElementById("overlay-canvas").getContext("2d");
+// Mercator latitude projection so high-latitude camera travel moves at uniform screen velocity
+function latToMercY(lat) {{
+  const rad = Math.max(-82, Math.min(82, lat)) * Math.PI / 180.0;
+  return Math.log(Math.tan(Math.PI / 4.0 + rad / 2.0));
+}}
+function mercYToLat(y) {{
+  return (2.0 * Math.atan(Math.exp(y)) - Math.PI / 2.0) * 180.0 / Math.PI;
+}}
+
+// Configure HiDPI 2x overlay canvas with subpixel bilinear image smoothing
+const ovCanvas = document.getElementById("overlay-canvas");
+ovCanvas.width = Math.round(W * DPR);
+ovCanvas.height = Math.round(H * DPR);
+const ctx = ovCanvas.getContext("2d");
+ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+ctx.imageSmoothingEnabled = true;
+ctx.imageSmoothingQuality = "high";
+
+// 2x HiDPI Offscreen Pre-Rasterized Label & Marker Badge Sprites (ZERO ctx.fillText per frame!)
+const SPRITE_DPR = Math.max(2, DPR);
+let labelSprites = [];
+let markerSprites = [];
+
+function buildLabelSprite(lbl) {{
+  const isOcean = lbl.kind === "ocean" || lbl.kind === "sea";
+  const fsize = (lbl.size || (isOcean ? 26 : 24)) * SCALE;
+  const fontStr = isOcean
+    ? `italic 600 ${{fsize.toFixed(2)}}px 'Cormorant Garamond', Georgia, serif`
+    : `600 ${{fsize.toFixed(2)}}px 'Cinzel', Georgia, serif`;
+  const text = (lbl.text || "").toUpperCase();
+
+  const tmp = document.createElement("canvas").getContext("2d");
+  tmp.font = fontStr;
+  const metrics = tmp.measureText(text);
+  const padX = Math.ceil(28 * SCALE);
+  const padY = Math.ceil(22 * SCALE);
+  const cssW = Math.ceil(metrics.width + padX * 2);
+  const cssH = Math.ceil(fsize * 1.45 + padY * 2);
+
+  const c = document.createElement("canvas");
+  c.width = Math.ceil(cssW * SPRITE_DPR);
+  c.height = Math.ceil(cssH * SPRITE_DPR);
+  const g = c.getContext("2d");
+  g.scale(SPRITE_DPR, SPRITE_DPR);
+  g.font = fontStr;
+  g.textAlign = "center";
+  g.textBaseline = "middle";
+  g.shadowColor = "rgba(3, 8, 16, 0.94)";
+  g.shadowBlur = 12 * SCALE;
+  g.shadowOffsetX = 0;
+  g.shadowOffsetY = 2 * SCALE;
+  g.fillStyle = isOcean ? "rgba(168, 214, 240, 0.92)" : "rgba(235, 242, 249, 0.88)";
+  g.fillText(text, cssW * 0.5, cssH * 0.5);
+  return {{ lbl, canvas: c, cssW, cssH }};
+}}
+
+function buildMarkerBadgeSprite(m) {{
+  const color = m.color || "#E39B43";
+  const title = m.label || "";
+  const sub = m.sublabel || "";
+  const titleFont = `700 ${{(21 * SCALE).toFixed(2)}}px 'Plus Jakarta Sans', sans-serif`;
+  const subFont = `600 ${{(15.5 * SCALE).toFixed(2)}}px 'IBM Plex Mono', monospace`;
+
+  const tmp = document.createElement("canvas").getContext("2d");
+  tmp.font = titleFont;
+  const tw = tmp.measureText(title).width;
+  tmp.font = subFont;
+  const sw = sub ? tmp.measureText(sub).width : 0;
+  const bw = Math.ceil(Math.max(tw, sw) + 34 * SCALE);
+  const bh = Math.ceil((sub ? 62 : 40) * SCALE);
+  const pad = Math.ceil(10 * SCALE);
+  const cssW = bw + pad * 2;
+  const cssH = bh + pad * 2;
+
+  const c = document.createElement("canvas");
+  c.width = Math.ceil(cssW * SPRITE_DPR);
+  c.height = Math.ceil(cssH * SPRITE_DPR);
+  const g = c.getContext("2d");
+  g.scale(SPRITE_DPR, SPRITE_DPR);
+
+  // Subtle shadow + frosted slate badge
+  g.save();
+  g.shadowColor = "rgba(0, 0, 0, 0.55)";
+  g.shadowBlur = 10 * SCALE;
+  g.shadowOffsetY = 3 * SCALE;
+  g.fillStyle = "rgba(7, 11, 18, 0.90)";
+  g.strokeStyle = "rgba(232, 240, 248, 0.28)";
+  g.lineWidth = 1.4 * SCALE;
+  g.beginPath();
+  g.roundRect(pad, pad, bw, bh, 6 * SCALE);
+  g.fill();
+  g.restore();
+  g.strokeStyle = "rgba(232, 240, 248, 0.28)";
+  g.lineWidth = 1.4 * SCALE;
+  g.beginPath();
+  g.roundRect(pad, pad, bw, bh, 6 * SCALE);
+  g.stroke();
+
+  // Accent strip
+  g.fillStyle = color;
+  g.fillRect(pad, pad + 5 * SCALE, 4.0 * SCALE, bh - 10 * SCALE);
+
+  g.textAlign = "left";
+  g.textBaseline = "top";
+  g.fillStyle = "#F7F9FC";
+  g.font = titleFont;
+  g.fillText(title, pad + 16 * SCALE, pad + 8 * SCALE);
+  if (sub) {{
+    g.fillStyle = "#B4DCF2";
+    g.font = subFont;
+    g.fillText(sub, pad + 16 * SCALE, pad + 35 * SCALE);
+  }}
+  return {{ m, canvas: c, cssW, cssH, bw, bh, pad }};
+}}
+
+window.__initSprites = function() {{
+  labelSprites = (SPEC.labels || []).map(buildLabelSprite);
+  markerSprites = (SPEC.markers || []).map(buildMarkerBadgeSprite);
+}};
 
 function drawOverlay(t_s) {{
   ctx.clearRect(0, 0, W, H);
   ctx.save();
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = "high";
 
-  // 1. Sea / Continent / Region editorial watermark labels (smooth soft shadow, zero jagged stroke!)
-  for (const lbl of (SPEC.labels || [])) {{
-    const p = map.project([lbl.lon, lbl.lat]);
-    if (p.x < -80 || p.x > W + 80 || p.y < -80 || p.y > H + 80) continue;
-    const isOcean = lbl.kind === "ocean" || lbl.kind === "sea";
-    const fsize = Math.round((lbl.size || (isOcean ? 26 : 24)) * SCALE);
-    ctx.save();
-    ctx.font = isOcean
-      ? `italic 600 ${{fsize}}px 'Cormorant Garamond', Georgia, serif`
-      : `600 ${{fsize}}px 'Cinzel', Georgia, serif`;
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    const text = (lbl.text || "").toUpperCase();
-    ctx.shadowColor = "rgba(3, 8, 16, 0.94)";
-    ctx.shadowBlur = 12 * SCALE;
-    ctx.shadowOffsetX = 0;
-    ctx.shadowOffsetY = 2 * SCALE;
-    ctx.fillStyle = isOcean ? "rgba(168, 214, 240, 0.92)" : "rgba(235, 242, 249, 0.88)";
-    ctx.fillText(text, p.x, p.y);
-    ctx.restore();
+  // 1. Pre-rasterized 2x HiDPI sea/region watermark labels (bilinear subpixel drawImage -> 0.0px jumping!)
+  for (const sp of labelSprites) {{
+    const p = map.project([sp.lbl.lon, sp.lbl.lat]);
+    if (p.x < -sp.cssW || p.x > W + sp.cssW || p.y < -sp.cssH || p.y > H + sp.cssH) continue;
+    ctx.drawImage(sp.canvas, p.x - sp.cssW * 0.5, p.y - sp.cssH * 0.5, sp.cssW, sp.cssH);
   }}
 
-  // 2. Animated glowing migration routes
+  // 2. Animated glowing migration routes (smooth subpixel fractional interpolation at comet tip)
   for (const r of builtRoutes) {{
     const rs = r.start_s || 0.4;
     const re = r.end_s || (SPEC.duration_s - 0.8);
     const prog = Math.max(0, Math.min(1, (t_s - rs) / Math.max(0.2, re - rs)));
     if (prog <= 0.005) continue;
-    const eased = easeInOutCubic(prog);
-    const count = Math.max(2, Math.floor(r.pts.length * eased));
-    const projPts = r.pts.slice(0, count).map((c) => map.project(c));
+    const eased = smootherstep(prog);
+    const exactIdx = (r.pts.length - 1) * eased;
+    const fullCount = Math.max(1, Math.floor(exactIdx));
+    const frac = exactIdx - fullCount;
+    const projPts = [];
+    for (let i = 0; i <= fullCount; i++) projPts.push(map.project(r.pts[i]));
+    if (fullCount + 1 < r.pts.length && frac > 1e-4) {{
+      const pA = map.project(r.pts[fullCount]);
+      const pB = map.project(r.pts[fullCount + 1]);
+      projPts.push({{ x: pA.x + (pB.x - pA.x) * frac, y: pA.y + (pB.y - pA.y) * frac }});
+    }}
+    if (projPts.length < 2) continue;
     const color = r.color || "#E39B43";
 
     // Outer bloom pass
@@ -492,21 +637,21 @@ function drawOverlay(t_s) {{
     for (let i = 1; i < projPts.length; i++) ctx.lineTo(projPts[i].x, projPts[i].y);
     ctx.strokeStyle = color;
     ctx.globalAlpha = 0.28;
-    ctx.lineWidth = 11 * SCALE;
+    ctx.lineWidth = 11.5 * SCALE;
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
     ctx.stroke();
 
-    // Core crisp route line
+    // Core crisp route line (solid anti-aliased stroke; avoid thin aliasing dashes)
     ctx.globalAlpha = 0.96;
-    ctx.lineWidth = 3.6 * SCALE;
-    if (r.dashed) ctx.setLineDash([12 * SCALE, 7 * SCALE]);
+    ctx.lineWidth = 4.0 * SCALE;
+    if (r.dashed) ctx.setLineDash([16 * SCALE, 9 * SCALE]);
     ctx.stroke();
     ctx.setLineDash([]);
 
     // Glowing comet head & directional arrowhead
     const head = projPts[projPts.length - 1];
-    const prev = projPts[Math.max(0, projPts.length - 3)];
+    const prev = projPts[Math.max(0, projPts.length - 4)];
     const ang = Math.atan2(head.y - prev.y, head.x - prev.x);
     const grad = ctx.createRadialGradient(head.x, head.y, 1, head.x, head.y, 18 * SCALE);
     grad.addColorStop(0, "#FFF7E6");
@@ -517,12 +662,11 @@ function drawOverlay(t_s) {{
     ctx.arc(head.x, head.y, 18 * SCALE, 0, Math.PI * 2);
     ctx.fill();
 
-    // Crisp arrow tip
     ctx.translate(head.x, head.y);
     ctx.rotate(ang);
     ctx.fillStyle = "#FFF7E6";
     ctx.beginPath();
-    ctx.moveTo(9 * SCALE, 0);
+    ctx.moveTo(9.5 * SCALE, 0);
     ctx.lineTo(-6 * SCALE, -5.5 * SCALE);
     ctx.lineTo(-3 * SCALE, 0);
     ctx.lineTo(-6 * SCALE, 5.5 * SCALE);
@@ -531,21 +675,41 @@ function drawOverlay(t_s) {{
     ctx.restore();
   }}
 
-  // 3. Pulsing site markers + modern frosted glass pills (+25% mobile readability!)
-  for (const m of (SPEC.markers || [])) {{
+  // 3. Pulsing site markers + pre-rasterized 2x HiDPI badge sprites (subpixel smooth + HUD-safe edge fade!)
+  for (const sp of markerSprites) {{
+    const m = sp.m;
     const ms = m.start_s || 0.2;
-    if (t_s < ms) continue;
-    const fade = Math.min(1, (t_s - ms) / 0.45);
+    const me = m.end_s || (SPEC.duration_s + 1.0);
+    if (t_s < ms || t_s > me + 0.5) continue;
+    let fade = smootherstep(Math.min(1, (t_s - ms) / 0.50));
+    if (t_s > me) fade *= (1.0 - smootherstep(Math.min(1, (t_s - me) / 0.45)));
     const p = map.project([m.lon, m.lat]);
+    const dx = (m.offset_x || 22) * SCALE;
+    const dy = (m.offset_y || -38) * SCALE;
+    const lx = p.x + dx;
+    const ly = p.y + dy;
+    // Gracefully fade out before badge clips off-screen or collides with bottom-right HUD scale bar
+    const edgeMargin = 28 * SCALE;
+    const hudRightSafe = (lx + sp.bw > W - 260 * SCALE) && (ly + sp.bh > H - 125 * SCALE);
+    if (hudRightSafe || lx < edgeMargin || ly < edgeMargin || (lx + sp.bw) > (W - edgeMargin) || (ly + sp.bh) > (H - edgeMargin)) {{
+      const distOut = Math.max(
+        edgeMargin - lx,
+        edgeMargin - ly,
+        (lx + sp.bw) - (W - edgeMargin),
+        (ly + sp.bh) - (H - edgeMargin),
+        hudRightSafe ? 48 * SCALE : 0
+      );
+      fade *= Math.max(0, 1.0 - distOut / (48 * SCALE));
+    }}
+    if (fade <= 0.01) continue;
     const color = m.color || "#E39B43";
-    const pulse = ((t_s - ms) % 1.6) / 1.6;
+    const pulse = ((t_s - ms) % 1.8) / 1.8;
 
     ctx.save();
-    ctx.globalAlpha = fade;
     // Radar ring
     ctx.strokeStyle = color;
-    ctx.lineWidth = 2 * SCALE;
-    ctx.globalAlpha = fade * (1 - pulse) * 0.85;
+    ctx.lineWidth = 2.2 * SCALE;
+    ctx.globalAlpha = fade * (1 - pulse) * 0.80;
     ctx.beginPath();
     ctx.arc(p.x, p.y, (8 + pulse * 24) * SCALE, 0, Math.PI * 2);
     ctx.stroke();
@@ -554,85 +718,60 @@ function drawOverlay(t_s) {{
     ctx.globalAlpha = fade;
     ctx.fillStyle = "#FFF7E6";
     ctx.beginPath();
-    ctx.arc(p.x, p.y, 6.0 * SCALE, 0, Math.PI * 2);
+    ctx.arc(p.x, p.y, 6.2 * SCALE, 0, Math.PI * 2);
     ctx.fill();
     ctx.strokeStyle = color;
     ctx.lineWidth = 2.8 * SCALE;
     ctx.stroke();
 
-    // Frosted label badge offset above/right
-    const dx = (m.offset_x || 22) * SCALE;
-    const dy = (m.offset_y || -38) * SCALE;
-    const lx = p.x + dx;
-    const ly = p.y + dy;
-    const title = m.label || "";
-    const sub = m.sublabel || "";
-
-    ctx.font = `700 ${{Math.round(21 * SCALE)}}px 'Plus Jakarta Sans', sans-serif`;
-    const tw = ctx.measureText(title).width;
-    ctx.font = `600 ${{Math.round(15.5 * SCALE)}}px 'IBM Plex Mono', monospace`;
-    const sw = sub ? ctx.measureText(sub).width : 0;
-    const bw = Math.max(tw, sw) + 32 * SCALE;
-    const bh = (sub ? 60 : 38) * SCALE;
-
     // Leader line from pin to nearest badge edge
-    const anchorX = lx > p.x ? lx : (lx + bw);
+    const anchorX = lx > p.x ? lx : (lx + sp.bw);
     ctx.strokeStyle = "rgba(232,240,248,0.68)";
-    ctx.lineWidth = 1.6 * SCALE;
+    ctx.lineWidth = 1.8 * SCALE;
     ctx.beginPath();
     ctx.moveTo(p.x, p.y);
-    ctx.lineTo(anchorX, ly + bh * 0.5);
+    ctx.lineTo(anchorX, ly + sp.bh * 0.5);
     ctx.stroke();
 
-    // Badge card
-    ctx.fillStyle = "rgba(7, 11, 18, 0.92)";
-    ctx.strokeStyle = "rgba(232, 240, 248, 0.32)";
-    ctx.lineWidth = 1.3 * SCALE;
-    ctx.beginPath();
-    ctx.roundRect(lx, ly, bw, bh, 7 * SCALE);
-    ctx.fill();
-    ctx.stroke();
-
-    // Accent strip
-    ctx.fillStyle = color;
-    ctx.fillRect(lx, ly + 5 * SCALE, 4.0 * SCALE, bh - 10 * SCALE);
-
-    ctx.textAlign = "left";
-    ctx.textBaseline = "top";
-    ctx.fillStyle = "#F7F9FC";
-    ctx.font = `700 ${{Math.round(21 * SCALE)}}px 'Plus Jakarta Sans', sans-serif`;
-    ctx.fillText(title, lx + 16 * SCALE, ly + 8 * SCALE);
-    if (sub) {{
-      ctx.fillStyle = "#B4DCF2";
-      ctx.font = `600 ${{Math.round(15.5 * SCALE)}}px 'IBM Plex Mono', monospace`;
-      ctx.fillText(sub, lx + 16 * SCALE, ly + 35 * SCALE);
-    }}
+    // Blit pre-rasterized 2x HiDPI badge bitmap at exact floating-point coordinates
+    ctx.drawImage(sp.canvas, lx - sp.pad, ly - sp.pad, sp.cssW, sp.cssH);
     ctx.restore();
   }}
   ctx.restore();
 }}
 
+// Precompute damped Mercator camera endpoints (avoid micro-jitter simultaneous pitch+bearing twist)
+const ZOOM_OFFSET = Math.log2(W / 1920.0);
+const START_MY = latToMercY(SPEC.start_camera.center_lat);
+const END_MY = latToMercY(SPEC.end_camera.center_lat);
+const START_PITCH = SPEC.start_camera.pitch != null ? SPEC.start_camera.pitch : 24;
+const END_PITCH = SPEC.end_camera.pitch != null ? SPEC.end_camera.pitch : START_PITCH;
+const START_BEARING = SPEC.start_camera.bearing || 0;
+const RAW_END_BEARING = SPEC.end_camera.bearing != null ? SPEC.end_camera.bearing : START_BEARING;
+// Damp tiny simultaneous bearing micro-twists when pitch is also changing
+const DAMPED_END_BEARING = (Math.abs(RAW_END_BEARING - START_BEARING) < 5.0 && Math.abs(END_PITCH - START_PITCH) > 0.5)
+  ? START_BEARING
+  : RAW_END_BEARING;
+
 window.__renderAt = function(t_s) {{
   const u = Math.max(0, Math.min(1, t_s / Math.max(0.1, SPEC.duration_s)));
-  const e = easeInOutCubic(u);
+  const e = smootherstep(u);
   const lon = SPEC.start_camera.center_lon + (SPEC.end_camera.center_lon - SPEC.start_camera.center_lon) * e;
-  const lat = SPEC.start_camera.center_lat + (SPEC.end_camera.center_lat - SPEC.start_camera.center_lat) * e;
-  const zoom = SPEC.start_camera.zoom + (SPEC.end_camera.zoom - SPEC.start_camera.zoom) * e;
-  const pitch = (SPEC.start_camera.pitch || 26) + ((SPEC.end_camera.pitch || 26) - (SPEC.start_camera.pitch || 26)) * e;
-  const bearing = (SPEC.start_camera.bearing || 0) + ((SPEC.end_camera.bearing || 0) - (SPEC.start_camera.bearing || 0)) * e;
+  const lat = mercYToLat(START_MY + (END_MY - START_MY) * e);
+  const zoom = SPEC.start_camera.zoom + (SPEC.end_camera.zoom - SPEC.start_camera.zoom) * e + ZOOM_OFFSET;
+  const pitch = START_PITCH + (END_PITCH - START_PITCH) * e;
+  const bearing = START_BEARING + (DAMPED_END_BEARING - START_BEARING) * e;
 
   map.jumpTo({{ center: [lon, lat], zoom, pitch, bearing }});
   map._render();
   drawOverlay(t_s);
 
-  // Normalize longitude cleanly into [-180, 180] so antimeridian maps display W/E accurately!
   let normLon = ((lon + 180) % 360 + 360) % 360 - 180;
   const ns = lat >= 0 ? "N" : "S";
   const ew = normLon >= 0 ? "E" : "W";
   document.getElementById("coord-readout").textContent =
     `${{Math.abs(lat).toFixed(2)}}° ${{ns}}  /  ${{Math.abs(normLon).toFixed(2)}}° ${{ew}}`;
 
-  // Approximate scale bar distance for 140px at current latitude & zoom
   const mpp = (156543.03392 * Math.cos((lat * Math.PI) / 180)) / Math.pow(2, zoom);
   const km = Math.max(10, Math.round((mpp * 140 * SCALE) / 1000 / 50) * 50);
   document.getElementById("scale-label").textContent = `${{km.toLocaleString("en-US")}} KM`;
@@ -654,10 +793,11 @@ def render_webgl_cinema_map(
     width: int = 2560,
     height: int = 1440,
     fps: int = 24,
-    render_width: int = 1920,
-    render_height: int = 1080,
+    render_width: int = 960,
+    render_height: int = 540,
+    device_scale_factor: int = 2,
 ) -> dict[str, Any]:
-    """Render a 2K 24fps GeoLayers-grade MapLibre GL WebGL2 documentary map animation."""
+    """Render a 2K 24fps zero-jitter 2x-supersampled MapLibre GL WebGL2 documentary map animation."""
     out_mp4.parent.mkdir(parents=True, exist_ok=True)
     relief_png, land_ratio = _grade_relief_plate_paleo(spec.relief_bounds, out_mp4.with_suffix(".relief.png"))
 
@@ -665,7 +805,9 @@ def render_webgl_cinema_map(
     html_path.write_text(_build_maplibre_html(spec, relief_png, width=render_width, height=render_height), encoding="utf-8")
 
     total_frames = max(2, int(round(spec.duration_s * fps)))
-    vf = f"scale={width}:{height}:flags=lanczos" if (render_width, render_height) != (width, height) else "null"
+    phys_w = render_width * max(1, int(device_scale_factor))
+    phys_h = render_height * max(1, int(device_scale_factor))
+    vf = f"scale={width}:{height}:flags=lanczos" if (phys_w, phys_h) != (width, height) else "null"
     ff_cmd = [
         "ffmpeg",
         "-y",
@@ -686,7 +828,7 @@ def render_webgl_cinema_map(
         "-preset",
         "medium",
         "-crf",
-        "17",
+        "16",
         "-pix_fmt",
         "yuv420p",
         "-movflags",
@@ -702,12 +844,22 @@ def render_webgl_cinema_map(
     with sync_playwright() as p:
         browser = p.chromium.launch(
             headless=True,
-            args=["--use-gl=angle", "--use-angle=swiftshader", "--enable-webgl", "--ignore-gpu-blocklist"],
+            args=[
+                "--use-gl=angle",
+                "--use-angle=swiftshader",
+                "--enable-webgl",
+                "--ignore-gpu-blocklist",
+                "--enable-antialiasing",
+            ],
         )
-        page = browser.new_page(viewport={"width": render_width, "height": render_height}, device_scale_factor=1)
+        page = browser.new_page(
+            viewport={"width": render_width, "height": render_height},
+            device_scale_factor=max(1, int(device_scale_factor)),
+        )
         page.goto(html_path.resolve().as_uri(), wait_until="load")
         page.wait_for_function("() => window.__mapReady === true", timeout=60000)
         page.evaluate("() => document.fonts.ready")
+        page.evaluate("() => window.__initSprites()")
         raw_bb = list(page.evaluate("() => window.__getTitleBBox()"))
         title_bbox = [int(round(raw_bb[0] * sx)), int(round(raw_bb[1] * sy)), int(round(raw_bb[2] * sx)), int(round(raw_bb[3] * sy))]
         cdp = page.context.new_cdp_session(page)
@@ -715,7 +867,7 @@ def render_webgl_cinema_map(
         for f_idx in range(total_frames):
             t_s = f_idx / float(fps)
             page.evaluate(f"() => window.__renderAt({t_s:.4f})")
-            res = cdp.send("Page.captureScreenshot", {"format": "jpeg", "quality": 95})
+            res = cdp.send("Page.captureScreenshot", {"format": "jpeg", "quality": 96})
             proc.stdin.write(base64.b64decode(res["data"]))
 
         browser.close()
@@ -736,4 +888,6 @@ def render_webgl_cinema_map(
         "width": width,
         "height": height,
         "fps": fps,
+        "supersample_scale": max(1, int(device_scale_factor)),
+        "physical_render_size": [phys_w, phys_h],
     }

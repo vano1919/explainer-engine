@@ -134,11 +134,26 @@ def mix_broadcast_cinema_audio(
     sfx_events: list[dict[str, Any]],
     out_wav: Path,
     sub_bass_events: list[dict[str, Any]] | None = None,
+    ltx_diegetic_wav: Path | None = None,
+    ltx_diegetic_gain_db: float = 0.0,
+    silence_drops: list[dict[str, Any]] | None = None,
+    min_music_raw_duration_s: float = 0.0,
     sr: int = 48000,
     target_lufs: float = -14.0,
     true_peak_ceiling_db: float = -1.2,
 ) -> dict[str, Any]:
-    """Mix 5-layer 48kHz stereo broadcast documentary master with <1.0 dB pumping and exact -14.0 LUFS."""
+    """Mix 6-layer 48kHz stereo broadcast documentary master with <1.0 dB pumping and exact -14.0 LUFS.
+
+    Layers:
+    1. Voice (ElevenLabs Odom polished)
+    2. Continuous Musical Score (multi-minute >=45s real recordings with vocal-pocket EQ + Cinema Silence Drops)
+    3. Scene-Locked Ambience (0.45s equal-power J/L crossfades + Cinema Silence Drops)
+    4. Stabilized LTX Native Diegetic Foley (85Hz HPF + light afftdn + 0.40s J/L crossfades)
+    5. LTX-Synced CC0 Punch SFX (capped <= -8.5 dB rel voice, +-3% pitch variety)
+    6. 40-80 Hz Sub-Bass Cinematic Impacts (real CC0 bandpassed impacts)
+    """
+    from explainer_engine.audio.cinematic_score import apply_cinema_silence_drops, validate_music_stem
+
     out_wav.parent.mkdir(parents=True, exist_ok=True)
     n_total = int(round(total_duration_s * sr))
 
@@ -159,32 +174,42 @@ def mix_broadcast_cinema_audio(
     music_duck = _smooth_voice_duck_envelope(v_mono, sr, duck_db=-1.6, attack_ms=220.0, release_ms=900.0)
     amb_duck = _smooth_voice_duck_envelope(v_mono, sr, duck_db=-1.1, attack_ms=240.0, release_ms=950.0)
 
-    # 2. Multi-Act Music Score (smooth 3.0s crossfades between acts)
+    # 2. Continuous Multi-Act Musical Score (smooth 3.5s equal-power crossfades between acts)
     music_buf = np.zeros((n_total, 2), dtype=np.float32)
     for act in music_acts:
         p = Path(str(act["wav_path"]))
         if not p.is_file():
             continue
+        if min_music_raw_duration_s > 0.0:
+            validate_music_stem(p, min_duration_s=min_music_raw_duration_s)
         st = max(0.0, float(act["start_s"]))
         en = min(total_duration_s, float(act["end_s"]))
         if en <= st:
             continue
         s_idx, e_idx = int(round(st * sr)), int(round(en * sr))
         seg_n = e_idx - s_idx
-        stem = _eq_bed(_load_stereo_48k(p, sr=sr), sr, hp_hz=42.0, lp_hz=7200.0)
+        raw_m = _load_stereo_48k(p, sr=sr)
+        off_s = max(0.0, float(act.get("source_offset_s", 0.0)))
+        off_n = int(round(off_s * sr))
+        if off_n > 0 and off_n < len(raw_m):
+            raw_m = raw_m[off_n:]
+        stem = _eq_bed(raw_m, sr, hp_hz=42.0, lp_hz=6800.0)
         stem = _loop_seamless(stem, seg_n)
-        lvl_db = float(act.get("level_dbfs", -29.5))
+        lvl_db = float(act.get("level_dbfs", -28.5))
         stem = _normalize_rms_db(stem, lvl_db)
 
-        xf_s = float(act.get("fade_s", 2.5))
+        xf_s = float(act.get("fade_s", 3.2))
         xf_n = min(seg_n // 3, int(round(xf_s * sr)))
         if xf_n > 10:
+            t_r = np.linspace(0.0, np.pi * 0.5, xf_n, dtype=np.float32)
             env = np.ones(seg_n, dtype=np.float32)
-            env[:xf_n] = np.linspace(0.0, 1.0, xf_n, dtype=np.float32)
-            env[-xf_n:] = np.linspace(1.0, 0.0, xf_n, dtype=np.float32)
+            env[:xf_n] = np.sin(t_r)
+            env[-xf_n:] = np.cos(t_r)
             stem *= env[:, None]
         music_buf[s_idx:e_idx] += stem
     music_buf *= music_duck[:, None]
+    if silence_drops:
+        music_buf = apply_cinema_silence_drops(music_buf, sr, silence_drops)
 
     # 3. Scene-Locked Ambiences with smooth J/L-cut overlaps (0.35-0.80s)
     amb_buf = np.zeros((n_total, 2), dtype=np.float32)
@@ -210,9 +235,10 @@ def mix_broadcast_cinema_audio(
             seg = _normalize_rms_db(seg, float(sh.get("level_dbfs", -32.0)))
             fn = min(seg_n // 3, int(round(0.45 * sr)))
             if fn > 10:
+                t_r = np.linspace(0.0, np.pi * 0.5, fn, dtype=np.float32)
                 env = np.ones(seg_n, dtype=np.float32)
-                env[:fn] = np.linspace(0.0, 1.0, fn, dtype=np.float32)
-                env[-fn:] = np.linspace(1.0, 0.0, fn, dtype=np.float32)
+                env[:fn] = np.sin(t_r)
+                env[-fn:] = np.cos(t_r)
                 seg *= env[:, None]
             amb_buf[s_idx:e_idx] += seg
             cent = _spectral_centroid(seg, sr)
@@ -232,8 +258,22 @@ def mix_broadcast_cinema_audio(
             }
         )
     amb_buf *= amb_duck[:, None]
+    if silence_drops:
+        amb_buf = apply_cinema_silence_drops(amb_buf, sr, silence_drops)
 
-    # 4. Visual-Spotted Foley & UI Micro-SFX (strictly capped <= -8 dB rel voice, subtle pitch/EQ variation!)
+    # 4. Layer 4 — Stabilized LTX Native Diegetic Foley Stem (0.40s J/L crossfaded 48kHz native audio)
+    ltx_buf = np.zeros((n_total, 2), dtype=np.float32)
+    ltx_layer_active = False
+    if ltx_diegetic_wav is not None and Path(ltx_diegetic_wav).is_file():
+        ltx_raw = _load_stereo_48k(Path(ltx_diegetic_wav), sr=sr)
+        l_len = min(n_total, len(ltx_raw))
+        ltx_buf[:l_len] = ltx_raw[:l_len] * float(10.0 ** (ltx_diegetic_gain_db / 20.0))
+        ltx_buf *= amb_duck[:, None]
+        if silence_drops:
+            ltx_buf = apply_cinema_silence_drops(ltx_buf, sr, silence_drops)
+        ltx_layer_active = True
+
+    # 5. Layer 5 — Visual-Spotted / LTX-Synced CC0 Punch SFX (strictly capped <= -8.5 dB rel voice, +-3% pitch variety!)
     sfx_buf = np.zeros((n_total, 2), dtype=np.float32)
     max_sfx_rel_db = -40.0
     usage_counts: dict[str, int] = {}
@@ -245,7 +285,6 @@ def mix_broadcast_cinema_audio(
         max_dur = float(ev.get("max_duration_s", 2.2))
         raw = _load_stereo_48k(p, sr=sr)
         raw = raw[: min(len(raw), int(round(max_dur * sr)))]
-        # Apply subtle organic pitch variation (+-3%) when a file appears more than once in non-adjacent spots
         cnt = usage_counts.get(str(p), 0)
         usage_counts[str(p)] = cnt + 1
         if cnt > 0 and len(raw) > 256:
@@ -268,7 +307,7 @@ def mix_broadcast_cinema_audio(
             ev_rms_db = 20.0 * np.log10(float(np.sqrt(np.mean(scaled * scaled)) + 1e-9))
             max_sfx_rel_db = max(max_sfx_rel_db, ev_rms_db - voice_rms_db)
 
-    # 5. Layer 5 — 40-80 Hz Sub-Bass Cinematic Impacts (filtered from real CC0 impact WAVs, zero sine placeholders)
+    # 6. Layer 6 — 40-80 Hz Sub-Bass Cinematic Impacts (filtered from real CC0 impact WAVs, zero sine placeholders)
     sub_buf = np.zeros((n_total, 2), dtype=np.float32)
     sos_sub = butter(3, [38.0 / (0.5 * sr), 92.0 / (0.5 * sr)], btype="bandpass", output="sos")
     for sev in sub_bass_events or []:
@@ -306,8 +345,8 @@ def mix_broadcast_cinema_audio(
     else:
         pump_swing_db = 0.0
 
-    # 6. Sum all 5 cinema layers & Two-Pass EBU R128 Mastering (-14.0 LUFS / <= true_peak_ceiling_db dBTP)
-    mix = voice_buf + music_buf + amb_buf + sfx_buf + sub_buf
+    # Sum all 6 cinema layers & Two-Pass EBU R128 Mastering (-14.0 LUFS / <= true_peak_ceiling_db dBTP)
+    mix = voice_buf + music_buf + amb_buf + ltx_buf + sfx_buf + sub_buf
     # Gentle head/tail 30ms anti-pop fade
     anti_pop = min(n_total // 8, int(round(0.03 * sr)))
     if anti_pop > 4:
@@ -404,7 +443,8 @@ def mix_broadcast_cinema_audio(
     sf.write(str(out_wav), mix, sr, subtype="PCM_24")
 
     report = {
-        "schema": "broadcast_cinema_audio_mix/1",
+        "schema": "broadcast_cinema_audio_mix/2",
+        "layers": 6 if ltx_layer_active else 5,
         "master_wav": str(out_wav),
         "sample_rate": sr,
         "channels": 2,
@@ -414,6 +454,8 @@ def mix_broadcast_cinema_audio(
         "true_peak_dbtp": round(final_true_peak_dbtp, 2),
         "max_sfx_relative_to_voice_db": round(max_sfx_rel_db, 2),
         "max_pause_pumping_swing_db": round(pump_swing_db, 2),
+        "ltx_diegetic_layer_active": ltx_layer_active,
+        "silence_drop_count": len(silence_drops or []),
         "music_act_count": len(music_acts),
         "sfx_event_count": len(sfx_events),
         "shots": shot_reports,

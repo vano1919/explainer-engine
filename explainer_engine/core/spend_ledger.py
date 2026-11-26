@@ -289,3 +289,45 @@ def service_status(service: str, *, ledger_path: Path | None = None) -> dict[str
         }
     finally:
         conn.close()
+
+
+def reconcile_overrun_block(
+    service: str,
+    *,
+    owner_reason: str,
+    ledger_path: Path | None = None,
+) -> dict[str, Any]:
+    """Clear an overrun block after explicit owner reconciliation without erasing any recorded spend."""
+    if not owner_reason or not owner_reason.strip():
+        raise ValueError("owner_reason is required to reconcile a spend overrun block")
+    path = ledger_path or default_ledger_path()
+    conn = _connect(path)
+    now = datetime.datetime.now(UTC).isoformat()
+    try:
+        conn.execute("BEGIN IMMEDIATE")
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS block_reconciliations (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                service TEXT NOT NULL,
+                previous_reason TEXT,
+                owner_reason TEXT NOT NULL,
+                reconciled_at TEXT NOT NULL
+            )
+            """
+        )
+        prev = conn.execute("SELECT reason FROM service_blocks WHERE service = ?", (service,)).fetchone()
+        prev_reason = str(prev["reason"]) if prev is not None else None
+        conn.execute("DELETE FROM service_blocks WHERE service = ?", (service,))
+        conn.execute(
+            "INSERT INTO block_reconciliations (service, previous_reason, owner_reason, reconciled_at) VALUES (?, ?, ?, ?)",
+            (service, prev_reason, owner_reason.strip(), now),
+        )
+        conn.execute("COMMIT")
+    except sqlite3.Error as exc:
+        with contextlib.suppress(sqlite3.Error):
+            conn.execute("ROLLBACK")
+        raise LedgerPersistenceError(f"Failed to reconcile block for {service}: {exc}") from exc
+    finally:
+        conn.close()
+    return service_status(service, ledger_path=path)

@@ -6,6 +6,7 @@ import hashlib
 import hmac
 import json
 import math
+import os
 import re
 import sqlite3
 from pathlib import Path
@@ -32,7 +33,11 @@ def canonical_manifest_sha256(manifest: dict[str, Any]) -> str:
 
 
 def load_approvals(path: Path | None = None) -> dict[str, Any]:
-    p = path or DEFAULT_APPROVALS_PATH
+    if path is not None:
+        p = path
+    else:
+        env_p = os.environ.get("EE_OWNER_APPROVALS_PATH", "").strip()
+        p = Path(env_p).expanduser() if env_p else DEFAULT_APPROVALS_PATH
     if not p.is_file():
         raise ApprovalError(f"Owner approval registry not found: {p}")
     data = json.loads(p.read_text(encoding="utf-8"))

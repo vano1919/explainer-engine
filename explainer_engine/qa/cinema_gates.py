@@ -341,8 +341,13 @@ def check_narration_pacing_gaps(
     max_unplanned_gap_s: float = 3.5,
     max_breather_gap_s: float = 5.0,
     max_tail_silence_s: float = 4.0,
+    dramatic_scene_windows: list[tuple[float, float]] | None = None,
 ) -> dict[str, Any]:
-    """Fail if narration/dialogue leaves unplanned dead-air stretches > 3.5s (or > 5.0s breather)."""
+    """Fail if narration/dialogue leaves unplanned dead-air stretches > 3.5s (or > 5.0s breather).
+
+    Gaps covered by declared ``dramatic_scene_windows`` (the 30% narrator-free cinema acting scenes
+    in 70/30 YouTube docudrama architecture) are explicitly exempted from dead-air penalties.
+    """
     findings: list[str] = []
     gaps: list[dict[str, Any]] = []
     ordered = sorted(utterances, key=lambda u: float(u.get("start_s", 0.0)))
@@ -354,9 +359,23 @@ def check_narration_pacing_gaps(
             "findings": ["Zero narration or dialogue utterances present"],
         }
 
+    def _in_dramatic_scene(g_start: float, g_end: float) -> bool:
+        if not dramatic_scene_windows or g_end <= g_start:
+            return False
+        dur = g_end - g_start
+        covered = 0.0
+        for ds, de in dramatic_scene_windows:
+            ov = max(0.0, min(g_end, float(de)) - max(g_start, float(ds)))
+            covered += ov
+        return (covered / max(1e-6, dur)) >= 0.70
+
     # Check opening dead silence before first speech
     first_start = float(ordered[0].get("start_s", 0.0))
-    if first_start > max_unplanned_gap_s and not bool(ordered[0].get("dramatic_breather", False)):
+    if (
+        first_start > max_unplanned_gap_s
+        and not bool(ordered[0].get("dramatic_breather", False))
+        and not _in_dramatic_scene(0.0, first_start)
+    ):
         findings.append(f"Opening dead-air before first voice is {first_start:.2f}s > {max_unplanned_gap_s:.2f}s")
 
     max_gap = first_start
@@ -367,25 +386,31 @@ def check_narration_pacing_gaps(
         is_breather = bool(ordered[idx].get("dramatic_breather_after", False)) or bool(
             ordered[idx + 1].get("dramatic_breather", False)
         )
+        is_dramatic_stretch = bool(ordered[idx].get("dramatic_scene_after", False)) or _in_dramatic_scene(
+            cur_end, nxt_start
+        )
         limit = max_breather_gap_s if is_breather else max_unplanned_gap_s
-        max_gap = max(max_gap, gap)
+        if not is_dramatic_stretch:
+            max_gap = max(max_gap, gap)
+        passed = True if is_dramatic_stretch else (gap <= limit)
         gaps.append(
             {
                 "from_s": round(cur_end, 3),
                 "to_s": round(nxt_start, 3),
                 "gap_s": round(gap, 3),
                 "dramatic_breather": is_breather,
-                "passed": gap <= limit,
+                "dramatic_scene_silent": is_dramatic_stretch,
+                "passed": passed,
             }
         )
-        if gap > limit:
+        if not passed:
             findings.append(
                 f"Dead narration gap {cur_end:.2f}s->{nxt_start:.2f}s ({gap:.2f}s > {limit:.2f}s limit)"
             )
 
     tail_gap = max(0.0, float(total_duration_s) - float(ordered[-1].get("end_s", 0.0)))
     max_gap = max(max_gap, tail_gap)
-    if tail_gap > max_tail_silence_s:
+    if tail_gap > max_tail_silence_s and not _in_dramatic_scene(float(ordered[-1].get("end_s", 0.0)), total_duration_s):
         findings.append(f"Tail dead-air after final line is {tail_gap:.2f}s > {max_tail_silence_s:.2f}s")
 
     return {
@@ -771,7 +796,8 @@ def check_zero_photo_clip_reuse(
                     else:
                         continue
                 ham = int(phashes[i] - phashes[j])
-                sim = float(ssim(thumbs_gray[i], thumbs_gray[j], data_range=255))
+                raw_sim = ssim(thumbs_gray[i], thumbs_gray[j], data_range=255)
+                sim = float(raw_sim[0] if isinstance(raw_sim, tuple) else raw_sim)
                 if ham < min_phash_hamming or sim > max_ssim:
                     s_a = str(valid_shots[i].get("shot_id") or f"shot_{i + 1}")
                     s_b = str(valid_shots[j].get("shot_id") or f"shot_{j + 1}")
@@ -1057,6 +1083,492 @@ def check_audio_anti_repetition(
     }
 
 
+def check_map_stability(
+    video_path: Path,
+    *,
+    max_mean_hf_shimmer: float = 2.6,
+    max_peak_hf_shimmer: float = 4.2,
+    max_p85_label_jerk_px: float = 0.55,
+    max_samples: int = 24,
+) -> dict[str, Any]:
+    """Deterministic map stability gate measuring high-frequency WebGL shimmer and subpixel label jitter.
+
+    Samples consecutive frame triplets ``(t-1, t, t+1)`` across the map video:
+    1. High-frequency temporal shimmer: aligns consecutive luminance frames via subpixel ``phaseCorrelate``
+       to cancel smooth camera pan, then measures the MAD/mean energy in the spatial high-pass residual.
+       Thin aliased/dashed vector lines shimmer loudly even after translation compensation.
+    2. Label / corner feature jerk: tracks crisp corners across ``(t-1 -> t -> t+1)`` via PyrLK optical flow
+       and measures second-order acceleration ``|(p_{t+1} - p_t) - (p_t - p_{t-1})|``.
+       Pre-rasterized bilinear sprites glide with near-zero jerk; per-frame ``fillText`` integer snapping
+       spikes jerk across frames.
+    """
+    cap = cv2.VideoCapture(str(video_path))
+    if not cap.isOpened():
+        raise FileNotFoundError(f"Could not open map video: {video_path}")
+    fps = cap.get(cv2.CAP_PROP_FPS) or 24.0
+    total = int(cap.get(cv2.CAP_PROP_FRAME_COUNT) or 0)
+    cap.release()
+    if total < 5:
+        return {
+            "status": "FAIL",
+            "findings": [f"Map video too short for stability check ({total} frames)"],
+        }
+
+    # Sample evenly spaced triplet centers across interior [10%..90%] (active camera motion)
+    lo = max(2, int(total * 0.10))
+    hi = max(lo + 1, min(total - 2, int(total * 0.90)))
+    n_trips = min(max_samples, max(3, (hi - lo) // 3))
+    centers = sorted({int(round(lo + i * (hi - lo) / max(1, n_trips - 1))) for i in range(n_trips)})
+    wanted_frames: list[int] = []
+    for c in centers:
+        wanted_frames.extend([c - 1, c, c + 1])
+    unique_idx = sorted(set(wanted_frames))
+
+    cap = cv2.VideoCapture(str(video_path))
+    decoded: dict[int, np.ndarray] = {}
+    cur = 0
+    max_idx = unique_idx[-1]
+    wanted_set = set(unique_idx)
+    try:
+        while cur <= max_idx:
+            if not cap.grab():
+                break
+            if cur in wanted_set:
+                ok, bgr = cap.retrieve()
+                if ok and bgr is not None:
+                    # Evaluate at 960x540 (preserves sharp 1px aliasing & text snapping while staying super fast)
+                    if bgr.shape[1] > 960:
+                        bgr = cv2.resize(bgr, (960, int(round(bgr.shape[0] * 960.0 / bgr.shape[1]))), interpolation=cv2.INTER_AREA)
+                    decoded[cur] = cv2.cvtColor(bgr, cv2.COLOR_BGR2GRAY)
+            cur += 1
+    finally:
+        cap.release()
+
+    shimmers: list[float] = []
+    jerks: list[float] = []
+    hann_cache: np.ndarray | None = None
+
+    for c in centers:
+        if (c - 1) not in decoded or c not in decoded or (c + 1) not in decoded:
+            continue
+        g0 = decoded[c - 1]
+        g1 = decoded[c]
+        g2 = decoded[c + 1]
+        h, w = g1.shape
+        # Focus on interior map canvas (exclude static top/bottom HUD corners)
+        y0, y1 = int(h * 0.16), int(h * 0.84)
+        x0, x1 = int(w * 0.08), int(w * 0.92)
+        c0 = g0[y0:y1, x0:x1].astype(np.float32)
+        c1 = g1[y0:y1, x0:x1].astype(np.float32)
+        if hann_cache is None or hann_cache.shape != c0.shape:
+            hann_cache = cv2.createHanningWindow((c0.shape[1], c0.shape[0]), cv2.CV_32F)
+
+        # 1. Track crisp features across (t-1 -> t -> t+1) for BOTH perspective alignment & second-order jerk
+        roi0 = g0[y0:y1, x0:x1]
+        roi1 = g1[y0:y1, x0:x1]
+        roi2 = g2[y0:y1, x0:x1]
+        pts0 = cv2.goodFeaturesToTrack(roi0, maxCorners=180, qualityLevel=0.04, minDistance=10, blockSize=5)
+        c0_aligned = None
+        if pts0 is not None and len(pts0) >= 8:
+            pts1, st1, _ = cv2.calcOpticalFlowPyrLK(roi0, roi1, pts0, None, winSize=(15, 15), maxLevel=2)
+            pts2, st2, _ = cv2.calcOpticalFlowPyrLK(roi1, roi2, pts1, None, winSize=(15, 15), maxLevel=2)
+            good01 = st1.ravel() == 1
+            if int(np.sum(good01)) >= 8:
+                h_mat, _ = cv2.findHomography(pts0[good01], pts1[good01], cv2.RANSAC, 2.0)
+                if h_mat is not None:
+                    c0_aligned = cv2.warpPerspective(
+                        c0,
+                        h_mat,
+                        (c0.shape[1], c0.shape[0]),
+                        flags=cv2.INTER_LINEAR,
+                        borderMode=cv2.BORDER_REPLICATE,
+                    )
+            good = good01 & (st2.ravel() == 1)
+            if int(np.sum(good)) >= 6:
+                v01 = pts1[good] - pts0[good]
+                v12 = pts2[good] - pts1[good]
+                accel = np.linalg.norm(v12 - v01, axis=-1).ravel()
+                valid_acc = accel[accel < 6.0]
+                if valid_acc.size >= 4:
+                    jerks.extend(valid_acc.tolist())
+
+        # 2. Motion-compensated high-frequency shimmer (homography cancels 3D tilt+zoom+pan; fallback phaseCorrelate)
+        if c0_aligned is None:
+            (dx, dy), _resp = cv2.phaseCorrelate(c0, c1, window=hann_cache)
+            mat = np.array([[1.0, 0.0, float(dx)], [0.0, 1.0, float(dy)]], dtype=np.float32)
+            c0_aligned = cv2.warpAffine(
+                c0, mat, (c0.shape[1], c0.shape[0]), flags=cv2.INTER_LINEAR, borderMode=cv2.BORDER_REPLICATE
+            )
+        hp0 = c0_aligned - cv2.GaussianBlur(c0_aligned, (5, 5), 1.1)
+        hp1 = c1 - cv2.GaussianBlur(c1, (5, 5), 1.1)
+        # Exclude 12px border where warp replicates edge pixels
+        diff_hp = np.abs(hp1[12:-12, 12:-12] - hp0[12:-12, 12:-12])
+        shimmers.append(float(np.mean(diff_hp)))
+
+    findings: list[str] = []
+    mean_shimmer = float(np.mean(shimmers)) if shimmers else 0.0
+    peak_shimmer = float(np.max(shimmers)) if shimmers else 0.0
+    med_jerk = float(np.median(jerks)) if jerks else 0.0
+    p85_jerk = float(np.percentile(jerks, 85)) if jerks else 0.0
+
+    if mean_shimmer > max_mean_hf_shimmer:
+        findings.append(f"High-frequency map shimmer {mean_shimmer:.2f} exceeds {max_mean_hf_shimmer:.2f} ceiling")
+    if peak_shimmer > max_peak_hf_shimmer:
+        findings.append(f"Peak high-frequency map shimmer {peak_shimmer:.2f} exceeds {max_peak_hf_shimmer:.2f} ceiling")
+    if p85_jerk > max_p85_label_jerk_px:
+        findings.append(f"Label/feature jitter p85 jerk={p85_jerk:.3f}px/f^2 exceeds {max_p85_label_jerk_px:.2f}px/f^2 ceiling")
+
+    return {
+        "status": "PASS" if not findings else "FAIL",
+        "fps": round(fps, 2),
+        "triplets_sampled": len(shimmers),
+        "mean_hf_shimmer": round(mean_shimmer, 3),
+        "peak_hf_shimmer": round(peak_shimmer, 3),
+        "median_label_jerk_px": round(med_jerk, 3),
+        "p85_label_jerk_px": round(p85_jerk, 3),
+        "findings": findings,
+    }
+
+
+def _read_frames_at_indices(video_path: Path, frame_indices: list[int]) -> dict[int, np.ndarray]:
+    """Decode exact 0-based video frame indices as RGB uint8 arrays."""
+    if not frame_indices:
+        return {}
+    cap = cv2.VideoCapture(str(video_path))
+    if not cap.isOpened():
+        raise FileNotFoundError(f"Could not open video: {video_path}")
+    total = int(cap.get(cv2.CAP_PROP_FRAME_COUNT) or 0)
+    clamped = sorted({max(0, min(max(0, total - 1), int(i))) for i in frame_indices})
+    max_idx = clamped[-1]
+    wanted = set(clamped)
+    decoded: dict[int, np.ndarray] = {}
+    try:
+        if total > 1800 and len(clamped) <= 180:
+            # Seek a few frames early and step forward for frame-accurate reads on H.264 long GOPs
+            for idx in clamped:
+                seek_to = max(0, idx - 6)
+                cap.set(cv2.CAP_PROP_POS_FRAMES, seek_to)
+                cur = seek_to
+                while cur <= idx:
+                    if not cap.grab():
+                        break
+                    if cur == idx:
+                        ok, bgr = cap.retrieve()
+                        if ok and bgr is not None:
+                            decoded[idx] = cv2.cvtColor(bgr, cv2.COLOR_BGR2RGB)
+                    cur += 1
+        else:
+            cur = 0
+            while cur <= max_idx:
+                if not cap.grab():
+                    break
+                if cur in wanted:
+                    ok, bgr = cap.retrieve()
+                    if ok and bgr is not None:
+                        decoded[cur] = cv2.cvtColor(bgr, cv2.COLOR_BGR2RGB)
+                cur += 1
+    finally:
+        cap.release()
+    return decoded
+
+
+def check_no_jump_cuts(
+    video_path: Path,
+    shot_windows: list[dict[str, Any]],
+    *,
+    chained_min_ssim: float = 0.88,
+    jump_cut_low_ssim: float = 0.55,
+    jump_cut_high_ssim: float = 0.88,
+    same_framing_corr_threshold: float = 0.82,
+) -> dict[str, Any]:
+    """Enforce zero jump cuts across every shot boundary.
+
+    1. **Chained Handoff Contract** (``Shot B.chained_from == Shot A.shot_id``):
+       Measures SSIM between the last frame of Shot A and the first frame of Shot B;
+       MUST satisfy ``SSIM >= 0.88`` (catches v3 bug where parents were trimmed early before ``F_ext``).
+    2. **Same-Environment Jump-Cut Detector** (non-chained adjacent cuts):
+       Flags cuts landing in the uncanny same-framing jump-cut band ``0.55 < SSIM < 0.88`` where
+       camera framing/layout stayed nearly identical (catches accidental jump cuts & mismatched scale cuts).
+    """
+    from skimage.metrics import structural_similarity as ssim
+
+    cap = cv2.VideoCapture(str(video_path))
+    if not cap.isOpened():
+        raise FileNotFoundError(f"Could not open video: {video_path}")
+    fps = float(cap.get(cv2.CAP_PROP_FPS) or 24.0)
+    total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT) or 0)
+    cap.release()
+
+    if len(shot_windows) < 2 or total_frames < 2:
+        return {
+            "status": "PASS",
+            "cuts_checked": 0,
+            "chained_handoffs_checked": 0,
+            "cuts": [],
+            "findings": [],
+        }
+
+    # Collect exact boundary frame pairs (last frame of Shot A, first frame of Shot B)
+    pair_specs: list[dict[str, Any]] = []
+    wanted_indices: list[int] = []
+    for i in range(len(shot_windows) - 1):
+        a = shot_windows[i]
+        b = shot_windows[i + 1]
+        cut_s = float(b.get("start_s", a.get("end_s", 0.0)))
+        if cut_s <= 0.02:
+            continue
+        b_idx = max(1, min(total_frames - 1, int(round(cut_s * fps))))
+        a_idx = max(0, b_idx - 1)
+        wanted_indices.extend([a_idx, b_idx])
+        pair_specs.append({"a": a, "b": b, "a_idx": a_idx, "b_idx": b_idx, "cut_s": cut_s})
+
+    frames = _read_frames_at_indices(video_path, wanted_indices)
+
+    findings: list[str] = []
+    cut_reports: list[dict[str, Any]] = []
+    chained_checked = 0
+
+    for ps in pair_specs:
+        a = ps["a"]
+        b = ps["b"]
+        a_id = str(a.get("shot_id") or "shot_a")
+        b_id = str(b.get("shot_id") or "shot_b")
+        fr_a = frames.get(ps["a_idx"])
+        fr_b = frames.get(ps["b_idx"])
+        if fr_a is None or fr_b is None:
+            continue
+
+        ga = cv2.cvtColor(cv2.resize(fr_a, (320, 180), interpolation=cv2.INTER_AREA), cv2.COLOR_RGB2GRAY)
+        gb = cv2.cvtColor(cv2.resize(fr_b, (320, 180), interpolation=cv2.INTER_AREA), cv2.COLOR_RGB2GRAY)
+        raw_sim = ssim(ga, gb, data_range=255)
+        sim = float(raw_sim[0] if isinstance(raw_sim, tuple) else raw_sim)
+        # Gently smoothed SSIM absorbs 1-frame fire/spark/snow flicker across LTX VAE handoffs while catching pose/trim jumps
+        ga_s = cv2.GaussianBlur(ga, (7, 7), 1.8)
+        gb_s = cv2.GaussianBlur(gb, (7, 7), 1.8)
+        raw_sim_s = ssim(ga_s, gb_s, data_range=255)
+        smooth_sim = float(raw_sim_s[0] if isinstance(raw_sim_s, tuple) else raw_sim_s)
+        handoff_ssim = max(sim, smooth_sim)
+
+        # Low-resolution layout correlation detects identical camera framing/horizon even if subject jumped
+        la = cv2.resize(ga, (32, 18), interpolation=cv2.INTER_AREA).astype(np.float32).ravel()
+        lb = cv2.resize(gb, (32, 18), interpolation=cv2.INTER_AREA).astype(np.float32).ravel()
+        la_c = la - float(np.mean(la))
+        lb_c = lb - float(np.mean(lb))
+        denom = float(np.linalg.norm(la_c) * np.linalg.norm(lb_c))
+        layout_corr = float(np.dot(la_c, lb_c) / denom) if denom > 1e-6 else 0.0
+
+        chained_from = str(b.get("chained_from") or "").strip()
+        is_chained = bool(chained_from and chained_from == a_id)
+        grp_a = str(a.get("scene_group") or "").strip()
+        grp_b = str(b.get("scene_group") or "").strip()
+        same_group = bool(grp_a and grp_a == grp_b)
+        scale_a = str(a.get("shot_scale") or "").strip().lower()
+        scale_b = str(b.get("shot_scale") or "").strip().lower()
+        scale_changed = bool(scale_a and scale_b and scale_a != scale_b)
+        angle_delta = float(b.get("camera_angle_delta_deg", 0.0))
+        allow_match = bool(b.get("allow_match_cut", False))
+
+        passed = True
+        verdict = "clean_cut"
+        if is_chained:
+            chained_checked += 1
+            if handoff_ssim < chained_min_ssim or layout_corr < 0.90:
+                passed = False
+                verdict = "broken_chained_handoff"
+                findings.append(
+                    f"Broken chained handoff at {ps['cut_s']:.2f}s ({a_id} -> {b_id}): "
+                    f"handoff_SSIM={handoff_ssim:.3f} (raw={sim:.3f}, smooth={smooth_sim:.3f}) < {chained_min_ssim:.2f} "
+                    f"or layout_corr={layout_corr:.3f} < 0.90 (parent clip trimmed early or wrong handoff frame)"
+                )
+            else:
+                verdict = "seamless_chained_handoff"
+        elif (
+            not allow_match
+            and jump_cut_low_ssim < sim < jump_cut_high_ssim
+            and (layout_corr >= same_framing_corr_threshold or (same_group and not scale_changed and angle_delta < 30.0))
+        ):
+            passed = False
+            verdict = "jump_cut_detected"
+            findings.append(
+                f"Jump cut detected at {ps['cut_s']:.2f}s ({a_id} -> {b_id}): "
+                f"SSIM={sim:.3f} in ({jump_cut_low_ssim:.2f}, {jump_cut_high_ssim:.2f}) "
+                f"with layout_corr={layout_corr:.3f} (same-environment framing jump)"
+            )
+
+        cut_reports.append(
+            {
+                "cut_s": round(ps["cut_s"], 3),
+                "from_shot": a_id,
+                "to_shot": b_id,
+                "is_chained": is_chained,
+                "ssim": round(sim, 4),
+                "smooth_ssim": round(smooth_sim, 4),
+                "handoff_ssim": round(handoff_ssim, 4),
+                "layout_corr": round(layout_corr, 4),
+                "verdict": verdict,
+                "passed": passed,
+            }
+        )
+
+    return {
+        "status": "PASS" if not findings else "FAIL",
+        "cuts_checked": len(cut_reports),
+        "chained_handoffs_checked": chained_checked,
+        "cuts": cut_reports,
+        "findings": findings,
+    }
+
+
+def check_docudrama_70_30_balance(
+    shots: list[dict[str, Any]],
+    utterances: list[dict[str, Any]],
+    *,
+    min_dramatic_ratio: float = 0.25,
+    max_dramatic_ratio: float = 0.38,
+    min_dramatic_scenes: int = 2,
+    min_scene_duration_s: float = 35.0,
+    min_narrator_free_stretch_s: float = 25.0,
+) -> dict[str, Any]:
+    """Enforce true 70/30 YouTube Docudrama balance (not 98% wall-to-wall narration montage).
+
+    Requirements:
+    1. Dramatic acting/action share = 25%–38% of total runtime.
+    2. At least ``min_dramatic_scenes`` (>= 2) continuous dramatic scenes, each ``>= 35s`` long.
+    3. Each qualifying dramatic scene contains a continuous narrator-free stretch ``>= 25s``
+       driven by real moving video clips (not static 2.5D slides).
+    """
+    findings: list[str] = []
+    if not shots:
+        return {
+            "status": "FAIL",
+            "dramatic_ratio": 0.0,
+            "dramatic_scenes": [],
+            "findings": ["No shots provided for 70/30 docudrama balance check"],
+        }
+
+    ordered_shots = sorted(shots, key=lambda s: float(s.get("start_s", 0.0)))
+    total_dur = max(
+        0.0,
+        max(float(s.get("end_s", 0.0)) for s in ordered_shots)
+        - min(float(s.get("start_s", 0.0)) for s in ordered_shots),
+    )
+
+    # Group contiguous dramatic shots into continuous dramatic scenes
+    real_video_kinds = {"video", "ltx", "ltx_25", "ltx_video", "ltx_multishot", "helios"}
+    scenes: list[dict[str, Any]] = []
+    cur: dict[str, Any] | None = None
+    dramatic_dur = 0.0
+
+    for s in ordered_shots:
+        st = float(s.get("start_s", 0.0))
+        en = float(s.get("end_s", st))
+        dur = max(0.0, en - st)
+        sc_id = str(s.get("dramatic_scene_id") or "").strip()
+        is_dram = bool(s.get("is_dramatic_scene", False)) or bool(s.get("is_dramatic_showcase", False)) or bool(sc_id)
+        if not is_dram:
+            if cur is not None:
+                scenes.append(cur)
+                cur = None
+            continue
+
+        dramatic_dur += dur
+        label = sc_id or str(s.get("scene_group") or "dramatic_scene")
+        kind = str(s.get("kind") or "").lower()
+        is_real_vid = kind in real_video_kinds
+
+        if cur is not None and (cur["scene_id"] == label or abs(st - cur["end_s"]) <= 0.15 and not sc_id):
+            cur["end_s"] = max(cur["end_s"], en)
+            cur["shot_count"] += 1
+            cur["real_video_dur_s"] += dur if is_real_vid else 0.0
+        else:
+            if cur is not None:
+                scenes.append(cur)
+            cur = {
+                "scene_id": label,
+                "start_s": st,
+                "end_s": en,
+                "shot_count": 1,
+                "real_video_dur_s": dur if is_real_vid else 0.0,
+            }
+    if cur is not None:
+        scenes.append(cur)
+
+    # Filter narrator utterances (exclude diegetic actor whispers if tagged speaker != narrator)
+    narr_spans = sorted(
+        [
+            (float(u.get("start_s", 0.0)), float(u.get("end_s", 0.0)))
+            for u in utterances
+            if str(u.get("speaker", "narrator")).lower() not in {"diegetic", "actor", "sfx"}
+            and float(u.get("end_s", 0.0)) > float(u.get("start_s", 0.0))
+        ]
+    )
+
+    qualifying_scenes: list[dict[str, Any]] = []
+    for sc in scenes:
+        sc_st = float(sc["start_s"])
+        sc_en = float(sc["end_s"])
+        sc_dur = max(0.0, sc_en - sc_st)
+        # Compute longest continuous narrator-free interval within [sc_st, sc_en]
+        cursor = sc_st
+        longest_silent = 0.0
+        for u_st, u_en in narr_spans:
+            if u_en <= sc_st:
+                continue
+            if u_st >= sc_en:
+                break
+            if u_st > cursor:
+                longest_silent = max(longest_silent, min(u_st, sc_en) - cursor)
+            cursor = max(cursor, min(u_en, sc_en))
+        if sc_en > cursor:
+            longest_silent = max(longest_silent, sc_en - cursor)
+
+        real_vid_ratio = sc["real_video_dur_s"] / max(1e-6, sc_dur)
+        sc["duration_s"] = round(sc_dur, 2)
+        sc["longest_narrator_free_s"] = round(longest_silent, 2)
+        sc["real_video_ratio"] = round(real_vid_ratio, 3)
+        sc["qualifies"] = (
+            sc_dur >= min_scene_duration_s
+            and longest_silent >= min_narrator_free_stretch_s
+            and real_vid_ratio >= 0.85
+        )
+        if sc["qualifies"]:
+            qualifying_scenes.append(sc)
+        else:
+            if sc_dur < min_scene_duration_s:
+                findings.append(
+                    f"Dramatic scene {sc['scene_id']!r} duration {sc_dur:.1f}s < required {min_scene_duration_s:.0f}s"
+                )
+            if longest_silent < min_narrator_free_stretch_s:
+                findings.append(
+                    f"Dramatic scene {sc['scene_id']!r} narrator-free stretch {longest_silent:.1f}s "
+                    f"< required {min_narrator_free_stretch_s:.0f}s"
+                )
+            if real_vid_ratio < 0.85:
+                findings.append(
+                    f"Dramatic scene {sc['scene_id']!r} real moving video ratio {real_vid_ratio:.0%} < 85%"
+                )
+
+    ratio = (dramatic_dur / total_dur) if total_dur > 0 else 0.0
+    if not (min_dramatic_ratio <= ratio <= max_dramatic_ratio):
+        findings.append(
+            f"Dramatic scene share {ratio:.1%} outside 70/30 docudrama target [{min_dramatic_ratio:.0%}, {max_dramatic_ratio:.0%}]"
+        )
+    if len(qualifying_scenes) < min_dramatic_scenes:
+        findings.append(
+            f"Qualifying continuous dramatic scenes count {len(qualifying_scenes)} < required {min_dramatic_scenes}"
+        )
+
+    return {
+        "status": "PASS" if not findings else "FAIL",
+        "total_duration_s": round(total_dur, 2),
+        "dramatic_duration_s": round(dramatic_dur, 2),
+        "dramatic_ratio": round(ratio, 4),
+        "qualifying_scene_count": len(qualifying_scenes),
+        "dramatic_scenes": scenes,
+        "findings": findings,
+    }
+
+
 def run_full_cinema_audit(
     video_path: Path,
     *,
@@ -1075,11 +1587,12 @@ def run_full_cinema_audit(
     expected_component: str = "final_film",
     require_ai_critic: bool = True,
     enforce_v3_contracts: bool = False,
+    enforce_v4_contracts: bool = False,
     sfx_events: list[dict[str, Any]] | None = None,
     narration_waves: list[tuple[float, float]] | None = None,
     verify_ffmpeg_true_peak: bool = False,
 ) -> dict[str, Any]:
-    """Run every deterministic L3 gate PLUS optional v3.2 Anti-Laziness contracts & fail-closed AI Media Critic."""
+    """Run every deterministic L3 gate PLUS optional v3.2/v4.0 contracts & fail-closed AI Media Critic."""
     from explainer_engine.qa.ai_critic_gate import verify_ai_critic_verdict
 
     delivery = check_master_delivery_specs(
@@ -1090,13 +1603,24 @@ def run_full_cinema_audit(
     total_dur = float(delivery.get("duration_s", 0.0))
     cut_times = [float(s["start_s"]) for s in shot_windows[1:] if float(s.get("start_s", 0.0)) > 0.2]
 
+    dramatic_windows: list[tuple[float, float]] | None = None
+    if enforce_v4_contracts:
+        bal = check_docudrama_70_30_balance(shot_windows, utterances)
+        dramatic_windows = [(float(sc["start_s"]), float(sc["end_s"])) for sc in bal.get("dramatic_scenes", [])]
+    else:
+        bal = None
+
     results: dict[str, Any] = {
         "delivery": delivery,
         "static_shots": check_no_static_shots(video_path, shot_windows),
         "midframe_tears": check_no_midframe_tears(video_path),
         "audio_scene_consistency": check_audio_scene_consistency(soundscape_report),
         "cross_cut_color_parity": check_cross_cut_color_parity(video_path, cut_times),
-        "narration_pacing_gaps": check_narration_pacing_gaps(utterances, total_duration_s=total_dur),
+        "narration_pacing_gaps": check_narration_pacing_gaps(
+            utterances,
+            total_duration_s=total_dur,
+            dramatic_scene_windows=dramatic_windows,
+        ),
         "tts_pronunciation_asr": check_tts_pronunciation_asr(
             expected_script,
             audio_path=voice_audio_path,
@@ -1116,6 +1640,10 @@ def run_full_cinema_audit(
         results["overlay_density"] = check_overlay_density(bridges or [], narration_waves=narration_waves)
         results["grain_ceiling"] = check_grain_ceiling(video_path)
         results["audio_anti_repetition"] = check_audio_anti_repetition(sfx_events or [], soundscape_report)
+
+    if enforce_v4_contracts:
+        results["no_jump_cuts"] = check_no_jump_cuts(video_path, shot_windows)
+        results["docudrama_70_30_balance"] = bal or check_docudrama_70_30_balance(shot_windows, utterances)
 
     if require_ai_critic:
         if ai_critic_verdict_path is None:
