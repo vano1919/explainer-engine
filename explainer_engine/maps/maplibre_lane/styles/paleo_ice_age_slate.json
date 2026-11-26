@@ -1,0 +1,45 @@
+{
+  "name": "paleo_ice_age_slate",
+  "note": "Netflix Life on Our Planet / BBC Earth Pleistocene Ice Age slate-indigo ocean, sculpted topographic stone relief, organic glacial ice sheets, and warm ember migration arcs.",
+  "font": "'Cinzel', 'Plus Jakarta Sans', Georgia, serif",
+  "map": {
+    "background": "#0B1622",
+    "water": "#0B1622",
+    "waterway": {"color": "#4E8BB0", "width": 1.3},
+    "landcover": {"color": "#242D36", "opacity": 0.78},
+    "boundary": {"color": "#6C97B5", "width": 1.2, "dash": [4, 2]},
+    "roads": {"color": "#3E4A56", "width": 0.9},
+    "hillshade": {"exaggeration": 0.65, "shadow": "#091018", "highlight": "#8FA6B8"}
+  },
+  "line": {
+    "stroke": "#E39B43",
+    "stroke_width": 3.4,
+    "casing": "#1C2A38",
+    "casing_width": 6.0,
+    "casing_opacity": 0.82
+  },
+  "hud": {
+    "counter_bg": "rgba(7,12,19,0.92)",
+    "counter_border": "rgba(232,240,248,0.28)",
+    "counter_value": "#7CC4E8",
+    "counter_label": "#F5F7FA",
+    "chip_bg": "#0B131E",
+    "chip_fg": "#E39B43",
+    "dot": "#FFF7E6",
+    "dot_border": "#E39B43",
+    "town_bg": "rgba(7,11,18,0.92)",
+    "town_border": "rgba(232,240,248,0.32)",
+    "town_text": "#F7F9FC",
+    "footnote_text": "#DCE6F2",
+    "footnote_bg": "rgba(7,12,19,0.86)"
+  },
+  "finish": {
+    "grain": {"opacity": 0.06, "size": 300},
+    "vignette": 0.34,
+    "tint": {"color": "#0A1726", "opacity": 0.08}
+  },
+  "palette_check": {
+    "foreground": ["line.stroke", "hud.counter_value"],
+    "background": "map.background"
+  }
+}

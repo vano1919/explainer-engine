@@ -275,3 +275,39 @@ def composite_bridges_onto_video(
         "pngs": [str(p) for p in pngs],
         "png_hashes": png_hashes,
     }
+
+
+def composite_gsap_bridges_onto_video(
+    base_video: Path,
+    motion_specs: list[Any],
+    out_video: Path,
+    *,
+    work_dir: Path,
+    width: int = 2560,
+    height: int = 1440,
+    fps: int = 24,
+) -> dict[str, Any]:
+    """Render and composite GSAP 3.13 HTML5/SVG 24fps RGBA broadcast motion bridges onto ``base_video``."""
+    from explainer_engine.overlay.motion_bridges import (
+        MotionBridgeSpec,
+        composite_motion_bridges,
+        render_motion_bridge_rgba,
+    )
+
+    if not base_video.is_file():
+        raise ContractError(f"Base video not found: {base_video}")
+    work_dir.mkdir(parents=True, exist_ok=True)
+    renders: list[dict[str, Any]] = []
+    for raw in motion_specs:
+        sp = raw if isinstance(raw, MotionBridgeSpec) else MotionBridgeSpec(**raw)
+        mov = work_dir / f"{sp.bridge_id}.mov"
+        renders.append(render_motion_bridge_rgba(sp, mov, width=width, height=height, fps=fps))
+    composite_motion_bridges(base_video, renders, out_video)
+    return {
+        "renderer": "gsap_chromium_rgba_overlay",
+        "output_video": str(out_video),
+        "sha256": _sha256(out_video),
+        "bridges_composited": len(renders),
+        "renders": renders,
+    }
+

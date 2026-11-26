@@ -305,3 +305,435 @@ def check_master_delivery_specs(
         "duration_s": round(float((probe.get("format") or {}).get("duration", 0.0)), 3),
         "findings": findings,
     }
+
+
+def check_narration_pacing_gaps(
+    utterances: list[dict[str, Any]],
+    *,
+    total_duration_s: float,
+    max_unplanned_gap_s: float = 3.5,
+    max_breather_gap_s: float = 5.0,
+    max_tail_silence_s: float = 4.0,
+) -> dict[str, Any]:
+    """Fail if narration/dialogue leaves unplanned dead-air stretches > 3.5s (or > 5.0s breather)."""
+    findings: list[str] = []
+    gaps: list[dict[str, Any]] = []
+    ordered = sorted(utterances, key=lambda u: float(u.get("start_s", 0.0)))
+    if not ordered:
+        return {
+            "status": "FAIL",
+            "max_gap_s": round(total_duration_s, 3),
+            "gaps": [],
+            "findings": ["Zero narration or dialogue utterances present"],
+        }
+
+    # Check opening dead silence before first speech
+    first_start = float(ordered[0].get("start_s", 0.0))
+    if first_start > max_unplanned_gap_s and not bool(ordered[0].get("dramatic_breather", False)):
+        findings.append(f"Opening dead-air before first voice is {first_start:.2f}s > {max_unplanned_gap_s:.2f}s")
+
+    max_gap = first_start
+    for idx in range(len(ordered) - 1):
+        cur_end = float(ordered[idx].get("end_s", ordered[idx].get("start_s", 0.0)))
+        nxt_start = float(ordered[idx + 1].get("start_s", cur_end))
+        gap = max(0.0, nxt_start - cur_end)
+        is_breather = bool(ordered[idx].get("dramatic_breather_after", False)) or bool(
+            ordered[idx + 1].get("dramatic_breather", False)
+        )
+        limit = max_breather_gap_s if is_breather else max_unplanned_gap_s
+        max_gap = max(max_gap, gap)
+        gaps.append(
+            {
+                "from_s": round(cur_end, 3),
+                "to_s": round(nxt_start, 3),
+                "gap_s": round(gap, 3),
+                "dramatic_breather": is_breather,
+                "passed": gap <= limit,
+            }
+        )
+        if gap > limit:
+            findings.append(
+                f"Dead narration gap {cur_end:.2f}s->{nxt_start:.2f}s ({gap:.2f}s > {limit:.2f}s limit)"
+            )
+
+    tail_gap = max(0.0, float(total_duration_s) - float(ordered[-1].get("end_s", 0.0)))
+    max_gap = max(max_gap, tail_gap)
+    if tail_gap > max_tail_silence_s:
+        findings.append(f"Tail dead-air after final line is {tail_gap:.2f}s > {max_tail_silence_s:.2f}s")
+
+    return {
+        "status": "PASS" if not findings else "FAIL",
+        "max_gap_s": round(max_gap, 3),
+        "tail_gap_s": round(tail_gap, 3),
+        "gaps": gaps,
+        "findings": findings,
+    }
+
+
+def _normalize_words(text: str) -> list[str]:
+    import re
+
+    return re.findall(r"[a-z0-9]+", text.lower())
+
+
+def _word_error_rate(ref_words: list[str], hyp_words: list[str]) -> float:
+    if not ref_words:
+        return 0.0
+    n = len(ref_words)
+    m = len(hyp_words)
+    dp = list(range(m + 1))
+    for i in range(1, n + 1):
+        prev = dp[0]
+        dp[0] = i
+        for j in range(1, m + 1):
+            temp = dp[j]
+            cost = 0 if ref_words[i - 1] == hyp_words[j - 1] else 1
+            dp[j] = min(dp[j] + 1, dp[j - 1] + 1, prev + cost)
+            prev = temp
+    return dp[m] / max(1, n)
+
+
+def check_tts_pronunciation_asr(
+    expected_script: str,
+    *,
+    audio_path: Path | None = None,
+    observed_transcript: str | None = None,
+    required_proper_nouns: list[str] | None = None,
+    max_wer: float = 0.08,
+    whisper_model: str = "tiny.en",
+) -> dict[str, Any]:
+    """Verify TTS pronunciation accuracy against script via faster-whisper ASR (or observed transcript)."""
+    findings: list[str] = []
+    transcript = observed_transcript
+    if transcript is None:
+        if audio_path is None or not audio_path.is_file():
+            return {
+                "status": "FAIL",
+                "wer": 1.0,
+                "transcript": "",
+                "missing_proper_nouns": list(required_proper_nouns or []),
+                "findings": ["Neither observed_transcript nor existing audio_path was supplied for ASR check"],
+            }
+        import soundfile as sf
+        from faster_whisper import WhisperModel
+        from scipy.signal import resample_poly
+
+        wav_data, wav_sr = sf.read(str(audio_path), always_2d=False)
+        wav_mono = wav_data.mean(axis=1) if wav_data.ndim > 1 else wav_data
+        audio_16k = (
+            resample_poly(wav_mono, 16000, wav_sr).astype(np.float32)
+            if wav_sr != 16000
+            else wav_mono.astype(np.float32)
+        )
+        model = WhisperModel(whisper_model, device="cpu", compute_type="int8")
+        segments, _ = model.transcribe(audio_16k, language="en", beam_size=1)
+        transcript = " ".join(seg.text.strip() for seg in segments).strip()
+
+    ref_words = _normalize_words(expected_script)
+    hyp_words = _normalize_words(transcript)
+    wer = round(_word_error_rate(ref_words, hyp_words), 4)
+    if wer > max_wer:
+        findings.append(f"ASR Word Error Rate {wer:.3f} exceeds max {max_wer:.3f}")
+
+    hyp_joined = " " + " ".join(hyp_words) + " "
+    missing_nouns: list[str] = []
+    for noun in required_proper_nouns or []:
+        norm_noun = " ".join(_normalize_words(noun))
+        if norm_noun and f" {norm_noun} " not in hyp_joined:
+            missing_nouns.append(noun)
+            findings.append(f"Proper noun mispronounced or dropped by TTS/ASR: {noun!r}")
+
+    return {
+        "status": "PASS" if not findings else "FAIL",
+        "wer": wer,
+        "transcript": transcript,
+        "missing_proper_nouns": missing_nouns,
+        "findings": findings,
+    }
+
+
+def check_map_geographic_richness(
+    map_specs: list[dict[str, Any]],
+    *,
+    min_land_ratio: float = 0.18,
+    require_context_labels: bool = True,
+    require_unified_palette: bool = True,
+) -> dict[str, Any]:
+    """Fail if any map is mostly empty ocean (<18% land), lacks sea/region labels, or mixes palettes."""
+    findings: list[str] = []
+    palettes: set[str] = set()
+    checked: list[dict[str, Any]] = []
+
+    for idx, m in enumerate(map_specs):
+        mid = str(m.get("map_id") or m.get("shot_id") or f"map_{idx + 1}")
+        pal = str(m.get("palette") or m.get("style_preset") or "")
+        if pal:
+            palettes.add(pal)
+
+        land_ratio = m.get("land_ratio")
+        if land_ratio is None and m.get("frame_path"):
+            p = Path(str(m["frame_path"]))
+            if p.is_file():
+                bgr = cv2.imread(str(p))
+                if bgr is not None:
+                    # Ocean pixels tend to have B > R + 12 and low luminance/high blue dominance
+                    b_ch = bgr[..., 0].astype(np.float32)
+                    g_ch = bgr[..., 1].astype(np.float32)
+                    r_ch = bgr[..., 2].astype(np.float32)
+                    is_ocean = (b_ch > r_ch + 12.0) & (b_ch >= g_ch - 4.0)
+                    land_ratio = float(1.0 - np.mean(is_ocean))
+        land_val = float(land_ratio) if land_ratio is not None else 0.0
+        labels = list(m.get("context_labels") or m.get("sea_and_region_labels") or [])
+        ok = True
+        if land_val < min_land_ratio:
+            ok = False
+            findings.append(f"{mid}: land/relief ratio {land_val:.3f} < {min_land_ratio:.2f} (empty ocean map)")
+        if require_context_labels and len(labels) < 1:
+            ok = False
+            findings.append(f"{mid}: missing sea/continent/region geographic context labels")
+        checked.append(
+            {
+                "map_id": mid,
+                "palette": pal,
+                "land_ratio": round(land_val, 3),
+                "context_label_count": len(labels),
+                "passed": ok,
+            }
+        )
+
+    if require_unified_palette and len(palettes) > 1:
+        findings.append(f"Conflicting map palettes within one episode: {sorted(palettes)}")
+
+    return {
+        "status": "PASS" if not findings else "FAIL",
+        "palettes": sorted(palettes),
+        "maps": checked,
+        "findings": findings,
+    }
+
+
+def _boxes_overlap(a: tuple[float, float, float, float], b: tuple[float, float, float, float], pad: float = 4.0) -> bool:
+    ax0, ay0, ax1, ay1 = a
+    bx0, by0, bx1, by1 = b
+    return not (ax1 + pad <= bx0 or bx1 + pad <= ax0 or ay1 + pad <= by0 or by1 + pad <= ay0)
+
+
+def check_overlay_spatial_collisions(
+    bridges: list[dict[str, Any]],
+    map_elements: list[dict[str, Any]],
+) -> dict[str, Any]:
+    """Fail if any visual bridge bounding box overlaps a map title/label/pin during concurrent timestamps."""
+    findings: list[str] = []
+    collisions: list[dict[str, Any]] = []
+    for br in bridges:
+        bs = float(br.get("start_s", 0.0))
+        be = float(br.get("end_s", bs + float(br.get("duration_s", 0.0))))
+        bb = br.get("bbox")
+        if not bb or len(bb) != 4:
+            continue
+        b_box = (float(bb[0]), float(bb[1]), float(bb[2]), float(bb[3]))
+        for me in map_elements:
+            ms = float(me.get("start_s", 0.0))
+            me_end = float(me.get("end_s", ms + float(me.get("duration_s", 0.0))))
+            if be <= ms or me_end <= bs:
+                continue
+            mb = me.get("bbox")
+            if not mb or len(mb) != 4:
+                continue
+            m_box = (float(mb[0]), float(mb[1]), float(mb[2]), float(mb[3]))
+            if _boxes_overlap(b_box, m_box):
+                col = {
+                    "bridge_id": br.get("id", "bridge"),
+                    "map_element_id": me.get("id", "map_el"),
+                    "overlap_window_s": [round(max(bs, ms), 3), round(min(be, me_end), 3)],
+                }
+                collisions.append(col)
+                findings.append(
+                    f"Spatial collision between {col['bridge_id']} and {col['map_element_id']} "
+                    f"at {col['overlap_window_s'][0]:.2f}s-{col['overlap_window_s'][1]:.2f}s"
+                )
+    return {
+        "status": "PASS" if not findings else "FAIL",
+        "collisions": collisions,
+        "findings": findings,
+    }
+
+
+def check_edit_grammar_and_dedup(
+    shots: list[dict[str, Any]],
+    *,
+    max_xfade_ratio: float = 0.25,
+    require_real_video_in_dramatic: bool = True,
+) -> dict[str, Any]:
+    """Fail on duplicate source_sha256 reuse, excessive cross-dissolves (>25%), or static dramatic scenes."""
+    findings: list[str] = []
+    seen_sources: dict[str, str] = {}
+    duplicate_pairs: list[tuple[str, str]] = []
+    transitions = 0
+    xfades = 0
+    dramatic_total = 0
+    dramatic_real_video = 0
+
+    for idx, s in enumerate(shots):
+        sid = str(s.get("shot_id") or f"shot_{idx + 1}")
+        src_sha = str(s.get("source_sha256") or "").strip().lower()
+        if src_sha:
+            if src_sha in seen_sources and not bool(s.get("allow_callback_repeat", False)):
+                duplicate_pairs.append((seen_sources[src_sha], sid))
+                findings.append(f"Duplicate visual source reused in {sid} (already used in {seen_sources[src_sha]})")
+            else:
+                seen_sources[src_sha] = sid
+
+        if idx > 0:
+            transitions += 1
+            tr = str(s.get("transition_in") or "hard_cut").lower()
+            if "xfade" in tr or "dissolve" in tr or "fade" in tr:
+                xfades += 1
+
+        if bool(s.get("is_dramatic_showcase", False)):
+            dramatic_total += 1
+            if str(s.get("kind", "")).lower() in {"video", "ltx", "ltx_multishot", "helios"}:
+                dramatic_real_video += 1
+
+    xfade_ratio = (xfades / transitions) if transitions > 0 else 0.0
+    if transitions >= 3 and xfade_ratio > max_xfade_ratio:
+        findings.append(
+            f"Excessive PowerPoint cross-dissolves: {xfades}/{transitions} ({xfade_ratio:.0%}) > {max_xfade_ratio:.0%} max"
+        )
+    if require_real_video_in_dramatic and dramatic_total > 0 and dramatic_real_video == 0:
+        findings.append(
+            f"Dramatic showcase has 0/{dramatic_total} real moving video clips (frozen 2.5D slideshow rejected)"
+        )
+
+    return {
+        "status": "PASS" if not findings else "FAIL",
+        "xfade_ratio": round(xfade_ratio, 3),
+        "duplicate_sources": duplicate_pairs,
+        "dramatic_real_video_count": dramatic_real_video,
+        "dramatic_total_count": dramatic_total,
+        "findings": findings,
+    }
+
+
+def check_audio_ducking_and_sfx_balance(
+    audio_metrics: dict[str, Any],
+    *,
+    max_sfx_vs_voice_db: float = -6.0,
+    max_pause_pumping_db: float = 5.0,
+) -> dict[str, Any]:
+    """Fail if map/foley SFX overpowers narration (>-6 dB rel voice) or bed pumps >5 dB in pauses."""
+    findings: list[str] = []
+    sfx_rel = float(audio_metrics.get("max_sfx_relative_to_voice_db", -12.0))
+    pump_db = float(audio_metrics.get("max_pause_pumping_swing_db", 0.0))
+    if sfx_rel > max_sfx_vs_voice_db:
+        findings.append(
+            f"SFX overpowers narration: {sfx_rel:.1f} dB relative to voice (limit <= {max_sfx_vs_voice_db:.1f} dB)"
+        )
+    if pump_db > max_pause_pumping_db:
+        findings.append(
+            f"Ambience/music ducking pumps during speech pauses: {pump_db:.1f} dB swing > {max_pause_pumping_db:.1f} dB"
+        )
+    return {
+        "status": "PASS" if not findings else "FAIL",
+        "max_sfx_relative_to_voice_db": round(sfx_rel, 2),
+        "max_pause_pumping_swing_db": round(pump_db, 2),
+        "findings": findings,
+    }
+
+
+def check_archival_or_grade_cohesion(
+    video_path: Path,
+    shot_windows: list[dict[str, Any]],
+    *,
+    max_luma_std_spread: float = 48.0,
+    max_sat_spread: float = 0.42,
+) -> dict[str, Any]:
+    """Verify tonal/saturation unity across all shots so no shot breaks the episode's 35mm film grade."""
+    times = [
+        round((float(s["start_s"]) + float(s["end_s"])) * 0.5, 3)
+        for s in shot_windows
+        if float(s.get("end_s", 0.0)) > float(s.get("start_s", 0.0))
+    ]
+    frs = _read_frames_at_times(video_path, times) if times else []
+    lumas: list[float] = []
+    sats: list[float] = []
+    for fr in frs:
+        lumas.append(float(cv2.cvtColor(fr, cv2.COLOR_RGB2GRAY).mean()))
+        sats.append(float(cv2.cvtColor(fr, cv2.COLOR_RGB2HSV)[..., 1].mean() / 255.0))
+
+    findings: list[str] = []
+    luma_std = float(np.std(lumas)) if len(lumas) >= 2 else 0.0
+    sat_span = float(max(sats) - min(sats)) if len(sats) >= 2 else 0.0
+    if luma_std > max_luma_std_spread:
+        findings.append(f"Cross-shot luminance spread {luma_std:.1f} exceeds {max_luma_std_spread:.1f}")
+    if sat_span > max_sat_spread:
+        findings.append(f"Cross-shot saturation span {sat_span:.3f} exceeds {max_sat_spread:.3f}")
+    return {
+        "status": "PASS" if not findings else "FAIL",
+        "luma_std": round(luma_std, 2),
+        "sat_span": round(sat_span, 3),
+        "findings": findings,
+    }
+
+
+def run_full_cinema_audit(
+    video_path: Path,
+    *,
+    shot_windows: list[dict[str, Any]],
+    soundscape_report: dict[str, Any],
+    utterances: list[dict[str, Any]],
+    expected_script: str,
+    observed_transcript: str | None = None,
+    voice_audio_path: Path | None = None,
+    required_proper_nouns: list[str] | None = None,
+    map_specs: list[dict[str, Any]] | None = None,
+    bridges: list[dict[str, Any]] | None = None,
+    map_elements: list[dict[str, Any]] | None = None,
+    audio_ducking_metrics: dict[str, Any] | None = None,
+    ai_critic_verdict_path: Path | None = None,
+    expected_component: str = "final_film",
+    require_ai_critic: bool = True,
+) -> dict[str, Any]:
+    """Run every deterministic L3 gate PLUS fail-closed AI Media Critic verification."""
+    from explainer_engine.qa.ai_critic_gate import verify_ai_critic_verdict
+
+    delivery = check_master_delivery_specs(video_path, audio_report=soundscape_report)
+    total_dur = float(delivery.get("duration_s", 0.0))
+    cut_times = [float(s["start_s"]) for s in shot_windows[1:] if float(s.get("start_s", 0.0)) > 0.2]
+
+    results: dict[str, Any] = {
+        "delivery": delivery,
+        "static_shots": check_no_static_shots(video_path, shot_windows),
+        "midframe_tears": check_no_midframe_tears(video_path),
+        "audio_scene_consistency": check_audio_scene_consistency(soundscape_report),
+        "cross_cut_color_parity": check_cross_cut_color_parity(video_path, cut_times),
+        "narration_pacing_gaps": check_narration_pacing_gaps(utterances, total_duration_s=total_dur),
+        "tts_pronunciation_asr": check_tts_pronunciation_asr(
+            expected_script,
+            audio_path=voice_audio_path,
+            observed_transcript=observed_transcript,
+            required_proper_nouns=required_proper_nouns,
+        ),
+        "map_geographic_richness": check_map_geographic_richness(map_specs or []) if map_specs else {"status": "PASS", "findings": []},
+        "overlay_spatial_collisions": check_overlay_spatial_collisions(bridges or [], map_elements or []),
+        "edit_grammar_and_dedup": check_edit_grammar_and_dedup(shot_windows),
+        "audio_ducking_and_sfx": check_audio_ducking_and_sfx_balance(audio_ducking_metrics or {}),
+        "grade_cohesion": check_archival_or_grade_cohesion(video_path, shot_windows),
+    }
+    if require_ai_critic:
+        if ai_critic_verdict_path is None:
+            results["ai_critic"] = {"status": "FAIL", "findings": ["Missing mandatory ai_critic_verdict_path"]}
+        else:
+            results["ai_critic"] = verify_ai_critic_verdict(
+                video_path,
+                ai_critic_verdict_path,
+                expected_component=expected_component,
+            )
+
+    failed_gates = [k for k, v in results.items() if v.get("status") != "PASS"]
+    return {
+        "status": "PASS" if not failed_gates else "FAIL",
+        "failed_gates": failed_gates,
+        "gates": results,
+    }
+

@@ -47,3 +47,12 @@ examples/episodes/*/media/
 assets/audio/originals/
 assets/audio/library/catalog.sqlite
 assets/audio/previews/
+
+# local neural TTS weights, Natural Earth GeoJSONs, cached world relief, and vendor JS bundles
+assets/models/kokoro/
+assets/maps/ne_10m_geojson/
+assets/maps/relief/paleo_mercator_world*.png
+assets/design_system/vendor/
+explainer_engine/maps/maplibre_lane/vendor/*.js
+explainer_engine/maps/maplibre_lane/vendor/*.css
+
