@@ -576,5 +576,47 @@ def test_phase3_forensic_gates_pts_visual_audit_silence_and_word_sync(tmp_path: 
     assert sync_fail["status"] == "FAIL", sync_fail
 
 
+def test_elevenlabs_backup_key_failover(monkeypatch: Any) -> None:
+    import email.message
+    import io
+    import json
+    import urllib.error
+    import urllib.request
+
+    from explainer_engine.audio import elevenlabs_narrator as en
+
+    monkeypatch.setattr(en, "load_project_env", lambda: None)
+    monkeypatch.setenv("ELEVENLABS_API_KEY", "primary_test_key")
+    monkeypatch.setenv("ELEVENLABS_API_KEY_BACKUP", "backup_test_key")
+
+    seen_keys: list[str] = []
+
+    class _FakeResp(io.BytesIO):
+        def __enter__(self) -> _FakeResp:
+            return self
+
+        def __exit__(self, *args: object) -> None:
+            return None
+
+    def _fake_urlopen(req: Any, timeout: int = 20) -> _FakeResp:
+        key = req.get_header("Xi-api-key")
+        seen_keys.append(key)
+        if key == "primary_test_key":
+            raise urllib.error.HTTPError(
+                req.full_url,
+                429,
+                "quota_exceeded",
+                email.message.Message(),
+                None,
+            )
+        return _FakeResp(json.dumps({"ok": True, "used_key": key}).encode("utf-8"))
+
+    monkeypatch.setattr(urllib.request, "urlopen", _fake_urlopen)
+    out = en._request_json_with_backup("https://api.elevenlabs.io/v1/user/subscription")
+    assert out == {"ok": True, "used_key": "backup_test_key"}
+    assert seen_keys == ["primary_test_key", "backup_test_key"]
+
+
+
 
 

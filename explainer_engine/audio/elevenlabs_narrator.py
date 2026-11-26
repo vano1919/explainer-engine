@@ -33,30 +33,66 @@ PREFERRED_MODELS: tuple[str, ...] = ("eleven_v4", "eleven_v3", "eleven_multiling
 PREFERRED_FORMATS: tuple[str, ...] = ("mp3_44100_128", "mp3_44100_192")
 
 
-def _api_key() -> str:
+def _api_keys() -> list[str]:
     load_project_env()
-    key = (os.environ.get("ELEVENLABS_API_KEY") or os.environ.get("ELEVENLABS_API") or "").strip()
-    if not key:
-        raise RuntimeError("Missing ELEVENLABS_API_KEY; refusing silent fallback to Kokoro.")
-    return key
+    candidates = [
+        os.environ.get("ELEVENLABS_API_KEY"),
+        os.environ.get("ELEVENLABS_API"),
+        os.environ.get("XI_API_KEY"),
+        os.environ.get("ELEVENLABS_API_KEY_BACKUP"),
+        os.environ.get("ELEVENLABS_BACKUP_API_KEY"),
+    ]
+    keys: list[str] = []
+    for raw in candidates:
+        k = (raw or "").strip()
+        if k and k not in keys:
+            keys.append(k)
+    if not keys:
+        raise RuntimeError("Missing ELEVENLABS_API_KEY (and backup); refusing silent fallback to Kokoro.")
+    return keys
+
+
+def _api_key() -> str:
+    return _api_keys()[0]
+
+
+def _request_json_with_backup(
+    url: str,
+    *,
+    payload: dict[str, Any] | None = None,
+    timeout: int = 20,
+) -> Any:
+    """Call ElevenLabs JSON endpoint, failing over to ELEVENLABS_API_KEY_BACKUP on quota/auth/rate errors."""
+    keys = _api_keys()
+    body_bytes = json.dumps(payload).encode("utf-8") if payload is not None else None
+    last_exc: Exception | None = None
+    for idx, key in enumerate(keys):
+        headers = {"xi-api-key": key}
+        if body_bytes is not None:
+            headers["Content-Type"] = "application/json"
+        req = urllib.request.Request(
+            url,
+            data=body_bytes,
+            headers=headers,
+            method="POST" if body_bytes is not None else "GET",
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=timeout) as resp:
+                return json.loads(resp.read().decode("utf-8"))
+        except urllib.error.HTTPError as exc:
+            last_exc = exc
+            if exc.code in (401, 402, 403, 429) and idx + 1 < len(keys):
+                continue
+            raise
+    if last_exc is not None:
+        raise last_exc
+    raise RuntimeError("ElevenLabs request failed with no available API keys.")
 
 
 def check_elevenlabs_subscription() -> dict[str, Any]:
     """Verify ElevenLabs API key, active status, remaining characters, and available TTS models."""
-    key = _api_key()
-    req_sub = urllib.request.Request(
-        "https://api.elevenlabs.io/v1/user/subscription",
-        headers={"xi-api-key": key},
-    )
-    with urllib.request.urlopen(req_sub, timeout=20) as resp:
-        sub = json.loads(resp.read().decode("utf-8"))
-
-    req_mod = urllib.request.Request(
-        "https://api.elevenlabs.io/v1/models",
-        headers={"xi-api-key": key},
-    )
-    with urllib.request.urlopen(req_mod, timeout=20) as resp:
-        models = json.loads(resp.read().decode("utf-8"))
+    sub = _request_json_with_backup("https://api.elevenlabs.io/v1/user/subscription", timeout=20)
+    models = _request_json_with_backup("https://api.elevenlabs.io/v1/models", timeout=20)
 
     tts_models = [m.get("model_id") for m in models if isinstance(m, dict) and m.get("can_do_text_to_speech")]
     chosen_model = next((m for m in PREFERRED_MODELS if m in tts_models), tts_models[0] if tts_models else "eleven_multilingual_v2")
@@ -70,6 +106,7 @@ def check_elevenlabs_subscription() -> dict[str, Any]:
         "remaining_characters": max(0, limit - used),
         "chosen_model": chosen_model,
         "available_tts_models": tts_models,
+        "backup_key_configured": len(_api_keys()) > 1,
     }
 
 
@@ -147,7 +184,6 @@ def _call_elevenlabs_tts_with_timestamps(
     previous_text: str | None = None,
     next_text: str | None = None,
 ) -> dict[str, Any]:
-    key = _api_key()
     url = f"https://api.elevenlabs.io/v1/text-to-speech/{voice_id}/with-timestamps?output_format={output_format}"
     body: dict[str, Any] = {
         "text": text,
@@ -159,14 +195,7 @@ def _call_elevenlabs_tts_with_timestamps(
     if next_text and model_id != "eleven_v3":
         body["next_text"] = next_text[:300]
 
-    req = urllib.request.Request(
-        url,
-        data=json.dumps(body).encode("utf-8"),
-        headers={"xi-api-key": key, "Content-Type": "application/json"},
-        method="POST",
-    )
-    with urllib.request.urlopen(req, timeout=90) as resp:
-        return json.loads(resp.read().decode("utf-8"))
+    return _request_json_with_backup(url, payload=body, timeout=90)
 
 
 def format_srt_timestamp(seconds: float) -> str:
