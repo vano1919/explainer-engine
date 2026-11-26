@@ -36,7 +36,7 @@ def _resolve_sqlite_path(path: str | Path | None) -> Path:
 
 
 def _strictest_modal_cap() -> float:
-    """Resolve the strictest applicable authorized Modal cap from config/spend_caps.json."""
+    """Resolve the strictest applicable authorized cumulative Modal cap from config/spend_caps.json."""
     cfg = spend_caps.load()
     caps: list[float] = []
     modal_cfg = cfg.get("modal") or {}
@@ -45,13 +45,24 @@ def _strictest_modal_cap() -> float:
     ):
         caps.append(float(modal_cfg["night_total_usd"]))
     ltx_cfg = cfg.get("modal_ltx") or {}
-    if isinstance(ltx_cfg.get("per_run_usd"), (int, float)) and not isinstance(
-        ltx_cfg.get("per_run_usd"), bool
-    ):
-        caps.append(float(ltx_cfg["per_run_usd"]))
+    ep_cap = ltx_cfg.get("per_episode_usd")
+    run_cap = ltx_cfg.get("per_run_usd")
+    if isinstance(ep_cap, (int, float)) and not isinstance(ep_cap, bool) and ep_cap > 0:
+        caps.append(float(ep_cap))
+    elif isinstance(run_cap, (int, float)) and not isinstance(run_cap, bool) and run_cap > 0:
+        caps.append(float(run_cap))
     if not caps:
         raise NightCapExceeded("No authorized Modal spending cap configured in config/spend_caps.json (zero budget)")
     return min(caps)
+
+
+def _per_run_modal_cap() -> float | None:
+    cfg = spend_caps.load()
+    ltx_cfg = cfg.get("modal_ltx") or {}
+    run_cap = ltx_cfg.get("per_run_usd")
+    if isinstance(run_cap, (int, float)) and not isinstance(run_cap, bool) and run_cap > 0:
+        return float(run_cap)
+    return None
 
 
 def _mirror_json(json_path: Path, row: dict[str, Any]) -> None:
@@ -68,6 +79,9 @@ def _mirror_json(json_path: Path, row: dict[str, Any]) -> None:
 def reserve(path: str | Path | None, item: str, usd: float, why: str = "") -> dict[str, Any]:
     """Atomically reserve ``usd`` for ``item`` under the strictest applicable Modal cap."""
     db_path = _resolve_sqlite_path(path)
+    per_run = _per_run_modal_cap()
+    if per_run is not None and float(usd) > per_run + 1e-9:
+        raise NightCapExceeded(f"Single modal_ltx launch ${float(usd):.4f} exceeds per_run_usd ${per_run:.2f}")
     cap_usd = _strictest_modal_cap()
     try:
         row = spend_ledger.reserve(

@@ -34,6 +34,9 @@ VALID_MOTION_BRIDGE_TEMPLATES = frozenset(
         "stat_counter_card",
         "callout_spec_pointer",
         "split_era_card",
+        "artifact_callout_card",
+        "trajectory_arrow_callout",
+        "kinetic_word_burst",
     }
 )
 
@@ -194,6 +197,56 @@ def _build_bridge_html(spec: MotionBridgeSpec, *, width: int, height: int) -> st
             <div class="callout-val mono">{spec_val}</div>
             <div class="card-title">{safe_title}</div>
             <div class="card-sub">{safe_sub}</div>
+          </div>
+        </div>
+        """
+    elif spec.template == "artifact_callout_card":
+        era_stamp = html.escape(str(spec.meta.get("era_stamp") or "70,000 BCE"))
+        metric = html.escape(str(spec.meta.get("metric") or "FLINT + PYRITE"))
+        stage_cls = "stage-bottom-left" if spec.position != "top_left" else "stage-top-center"
+        body_html = f"""
+        <div id="stage" class="{stage_cls}">
+          <div class="glass-card artifact-card" id="bbox-root" style="display:flex;align-items:center;gap:20px;padding:20px 28px;border-left:4px solid {accent};max-width:740px;">
+            <div style="width:58px;height:58px;border-radius:12px;background:rgba(227,155,67,0.14);border:1px solid {accent};display:flex;align-items:center;justify-content:center;color:{accent};flex-shrink:0;">
+              <i data-lucide="{icon_name}"></i>
+            </div>
+            <div>
+              <div class="eyebrow mono" style="margin-bottom:4px;">{eyebrow} • {era_stamp}</div>
+              <div class="card-title" style="font-size:30px;font-weight:700;letter-spacing:0.01em;">{safe_title}</div>
+              <div class="card-sub" style="font-size:18px;color:#C5D1DE;margin-top:4px;">{safe_sub}</div>
+            </div>
+            <div class="mono" style="margin-left:auto;padding:8px 14px;background:rgba(6,9,14,0.82);border:1px solid rgba(227,155,67,0.45);border-radius:6px;font-size:16px;color:{accent};white-space:nowrap;">{metric}</div>
+          </div>
+        </div>
+        """
+    elif spec.template == "trajectory_arrow_callout":
+        x1 = int(spec.meta.get("x1", 520))
+        y1 = int(spec.meta.get("y1", 690))
+        cx = int(spec.meta.get("cx", 860))
+        cy = int(spec.meta.get("cy", 430))
+        x2 = int(spec.meta.get("x2", 1220))
+        y2 = int(spec.meta.get("y2", 520))
+        body_html = f"""
+        <div id="stage" class="stage-full">
+          <svg class="callout-svg" viewBox="0 0 1920 1080" fill="none">
+            <path id="traj-path" d="M {x1} {y1} Q {cx} {cy} {x2} {y2}" stroke="{accent}" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+            <circle id="traj-dot" cx="{x2}" cy="{y2}" r="9" fill="{accent}"/>
+          </svg>
+          <div class="glass-card traj-pill" id="bbox-root" style="position:absolute;left:{min(1380, x2 + 18) / 19.2:.2f}%;top:{max(110, y2 - 48) / 10.8:.2f}%;padding:14px 22px;border-left:3px solid {accent};max-width:460px;">
+            <div class="eyebrow mono">{eyebrow}</div>
+            <div class="card-title" style="font-size:26px;font-weight:700;">{safe_title}</div>
+            <div class="card-sub" style="font-size:16px;color:#C5D1DE;margin-top:3px;">{safe_sub}</div>
+          </div>
+        </div>
+        """
+    elif spec.template == "kinetic_word_burst":
+        stage_cls = "stage-bottom-center" if spec.position != "top_center" else "stage-top-center"
+        body_html = f"""
+        <div id="stage" class="{stage_cls}">
+          <div class="word-burst-wrap" id="bbox-root" style="background:rgba(8,12,18,0.78);backdrop-filter:blur(10px);border:1px solid rgba(232,240,248,0.2);border-bottom:3px solid {accent};border-radius:10px;padding:16px 34px;text-align:center;">
+            <div class="eyebrow mono" style="font-size:13px;letter-spacing:0.22em;color:{accent};margin-bottom:4px;">{eyebrow}</div>
+            <div id="burst-title" style="font-family:'Cinzel',serif;font-size:44px;font-weight:700;letter-spacing:0.06em;color:#F5F7FA;">{safe_title}</div>
+            {f'<div style="font-size:18px;color:#C5D1DE;margin-top:4px;">{safe_sub}</div>' if safe_sub else ''}
           </div>
         </div>
         """
@@ -401,6 +454,19 @@ if (template === "kinetic_title_reveal") {{
     .from("#leader-line", {{ drawSVG: "0%", duration: 0.55, ease: easeOut }}, 0.12)
     .from(".callout-tag", {{ opacity: 0, x: 24, duration: 0.45, ease: easeOut }}, 0.38)
     .to("#stage", {{ opacity: 0, duration: 0.42, ease: "power2.in" }}, outStart);
+}} else if (template === "artifact_callout_card") {{
+  tl.from(".artifact-card", {{ opacity: 0, x: -42, duration: 0.48, ease: easeOut }}, 0)
+    .to(".artifact-card", {{ opacity: 0, x: -20, duration: 0.40, ease: "power2.in" }}, outStart);
+}} else if (template === "trajectory_arrow_callout") {{
+  tl.from("#traj-path", {{ drawSVG: "0%", duration: 0.65, ease: easeOut }}, 0)
+    .from("#traj-dot", {{ scale: 0, transformOrigin: "center", duration: 0.28, ease: "back.out(2.0)" }}, 0.55)
+    .from(".traj-pill", {{ opacity: 0, y: 18, duration: 0.42, ease: easeOut }}, 0.48)
+    .to("#stage", {{ opacity: 0, duration: 0.40, ease: "power2.in" }}, outStart);
+}} else if (template === "kinetic_word_burst") {{
+  const sp = new SplitText("#burst-title", {{ type: "words" }});
+  tl.from(".word-burst-wrap", {{ opacity: 0, y: 24, duration: 0.36, ease: easeOut }}, 0)
+    .from(sp.words, {{ opacity: 0, y: 14, stagger: 0.06, duration: 0.32, ease: easeOut }}, 0.12)
+    .to(".word-burst-wrap", {{ opacity: 0, y: 16, duration: 0.38, ease: "power2.in" }}, outStart);
 }} else {{
   const lw = document.getElementById("bar-left").dataset.w;
   const rw = document.getElementById("bar-right").dataset.w;

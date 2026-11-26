@@ -76,6 +76,7 @@ One canonical home per specification and per ID (D-23). Link to a document or an
 | [ASSET_SYSTEM](ASSET_SYSTEM.md) | asset records, naming, licences, generation rules | |
 | [AUDIO_SYSTEM](AUDIO_SYSTEM.md) | narration, mix, audio-event contract, licences, the sound director's checks | SD- |
 | [SOUND_LIBRARY](SOUND_LIBRARY.md) | the professional sound library (D-134): sources and their licences, the creator's licence scope (music only), originals, QC, the catalog and its search CLI, previews | LIB- |
+| [LOCAL_VOICE_CLONING_ODOM_BLUEPRINT](LOCAL_VOICE_CLONING_ODOM_BLUEPRINT.md) | future-episode lightweight local emotion-controlled Odom voice cloning architecture (Chatterbox-Turbo / CosyVoice2 / Orpheus-3B / F5-TTS) with narrator_polish and WER/SIM QA gates | |
 | [RENDERING_ARCHITECTURE](RENDERING_ARCHITECTURE.md) | current Python/FFmpeg assembler; historical Remotion proposal and renderer decision notes | |
 | [PIPELINE_ARCHITECTURE](PIPELINE_ARCHITECTURE.md) | target stages, failure classes, config and job record; current entry points and unimplemented coordinator are marked at the top | |
 | [QA_SPECIFICATION](QA_SPECIFICATION.md) | technical and editorial QA, review bundle | Q- |

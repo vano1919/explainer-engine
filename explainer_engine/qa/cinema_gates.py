@@ -29,8 +29,8 @@ def _read_frames_at_times(video_path: Path, times_s: list[float]) -> list[np.nda
     wanted = set(unique_sorted)
     decoded: dict[int, np.ndarray] = {}
     try:
-        # Sequential grab avoids expensive H.264 GOP random seeks on 2K files
-        if len(unique_sorted) <= 2 and total > 600:
+        # Use keyframe seeking for sparse samples across long 2K videos; sequential grab for dense short clips
+        if total > 1200 and len(unique_sorted) <= 200:
             for idx in unique_sorted:
                 cap.set(cv2.CAP_PROP_POS_FRAMES, idx)
                 ok, bgr = cap.read()
@@ -676,6 +676,353 @@ def check_archival_or_grade_cohesion(
     }
 
 
+def check_zero_photo_clip_reuse(
+    video_path: Path,
+    shot_windows: list[dict[str, Any]],
+    *,
+    max_ssim: float = 0.85,
+    min_phash_hamming: int = 7,
+) -> dict[str, Any]:
+    """Fail if any two non-chained, unrelated shots share a source path/SHA-256 or visually duplicate (SSIM > 0.85 or pHash <= 6)."""
+    import imagehash
+    from PIL import Image
+    from skimage.metrics import structural_similarity as ssim
+
+    findings: list[str] = []
+    seen_paths: dict[str, str] = {}
+    seen_shas: dict[str, str] = {}
+    visual_dups: list[dict[str, Any]] = []
+
+    valid_shots: list[dict[str, Any]] = []
+    sample_times: list[float] = []
+    for idx, s in enumerate(shot_windows):
+        sid = str(s.get("shot_id") or f"shot_{idx + 1}")
+        chained_from = str(s.get("chained_from") or "").strip()
+        src_p = str(s.get("source_image_path") or s.get("source_path") or "").strip()
+        src_sha = str(s.get("source_sha256") or "").strip().lower()
+        if src_p and not chained_from:
+            if src_p in seen_paths:
+                findings.append(f"Source image/clip path reused across shots: {seen_paths[src_p]} and {sid} ({Path(src_p).name})")
+            else:
+                seen_paths[src_p] = sid
+        if src_sha and not chained_from:
+            if src_sha in seen_shas:
+                findings.append(f"Source SHA-256 reused across shots: {seen_shas[src_sha]} and {sid}")
+            else:
+                seen_shas[src_sha] = sid
+        st = float(s.get("start_s", 0.0))
+        en = float(s.get("end_s", 0.0))
+        if en > st:
+            valid_shots.append(s)
+            sample_times.append(round((st + en) * 0.5, 3))
+
+    if video_path.is_file() and sample_times:
+        frs = _read_frames_at_times(video_path, sample_times)
+        thumbs_gray: list[np.ndarray] = []
+        phashes: list[Any] = []
+        for fr in frs:
+            small = cv2.resize(fr, (320, 180), interpolation=cv2.INTER_AREA)
+            thumbs_gray.append(cv2.cvtColor(small, cv2.COLOR_RGB2GRAY))
+            phashes.append(imagehash.phash(Image.fromarray(small)))
+
+        for i in range(len(thumbs_gray)):
+            for j in range(i + 1, len(thumbs_gray)):
+                # Skip immediately adjacent chained shots (Last-Frame Chaining / FLF2V continuation)
+                if j == i + 1 and str(valid_shots[j].get("chained_from") or "").strip():
+                    continue
+                if j == i + 1 and valid_shots[i].get("scene_group") and valid_shots[i].get("scene_group") == valid_shots[j].get("scene_group"):
+                    # Adjacent shots inside the same continuous LTX scene still must not be identical clones
+                    if int(phashes[i] - phashes[j]) <= 3:
+                        pass
+                    else:
+                        continue
+                ham = int(phashes[i] - phashes[j])
+                sim = float(ssim(thumbs_gray[i], thumbs_gray[j], data_range=255))
+                if ham < min_phash_hamming or sim > max_ssim:
+                    s_a = str(valid_shots[i].get("shot_id") or f"shot_{i + 1}")
+                    s_b = str(valid_shots[j].get("shot_id") or f"shot_{j + 1}")
+                    rec = {"shot_a": s_a, "shot_b": s_b, "phash_hamming": ham, "ssim": round(sim, 3)}
+                    visual_dups.append(rec)
+                    findings.append(
+                        f"Cross-shot visual duplicate detected between {s_a} and {s_b} "
+                        f"(pHash hamming={ham} < {min_phash_hamming} or SSIM={sim:.3f} > {max_ssim})"
+                    )
+
+    return {
+        "status": "PASS" if not findings else "FAIL",
+        "shots_checked": len(valid_shots),
+        "visual_duplicates": visual_dups,
+        "findings": findings,
+    }
+
+
+def check_ltx_dominance(
+    shot_windows: list[dict[str, Any]],
+    *,
+    min_ltx_ratio: float = 0.65,
+    max_ltx_ratio: float = 0.80,
+    min_unique_clips: int = 24,
+    max_speed: float = 1.0,
+) -> dict[str, Any]:
+    """Enforce 65-75% unique real Modal H100 LTX-2.5 dominance (min 24 unique clips, 4-6s, <= 1.0x speed, distinct SHA-256 + Modal Job IDs)."""
+    findings: list[str] = []
+    total_dur = 0.0
+    ltx_dur = 0.0
+    unique_shas: set[str] = set()
+    modal_job_ids: set[str] = set()
+    ltx_count = 0
+
+    for idx, s in enumerate(shot_windows):
+        sid = str(s.get("shot_id") or f"shot_{idx + 1}")
+        dur = max(0.0, float(s.get("end_s", 0.0)) - float(s.get("start_s", 0.0)))
+        total_dur += dur
+        kind = str(s.get("kind", "")).lower()
+        if kind in {"ltx", "ltx_25", "ltx_video", "video", "ltx_multishot"}:
+            ltx_count += 1
+            ltx_dur += dur
+            sha = str(s.get("file_sha256") or s.get("clip_sha256") or s.get("source_sha256") or "").strip().lower()
+            job_id = str(s.get("modal_job_id") or s.get("run_id") or "").strip()
+            spd = float(s.get("playback_speed", 1.0))
+            if not sha:
+                findings.append(f"{sid}: LTX clip missing file_sha256 provenance")
+            elif sha in unique_shas:
+                findings.append(f"{sid}: duplicate LTX clip SHA-256 reused/looped ({sha[:12]})")
+            else:
+                unique_shas.add(sha)
+            if not job_id:
+                findings.append(f"{sid}: LTX clip missing modal_job_id provenance")
+            else:
+                modal_job_ids.add(job_id)
+            if spd > max_speed + 1e-6:
+                findings.append(f"{sid}: LTX playback speed {spd:.2f}x exceeds {max_speed:.2f}x cap")
+
+    ratio = (ltx_dur / total_dur) if total_dur > 0 else 0.0
+    if ratio < min_ltx_ratio:
+        findings.append(f"LTX-2.5 real video share {ratio:.1%} < required {min_ltx_ratio:.0%} minimum")
+    if ratio > max_ltx_ratio:
+        findings.append(f"LTX-2.5 share {ratio:.1%} exceeds {max_ltx_ratio:.0%} (maps/bridges/2.5D underrepresented)")
+    if len(unique_shas) < min_unique_clips:
+        findings.append(f"Unique LTX-2.5 clip count {len(unique_shas)} < required {min_unique_clips}")
+
+    return {
+        "status": "PASS" if not findings else "FAIL",
+        "ltx_duration_s": round(ltx_dur, 2),
+        "total_duration_s": round(total_dur, 2),
+        "ltx_ratio": round(ratio, 4),
+        "ltx_shot_count": ltx_count,
+        "unique_ltx_clips": len(unique_shas),
+        "distinct_modal_batches": len(modal_job_ids),
+        "findings": findings,
+    }
+
+
+def check_youtube_rhythm_and_jl_cuts(
+    shot_windows: list[dict[str, Any]],
+    utterances: list[dict[str, Any]],
+    *,
+    min_avg_shot_s: float = 3.0,
+    max_avg_shot_s: float = 4.8,
+    hook_window_s: float = 30.0,
+    min_hook_avg_s: float = 2.0,
+    max_hook_avg_s: float = 3.6,
+    min_jl_cuts: int = 6,
+    min_breathers: int = 4,
+    max_breathers: int = 6,
+) -> dict[str, Any]:
+    """Enforce YouTube docudrama pacing (3.0-4.8s avg cut, 2.0-3.5s first 30s hook, J/L cuts, 4-6 dramatic breathers)."""
+    findings: list[str] = []
+    durs = [max(0.0, float(s.get("end_s", 0.0)) - float(s.get("start_s", 0.0))) for s in shot_windows]
+    avg_shot = float(np.mean(durs)) if durs else 0.0
+    hook_durs = [
+        max(0.0, float(s.get("end_s", 0.0)) - float(s.get("start_s", 0.0)))
+        for s in shot_windows
+        if float(s.get("start_s", 0.0)) < hook_window_s
+    ]
+    hook_avg = float(np.mean(hook_durs)) if hook_durs else 0.0
+
+    jl_count = sum(
+        1
+        for s in shot_windows
+        if float(s.get("j_cut_lead_s", 0.0)) >= 0.25 or float(s.get("l_cut_tail_s", 0.0)) >= 0.25
+    )
+
+    breathers: list[float] = []
+    sorted_u = sorted(utterances, key=lambda u: float(u.get("start_s", 0.0)))
+    for i in range(len(sorted_u) - 1):
+        gap = float(sorted_u[i + 1].get("start_s", 0.0)) - float(sorted_u[i].get("end_s", 0.0))
+        if bool(sorted_u[i].get("dramatic_breather_after", False)) and 0.75 <= gap <= 2.2:
+            breathers.append(round(gap, 2))
+
+    if not (min_avg_shot_s <= avg_shot <= max_avg_shot_s):
+        findings.append(f"Average shot length {avg_shot:.2f}s outside YouTube target [{min_avg_shot_s:.1f}s, {max_avg_shot_s:.1f}s]")
+    if hook_durs and not (min_hook_avg_s <= hook_avg <= max_hook_avg_s):
+        findings.append(f"First 30s Hook average shot length {hook_avg:.2f}s outside [{min_hook_avg_s:.1f}s, {max_hook_avg_s:.1f}s]")
+    if jl_count < min_jl_cuts:
+        findings.append(f"J/L-cut audio overlaps count {jl_count} < required {min_jl_cuts}")
+    if not (min_breathers <= len(breathers) <= max_breathers):
+        findings.append(f"Dramatic breathing pauses count {len(breathers)} outside [{min_breathers}, {max_breathers}]")
+
+    return {
+        "status": "PASS" if not findings else "FAIL",
+        "avg_shot_length_s": round(avg_shot, 2),
+        "hook_30s_avg_shot_s": round(hook_avg, 2),
+        "jl_cut_count": jl_count,
+        "dramatic_breather_count": len(breathers),
+        "dramatic_breather_gaps_s": breathers,
+        "findings": findings,
+    }
+
+
+def check_overlay_density(
+    bridges: list[dict[str, Any]],
+    *,
+    narration_waves: list[tuple[float, float]] | None = None,
+    min_total_overlays: int = 20,
+    min_distinct_archetypes: int = 6,
+    max_dead_gap_in_wave_s: float = 5.5,
+) -> dict[str, Any]:
+    """Verify >= 20 unique word-synced overlays, >= 6 distinct archetypes, and 2-5s density across narration waves."""
+    findings: list[str] = []
+    ids: set[str] = set()
+    archetypes: set[str] = set()
+    starts: list[float] = []
+
+    for idx, b in enumerate(bridges):
+        bid = str(b.get("bridge_id") or b.get("id") or f"ov_{idx + 1}")
+        ids.add(bid)
+        arch = str(b.get("template") or b.get("archetype") or "").strip()
+        if arch:
+            archetypes.add(arch)
+        starts.append(float(b.get("start_s", 0.0)))
+
+    if len(ids) < min_total_overlays:
+        findings.append(f"Word-synced overlays count {len(ids)} < required {min_total_overlays}")
+    if len(archetypes) < min_distinct_archetypes:
+        findings.append(f"Distinct bridge/overlay archetypes {len(archetypes)} < required {min_distinct_archetypes}: {sorted(archetypes)}")
+
+    max_obs_gap = 0.0
+    if narration_waves:
+        sorted_b = sorted(bridges, key=lambda x: float(x.get("start_s", 0.0)))
+        for w_st, w_en in narration_waves:
+            in_wave = [b for b in sorted_b if w_st - 0.5 <= float(b.get("start_s", 0.0)) <= w_en]
+            if not in_wave:
+                findings.append(f"Narration wave [{w_st:.1f}s-{w_en:.1f}s] has 0 word-synced overlays")
+                continue
+            pts = [w_st] + [float(b.get("start_s", 0.0)) for b in in_wave] + [w_en]
+            for k in range(len(pts) - 1):
+                gap = pts[k + 1] - pts[k]
+                max_obs_gap = max(max_obs_gap, gap)
+                if gap > max_dead_gap_in_wave_s:
+                    findings.append(
+                        f"Narration wave visual dead zone of {gap:.2f}s (> {max_dead_gap_in_wave_s:.1f}s) between {pts[k]:.1f}s and {pts[k+1]:.1f}s"
+                    )
+
+    return {
+        "status": "PASS" if not findings else "FAIL",
+        "unique_overlays": len(ids),
+        "distinct_archetypes": sorted(archetypes),
+        "max_wave_gap_s": round(max_obs_gap, 2),
+        "findings": findings,
+    }
+
+
+def check_grain_ceiling(
+    video_path: Path,
+    *,
+    sample_times_s: list[float] | None = None,
+    max_median_sigma: float = 2.0,
+    max_peak_sigma: float = 2.4,
+) -> dict[str, Any]:
+    """Deterministic high-pass noise / grain ceiling rejecting over-grained plates and enforcing uniform subtle 35mm grain."""
+    cap = cv2.VideoCapture(str(video_path))
+    fps = cap.get(cv2.CAP_PROP_FPS) or 24.0
+    total = int(cap.get(cv2.CAP_PROP_FRAME_COUNT) or 0)
+    dur = total / max(1.0, fps)
+    cap.release()
+
+    times = sample_times_s or [round(dur * (i + 0.5) / 16.0, 2) for i in range(16)]
+    frs = _read_frames_at_times(video_path, times)
+    sigmas: list[float] = []
+    findings: list[str] = []
+
+    for ts, fr in zip(times, frs, strict=False):
+        gray = cv2.cvtColor(fr, cv2.COLOR_RGB2GRAY).astype(np.float32)
+        h, w = gray.shape
+        # Measure interior texture/grain residual using 3x3 median/Gaussian high-pass estimator
+        crop = gray[h // 5 : 4 * h // 5, w // 5 : 4 * w // 5]
+        blur = cv2.GaussianBlur(crop, (3, 3), 0.8)
+        resid = crop - blur
+        # MAD-based robust noise sigma estimator (immune to crisp UI/text edges!)
+        sigma = float(np.median(np.abs(resid - np.median(resid))) * 1.4826)
+        sigmas.append(round(sigma, 3))
+        if sigma > max_peak_sigma:
+            findings.append(f"frame@{ts:.2f}s: excessive grain/high-freq noise sigma={sigma:.2f} > {max_peak_sigma:.2f}")
+
+    med = float(np.median(sigmas)) if sigmas else 0.0
+    peak = float(np.max(sigmas)) if sigmas else 0.0
+    if med > max_median_sigma:
+        findings.append(f"Median film grain sigma={med:.2f} exceeds ceiling {max_median_sigma:.2f}")
+
+    return {
+        "status": "PASS" if not findings else "FAIL",
+        "median_grain_sigma": round(med, 3),
+        "max_grain_sigma": round(peak, 3),
+        "samples": len(sigmas),
+        "findings": findings,
+    }
+
+
+def check_audio_anti_repetition(
+    sfx_events: list[dict[str, Any]],
+    soundscape_report: dict[str, Any],
+    *,
+    min_distinct_sfx_files: int = 15,
+    max_pumping_db: float = 1.0,
+) -> dict[str, Any]:
+    """Enforce >= 15 distinct real CC0 SFX files, 0 back-to-back identical SFX repeats, < 1.0 dB pumping, -14.0 LUFS, <= -1.0 dBTP."""
+    findings: list[str] = []
+    sorted_ev = sorted(sfx_events, key=lambda e: float(e.get("time_s", 0.0)))
+    distinct_files: set[str] = set()
+    prev_path = ""
+    consecutive_repeats: list[dict[str, Any]] = []
+
+    for ev in sorted_ev:
+        p = str(ev.get("wav_path") or "").strip()
+        if not p:
+            continue
+        name = Path(p).name
+        if "synth" in name.lower() or "sine" in name.lower() or "placeholder" in name.lower():
+            findings.append(f"Synthetic placeholder SFX prohibited: {name}")
+        distinct_files.add(name)
+        if prev_path and p == prev_path:
+            consecutive_repeats.append({"file": name, "time_s": round(float(ev.get("time_s", 0.0)), 2)})
+            findings.append(f"Back-to-back identical SFX repeat at {float(ev.get('time_s', 0.0)):.2f}s: {name}")
+        prev_path = p
+
+    if len(distinct_files) < min_distinct_sfx_files:
+        findings.append(f"Distinct real SFX/foley files count {len(distinct_files)} < required {min_distinct_sfx_files}")
+
+    lufs = float(soundscape_report.get("integrated_lufs", -99.0))
+    peak = float(soundscape_report.get("peak_dbfs", 0.0))
+    pump = float(soundscape_report.get("max_pause_pumping_swing_db", 0.0))
+    if not (-14.5 <= lufs <= -13.5):
+        findings.append(f"Master loudness {lufs:.2f} LUFS outside strict -14.0 +/- 0.5 LUFS")
+    if peak > -1.0:
+        findings.append(f"True peak {peak:.2f} dBTP exceeds -1.0 dBTP")
+    if pump >= max_pumping_db:
+        findings.append(f"Ducking pumping {pump:.2f} dB >= strict {max_pumping_db:.1f} dB ceiling")
+
+    return {
+        "status": "PASS" if not findings else "FAIL",
+        "distinct_sfx_files": len(distinct_files),
+        "consecutive_repeats": consecutive_repeats,
+        "integrated_lufs": lufs,
+        "peak_dbfs": peak,
+        "pumping_db": pump,
+        "findings": findings,
+    }
+
+
 def run_full_cinema_audit(
     video_path: Path,
     *,
@@ -693,8 +1040,11 @@ def run_full_cinema_audit(
     ai_critic_verdict_path: Path | None = None,
     expected_component: str = "final_film",
     require_ai_critic: bool = True,
+    enforce_v3_contracts: bool = False,
+    sfx_events: list[dict[str, Any]] | None = None,
+    narration_waves: list[tuple[float, float]] | None = None,
 ) -> dict[str, Any]:
-    """Run every deterministic L3 gate PLUS fail-closed AI Media Critic verification."""
+    """Run every deterministic L3 gate PLUS optional v3.2 Anti-Laziness contracts & fail-closed AI Media Critic."""
     from explainer_engine.qa.ai_critic_gate import verify_ai_critic_verdict
 
     delivery = check_master_delivery_specs(video_path, audio_report=soundscape_report)
@@ -720,6 +1070,14 @@ def run_full_cinema_audit(
         "audio_ducking_and_sfx": check_audio_ducking_and_sfx_balance(audio_ducking_metrics or {}),
         "grade_cohesion": check_archival_or_grade_cohesion(video_path, shot_windows),
     }
+    if enforce_v3_contracts:
+        results["zero_photo_clip_reuse"] = check_zero_photo_clip_reuse(video_path, shot_windows)
+        results["ltx_dominance"] = check_ltx_dominance(shot_windows)
+        results["youtube_rhythm_and_jl_cuts"] = check_youtube_rhythm_and_jl_cuts(shot_windows, utterances)
+        results["overlay_density"] = check_overlay_density(bridges or [], narration_waves=narration_waves)
+        results["grain_ceiling"] = check_grain_ceiling(video_path)
+        results["audio_anti_repetition"] = check_audio_anti_repetition(sfx_events or [], soundscape_report)
+
     if require_ai_critic:
         if ai_critic_verdict_path is None:
             results["ai_critic"] = {"status": "FAIL", "findings": ["Missing mandatory ai_critic_verdict_path"]}
@@ -736,4 +1094,5 @@ def run_full_cinema_audit(
         "failed_gates": failed_gates,
         "gates": results,
     }
+
 

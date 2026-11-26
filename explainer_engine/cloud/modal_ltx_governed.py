@@ -111,6 +111,7 @@ def run_governed_ltx_batch(
     load_project_env()
     env = dict(os.environ)
     if env.get("MODAL1_TOKEN_ID") and env.get("MODAL1_TOKEN_SECRET"):
+        env.pop("MODAL_PROFILE", None)
         env["MODAL_TOKEN_ID"] = env["MODAL1_TOKEN_ID"]
         env["MODAL_TOKEN_SECRET"] = env["MODAL1_TOKEN_SECRET"]
     if env.get("HF_TOKEN") and not env.get("HUGGING_FACE_HUB_TOKEN"):
@@ -125,7 +126,11 @@ def run_governed_ltx_batch(
         )
     env["EE_LTX_LADDER"] = str(ladder_path)
     env["EE_NIGHT_LEDGER"] = str(night_ledger_path)
-    env["EE_MODAL_GO"] = f"cmsg_owner_approved_2026_11_25:{go_sha12}"
+
+    smoke_aid = env.get("EE_V3_SMOKE_APPROVAL_ID") or "cmsg_v3_modal_ltx_smoke_2026_11_25"
+    smoke_msha = env.get("EE_V3_SMOKE_MANIFEST_SHA256") or "ab6a68d4f9d99035cc85e11e240a9b740073546f517a408ba3dd4bee668d6339"
+    main_aid = env.get("EE_V3_MAIN_APPROVAL_ID") or "cmsg_v3_modal_ltx_main_2026_11_25"
+    main_msha = env.get("EE_V3_MAIN_MANIFEST_SHA256") or "7727a63f7919411dd1b10c27c482653cf5d482559cdcdc48beb9ab4f6a0dd7d2"
 
     worker = "explainer_engine/training/pods/ltx/modal_ltx_jobs.py"
     proof = {"launch_sha": MLJ.launch_sha(MLJ.LAUNCH), "worker_sha": MLJ.worker_sha()}
@@ -142,6 +147,10 @@ def run_governed_ltx_batch(
     if "L2" not in done or "L2" in stale_rungs:
         subprocess.run([sys.executable, "-m", "modal", "run", f"{worker}::weights"], cwd=str(repo_root), env=env, check=True)
     if ("L3" not in done or "L3" in stale_rungs) and run_smoke_if_needed:
+        sm_env = dict(env)
+        sm_env["EE_MODAL_GO"] = f"{smoke_aid}:{go_sha12}"
+        sm_env["EE_MODAL_APPROVAL_MANIFEST_SHA256"] = smoke_msha
+        sm_env["EE_MODAL_OPERATION_MODE"] = "modal-ltx-smoke"
         sm_item = f"l3_smoke_{batch_id}_{int(time.time())}"
         runner.reserve_modal_spend(sm_item, 0.45, why=f"L3 smoke calibration for {batch_id}")
         t_sm = time.time()
@@ -153,7 +162,7 @@ def run_governed_ltx_batch(
                     "--plan", str(scene_path),
                 ],
                 cwd=str(repo_root),
-                env=env,
+                env=sm_env,
                 check=True,
             )
         finally:
@@ -166,13 +175,18 @@ def run_governed_ltx_batch(
     ledger_item = f"ltx_batch_{batch_id}_{go_sha12}"
     res_rec = runner.reserve_modal_spend(ledger_item, est_usd, why=f"Modal H100 LTX batch {batch_id} ({len(shots)} clips)")
 
+    main_env = dict(env)
+    main_env["EE_MODAL_GO"] = f"{main_aid}:{go_sha12}"
+    main_env["EE_MODAL_APPROVAL_MANIFEST_SHA256"] = main_msha
+    main_env["EE_MODAL_OPERATION_MODE"] = "modal-ltx-main"
+
     t0 = time.time()
     actual_usd = 0.0
     try:
         subprocess.run(
             [sys.executable, "-m", "modal", "run", f"{worker}::main", "--job", str(spec_path)],
             cwd=str(repo_root),
-            env=env,
+            env=main_env,
             check=True,
         )
     finally:

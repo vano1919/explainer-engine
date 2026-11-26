@@ -1705,6 +1705,8 @@ if modal is not None:
     app = modal.App(LAUNCH["app_name"])
     vol = modal.Volume.from_name("ee-weights", version=2)
     _code = LAUNCH.get("ltx_code") or {}
+    _p_list = Path(__file__).resolve().parents
+    _approvals_src = (_p_list[4] if len(_p_list) > 4 else Path(__file__).resolve().parent) / "config" / "owner_approvals.json"
     image = (modal.Image.from_registry(LAUNCH.get("base_image") or "python:3.12-slim", add_python="3.12")
              .apt_install("ffmpeg", "git")
              .run_commands(f'pip install -q "huggingface_hub=={LAUNCH.get("hf_hub_pin") or "1.33.0"}"',
@@ -1712,6 +1714,8 @@ if modal is not None:
                            f"{_code.get('commit')} && pip install -q -e /workspace/LTX-2/packages/ltx-core "
                            "-e /workspace/LTX-2/packages/ltx-pipelines")
              .add_local_file(str(LAUNCH_PATH), "/root/launch.json"))
+    if _approvals_src.is_file():
+        image = image.add_local_file(str(_approvals_src), "/root/config/owner_approvals.json")
     secrets = [modal.Secret.from_name(SECRET_NAME)]
 
     @app.function(image=image, cpu=(2.0, 2.0), memory=(4096, 4096), timeout=300, retries=0, secrets=secrets)

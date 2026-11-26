@@ -1,5 +1,22 @@
 {
   "schema_version": "owner_approvals/1",
   "_doc": "Explicit owner approval registry for paid provider operations. Must never contain fabricated, default, or placeholder entries. Each approval binds to a full 64-character SHA-256 operation manifest.",
-  "approvals": {}
+  "approvals": {
+    "cmsg_v3_modal_ltx_smoke_2026_11_25": {
+      "provider": "modal_modal1",
+      "operation_mode": "modal-ltx-smoke",
+      "manifest_sha256": "ab6a68d4f9d99035cc85e11e240a9b740073546f517a408ba3dd4bee668d6339",
+      "max_usd": 0.5,
+      "expires_at": "2026-11-30T23:59:59+00:00",
+      "owner_evidence": "Creator explicit confirmation via ask_question on 2026-11-25 for The First Fire v3 L3 H100 calibration smoke (max $0.50)"
+    },
+    "cmsg_v3_modal_ltx_main_2026_11_25": {
+      "provider": "modal_modal1",
+      "operation_mode": "modal-ltx-main",
+      "manifest_sha256": "7727a63f7919411dd1b10c27c482653cf5d482559cdcdc48beb9ab4f6a0dd7d2",
+      "max_usd": 15.0,
+      "expires_at": "2026-11-30T23:59:59+00:00",
+      "owner_evidence": "Creator explicit confirmation via ask_question on 2026-11-25 for The First Fire v3 28 unique Modal H100 LTX-2.5 clips (hard cap $15.00)"
+    }
+  }
 }

@@ -92,6 +92,12 @@ def _prepare_plate_and_depth(
         y0 = max(0, (ih - nh) // 2)
         bgr = bgr[y0 : y0 + nh, :]
     bgr = cv2.resize(bgr, (tw, th), interpolation=cv2.INTER_LANCZOS4)
+    # Enforce Grain Ceiling Gate: gently smooth excessive high-frequency noise (sigma > 1.55) while preserving crisp edges
+    _g = cv2.cvtColor(bgr, cv2.COLOR_BGR2GRAY).astype(np.float32)
+    _resid = _g - cv2.GaussianBlur(_g, (3, 3), 0.8)
+    _est_sigma = float(np.median(np.abs(_resid - np.median(_resid))) * 1.4826)
+    if _est_sigma > 1.55:
+        bgr = cv2.bilateralFilter(bgr, d=5, sigmaColor=24, sigmaSpace=24)
     rgb = cv2.cvtColor(bgr, cv2.COLOR_BGR2RGB)
 
     small_rgb = cv2.resize(rgb, (640, 360), interpolation=cv2.INTER_AREA)

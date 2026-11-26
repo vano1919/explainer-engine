@@ -22,6 +22,7 @@ def verify_viewer_panel_report(
     min_retention_30s_pct: float = 72.0,
     min_avg_view_pct: float = 58.0,
     min_readiness_score: float = 8.5,
+    min_personas: int = 3,
 ) -> dict[str, Any]:
     """Verify ``youtube_viewer_panel/1`` fail-closed against retention & A/B CTR targets."""
     findings: list[str] = []
@@ -43,8 +44,8 @@ def verify_viewer_panel_report(
     crit = list(data.get("critical_drop_off_defects") or [])
     personas = list(data.get("personas") or [])
 
-    if len(personas) < 3:
-        findings.append(f"Viewer panel requires >= 3 personas, got {len(personas)}")
+    if len(personas) < min_personas:
+        findings.append(f"Viewer panel requires >= {min_personas} personas, got {len(personas)}")
     if ret30 < min_retention_30s_pct:
         findings.append(f"Retention @ 0:30 is {ret30:.1f}% < required {min_retention_30s_pct:.1f}%")
     if avg_pct < min_avg_view_pct:
@@ -62,6 +63,7 @@ def verify_viewer_panel_report(
 
     return {
         "status": "PASS" if not findings else "FAIL",
+        "persona_count": len(personas),
         "retention_at_30s_pct": round(ret30, 1),
         "avg_view_pct": round(avg_pct, 1),
         "overall_youtube_readiness_score": round(score, 2),
@@ -76,14 +78,14 @@ def render_retention_curve_png(report_data: dict[str, Any], out_png: Path) -> Pa
     w, h = 1400, 760
     img = np.full((h, w, 3), (18, 15, 11), dtype=np.uint8)  # BGR deep obsidian
 
-    pad_l, pad_r, pad_t, pad_b = 110, 70, 110, 95
+    pad_l, pad_r, pad_t, pad_b = 115, 70, 115, 95
     pw = w - pad_l - pad_r
     ph = h - pad_t - pad_b
 
-    # Title
+    n_p = len(list(report_data.get("personas") or [])) or 5
     cv2.putText(
         img,
-        "YOUTUBE 3-PERSONA AUDIENCE RETENTION CURVE",
+        f"YOUTUBE {n_p}-PERSONA AUDIENCE RETENTION CURVE",
         (pad_l, 52),
         cv2.FONT_HERSHEY_SIMPLEX,
         0.95,
@@ -93,26 +95,27 @@ def render_retention_curve_png(report_data: dict[str, Any], out_png: Path) -> Pa
     )
     ret30 = float(report_data.get("aggregate_retention_at_30s_pct", 0.0))
     avg_v = float(report_data.get("aggregate_avg_view_pct", 0.0))
+    score = float(report_data.get("overall_youtube_readiness_score", 0.0))
     winner = (report_data.get("ab_packaging") or {}).get("winner", "?")
     cv2.putText(
         img,
-        f"Retention @ 0:30: {ret30:.1f}%  |  Avg View: {avg_v:.1f}%  |  A/B Winner: Variant {winner}",
+        f"Retention @ 0:30: {ret30:.1f}%  |  Avg View: {avg_v:.1f}%  |  Score: {score:.1f}/10  |  A/B Winner: Variant {winner}",
         (pad_l, 86),
         cv2.FONT_HERSHEY_SIMPLEX,
-        0.62,
+        0.60,
         (232, 196, 124),
         1,
         cv2.LINE_AA,
     )
 
     # Grid lines 0..100%
-    for pct in (0, 20, 40, 60, 72, 80, 100):
+    for pct in (0, 20, 40, 65, 80, 100):
         y = int(round(pad_t + ph * (1.0 - pct / 100.0)))
-        color = (70, 145, 215) if pct == 72 else (45, 42, 38)
-        thick = 2 if pct == 72 else 1
+        color = (70, 145, 215) if pct == 80 else ((90, 180, 130) if pct == 65 else (45, 42, 38))
+        thick = 2 if pct in (65, 80) else 1
         cv2.line(img, (pad_l, y), (pad_l + pw, y), color, thick, cv2.LINE_AA)
-        lbl = f"{pct}% (30s Target)" if pct == 72 else f"{pct}%"
-        cv2.putText(img, lbl, (18, y + 5), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (185, 195, 205), 1, cv2.LINE_AA)
+        lbl = f"{pct}% (30s Goal)" if pct == 80 else (f"{pct}% (AVD Goal)" if pct == 65 else f"{pct}%")
+        cv2.putText(img, lbl, (12, y + 5), cv2.FONT_HERSHEY_SIMPLEX, 0.42, (185, 195, 205), 1, cv2.LINE_AA)
 
     pts_raw = list(report_data.get("retention_curve_15s") or [])
     if pts_raw:
