@@ -306,7 +306,7 @@ def mix_broadcast_cinema_audio(
     else:
         pump_swing_db = 0.0
 
-    # 6. Sum all 5 cinema layers & Two-Pass EBU R128 Mastering (-14.0 LUFS / <= -1.2 dBTP)
+    # 6. Sum all 5 cinema layers & Two-Pass EBU R128 Mastering (-14.0 LUFS / <= true_peak_ceiling_db dBTP)
     mix = voice_buf + music_buf + amb_buf + sfx_buf + sub_buf
     # Gentle head/tail 30ms anti-pop fade
     anti_pop = min(n_total // 8, int(round(0.03 * sr)))
@@ -315,24 +315,91 @@ def mix_broadcast_cinema_audio(
         mix[:anti_pop] *= r
         mix[-anti_pop:] *= r[::-1]
 
-    meter = pyln.Meter(sr)
-    cur_lufs = float(meter.integrated_loudness(mix))
-    if np.isfinite(cur_lufs):
-        mix = pyln.normalize.loudness(mix, cur_lufs, target_lufs).astype(np.float32)
+    def _measure_true_peak_lin(sig: np.ndarray) -> float:
+        """4x oversampled ITU-R BS.1770-4 inter-sample true peak (linear)."""
+        if len(sig) < 16:
+            return float(np.max(np.abs(sig))) if len(sig) else 0.0
+        peak = float(np.max(np.abs(sig)))
+        # Process in chunks to keep memory modest on long 48kHz stereo mixes
+        chunk = sr * 15
+        for st_i in range(0, len(sig), chunk):
+            seg = sig[st_i : min(len(sig), st_i + chunk)]
+            for ch in range(seg.shape[1]):
+                up = resample_poly(seg[:, ch], 4, 1)
+                peak = max(peak, float(np.max(np.abs(up))))
+        return peak
 
-    # Soft-knee true peak limiter at true_peak_ceiling_db (-1.2 dBTP)
+    def _smooth_true_peak_limit(sig: np.ndarray, ceiling_lin: float) -> np.ndarray:
+        """Transparent lookahead true-peak brickwall limiter (zero flat-top hard-clipping)."""
+        out = sig.astype(np.float32, copy=True)
+        # 2-pass envelope limiting on 4x oversampled peak envelope guarantees true peak <= ceiling_lin
+        # without flat-top waveform distortion that causes inter-sample overshoot.
+        hop = max(1, int(sr * 0.002))  # 2ms resolution (~96 samples @ 48kHz)
+        look_blocks = 3  # 6ms lookahead
+        rel_coeff = float(np.exp(-2.0 / 65.0))  # ~65ms smooth release
+        for _ in range(3):
+            # Compute per-2ms block true peak via 4x oversampling
+            n_samp = len(out)
+            n_blk = int(np.ceil(n_samp / hop))
+            blk_peak = np.zeros(n_blk, dtype=np.float32)
+            chunk_blks = max(1, int((sr * 15) // hop))
+            for b0 in range(0, n_blk, chunk_blks):
+                b1 = min(n_blk, b0 + chunk_blks)
+                s0 = b0 * hop
+                s1 = min(n_samp, b1 * hop)
+                seg = out[s0:s1]
+                p_max = np.zeros(b1 - b0, dtype=np.float32)
+                for ch in range(seg.shape[1]):
+                    up = np.abs(resample_poly(seg[:, ch], 4, 1))
+                    up_hop = hop * 4
+                    pad_u = (b1 - b0) * up_hop - len(up)
+                    up = np.pad(up, (0, pad_u)) if pad_u > 0 else up[: (b1 - b0) * up_hop]
+                    p_max = np.maximum(p_max, up.reshape(b1 - b0, up_hop).max(axis=1))
+                blk_peak[b0:b1] = p_max
+
+            if float(np.max(blk_peak)) <= ceiling_lin * 1.002:
+                break
+
+            # Lookahead max window so gain ramps down cleanly BEFORE transient hits
+            win_peak = blk_peak.copy()
+            for k in range(1, look_blocks + 1):
+                win_peak[:-k] = np.maximum(win_peak[:-k], blk_peak[k:])
+                win_peak[k:] = np.maximum(win_peak[k:], blk_peak[:-k])
+
+            req_gain = np.minimum(1.0, (ceiling_lin * 0.985) / np.maximum(win_peak, 1e-9)).astype(np.float32)
+            # Smooth attack (fast) & release (65ms) on gain curve
+            smooth_g = np.ones(n_blk, dtype=np.float32)
+            cur_g = 1.0
+            for i in range(n_blk):
+                rg = float(req_gain[i])
+                cur_g = rg if rg < cur_g else rel_coeff * cur_g + (1.0 - rel_coeff) * rg
+                smooth_g[i] = cur_g
+            # Reverse lookahead pass to keep fast attack smooth (zero click)
+            for i in range(n_blk - 2, -1, -1):
+                smooth_g[i] = min(smooth_g[i], smooth_g[i + 1] + 0.18)
+
+            xp = np.arange(n_blk, dtype=np.float32) * hop
+            x_eval = np.arange(n_samp, dtype=np.float32)
+            sample_gain = np.interp(x_eval, xp, smooth_g).astype(np.float32)
+            out *= sample_gain[:, None]
+        return out
+
+    meter = pyln.Meter(sr)
     ceil_lin = float(10.0 ** (true_peak_ceiling_db / 20.0))
-    peak_before = float(np.max(np.abs(mix)))
-    if peak_before > ceil_lin:
-        mix = (np.tanh(mix / ceil_lin) * ceil_lin).astype(np.float32)
-        # Re-check LUFS after gentle limiting
+    # Two-pass loudness + true-peak convergence (no pre-limiter pyloudnorm clipping warning!)
+    for _ in range(3):
+        cur_lufs = float(meter.integrated_loudness(mix))
+        if np.isfinite(cur_lufs) and abs(cur_lufs - target_lufs) > 0.08:
+            g = float(10.0 ** ((target_lufs - cur_lufs) / 20.0))
+            mix = (mix * g).astype(np.float32)
+        mix = _smooth_true_peak_limit(mix, ceil_lin)
         post_lufs = float(meter.integrated_loudness(mix))
-        if np.isfinite(post_lufs) and abs(post_lufs - target_lufs) > 0.25:
-            g = 10.0 ** ((target_lufs - post_lufs) / 20.0)
-            mix = np.clip(mix * g, -ceil_lin, ceil_lin).astype(np.float32)
+        if np.isfinite(post_lufs) and abs(post_lufs - target_lufs) <= 0.15:
+            break
 
     final_lufs = float(meter.integrated_loudness(mix))
     final_peak_db = float(20.0 * np.log10(float(np.max(np.abs(mix))) + 1e-9))
+    final_true_peak_dbtp = float(20.0 * np.log10(_measure_true_peak_lin(mix) + 1e-9))
 
     sf.write(str(out_wav), mix, sr, subtype="PCM_24")
 
@@ -344,6 +411,7 @@ def mix_broadcast_cinema_audio(
         "duration_s": round(total_duration_s, 3),
         "integrated_lufs": round(final_lufs, 2),
         "peak_dbfs": round(final_peak_db, 2),
+        "true_peak_dbtp": round(final_true_peak_dbtp, 2),
         "max_sfx_relative_to_voice_db": round(max_sfx_rel_db, 2),
         "max_pause_pumping_swing_db": round(pump_swing_db, 2),
         "music_act_count": len(music_acts),

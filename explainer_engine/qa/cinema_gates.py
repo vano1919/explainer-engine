@@ -239,9 +239,11 @@ def check_master_delivery_specs(
     expected_sr: int = 48000,
     expected_channels: int = 2,
     audio_report: dict[str, Any] | None = None,
+    verify_ffmpeg_true_peak: bool = False,
 ) -> dict[str, Any]:
     """L3 machine forensics: verify 2K 2560x1440 @ 24fps yuv420p, 48kHz stereo, -14.0 +/- 0.5 LUFS, <= -1.0 dBTP."""
     import json
+    import re
     import subprocess
 
     raw = subprocess.check_output(
@@ -288,13 +290,33 @@ def check_master_delivery_specs(
 
     if audio_report is not None:
         lufs = float(audio_report.get("integrated_lufs", -99.0))
-        peak = float(audio_report.get("peak_dbfs", 0.0))
+        peak = float(audio_report.get("true_peak_dbtp", audio_report.get("peak_dbfs", 0.0)))
         if not (-14.5 <= lufs <= -13.5):
             findings.append(f"Integrated loudness {lufs:.2f} LUFS outside strict -14.0 +/- 0.5 LUFS target")
         if peak > -1.0:
-            findings.append(f"True peak {peak:.2f} dBFS exceeds -1.0 dBTP ceiling")
+            findings.append(f"True peak {peak:.2f} dBTP exceeds -1.0 dBTP ceiling")
 
-    return {
+    ffmpeg_true_peak_dbtp: float | None = None
+    ffmpeg_lufs: float | None = None
+    if verify_ffmpeg_true_peak and a_streams:
+        ebur = subprocess.run(
+            ["ffmpeg", "-hide_banner", "-nostats", "-i", str(video_path), "-vn", "-af", "ebur128=peak=true", "-f", "null", "-"],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        m_i = re.findall(r"Integrated loudness:\s*\n\s*I:\s*([-+]?\d+(?:\.\d+)?)\s*LUFS", ebur.stderr)
+        m_tp = re.findall(r"True peak:\s*\n\s*Peak:\s*([-+]?\d+(?:\.\d+)?)\s*dBFS", ebur.stderr)
+        if m_i:
+            ffmpeg_lufs = float(m_i[-1])
+            if not (-14.5 <= ffmpeg_lufs <= -13.5):
+                findings.append(f"FFmpeg ebur128 integrated loudness {ffmpeg_lufs:.2f} LUFS outside [-14.5, -13.5]")
+        if m_tp:
+            ffmpeg_true_peak_dbtp = float(m_tp[-1])
+            if ffmpeg_true_peak_dbtp > -0.95:
+                findings.append(f"FFmpeg ebur128 true peak {ffmpeg_true_peak_dbtp:.2f} dBTP exceeds -1.0 dBTP ceiling")
+
+    res: dict[str, Any] = {
         "status": "PASS" if not findings else "FAIL",
         "width": w,
         "height": h,
@@ -305,6 +327,11 @@ def check_master_delivery_specs(
         "duration_s": round(float((probe.get("format") or {}).get("duration", 0.0)), 3),
         "findings": findings,
     }
+    if ffmpeg_lufs is not None:
+        res["ffmpeg_integrated_lufs"] = round(ffmpeg_lufs, 2)
+    if ffmpeg_true_peak_dbtp is not None:
+        res["ffmpeg_true_peak_dbtp"] = round(ffmpeg_true_peak_dbtp, 2)
+    return res
 
 
 def check_narration_pacing_gaps(
@@ -426,7 +453,14 @@ def check_tts_pronunciation_asr(
             else wav_mono.astype(np.float32)
         )
         model = WhisperModel(whisper_model, device="cpu", compute_type="int8")
-        segments, _ = model.transcribe(audio_16k, language="en", beam_size=1)
+        asr_prompt = ", ".join(required_proper_nouns) if required_proper_nouns else None
+        segments, _ = model.transcribe(
+            audio_16k,
+            language="en",
+            beam_size=1,
+            initial_prompt=asr_prompt,
+            condition_on_previous_text=False,
+        )
         transcript = " ".join(seg.text.strip() for seg in segments).strip()
 
     ref_words = _normalize_words(expected_script)
@@ -1003,7 +1037,7 @@ def check_audio_anti_repetition(
         findings.append(f"Distinct real SFX/foley files count {len(distinct_files)} < required {min_distinct_sfx_files}")
 
     lufs = float(soundscape_report.get("integrated_lufs", -99.0))
-    peak = float(soundscape_report.get("peak_dbfs", 0.0))
+    peak = float(soundscape_report.get("true_peak_dbtp", soundscape_report.get("peak_dbfs", 0.0)))
     pump = float(soundscape_report.get("max_pause_pumping_swing_db", 0.0))
     if not (-14.5 <= lufs <= -13.5):
         findings.append(f"Master loudness {lufs:.2f} LUFS outside strict -14.0 +/- 0.5 LUFS")
@@ -1043,11 +1077,16 @@ def run_full_cinema_audit(
     enforce_v3_contracts: bool = False,
     sfx_events: list[dict[str, Any]] | None = None,
     narration_waves: list[tuple[float, float]] | None = None,
+    verify_ffmpeg_true_peak: bool = False,
 ) -> dict[str, Any]:
     """Run every deterministic L3 gate PLUS optional v3.2 Anti-Laziness contracts & fail-closed AI Media Critic."""
     from explainer_engine.qa.ai_critic_gate import verify_ai_critic_verdict
 
-    delivery = check_master_delivery_specs(video_path, audio_report=soundscape_report)
+    delivery = check_master_delivery_specs(
+        video_path,
+        audio_report=soundscape_report,
+        verify_ffmpeg_true_peak=verify_ffmpeg_true_peak,
+    )
     total_dur = float(delivery.get("duration_s", 0.0))
     cut_times = [float(s["start_s"]) for s in shot_windows[1:] if float(s.get("start_s", 0.0)) > 0.2]
 

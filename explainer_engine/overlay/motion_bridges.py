@@ -148,8 +148,10 @@ def _build_bridge_html(spec: MotionBridgeSpec, *, width: int, height: int) -> st
         </div>
         """
     elif spec.template == "stat_counter_card":
-        start_val = float(spec.meta.get("start_val", 0))
-        end_val = float(spec.meta.get("end_val", 300))
+        raw_start = spec.meta.get("start_val") if "start_val" in spec.meta else spec.meta.get("start_value", 0)
+        raw_end = spec.meta.get("end_val") if "end_val" in spec.meta else spec.meta.get("end_value", 300)
+        start_val = float(raw_start if raw_start is not None else 0)
+        end_val = float(raw_end if raw_end is not None else 300)
         prefix = html.escape(str(spec.meta.get("prefix", "+")))
         suffix = html.escape(str(spec.meta.get("suffix", "%")))
         arc_pct = max(5, min(100, int(spec.meta.get("arc_pct", 78))))
@@ -530,9 +532,9 @@ def render_motion_bridge_rgba(
         "-vf",
         vf,
         "-c:v",
-        "qtrle",
+        "png",
         "-pix_fmt",
-        "argb",
+        "rgba",
         str(out_mov),
     ]
     proc = subprocess.Popen(ff_cmd, stdin=subprocess.PIPE)
@@ -544,7 +546,7 @@ def render_motion_bridge_rgba(
             args=["--use-gl=angle", "--use-angle=swiftshader", "--enable-webgl", "--ignore-gpu-blocklist"],
         )
         page = browser.new_page(viewport={"width": render_width, "height": render_height}, device_scale_factor=1)
-        page.goto(html_path.as_uri(), wait_until="load")
+        page.goto(html_path.resolve().as_uri(), wait_until="load")
         page.evaluate("() => document.fonts.ready")
         page.evaluate(f"() => window.__setTime({spec.duration_s * 0.5:.3f})")
         raw_bb = list(page.evaluate("() => window.__getBBox()"))

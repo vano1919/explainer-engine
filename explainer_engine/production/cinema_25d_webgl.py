@@ -432,7 +432,7 @@ def render_webgl_25d_clip(
             args=["--use-gl=angle", "--use-angle=swiftshader", "--enable-webgl", "--ignore-gpu-blocklist"],
         )
         page = browser.new_page(viewport={"width": render_width, "height": render_height}, device_scale_factor=1)
-        page.goto(html_path.as_uri(), wait_until="load")
+        page.goto(html_path.resolve().as_uri(), wait_until="load")
         page.wait_for_function("() => window.__ready === true", timeout=60000)
         cdp = page.context.new_cdp_session(page)
 

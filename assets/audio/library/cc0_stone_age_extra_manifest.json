@@ -56,14 +56,14 @@
   },
   "ice_glacier_crack": {
     "path": "assets/audio/library/ice_glacier_crack.wav",
-    "source_id": 712,
-    "orig_name": "Taking a drink",
-    "source": "Freesound @njjjjjjjjjjjjjjjjjjjjjjjj https://freesound.org/s/654242/",
+    "source_id": 1739,
+    "orig_name": "ice grinding cracking freezing designed",
+    "source": "Freesound @kyles https://freesound.org/s/452645/",
     "license": "CC0-1.0",
     "commercial_use": true,
-    "source_url": "https://huggingface.co/datasets/Jacob121294/bank-sfx (id=712, Freesound @njjjjjjjjjjjjjjjjjjjjjjjj https://freesound.org/s/654242/)",
-    "duration_s": 1.84,
-    "sha256": "4ca53506560414bc50a5d3209280f7445d2b09b5d07b989805dc3cc5f84e9540"
+    "source_url": "https://huggingface.co/datasets/Jacob121294/bank-sfx (id=1739, Freesound @kyles https://freesound.org/s/452645/)",
+    "duration_s": 2.2,
+    "sha256": "6449774468b74d8a32d6af37a396b90dc52aa4fe246fc45703a0616529f70e19"
   },
   "wolf_growl_prowl": {
     "path": "assets/audio/library/wolf_growl_prowl.wav",
@@ -210,35 +210,35 @@
   },
   "music_act1_glacial_drone": {
     "path": "assets/audio/library/music_act1_glacial_drone.wav",
-    "source_id": 1702,
-    "orig_name": "thunder4",
-    "source": "Freesound @BeroundSound https://freesound.org/s/693877/",
+    "source_id": 1703,
+    "orig_name": "Low rumble SFX (PaulStretch 18s smooth glacial drone)",
+    "source": "Freesound @Sadiquecat https://freesound.org/s/737428/",
     "license": "CC0-1.0",
     "commercial_use": true,
-    "source_url": "https://huggingface.co/datasets/Jacob121294/bank-sfx (id=1702, Freesound @BeroundSound https://freesound.org/s/693877/)",
-    "duration_s": 5.648,
-    "sha256": "604975baf2ebf6dbb6788ea4219061c4ce82a2ff9d8b8b6030a7ef3ce0763489"
+    "source_url": "https://huggingface.co/datasets/Jacob121294/bank-sfx (id=1703, Freesound @Sadiquecat https://freesound.org/s/737428/)",
+    "duration_s": 18.0,
+    "sha256": "0160bb68e7d98da2f63659a0c284ee3461fbcd91297971dbfbde310f9fcc21e5"
   },
   "music_act2_tribal_tension": {
     "path": "assets/audio/library/music_act2_tribal_tension.wav",
     "source_id": 1744,
     "orig_name": "Cinematic Rumble",
-    "source": "Freesound (CC0-1.0)",
+    "source": "Freesound @qubodup https://freesound.org/s/184936/",
     "license": "CC0-1.0",
     "commercial_use": true,
-    "source_url": "https://huggingface.co/datasets/Jacob121294/bank-sfx (id=1744)",
+    "source_url": "https://huggingface.co/datasets/Jacob121294/bank-sfx (id=1744, Freesound @qubodup https://freesound.org/s/184936/)",
     "duration_s": 6.682,
     "sha256": "c7e01e28c0874c66d6f0dcb2e1b290483e5040c11722ae5eb681703afc9682b4"
   },
   "music_act3_triumph_swell": {
     "path": "assets/audio/library/music_act3_triumph_swell.wav",
-    "source_id": 1092,
-    "orig_name": "Synth Texture 3",
-    "source": "Freesound (CC0-1.0)",
+    "source_id": 1498,
+    "orig_name": "reversed piano note with clean no reverb + Cinematic Rumble (PaulStretch 18s warm documentary pad)",
+    "source": "Freesound @tusic99 https://freesound.org/s/648909/ + Freesound @qubodup https://freesound.org/s/184936/",
     "license": "CC0-1.0",
     "commercial_use": true,
-    "source_url": "https://huggingface.co/datasets/Jacob121294/bank-sfx (id=1092)",
-    "duration_s": 6.697,
-    "sha256": "045a874d603fadda01f30c829bcbcb0ceefdaf52695b83997a9ef7d5fbb113f1"
+    "source_url": "https://huggingface.co/datasets/Jacob121294/bank-sfx (id=1498 Freesound @tusic99 https://freesound.org/s/648909/; id=1744 Freesound @qubodup https://freesound.org/s/184936/)",
+    "duration_s": 18.0,
+    "sha256": "6b96e3f242e4f897eaa9b9ed7ff08495314c1125b6ccf938da708d7b249bb296"
   }
 }

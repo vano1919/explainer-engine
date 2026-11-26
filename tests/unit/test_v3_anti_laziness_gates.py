@@ -182,3 +182,60 @@ def test_five_persona_viewer_panel_and_paddy_galloway_matrix(tmp_path: Path) -> 
         total_duration_s=36.0,
     )
     assert pi["status"] == "PASS"
+
+
+def test_stat_counter_card_accepts_end_value_alias() -> None:
+    from explainer_engine.overlay.motion_bridges import MotionBridgeSpec, _build_bridge_html
+
+    spec = MotionBridgeSpec(
+        bridge_id="ov_alias",
+        template="stat_counter_card",
+        title="EXTRA HOURS",
+        subtitle="Language & cave art",
+        duration_s=3.5,
+        meta={"start_value": 0, "end_value": 4, "prefix": "+", "suffix": " HRS"},
+    )
+    doc = _build_bridge_html(spec, width=1920, height=1080)
+    assert 'data-end="4.0"' in doc
+    assert 'data-start="0.0"' in doc
+
+
+def test_broadcast_mix_true_peak_limiter_and_gate(tmp_path: Path) -> None:
+    import warnings
+
+    import soundfile as sf
+
+    from explainer_engine.audio.broadcast_cinema_mix import mix_broadcast_cinema_audio
+
+    sr = 48000
+    t = np.linspace(0.0, 4.0, sr * 4, endpoint=False, dtype=np.float32)
+    # Hot transient-rich voice signal that previously caused inter-sample true-peak overshoot
+    voice = (0.7 * np.sin(2 * np.pi * 220 * t) + 0.45 * np.sin(2 * np.pi * 1760 * t) * (np.sin(2 * np.pi * 3 * t) > 0.5)).astype(np.float32)
+    voice_wav = tmp_path / "voice.wav"
+    sf.write(str(voice_wav), voice, sr, subtype="PCM_16")
+    out_wav = tmp_path / "mix.wav"
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always")
+        rep = mix_broadcast_cinema_audio(
+            total_duration_s=4.0,
+            voice_wav=voice_wav,
+            music_acts=[],
+            scene_ambiences=[],
+            sfx_events=[],
+            out_wav=out_wav,
+            target_lufs=-14.0,
+            true_peak_ceiling_db=-1.5,
+        )
+    clip_warns = [w for w in caught if "clipped" in str(w.message).lower()]
+    assert not clip_warns, f"Unexpected clipping warning: {clip_warns}"
+    assert -14.4 <= rep["integrated_lufs"] <= -13.6
+    assert rep["true_peak_dbtp"] <= -1.35
+
+    # Gate must reject true_peak_dbtp > -1.0 even when sample peak_dbfs looks safe
+    sfx = [{"time_s": float(i), "wav_path": f"/tmp/sfx_{i:02d}.wav"} for i in range(15)]
+    bad_tp = check_audio_anti_repetition(
+        sfx,
+        {"integrated_lufs": -14.0, "peak_dbfs": -1.2, "true_peak_dbtp": 2.2, "max_pause_pumping_swing_db": 0.2},
+    )
+    assert bad_tp["status"] == "FAIL"
+

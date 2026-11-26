@@ -110,7 +110,7 @@ html, body {{ width: 1280px; height: 720px; overflow: hidden; background: #000; 
     with sync_playwright() as p:
         b = p.chromium.launch(headless=True)
         page = b.new_page(viewport={"width": 1280, "height": 720}, device_scale_factor=1)
-        page.goto(html_tmp.as_uri(), wait_until="load")
+        page.goto(html_tmp.resolve().as_uri(), wait_until="load")
         page.evaluate("() => document.fonts.ready")
         page.screenshot(path=str(out_jpg), type="jpeg", quality=93)
         b.close()
@@ -246,7 +246,7 @@ h2 {{
     with sync_playwright() as p:
         b = p.chromium.launch(headless=True)
         page = b.new_page(viewport={"width": 1600, "height": 1020}, device_scale_factor=1)
-        page.goto(tmp_html.as_uri(), wait_until="load")
+        page.goto(tmp_html.resolve().as_uri(), wait_until="load")
         page.evaluate("() => document.fonts.ready")
         page.screenshot(path=str(out_png), type="png")
         b.close()

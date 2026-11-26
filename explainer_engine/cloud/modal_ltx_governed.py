@@ -127,10 +127,15 @@ def run_governed_ltx_batch(
     env["EE_LTX_LADDER"] = str(ladder_path)
     env["EE_NIGHT_LEDGER"] = str(night_ledger_path)
 
-    smoke_aid = env.get("EE_V3_SMOKE_APPROVAL_ID") or "cmsg_v3_modal_ltx_smoke_2026_11_25"
-    smoke_msha = env.get("EE_V3_SMOKE_MANIFEST_SHA256") or "ab6a68d4f9d99035cc85e11e240a9b740073546f517a408ba3dd4bee668d6339"
-    main_aid = env.get("EE_V3_MAIN_APPROVAL_ID") or "cmsg_v3_modal_ltx_main_2026_11_25"
-    main_msha = env.get("EE_V3_MAIN_MANIFEST_SHA256") or "7727a63f7919411dd1b10c27c482653cf5d482559cdcdc48beb9ab4f6a0dd7d2"
+    smoke_aid = (env.get("EE_V3_SMOKE_APPROVAL_ID") or env.get("EE_MODAL_SMOKE_APPROVAL_ID") or "").strip()
+    smoke_msha = (env.get("EE_V3_SMOKE_MANIFEST_SHA256") or env.get("EE_MODAL_SMOKE_MANIFEST_SHA256") or "").strip()
+    main_aid = (env.get("EE_V3_MAIN_APPROVAL_ID") or env.get("EE_MODAL_APPROVAL_ID") or "").strip()
+    main_msha = (env.get("EE_V3_MAIN_MANIFEST_SHA256") or env.get("EE_MODAL_APPROVAL_MANIFEST_SHA256") or "").strip()
+    if not main_aid or len(main_msha) != 64:
+        raise RuntimeError(
+            "Missing explicit runtime Modal approval env vars (EE_V3_MAIN_APPROVAL_ID and 64-hex "
+            "EE_V3_MAIN_MANIFEST_SHA256, plus EE_OWNER_APPROVALS_PATH pointing to a local session approval file)."
+        )
 
     worker = "explainer_engine/training/pods/ltx/modal_ltx_jobs.py"
     proof = {"launch_sha": MLJ.launch_sha(MLJ.LAUNCH), "worker_sha": MLJ.worker_sha()}

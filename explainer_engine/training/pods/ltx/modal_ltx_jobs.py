@@ -1706,7 +1706,12 @@ if modal is not None:
     vol = modal.Volume.from_name("ee-weights", version=2)
     _code = LAUNCH.get("ltx_code") or {}
     _p_list = Path(__file__).resolve().parents
-    _approvals_src = (_p_list[4] if len(_p_list) > 4 else Path(__file__).resolve().parent) / "config" / "owner_approvals.json"
+    _env_approvals = os.environ.get("EE_OWNER_APPROVALS_PATH", "").strip()
+    _approvals_src = (
+        Path(_env_approvals).expanduser()
+        if _env_approvals
+        else (_p_list[4] if len(_p_list) > 4 else Path(__file__).resolve().parent) / "config" / "owner_approvals.json"
+    )
     image = (modal.Image.from_registry(LAUNCH.get("base_image") or "python:3.12-slim", add_python="3.12")
              .apt_install("ffmpeg", "git")
              .run_commands(f'pip install -q "huggingface_hub=={LAUNCH.get("hf_hub_pin") or "1.33.0"}"',

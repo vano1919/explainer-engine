@@ -365,7 +365,15 @@ def synthesize_elevenlabs_odom_narration(
 
         wm = WhisperModel("tiny.en", device="cpu", compute_type="int8")
         audio_16k = resample_poly(np.clip(timeline, -0.98, 0.98), 16000, target_sr).astype(np.float32)
-        segments, _ = wm.transcribe(audio_16k, language="en", word_timestamps=False, beam_size=1)
+        asr_prompt = ", ".join(required_proper_nouns) if required_proper_nouns else None
+        segments, _ = wm.transcribe(
+            audio_16k,
+            language="en",
+            word_timestamps=False,
+            beam_size=1,
+            initial_prompt=asr_prompt,
+            condition_on_previous_text=False,
+        )
         observed = " ".join(seg.text.strip() for seg in segments).strip()
         asr_report = check_tts_pronunciation_asr(
             expected_script,

@@ -252,7 +252,7 @@ body {{ width: 1680px; background: #0D0E11; color: #F1F3F6; font-family: 'Plus J
     with sync_playwright() as p:
         b = p.chromium.launch(headless=True)
         page = b.new_page(viewport={"width": 1680, "height": 1160}, device_scale_factor=1)
-        page.goto(html_p.as_uri(), wait_until="load")
+        page.goto(html_p.resolve().as_uri(), wait_until="load")
         page.evaluate("() => document.fonts.ready")
         page.screenshot(path=str(png_p), full_page=True)
         b.close()
