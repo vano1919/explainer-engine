@@ -16,6 +16,7 @@ Implements the November 2026 production architecture inside ``explainer-engine``
 """
 from __future__ import annotations
 
+import sqlite3
 import subprocess
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
@@ -48,12 +49,67 @@ class SpendRecord:
 
 @dataclass(slots=True)
 class EpisodeBudgetGuard:
-    """Enforces a strict per-episode hard USD cap ($10.00 default) with 80% ($8.00) checkpoint."""
+    """Enforces a strict per-episode hard USD cap ($10.00 default) with 80% ($8.00) checkpoint.
+
+    When ``db_path`` is supplied, persists every reservation and settlement atomically to a
+    SQLite WAL database so crash recovery never forgets prior Modal/API spend.
+    """
 
     episode_id: str
     cap_usd: float = DEFAULT_EPISODE_BUDGET_CAP_USD
     checkpoint_ratio: float = DEFAULT_CHECKPOINT_RATIO
     records: list[SpendRecord] = field(default_factory=list)
+    db_path: Path | None = None
+
+    def __post_init__(self) -> None:
+        if self.db_path is not None:
+            self.db_path = Path(self.db_path)
+            self.db_path.parent.mkdir(parents=True, exist_ok=True)
+            self._init_db()
+            self._load_from_db()
+
+    def _connect(self) -> sqlite3.Connection:
+        assert self.db_path is not None
+        conn = sqlite3.connect(str(self.db_path), timeout=15.0)
+        conn.execute("PRAGMA journal_mode=WAL;")
+        return conn
+
+    def _init_db(self) -> None:
+        with self._connect() as conn:
+            conn.execute(
+                """
+                CREATE TABLE IF NOT EXISTS episode_spend (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    episode_id TEXT NOT NULL,
+                    job_id TEXT NOT NULL,
+                    category TEXT NOT NULL,
+                    provider TEXT NOT NULL,
+                    estimated_usd REAL NOT NULL,
+                    actual_usd REAL,
+                    status TEXT NOT NULL
+                )
+                """
+            )
+            conn.commit()
+
+    def _load_from_db(self) -> None:
+        with self._connect() as conn:
+            rows = conn.execute(
+                "SELECT job_id, category, provider, estimated_usd, actual_usd, status "
+                "FROM episode_spend WHERE episode_id = ? ORDER BY id ASC",
+                (self.episode_id,),
+            ).fetchall()
+        self.records = [
+            SpendRecord(
+                job_id=str(r[0]),
+                category=str(r[1]),
+                provider=str(r[2]),
+                estimated_usd=float(r[3]),
+                actual_usd=float(r[4]) if r[4] is not None else None,
+                status=str(r[5]),
+            )
+            for r in rows
+        ]
 
     @property
     def checkpoint_usd(self) -> float:
@@ -61,6 +117,8 @@ class EpisodeBudgetGuard:
 
     @property
     def committed_usd(self) -> float:
+        if self.db_path is not None:
+            self._load_from_db()
         total = 0.0
         for r in self.records:
             if r.status == "SETTLED" and r.actual_usd is not None:
@@ -82,6 +140,15 @@ class EpisodeBudgetGuard:
                 f"committed=${self.committed_usd:.2f} + est=${est:.2f} = ${projected:.2f} > cap=${self.cap_usd:.2f}"
             )
         rec = SpendRecord(job_id=job_id, category=category, provider=provider, estimated_usd=est)
+        if self.db_path is not None:
+            with self._connect() as conn:
+                conn.execute("BEGIN IMMEDIATE")
+                conn.execute(
+                    "INSERT INTO episode_spend (episode_id, job_id, category, provider, estimated_usd, actual_usd, status) "
+                    "VALUES (?, ?, ?, ?, ?, NULL, 'RESERVED')",
+                    (self.episode_id, job_id, category, provider, est),
+                )
+                conn.commit()
         self.records.append(rec)
         return {
             "job_id": job_id,
@@ -93,9 +160,31 @@ class EpisodeBudgetGuard:
         }
 
     def settle(self, job_id: str, *, actual_usd: float) -> dict[str, Any]:
+        act = max(0.0, float(actual_usd))
+        if self.db_path is not None:
+            with self._connect() as conn:
+                conn.execute("BEGIN IMMEDIATE")
+                row = conn.execute(
+                    "SELECT id FROM episode_spend WHERE episode_id = ? AND job_id = ? AND status = 'RESERVED' ORDER BY id DESC LIMIT 1",
+                    (self.episode_id, job_id),
+                ).fetchone()
+                if row is None:
+                    raise KeyError(f"No open RESERVED spend record found for job_id={job_id!r}")
+                conn.execute(
+                    "UPDATE episode_spend SET actual_usd = ?, status = 'SETTLED' WHERE id = ?",
+                    (act, int(row[0])),
+                )
+                conn.commit()
+            self._load_from_db()
+            return {
+                "job_id": job_id,
+                "actual_usd": act,
+                "committed_usd": self.committed_usd,
+                "remaining_usd": self.remaining_usd,
+            }
         for r in reversed(self.records):
             if r.job_id == job_id and r.status == "RESERVED":
-                r.actual_usd = max(0.0, float(actual_usd))
+                r.actual_usd = act
                 r.status = "SETTLED"
                 return {
                     "job_id": job_id,
@@ -106,13 +195,15 @@ class EpisodeBudgetGuard:
         raise KeyError(f"No open RESERVED spend record found for job_id={job_id!r}")
 
     def summary(self) -> dict[str, Any]:
+        committed = self.committed_usd
         return {
             "episode_id": self.episode_id,
             "cap_usd": self.cap_usd,
             "checkpoint_usd": self.checkpoint_usd,
-            "committed_usd": self.committed_usd,
-            "remaining_usd": self.remaining_usd,
-            "checkpoint_reached": self.committed_usd >= self.checkpoint_usd,
+            "committed_usd": committed,
+            "remaining_usd": round(max(0.0, self.cap_usd - committed), 4),
+            "checkpoint_reached": committed >= self.checkpoint_usd,
+            "db_path": str(self.db_path) if self.db_path is not None else None,
             "records": [asdict(r) for r in self.records],
         }
 
