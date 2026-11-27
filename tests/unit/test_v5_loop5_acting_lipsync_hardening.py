@@ -18,12 +18,10 @@ from explainer_engine.qa.cinema_gates import (
 )
 from explainer_engine.videolane.ltx_loop import (
     CLOSED_MOUTH_LOCK_CLAUSE,
-    ContractError,
     PhotoObservation,
     build_photo_grounded_prompt,
     sha256_file,
     validate_acting_blocking_prompt,
-    validate_dialogue_framing,
 )
 from explainer_engine.videolane.multishot_scene_director import (
     extract_axis_locked_coverage_plates,
@@ -79,7 +77,12 @@ def test_validate_native_keyframe_plates_blocks_crops_and_reuse() -> None:
     assert validate_native_keyframe_plates(good_plan)["status"] == "PASS"
 
 
-def test_vl02_dialogue_framing_and_closed_mouth_lock(tmp_path: Path) -> None:
+def test_closeup_dialogue_routes_to_voice_first_lipsync_and_silent_locks_mouth(tmp_path: Path) -> None:
+    from explainer_engine.videolane.lipsync_pipeline import (
+        build_lipsync_refinement_command,
+        plan_dialogue_lipsync_route,
+    )
+
     img = tmp_path / "still.png"
     Image.new("RGB", (1280, 720), color=(40, 45, 50)).save(img)
     obs = PhotoObservation(
@@ -91,44 +94,52 @@ def test_vl02_dialogue_framing_and_closed_mouth_lock(tmp_path: Path) -> None:
         observed_environment="travertine portico steps",
     )
 
-    # Frontal medium_close_up raw text-only LTX dialogue MUST fail closed (VL-02)
-    with pytest.raises(ContractError, match="VL-02 violation"):
-        build_photo_grounded_prompt(
-            obs,
-            camera_move="zoom_in",
-            action_beat="turns his head toward Spurinna",
-            acting_style="physically grounded cinema acting",
-            spoken_line="The Ides of March have come.",
-            speaker_name="Julius Caesar",
-            voice_description="deep resonant baritone",
-            shot_scale="medium_close_up",
-            camera_framing="frontal",
-            audio_driven_lipsync=False,
-        )
-
-    # Safe over_the_shoulder framing PASSES
-    p_ots = build_photo_grounded_prompt(
+    # Frontal medium_close_up dialogue is ALLOWED (never banned) and routes to Voice-First A2V + LatentSync!
+    p_cu = build_photo_grounded_prompt(
         obs,
         camera_move="zoom_in",
-        action_beat="turns his shoulder and steps forward",
+        action_beat="turns his head toward Spurinna with a sharp ironic glance",
         acting_style="physically grounded cinema acting",
         spoken_line="The Ides of March have come.",
         speaker_name="Julius Caesar",
         voice_description="deep resonant baritone",
         shot_scale="medium_close_up",
-        camera_framing="over_the_shoulder",
+        camera_framing="frontal",
     )
-    assert "lips close cleanly" in p_ots.lower()
+    assert "audio-driven cinema close-up acting" in p_cu.lower()
+    assert "lips close cleanly" in p_cu.lower()
 
-    # Audio-driven lipsync PASSES even on close_up
-    validate_dialogue_framing(
-        spoken_line="Aye, Caesar.",
+    plan_cu = plan_dialogue_lipsync_route(
+        shot_id="cu_01",
+        spoken_line="The Ides of March have come.",
         shot_scale="close_up",
         camera_framing="frontal",
-        audio_driven_lipsync=True,
+        audio_driver_path=tmp_path / "caesar.wav",
+        preferred_backend="latentsync_1_6",
     )
+    assert plan_cu.route == "ltx_a2v_plus_lipsync_refinement"
+    assert plan_cu.primary_engine == "ltx_a2v"
+    assert plan_cu.refinement_backend == "latentsync_1_6"
+    assert plan_cu.requires_voice_first_wav is True
 
-    # Non-dialogue shot MUST lock mouth closed
+    job_ls = build_lipsync_refinement_command(
+        backend="latentsync_1_6",
+        video_path=tmp_path / "raw_ltx.mp4",
+        audio_wav_path=tmp_path / "caesar.wav",
+        out_mp4=tmp_path / "synced.mp4",
+    )
+    assert job_ls["license"] == "Apache-2.0"
+    assert "stage2_512.yaml" in " ".join(job_ls["cmd"])
+
+    job_mt = build_lipsync_refinement_command(
+        backend="musetalk_1_5",
+        video_path=tmp_path / "raw_ltx.mp4",
+        audio_wav_path=tmp_path / "caesar.wav",
+        out_mp4=tmp_path / "synced_mt.mp4",
+    )
+    assert job_mt["license"] == "MIT"
+
+    # Non-dialogue shot MUST still lock mouth closed during narrator-over scenes
     p_silent = build_photo_grounded_prompt(
         obs,
         camera_move="truck",

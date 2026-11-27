@@ -24,6 +24,7 @@ from typing import Any
 
 from explainer_engine.core.camera_vocab import ALLOWED_CAMERA_MOVES, validate_camera_move
 from explainer_engine.core.errors import ContractError
+from explainer_engine.videolane.lipsync_pipeline import DialogueLipSyncPlan, plan_dialogue_lipsync_route
 
 DEFAULT_FPS = 24
 HEAD_HANDLE_S = 0.5
@@ -199,27 +200,23 @@ def validate_dialogue_framing(
     shot_scale: str | None = None,
     camera_framing: str | None = None,
     audio_driven_lipsync: bool = False,
-) -> None:
-    """Enforce VL-02 lip-sync discipline: forbid frontal close-up speaking heads in raw text-only LTX.
+    audio_driver_path: str | Path | None = None,
+    preferred_backend: str = "latentsync_1_5",
+) -> DialogueLipSyncPlan:
+    """Resolve the Voice-First Audio-to-Video + Lip-Sync refinement route for dialogue shots.
 
-    Raw text-prompted LTX-2.5 produces unnatural mouth-flapping and jaw distortion on frontal
-    close-ups and medium close-ups. Spoken LTX shots MUST either:
-    - use ``audio_driven_lipsync=True`` (Audio-to-Video / dedicated lip-sync pass), OR
-    - use safe documentary framing (``over_the_shoulder``, ``three_quarter_profile``,
-      ``profile``, ``medium_wide``, ``two_shot``).
+    NEVER bans close-up or medium-close-up dialogue: instead automatically routes frontal/close-up
+    dialogue through ``ltx_a2v`` + ``latentsync_1_5``/``latentsync_1_6``/``musetalk_1_5`` so
+    drama-first and "What If" miniseries scenes achieve pixel-accurate lip-sync without compromises.
     """
-    if not spoken_line or not str(spoken_line).strip():
-        return
-    if audio_driven_lipsync:
-        return
-    scale = str(shot_scale or "").strip().lower().replace("-", "_").replace(" ", "_")
-    framing = str(camera_framing or "").strip().lower().replace("-", "_").replace(" ", "_")
-    if scale in VL02_FORBIDDEN_RAW_DIALOGUE_SCALES and framing not in VL02_SAFE_DIALOGUE_FRAMINGS:
-        raise ContractError(
-            f"VL-02 violation: raw text-prompted LTX dialogue is forbidden on {scale!r} "
-            f"(framing={framing or 'frontal'!r}) because LTX mouths distort/desync; "
-            f"use audio_driven_lipsync=True or reframe to one of {sorted(VL02_SAFE_DIALOGUE_FRAMINGS)}"
-        )
+    _ = audio_driven_lipsync  # retained for backwards compatibility
+    return plan_dialogue_lipsync_route(
+        spoken_line=spoken_line,
+        shot_scale=shot_scale,
+        camera_framing=camera_framing,
+        audio_driver_path=audio_driver_path,
+        preferred_backend=preferred_backend,
+    )
 
 
 def validate_acting_blocking_prompt(prompt: str) -> list[str]:
@@ -278,7 +275,7 @@ def build_photo_grounded_prompt(
     if spoken_line:
         if not speaker_name or not voice_description:
             raise ContractError("Clip-spoken LTX prompt requires both speaker_name and voice_description")
-        validate_dialogue_framing(
+        ls_plan = validate_dialogue_framing(
             spoken_line=spoken_line,
             shot_scale=shot_scale,
             camera_framing=camera_framing,
@@ -286,7 +283,7 @@ def build_photo_grounded_prompt(
         )
         parts.append(
             f'{speaker_name.strip()} says in {voice_description.strip()}: "{spoken_line.strip()}" '
-            f"Natural jaw cadence, subtle head/shoulder emphasis, lips close cleanly at sentence end."
+            f"{ls_plan.prompt_directive}"
         )
     else:
         parts.append(CLOSED_MOUTH_LOCK_CLAUSE)
@@ -366,8 +363,17 @@ def run_continuous_shot_loop(
         attempts = 0
         for attempt in range(1, max_retries + 2):
             attempts = attempt
+            ls_plan = plan_dialogue_lipsync_route(
+                shot_id=shot_id,
+                spoken_line=shot.get("spoken_line"),
+                shot_scale=shot.get("shot_scale"),
+                camera_framing=shot.get("camera_framing"),
+                audio_driver_path=shot.get("audio_driver_path"),
+                preferred_backend=str(shot.get("lipsync_backend", "latentsync_1_5")),
+            )
             req = {
                 "shot_id": shot_id,
+                "lipsync_plan": ls_plan.to_dict(),
                 "scene_id": scene_id,
                 "ltx_mode": mode,
                 "prompt": prompt,
