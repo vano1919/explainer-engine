@@ -28,6 +28,12 @@ These rules govern ALL autonomous Antigravity sessions on `vano1919/explainer-en
 6. **2K Broadcast Master (`DEF-08`):** Every final delivery master MUST be `2560x1440`, `24 fps`, `yuv420p`, `48000 Hz` 2-ch stereo, `-14.0 ± 0.5 LUFS`, `<= -1.2 dBTP` (mix target `-1.5 dBTP` for AAC headroom).
 7. **Scene-Isolated Broadcast Audio (`DEF-06`, `DEF-11`):** Lock per-shot ambience and SFX strictly to their own scene boundaries (**0.0s bleed into unrelated scenes**), use non-periodic ambience extension, keep modern documentary underscore subtly tucked under voice (`-26..-32 dB` relative), and add `30–50ms` anti-pop fades.
 
+## 3A. Permanent Plate & Dialogue Bans (BP-214..BP-217, fail-closed)
+1. **No Cropped Coverage Plates:** NEVER slice a close-up, medium or reverse out of a wider master plate. Every camera angle is generated as its own native full frame. `extract_axis_locked_coverage_plates()` raises; `check_no_cropped_seed_plates()` rejects `crop_from_master`, `rel_w < 1.0`, near-identical plates and sub-rectangle matches.
+2. **No Foreground Cutout Pasting:** NEVER matte a person out of one picture (`cv2.grabCut`, RMBG, `rembg`, `composite_person_onto_bg`, `composite_clean`) and paste them onto a separate or mismatched background. A plate with several characters, or a character in a location, is generated natively in one unified light and declares `plate_method` = `multi_reference_anchor` or `blender_blocked_render`; `check_no_cutout_compositing()` enforces it.
+3. **No Mid-Word Cuts:** every dialogue shot declares `speech_start_s` and `speech_end_s` and plays through `speech_end_s + 0.35 s`; anything shorter raises `DialogueWordClippedError`. Regenerate a take whose source ends too early; never shorten the tail.
+4. **Conversation Sound:** gentle single-pass denoise, pauses lowered by at most 14 dB, every speaker at `-17.5 LUFS ± 0.8 LU`, speaker turns as `0.20–0.35 s` J/L-cuts, and one continuous room-tone bed per dramatic scene.
+
 ## 4. Mandatory Governed Execution, Research-First & Adversarial QA (L0–L5)
 - Route governed commands and spend accounting through `explainer_engine/governance/antigravity_runner.py` (logging every step to `jobs/antigravity_execution_ledger.jsonl` and enforcing `gateway_hook` + `ProductionStateMachine` + `spend_ledger`).
 - **Research-First Law:** When solving a hard media/audio/continuity problem, NEVER blindly invent from scratch. First research >=5 real external references/open-source tools/industry workflows, adapt proven methods, and only invent when nothing suitable exists.

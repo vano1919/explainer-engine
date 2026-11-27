@@ -24,6 +24,11 @@ from typing import Any
 
 from explainer_engine.core.camera_vocab import ALLOWED_CAMERA_MOVES, validate_camera_move
 from explainer_engine.core.errors import ContractError
+from explainer_engine.videolane.lipsync_pipeline import (
+    DialogueLipSyncPlan,
+    plan_dialogue_lipsync_route,
+    require_voice_first_inputs,
+)
 
 DEFAULT_FPS = 24
 HEAD_HANDLE_S = 0.5
@@ -155,6 +160,94 @@ def select_ltx_mode(
     return "new_keyframe_i2v"
 
 
+
+VL02_FORBIDDEN_RAW_DIALOGUE_SCALES = frozenset({"close_up", "extreme_close_up", "medium_close_up"})
+VL02_SAFE_DIALOGUE_FRAMINGS = frozenset(
+    {"over_the_shoulder", "three_quarter_profile", "profile", "medium_wide", "wide", "two_shot"}
+)
+PASSIVE_STATUE_PHRASES = (
+    "arms lowered",
+    "steady posture",
+    "standing still",
+    "stares ahead",
+    "unmoving",
+    "motionless",
+)
+ACTIVE_BLOCKING_VERBS = (
+    "walk",
+    "step",
+    "turn",
+    "lean",
+    "grip",
+    "hand over",
+    "hands over",
+    "reach",
+    "gesture",
+    "nod",
+    "shift",
+    "rise",
+    "climb",
+    "unfold",
+    "point",
+    "pace",
+    "glance",
+)
+CLOSED_MOUTH_LOCK_CLAUSE = (
+    "Nobody speaks. No dialogue. Mouth remains naturally closed throughout; "
+    "silent breathing only, zero lip movement or speaking."
+)
+
+
+def validate_dialogue_framing(
+    *,
+    spoken_line: str | None,
+    shot_scale: str | None = None,
+    camera_framing: str | None = None,
+    audio_driven_lipsync: bool = False,
+    audio_driver_path: str | Path | None = None,
+    preferred_backend: str = "latentsync_1_5",
+    shot_id: str = "dialogue_shot",
+) -> DialogueLipSyncPlan:
+    """Resolve and enforce the dialogue route of a shot (BP-205 as decided 2026-11-27).
+
+    Close-up and frontal dialogue go through ``ltx_a2v`` plus a refinement pass (``latentsync_1_5`` /
+    ``latentsync_1_6`` / ``musetalk_1_5``); raises ``ContractError`` when the voice-first WAV is missing, so a
+    speaking close-up is never rendered as a text-prompted clip. ``audio_driven_lipsync`` is kept for older callers.
+    """
+    _ = audio_driven_lipsync
+    plan = plan_dialogue_lipsync_route(
+        shot_id=shot_id,
+        spoken_line=spoken_line,
+        shot_scale=shot_scale,
+        camera_framing=camera_framing,
+        audio_driver_path=audio_driver_path,
+        preferred_backend=preferred_backend,
+    )
+    require_voice_first_inputs(plan)
+    return plan
+
+
+def validate_acting_blocking_prompt(prompt: str) -> list[str]:
+    """Check an LTX prompt for passive mannequin/statue phrasing lacking physical blocking verbs (whole words only:
+    'handsome' is not 'hand', 'stone steps' is not a step taken)."""
+    import re
+
+    low = str(prompt or "").lower()
+    hits = [ph for ph in PASSIVE_STATUE_PHRASES if re.search(rf"\b{re.escape(ph)}\b", low)]
+    if not hits:
+        return []
+    verbs = "|".join(re.escape(v) for v in ACTIVE_BLOCKING_VERBS)
+    # the place is not the action: 'the stone steps', 'a turn of the road'
+    acted = re.sub(r"\b(?:the|a|stone|marble|temple|portico|its|his|her)\s+(?:steps?|turns?|points?|paces?)\b", " ", low)
+    has_active_verb = re.search(rf"\b(?:{verbs})(?:s|es|ed|ing|ping|ped)?\b", acted) is not None
+    if has_active_verb:
+        return []
+    return [
+        f"Passive statue acting phrase(s) {hits} without motivated physical blocking verb "
+        f"(add concrete movement such as stepping, turning, leaning, gripping, or shifting weight)"
+    ]
+
+
 def build_photo_grounded_prompt(
     observation: PhotoObservation,
     *,
@@ -166,6 +259,10 @@ def build_photo_grounded_prompt(
     voice_description: str | None = None,
     ambient_sound: str = "",
     ltx_mode: str = "new_keyframe_i2v",
+    shot_scale: str | None = None,
+    camera_framing: str | None = None,
+    audio_driven_lipsync: bool = False,
+    audio_driver_path: str | Path | None = None,
 ) -> str:
     """Compose an LTX-2.5 motion prompt strictly grounded in the observed pixels of the reference photo."""
     photo_p = Path(observation.photo_path)
@@ -193,9 +290,19 @@ def build_photo_grounded_prompt(
     if spoken_line:
         if not speaker_name or not voice_description:
             raise ContractError("Clip-spoken LTX prompt requires both speaker_name and voice_description")
-        parts.append(f'{speaker_name.strip()} says in {voice_description.strip()}: "{spoken_line.strip()}"')
+        ls_plan = validate_dialogue_framing(
+            spoken_line=spoken_line,
+            shot_scale=shot_scale,
+            camera_framing=camera_framing,
+            audio_driven_lipsync=audio_driven_lipsync,
+            audio_driver_path=audio_driver_path,
+        )
+        parts.append(
+            f'{speaker_name.strip()} says in {voice_description.strip()}: "{spoken_line.strip()}" '
+            f"{ls_plan.prompt_directive}"
+        )
     else:
-        parts.append("Nobody speaks. No dialogue.")
+        parts.append(CLOSED_MOUTH_LOCK_CLAUSE)
     if ambient_sound.strip():
         parts.append(f"Diegetic sound: {ambient_sound.strip()}.")
     return " ".join(parts)
@@ -211,9 +318,11 @@ def run_continuous_shot_loop(
     upscaler_2k: Callable[[Path, str], Path] | None = None,
     still_upscaler: Any = None,
     video_upscaler: Any = None,
-    acting_style: str = "restrained historical documentary realism, natural micro-expressions, steady posture",
+    acting_style: str = "physically grounded cinema acting with deliberate blocking, natural weight shift, eye-line focus, and motivated hand or body movement; never stiff or statue-like",
     max_retries: int = 2,
     upscaler_backend: str = "realesrgan_x2",
+    lipsync_refiner: Callable[[Path, dict[str, Any]], Path] | None = None,
+    lipsync_checker: Callable[..., dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     """Execute the closed-loop Photo -> Vision Prompt -> LTX (+0.5s handles) -> QA -> 2K Upscale -> Chain loop.
 
@@ -261,7 +370,27 @@ def run_continuous_shot_loop(
             voice_description=shot.get("voice_description"),
             ambient_sound=str(shot.get("ambient_sound", "")),
             ltx_mode=mode,
+            shot_scale=shot.get("shot_scale"),
+            camera_framing=shot.get("camera_framing"),
+            audio_driven_lipsync=bool(shot.get("audio_driven_lipsync", False)),
+            audio_driver_path=shot.get("audio_driver_path"),
         )
+        ls_plan = plan_dialogue_lipsync_route(
+            shot_id=shot_id,
+            spoken_line=shot.get("spoken_line"),
+            shot_scale=shot.get("shot_scale"),
+            camera_framing=shot.get("camera_framing"),
+            audio_driver_path=shot.get("audio_driver_path"),
+            preferred_backend=str(shot.get("lipsync_backend", "latentsync_1_5")),
+        )
+        audio_pin = require_voice_first_inputs(ls_plan)
+        if ls_plan.refinement_backend and lipsync_refiner is None:
+            raise ContractError(
+                f"{shot_id}: a speaking close-up needs its {ls_plan.refinement_backend} refinement stage; "
+                "nothing is rendered without it"
+            )
+        if lipsync_checker is None:
+            from explainer_engine.qa.cinema_gates import check_mouth_motion_sync as lipsync_checker
 
         qa_verdict = "FAIL"
         clip_path: Path | None = None
@@ -271,6 +400,7 @@ def run_continuous_shot_loop(
             attempts = attempt
             req = {
                 "shot_id": shot_id,
+                "lipsync_plan": ls_plan.to_dict(),
                 "scene_id": scene_id,
                 "ltx_mode": mode,
                 "prompt": prompt,
@@ -280,9 +410,22 @@ def run_continuous_shot_loop(
                 "ltx_seconds": timing.ltx_seconds,
                 "attempt": attempt,
             }
+            if ls_plan.primary_engine == "ltx_a2v":
+                # The worker's a2v kind (training/pods/ltx/modal_ltx_jobs.py) refuses audio without hf_path + sha256
+                req.update(kind="a2v", audio=dict(audio_pin), a2v_settings=dict(shot.get("a2v_settings") or {}))
             clip_path = video_generator(req)
+            if ls_plan.refinement_backend and lipsync_refiner is not None:
+                clip_path = lipsync_refiner(clip_path, req)
             qa_res = qa_reviewer(clip_path, req)
             qa_verdict = str(qa_res.get("verdict", "FAIL")).upper()
+            if qa_verdict == "PASS" and ls_plan.route != "silent_ltx_i2v" and (
+                ls_plan.requires_voice_first_wav or ls_plan.refinement_backend
+            ):
+                sync = lipsync_checker(clip_path, has_dialogue=True, audio_path=Path(audio_pin["path"]))
+                req["lipsync_gate"] = sync
+                if sync.get("status") != "PASS":
+                    qa_verdict = "FAIL"
+                    qa_res = {"reason": "; ".join(sync.get("findings") or [f"lip-sync gate {sync.get('status')}"])}
             if qa_verdict == "PASS":
                 break
             notes.append(f"attempt {attempt}: QA={qa_verdict} ({qa_res.get('reason', 'unspecified')})")

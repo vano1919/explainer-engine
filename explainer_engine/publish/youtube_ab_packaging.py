@@ -15,8 +15,6 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from playwright.sync_api import sync_playwright
-
 from explainer_engine.design_system.tokens import build_font_face_css
 
 
@@ -107,6 +105,8 @@ html, body {{ width: 1280px; height: 720px; overflow: hidden; background: #000; 
 
     html_tmp = out_jpg.with_suffix(".html")
     html_tmp.write_text(page_html, encoding="utf-8")
+    from playwright.sync_api import sync_playwright
+
     with sync_playwright() as p:
         b = p.chromium.launch(headless=True)
         page = b.new_page(viewport={"width": 1280, "height": 720}, device_scale_factor=1)
@@ -243,6 +243,8 @@ h2 {{
 
     tmp_html = out_png.with_suffix(".html")
     tmp_html.write_text(mockup_html, encoding="utf-8")
+    from playwright.sync_api import sync_playwright
+
     with sync_playwright() as p:
         b = p.chromium.launch(headless=True)
         page = b.new_page(viewport={"width": 1600, "height": 1020}, device_scale_factor=1)

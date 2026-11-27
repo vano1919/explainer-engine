@@ -25,8 +25,6 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-from playwright.sync_api import sync_playwright
-
 from explainer_engine.design_system.tokens import (
     PALEO_ICE_AGE_THEME,
     build_font_face_css,
@@ -841,6 +839,8 @@ def render_editorial_graphic_rgba(
     proc = subprocess.Popen(ff_cmd, stdin=subprocess.PIPE)
     assert proc.stdin is not None
     bbox = [0, 0, 0, 0]
+
+    from playwright.sync_api import sync_playwright
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)

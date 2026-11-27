@@ -6,3 +6,11 @@
 - Not done: the existing v5 master was not re-rendered.
 - Test: `tests/unit/test_v5_hardening_bans.py`.
 - Cost: $0.00 (local only).
+
+### Integration of the v9/v10 acting and lip-sync work (creator's choices, 2026-11-27)
+- Taken: lazy `playwright`/`rasterio` imports, the `LOYAL LEGIONS` layout fix, relative paths in `ides_v5_loop5_batch_m4.json`, the closed-mouth clause for silent shots and the active acting style, `check_shot_plate_diversity`, `check_acting_dynamics_and_freeze` (thresholds from BP-211 and the new BP-218).
+- Changed: the crop helper stays banned (BP-217); the duplicate `validate_native_keyframe_plates` is not taken (it also refused the real 1280x704 plates). `validate_acting_blocking_prompt` matches whole words.
+- Speaking close-ups (BP-205 changed by the creator): allowed only through the voice-first route. `lipsync_pipeline.require_voice_first_inputs` and `ltx_loop.validate_dialogue_framing` refuse a close-up without its WAV; the shot loop sends an `a2v` request with the WAV's sha256, needs a refinement stage for a close-up and accepts the clip only when the mouth gate passes; VL-02 in `videolane/plan.py` passes a speaking close-up only with a declared `lipsync` route.
+- Mouth gate rebuilt (BP-219): `check_mouth_motion_sync` tracks the face (YuNet when installed, else scikit-image's bundled LBP cascade) and removes the head's own motion. On the v5 clips: 11 of 12 dialogue clips with a face pass (0.34-0.69), `b4_artemidorus` fails (-0.06), 3 have no detectable face (NOT_RUN); the 4 silent clips with a face pass (1.34-2.00). The earlier frame-centre version failed 7 of 15 dialogue clips.
+- New LatentSync 1.5 refinement worker `training/pods/latentsync/` with pinned code, weights and VAE (`config/cloud_pins.json` `models.lipsync_latentsync`). It cannot run yet: `base_image` and the face-detector zip's sha256 are open, and `config/spend_caps.json` has no `modal_latentsync` line. Not run, nothing paid.
+- Tests: `tests/unit/test_v5_loop5_acting_lipsync_hardening.py`, `tests/unit/test_latentsync_worker.py`.
