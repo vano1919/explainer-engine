@@ -155,6 +155,88 @@ def select_ltx_mode(
     return "new_keyframe_i2v"
 
 
+
+VL02_FORBIDDEN_RAW_DIALOGUE_SCALES = frozenset({"close_up", "extreme_close_up", "medium_close_up"})
+VL02_SAFE_DIALOGUE_FRAMINGS = frozenset(
+    {"over_the_shoulder", "three_quarter_profile", "profile", "medium_wide", "wide", "two_shot"}
+)
+PASSIVE_STATUE_PHRASES = (
+    "arms lowered",
+    "steady posture",
+    "standing still",
+    "stares ahead",
+    "unmoving",
+    "motionless",
+)
+ACTIVE_BLOCKING_VERBS = (
+    "walk",
+    "step",
+    "turn",
+    "lean",
+    "grip",
+    "hand",
+    "reach",
+    "gesture",
+    "nod",
+    "shift",
+    "rise",
+    "climb",
+    "unfold",
+    "point",
+    "pace",
+    "glance",
+    "pause",
+)
+CLOSED_MOUTH_LOCK_CLAUSE = (
+    "Nobody speaks. No dialogue. Mouth remains naturally closed throughout; "
+    "silent breathing only, zero lip movement or speaking."
+)
+
+
+def validate_dialogue_framing(
+    *,
+    spoken_line: str | None,
+    shot_scale: str | None = None,
+    camera_framing: str | None = None,
+    audio_driven_lipsync: bool = False,
+) -> None:
+    """Enforce VL-02 lip-sync discipline: forbid frontal close-up speaking heads in raw text-only LTX.
+
+    Raw text-prompted LTX-2.5 produces unnatural mouth-flapping and jaw distortion on frontal
+    close-ups and medium close-ups. Spoken LTX shots MUST either:
+    - use ``audio_driven_lipsync=True`` (Audio-to-Video / dedicated lip-sync pass), OR
+    - use safe documentary framing (``over_the_shoulder``, ``three_quarter_profile``,
+      ``profile``, ``medium_wide``, ``two_shot``).
+    """
+    if not spoken_line or not str(spoken_line).strip():
+        return
+    if audio_driven_lipsync:
+        return
+    scale = str(shot_scale or "").strip().lower().replace("-", "_").replace(" ", "_")
+    framing = str(camera_framing or "").strip().lower().replace("-", "_").replace(" ", "_")
+    if scale in VL02_FORBIDDEN_RAW_DIALOGUE_SCALES and framing not in VL02_SAFE_DIALOGUE_FRAMINGS:
+        raise ContractError(
+            f"VL-02 violation: raw text-prompted LTX dialogue is forbidden on {scale!r} "
+            f"(framing={framing or 'frontal'!r}) because LTX mouths distort/desync; "
+            f"use audio_driven_lipsync=True or reframe to one of {sorted(VL02_SAFE_DIALOGUE_FRAMINGS)}"
+        )
+
+
+def validate_acting_blocking_prompt(prompt: str) -> list[str]:
+    """Check an LTX prompt for passive mannequin/statue phrasing lacking physical blocking verbs."""
+    low = str(prompt or "").lower()
+    hits = [ph for ph in PASSIVE_STATUE_PHRASES if ph in low]
+    if not hits:
+        return []
+    has_active_verb = any(v in low for v in ACTIVE_BLOCKING_VERBS)
+    if has_active_verb:
+        return []
+    return [
+        f"Passive statue acting phrase(s) {hits} without motivated physical blocking verb "
+        f"(add concrete movement such as stepping, turning, leaning, gripping, or shifting weight)"
+    ]
+
+
 def build_photo_grounded_prompt(
     observation: PhotoObservation,
     *,
@@ -166,6 +248,9 @@ def build_photo_grounded_prompt(
     voice_description: str | None = None,
     ambient_sound: str = "",
     ltx_mode: str = "new_keyframe_i2v",
+    shot_scale: str | None = None,
+    camera_framing: str | None = None,
+    audio_driven_lipsync: bool = False,
 ) -> str:
     """Compose an LTX-2.5 motion prompt strictly grounded in the observed pixels of the reference photo."""
     photo_p = Path(observation.photo_path)
@@ -193,9 +278,18 @@ def build_photo_grounded_prompt(
     if spoken_line:
         if not speaker_name or not voice_description:
             raise ContractError("Clip-spoken LTX prompt requires both speaker_name and voice_description")
-        parts.append(f'{speaker_name.strip()} says in {voice_description.strip()}: "{spoken_line.strip()}"')
+        validate_dialogue_framing(
+            spoken_line=spoken_line,
+            shot_scale=shot_scale,
+            camera_framing=camera_framing,
+            audio_driven_lipsync=audio_driven_lipsync,
+        )
+        parts.append(
+            f'{speaker_name.strip()} says in {voice_description.strip()}: "{spoken_line.strip()}" '
+            f"Natural jaw cadence, subtle head/shoulder emphasis, lips close cleanly at sentence end."
+        )
     else:
-        parts.append("Nobody speaks. No dialogue.")
+        parts.append(CLOSED_MOUTH_LOCK_CLAUSE)
     if ambient_sound.strip():
         parts.append(f"Diegetic sound: {ambient_sound.strip()}.")
     return " ".join(parts)
@@ -211,7 +305,7 @@ def run_continuous_shot_loop(
     upscaler_2k: Callable[[Path, str], Path] | None = None,
     still_upscaler: Any = None,
     video_upscaler: Any = None,
-    acting_style: str = "restrained historical documentary realism, natural micro-expressions, steady posture",
+    acting_style: str = "physically grounded cinema acting with deliberate blocking, natural weight shift, eye-line focus, and motivated hand or body movement; never stiff or statue-like",
     max_retries: int = 2,
     upscaler_backend: str = "realesrgan_x2",
 ) -> dict[str, Any]:
@@ -261,6 +355,9 @@ def run_continuous_shot_loop(
             voice_description=shot.get("voice_description"),
             ambient_sound=str(shot.get("ambient_sound", "")),
             ltx_mode=mode,
+            shot_scale=shot.get("shot_scale"),
+            camera_framing=shot.get("camera_framing"),
+            audio_driven_lipsync=bool(shot.get("audio_driven_lipsync", False)),
         )
 
         qa_verdict = "FAIL"

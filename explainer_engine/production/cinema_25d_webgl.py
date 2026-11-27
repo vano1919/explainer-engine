@@ -21,7 +21,6 @@ from typing import Any
 
 import cv2
 import numpy as np
-from playwright.sync_api import sync_playwright
 
 from explainer_engine.design_system.tokens import resolve_vendor_js
 
@@ -425,6 +424,8 @@ def render_webgl_25d_clip(
     ]
     proc = subprocess.Popen(ff_cmd, stdin=subprocess.PIPE)
     assert proc.stdin is not None
+
+    from playwright.sync_api import sync_playwright
 
     with sync_playwright() as p:
         browser = p.chromium.launch(

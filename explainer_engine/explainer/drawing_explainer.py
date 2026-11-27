@@ -23,8 +23,6 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-from playwright.sync_api import sync_playwright
-
 from explainer_engine.design_system.tokens import (
     PALEO_ICE_AGE_THEME,
     build_font_face_css,
@@ -223,7 +221,7 @@ def _build_explainer_html(spec: DrawingExplainerSpec, *, width: int, height: int
         </div>
         <div class="annot" id="a-decimus" style="left:1340px; top:385px; width:500px; text-align:left;">
           <div class="tag-mono mono cool">03 · PARTHIA CAMPAIGN</div>
-          <div class="big-stat mono cool" id="num-legions">LOYAL LEGIONS</div>
+          <div class="big-stat mono cool" id="num-legions" style="font-size:48px;line-height:1.15;white-space:nowrap;">LOYAL LEGIONS</div>
           <div class="annot-desc">Once surrounded by his army in the east, the plot is dead</div>
         </div>
         <div class="annot" id="a-consp-bottom" style="left:84px; bottom:74px; width:1740px; text-align:center;">
@@ -537,15 +535,15 @@ if (KIND === "caloric_trap") {{
     .to("#a-omen-verdict", {{ opacity: 1, duration: 0.5, ease: easeOut }}, 6.35);
 }} else if (KIND === "roman_conspiracy") {{
   const boxS = addSketch(rc.line(84, 356, 560, 354, {{ stroke: CRIMSON, strokeWidth: 4.0, roughness: 1.8, seed: 601 }}));
-  const bar60 = addSketch(rc.rectangle(84, 646, 460, 24, {{ stroke: CRIMSON, fill: "rgba(212,82,59,0.40)", fillStyle: "hachure", hachureGap: 7, strokeWidth: 2.4, roughness: 1.5, seed: 602 }}));
+  const bar60 = addSketch(rc.rectangle(84, 678, 460, 24, {{ stroke: CRIMSON, fill: "rgba(212,82,59,0.40)", fillStyle: "hachure", hachureGap: 7, strokeWidth: 2.4, roughness: 1.5, seed: 602 }}));
   const arrMid = addSketch(rc.curve([[595, 476], [642, 462], [688, 476]], {{ stroke: WARM, strokeWidth: 3.4, roughness: 1.3, seed: 603 }}));
   const arrMidTip = addSketch(rc.linearPath([[670, 464], [688, 476], [668, 488]], {{ stroke: WARM, strokeWidth: 3.4, roughness: 1.2, seed: 613 }}));
   const topDays = addSketch(rc.line(715, 356, 1195, 354, {{ stroke: WARM, strokeWidth: 4.0, roughness: 1.7, seed: 604 }}));
-  const barDays = addSketch(rc.rectangle(765, 646, 380, 24, {{ stroke: WARM, fill: "rgba(227,155,67,0.38)", fillStyle: "hachure", hachureGap: 7, strokeWidth: 2.4, roughness: 1.5, seed: 614 }}));
+  const barDays = addSketch(rc.rectangle(765, 678, 380, 24, {{ stroke: WARM, fill: "rgba(227,155,67,0.38)", fillStyle: "hachure", hachureGap: 7, strokeWidth: 2.4, roughness: 1.5, seed: 614 }}));
   const arrRight = addSketch(rc.curve([[1225, 476], [1278, 462], [1332, 476]], {{ stroke: COOL, strokeWidth: 3.4, roughness: 1.3, seed: 605 }}));
   const arrRightTip = addSketch(rc.linearPath([[1314, 464], [1332, 476], [1312, 488]], {{ stroke: COOL, strokeWidth: 3.4, roughness: 1.2, seed: 615 }}));
   const lineRight = addSketch(rc.line(1340, 356, 1828, 354, {{ stroke: COOL, strokeWidth: 3.8, roughness: 1.7, seed: 606 }}));
-  const barLegions = addSketch(rc.rectangle(1340, 646, 460, 24, {{ stroke: COOL, fill: "rgba(139,196,222,0.36)", fillStyle: "hachure", hachureGap: 7, strokeWidth: 2.4, roughness: 1.5, seed: 616 }}));
+  const barLegions = addSketch(rc.rectangle(1340, 678, 460, 24, {{ stroke: COOL, fill: "rgba(139,196,222,0.36)", fillStyle: "hachure", hachureGap: 7, strokeWidth: 2.4, roughness: 1.5, seed: 616 }}));
   const botLine = addSketch(rc.line(320, 868, 1600, 866, {{ stroke: WARM, strokeWidth: 3.8, roughness: 1.8, seed: 607 }}));
 
   const bt = Array.isArray(META.beat_times) && META.beat_times.length >= 4 ? META.beat_times : [1.0, 3.25, 5.55, 7.3];
@@ -678,6 +676,8 @@ def render_drawing_explainer(
     ]
     proc = subprocess.Popen(ff_cmd, stdin=subprocess.PIPE)
     assert proc.stdin is not None
+
+    from playwright.sync_api import sync_playwright
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)

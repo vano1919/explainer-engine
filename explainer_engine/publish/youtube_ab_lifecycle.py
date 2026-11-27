@@ -17,8 +17,6 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-from playwright.sync_api import sync_playwright
-
 from explainer_engine.design_system.tokens import build_font_face_css
 from explainer_engine.publish.youtube_ab_packaging import ThumbnailVariantSpec, render_photoreal_thumbnail
 
@@ -249,6 +247,8 @@ body {{ width: 1680px; background: #0D0E11; color: #F1F3F6; font-family: 'Plus J
     html_p = out_dir / "youtube_feed_ab_mockup.html"
     png_p = out_dir / "youtube_feed_ab_mockup.png"
     html_p.write_text(mockup_html, encoding="utf-8")
+    from playwright.sync_api import sync_playwright
+
     with sync_playwright() as p:
         b = p.chromium.launch(headless=True)
         page = b.new_page(viewport={"width": 1680, "height": 1160}, device_scale_factor=1)

@@ -194,6 +194,7 @@ def test_eyeline_180_rule_and_axis_locked_coverage_plates(tmp_path: Path) -> Non
             {"shot_id": "right_actor", "cx": 0.75, "cy": 0.5, "rel_w": 0.45, "focus_subject": "calpurnia", "facing_dir": "left"},
         ],
         tmp_path / "plates",
+        allow_destructive_crop=True,
     )
     assert Path(plates["left_actor"]["path"]).is_file()
     assert Path(plates["right_actor"]["path"]).is_file()

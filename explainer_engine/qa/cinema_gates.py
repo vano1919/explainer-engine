@@ -11,7 +11,7 @@ from __future__ import annotations
 import math
 import subprocess
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import cv2
 import numpy as np
@@ -1015,7 +1015,8 @@ def check_grain_ceiling(
         blur = cv2.GaussianBlur(crop, (3, 3), 0.8)
         resid = crop - blur
         # MAD-based robust noise sigma estimator (immune to crisp UI/text edges!)
-        sigma = float(np.median(np.abs(resid - np.median(resid))) * 1.4826)
+        resid_f = np.asarray(resid, dtype=np.float32)
+        sigma = float(np.median(np.abs(resid_f - float(np.median(resid_f)))) * 1.4826)
         sigmas.append(round(sigma, 3))
         if sigma > max_peak_sigma:
             findings.append(f"frame@{ts:.2f}s: excessive grain/high-freq noise sigma={sigma:.2f} > {max_peak_sigma:.2f}")
@@ -1177,8 +1178,8 @@ def check_map_stability(
         pts0 = cv2.goodFeaturesToTrack(roi0, maxCorners=180, qualityLevel=0.04, minDistance=10, blockSize=5)
         c0_aligned = None
         if pts0 is not None and len(pts0) >= 8:
-            pts1, st1, _ = cv2.calcOpticalFlowPyrLK(roi0, roi1, pts0, None, winSize=(15, 15), maxLevel=2)
-            pts2, st2, _ = cv2.calcOpticalFlowPyrLK(roi1, roi2, pts1, None, winSize=(15, 15), maxLevel=2)
+            pts1, st1, _ = cv2.calcOpticalFlowPyrLK(roi0, roi1, pts0, cast(Any, None), winSize=(15, 15), maxLevel=2)
+            pts2, st2, _ = cv2.calcOpticalFlowPyrLK(roi1, roi2, pts1, cast(Any, None), winSize=(15, 15), maxLevel=2)
             good01 = st1.ravel() == 1
             if int(np.sum(good01)) >= 8:
                 h_mat, _ = cv2.findHomography(pts0[good01], pts1[good01], cv2.RANSAC, 2.0)
@@ -2160,7 +2161,7 @@ def _radial_flow_divergence(gray_prev: np.ndarray, gray_next: np.ndarray) -> flo
     flow = cv2.calcOpticalFlowFarneback(
         gray_prev,
         gray_next,
-        None,
+        cast(Any, None),
         pyr_scale=0.5,
         levels=3,
         winsize=15,
@@ -2186,7 +2187,7 @@ def _affine_scale_and_anisotropy(gray_a: np.ndarray, gray_b: np.ndarray) -> tupl
     pts_a = cv2.goodFeaturesToTrack(gray_a, maxCorners=220, qualityLevel=0.02, minDistance=8, blockSize=5)
     if pts_a is None or len(pts_a) < 10:
         return 1.0, 0.0, 0
-    pts_b, st, _ = cv2.calcOpticalFlowPyrLK(gray_a, gray_b, pts_a, None, winSize=(21, 21), maxLevel=3)
+    pts_b, st, _ = cv2.calcOpticalFlowPyrLK(gray_a, gray_b, pts_a, cast(Any, None), winSize=(21, 21), maxLevel=3)
     if pts_b is None or st is None:
         return 1.0, 0.0, 0
     good = st.ravel() == 1
@@ -2628,6 +2629,259 @@ def check_music_to_voice_headroom(
     }
 
 
+def check_mouth_motion_sync(
+    clip_mp4: Path,
+    *,
+    has_dialogue: bool,
+    audio_path: Path | None = None,
+    mouth_roi_norm: tuple[float, float, float, float] | None = None,
+    max_silent_mouth_flow: float = 0.55,
+    min_dialogue_mouth_audio_corr: float = 0.15,
+    max_pause_flap_ratio: float = 1.45,
+) -> dict[str, Any]:
+    """Detect phantom mouth-flapping on silent/narrated LTX clips AND lip-desync on dialogue clips.
+
+    Measures lower-face mouth ROI optical-flow energy frame-by-frame:
+    - When ``has_dialogue=False``: fails if mean mouth ROI motion exceeds ``max_silent_mouth_flow``
+      (catching LTX talking-mouth hallucinations during narrator-over shots).
+    - When ``has_dialogue=True``: aligns mouth motion energy against vocal-band (300-3400 Hz) RMS
+      from ``audio_path`` (or the clip's own audio track) and fails if correlation is below
+      ``min_dialogue_mouth_audio_corr`` OR if mouth movement during silent pauses exceeds
+      ``max_pause_flap_ratio`` times active-speech mouth movement.
+    """
+    p = Path(clip_mp4)
+    if not p.is_file():
+        raise FileNotFoundError(f"Clip not found for mouth-motion QA: {p}")
+
+    cap = cv2.VideoCapture(str(p))
+    if not cap.isOpened():
+        raise RuntimeError(f"Could not open video for mouth-motion QA: {p}")
+    fps = float(cap.get(cv2.CAP_PROP_FPS) or 24.0)
+    frames_gray: list[np.ndarray] = []
+    try:
+        while True:
+            ok, bgr = cap.read()
+            if not ok or bgr is None:
+                break
+            small = cv2.resize(bgr, (320, 180), interpolation=cv2.INTER_AREA)
+            frames_gray.append(cv2.cvtColor(small, cv2.COLOR_BGR2GRAY))
+    finally:
+        cap.release()
+
+    if len(frames_gray) < 4:
+        return {"status": "FAIL", "findings": ["Clip too short for mouth-motion sync check"]}
+
+    h, w = frames_gray[0].shape[:2]
+    if mouth_roi_norm is not None:
+        rx0, ry0, rx1, ry1 = mouth_roi_norm
+        x0, y0 = max(0, int(rx0 * w)), max(0, int(ry0 * h))
+        x1, y1 = min(w, max(x0 + 8, int(rx1 * w))), min(h, max(y0 + 8, int(ry1 * h)))
+    else:
+        # Default upper-center portrait lower-face region (works when face detector is unavailable)
+        x0, y0, x1, y1 = int(w * 0.36), int(h * 0.38), int(w * 0.64), int(h * 0.62)
+
+    mouth_energy: list[float] = []
+    for i in range(len(frames_gray) - 1):
+        g0 = frames_gray[i][y0:y1, x0:x1]
+        g1 = frames_gray[i + 1][y0:y1, x0:x1]
+        flow = cv2.calcOpticalFlowFarneback(
+            g0, g1, cast(Any, None), 0.5, 2, 9, 2, 5, 1.1, 0
+        )
+        mag = np.sqrt(flow[..., 0] ** 2 + flow[..., 1] ** 2)
+        mouth_energy.append(float(np.mean(mag)))
+
+    m_arr = np.asarray(mouth_energy, dtype=np.float32)
+    mean_flow = float(np.mean(m_arr))
+    p95_flow = float(np.percentile(m_arr, 95))
+    findings: list[str] = []
+
+    if not has_dialogue:
+        if mean_flow > max_silent_mouth_flow or p95_flow > max_silent_mouth_flow * 2.2:
+            findings.append(
+                f"Phantom mouth movement on silent/narrated shot: mean_mouth_flow={mean_flow:.3f} "
+                f"(p95={p95_flow:.3f}) > ceiling {max_silent_mouth_flow:.3f}"
+            )
+        return {
+            "status": "PASS" if not findings else "FAIL",
+            "has_dialogue": False,
+            "mean_mouth_flow": round(mean_flow, 4),
+            "p95_mouth_flow": round(p95_flow, 4),
+            "findings": findings,
+        }
+
+    # Dialogue shot: correlate mouth energy with vocal-band RMS
+    import soundfile as sf
+    from scipy.signal import butter, sosfiltfilt
+
+    src_audio = Path(audio_path) if audio_path is not None else p
+    if src_audio.suffix.lower() != ".wav":
+        tmp_wav = p.with_suffix(".mouth_qa_tmp.wav")
+        subprocess.run(
+            ["ffmpeg", "-y", "-v", "error", "-i", str(src_audio), "-vn", "-ac", "1", "-ar", "16000", "-c:a", "pcm_s16le", str(tmp_wav)],
+            check=True,
+        )
+        try:
+            sig, sr = sf.read(str(tmp_wav), dtype="float32")
+        finally:
+            tmp_wav.unlink(missing_ok=True)
+    else:
+        sig, sr = sf.read(str(src_audio), dtype="float32")
+    if sig.ndim > 1:
+        sig = sig.mean(axis=1)
+
+    nyq = 0.5 * sr
+    sos = butter(3, [min(300.0, nyq * 0.4) / nyq, min(3400.0, nyq * 0.92) / nyq], btype="bandpass", output="sos")
+    vox = sosfiltfilt(sos, sig.astype(np.float32)).astype(np.float32)
+
+    spf = max(1, int(round(sr / max(1.0, fps))))
+    n_steps = min(len(m_arr), max(1, len(vox) // spf))
+    a_rms = np.asarray(
+        [float(np.sqrt(np.mean(vox[i * spf : (i + 1) * spf] ** 2))) for i in range(n_steps)],
+        dtype=np.float32,
+    )
+    m_sync = m_arr[:n_steps]
+
+    if float(np.std(m_sync)) < 1e-6 or float(np.std(a_rms)) < 1e-6:
+        corr = 0.0
+    else:
+        corr = float(np.corrcoef(m_sync, a_rms)[0, 1])
+
+    thresh = max(1e-4, float(np.percentile(a_rms, 40)))
+    active_mask = a_rms >= thresh * 1.4
+    silent_mask = a_rms < thresh * 0.6
+    pause_flap_ratio = 0.0
+    if int(np.sum(active_mask)) >= 2 and int(np.sum(silent_mask)) >= 2:
+        act_m = float(np.mean(m_sync[active_mask]))
+        sil_m = float(np.mean(m_sync[silent_mask]))
+        pause_flap_ratio = sil_m / max(1e-4, act_m)
+        if pause_flap_ratio > max_pause_flap_ratio:
+            findings.append(
+                f"Lip-sync pause flap detected: silent-pause mouth motion is {pause_flap_ratio:.2f}x "
+                f"active-speech mouth motion (ceiling {max_pause_flap_ratio:.2f}x)"
+            )
+
+    if corr < min_dialogue_mouth_audio_corr:
+        findings.append(
+            f"Poor mouth-to-voice correlation={corr:.3f} < {min_dialogue_mouth_audio_corr:.3f} "
+            f"(refilm with OTS/profile framing or audio-driven lip-sync)"
+        )
+
+    return {
+        "status": "PASS" if not findings else "FAIL",
+        "has_dialogue": True,
+        "mouth_audio_corr": round(corr, 4),
+        "pause_flap_ratio": round(pause_flap_ratio, 4),
+        "mean_mouth_flow": round(mean_flow, 4),
+        "findings": findings,
+    }
 
 
+def check_acting_dynamics_and_freeze(
+    video_path: Path,
+    *,
+    max_freeze_s: float = 0.85,
+    freeze_diff_thresh: float = 0.65,
+    min_residual_subject_flow: float = 0.12,
+    sample_stride: int = 2,
+) -> dict[str, Any]:
+    """Detect frozen clips AND stiff mannequin acting (static subject with camera-only creep).
 
+    1. Tracks consecutive near-identical frames (``mean_abs_diff < freeze_diff_thresh``); fails if
+       any freeze stretch exceeds ``max_freeze_s`` (catching 1.46s frozen tails/clips).
+    2. Computes foreground/subject optical-flow residual after subtracting global median camera
+       translation so a stiff statue with slow camera zoom/pan fails as ``static_subject_with_camera_creep``.
+    """
+    p = Path(video_path)
+    if not p.is_file():
+        raise FileNotFoundError(f"Video not found for acting/freeze QA: {p}")
+
+    cap = cv2.VideoCapture(str(p))
+    if not cap.isOpened():
+        raise RuntimeError(f"Could not open video for acting/freeze QA: {p}")
+    fps = float(cap.get(cv2.CAP_PROP_FPS) or 24.0)
+    stride = max(1, int(sample_stride))
+    sampled: list[np.ndarray] = []
+    idx = 0
+    try:
+        while True:
+            ok, bgr = cap.read()
+            if not ok or bgr is None:
+                break
+            if idx % stride == 0:
+                small = cv2.resize(bgr, (320, 180), interpolation=cv2.INTER_AREA)
+                sampled.append(cv2.cvtColor(small, cv2.COLOR_BGR2GRAY))
+            idx += 1
+    finally:
+        cap.release()
+
+    if len(sampled) < 3:
+        return {"status": "FAIL", "findings": ["Video too short for acting dynamics/freeze check"]}
+
+    step_s = stride / max(1.0, fps)
+    cur_freeze = 0.0
+    max_freeze_run = 0.0
+    residual_flows: list[float] = []
+
+    for i in range(len(sampled) - 1):
+        g0, g1 = sampled[i], sampled[i + 1]
+        mad = float(np.mean(np.abs(g1.astype(np.float32) - g0.astype(np.float32))))
+        if mad < freeze_diff_thresh:
+            cur_freeze += step_s
+            if cur_freeze > max_freeze_run:
+                max_freeze_run = cur_freeze
+        else:
+            cur_freeze = 0.0
+
+        flow = cv2.calcOpticalFlowFarneback(
+            g0, g1, cast(Any, None), 0.5, 2, 11, 2, 5, 1.1, 0
+        )
+        med_u = float(np.median(np.asarray(flow[..., 0], dtype=np.float32)))
+        med_v = float(np.median(np.asarray(flow[..., 1], dtype=np.float32)))
+        res_mag = np.sqrt((flow[..., 0] - med_u) ** 2 + (flow[..., 1] - med_v) ** 2)
+        residual_flows.append(float(np.percentile(res_mag, 85)))
+
+    med_res_flow = float(np.median(residual_flows)) if residual_flows else 0.0
+    findings: list[str] = []
+    if max_freeze_run > max_freeze_s:
+        findings.append(
+            f"Freeze frame detected: {max_freeze_run:.2f}s static stretch > ceiling {max_freeze_s:.2f}s"
+        )
+    if med_res_flow < min_residual_subject_flow:
+        findings.append(
+            f"Static subject / mannequin acting detected: median residual subject flow={med_res_flow:.3f} "
+            f"< {min_residual_subject_flow:.3f} (actor barely moves independent of camera)"
+        )
+
+    return {
+        "status": "PASS" if not findings else "FAIL",
+        "max_freeze_s": round(max_freeze_run, 3),
+        "median_residual_subject_flow": round(med_res_flow, 4),
+        "findings": findings,
+    }
+
+
+def check_shot_plate_diversity(
+    shot_specs: list[dict[str, Any]],
+    *,
+    max_plate_reuse: int = 1,
+) -> dict[str, Any]:
+    """Fail if the same establishing/still plate is recycled across multiple non-chained shots."""
+    counts: dict[str, list[str]] = {}
+    for idx, sh in enumerate(shot_specs):
+        if str(sh.get("chained_from") or "").strip():
+            continue
+        sid = str(sh.get("shot_id") or f"shot_{idx + 1}")
+        key = str(sh.get("plate_sha256") or sh.get("start_image_path") or sh.get("picture") or "").strip()
+        if key:
+            counts.setdefault(key, []).append(sid)
+
+    findings = [
+        f"Repeated plate {k!r} used {len(v)} times ({v}) > max_plate_reuse={max_plate_reuse}"
+        for k, v in counts.items()
+        if len(v) > max_plate_reuse
+    ]
+    return {
+        "status": "PASS" if not findings else "FAIL",
+        "unique_plates": len(counts),
+        "findings": findings,
+    }

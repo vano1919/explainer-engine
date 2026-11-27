@@ -4,13 +4,13 @@
   "asked": "Governed Antigravity super-realistic cinema batch ides_v5_loop5_batch_m4 under $15.00 SQLite WAL hard cap.",
   "sound": "LTX native diegetic speech and physical foley; mastered downstream with scene-locked ambience.",
   "ledger": {
-    "path": "/home/antigravity/vano1919/explainer-engine/jobs/ides_of_march_v5/ltx_batches/loop5_batch_m4/scene_ledger.json",
+    "path": "jobs/ides_of_march_v5/ltx_batches/loop5_batch_m4/scene_ledger.json",
     "caps": {
       "modal_ltx": 1.25
     }
   },
   "pictures": {
-    "manifest": "/home/antigravity/vano1919/explainer-engine/jobs/ides_of_march_v5/ltx_batches/loop5_batch_m4/pictures.json"
+    "manifest": "jobs/ides_of_march_v5/ltx_batches/loop5_batch_m4/pictures.json"
   },
   "shots": [
     {
@@ -18,8 +18,10 @@
       "seconds": 5.5,
       "seed": 5306,
       "line": null,
-      "motion_prompt": "35mm HBO historical film medium close-up in warm Roman sunlight against marble columns, 50mm lens. Stern composed Decimus Brutus in crimson-bordered cream wool toga looks off-camera right, unsmiling, making a subtle firm gesture forward, speaking smoothly in English baritone: 'Move along, friend. The senators are already seated.' Lips close cleanly. Zero music.",
-      "picture": "b4_street_06_brutus_nudge_dlg"
+      "motion_prompt": "35mm HBO historical film over-the-shoulder three-quarter medium shot in warm Roman sunlight along marble columns, 50mm lens. Decimus Brutus in crimson-bordered cream wool toga steps beside Caesar, angling his shoulder and gesturing smoothly forward toward the colonnade, speaking in a low English baritone: 'Move along, friend. The senators are already seated.' Natural head turn, lips close cleanly at sentence end. Zero music.",
+      "picture": "b4_street_06_brutus_nudge_dlg",
+      "shot_scale": "medium_wide",
+      "camera_framing": "over_the_shoulder"
     },
     {
       "shot_id": "b4_street_07_keeps_walking_chain",
@@ -45,8 +47,10 @@
       "seconds": 5.5,
       "seed": 5402,
       "line": null,
-      "motion_prompt": "35mm HBO historical film medium close-up in warm directional sunlight against cool marble portico shadows, 50mm lens. Dignified unsmiling Julius Caesar in crimson-bordered cream toga pauses calmly looking off-camera right, arms lowered, speaking dryly in a deep resonant English baritone: 'Well, Spurinna \u2014 the Ides of March have come.' Lips close cleanly, steady gaze. Zero music.",
-      "picture": "b5_steps_02_caesar_ides_dlg"
+      "motion_prompt": "35mm HBO historical film three-quarter profile medium shot in warm directional sunlight against cool marble portico shadows, 50mm lens. Julius Caesar in crimson-bordered cream toga pauses mid-stride on the stone steps, turning his torso slightly toward Spurinna with a dry ironic tilt of the chin, speaking in a deep resonant English baritone: 'Well, Spurinna — the Ides of March have come.' Natural weight shift, lips close cleanly. Zero music.",
+      "picture": "b5_steps_02_caesar_ides_dlg",
+      "shot_scale": "medium_wide",
+      "camera_framing": "three_quarter_profile"
     }
   ]
 }

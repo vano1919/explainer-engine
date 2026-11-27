@@ -19,9 +19,6 @@ from typing import Any
 
 import cv2
 import numpy as np
-import rasterio
-from playwright.sync_api import sync_playwright
-from rasterio.windows import from_bounds
 
 from explainer_engine.design_system.tokens import (
     PALEO_ICE_AGE_THEME,
@@ -100,6 +97,9 @@ def _grade_relief_plate_paleo(
     out_png.parent.mkdir(parents=True, exist_ok=True)
 
     # Always compute exact land_ratio within requested viewport bounds
+    import rasterio
+    from rasterio.windows import from_bounds
+
     with rasterio.open(RELIEF_TIF) as src:
         w_clamped = max(-180.0, min(179.0, west))
         e_clamped = max(w_clamped + 1.0, min(180.0, east))
@@ -1449,6 +1449,8 @@ def render_webgl_cinema_map(
     title_bbox = [0, 0, 0, 0]
     sx = width / float(render_width)
     sy = height / float(render_height)
+
+    from playwright.sync_api import sync_playwright
 
     with sync_playwright() as p:
         browser = p.chromium.launch(

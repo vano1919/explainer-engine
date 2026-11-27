@@ -836,6 +836,9 @@ def extract_axis_locked_coverage_plates(
     *,
     target_width: int = 1280,
     target_height: int = 720,
+    min_rel_w: float = 0.72,
+    max_upscale_ratio: float = 1.35,
+    allow_destructive_crop: bool = False,
 ) -> dict[str, dict[str, Any]]:
     """Derive 100% environment-, lighting-, wardrobe-, and 180-degree-axis-locked coverage plates
     directly from ONE approved wide master plate (zero column morphing, zero wardrobe drift, zero mystery extras).
@@ -860,18 +863,31 @@ def extract_axis_locked_coverage_plates(
             sid = str(spec["shot_id"])
             cx = float(spec.get("cx", 0.5)) * mw
             cy = float(spec.get("cy", 0.5)) * mh
-            rel_w = max(0.28, min(1.0, float(spec.get("rel_w", 0.52))))
+            raw_rel_w = float(spec.get("rel_w", 0.75))
+            if not allow_destructive_crop and raw_rel_w < min_rel_w:
+                raise ValueError(
+                    f"Shot {sid!r}: destructive digital sub-crop rel_w={raw_rel_w:.2f} < {min_rel_w:.2f} "
+                    f"is forbidden for LTX plates (generate native angle plates from locked anchors instead)"
+                )
+            rel_w = max(0.28, min(1.0, raw_rel_w))
             cw = rel_w * mw
             ch = cw / target_ar
             if ch > mh:
                 ch = float(mh)
                 cw = ch * target_ar
+            upscale_ratio = max(float(target_width) / max(1.0, cw), float(target_height) / max(1.0, ch))
+            if not allow_destructive_crop and upscale_ratio > max_upscale_ratio:
+                raise ValueError(
+                    f"Shot {sid!r}: crop upscale ratio {upscale_ratio:.2f}x > {max_upscale_ratio:.2f}x "
+                    f"produces soft/chopped LTX inputs; generate a native high-res keyframe instead"
+                )
             x0 = max(0.0, min(mw - cw, cx - cw * 0.5))
             y0 = max(0.0, min(mh - ch, cy - ch * 0.5))
             box = (int(round(x0)), int(round(y0)), int(round(x0 + cw)), int(round(y0 + ch)))
             cropped = rgb.crop(box)
             up = cropped.resize((target_width, target_height), Image.Resampling.LANCZOS)
-            up = up.filter(ImageFilter.UnsharpMask(radius=1.1, percent=110, threshold=2))
+            if upscale_ratio > 1.05:
+                up = up.filter(ImageFilter.UnsharpMask(radius=0.8, percent=65, threshold=3))
             out_p = out_dir / f"{sid}_plate.png"
             up.save(out_p, format="PNG")
             results[sid] = {
@@ -886,6 +902,66 @@ def extract_axis_locked_coverage_plates(
                 "facing_dir": str(spec.get("facing_dir") or ""),
             }
     return results
+
+
+
+
+def validate_native_keyframe_plates(
+    shot_specs: list[dict[str, Any]],
+    *,
+    min_width: int = 1280,
+    min_height: int = 720,
+    max_plate_reuse: int = 1,
+    max_crop_upscale: float = 1.35,
+) -> dict[str, Any]:
+    """Fail-closed guard preventing chopped sub-crops and repeated establishing plates in LTX plans.
+
+    Enforces two cinema quality laws:
+    1. No LTX shot may feed an aggressively cropped & upscaled slice of a wide image
+       (``derived_from_crop=True`` with ``crop_upscale_ratio > max_crop_upscale``).
+    2. No identical still plate (path or SHA-256) may be reused more than ``max_plate_reuse``
+       times across an episode unless explicitly marked ``chained_from`` an active shot.
+    """
+    findings: list[str] = []
+    plate_usage: dict[str, list[str]] = {}
+
+    for idx, spec in enumerate(shot_specs):
+        sid = str(spec.get("shot_id") or f"shot_{idx + 1}")
+        route = str(spec.get("route") or "ltx_video").strip().lower()
+        is_ltx = route in {"ltx", "ltx_video", "video"}
+
+        crop_ratio = float(spec.get("crop_upscale_ratio", 1.0) or 1.0)
+        if is_ltx and (bool(spec.get("derived_from_crop")) and crop_ratio > max_crop_upscale):
+            findings.append(
+                f"{sid}: digitally cropped sub-plate (upscale={crop_ratio:.2f}x > {max_crop_upscale:.2f}x) "
+                f"is forbidden as an LTX keyframe; generate a native anchor-locked angle plate"
+            )
+
+        w = int(spec.get("plate_width", min_width) or min_width)
+        h = int(spec.get("plate_height", min_height) or min_height)
+        if is_ltx and (w < min_width or h < min_height):
+            findings.append(f"{sid}: plate resolution {w}x{h} below minimum {min_width}x{min_height}")
+
+        if not str(spec.get("chained_from") or "").strip():
+            key = str(spec.get("plate_sha256") or spec.get("start_image_path") or spec.get("picture") or "").strip()
+            if key:
+                plate_usage.setdefault(key, []).append(sid)
+
+    reused: dict[str, list[str]] = {}
+    for key, sids in plate_usage.items():
+        if len(sids) > max_plate_reuse:
+            reused[key] = sids
+            findings.append(
+                f"Plate {key!r} reused {len(sids)} times across shots {sids} "
+                f"(max allowed={max_plate_reuse}; generate distinct camera angles/plates)"
+            )
+
+    return {
+        "status": "PASS" if not findings else "FAIL",
+        "shots_checked": len(shot_specs),
+        "reused_plates": reused,
+        "findings": findings,
+    }
 
 
 __all__ = [
@@ -903,5 +979,6 @@ __all__ = [
     "upscale_ltx_clip_to_2k",
     "validate_chained_handoff_plan",
     "validate_eyeline_180_rule",
+    "validate_native_keyframe_plates",
     "validate_zero_pre_stitch_zoom",
 ]
