@@ -8,16 +8,123 @@ driven directly by ElevenLabs ``word_timestamps.json``:
    and after every voiced character dialogue turn AND every Cinema Silence Drop window.
 3. Emits a verified ``compiled_timeline.json`` manifest for downstream 2K master assembly
    and forensic QA gates.
+4. Fails closed (``DialogueWordClippedError``) when a dialogue shot would cut into a spoken word
+   or the breath tail after it (BP-214).
 """
 from __future__ import annotations
 
 import json
+import math
 import re
+from collections.abc import Mapping
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any
 
+from explainer_engine.core.errors import ContractError
+from explainer_engine.standards import sourced_rules
+
 _WORD_CLEAN_RE = re.compile(r"[^a-z0-9']+")
+
+MIN_POST_SPEECH_TAIL_S = float(sourced_rules.T("BP-214", "min_post_speech_tail_s"))
+_TIME_TOL_S = 1e-4
+
+
+class DialogueWordClippedError(ContractError):
+    """A dialogue clip would be cut inside a spoken word or its breath tail, or cannot be proven not to be."""
+
+
+def is_dialogue_shot(shot: Mapping[str, Any]) -> bool:
+    """True when the shot declares spoken character dialogue in any of the forms the pipeline writes."""
+    return bool(
+        shot.get("has_dialogue")
+        or shot.get("dialogue_line")
+        or shot.get("line")
+        or shot.get("speech_end_s") is not None
+    )
+
+
+def _first_seconds(shot: Mapping[str, Any], *keys: str) -> float | None:
+    for key in keys:
+        if shot.get(key) is None:
+            continue
+        value = float(shot[key])
+        if not math.isfinite(value):
+            raise DialogueWordClippedError(f"{shot.get('shot_id', 'dialogue shot')}: {key}={shot[key]!r} is not a time")
+        return value
+    return None
+
+
+def enforce_dialogue_breath_tail(
+    shot: Mapping[str, Any],
+    *,
+    min_tail_s: float = MIN_POST_SPEECH_TAIL_S,
+) -> dict[str, Any]:
+    """Prove that a dialogue shot plays ``[speech_start_s, speech_end_s]`` plus the breath tail.
+
+    All times are on the source clip's own clock. The played window starts at ``trim_start_s`` (default 0) and
+    ends at the earliest of: start + duration (``duration_s``, or ``end_s - start_s``), ``trim_end_s``,
+    start + ``max_duration_s``, ``source_duration_s`` and ``source_duration_s - trim_tail_s``.
+
+    ``min_tail_s`` can only raise the floor of ``MIN_POST_SPEECH_TAIL_S``, never lower it.
+    """
+    sid = str(shot.get("shot_id") or "dialogue shot")
+    tail_floor = max(float(min_tail_s), MIN_POST_SPEECH_TAIL_S)
+    speech_start = _first_seconds(shot, "speech_start_s")
+    speech_end = _first_seconds(shot, "speech_end_s")
+    if speech_start is None or speech_end is None:
+        raise DialogueWordClippedError(
+            f"{sid}: dialogue shot has no speech_start_s / speech_end_s, so its cut cannot be proven safe"
+        )
+    if speech_start < 0.0 or speech_end <= speech_start:
+        raise DialogueWordClippedError(f"{sid}: invalid speech window [{speech_start}, {speech_end}]")
+
+    play_in = _first_seconds(shot, "trim_start_s", "trim_start") or 0.0
+    duration = _first_seconds(shot, "duration_s")
+    if duration is None:
+        start, end = _first_seconds(shot, "start_s"), _first_seconds(shot, "end_s")
+        if start is not None and end is not None:
+            duration = end - start
+
+    outs: list[float] = []
+    if duration is not None:
+        outs.append(play_in + duration)
+    trim_end = _first_seconds(shot, "trim_end_s", "trim_end")
+    if trim_end is not None:
+        outs.append(trim_end)
+    max_duration = _first_seconds(shot, "max_duration_s")
+    if max_duration is not None:
+        outs.append(play_in + max_duration)
+    source = _first_seconds(shot, "source_duration_s")
+    if source is not None:
+        outs.append(source)
+    trim_tail = _first_seconds(shot, "trim_tail_s")
+    if trim_tail:
+        if source is None:
+            raise DialogueWordClippedError(f"{sid}: trim_tail_s needs source_duration_s to prove the cut is safe")
+        outs.append(source - trim_tail)
+    if not outs:
+        raise DialogueWordClippedError(f"{sid}: no duration or out point, so its cut cannot be proven safe")
+
+    play_out = min(outs)
+    if play_in > speech_start + _TIME_TOL_S:
+        raise DialogueWordClippedError(
+            f"{sid}: trim starts at {play_in:.3f}s, after speech starts at {speech_start:.3f}s"
+        )
+    required_out = speech_end + tail_floor
+    if play_out < required_out - _TIME_TOL_S:
+        raise DialogueWordClippedError(
+            f"{sid}: clip ends at {play_out:.3f}s but speech ends at {speech_end:.3f}s and needs a "
+            f"{tail_floor:.2f}s breath tail (out >= {required_out:.3f}s)"
+        )
+    return {
+        "shot_id": sid,
+        "play_in_s": play_in,
+        "play_out_s": play_out,
+        "speech_start_s": speech_start,
+        "speech_end_s": speech_end,
+        "tail_s": play_out - speech_end,
+    }
 
 
 def _norm_token(word: str) -> str:
@@ -169,6 +276,12 @@ def compile_word_locked_timeline(
     snap_to_words:
         When ``True``, gently adjusts preceding non-dialogue shot end boundaries (respecting
         ``min_shot_duration_s``) so narrated anchor shots land tightly on their spoken cues.
+
+    Raises
+    ------
+    DialogueWordClippedError
+        A dialogue shot lacks ``speech_start_s`` / ``speech_end_s`` or its trim or duration ends before
+        ``speech_end_s`` plus the breath tail (see :func:`enforce_dialogue_breath_tail`).
     """
     norm_words: list[dict[str, Any]] = []
     for entry in word_timestamps:
@@ -196,6 +309,9 @@ def compile_word_locked_timeline(
         cursor = e_t
         max_d = float(raw["max_duration_s"]) if raw.get("max_duration_s") is not None else None
         max_durs.append(max_d)
+        if is_dialogue_shot(raw):
+            # Dialogue shots are never re-timed by the word snapping below, so this duration is final.
+            enforce_dialogue_breath_tail({**raw, "duration_s": dur})
         compiled.append(
             CompiledShot(
                 shot_id=str(raw.get("shot_id") or f"shot_{len(compiled) + 1:02d}"),
@@ -204,7 +320,7 @@ def compile_word_locked_timeline(
                 start_s=round(s_t, 4),
                 end_s=round(e_t, 4),
                 duration_s=round(dur, 4),
-                has_dialogue=bool(raw.get("has_dialogue", False)),
+                has_dialogue=is_dialogue_shot(raw),
                 dramatic_scene=bool(raw.get("dramatic_scene", False)),
                 chained_from=str(raw.get("chained_from") or ""),
                 anchor_word=str(raw.get("anchor_word") or "").strip(),

@@ -2,7 +2,8 @@
 
 Addresses every single audio flaw found in our Ears-On audit:
 1. Multi-act music progression (4 distinct emotional stems crossfaded smoothly over 3.5-4.0s).
-2. Scene-locked ambience per shot with smooth 0.40s J-cut/L-cut crossfades (zero unrelated water/rain).
+2. Scene-locked ambience per shot with smooth 0.40s J-cut/L-cut crossfades (zero unrelated water/rain);
+   a dramatic scene keeps ONE continuous room-tone bed across all of its shots (BP-215).
 3. Post-assembly visual-spotted foley/SFX capped strictly <= -8 dB relative to voice (zero overpowering map whooshes!).
 4. Smooth, zero-pumping RMS envelope follower (180ms attack, 650ms release, gentle -3.8 dB ducking)
    so background ambience NEVER jumps up loudly during speech pauses.
@@ -190,6 +191,139 @@ def _resolve_owning_scene_end(
     return total_duration_s
 
 
+def consolidate_scene_room_tone(
+    scene_ambiences: list[dict[str, Any]],
+    scene_windows: list[dict[str, Any]] | None = None,
+) -> list[dict[str, Any]]:
+    """Join the per-shot ambience entries of a dramatic scene into one continuous bed (BP-215).
+
+    A scene is dramatic when an ambience entry or its scene window says ``dramatic_scene``. Entries that follow
+    each other in time with the same ``scene_id`` become one entry, so the bed is generated and faded only once.
+    Different beds or levels inside one such run are an error: the room would audibly change at a cut.
+    """
+    dramatic = {
+        str(row.get("scene_id") or row.get("scene_group"))
+        for row in [*scene_ambiences, *(scene_windows or [])]
+        if row.get("dramatic_scene") and (row.get("scene_id") or row.get("scene_group"))
+    }
+    if any(row.get("dramatic_scene") and not (row.get("scene_id") or row.get("scene_group")) for row in scene_ambiences):
+        raise ValueError("a dramatic_scene ambience entry needs a scene_id")
+
+    out: list[dict[str, Any]] = []
+    previous_scene = ""
+    for row in sorted(scene_ambiences, key=lambda r: float(r["start_s"])):
+        scene = str(row.get("scene_id") or row.get("scene_group") or "")
+        if scene in dramatic and scene == previous_scene:
+            bed = out[-1]
+            for key, default in (("wav_path", None), ("level_dbfs", -36.0), ("hp_hz", 65.0), ("lp_hz", 6500.0)):
+                if str(bed.get(key, default)) != str(row.get(key, default)):
+                    raise ValueError(
+                        f"dramatic scene {scene!r} needs a single continuous room-tone bed: {key} changes from "
+                        f"{bed.get(key, default)!r} to {row.get(key, default)!r}"
+                    )
+            bed["end_s"] = max(float(bed["end_s"]), float(row["end_s"]))
+            if "scene_end_s" in bed or "scene_end_s" in row:
+                bed["scene_end_s"] = max(
+                    float(bed.get("scene_end_s", bed["end_s"])), float(row.get("scene_end_s", row["end_s"])), bed["end_s"]
+                )
+        else:
+            entry = dict(row)
+            if scene in dramatic:
+                entry["shot_id"] = f"room_tone_{scene}"
+                entry["kind"] = "scene_room_tone"
+            out.append(entry)
+        previous_scene = scene
+    return out
+
+
+def render_dialogue_scene_track(
+    plan: dict[str, Any],
+    stems: dict[str, Path],
+    room_tones: dict[str, Path],
+    out_wav: Path,
+    *,
+    room_tone_dbfs: float = -46.0,
+    sr: int = 48000,
+) -> dict[str, Any]:
+    """Render the sound of a J/L-cut plan: overlapping speaker turns over one room-tone bed per scene.
+
+    ``plan`` comes from ``plan_dialogue_j_l_cuts``. ``stems`` maps a dialogue ``shot_id`` to that clip's cleaned
+    audio on the source clip's clock; ``room_tones`` maps every ``scene_id`` of the plan to its one bed. A fade
+    never reaches into a spoken word, and a stem too short for its line and breath tail fails closed.
+    """
+    from explainer_engine.episode.word_timeline_compiler import enforce_dialogue_breath_tail
+
+    shots = list(plan["shots"])
+    if not shots:
+        raise ValueError("empty dialogue plan")
+    n_total = int(round(float(plan["total_duration_s"]) * sr))
+    mix = np.zeros((n_total, 2), dtype=np.float32)
+    anti_click = 0.005
+
+    for idx, shot in enumerate(shots):
+        if not shot["has_dialogue"]:
+            continue
+        sid = shot["shot_id"]
+        if sid not in stems:
+            raise ValueError(f"no dialogue stem for shot {sid!r}")
+        audio = _load_stereo_48k(Path(stems[sid]), sr=sr)
+        src_in, src_out = float(shot["audio_source_in_s"]), float(shot["audio_source_out_s"])
+        if len(audio) / sr < src_out - 1.0 / float(plan["fps"]):
+            enforce_dialogue_breath_tail(
+                {**shot, "trim_start_s": src_in, "duration_s": src_out - src_in, "source_duration_s": len(audio) / sr}
+            )
+        seg = audio[int(round(src_in * sr)) : int(round(src_out * sr))].copy()
+        start = float(shot["audio_start_s"])
+        overlap_in = max(0.0, shots[idx - 1]["audio_end_s"] - start) if idx else 0.0
+        overlap_out = (
+            max(0.0, shot["audio_end_s"] - shots[idx + 1]["audio_start_s"]) if idx + 1 < len(shots) else 0.0
+        )
+        lead_room = float(shot["speech_start_s"]) - src_in
+        tail_room = src_out - float(shot["speech_end_s"])
+        fade_in = int(round(max(anti_click, min(overlap_in, lead_room)) * sr))
+        fade_out = int(round(max(anti_click, min(overlap_out, tail_room)) * sr))
+        fade_in, fade_out = min(fade_in, len(seg) // 2), min(fade_out, len(seg) // 2)
+        if fade_in > 1:
+            seg[:fade_in] *= np.sin(np.linspace(0.0, np.pi * 0.5, fade_in, dtype=np.float32))[:, None]
+        if fade_out > 1:
+            seg[-fade_out:] *= np.cos(np.linspace(0.0, np.pi * 0.5, fade_out, dtype=np.float32))[:, None]
+        s_idx = int(round(start * sr))
+        e_idx = min(n_total, s_idx + len(seg))
+        mix[s_idx:e_idx] += seg[: e_idx - s_idx]
+
+    # One bed for each unbroken run of a scene: generated once, faded only at the scene's own edges
+    runs: list[dict[str, Any]] = []
+    for shot in shots:
+        if runs and runs[-1]["scene_id"] == shot["scene_id"]:
+            runs[-1]["end_s"] = max(runs[-1]["end_s"], shot["audio_end_s"])
+        else:
+            runs.append({"scene_id": shot["scene_id"], "start_s": shot["audio_start_s"], "end_s": shot["audio_end_s"]})
+    for run_idx, run in enumerate(runs):
+        scene = run["scene_id"]
+        if scene not in room_tones:
+            raise ValueError(f"scene {scene!r} has no room-tone bed")
+        s_idx = int(round(run["start_s"] * sr))
+        e_idx = min(n_total, int(round(run["end_s"] * sr)))
+        raw = _load_stereo_48k(Path(room_tones[scene]), sr=sr)
+        if not len(raw) or float(np.max(np.abs(raw))) <= 0.0:
+            raise ValueError(f"scene {scene!r}: room-tone bed is silent")
+        bed = _normalize_rms_db(_loop_nonperiodic_ambience(raw, e_idx - s_idx, seed=17 + run_idx * 31), room_tone_dbfs)
+        fade = min(len(bed) // 3, int(round(0.25 * sr)))
+        if fade > 1:
+            bed[:fade] *= np.sin(np.linspace(0.0, np.pi * 0.5, fade, dtype=np.float32))[:, None]
+            bed[-fade:] *= np.cos(np.linspace(0.0, np.pi * 0.5, fade, dtype=np.float32))[:, None]
+        mix[s_idx:e_idx] += bed
+
+    out_wav.parent.mkdir(parents=True, exist_ok=True)
+    sf.write(str(out_wav), np.clip(mix, -0.98, 0.98), sr, subtype="PCM_24")
+    return {
+        "path": str(out_wav),
+        "duration_s": round(n_total / sr, 4),
+        "room_tone_beds": [{**r, "start_s": round(r["start_s"], 4), "end_s": round(r["end_s"], 4)} for r in runs],
+        "cuts": plan["cuts"],
+    }
+
+
 def mix_broadcast_cinema_audio(
     *,
     total_duration_s: float,
@@ -297,6 +431,7 @@ def mix_broadcast_cinema_audio(
     amb_buf = np.zeros((n_total, 2), dtype=np.float32)
     shot_reports: list[dict[str, Any]] = []
     clamped_ambience_count = 0
+    scene_ambiences = consolidate_scene_room_tone(scene_ambiences, scene_windows)
     for idx_amb, sh in enumerate(scene_ambiences):
         st = max(0.0, float(sh["start_s"]))
         en = min(total_duration_s, float(sh["end_s"]))

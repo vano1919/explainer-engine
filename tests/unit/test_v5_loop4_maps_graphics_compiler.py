@@ -180,7 +180,8 @@ def test_word_timeline_compiler_snaps_anchors_and_enforces_dialogue_clearance(tm
         {"shot_id": "s1", "scene_id": "hook", "route": "ltx_video", "duration_s": 5.0, "anchor_word": "Everyone"},
         {"shot_id": "s2", "scene_id": "map", "route": "map_action", "duration_s": 6.5, "anchor_word": "Domus"},
         {"shot_id": "s3", "scene_id": "atrium", "route": "ltx_video", "duration_s": 3.5, "anchor_word": "wavers"},
-        {"shot_id": "s4_dlg", "scene_id": "atrium", "route": "ltx_video", "duration_s": 8.0, "has_dialogue": True},
+        {"shot_id": "s4_dlg", "scene_id": "atrium", "route": "ltx_video", "duration_s": 8.0, "has_dialogue": True,
+         "speech_start_s": 0.4, "speech_end_s": 7.2},
         {"shot_id": "s5", "scene_id": "atrium", "route": "ltx_video", "duration_s": 5.0, "anchor_word": "decides"},
     ]
     # Clean narrator utterances with >= 0.40s margin around dialogue [15.0..23.0] and silence drop [14.3..14.8]

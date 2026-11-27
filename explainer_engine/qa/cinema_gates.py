@@ -5,16 +5,23 @@ Catches the exact real-world visual and audio defects that legacy synthetic test
 2. Mid-Frame Seam/Tear Detector: detects artificial horizontal/vertical gradient discontinuity splits.
 3. Audio-Scene Consistency Gate: verifies no rain on dry/map shots, synced SFX on every map shot,
    ITU-R BS.1770-4 loudness/peak compliance, and real acoustic variation across scene boundaries.
+4. Cropped Seed Plate Gate and Cutout Compositing Gate (BP-217): every seed plate is a native full frame; no
+   person is matted out and pasted onto a separate background.
 """
 from __future__ import annotations
 
+import ast
+import json
 import math
+import re
 import subprocess
 from pathlib import Path
 from typing import Any
 
 import cv2
 import numpy as np
+
+from explainer_engine.standards import sourced_rules
 
 
 def _read_frames_at_times(video_path: Path, times_s: list[float]) -> list[np.ndarray]:
@@ -1870,6 +1877,323 @@ def check_word_to_shot_sync(
     }
 
 
+_SEED_PLATE_KEYS = ("seed_plate_path", "plate_path", "start_picture", "source_image_path", "image_path")
+_PLATE_LAYERS = ("provenance", "plate", "seed_plate", "extra")
+
+
+def _spec_layers(spec: dict[str, Any]) -> list[dict[str, Any]]:
+    return [spec] + [spec[k] for k in _PLATE_LAYERS if isinstance(spec.get(k), dict)]
+
+
+def _shrink_plate(gray: np.ndarray, width: int = 640) -> np.ndarray:
+    if gray.shape[1] <= width:
+        return gray
+    height = max(8, round(gray.shape[0] * width / gray.shape[1]))
+    return cv2.resize(gray, (width, height), interpolation=cv2.INTER_AREA)
+
+
+def _sub_rect_score(master: np.ndarray, candidate: np.ndarray) -> tuple[float, float]:
+    """Best correlation of ``candidate`` as a smaller rectangle of ``master`` (both gray), and its relative width."""
+
+    def search(width: int, scales: np.ndarray) -> tuple[float, float]:
+        height = max(8, round(master.shape[0] * width / master.shape[1]))
+        big = cv2.resize(master, (width, height), interpolation=cv2.INTER_AREA)
+        best_score, best_scale = -1.0, 0.0
+        for scale in scales:
+            tw = round(width * float(scale))
+            th = round(tw * candidate.shape[0] / candidate.shape[1])
+            if tw < 16 or th < 16 or tw > width or th > height:
+                continue
+            templ = cv2.resize(candidate, (tw, th), interpolation=cv2.INTER_AREA)
+            if float(templ.std()) < 4.0:
+                continue
+            score = float(np.nan_to_num(cv2.matchTemplate(big, templ, cv2.TM_CCOEFF_NORMED), nan=-1.0,
+                                        posinf=-1.0, neginf=-1.0).max())
+            if score > best_score:
+                best_score, best_scale = score, float(scale)
+        return best_score, best_scale
+
+    score, scale = search(128, np.arange(0.25, 0.961, 0.02))
+    if score < 0.60:
+        return score, scale
+    # Only the finer pass is trusted: small pictures correlate too easily
+    return search(384, np.arange(max(0.2, scale - 0.024), min(0.97, scale + 0.0241), 0.004))
+
+
+def check_no_cropped_seed_plates(
+    shot_specs: list[dict[str, Any]],
+    *,
+    base_dir: Path | None = None,
+    max_phash_hamming: int | None = None,
+    containment_score_min: float | None = None,
+) -> dict[str, Any]:
+    """Reject any shot whose seed plate was cut out of another plate (BP-217).
+
+    Declared evidence: ``crop_from_master``, ``rel_w`` / ``rel_h`` below 1.0, ``crop_box`` or ``source_master`` on
+    the spec or its ``provenance`` / ``plate`` / ``seed_plate`` / ``extra`` block. Measured evidence, between the
+    different plate files of the specs: a near-identical perceptual hash, or one plate found as a smaller rectangle
+    inside another. A shot and the parent it is chained from are not compared (the handoff frame is meant to match).
+    A named plate that cannot be read fails: it cannot be proven native.
+    """
+    import hashlib
+
+    import imagehash
+    from PIL import Image
+
+    hamming_max = int(sourced_rules.T("BP-217", "phash_hamming_max") if max_phash_hamming is None else max_phash_hamming)
+    score_min = float(
+        sourced_rules.T("BP-217", "containment_score_min") if containment_score_min is None else containment_score_min
+    )
+    findings: list[str] = []
+    if not shot_specs:
+        findings.append("no shot specs given: seed plates cannot be proven native")
+
+    plates: dict[str, dict[str, Any]] = {}
+    for idx, spec in enumerate(shot_specs):
+        sid = str(spec.get("shot_id") or f"shot_{idx + 1}")
+        raw_path = ""
+        for layer in _spec_layers(spec):
+            if layer.get("crop_from_master"):
+                findings.append(f"{sid}: crop_from_master={layer['crop_from_master']!r} (cropped plates are banned)")
+            for key in ("rel_w", "rel_h"):
+                if layer.get(key) is not None and float(layer[key]) < 1.0 - 1e-6:
+                    findings.append(f"{sid}: {key}={float(layer[key]):.3f} < 1.0 is a sub-region of a wider plate")
+            for key in ("crop_box", "source_master"):
+                if layer.get(key):
+                    findings.append(f"{sid}: {key}={layer[key]!r} records a crop of another plate")
+            raw_path = raw_path or next((str(layer[k]) for k in _SEED_PLATE_KEYS if layer.get(k)), "")
+        if not raw_path:
+            continue
+        plate = Path(raw_path)
+        if base_dir is not None and not plate.is_absolute():
+            plate = Path(base_dir) / plate
+        data = np.fromfile(str(plate), dtype=np.uint8) if plate.is_file() else np.zeros(0, dtype=np.uint8)
+        gray = cv2.imdecode(data, cv2.IMREAD_GRAYSCALE) if data.size else None
+        if gray is None:
+            findings.append(f"{sid}: seed plate {raw_path!r} is missing or unreadable")
+            continue
+        digest = hashlib.sha256(data.tobytes()).hexdigest()
+        row = plates.setdefault(digest, {"path": raw_path, "gray": _shrink_plate(gray), "shots": [], "parents": set()})
+        row["shots"].append(sid)
+        if spec.get("chained_from"):
+            row["parents"].add(str(spec["chained_from"]))
+
+    rows = list(plates.values())
+    for row in rows:
+        row["phash"] = imagehash.phash(Image.fromarray(row["gray"]))
+        row["flat"] = float(row["gray"].std()) < 4.0
+
+    matches: list[dict[str, Any]] = []
+    for i, a in enumerate(rows):
+        for j in range(i + 1, len(rows)):
+            b = rows[j]
+            if a["flat"] or b["flat"] or a["parents"] & set(b["shots"]) or b["parents"] & set(a["shots"]):
+                continue
+            hamming = int(a["phash"] - b["phash"])
+            if hamming <= hamming_max:
+                matches.append({"kind": "perceptual_duplicate", "shots_a": a["shots"], "shots_b": b["shots"],
+                                "phash_hamming": hamming})
+                findings.append(
+                    f"{', '.join(b['shots'])}: seed plate is a near copy of the plate of {', '.join(a['shots'])} "
+                    f"(pHash distance {hamming} <= {hamming_max})"
+                )
+                continue
+            for master, part in ((a, b), (b, a)):
+                score, rel_w = _sub_rect_score(master["gray"], part["gray"])
+                if score >= score_min:
+                    matches.append({"kind": "sub_rectangle", "master_shots": master["shots"],
+                                    "cropped_shots": part["shots"], "score": round(score, 3),
+                                    "rel_w": round(rel_w, 3)})
+                    findings.append(
+                        f"{', '.join(part['shots'])}: seed plate is a sub-rectangle (rel_w~{rel_w:.2f}, "
+                        f"match {score:.3f}) of the plate of {', '.join(master['shots'])}"
+                    )
+                    break
+
+    return {
+        "status": "PASS" if not findings else "FAIL",
+        "shots_checked": len(shot_specs),
+        "plates_compared": len(rows),
+        "matches": matches,
+        "findings": findings,
+    }
+
+
+_CUTOUT_NAMES = {"grabCut", "rembg", "composite_person_onto_bg", "composite_clean"}
+# The repository's own matting helper keeps serving the retired card route; a job script may not call it.
+_JOB_CUTOUT_NAMES = _CUTOUT_NAMES | {"birefnet_mask"}
+_RMBG_MODEL_RE = re.compile(r"briaai[/]rmbg|\brmbg[-_]?\d", re.IGNORECASE)
+_CUTOUT_TEXT_RE = re.compile(
+    r"grabcut|rembg|rmbg|composite_person_onto_bg|composite_clean|alpha_paste", re.IGNORECASE
+)
+_CUTOUT_MANIFEST_KEYS = {
+    "method", "tool", "tools", "operation", "operations", "compositing", "pipeline", "plate_method", "generator",
+    "script", "path", "plate_path", "seed_plate_path", "start_picture", "source_image_path", "cutout",
+}
+_JOB_SHELL_SUFFIXES = {".sh", ".ps1", ".bat", ".ipynb"}
+
+
+def _cutout_hits_in_python(path: Path, names: set[str]) -> list[tuple[int, str]]:
+    """(line, what) of every forbidden cutout import, name, call argument or matting model id; docstrings are ignored."""
+    tree = ast.parse(path.read_text(encoding="utf-8-sig"), filename=str(path))
+    docstrings: set[int] = set()
+    for node in ast.walk(tree):
+        if isinstance(node, (ast.Module, ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)) and node.body:
+            first = node.body[0]
+            if isinstance(first, ast.Expr) and isinstance(first.value, ast.Constant):
+                docstrings.add(id(first.value))
+
+    def banned(name: str) -> bool:
+        return name in names or name.lower().startswith("rmbg")
+
+    exact = names | {"RMBG"}
+    hits: set[tuple[int, str]] = set()
+    for node in ast.walk(tree):
+        if isinstance(node, (ast.Import, ast.ImportFrom)):
+            module = node.module if isinstance(node, ast.ImportFrom) else None
+            dotted = [alias.name for alias in node.names] + ([module] if module else [])
+            for item in dotted:
+                for part in item.split("."):
+                    if banned(part):
+                        hits.add((node.lineno, f"import of {part}"))
+        elif isinstance(node, ast.Name) and banned(node.id):
+            hits.add((node.lineno, node.id))
+        elif isinstance(node, ast.Attribute) and banned(node.attr):
+            hits.add((node.lineno, node.attr))
+        elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)) and banned(node.name):
+            hits.add((node.lineno, f"definition of {node.name}"))
+        elif (isinstance(node, ast.Constant) and isinstance(node.value, str) and id(node) not in docstrings
+              and _RMBG_MODEL_RE.search(node.value)):
+            hits.add((node.lineno, "RMBG matting model id"))
+        if isinstance(node, ast.Call):
+            for arg in [*node.args, *(kw.value for kw in node.keywords)]:
+                for sub_node in ast.walk(arg):
+                    if isinstance(sub_node, ast.Constant) and isinstance(sub_node.value, str):
+                        words = sub_node.value.split()
+                        command = len(words) > 1 and words[0] == "rembg"
+                        if command or (len(words) == 1 and words[0] in exact):
+                            hits.add((sub_node.lineno, f"call argument {words[0]!r}"))
+    return sorted(hits)
+
+
+def _walk_dicts(node: Any):
+    if isinstance(node, dict):
+        yield node
+        for value in node.values():
+            yield from _walk_dicts(value)
+    elif isinstance(node, list):
+        for value in node:
+            yield from _walk_dicts(value)
+
+
+def check_no_cutout_compositing(
+    repo_root: Path,
+    job_dir: Path,
+    *,
+    shot_specs: list[dict[str, Any]] | None = None,
+    require_provenance: bool = False,
+) -> dict[str, Any]:
+    """Fail when a person is cut out of one picture and pasted onto another (BP-217).
+
+    Static part: every Python file of ``<repo_root>/explainer_engine``, ``<repo_root>/scripts`` and ``job_dir`` is
+    parsed and checked for ``cv2.grabCut``, ``rembg``, RMBG models and ``composite_person_onto_bg`` /
+    ``composite_clean``; job shell scripts and notebooks are searched as text. Manifest part: the job's JSON files
+    may not record such a step, and every shot entry (``shot_id``) that declares several ``characters``, or
+    characters in a ``location``, must declare a native ``plate_method``. With ``require_provenance`` a job that declares no such
+    shot at all fails as well, because nothing was proven. A file that cannot be parsed fails.
+    """
+    repo_root, job_dir = Path(repo_root), Path(job_dir)
+    native = set(sourced_rules.T("BP-217", "native_plate_methods"))
+    findings: list[str] = []
+    for label, folder in (("repo_root/explainer_engine", repo_root / "explainer_engine"), ("job_dir", job_dir)):
+        if not folder.is_dir():
+            findings.append(f"{label} {str(folder)!r} is not a directory: nothing could be scanned")
+
+    def files(folder: Path):
+        for item in sorted(folder.rglob("*")) if folder.is_dir() else []:
+            inside = set(item.relative_to(folder).parts)
+            if item.is_file() and not {"__pycache__", ".venv", "venv", "node_modules"} & inside:
+                yield item
+
+    def shown(item: Path) -> str:
+        for root in (repo_root, job_dir):
+            if item.is_relative_to(root):
+                return item.relative_to(root).as_posix()
+        return item.as_posix()
+
+    job_files = list(files(job_dir))
+    python_files: dict[Path, set[str]] = {
+        item.resolve(): _CUTOUT_NAMES
+        for folder in (repo_root / "explainer_engine", repo_root / "scripts")
+        for item in files(folder)
+        if item.suffix == ".py"
+    }
+    python_files.update({item.resolve(): _JOB_CUTOUT_NAMES for item in job_files if item.suffix == ".py"})
+    repo_root, job_dir = repo_root.resolve(), job_dir.resolve()
+    for item, names in python_files.items():
+        try:
+            for line, what in _cutout_hits_in_python(item, names):
+                findings.append(f"{shown(item)}:{line}: forbidden cutout compositing ({what})")
+        except (SyntaxError, UnicodeDecodeError, ValueError) as exc:
+            findings.append(f"{shown(item)}: cannot be parsed, so it cannot be cleared ({exc.__class__.__name__})")
+
+    declared: list[tuple[str, dict[str, Any]]] = [("shot_specs", spec) for spec in shot_specs or []]
+    manifests = 0
+    for item in job_files:
+        if item.suffix in _JOB_SHELL_SUFFIXES:
+            found = _CUTOUT_TEXT_RE.search(item.read_text(encoding="utf-8", errors="replace"))
+            if found:
+                findings.append(f"{shown(item.resolve())}: forbidden cutout compositing ({found.group(0)})")
+        if item.suffix not in (".json", ".jsonl"):
+            continue
+        manifests += 1
+        try:
+            text = item.read_text(encoding="utf-8-sig")
+            docs = (
+                [json.loads(row) for row in text.splitlines() if row.strip()]
+                if item.suffix == ".jsonl"
+                else [json.loads(text)]
+            )
+        except (json.JSONDecodeError, UnicodeDecodeError) as exc:
+            findings.append(f"{shown(item.resolve())}: unreadable manifest ({exc.__class__.__name__})")
+            continue
+        declared.extend((shown(item.resolve()), row) for doc in docs for row in _walk_dicts(doc))
+
+    character_shots = 0
+    for source, row in declared:
+        sid = str(row.get("shot_id") or "entry")
+        for key, value in row.items():
+            if _CUTOUT_TEXT_RE.search(str(key)) and value:
+                findings.append(f"{source}: {sid} records a cutout compositing step ({key})")
+            elif str(key).lower() in _CUTOUT_MANIFEST_KEYS:
+                found = _CUTOUT_TEXT_RE.search(json.dumps(value, ensure_ascii=False, default=str))
+                if found:
+                    findings.append(f"{source}: {sid} records a cutout compositing step ({key}: {found.group(0)})")
+        characters = row.get("characters") or row.get("character_ids")
+        if not row.get("shot_id") or not isinstance(characters, list) or not characters:
+            continue
+        if len(characters) < 2 and not (row.get("location") or row.get("location_id")):
+            continue
+        character_shots += 1
+        provenance = row.get("provenance") if isinstance(row.get("provenance"), dict) else {}
+        method = str(row.get("plate_method") or provenance.get("plate_method") or "")
+        if method not in native:
+            findings.append(
+                f"{source}: {sid} places characters in one picture but its plate_method is {method or 'missing'!r}; "
+                f"it must be one of {sorted(native)}"
+            )
+    if require_provenance and not character_shots:
+        findings.append("no shot declares its characters and plate_method: native generation is not proven")
+
+    return {
+        "status": "PASS" if not findings else "FAIL",
+        "python_files_scanned": len(python_files),
+        "manifests_scanned": manifests,
+        "character_shots_declared": character_shots,
+        "findings": findings,
+    }
+
+
 def run_full_cinema_audit(
     video_path: Path,
     *,
@@ -1897,8 +2221,16 @@ def run_full_cinema_audit(
     silence_drops: list[dict[str, Any]] | None = None,
     word_timestamps: list[dict[str, Any]] | None = None,
     word_shot_anchors: list[dict[str, Any]] | None = None,
+    seed_plate_specs: list[dict[str, Any]] | None = None,
+    repo_root: Path | None = None,
+    job_dir: Path | None = None,
+    enforce_v5_contracts: bool = False,
 ) -> dict[str, Any]:
-    """Run every deterministic L3 gate PLUS optional v3.2/v4.0 contracts & fail-closed AI Media Critic."""
+    """Run every deterministic L3 gate PLUS optional v3.2/v4.0 contracts & fail-closed AI Media Critic.
+
+    ``enforce_v5_contracts`` makes the seed plate and cutout compositing gates mandatory (BP-217); without it each
+    runs when its inputs are given.
+    """
     from explainer_engine.qa.ai_critic_gate import verify_ai_critic_verdict
 
     delivery = check_master_delivery_specs(
@@ -1964,6 +2296,19 @@ def run_full_cinema_audit(
                 shot_windows,
                 word_timestamps,
                 word_shot_anchors,
+            )
+
+    if enforce_v5_contracts or seed_plate_specs is not None:
+        results["cropped_seed_plates"] = check_no_cropped_seed_plates(seed_plate_specs or [], base_dir=repo_root)
+    if enforce_v5_contracts or job_dir is not None:
+        if repo_root is None or job_dir is None:
+            results["cutout_compositing"] = {"status": "FAIL", "findings": ["repo_root and job_dir are required"]}
+        else:
+            results["cutout_compositing"] = check_no_cutout_compositing(
+                repo_root,
+                job_dir,
+                shot_specs=seed_plate_specs,
+                require_provenance=enforce_v5_contracts,
             )
 
     if require_ai_critic:
