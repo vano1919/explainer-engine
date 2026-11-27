@@ -21,14 +21,31 @@ from scipy.signal import butter, filtfilt, iirpeak, resample_poly, sosfiltfilt
 
 MIN_RAW_MUSIC_DURATION_S: float = 45.0
 FORBIDDEN_MUSIC_TOKENS = ("synth", "sine", "beep", "placeholder", "sfx_loop", "rumble_loop")
+FORBIDDEN_CLASSICAL_TOKENS = (
+    "symphony",
+    "waltz",
+    "concerto",
+    "sonata",
+    "minuet",
+    "nocturne",
+    "beethoven",
+    "mozart",
+    "chopin",
+    "vivaldi",
+    "bach",
+    "tchaikovsky",
+    "overture",
+    "quartet",
+)
 
 
 def validate_music_stem(
     wav_path: Path,
     *,
     min_duration_s: float = MIN_RAW_MUSIC_DURATION_S,
+    modern_underscore_only: bool = True,
 ) -> dict[str, Any]:
-    """Fail-closed gate rejecting synthetic music placeholders or any raw track shorter than 45.0 seconds."""
+    """Fail-closed gate rejecting synthetic loops, intrusive classical concert pieces, or tracks < 45.0s."""
     p = Path(wav_path)
     if not p.is_file():
         raise FileNotFoundError(f"Music score stem not found: {p}")
@@ -36,6 +53,12 @@ def validate_music_stem(
     for bad in FORBIDDEN_MUSIC_TOKENS:
         if bad in low:
             raise ValueError(f"Forbidden synthetic/loop music stem rejected: {p.name}")
+    if modern_underscore_only:
+        for classical in FORBIDDEN_CLASSICAL_TOKENS:
+            if classical in low:
+                raise ValueError(
+                    f"Intrusive classical concert piece rejected for modern documentary underscore: {p.name}"
+                )
     info = sf.info(str(p))
     dur_s = float(info.frames) / float(max(1, info.samplerate))
     if dur_s < min_duration_s:
@@ -49,6 +72,7 @@ def validate_music_stem(
         "duration_s": round(dur_s, 3),
         "sample_rate": int(info.samplerate),
         "channels": int(info.channels),
+        "modern_underscore_verified": bool(modern_underscore_only),
     }
 
 
@@ -88,18 +112,20 @@ def apply_cinema_silence_drops(
 
 
 def _shape_documentary_score_eq(x: np.ndarray, sr: int) -> np.ndarray:
-    """Warm filmic underscore shaping: 42Hz HPF, 6800Hz gentle air rolloff, soft -2.5dB vocal pocket at 1.9kHz."""
-    sos_hp = butter(2, 42.0 / (0.5 * sr), btype="highpass", output="sos")
-    sos_lp = butter(2, 6800.0 / (0.5 * sr), btype="lowpass", output="sos")
-    # Gentle notch attenuation in narrator vocal presence band (~1.9 kHz)
-    b_pk, a_pk = iirpeak(1900.0 / (0.5 * sr), Q=1.4)
+    """Modern YouTube documentary underscore EQ: 45Hz HPF, 5800Hz warm rolloff, -4.5dB vocal-clarity pocket (1.2-3.8 kHz)."""
+    sos_hp = butter(2, 45.0 / (0.5 * sr), btype="highpass", output="sos")
+    sos_lp = butter(2, 5800.0 / (0.5 * sr), btype="lowpass", output="sos")
+    # Broad vocal presence notch centered at 2.2 kHz (covers 1.2-3.8 kHz speech intelligibility band)
+    b_pk1, a_pk1 = iirpeak(1850.0 / (0.5 * sr), Q=1.1)
+    b_pk2, a_pk2 = iirpeak(3100.0 / (0.5 * sr), Q=1.2)
     out = np.empty_like(x)
     for ch in range(x.shape[1]):
         y = sosfiltfilt(sos_hp, x[:, ch])
         y = sosfiltfilt(sos_lp, y)
-        # Subtract 25% of narrow vocal-band peak (~-2.5 dB pocket)
-        band = filtfilt(b_pk, a_pk, y)
-        y = y - 0.25 * band
+        # Carve ~-4.5 dB combined pocket across 1.2-3.8 kHz so narration & dialogue stay crystal clear
+        band1 = filtfilt(b_pk1, a_pk1, y)
+        band2 = filtfilt(b_pk2, a_pk2, y)
+        y = y - 0.36 * band1 - 0.28 * band2
         out[:, ch] = y.astype(np.float32)
     return out
 
@@ -127,6 +153,7 @@ def build_continuous_musical_score(
     silence_drops: list[dict[str, Any]] | None = None,
     sr: int = 48000,
     min_raw_duration_s: float = MIN_RAW_MUSIC_DURATION_S,
+    modern_underscore_only: bool = True,
 ) -> dict[str, Any]:
     """Assemble a continuous, loop-free multi-act musical score stem from verified >=45s real recordings."""
     n_total = max(1, int(round(total_duration_s * sr)))
@@ -135,7 +162,7 @@ def build_continuous_musical_score(
 
     for cue in score_cues:
         p = Path(str(cue["wav_path"]))
-        v = validate_music_stem(p, min_duration_s=min_raw_duration_s)
+        v = validate_music_stem(p, min_duration_s=min_raw_duration_s, modern_underscore_only=modern_underscore_only)
         st = max(0.0, float(cue["start_s"]))
         en = min(total_duration_s, float(cue["end_s"]))
         if en <= st:
@@ -155,7 +182,7 @@ def build_continuous_musical_score(
         seg = _shape_documentary_score_eq(seg, sr)
         rms = float(np.sqrt(np.mean(seg * seg)) + 1e-9)
         cur_db = 20.0 * np.log10(rms)
-        tgt_db = float(cue.get("level_dbfs", -28.0))
+        tgt_db = float(cue.get("level_dbfs", -44.0))
         seg *= float(10.0 ** ((tgt_db - cur_db) / 20.0))
 
         # Equal-power sine/cosine act crossfades (default 3.5s)

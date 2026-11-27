@@ -110,8 +110,58 @@ def check_elevenlabs_subscription() -> dict[str, Any]:
     }
 
 
+_AUDIO_TAG_RE = re.compile(r"\[[^\]]+\]")
+
+EXPRESSIVE_DELIVERY_PRESETS: dict[str, dict[str, Any]] = {
+    "hook_punch": {"tag": "[curious, energetic, leaning in]", "stability": 0.34, "similarity_boost": 0.80},
+    "witty_twist": {"tag": "[dry amusement, conversational]", "stability": 0.32, "similarity_boost": 0.80},
+    "rising_stakes": {"tag": "[building tension, urgent]", "stability": 0.36, "similarity_boost": 0.82},
+    "intimate_whisper": {"tag": "[quietly, suspenseful]", "stability": 0.40, "similarity_boost": 0.82},
+    "urgent_ticking": {"tag": "[quick, tense pace]", "stability": 0.34, "similarity_boost": 0.80},
+    "reflective_finale": {"tag": "[thoughtful, resonant]", "stability": 0.44, "similarity_boost": 0.84},
+}
+
+
+def strip_audio_tags(text: str) -> str:
+    """Remove ElevenLabs v3/v4 inline bracketed Audio Tags like ``[dry amusement]`` for clean SRT/ASR text."""
+    return re.sub(r"\s+", " ", _AUDIO_TAG_RE.sub("", str(text))).strip()
+
+
+def resolve_expressive_line(line: dict[str, Any], *, model_id: str) -> tuple[str, dict[str, Any]]:
+    """Build expressive ElevenLabs v4/v3 text + voice_settings from per-line delivery_mode / audio_tag cues."""
+    raw_text = str(line.get("text", "")).strip()
+    mode = str(line.get("delivery_mode") or "").strip().lower()
+    preset = EXPRESSIVE_DELIVERY_PRESETS.get(mode, {})
+    explicit_tag = str(line.get("audio_tag") or "").strip()
+    tag = explicit_tag or str(preset.get("tag") or "")
+
+    supports_tags = model_id.startswith(("eleven_v4", "eleven_v3"))
+    if supports_tags and tag and not raw_text.startswith("["):
+        spoken_text = f"{tag} {raw_text}"
+    elif not supports_tags:
+        spoken_text = strip_audio_tags(raw_text)
+    else:
+        spoken_text = raw_text
+
+    stability = float(line.get("stability", preset.get("stability", 0.38)))
+    similarity = float(line.get("similarity_boost", preset.get("similarity_boost", 0.82)))
+    if model_id.startswith("eleven_v4"):
+        voice_settings: dict[str, Any] = {
+            "stability": stability,
+            "similarity_boost": similarity,
+        }
+    else:
+        voice_settings = {
+            "stability": stability,
+            "similarity_boost": similarity,
+            "style": float(line.get("style", 0.38)),
+            "use_speaker_boost": True,
+        }
+    return spoken_text, voice_settings
+
+
 def _chars_to_words(alignment: dict[str, Any], offset_s: float, fps: int) -> list[dict[str, Any]]:
-    """Convert ElevenLabs character-level alignment into exact word-level timestamps."""
+    """Convert ElevenLabs character-level alignment into exact word-level timestamps, skipping bracketed [audio tags]."""
     chars = list(alignment.get("characters") or [])
     starts = list(alignment.get("character_start_times_seconds") or [])
     ends = list(alignment.get("character_end_times_seconds") or [])
@@ -120,6 +170,7 @@ def _chars_to_words(alignment: dict[str, Any], offset_s: float, fps: int) -> lis
     cur_chars: list[str] = []
     w_start: float | None = None
     w_end: float | None = None
+    in_bracket = False
 
     def flush() -> None:
         nonlocal cur_chars, w_start, w_end
@@ -142,6 +193,15 @@ def _chars_to_words(alignment: dict[str, Any], offset_s: float, fps: int) -> lis
 
     for i in range(n):
         ch = str(chars[i])
+        if ch == "[":
+            flush()
+            in_bracket = True
+            continue
+        if ch == "]":
+            in_bracket = False
+            continue
+        if in_bracket:
+            continue
         if ch.isspace():
             flush()
             continue
@@ -190,9 +250,9 @@ def _call_elevenlabs_tts_with_timestamps(
         "model_id": model_id,
         "voice_settings": voice_settings,
     }
-    if previous_text and model_id != "eleven_v3":
+    if previous_text and not model_id.startswith(("eleven_v3", "eleven_v4")):
         body["previous_text"] = previous_text[-300:]
-    if next_text and model_id != "eleven_v3":
+    if next_text and not model_id.startswith(("eleven_v3", "eleven_v4")):
         body["next_text"] = next_text[:300]
 
     return _request_json_with_backup(url, payload=body, timeout=90)
@@ -265,16 +325,10 @@ def synthesize_elevenlabs_odom_narration(
 
     for idx, line in enumerate(valid_lines):
         lid = str(line.get("id") or f"line_{idx + 1:02d}")
-        text = str(line.get("text", "")).strip()
-        prev_txt = str(valid_lines[idx - 1]["text"]).strip() if idx > 0 else None
-        next_txt = str(valid_lines[idx + 1]["text"]).strip() if idx + 1 < len(valid_lines) else None
-
-        voice_settings = {
-            "stability": float(line.get("stability", 0.42)),
-            "similarity_boost": float(line.get("similarity_boost", 0.82)),
-            "style": float(line.get("style", 0.35)),
-            "use_speaker_boost": True,
-        }
+        spoken_text, voice_settings = resolve_expressive_line(line, model_id=chosen_model)
+        clean_text = strip_audio_tags(spoken_text)
+        prev_txt = strip_audio_tags(str(valid_lines[idx - 1]["text"])) if idx > 0 else None
+        next_txt = strip_audio_tags(str(valid_lines[idx + 1]["text"])) if idx + 1 < len(valid_lines) else None
 
         mp3_path = out_dir / f"{lid}.mp3"
         wav_path = out_dir / f"{lid}.wav"
@@ -286,7 +340,7 @@ def synthesize_elevenlabs_odom_narration(
         if reuse_cached_takes and wav_path.is_file() and align_path.is_file() and meta_path.is_file():
             try:
                 old_meta = json.loads(meta_path.read_text(encoding="utf-8"))
-                if old_meta.get("text") == text and old_meta.get("voice_id") == voice_id:
+                if old_meta.get("spoken_text", old_meta.get("text")) == spoken_text and old_meta.get("voice_id") == voice_id:
                     cached_ok = True
                     alignment = json.loads(align_path.read_text(encoding="utf-8"))
                     polish_info = old_meta.get("polish", {})
@@ -295,7 +349,7 @@ def synthesize_elevenlabs_odom_narration(
 
         if not cached_ok:
             resp_data = _call_elevenlabs_tts_with_timestamps(
-                text,
+                spoken_text,
                 voice_id=voice_id,
                 model_id=chosen_model,
                 output_format=output_format,
@@ -310,16 +364,19 @@ def synthesize_elevenlabs_odom_narration(
             _decode_mp3_to_48k_mono_wav(mp3_path, wav_path, target_sr=target_sr)
             # Mandatory creator polish chain (+12 dB @ 150 Hz, -2 dB @ 300 Hz, 60 Hz HPF, light afftdn, limiter)
             polish_info = polish_in_place(wav_path)
-            chars_spent_live += len(text)
+            chars_spent_live += len(spoken_text)
             meta_path.write_text(
                 json.dumps(
                     {
                         "id": lid,
-                        "text": text,
+                        "text": clean_text,
+                        "spoken_text": spoken_text,
+                        "delivery_mode": str(line.get("delivery_mode") or ""),
+                        "voice_settings": voice_settings,
                         "voice_id": voice_id,
                         "model_id": chosen_model,
                         "output_format": output_format,
-                        "chars": len(text),
+                        "chars": len(spoken_text),
                         "polish": polish_info,
                     },
                     indent=2,
@@ -355,18 +412,20 @@ def synthesize_elevenlabs_odom_narration(
         line_words = _chars_to_words(alignment, offset_s=start_s, fps=fps)
         word_timestamps.extend(line_words)
         line_wavs.append((start_s, samples))
-        full_script_parts.append(text)
+        full_script_parts.append(clean_text)
         utterances.append(
             {
                 "id": lid,
-                "text": text,
+                "text": clean_text,
+                "spoken_text": spoken_text,
+                "delivery_mode": str(line.get("delivery_mode") or ""),
                 "voice_id": voice_id,
                 "model_id": chosen_model,
                 "start_s": round(start_s, 3),
                 "end_s": round(end_s, 3),
                 "duration_s": round(dur_s, 3),
                 "wav_path": str(wav_path),
-                "chars": len(text),
+                "chars": len(spoken_text),
                 "dramatic_breather_after": bool(line.get("dramatic_breather_after", False)),
                 "breather_after_s": float(line.get("breather_after_s", 0.0)),
                 "polish": polish_info,

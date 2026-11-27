@@ -37,6 +37,9 @@ VALID_EXPLAINER_SCENES = frozenset(
         "stone_chemistry",
         "brain_revolution",
         "night_hours",
+        "roman_omens",
+        "roman_conspiracy",
+        "ides_closing_essay",
     }
 )
 
@@ -61,8 +64,8 @@ class DrawingExplainerSpec:
                 f"Unsupported drawing explainer scene_kind {self.scene_kind!r}; "
                 f"expected one of {sorted(VALID_EXPLAINER_SCENES)}"
             )
-        if not (5.0 <= self.duration_s <= 14.0):
-            raise ValueError(f"Drawing explainer duration_s should be in [5.0, 14.0], got {self.duration_s}")
+        if not (5.0 <= self.duration_s <= 20.0):
+            raise ValueError(f"Drawing explainer duration_s should be in [5.0, 20.0], got {self.duration_s}")
         if not self.illustration_path.is_file():
             raise FileNotFoundError(f"Explainer archival illustration not found: {self.illustration_path}")
 
@@ -170,6 +173,94 @@ def _build_explainer_html(spec: DrawingExplainerSpec, *, width: int, height: int
           <div class="annot-italic">Fire literally rewired the human skull.</div>
         </div>
         """
+    elif spec.scene_kind == "roman_omens":
+        scene_dom = f"""
+        <div class="roman-dark-wash"></div>
+        <div class="header-block header-tl" style="max-width:740px;">
+          <div class="era mono">{safe_era}</div>
+          <h1 class="ex-title" id="ex-title">{safe_title}</h1>
+          <svg id="title-rule" width="520" height="22" viewBox="0 0 520 22"></svg>
+          <div class="ex-sub">{safe_sub}</div>
+        </div>
+        <div class="annot" id="a-dream" style="left:82px; top:385px; width:510px;">
+          <div class="tag-mono mono warm">01 · CALPURNIA'S NIGHTMARE</div>
+          <div class="mid-stat">COLLAPSING ROOF</div>
+          <div class="annot-desc">Plutarch notes she was never superstitious — until this dawn</div>
+        </div>
+        <div class="annot" id="a-priests" style="left:705px; top:385px; width:500px;">
+          <div class="tag-mono mono crimson">02 · HARUSPEX SACRIFICES</div>
+          <div class="big-stat mono crimson" id="num-omens">0 / 0</div>
+          <div class="annot-desc">Every morning reading returns catastrophic</div>
+        </div>
+        <div class="annot" id="a-caesar" style="right:76px; top:385px; width:490px; text-align:right;">
+          <div class="tag-mono mono cool">03 · CAESAR'S HESITATION</div>
+          <div class="mid-stat">SHAKEN &amp; DIZZY</div>
+          <div class="annot-italic">For once, Rome's boldest commander genuinely wavers.</div>
+        </div>
+        <div class="annot" id="a-omen-verdict" style="left:50%; bottom:74px; transform:translateX(-50%); width:1240px; text-align:center;">
+          <div class="tag-mono mono warm">DAWN AT THE DOMUS PUBLICA</div>
+          <div class="mid-stat warm">EVERY SIGN WARNS HIM NOT TO GO</div>
+        </div>
+        """
+    elif spec.scene_kind == "roman_conspiracy":
+        scene_dom = f"""
+        <div class="roman-dark-wash"></div>
+        <div class="header-block header-tl" style="max-width:780px;">
+          <div class="era mono">{safe_era}</div>
+          <h1 class="ex-title" id="ex-title">{safe_title}</h1>
+          <svg id="title-rule" width="520" height="22" viewBox="0 0 520 22"></svg>
+          <div class="ex-sub">{safe_sub}</div>
+        </div>
+        <div class="annot" id="a-senators" style="left:84px; top:385px; width:500px;">
+          <div class="tag-mono mono crimson">01 · THE CONSPIRACY</div>
+          <div class="big-stat mono crimson" id="num-senators">0 SENATORS</div>
+          <div class="annot-desc">Sixty rival politicians guarding one explosive secret</div>
+        </div>
+        <div class="annot" id="a-window" style="left:705px; top:385px; width:510px; text-align:center;">
+          <div class="tag-mono mono warm">02 · DEPARTURE DEADLINE</div>
+          <div class="big-stat mono warm" id="num-days">0 DAYS</div>
+          <div class="annot-desc">Until Caesar leaves Rome for his eastern war</div>
+        </div>
+        <div class="annot" id="a-decimus" style="left:1340px; top:385px; width:500px; text-align:left;">
+          <div class="tag-mono mono cool">03 · PARTHIA CAMPAIGN</div>
+          <div class="big-stat mono cool" id="num-legions">LOYAL LEGIONS</div>
+          <div class="annot-desc">Once surrounded by his army in the east, the plot is dead</div>
+        </div>
+        <div class="annot" id="a-consp-bottom" style="left:84px; bottom:74px; width:1740px; text-align:center;">
+          <div class="tag-mono mono warm">WHY DELAYING ONE SINGLE DAY KILLS THE PLOT</div>
+          <div class="mid-stat">TODAY IS THEIR ONLY WINDOW</div>
+        </div>
+        """
+    elif spec.scene_kind == "ides_closing_essay":
+        scene_dom = f"""
+        <div class="roman-dark-wash"></div>
+        <div class="header-block header-tc">
+          <div class="era mono">{safe_era}</div>
+          <h1 class="ex-title" id="ex-title">{safe_title}</h1>
+          <svg id="title-rule" width="560" height="22" viewBox="0 0 560 22"></svg>
+          <div class="ex-sub">{safe_sub}</div>
+        </div>
+        <div class="annot" id="a-p1" style="left:88px; top:375px; width:470px;">
+          <div class="tag-mono mono cool">PILLAR I · DAWN</div>
+          <div class="mid-stat">DOUBT</div>
+          <div class="annot-desc">Calpurnia's nightmare nearly stopped history at the doorway</div>
+        </div>
+        <div class="annot" id="a-p2" style="left:725px; top:375px; width:470px; text-align:center;">
+          <div class="tag-mono mono warm">PILLAR II · PERSUASION</div>
+          <div class="mid-stat warm">FRIENDSHIP</div>
+          <div class="annot-desc">Decimus Brutus turned trust and irony into a weapon</div>
+        </div>
+        <div class="annot" id="a-p3" style="right:88px; top:375px; width:470px; text-align:right;">
+          <div class="tag-mono mono crimson">PILLAR III · THE WALK</div>
+          <div class="mid-stat crimson">PRIDE</div>
+          <div class="annot-desc">No bodyguards, an unread scroll, and one step into shadow</div>
+        </div>
+        <div class="annot" id="a-legacy" style="left:50%; bottom:72px; transform:translateX(-50%); width:1260px; text-align:center;">
+          <div class="tag-mono mono warm">MARCH 15, 44 BCE</div>
+          <div class="big-stat mono" id="num-years">0 YEARS</div>
+          <div class="annot-italic">One fragile morning turned a Republic into an Empire.</div>
+        </div>
+        """
     else:  # night_hours
         scene_dom = f"""
         <div class="header-block header-tl" style="max-width:480px;">
@@ -223,6 +314,10 @@ html, body {{
 #art-img {{
   width: 100%; height: 100%; object-fit: cover; display: block;
   filter: contrast(1.06) brightness(0.92);
+}}
+.roman-dark-wash {{
+  position: absolute; inset: 0; pointer-events: none; z-index: 3;
+  background: linear-gradient(180deg, rgba(16,12,9,0.72) 0%, rgba(18,14,10,0.68) 52%, rgba(14,10,7,0.82) 100%);
 }}
 .archival-vignette {{
   position: absolute; inset: 0; pointer-events: none; z-index: 2;
@@ -320,6 +415,7 @@ const DUR = {dur:.3f};
 const WARM = {json.dumps(spec.accent_warm)};
 const COOL = {json.dumps(spec.accent_cool)};
 const CRIMSON = {json.dumps(spec.accent_crimson)};
+const META = {json.dumps(spec.meta)};
 
 const sketchSvg = document.getElementById("sketch-svg");
 const rc = rough.svg(sketchSvg);
@@ -417,6 +513,77 @@ if (KIND === "caloric_trap") {{
     .to(oBrain, {{ v: 20, duration: 1.35, ease: easeOut, onUpdate: () => {{ document.getElementById("num-brain").textContent = Math.round(oBrain.v) + "%"; }} }}, 5.5)
     .from(cJawSmall, {{ drawSVG: "0%", duration: 0.85, ease: easeOut }}, 7.1)
     .to("#a-right-bot", {{ opacity: 1, duration: 0.45, ease: easeOut }}, 7.4);
+}} else if (KIND === "roman_omens") {{
+  const c1 = addSketch(rc.line(82, 358, 560, 356, {{ stroke: WARM, strokeWidth: 3.4, roughness: 1.7, seed: 501 }}));
+  const arr1 = addSketch(rc.curve([[595, 465], [642, 448], [688, 465]], {{ stroke: WARM, strokeWidth: 3.2, roughness: 1.4, seed: 502 }}));
+  const arr1Tip = addSketch(rc.linearPath([[670, 452], [688, 465], [668, 476]], {{ stroke: WARM, strokeWidth: 3.2, roughness: 1.2, seed: 512 }}));
+  const c2 = addSketch(rc.line(705, 358, 1185, 356, {{ stroke: CRIMSON, strokeWidth: 3.8, roughness: 1.8, seed: 503 }}));
+  const arr2 = addSketch(rc.curve([[1225, 465], [1278, 448], [1332, 465]], {{ stroke: CRIMSON, strokeWidth: 3.2, roughness: 1.4, seed: 504 }}));
+  const arr2Tip = addSketch(rc.linearPath([[1314, 452], [1332, 465], [1312, 476]], {{ stroke: CRIMSON, strokeWidth: 3.2, roughness: 1.2, seed: 514 }}));
+  const c3 = addSketch(rc.line(1360, 358, 1844, 356, {{ stroke: COOL, strokeWidth: 3.4, roughness: 1.7, seed: 505 }}));
+  const botRule = addSketch(rc.line(340, 868, 1580, 866, {{ stroke: WARM, strokeWidth: 3.6, roughness: 1.8, seed: 506 }}));
+
+  const oOmen = {{ v: 0 }};
+  tl.from(c1, {{ drawSVG: "0%", duration: 0.75, ease: easeOut }}, 0.85)
+    .to("#a-dream", {{ opacity: 1, duration: 0.45, ease: easeOut }}, 1.0)
+    .from([...arr1, ...arr1Tip], {{ drawSVG: "0%", stagger: 0.05, duration: 0.55, ease: easeOut }}, 2.15)
+    .from(c2, {{ drawSVG: "0%", duration: 0.75, ease: easeOut }}, 2.45)
+    .to("#a-priests", {{ opacity: 1, duration: 0.45, ease: easeOut }}, 2.65)
+    .to(oOmen, {{ v: 3, duration: 1.15, ease: easeOut, onUpdate: () => {{ document.getElementById("num-omens").textContent = "0 / " + Math.max(1, Math.round(oOmen.v)) + " SAFE"; }} }}, 2.75)
+    .from([...arr2, ...arr2Tip], {{ drawSVG: "0%", stagger: 0.05, duration: 0.55, ease: easeOut }}, 4.25)
+    .from(c3, {{ drawSVG: "0%", duration: 0.75, ease: easeOut }}, 4.55)
+    .to("#a-caesar", {{ opacity: 1, duration: 0.45, ease: easeOut }}, 4.75)
+    .from(botRule, {{ drawSVG: "0%", duration: 0.85, ease: easeOut }}, 6.1)
+    .to("#a-omen-verdict", {{ opacity: 1, duration: 0.5, ease: easeOut }}, 6.35);
+}} else if (KIND === "roman_conspiracy") {{
+  const boxS = addSketch(rc.line(84, 356, 560, 354, {{ stroke: CRIMSON, strokeWidth: 4.0, roughness: 1.8, seed: 601 }}));
+  const bar60 = addSketch(rc.rectangle(84, 646, 460, 24, {{ stroke: CRIMSON, fill: "rgba(212,82,59,0.40)", fillStyle: "hachure", hachureGap: 7, strokeWidth: 2.4, roughness: 1.5, seed: 602 }}));
+  const arrMid = addSketch(rc.curve([[595, 476], [642, 462], [688, 476]], {{ stroke: WARM, strokeWidth: 3.4, roughness: 1.3, seed: 603 }}));
+  const arrMidTip = addSketch(rc.linearPath([[670, 464], [688, 476], [668, 488]], {{ stroke: WARM, strokeWidth: 3.4, roughness: 1.2, seed: 613 }}));
+  const topDays = addSketch(rc.line(715, 356, 1195, 354, {{ stroke: WARM, strokeWidth: 4.0, roughness: 1.7, seed: 604 }}));
+  const barDays = addSketch(rc.rectangle(765, 646, 380, 24, {{ stroke: WARM, fill: "rgba(227,155,67,0.38)", fillStyle: "hachure", hachureGap: 7, strokeWidth: 2.4, roughness: 1.5, seed: 614 }}));
+  const arrRight = addSketch(rc.curve([[1225, 476], [1278, 462], [1332, 476]], {{ stroke: COOL, strokeWidth: 3.4, roughness: 1.3, seed: 605 }}));
+  const arrRightTip = addSketch(rc.linearPath([[1314, 464], [1332, 476], [1312, 488]], {{ stroke: COOL, strokeWidth: 3.4, roughness: 1.2, seed: 615 }}));
+  const lineRight = addSketch(rc.line(1340, 356, 1828, 354, {{ stroke: COOL, strokeWidth: 3.8, roughness: 1.7, seed: 606 }}));
+  const barLegions = addSketch(rc.rectangle(1340, 646, 460, 24, {{ stroke: COOL, fill: "rgba(139,196,222,0.36)", fillStyle: "hachure", hachureGap: 7, strokeWidth: 2.4, roughness: 1.5, seed: 616 }}));
+  const botLine = addSketch(rc.line(320, 868, 1600, 866, {{ stroke: WARM, strokeWidth: 3.8, roughness: 1.8, seed: 607 }}));
+
+  const bt = Array.isArray(META.beat_times) && META.beat_times.length >= 4 ? META.beat_times : [1.0, 3.25, 5.55, 7.3];
+  const t1 = bt[0], t2 = bt[1], t3 = bt[2], t4 = bt[3];
+  const oSen = {{ v: 0 }}, oDays = {{ v: 10 }};
+  tl.from(boxS, {{ drawSVG: "0%", duration: 0.7, ease: easeOut }}, Math.max(0.4, t1 - 0.15))
+    .to("#a-senators", {{ opacity: 1, duration: 0.45, ease: easeOut }}, t1)
+    .to(oSen, {{ v: 60, duration: 1.15, ease: easeOut, onUpdate: () => {{ document.getElementById("num-senators").textContent = Math.round(oSen.v) + " SENATORS"; }} }}, t1 + 0.05)
+    .from(bar60, {{ drawSVG: "0%", stagger: 0.02, duration: 0.75, ease: easeOut }}, t1 + 0.7)
+    .from([...arrMid, ...arrMidTip], {{ drawSVG: "0%", stagger: 0.05, duration: 0.55, ease: easeOut }}, Math.max(t1 + 0.9, t2 - 0.4))
+    .from(topDays, {{ drawSVG: "0%", duration: 0.7, ease: easeOut }}, Math.max(t1 + 1.1, t2 - 0.15))
+    .to("#a-window", {{ opacity: 1, duration: 0.45, ease: easeOut }}, t2)
+    .to(oDays, {{ v: 3, duration: 1.0, ease: easeOut, onUpdate: () => {{ document.getElementById("num-days").textContent = Math.round(oDays.v) + " DAYS"; }} }}, t2 + 0.08)
+    .from(barDays, {{ drawSVG: "0%", stagger: 0.02, duration: 0.7, ease: easeOut }}, t2 + 0.65)
+    .from([...arrRight, ...arrRightTip], {{ drawSVG: "0%", stagger: 0.05, duration: 0.55, ease: easeOut }}, Math.max(t2 + 0.9, t3 - 0.4))
+    .from(lineRight, {{ drawSVG: "0%", duration: 0.7, ease: easeOut }}, Math.max(t2 + 1.1, t3 - 0.15))
+    .to("#a-decimus", {{ opacity: 1, duration: 0.45, ease: easeOut }}, t3)
+    .from(barLegions, {{ drawSVG: "0%", stagger: 0.02, duration: 0.75, ease: easeOut }}, t3 + 0.55)
+    .from(botLine, {{ drawSVG: "0%", duration: 0.85, ease: easeOut }}, Math.max(t3 + 0.8, t4 - 0.25))
+    .to("#a-consp-bottom", {{ opacity: 1, duration: 0.45, ease: easeOut }}, t4);
+}} else if (KIND === "ides_closing_essay") {{
+  const l1 = addSketch(rc.line(88, 348, 540, 346, {{ stroke: COOL, strokeWidth: 3.4, roughness: 1.6, seed: 701 }}));
+  const l2 = addSketch(rc.line(725, 348, 1195, 346, {{ stroke: WARM, strokeWidth: 3.8, roughness: 1.6, seed: 702 }}));
+  const l3 = addSketch(rc.line(1362, 348, 1832, 346, {{ stroke: CRIMSON, strokeWidth: 3.8, roughness: 1.6, seed: 703 }}));
+  const convL = addSketch(rc.curve([[315, 635], [580, 725], [880, 760]], {{ stroke: COOL, strokeWidth: 3.0, roughness: 1.5, seed: 704 }}));
+  const convC = addSketch(rc.line(960, 635, 960, 752, {{ stroke: WARM, strokeWidth: 3.2, roughness: 1.4, seed: 705 }}));
+  const convR = addSketch(rc.curve([[1605, 635], [1340, 725], [1040, 760]], {{ stroke: CRIMSON, strokeWidth: 3.0, roughness: 1.5, seed: 706 }}));
+
+  const oYrs = {{ v: 0 }};
+  tl.from(l1, {{ drawSVG: "0%", duration: 0.7, ease: easeOut }}, 0.9)
+    .to("#a-p1", {{ opacity: 1, duration: 0.45, ease: easeOut }}, 1.1)
+    .from(l2, {{ drawSVG: "0%", duration: 0.7, ease: easeOut }}, 2.4)
+    .to("#a-p2", {{ opacity: 1, duration: 0.45, ease: easeOut }}, 2.6)
+    .from(l3, {{ drawSVG: "0%", duration: 0.7, ease: easeOut }}, 3.9)
+    .to("#a-p3", {{ opacity: 1, duration: 0.45, ease: easeOut }}, 4.1)
+    .from([...convL, ...convC, ...convR], {{ drawSVG: "0%", stagger: 0.08, duration: 0.9, ease: easeOut }}, 5.45)
+    .to("#a-legacy", {{ opacity: 1, duration: 0.5, ease: easeOut }}, 6.0)
+    .to(oYrs, {{ v: 2000, duration: 1.45, ease: easeOut, onUpdate: () => {{ document.getElementById("num-years").textContent = Math.round(oYrs.v).toLocaleString("en-US") + " YEARS"; }} }}, 6.1);
 }} else {{
   // night_hours: Hand-drawn 24-hour Ice Age clock right inside the circular art dial!
   const cx = 960, cy = 540, rOuter = 232, rInner = 192;
@@ -455,8 +622,8 @@ if (KIND === "caloric_trap") {{
     .to("#a-culture", {{ opacity: 1, duration: 0.45, ease: easeOut }}, 4.75);
 }}
 
-// Gentle filmic dissolve-in and hold-clean-out (fade handled at edit level or 0.3s soft kiss)
-tl.from("#stage-root", {{ opacity: 0.0, duration: 0.32, ease: "power1.out" }}, 0);
+// Crisp cut-in without a black frame flash at t=0
+tl.from("#stage-root", {{ opacity: 0.94, duration: 0.16, ease: "power1.out" }}, 0);
 
 window.__setTime = function(t) {{ tl.time(t, false); }};
 </script>
@@ -500,7 +667,7 @@ def render_drawing_explainer(
         "-c:v",
         "libx264",
         "-preset",
-        "medium",
+        "veryfast",
         "-crf",
         "16",
         "-pix_fmt",

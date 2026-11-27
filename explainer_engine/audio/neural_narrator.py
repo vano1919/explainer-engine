@@ -181,3 +181,47 @@ def synthesize_kokoro_narration(
     }
     (out_dir / "narration_manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
     return manifest
+
+
+def build_dynamic_energy_curve(lines: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Assign dynamic Docudrama x MrBeast vocal delivery curves (stability/tags) across narration lines."""
+    from explainer_engine.audio.elevenlabs_narrator import EXPRESSIVE_DELIVERY_PRESETS
+
+    cycle = ("hook_punch", "witty_twist", "rising_stakes", "intimate_whisper", "urgent_ticking", "reflective_finale")
+    enriched: list[dict[str, Any]] = []
+    for idx, raw in enumerate(lines):
+        row = dict(raw)
+        mode = str(row.get("delivery_mode") or "").strip().lower()
+        if not mode:
+            mode = "hook_punch" if idx == 0 else ("reflective_finale" if idx == len(lines) - 1 else cycle[idx % len(cycle)])
+            row["delivery_mode"] = mode
+        preset = EXPRESSIVE_DELIVERY_PRESETS.get(mode, EXPRESSIVE_DELIVERY_PRESETS["rising_stakes"])
+        row.setdefault("stability", preset["stability"])
+        row.setdefault("similarity_boost", preset["similarity_boost"])
+        row.setdefault("audio_tag", preset["tag"])
+        enriched.append(row)
+    return enriched
+
+
+def synthesize_expressive_odom_narration(
+    lines: list[dict[str, Any]],
+    out_dir: Path,
+    *,
+    model_id: str | None = None,
+    verify_asr: bool = True,
+    required_proper_nouns: list[str] | None = None,
+    reuse_cached_takes: bool = True,
+) -> dict[str, Any]:
+    """Synthesize charismatic Docudrama x MrBeast narration via locked ElevenLabs Odom (never Kokoro)."""
+    from explainer_engine.audio.elevenlabs_narrator import synthesize_elevenlabs_odom_narration
+
+    directed = build_dynamic_energy_curve(lines)
+    return synthesize_elevenlabs_odom_narration(
+        directed,
+        out_dir,
+        model_id=model_id,
+        verify_asr=verify_asr,
+        required_proper_nouns=required_proper_nouns,
+        reuse_cached_takes=reuse_cached_takes,
+    )
+

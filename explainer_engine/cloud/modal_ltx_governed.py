@@ -56,20 +56,24 @@ def run_governed_ltx_batch(
     # 2. Build pictures manifest + scene JSON inside committed scenes_dir (for CH-03) and clean up temp scene if untracked
     pic_manifest: dict[str, Any] = {"shots": {}}
     scene_shots: list[dict[str, Any]] = []
-    for s in shots:
-        pic_p = Path(s["picture_path"]).resolve()
+    for idx_s, s in enumerate(shots):
         pic_id = str(s["shot_id"])
-        pic_manifest["shots"][pic_id] = {"path": str(pic_p), "sha256": sha256_file(pic_p)}
-        scene_shots.append(
-            {
-                "shot_id": pic_id,
-                "picture": pic_id,
-                "seconds": float(s["seconds"]),
-                "seed": int(s["seed"]),
-                "line": s.get("line"),
-                "motion_prompt": str(s["motion_prompt"]),
-            }
-        )
+        entry: dict[str, Any] = {
+            "shot_id": pic_id,
+            "seconds": float(s["seconds"]),
+            "seed": int(s["seed"]),
+            "line": s.get("line"),
+            "motion_prompt": str(s["motion_prompt"]),
+        }
+        if s.get("picture_path"):
+            pic_p = Path(s["picture_path"]).resolve()
+            pic_manifest["shots"][pic_id] = {"path": str(pic_p), "sha256": sha256_file(pic_p)}
+            entry["picture"] = pic_id
+        elif idx_s > 0 and s.get("continue_frame"):
+            entry["continue_frame"] = s["continue_frame"]
+        else:
+            raise ValueError(f"Shot {pic_id!r} requires either picture_path or (for idx>0) continue_frame")
+        scene_shots.append(entry)
 
     man_path = work_dir / "pictures.json"
     man_path.write_text(json.dumps(pic_manifest, indent=2) + "\n", encoding="utf-8")
@@ -203,14 +207,21 @@ def run_governed_ltx_batch(
         # Clean up temporary scene JSON from tracked scenes/ dir so git working tree stays clean
         scene_path.unlink(missing_ok=True)
 
-    # 4. Download every generated clip from Modal ee-weights Volume
+    # 4. Download every generated clip from Modal ee-weights Volume (using exact clip names from result.json if retried)
     clips_dir = work_dir / "clips"
     clips_dir.mkdir(parents=True, exist_ok=True)
     first_sid = scene_shots[0]["shot_id"]
+    actual_names: dict[str, str] = {}
+    res_json_p = spec_path.with_suffix(".result.json")
+    if res_json_p.is_file():
+        res_payload = json.loads(res_json_p.read_text(encoding="utf-8"))
+        for row in res_payload.get("chain") or [res_payload]:
+            if isinstance(row, dict) and row.get("shot_id") and row.get("clip"):
+                actual_names[str(row["shot_id"])] = str(row["clip"])
     downloaded: dict[str, dict[str, Any]] = {}
     for s in scene_shots:
         sid = s["shot_id"]
-        fname = f"{sid}_seed{s['seed']}.mp4"
+        fname = actual_names.get(sid) or f"{sid}_seed{s['seed']}.mp4"
         remote_p = f"{MLJ.VOL_OUT}/{run_id}/{first_sid}/{fname}"
         local_p = clips_dir / fname
         subprocess.run(

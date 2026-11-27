@@ -491,14 +491,417 @@ def assemble_multishot_reel(
     return out_mp4
 
 
+FORBIDDEN_PRE_STITCH_FILTER_TOKENS = (
+    "zoompan",
+    "ken_burns",
+    "scale_zoom",
+    "pre_stitch_zoom",
+    "dynamic_crop",
+)
+
+
+def validate_zero_pre_stitch_zoom(clip_specs: list[dict[str, Any]]) -> dict[str, Any]:
+    """Enforce the v5.0 ZERO Pre-Stitch Zoom/Stretch Law on LTX clips.
+
+    Per-clip zoom/Ken-Burns/anisotropic crop before stitching chained or multi-angle LTX
+    shots produces frame-stretch and scale-jump anomalies across cut boundaries. Any subtle
+    camera zoom must happen natively inside LTX or smoothly AFTER stitching.
+    """
+    findings: list[str] = []
+    for idx, spec in enumerate(clip_specs):
+        sid = str(spec.get("shot_id") or f"clip_{idx + 1}")
+        if bool(spec.get("pre_stitch_zoom")) or bool(spec.get("ken_burns")):
+            findings.append(f"{sid}: pre_stitch_zoom / ken_burns is forbidden before stitching LTX clips")
+        zoom_factor = float(spec.get("zoom_factor", 1.0) or 1.0)
+        if abs(zoom_factor - 1.0) > 1e-4:
+            findings.append(f"{sid}: per-clip zoom_factor={zoom_factor:.3f} != 1.0 forbidden before stitching")
+        crop_scale = float(spec.get("crop_scale", 1.0) or 1.0)
+        if abs(crop_scale - 1.0) > 1e-4:
+            findings.append(f"{sid}: per-clip crop_scale={crop_scale:.3f} != 1.0 forbidden before stitching")
+        vf = str(spec.get("vf") or spec.get("video_filter") or "").lower()
+        for bad in FORBIDDEN_PRE_STITCH_FILTER_TOKENS:
+            if bad in vf:
+                findings.append(f"{sid}: forbidden pre-stitch filter token {bad!r} in vf={vf!r}")
+    return {
+        "status": "PASS" if not findings else "FAIL",
+        "clips_checked": len(clip_specs),
+        "findings": findings,
+    }
+
+
+def plan_hybrid_scene_continuity(
+    scene_id: str,
+    mode: str,
+    shots: list[dict[str, Any]],
+    *,
+    blender_set_manifest: dict[str, Any] | None = None,
+    max_chain_depth: int = 3,
+) -> dict[str, Any]:
+    """Compile and validate a v5.0 Hybrid Scene Continuity plan.
+
+    Modes:
+    - ``blender_multiview_set``: 1 physical Blender 3D set (>= 4 locked camera angles) -> batch-styled
+      plates anchored to shared @Character + @Location references -> LTX-2.5.
+    - ``continuous_ltx_chain``: 1 master plate -> LTX -> exact ``find_exact_handoff_frame`` -> clean
+      uniform upscale -> next LTX (capped at ``max_chain_depth`` to prevent latent drift).
+    - ``hybrid_set_and_chain``: Blender multi-angle set cuts combined with continuous LTX chains inside
+      the same ``scene_id``.
+    """
+    valid_modes = {"blender_multiview_set", "continuous_ltx_chain", "hybrid_set_and_chain"}
+    if mode not in valid_modes:
+        raise ValueError(f"Unsupported hybrid continuity mode {mode!r}; expected one of {sorted(valid_modes)}")
+    if len(shots) < 2:
+        raise ValueError(f"Scene {scene_id!r} must contain >= 2 connected shots (no 1-off LTX slideshow clips)")
+
+    findings: list[str] = []
+    zoom_check = validate_zero_pre_stitch_zoom(shots)
+    if zoom_check["status"] != "PASS":
+        findings.extend(zoom_check["findings"])
+
+    if mode in ("blender_multiview_set", "hybrid_set_and_chain"):
+        if not blender_set_manifest:
+            findings.append(f"{scene_id}: mode={mode!r} requires a rendered blender_set_manifest")
+        else:
+            angles = blender_set_manifest.get("angles") or []
+            if len(angles) < 4:
+                findings.append(f"{scene_id}: blender_set_manifest has {len(angles)} angles (< 4 required)")
+
+    chain_depth = 0
+    for idx, sh in enumerate(shots):
+        sid = str(sh.get("shot_id") or f"{scene_id}_s{idx + 1}")
+        chained_from = str(sh.get("chained_from") or "").strip()
+        if chained_from:
+            chain_depth += 1
+            if chain_depth > max_chain_depth:
+                findings.append(f"{sid}: chain depth {chain_depth} exceeds max_chain_depth={max_chain_depth}")
+            if idx == 0 or chained_from != str(shots[idx - 1].get("shot_id") or ""):
+                findings.append(f"{sid}: chained_from={chained_from!r} must reference immediate previous shot")
+        else:
+            chain_depth = 0
+            if mode == "continuous_ltx_chain" and idx > 0:
+                findings.append(f"{sid}: continuous_ltx_chain shot {idx + 1} must set chained_from previous shot")
+
+    return {
+        "schema": "hybrid_scene_continuity_plan/1",
+        "scene_id": scene_id,
+        "mode": mode,
+        "shot_count": len(shots),
+        "zero_pre_stitch_zoom": zoom_check["status"] == "PASS",
+        "status": "PASS" if not findings else "FAIL",
+        "findings": findings,
+    }
+
+
+def normalize_ltx_clip_uniform(
+    src_mp4: Path,
+    out_mp4: Path,
+    *,
+    width: int = 2560,
+    height: int = 1440,
+    fps: int = 24,
+    start_frame: int = 0,
+    num_frames: int | None = None,
+    lut_path: Path | None = None,
+) -> dict[str, Any]:
+    """Uniformly scale+center-crop an LTX clip to exact target geometry with ZERO zoom or aspect stretch.
+
+    Using identical ``force_original_aspect_ratio=increase`` + centered ``crop=W:H`` for every
+    clip guarantees ``sx == sy`` (zero anisotropic stretch) and constant scale factor across
+    every chained handoff boundary.
+    """
+    if not src_mp4.is_file():
+        raise FileNotFoundError(f"Source LTX clip not found: {src_mp4}")
+    out_mp4.parent.mkdir(parents=True, exist_ok=True)
+
+    vf_parts: list[str] = []
+    if start_frame > 0 or num_frames is not None:
+        if num_frames is not None:
+            end_frame = start_frame + max(1, int(num_frames))
+            vf_parts.append(f"trim=start_frame={int(start_frame)}:end_frame={end_frame},setpts=PTS-STARTPTS")
+        else:
+            vf_parts.append(f"trim=start_frame={int(start_frame)},setpts=PTS-STARTPTS")
+    vf_parts.append(
+        f"scale={width}:{height}:force_original_aspect_ratio=increase:flags=lanczos+accurate_rnd,"
+        f"crop={width}:{height}:(iw-{width})/2:(ih-{height})/2,setsar=1"
+    )
+    if lut_path is not None and lut_path.is_file():
+        vf_parts.append(f"lut3d=file='{lut_path.as_posix()}'")
+    vf_parts.append("format=yuv420p")
+
+    af_parts: list[str] = []
+    if start_frame > 0 or num_frames is not None:
+        st_s = start_frame / float(fps)
+        if num_frames is not None:
+            en_s = (start_frame + max(1, int(num_frames))) / float(fps)
+            af_parts.append(f"atrim=start={st_s:.6f}:end={en_s:.6f},asetpts=PTS-STARTPTS")
+        else:
+            af_parts.append(f"atrim=start={st_s:.6f},asetpts=PTS-STARTPTS")
+    af_parts.append("afade=t=in:st=0:d=0.025")
+
+    probe = json.loads(
+        subprocess.check_output(
+            ["ffprobe", "-v", "error", "-show_streams", "-of", "json", str(src_mp4)],
+            text=True,
+        )
+    )
+    has_audio = any(st.get("codec_type") == "audio" for st in probe.get("streams") or [])
+
+    cmd = ["ffmpeg", "-y", "-v", "error", "-i", str(src_mp4)]
+    if has_audio:
+        cmd.extend(["-vf", ",".join(vf_parts), "-af", ",".join(af_parts)])
+    else:
+        cmd.extend(["-f", "lavfi", "-i", "anullsrc=r=48000:cl=stereo", "-map", "0:v:0", "-map", "1:a:0", "-vf", ",".join(vf_parts), "-shortest"])
+    cmd.extend(
+        [
+            "-r",
+            str(fps),
+            "-fps_mode",
+            "cfr",
+            "-c:v",
+            "libx264",
+            "-preset",
+            "fast",
+            "-crf",
+            "17",
+            "-c:a",
+            "aac",
+            "-ar",
+            "48000",
+            "-ac",
+            "2",
+            "-b:a",
+            "192k",
+            "-movflags",
+            "+faststart",
+            str(out_mp4),
+        ]
+    )
+    subprocess.run(cmd, check=True)
+
+    out_probe = json.loads(
+        subprocess.check_output(
+            ["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=nb_frames:format=duration", "-of", "json", str(out_mp4)],
+            text=True,
+        )
+    )
+    dur_out = float((out_probe.get("format") or {}).get("duration", 0.0))
+    return {
+        "source": str(src_mp4),
+        "path": str(out_mp4),
+        "sha256": sha256_file(out_mp4),
+        "duration_s": round(dur_out, 4),
+        "width": width,
+        "height": height,
+        "fps": fps,
+        "start_frame": start_frame,
+        "num_frames": num_frames,
+    }
+
+
+def stitch_scene_zero_stretch(
+    clip_specs: list[dict[str, Any]],
+    out_mp4: Path,
+    *,
+    work_dir: Path,
+    width: int = 2560,
+    height: int = 1440,
+    fps: int = 24,
+    lut_path: Path | None = None,
+) -> dict[str, Any]:
+    """Stitch multi-angle & chained LTX clips with ZERO pre-stitch zoom/stretch and exact handoff cuts."""
+    zchk = validate_zero_pre_stitch_zoom(clip_specs)
+    if zchk["status"] != "PASS":
+        raise ValueError("Refusing to stitch clips with pre-stitch zoom/stretch:\n  - " + "\n  - ".join(zchk["findings"]))
+    work_dir = Path(work_dir).resolve()
+    work_dir.mkdir(parents=True, exist_ok=True)
+
+    # 1. Resolve exact parent play_frames for any chained_from pair before normalizing
+    resolved_frames: dict[int, tuple[int, int | None]] = {}
+    handoff_records: list[dict[str, Any]] = []
+    for i, spec in enumerate(clip_specs):
+        st_f = int(spec.get("start_frame", 0))
+        n_f = int(spec["num_frames"]) if spec.get("num_frames") is not None else None
+        resolved_frames[i] = (st_f, n_f)
+
+    for i in range(len(clip_specs) - 1):
+        a = clip_specs[i]
+        b = clip_specs[i + 1]
+        a_id = str(a.get("shot_id") or f"shot_{i + 1}")
+        if str(b.get("chained_from") or "").strip() == a_id:
+            hf = find_exact_handoff_frame(Path(a["clip_path"]), Path(b["clip_path"]))
+            st_a, _ = resolved_frames[i]
+            play_n = max(1, int(hf["play_parent_frames"]) - st_a)
+            resolved_frames[i] = (st_a, play_n)
+            # Child starts strictly at frame 0 (never trimmed early)
+            _, n_b = resolved_frames[i + 1]
+            resolved_frames[i + 1] = (0, n_b)
+            handoff_records.append({"from_shot": a_id, "to_shot": b.get("shot_id"), **hf})
+
+    # 2. Uniformly normalize every clip with ZERO zoom/stretch
+    norm_paths: list[Path] = []
+    shot_windows: list[dict[str, Any]] = []
+    cursor_s = 0.0
+    for i, spec in enumerate(clip_specs):
+        sid = str(spec.get("shot_id") or f"shot_{i + 1:02d}")
+        st_f, n_f = resolved_frames[i]
+        norm_p = work_dir / f"norm_{i + 1:02d}_{sid}.mp4"
+        info = normalize_ltx_clip_uniform(
+            Path(spec["clip_path"]),
+            norm_p,
+            width=width,
+            height=height,
+            fps=fps,
+            start_frame=st_f,
+            num_frames=n_f,
+            lut_path=lut_path,
+        )
+        norm_paths.append(norm_p)
+        dur = float(info["duration_s"])
+        shot_windows.append(
+            {
+                "shot_id": sid,
+                "scene_id": str(spec.get("scene_id") or spec.get("scene_group") or "scene_01"),
+                "scene_group": str(spec.get("scene_group") or spec.get("scene_id") or "scene_01"),
+                "shot_scale": str(spec.get("shot_scale") or ""),
+                "camera_angle_delta_deg": float(spec.get("camera_angle_delta_deg", 0.0)),
+                "chained_from": str(spec.get("chained_from") or ""),
+                "start_s": round(cursor_s, 4),
+                "end_s": round(cursor_s + dur, 4),
+                "duration_s": round(dur, 4),
+                "route": "ltx_video",
+            }
+        )
+        cursor_s += dur
+
+    # 3. Assemble with clean hard cuts and single CFR re-mux
+    assemble_multishot_reel(norm_paths, out_mp4)
+    return {
+        "path": str(out_mp4),
+        "sha256": sha256_file(out_mp4),
+        "duration_s": round(cursor_s, 4),
+        "width": width,
+        "height": height,
+        "fps": fps,
+        "zero_pre_stitch_zoom_verified": True,
+        "handoffs": handoff_records,
+        "shot_windows": shot_windows,
+    }
+
+
+def validate_eyeline_180_rule(shot_specs: list[dict[str, Any]]) -> dict[str, Any]:
+    """Verify 180-degree axis / eyeline continuity across dialogue shot/reverse-shot cuts.
+
+    In any two-person scene, if Actor A is established facing ``right`` and Actor B facing ``left``,
+    consecutive cuts between A and B MUST preserve opposite facing directions so characters look
+    at each other rather than staring in the same screen direction.
+    """
+    findings: list[str] = []
+    actor_axis: dict[tuple[str, str], str] = {}
+    for idx, sh in enumerate(shot_specs):
+        sc = str(sh.get("scene_id") or sh.get("scene_group") or "").strip()
+        subj = str(sh.get("focus_subject") or "").strip().lower()
+        facing = str(sh.get("facing_dir") or "").strip().lower()
+        if not sc or not subj or facing not in ("left", "right"):
+            continue
+        key = (sc, subj)
+        if key in actor_axis and actor_axis[key] != facing:
+            findings.append(
+                f"180-degree axis break in scene {sc!r} on {sh.get('shot_id')}: "
+                f"subject {subj!r} flipped from facing {actor_axis[key]!r} to {facing!r}"
+            )
+        else:
+            actor_axis[key] = facing
+
+        if idx > 0:
+            prev = shot_specs[idx - 1]
+            p_sc = str(prev.get("scene_id") or prev.get("scene_group") or "").strip()
+            p_subj = str(prev.get("focus_subject") or "").strip().lower()
+            p_facing = str(prev.get("facing_dir") or "").strip().lower()
+            if p_sc == sc and p_subj and p_subj != subj and p_facing in ("left", "right") and p_facing == facing:
+                findings.append(
+                    f"Eyeline collision at {prev.get('shot_id')} -> {sh.get('shot_id')} in scene {sc!r}: "
+                    f"both {p_subj!r} and {subj!r} face {facing!r} instead of facing each other"
+                )
+    return {
+        "status": "PASS" if not findings else "FAIL",
+        "subjects_tracked": len(actor_axis),
+        "findings": findings,
+    }
+
+
+def extract_axis_locked_coverage_plates(
+    master_wide_path: Path,
+    crops: list[dict[str, Any]],
+    out_dir: Path,
+    *,
+    target_width: int = 1280,
+    target_height: int = 720,
+) -> dict[str, dict[str, Any]]:
+    """Derive 100% environment-, lighting-, wardrobe-, and 180-degree-axis-locked coverage plates
+    directly from ONE approved wide master plate (zero column morphing, zero wardrobe drift, zero mystery extras).
+
+    Each crop spec defines normalized ``(cx, cy, rel_w)`` in ``[0..1]`` coordinates (16:9 aspect-locked)
+    plus ``shot_id``, ``focus_subject``, and ``facing_dir`` (``left`` / ``right``).
+    """
+    from PIL import Image, ImageFilter
+
+    master_wide_path = Path(master_wide_path).resolve()
+    if not master_wide_path.is_file():
+        raise FileNotFoundError(f"Master wide plate not found: {master_wide_path}")
+    out_dir = Path(out_dir).resolve()
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    target_ar = float(target_width) / float(target_height)
+    results: dict[str, dict[str, Any]] = {}
+    with Image.open(master_wide_path) as im:
+        rgb = im.convert("RGB")
+        mw, mh = rgb.size
+        for spec in crops:
+            sid = str(spec["shot_id"])
+            cx = float(spec.get("cx", 0.5)) * mw
+            cy = float(spec.get("cy", 0.5)) * mh
+            rel_w = max(0.28, min(1.0, float(spec.get("rel_w", 0.52))))
+            cw = rel_w * mw
+            ch = cw / target_ar
+            if ch > mh:
+                ch = float(mh)
+                cw = ch * target_ar
+            x0 = max(0.0, min(mw - cw, cx - cw * 0.5))
+            y0 = max(0.0, min(mh - ch, cy - ch * 0.5))
+            box = (int(round(x0)), int(round(y0)), int(round(x0 + cw)), int(round(y0 + ch)))
+            cropped = rgb.crop(box)
+            up = cropped.resize((target_width, target_height), Image.Resampling.LANCZOS)
+            up = up.filter(ImageFilter.UnsharpMask(radius=1.1, percent=110, threshold=2))
+            out_p = out_dir / f"{sid}_plate.png"
+            up.save(out_p, format="PNG")
+            results[sid] = {
+                "shot_id": sid,
+                "path": str(out_p),
+                "sha256": sha256_file(out_p),
+                "source_master": str(master_wide_path),
+                "crop_box": list(box),
+                "width": target_width,
+                "height": target_height,
+                "focus_subject": str(spec.get("focus_subject") or ""),
+                "facing_dir": str(spec.get("facing_dir") or ""),
+            }
+    return results
+
+
 __all__ = [
     "SceneShotCard",
     "assemble_multishot_reel",
     "build_helios_60s_benchmark_spec",
+    "extract_axis_locked_coverage_plates",
     "extract_clean_extend_frame",
     "extract_exact_handoff_frame",
     "find_exact_handoff_frame",
+    "normalize_ltx_clip_uniform",
     "plan_dramatic_scene_sequence",
+    "plan_hybrid_scene_continuity",
+    "stitch_scene_zero_stretch",
     "upscale_ltx_clip_to_2k",
     "validate_chained_handoff_plan",
+    "validate_eyeline_180_rule",
+    "validate_zero_pre_stitch_zoom",
 ]

@@ -171,6 +171,25 @@ def _spectral_centroid(x: np.ndarray, sr: int) -> float:
     return float(np.sum(freqs * spec) / denom)
 
 
+def _resolve_owning_scene_end(
+    t_start: float,
+    explicit_end: float | None,
+    scene_windows: list[dict[str, Any]] | None,
+    total_duration_s: float,
+) -> float:
+    """Resolve the owning scene's end timestamp for strict per-scene hard audio isolation."""
+    if explicit_end is not None:
+        return min(total_duration_s, float(explicit_end))
+    if not scene_windows:
+        return total_duration_s
+    for sw in scene_windows:
+        s0 = float(sw.get("start_s", 0.0))
+        s1 = float(sw.get("end_s", total_duration_s))
+        if s0 - 0.05 <= t_start < s1:
+            return min(total_duration_s, s1)
+    return total_duration_s
+
+
 def mix_broadcast_cinema_audio(
     *,
     total_duration_s: float,
@@ -183,23 +202,35 @@ def mix_broadcast_cinema_audio(
     ltx_diegetic_wav: Path | None = None,
     ltx_diegetic_gain_db: float = 0.0,
     silence_drops: list[dict[str, Any]] | None = None,
+    scene_windows: list[dict[str, Any]] | None = None,
+    strict_scene_isolation: bool = True,
+    max_scene_bleed_s: float = 0.25,
+    export_qa_stems: bool = True,
+    modern_underscore_only: bool = True,
     min_music_raw_duration_s: float = 0.0,
     sr: int = 48000,
     target_lufs: float = -14.0,
     true_peak_ceiling_db: float = -1.5,
     strict_silence_drops: bool = False,
 ) -> dict[str, Any]:
-    """Mix 6-layer 48kHz stereo broadcast documentary master with <1.0 dB pumping and exact -14.0 LUFS.
+    """Mix 6-layer 48kHz stereo broadcast documentary master with <1.0 dB pumping, strict per-scene isolation, and exact -14.0 LUFS.
 
     Layers:
-    1. Voice (ElevenLabs Odom polished)
-    2. Continuous Musical Score (multi-minute >=45s real recordings with vocal-pocket EQ + Cinema Silence Drops)
-    3. Scene-Locked Ambience (non-periodic crossfaded loop + 0.45s J/L crossfades + Cinema Silence Drops)
+    1. Voice (ElevenLabs Odom polished + RNNoise-cleaned character dialogue)
+    2. Continuous Modern Documentary Underscore (>=45s real recordings, -43 dBFS default, 1.2-3.8 kHz vocal pocket EQ + Cinema Silence Drops)
+    3. Strictly Scene-Isolated Ambience (clamped to [scene_start, scene_end + 0.25s] with 0.25s equal-power cosine exit fade)
     4. Stabilized LTX Native Diegetic Foley (85Hz HPF + light afftdn + 0.40s J/L crossfades)
-    5. LTX-Synced CC0 Punch SFX (capped <= -8.5 dB rel voice, +-3% pitch variety)
-    6. 40-80 Hz Sub-Bass Cinematic Impacts (real CC0 bandpassed impacts)
+    5. Visual-Spotted / LTX-Synced Punch SFX (clamped strictly to owning scene end + 0.25s, capped <= -8.5 dB rel voice)
+    6. 40-80 Hz Sub-Bass Cinematic Impacts (bandpassed impacts)
+
+    When ``export_qa_stems=True``, writes 3 isolated clean-room QA stems alongside ``out_wav``:
+    ``stem_music_only.wav``, ``stem_sfx_amb_only.wav``, and ``stem_voice_plus_bed.wav``.
     """
-    from explainer_engine.audio.cinematic_score import apply_cinema_silence_drops, validate_music_stem
+    from explainer_engine.audio.cinematic_score import (
+        _shape_documentary_score_eq,
+        apply_cinema_silence_drops,
+        validate_music_stem,
+    )
 
     out_wav.parent.mkdir(parents=True, exist_ok=True)
     n_total = int(round(total_duration_s * sr))
@@ -221,14 +252,18 @@ def mix_broadcast_cinema_audio(
     music_duck = _smooth_voice_duck_envelope(v_mono, sr, duck_db=-1.6, attack_ms=220.0, release_ms=900.0)
     amb_duck = _smooth_voice_duck_envelope(v_mono, sr, duck_db=-1.1, attack_ms=240.0, release_ms=950.0)
 
-    # 2. Continuous Multi-Act Musical Score (smooth 3.5s equal-power crossfades between acts)
+    # 2. Continuous Multi-Act Modern Documentary Underscore (vocal-pocket EQ + subtle -43 dBFS default)
     music_buf = np.zeros((n_total, 2), dtype=np.float32)
     for act in music_acts:
         p = Path(str(act["wav_path"]))
         if not p.is_file():
             continue
         if min_music_raw_duration_s > 0.0:
-            validate_music_stem(p, min_duration_s=min_music_raw_duration_s)
+            validate_music_stem(
+                p,
+                min_duration_s=min_music_raw_duration_s,
+                modern_underscore_only=modern_underscore_only,
+            )
         st = max(0.0, float(act["start_s"]))
         en = min(total_duration_s, float(act["end_s"]))
         if en <= st:
@@ -240,9 +275,9 @@ def mix_broadcast_cinema_audio(
         off_n = int(round(off_s * sr))
         if off_n > 0 and off_n < len(raw_m):
             raw_m = raw_m[off_n:]
-        stem = _eq_bed(raw_m, sr, hp_hz=42.0, lp_hz=6800.0)
+        stem = _shape_documentary_score_eq(raw_m, sr)
         stem = _loop_seamless(stem, seg_n)
-        lvl_db = float(act.get("level_dbfs", -28.5))
+        lvl_db = float(act.get("level_dbfs", -43.0))
         stem = _normalize_rms_db(stem, lvl_db)
 
         xf_s = float(act.get("fade_s", 3.2))
@@ -258,16 +293,27 @@ def mix_broadcast_cinema_audio(
     if silence_drops:
         music_buf = apply_cinema_silence_drops(music_buf, sr, silence_drops)
 
-    # 3. Scene-Locked Ambiences with non-periodic looping + smooth J/L-cut overlaps (0.35-0.80s)
+    # 3. Strictly Scene-Isolated Ambiences (hard-clamped to [scene_start, scene_end + 0.25s] with 0.25s cosine exit!)
     amb_buf = np.zeros((n_total, 2), dtype=np.float32)
     shot_reports: list[dict[str, Any]] = []
+    clamped_ambience_count = 0
     for idx_amb, sh in enumerate(scene_ambiences):
         st = max(0.0, float(sh["start_s"]))
         en = min(total_duration_s, float(sh["end_s"]))
-        lead = float(sh.get("j_cut_lead_s", 0.35))
-        tail = float(sh.get("l_cut_tail_s", 0.35))
-        a_st = max(0.0, st - lead)
-        a_en = min(total_duration_s, en + tail)
+        lead = float(sh.get("j_cut_lead_s", 0.20 if strict_scene_isolation else 0.35))
+        tail = float(sh.get("l_cut_tail_s", max_scene_bleed_s if strict_scene_isolation else 0.35))
+        if strict_scene_isolation:
+            lead = min(lead, max_scene_bleed_s)
+            tail = min(tail, max_scene_bleed_s)
+            owner_end = _resolve_owning_scene_end(st, sh.get("scene_end_s", en), scene_windows, total_duration_s)
+            max_allowed_end = min(total_duration_s, owner_end + max_scene_bleed_s)
+            if en + tail > max_allowed_end + 1e-6:
+                clamped_ambience_count += 1
+            a_st = max(0.0, st - lead)
+            a_en = min(en + tail, max_allowed_end)
+        else:
+            a_st = max(0.0, st - lead)
+            a_en = min(total_duration_s, en + tail)
         s_idx, e_idx = int(round(a_st * sr)), int(round(a_en * sr))
         seg_n = max(0, e_idx - s_idx)
         p = Path(str(sh["wav_path"]))
@@ -275,18 +321,21 @@ def mix_broadcast_cinema_audio(
             raw = _eq_bed(
                 _load_stereo_48k(p, sr=sr),
                 sr,
-                hp_hz=float(sh.get("hp_hz", 55.0)),
-                lp_hz=float(sh.get("lp_hz", 6800.0)),
+                hp_hz=float(sh.get("hp_hz", 65.0)),
+                lp_hz=float(sh.get("lp_hz", 6500.0)),
             )
             seg = _loop_nonperiodic_ambience(raw, seg_n, seed=17 + idx_amb * 31)
-            seg = _normalize_rms_db(seg, float(sh.get("level_dbfs", -32.0)))
-            fn = min(seg_n // 3, int(round(0.45 * sr)))
-            if fn > 10:
-                t_r = np.linspace(0.0, np.pi * 0.5, fn, dtype=np.float32)
-                env = np.ones(seg_n, dtype=np.float32)
-                env[:fn] = np.sin(t_r)
-                env[-fn:] = np.cos(t_r)
-                seg *= env[:, None]
+            seg = _normalize_rms_db(seg, float(sh.get("level_dbfs", -36.0)))
+            fade_in_n = min(seg_n // 3, int(round(0.25 * sr)))
+            fade_out_n = min(seg_n // 3, int(round(max_scene_bleed_s * sr)))
+            env = np.ones(seg_n, dtype=np.float32)
+            if fade_in_n > 10:
+                t_in = np.linspace(0.0, np.pi * 0.5, fade_in_n, dtype=np.float32)
+                env[:fade_in_n] = np.sin(t_in)
+            if fade_out_n > 10:
+                t_out = np.linspace(0.0, np.pi * 0.5, fade_out_n, dtype=np.float32)
+                env[-fade_out_n:] = np.cos(t_out)
+            seg *= env[:, None]
             amb_buf[s_idx:e_idx] += seg
             cent = _spectral_centroid(seg, sr)
         else:
@@ -301,6 +350,7 @@ def mix_broadcast_cinema_audio(
                 "scene_environment": str(sh.get("scene_environment") or inferred_env),
                 "start_s": round(st, 3),
                 "end_s": round(en, 3),
+                "effective_end_s": round(a_en, 3),
                 "sfx_count_in_shot": sfx_in_shot,
                 "spectral_centroid_hz": round(cent, 1),
             }
@@ -321,16 +371,25 @@ def mix_broadcast_cinema_audio(
             ltx_buf = apply_cinema_silence_drops(ltx_buf, sr, silence_drops)
         ltx_layer_active = True
 
-    # 5. Layer 5 — Visual-Spotted / LTX-Synced CC0 Punch SFX (strictly capped <= -8.5 dB rel voice, +-3% pitch variety!)
+    # 5. Layer 5 — Visual-Spotted / LTX-Synced Punch SFX (strictly scene-clamped + <= -8.5 dB rel voice!)
     sfx_buf = np.zeros((n_total, 2), dtype=np.float32)
     max_sfx_rel_db = -40.0
     usage_counts: dict[str, int] = {}
+    clamped_sfx_count = 0
     for ev in sfx_events:
         p = Path(str(ev["wav_path"]))
         if not p.is_file():
             continue
         t_s = max(0.0, float(ev["time_s"]))
         max_dur = float(ev.get("max_duration_s", 2.2))
+        if strict_scene_isolation:
+            owner_end = _resolve_owning_scene_end(t_s, ev.get("scene_end_s"), scene_windows, total_duration_s)
+            allowed_dur = max(0.0, (owner_end + max_scene_bleed_s) - t_s)
+            if allowed_dur < max_dur:
+                clamped_sfx_count += 1
+                max_dur = allowed_dur
+        if max_dur <= 0.04:
+            continue
         raw = _load_stereo_48k(p, sr=sr)
         raw = raw[: min(len(raw), int(round(max_dur * sr)))]
         cnt = usage_counts.get(str(p), 0)
@@ -343,11 +402,14 @@ def mix_broadcast_cinema_audio(
                 raw = np.stack([l_p, r_p], axis=1)
         target_sfx_db = min(voice_rms_db - 8.5, float(ev.get("level_dbfs", voice_rms_db - 12.0)))
         scaled = _normalize_rms_db(raw, target_sfx_db)
-        fn = min(len(scaled) // 4, int(round(0.04 * sr)))
-        if fn > 4:
-            r = np.linspace(0.0, 1.0, fn, dtype=np.float32)[:, None]
-            scaled[:fn] *= r
-            scaled[-fn:] *= r[::-1]
+        fn_in = min(len(scaled) // 4, int(round(0.04 * sr)))
+        fn_out = min(len(scaled) // 2, int(round(min(0.25, max_scene_bleed_s) * sr)))
+        if fn_in > 4:
+            r_in = np.sin(np.linspace(0.0, np.pi * 0.5, fn_in, dtype=np.float32))[:, None]
+            scaled[:fn_in] *= r_in
+        if fn_out > 4:
+            r_out = np.cos(np.linspace(0.0, np.pi * 0.5, fn_out, dtype=np.float32))[:, None]
+            scaled[-fn_out:] *= r_out
         s_idx = int(round(t_s * sr))
         e_idx = min(n_total, s_idx + len(scaled))
         if e_idx > s_idx:
@@ -490,6 +552,32 @@ def mix_broadcast_cinema_audio(
 
     sf.write(str(out_wav), mix, sr, subtype="PCM_24")
 
+    qa_stems: dict[str, str] = {}
+    if export_qa_stems:
+        # Export 3 isolated clean-room QA stems alongside out_wav for Adversarial Ears-On Audit
+        stem_dir = out_wav.parent
+        music_stem_p = stem_dir / "stem_music_only.wav"
+        sfx_amb_stem_p = stem_dir / "stem_sfx_amb_only.wav"
+        voice_bed_stem_p = stem_dir / "stem_voice_plus_bed.wav"
+        sf.write(str(music_stem_p), np.clip(music_buf, -0.98, 0.98), sr, subtype="PCM_24")
+        sf.write(str(sfx_amb_stem_p), np.clip(amb_buf + ltx_buf + sfx_buf + sub_buf, -0.98, 0.98), sr, subtype="PCM_24")
+        v_bed = _smooth_true_peak_limit((voice_buf + music_buf + amb_buf).astype(np.float32), ceil_lin)
+        sf.write(str(voice_bed_stem_p), np.clip(v_bed, -0.98, 0.98), sr, subtype="PCM_24")
+        qa_stems = {
+            "music_only": str(music_stem_p),
+            "sfx_amb_only": str(sfx_amb_stem_p),
+            "voice_plus_bed": str(voice_bed_stem_p),
+        }
+
+    # Measure music-to-voice headroom (dB voice louder than music during active speech)
+    m_mono = music_buf.mean(axis=1)
+    if np.any(active) and float(np.sqrt(np.mean(m_mono[active] ** 2))) > 1e-7:
+        music_sp_db = float(20.0 * np.log10(float(np.sqrt(np.mean(m_mono[active] ** 2))) + 1e-12))
+        music_headroom_db = round(voice_rms_db - music_sp_db, 2)
+    else:
+        music_sp_db = -120.0
+        music_headroom_db = 99.0
+
     silence_drop_diagnostics: list[dict[str, Any]] = []
     for sd in silence_drops or []:
         t0 = max(0.0, float(sd.get("time_s", 0.0)))
@@ -535,6 +623,14 @@ def mix_broadcast_cinema_audio(
         "integrated_lufs": round(final_lufs, 2),
         "peak_dbfs": round(final_peak_db, 2),
         "true_peak_dbtp": round(final_true_peak_dbtp, 2),
+        "voice_active_rms_dbfs": round(voice_rms_db, 2),
+        "music_under_voice_rms_dbfs": round(music_sp_db, 2),
+        "music_to_voice_headroom_db": music_headroom_db,
+        "strict_scene_isolation": bool(strict_scene_isolation),
+        "max_scene_bleed_s": round(max_scene_bleed_s, 3),
+        "clamped_ambience_count": clamped_ambience_count,
+        "clamped_sfx_count": clamped_sfx_count,
+        "qa_stems": qa_stems,
         "max_sfx_relative_to_voice_db": round(max_sfx_rel_db, 2),
         "max_pause_pumping_swing_db": round(pump_swing_db, 2),
         "ltx_diegetic_layer_active": ltx_layer_active,

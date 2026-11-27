@@ -51,6 +51,9 @@ class WebGLMapSpec:
     paleo_land_polygons: list[list[list[float]]] = field(default_factory=list)
     palette: str = "paleo_ice_age_slate"
     era_badge: str = "70,000 - 15,000 BCE"
+    lock_horizon: bool = True
+    telemetry_subtitle: str = "PLEISTOCENE LGM RELIEF"
+    city_layers: dict[str, Any] | None = None
 
 
 WORLD_RELIEF_CACHE = ROOT / "assets" / "maps" / "relief" / "paleo_mercator_world_v2.png"
@@ -234,18 +237,28 @@ def _build_maplibre_html(
     ml_css_uri = resolve_vendor_js("maplibre-gl.css").as_uri()
     turf_uri = resolve_vendor_js("turf.min.js").as_uri()
 
-    west, south, east, north = spec.relief_bounds
-    _rel_bgr = cv2.imread(str(relief_png))
-    assert _rel_bgr is not None, f"Could not read graded world relief plate: {relief_png}"
-    _ok, _jpg_buf = cv2.imencode(".jpg", _rel_bgr, [int(cv2.IMWRITE_JPEG_QUALITY), 92])
-    assert _ok
-    relief_uri = "data:image/jpeg;base64," + base64.b64encode(_jpg_buf.tobytes()).decode("ascii")
+    is_city_mode = bool(spec.city_layers)
+    is_roman_palette = spec.palette == "ancient_rome_parchment"
+    city_layers = dict(spec.city_layers or {})
 
-    coast_geo = _load_geojson_world("ne_50m_coastline.geojson", include_east_wrap=True, clip_bounds=spec.relief_bounds)
-    rivers_geo = _load_geojson_world(
-        "ne_50m_rivers_lake_centerlines.geojson", include_east_wrap=True, clip_bounds=spec.relief_bounds
-    )
-    grat_geo = _load_geojson_world("ne_50m_graticules_15.geojson", include_east_wrap=True, clip_bounds=spec.relief_bounds)
+    west, south, east, north = spec.relief_bounds
+    if is_city_mode:
+        relief_uri = ""
+        coast_geo = {"type": "FeatureCollection", "features": []}
+        rivers_geo = {"type": "FeatureCollection", "features": []}
+        grat_geo = {"type": "FeatureCollection", "features": []}
+    else:
+        _rel_bgr = cv2.imread(str(relief_png))
+        assert _rel_bgr is not None, f"Could not read graded world relief plate: {relief_png}"
+        _ok, _jpg_buf = cv2.imencode(".jpg", _rel_bgr, [int(cv2.IMWRITE_JPEG_QUALITY), 92])
+        assert _ok
+        relief_uri = "data:image/jpeg;base64," + base64.b64encode(_jpg_buf.tobytes()).decode("ascii")
+        coast_geo = _load_geojson_world("ne_50m_coastline.geojson", include_east_wrap=True, clip_bounds=spec.relief_bounds)
+        rivers_geo = _load_geojson_world(
+            "ne_50m_rivers_lake_centerlines.geojson", include_east_wrap=True, clip_bounds=spec.relief_bounds
+        )
+        grat_geo = _load_geojson_world("ne_50m_graticules_15.geojson", include_east_wrap=True, clip_bounds=spec.relief_bounds)
+
     glacier_geo: dict[str, Any] = {"type": "FeatureCollection", "features": []}
 
     # Smooth organic Pleistocene Last Glacial Maximum ice sheet polygons
@@ -280,7 +293,23 @@ def _build_maplibre_html(
         "markers": spec.markers,
         "labels": spec.sea_and_region_labels,
         "bounds": [west, south, east, north],
+        "lock_horizon": bool(spec.lock_horizon),
+        "is_city_mode": is_city_mode,
+        "is_roman_palette": is_roman_palette,
     }
+
+    bg_color = "#1B1612" if is_roman_palette else "#09131E"
+    accent_bar_color = "#D89A46" if is_roman_palette else theme["accent_amber"]
+    scale_bar_color = "#D89A46" if is_roman_palette else theme["accent_glacial"]
+    coord_color = "#E8C68E" if is_roman_palette else "#9ED6F2"
+    telemetry_sub = spec.telemetry_subtitle or "PLEISTOCENE LGM RELIEF"
+
+    city_water_geo = city_layers.get("water_geo") or {"type": "FeatureCollection", "features": []}
+    city_hills_geo = city_layers.get("hills_geo") or {"type": "FeatureCollection", "features": []}
+    city_districts_geo = city_layers.get("districts_geo") or {"type": "FeatureCollection", "features": []}
+    city_roads_geo = city_layers.get("roads_geo") or {"type": "FeatureCollection", "features": []}
+    city_monuments_geo = city_layers.get("monuments_geo") or {"type": "FeatureCollection", "features": []}
+    city_walls_geo = city_layers.get("walls_geo") or {"type": "FeatureCollection", "features": []}
 
     return f"""<!doctype html>
 <html>
@@ -291,7 +320,7 @@ def _build_maplibre_html(
 {font_css}
 * {{ box-sizing: border-box; margin: 0; padding: 0; }}
 html, body {{
-  width: {width}px; height: {height}px; overflow: hidden; background: #09131E;
+  width: {width}px; height: {height}px; overflow: hidden; background: {bg_color};
   font-family: {theme["font_sans"]}; color: {theme["text_primary"]};
   -webkit-font-smoothing: antialiased;
 }}
@@ -304,50 +333,51 @@ html, body {{
 }}
 .vignette {{
   position: absolute; inset: 0; pointer-events: none; z-index: 8;
-  background: radial-gradient(ellipse 84% 78% at 50% 50%, rgba(0,0,0,0) 56%, rgba(4,7,12,0.58) 100%);
+  background: radial-gradient(ellipse 84% 78% at 50% 50%, rgba(0,0,0,0) 56%, rgba(8,6,4,0.62) 100%);
 }}
 .hud-title-card {{
   position: absolute; top: 44px; left: 54px; max-width: 680px;
   padding: 16px 26px 18px;
-  background: linear-gradient(155deg, rgba(8,13,20,0.88) 0%, rgba(5,9,15,0.92) 100%);
-  border-left: 3px solid {theme["accent_amber"]};
-  border-top: 1px solid rgba(232,240,248,0.16);
-  border-right: 1px solid rgba(232,240,248,0.12);
-  border-bottom: 1px solid rgba(232,240,248,0.12);
+  background: linear-gradient(155deg, rgba(16,12,9,0.90) 0%, rgba(10,8,6,0.94) 100%);
+  border-left: 3px solid {accent_bar_color};
+  border-top: 1px solid rgba(232,220,200,0.18);
+  border-right: 1px solid rgba(232,220,200,0.12);
+  border-bottom: 1px solid rgba(232,220,200,0.12);
   border-radius: 4px;
   box-shadow: 0 18px 44px rgba(0,0,0,0.55);
 }}
 .hud-era {{
   font-family: {theme["font_mono"]}; font-size: 15px; font-weight: 600; letter-spacing: 0.22em;
-  color: {theme["accent_amber"]}; text-transform: uppercase; margin-bottom: 6px;
+  color: {accent_bar_color}; text-transform: uppercase; margin-bottom: 6px;
 }}
 .hud-h1 {{
   font-family: {theme["font_display"]}; font-size: 34px; font-weight: 600;
-  letter-spacing: 0.08em; color: #F7F9FC; line-height: 1.14;
+  letter-spacing: 0.08em; color: #F7F4EE; line-height: 1.14;
 }}
 .hud-sub {{
-  font-family: {theme["font_sans"]}; font-size: 18px; font-weight: 500; color: #DCE6F2; margin-top: 6px;
+  font-family: {theme["font_sans"]}; font-size: 19px; font-weight: 500; color: #E8E1D5;
+  margin-top: 7px; letter-spacing: 0.02em; word-spacing: 0.08em; line-height: 1.3;
 }}
 .hud-telemetry {{
   position: absolute; top: 44px; right: 54px; display: flex; align-items: center; gap: 16px;
-  padding: 12px 20px; background: rgba(7,12,19,0.88);
-  border: 1px solid rgba(232,240,248,0.18); border-radius: 4px;
-  font-family: {theme["font_mono"]}; font-size: 15px; font-weight: 600; color: #9ED6F2;
+  padding: 12px 20px; background: rgba(14,11,8,0.88);
+  border: 1px solid rgba(232,220,200,0.18); border-radius: 4px;
+  font-family: {theme["font_mono"]}; font-size: 15px; font-weight: 600; color: {coord_color};
   font-variant-numeric: tabular-nums;
 }}
 .compass-svg {{ width: 40px; height: 40px; flex-shrink: 0; }}
 .hud-scale {{
   position: absolute; bottom: 44px; right: 54px;
-  padding: 10px 18px; background: rgba(7,12,19,0.80);
-  border: 1px solid rgba(232,240,248,0.18); border-radius: 4px;
-  font-family: {theme["font_mono"]}; font-size: 15px; font-weight: 600; color: #DCE6F2;
+  padding: 10px 18px; background: rgba(14,11,8,0.82);
+  border: 1px solid rgba(232,220,200,0.18); border-radius: 4px;
+  font-family: {theme["font_mono"]}; font-size: 15px; font-weight: 600; color: #EAE3D7;
   font-variant-numeric: tabular-nums;
   display: flex; flex-direction: column; align-items: flex-end; gap: 6px;
 }}
 .scale-bar-line {{
-  width: 140px; height: 6px; border-left: 2px solid {theme["accent_glacial"]};
-  border-right: 2px solid {theme["accent_glacial"]};
-  border-bottom: 2px solid {theme["accent_glacial"]};
+  width: 140px; height: 6px; border-left: 2px solid {scale_bar_color};
+  border-right: 2px solid {scale_bar_color};
+  border-bottom: 2px solid {scale_bar_color};
 }}
 .maplibregl-ctrl {{ display: none !important; }}
 </style>
@@ -364,18 +394,18 @@ html, body {{
   </div>
   <div class="hud-telemetry">
     <svg class="compass-svg" viewBox="0 0 48 48" fill="none">
-      <circle cx="24" cy="24" r="20" stroke="rgba(124,196,232,0.45)" stroke-width="1.5"/>
-      <polygon points="24,6 28,24 24,20 20,24" fill="{theme["accent_amber"]}"/>
+      <circle cx="24" cy="24" r="20" stroke="rgba(216,154,70,0.45)" stroke-width="1.5"/>
+      <polygon points="24,6 28,24 24,20 20,24" fill="{accent_bar_color}"/>
       <polygon points="24,42 28,24 24,28 20,24" fill="rgba(232,240,248,0.52)"/>
       <text x="24" y="5" fill="#F5F7FA" font-size="9" font-weight="700" font-family="IBM Plex Mono" text-anchor="middle">N</text>
     </svg>
     <div>
-      <div id="coord-readout">52.00° N  /  38.00° E</div>
-      <div style="font-size:12px;color:#B8C9DC;margin-top:3px;letter-spacing:0.12em;">PLEISTOCENE LGM RELIEF</div>
+      <div id="coord-readout">41.89° N  /  12.48° E</div>
+      <div style="font-size:12px;color:#C8BFA8;margin-top:3px;letter-spacing:0.12em;">{telemetry_sub}</div>
     </div>
   </div>
   <div class="hud-scale">
-    <div id="scale-label">1,000 KM</div>
+    <div id="scale-label">250 M</div>
     <div class="scale-bar-line"></div>
   </div>
 </div>
@@ -389,11 +419,58 @@ const RIVERS_GEO = {json.dumps(rivers_geo)};
 const GRAT_GEO = {json.dumps(grat_geo)};
 const GLACIER_GEO = {json.dumps(glacier_geo)};
 const PALEO_GEO = {json.dumps(paleo_geo)};
+const CITY_WATER_GEO = {json.dumps(city_water_geo)};
+const CITY_HILLS_GEO = {json.dumps(city_hills_geo)};
+const CITY_DISTRICTS_GEO = {json.dumps(city_districts_geo)};
+const CITY_ROADS_GEO = {json.dumps(city_roads_geo)};
+const CITY_MONUMENTS_GEO = {json.dumps(city_monuments_geo)};
+const CITY_WALLS_GEO = {json.dumps(city_walls_geo)};
 const W = {width}, H = {height};
 const SCALE = H / 1080.0;
 const DPR = Math.max(2, window.devicePixelRatio || 2);
 
-const styleObj = {{
+const styleObj = SPEC.is_city_mode ? {{
+  version: 8,
+  light: {{
+    anchor: "map",
+    color: "#FFEBD0",
+    intensity: 0.42,
+    position: [1.3, 135, 38]
+  }},
+  sources: {{
+    city_hills: {{ type: "geojson", data: CITY_HILLS_GEO }},
+    city_districts: {{ type: "geojson", data: CITY_DISTRICTS_GEO }},
+    city_water: {{ type: "geojson", data: CITY_WATER_GEO }},
+    city_roads: {{ type: "geojson", data: CITY_ROADS_GEO }},
+    city_walls: {{ type: "geojson", data: CITY_WALLS_GEO }},
+    city_monuments: {{ type: "geojson", data: CITY_MONUMENTS_GEO }}
+  }},
+  layers: [
+    {{ id: "bg", type: "background", paint: {{ "background-color": "#1E1914" }} }},
+    {{ id: "city-hills-fill", type: "fill", source: "city_hills", paint: {{ "fill-color": ["coalesce", ["get", "fill"], "#2C241B"], "fill-opacity": 0.92 }} }},
+    {{ id: "city-hills-rim", type: "line", source: "city_hills", paint: {{ "line-color": "#5E4E3B", "line-width": 1.6, "line-blur": 0.8, "line-opacity": 0.65 }} }},
+    {{ id: "city-districts-fill", type: "fill", source: "city_districts", paint: {{ "fill-color": ["coalesce", ["get", "fill"], "#2A231B"], "fill-opacity": 0.85 }} }},
+    {{ id: "city-districts-rim", type: "line", source: "city_districts", paint: {{ "line-color": "#6A5A45", "line-width": 1.4, "line-opacity": 0.45 }} }},
+    {{ id: "city-water-glow", type: "line", source: "city_water", paint: {{ "line-color": "#5F98B8", "line-width": 9.0, "line-blur": 6.0, "line-opacity": 0.28 }} }},
+    {{ id: "city-water-fill", type: "fill", source: "city_water", paint: {{ "fill-color": "#1A374A", "fill-opacity": 0.96 }} }},
+    {{ id: "city-water-rim", type: "line", source: "city_water", paint: {{ "line-color": "#74A8C4", "line-width": 2.0, "line-blur": 0.6, "line-opacity": 0.72 }} }},
+    {{ id: "city-roads-casing", type: "line", source: "city_roads", paint: {{ "line-color": "#120F0C", "line-width": ["coalesce", ["get", "casing_w"], 6.0], "line-opacity": 0.72 }}, layout: {{ "line-cap": "round", "line-join": "round" }} }},
+    {{ id: "city-roads-fill", type: "line", source: "city_roads", paint: {{ "line-color": ["coalesce", ["get", "color"], "#8F7C63"], "line-width": ["coalesce", ["get", "width"], 3.0], "line-opacity": 0.88 }}, layout: {{ "line-cap": "round", "line-join": "round" }} }},
+    {{ id: "city-walls-line", type: "line", source: "city_walls", paint: {{ "line-color": "#A38A68", "line-width": 3.4, "line-opacity": 0.70 }}, layout: {{ "line-cap": "round", "line-join": "round" }} }},
+    {{ id: "city-monuments-shadow", type: "fill", source: "city_monuments", paint: {{ "fill-color": "#0A0806", "fill-opacity": 0.55 }} }},
+    {{
+      id: "city-monuments-3d",
+      type: "fill-extrusion",
+      source: "city_monuments",
+      paint: {{
+        "fill-extrusion-color": ["coalesce", ["get", "color"], "#D5C3A3"],
+        "fill-extrusion-height": ["coalesce", ["get", "height"], 18],
+        "fill-extrusion-base": 0,
+        "fill-extrusion-opacity": 0.94
+      }}
+    }}
+  ]
+}} : {{
   version: 8,
   sources: {{
     relief_main: {{
@@ -447,7 +524,7 @@ const map = new maplibregl.Map({{
   bearing: SPEC.start_camera.bearing || 0,
   antialias: true,
   pixelRatio: DPR,
-  renderWorldCopies: true,
+  renderWorldCopies: !SPEC.is_city_mode,
   interactive: false,
   attributionControl: false,
   preserveDrawingBuffer: true,
@@ -603,11 +680,34 @@ function drawOverlay(t_s) {{
   ctx.imageSmoothingEnabled = true;
   ctx.imageSmoothingQuality = "high";
 
-  // 1. Pre-rasterized 2x HiDPI sea/region watermark labels (bilinear subpixel drawImage -> 0.0px jumping!)
+  // 1. Pre-rasterized 2x HiDPI sea/region watermark labels (bilinear subpixel drawImage + viewport/HUD safe fade!)
   for (const sp of labelSprites) {{
     const p = map.project([sp.lbl.lon, sp.lbl.lat]);
-    if (p.x < -sp.cssW || p.x > W + sp.cssW || p.y < -sp.cssH || p.y > H + sp.cssH) continue;
-    ctx.drawImage(sp.canvas, p.x - sp.cssW * 0.5, p.y - sp.cssH * 0.5, sp.cssW, sp.cssH);
+    const halfW = sp.cssW * 0.5;
+    const halfH = sp.cssH * 0.5;
+    const lx0 = p.x - halfW, lx1 = p.x + halfW;
+    const ly0 = p.y - halfH, ly1 = p.y + halfH;
+    const padEdge = 36 * SCALE;
+    // Exclude all 3 HUD corners (top-left title card, top-right compass/telemetry, bottom-right scale bar)
+    const hitTitle = (lx0 < 760 * SCALE) && (ly0 < 215 * SCALE);
+    const hitTelem = (lx1 > W - 400 * SCALE) && (ly0 < 155 * SCALE);
+    const hitScale = (lx1 > W - 300 * SCALE) && (ly1 > H - 155 * SCALE);
+    let distOut = Math.max(
+      padEdge - lx0,
+      padEdge - ly0,
+      lx1 - (W - padEdge),
+      ly1 - (H - padEdge),
+      0
+    );
+    if (hitTitle) distOut = Math.max(distOut, 70 * SCALE);
+    if (hitTelem) distOut = Math.max(distOut, 70 * SCALE);
+    if (hitScale) distOut = Math.max(distOut, 70 * SCALE);
+    const lblFade = Math.max(0, Math.min(1, 1.0 - distOut / (64 * SCALE)));
+    if (lblFade <= 0.02) continue;
+    ctx.save();
+    ctx.globalAlpha = lblFade;
+    ctx.drawImage(sp.canvas, lx0, ly0, sp.cssW, sp.cssH);
+    ctx.restore();
   }}
 
   // 2. Animated glowing migration routes (smooth subpixel fractional interpolation at comet tip)
@@ -740,25 +840,39 @@ function drawOverlay(t_s) {{
   ctx.restore();
 }}
 
-// Precompute damped Mercator camera endpoints (avoid micro-jitter simultaneous pitch+bearing twist)
+// Precompute locked-horizon Mercator-scale camera endpoints (zero simultaneous pitch+bearing gimbal sway!)
 const ZOOM_OFFSET = Math.log2(W / 1920.0);
 const START_MY = latToMercY(SPEC.start_camera.center_lat);
 const END_MY = latToMercY(SPEC.end_camera.center_lat);
+const START_Z = SPEC.start_camera.zoom;
+const END_Z = SPEC.end_camera.zoom;
+const INV_SCALE_START = Math.pow(2, -START_Z);
+const INV_SCALE_END = Math.pow(2, -END_Z);
 const START_PITCH = SPEC.start_camera.pitch != null ? SPEC.start_camera.pitch : 24;
-const END_PITCH = SPEC.end_camera.pitch != null ? SPEC.end_camera.pitch : START_PITCH;
+const RAW_END_PITCH = SPEC.end_camera.pitch != null ? SPEC.end_camera.pitch : START_PITCH;
 const START_BEARING = SPEC.start_camera.bearing || 0;
 const RAW_END_BEARING = SPEC.end_camera.bearing != null ? SPEC.end_camera.bearing : START_BEARING;
-// Damp tiny simultaneous bearing micro-twists when pitch is also changing
-const DAMPED_END_BEARING = (Math.abs(RAW_END_BEARING - START_BEARING) < 5.0 && Math.abs(END_PITCH - START_PITCH) > 0.5)
+// When lock_horizon is enabled, hold pitch and bearing strictly constant to eradicate camera sway ("ქანაობა")
+const END_PITCH = SPEC.lock_horizon ? START_PITCH : RAW_END_PITCH;
+const DAMPED_END_BEARING = SPEC.lock_horizon
   ? START_BEARING
-  : RAW_END_BEARING;
+  : ((Math.abs(RAW_END_BEARING - START_BEARING) < 5.0 && Math.abs(END_PITCH - START_PITCH) > 0.5)
+      ? START_BEARING
+      : RAW_END_BEARING);
 
 window.__renderAt = function(t_s) {{
   const u = Math.max(0, Math.min(1, t_s / Math.max(0.1, SPEC.duration_s)));
   const e = smootherstep(u);
-  const lon = SPEC.start_camera.center_lon + (SPEC.end_camera.center_lon - SPEC.start_camera.center_lon) * e;
-  const lat = mercYToLat(START_MY + (END_MY - START_MY) * e);
-  const zoom = SPEC.start_camera.zoom + (SPEC.end_camera.zoom - SPEC.start_camera.zoom) * e + ZOOM_OFFSET;
+  const zRaw = START_Z + (END_Z - START_Z) * e;
+  // Scale-weighted Mercator ground position keeps screen-space pan velocity dead-linear during zoom
+  let posE = e;
+  if (Math.abs(END_Z - START_Z) > 0.02) {{
+    const invCur = Math.pow(2, -zRaw);
+    posE = (INV_SCALE_START - invCur) / (INV_SCALE_START - INV_SCALE_END);
+  }}
+  const lon = SPEC.start_camera.center_lon + (SPEC.end_camera.center_lon - SPEC.start_camera.center_lon) * posE;
+  const lat = mercYToLat(START_MY + (END_MY - START_MY) * posE);
+  const zoom = zRaw + ZOOM_OFFSET;
   const pitch = START_PITCH + (END_PITCH - START_PITCH) * e;
   const bearing = START_BEARING + (DAMPED_END_BEARING - START_BEARING) * e;
 
@@ -773,8 +887,19 @@ window.__renderAt = function(t_s) {{
     `${{Math.abs(lat).toFixed(2)}}° ${{ns}}  /  ${{Math.abs(normLon).toFixed(2)}}° ${{ew}}`;
 
   const mpp = (156543.03392 * Math.cos((lat * Math.PI) / 180)) / Math.pow(2, zoom);
-  const km = Math.max(10, Math.round((mpp * 140 * SCALE) / 1000 / 50) * 50);
-  document.getElementById("scale-label").textContent = `${{km.toLocaleString("en-US")}} KM`;
+  const meters = mpp * 140 * SCALE;
+  let scaleTxt;
+  if (meters < 1800) {{
+    const step = meters < 200 ? 25 : (meters < 600 ? 50 : 100);
+    const mRounded = Math.max(50, Math.round(meters / step) * step);
+    scaleTxt = `${{mRounded.toLocaleString("en-US")}} M`;
+  }} else if (meters < 20000) {{
+    scaleTxt = `${{(meters / 1000).toFixed(1)}} KM`;
+  }} else {{
+    const km = Math.max(10, Math.round(meters / 1000 / 50) * 50);
+    scaleTxt = `${{km.toLocaleString("en-US")}} KM`;
+  }}
+  document.getElementById("scale-label").textContent = scaleTxt;
 }};
 
 window.__getTitleBBox = function() {{
@@ -784,6 +909,486 @@ window.__getTitleBBox = function() {{
 </script>
 </body>
 </html>"""
+
+
+def _rect_poly(lon: float, lat: float, half_lon: float, half_lat: float, angle_deg: float = 0.0) -> list[list[float]]:
+    """Build a rotated closed lon/lat rectangle ring for Roman architectural footprints."""
+    rad = math.radians(angle_deg)
+    ca, sa = math.cos(rad), math.sin(rad)
+    cos_lat = max(0.2, math.cos(math.radians(lat)))
+    corners = [(-half_lon, -half_lat), (half_lon, -half_lat), (half_lon, half_lat), (-half_lon, half_lat)]
+    ring: list[list[float]] = []
+    for dx, dy in corners:
+        rx = (dx * cos_lat * ca - dy * sa) / cos_lat
+        ry = dx * cos_lat * sa + dy * ca
+        ring.append([round(lon + rx, 6), round(lat + ry, 6)])
+    ring.append(ring[0])
+    return ring
+
+
+def _semicircle_theater_poly(
+    lon: float,
+    lat: float,
+    radius_lon: float,
+    radius_lat: float,
+    *,
+    start_deg: float = 95.0,
+    end_deg: float = 265.0,
+    steps: int = 18,
+) -> list[list[float]]:
+    """Build a semicircular Roman theater cavea polygon (Theatre of Pompey facing east into its Porticus)."""
+    ring: list[list[float]] = []
+    for i in range(steps + 1):
+        ang = math.radians(start_deg + (end_deg - start_deg) * (i / float(steps)))
+        ring.append([round(lon + math.cos(ang) * radius_lon, 6), round(lat + math.sin(ang) * radius_lat, 6)])
+    ring.append(ring[0])
+    return ring
+
+
+def _build_ancient_rome_city_layers() -> dict[str, Any]:
+    """Historically grounded vector topography & 3D monuments of central Rome on March 15, 44 BCE."""
+    tiber_ring = _chaikin_smooth_ring(
+        [
+            [12.4670, 41.9045],
+            [12.4702, 41.9005],
+            [12.4695, 41.8962],
+            [12.4718, 41.8924],
+            [12.4754, 41.8902],
+            [12.4778, 41.8884],
+            [12.4788, 41.8842],
+            [12.4758, 41.8842],
+            [12.4748, 41.8880],
+            [12.4720, 41.8904],
+            [12.4686, 41.8930],
+            [12.4664, 41.8968],
+            [12.4668, 41.9012],
+            [12.4638, 41.9045],
+            [12.4670, 41.9045],
+        ],
+        iterations=2,
+    )
+    water_geo = {
+        "type": "FeatureCollection",
+        "features": [{"type": "Feature", "properties": {"name": "Tiber River"}, "geometry": {"type": "Polygon", "coordinates": [tiber_ring]}}],
+    }
+
+    hills_geo = {
+        "type": "FeatureCollection",
+        "features": [
+            {
+                "type": "Feature",
+                "properties": {"name": "Capitoline Hill", "fill": "#32281F"},
+                "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [
+                        _chaikin_smooth_ring(
+                            [[12.4810, 41.8920], [12.4844, 41.8924], [12.4848, 41.8948], [12.4820, 41.8950], [12.4806, 41.8934], [12.4810, 41.8920]],
+                            iterations=2,
+                        )
+                    ],
+                },
+            },
+            {
+                "type": "Feature",
+                "properties": {"name": "Palatine Hill", "fill": "#352A20"},
+                "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [
+                        _chaikin_smooth_ring(
+                            [[12.4842, 41.8872], [12.4906, 41.8876], [12.4912, 41.8912], [12.4852, 41.8914], [12.4836, 41.8892], [12.4842, 41.8872]],
+                            iterations=2,
+                        )
+                    ],
+                },
+            },
+            {
+                "type": "Feature",
+                "properties": {"name": "Quirinal Slope", "fill": "#2D241C"},
+                "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [
+                        _chaikin_smooth_ring(
+                            [[12.4820, 41.8968], [12.4925, 41.8970], [12.4930, 41.9018], [12.4825, 41.9015], [12.4820, 41.8968]],
+                            iterations=2,
+                        )
+                    ],
+                },
+            },
+        ],
+    }
+
+    districts_geo = {
+        "type": "FeatureCollection",
+        "features": [
+            {
+                "type": "Feature",
+                "properties": {"name": "Campus Martius", "fill": "#262019"},
+                "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [
+                        _chaikin_smooth_ring(
+                            [[12.4706, 41.8926], [12.4802, 41.8928], [12.4806, 41.8998], [12.4712, 41.8995], [12.4706, 41.8926]],
+                            iterations=2,
+                        )
+                    ],
+                },
+            },
+            {
+                "type": "Feature",
+                "properties": {"name": "Forum Romanum Plaza", "fill": "#3A3024"},
+                "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [
+                        [[12.4838, 41.8921], [12.4872, 41.8914], [12.4876, 41.8928], [12.4842, 41.8934], [12.4838, 41.8921]]
+                    ],
+                },
+            },
+        ],
+    }
+
+    roads_geo = {
+        "type": "FeatureCollection",
+        "features": [
+            {
+                "type": "Feature",
+                "properties": {"name": "Via Sacra", "color": "#C5A87E", "width": 4.2, "casing_w": 7.5},
+                "geometry": {
+                    "type": "LineString",
+                    "coordinates": [[12.4898, 41.8908], [12.4870, 41.8918], [12.4852, 41.8925], [12.4834, 41.8929]],
+                },
+            },
+            {
+                "type": "Feature",
+                "properties": {"name": "Vicus Jugarius to Campus Martius", "color": "#B39770", "width": 3.6, "casing_w": 6.5},
+                "geometry": {
+                    "type": "LineString",
+                    "coordinates": [[12.4834, 41.8929], [12.4810, 41.8925], [12.4784, 41.8935], [12.4760, 41.8946], [12.4738, 41.8954]],
+                },
+            },
+            {
+                "type": "Feature",
+                "properties": {"name": "Via Lata / Flaminia", "color": "#8E7A60", "width": 3.2, "casing_w": 6.0},
+                "geometry": {
+                    "type": "LineString",
+                    "coordinates": [[12.4822, 41.8950], [12.4806, 41.8982], [12.4788, 41.9022]],
+                },
+            },
+            {
+                "type": "Feature",
+                "properties": {"name": "Argiletum / Subura", "color": "#87745B", "width": 2.8, "casing_w": 5.4},
+                "geometry": {
+                    "type": "LineString",
+                    "coordinates": [[12.4856, 41.8928], [12.4874, 41.8944], [12.4898, 41.8962]],
+                },
+            },
+            {
+                "type": "Feature",
+                "properties": {"name": "Via Triumphalis / Circus Flaminius", "color": "#8E7A60", "width": 2.8, "casing_w": 5.4},
+                "geometry": {
+                    "type": "LineString",
+                    "coordinates": [[12.4792, 41.8914], [12.4768, 41.8928], [12.4744, 41.8942], [12.4720, 41.8962]],
+                },
+            },
+        ],
+    }
+
+    walls_geo = {
+        "type": "FeatureCollection",
+        "features": [
+            {
+                "type": "Feature",
+                "properties": {"name": "Servian Wall Segment"},
+                "geometry": {
+                    "type": "LineString",
+                    "coordinates": [[12.4790, 41.8910], [12.4808, 41.8934], [12.4828, 41.8958], [12.4856, 41.8986]],
+                },
+            }
+        ],
+    }
+
+    monuments_geo = {
+        "type": "FeatureCollection",
+        "features": [
+            # Caesar's residence — Domus Publica & Atrium Vestae
+            {
+                "type": "Feature",
+                "properties": {"name": "Domus Publica", "color": "#E5B567", "height": 26},
+                "geometry": {"type": "Polygon", "coordinates": [_rect_poly(12.4865, 41.8919, 0.00055, 0.00038, -16.0)]},
+            },
+            {
+                "type": "Feature",
+                "properties": {"name": "Atrium Vestae", "color": "#C9B08A", "height": 18},
+                "geometry": {"type": "Polygon", "coordinates": [_rect_poly(12.4860, 41.8914, 0.00048, 0.00028, -16.0)]},
+            },
+            # Forum Romanum civic monuments
+            {
+                "type": "Feature",
+                "properties": {"name": "Basilica Julia", "color": "#D4C09E", "height": 24},
+                "geometry": {"type": "Polygon", "coordinates": [_rect_poly(12.4847, 41.8920, 0.00062, 0.00028, -15.0)]},
+            },
+            {
+                "type": "Feature",
+                "properties": {"name": "Basilica Aemilia", "color": "#CBB694", "height": 22},
+                "geometry": {"type": "Polygon", "coordinates": [_rect_poly(12.4857, 41.8929, 0.00056, 0.00024, -15.0)]},
+            },
+            {
+                "type": "Feature",
+                "properties": {"name": "Temple of Saturn", "color": "#DECBA9", "height": 28},
+                "geometry": {"type": "Polygon", "coordinates": [_rect_poly(12.4839, 41.8926, 0.00030, 0.00024, -12.0)]},
+            },
+            {
+                "type": "Feature",
+                "properties": {"name": "Tabularium", "color": "#C3AF8F", "height": 34},
+                "geometry": {"type": "Polygon", "coordinates": [_rect_poly(12.4832, 41.8931, 0.00045, 0.00022, -18.0)]},
+            },
+            {
+                "type": "Feature",
+                "properties": {"name": "Temple of Jupiter Capitolinus", "color": "#E0CEAE", "height": 36},
+                "geometry": {"type": "Polygon", "coordinates": [_rect_poly(12.4824, 41.8928, 0.00044, 0.00036, -15.0)]},
+            },
+            # Circus Flaminius colonnade
+            {
+                "type": "Feature",
+                "properties": {"name": "Circus Flaminius", "color": "#B9A587", "height": 15},
+                "geometry": {"type": "Polygon", "coordinates": [_rect_poly(12.4778, 41.8933, 0.00105, 0.00032, -24.0)]},
+            },
+            # Largo Argentina Sacred Temples (just east of Curia of Pompey)
+            {
+                "type": "Feature",
+                "properties": {"name": "Sacred Area Temples", "color": "#CBB89A", "height": 18},
+                "geometry": {"type": "Polygon", "coordinates": [_rect_poly(12.4766, 41.8954, 0.00038, 0.00042, 0.0)]},
+            },
+            # Theatre of Pompey (semicircular stone cavea) + Porticus of Pompey + Curia of Pompey!
+            {
+                "type": "Feature",
+                "properties": {"name": "Theatre of Pompey", "color": "#D9C5A3", "height": 36},
+                "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [_semicircle_theater_poly(12.4730, 41.8954, 0.00095, 0.00072)],
+                },
+            },
+            {
+                "type": "Feature",
+                "properties": {"name": "Porticus of Pompey", "color": "#C4AE8B", "height": 16},
+                "geometry": {"type": "Polygon", "coordinates": [_rect_poly(12.4741, 41.8954, 0.00105, 0.00058, 0.0)]},
+            },
+            {
+                "type": "Feature",
+                "properties": {"name": "Curia of Pompey", "color": "#D4523B", "height": 32},
+                "geometry": {"type": "Polygon", "coordinates": [_rect_poly(12.4754, 41.8954, 0.00038, 0.00034, 0.0)]},
+            },
+        ],
+    }
+
+    # Add subtle ancient urban insulae city-block footprints around Forum, Subura, Velabrum, Campus Martius, and Palatine slopes
+    insulae_centers = [
+        # Subura & Quirinal urban quarter (north-east of Forum)
+        (12.4876, 41.8942, 0.00050, 0.00028, 12, "#46392C", 11),
+        (12.4888, 41.8950, 0.00058, 0.00032, 18, "#413529", 10),
+        (12.4864, 41.8954, 0.00052, 0.00028, 8, "#483B2E", 12),
+        (12.4848, 41.8958, 0.00060, 0.00030, -6, "#43372B", 11),
+        (12.4878, 41.8966, 0.00064, 0.00034, 15, "#3E3227", 9),
+        (12.4896, 41.8932, 0.00056, 0.00030, -14, "#463A2D", 11),
+        # Velabrum & Palatine slopes (south of Forum)
+        (12.4820, 41.8906, 0.00054, 0.00028, -12, "#483B2E", 11),
+        (12.4838, 41.8902, 0.00058, 0.00030, -18, "#45382B", 12),
+        (12.4868, 41.8896, 0.00070, 0.00042, -10, "#5B4A38", 15),  # Palatine aristocratic villas
+        (12.4885, 41.8892, 0.00064, 0.00038, -15, "#544434", 14),
+        (12.4854, 41.8886, 0.00062, 0.00036, -8, "#514232", 13),
+        # Campus Martius civic & residential quarters (west & north of Pompey's Theatre)
+        (12.4788, 41.8956, 0.00056, 0.00032, 4, "#473A2D", 12),
+        (12.4796, 41.8970, 0.00062, 0.00034, 6, "#413529", 10),
+        (12.4774, 41.8974, 0.00060, 0.00034, 2, "#44372A", 11),
+        (12.4750, 41.8978, 0.00065, 0.00036, 0, "#46392C", 11),
+        (12.4728, 41.8974, 0.00054, 0.00032, -8, "#42362A", 10),
+        (12.4748, 41.8932, 0.00056, 0.00028, -22, "#46392C", 11),
+        (12.4728, 41.8938, 0.00048, 0.00026, -18, "#42362A", 10),
+        (12.4810, 41.8962, 0.00052, 0.00030, 10, "#473A2D", 12),
+        # Tiber Island (Isola Tiberina) temple & stone banks
+        (12.4774, 41.8906, 0.00065, 0.00022, -32, "#7C6A54", 10),
+    ]
+    for idx_in, (ilon, ilat, hlon, hlat, ang, col, ht) in enumerate(insulae_centers):
+        monuments_geo["features"].append(
+            {
+                "type": "Feature",
+                "properties": {"name": f"Roman Quarter {idx_in}", "color": col, "height": ht},
+                "geometry": {"type": "Polygon", "coordinates": [_rect_poly(ilon, ilat, hlon, hlat, ang)]},
+            }
+        )
+
+    # Add Roman stone bridges across Tiber River (Pons Fabricius & Pons Aemilius) + secondary street network
+    roads_geo["features"].extend(
+        [
+            {
+                "type": "Feature",
+                "properties": {"name": "Pons Fabricius", "color": "#CBB28A", "width": 3.4, "casing_w": 5.8},
+                "geometry": {"type": "LineString", "coordinates": [[12.4792, 41.8914], [12.4774, 41.8906], [12.4756, 41.8898]]},
+            },
+            {
+                "type": "Feature",
+                "properties": {"name": "Campus Martius Cross Street", "color": "#73624D", "width": 2.2, "casing_w": 4.2},
+                "geometry": {"type": "LineString", "coordinates": [[12.4720, 41.8968], [12.4765, 41.8968], [12.4812, 41.8966], [12.4865, 41.8964]]},
+            },
+            {
+                "type": "Feature",
+                "properties": {"name": "Vicus Tuscus", "color": "#7D6B54", "width": 2.4, "casing_w": 4.6},
+                "geometry": {"type": "LineString", "coordinates": [[12.4848, 41.8920], [12.4832, 41.8904], [12.4812, 41.8888]]},
+            },
+        ]
+    )
+
+    return {
+        "water_geo": water_geo,
+        "hills_geo": hills_geo,
+        "districts_geo": districts_geo,
+        "roads_geo": roads_geo,
+        "walls_geo": walls_geo,
+        "monuments_geo": monuments_geo,
+    }
+
+
+def build_ancient_rome_ides_map_spec(
+    kind: str = "overview",
+    *,
+    duration_s: float = 12.0,
+) -> WebGLMapSpec:
+    """Build a locked-horizon, zero-sway 3D WebGL2 cartography spec for Caesar's walk on March 15, 44 BCE.
+
+    ``kind="overview"`` (Block 1): Smooth locked-horizon zoom-in establishing the 1.3 km / 20-min distance
+    between Caesar's home (Domus Publica) and the Senate meeting hall (Curia of Pompey).
+    ``kind="route"`` (Block 4): Smooth locked-horizon west tracking pan following Caesar's footsteps
+    from the Domus Publica past the Forum Romanum and Artemidorus's warning to the Curia of Pompey.
+    """
+    city_layers = _build_ancient_rome_city_layers()
+    caesar_route_coords = [
+        [12.4865, 41.8919],  # Domus Publica
+        [12.4852, 41.8925],  # Forum Romanum / Via Sacra
+        [12.4834, 41.8929],  # Temple of Saturn / Rostra
+        [12.4809, 41.8926],  # Vicus Jugarius
+        [12.4784, 41.8936],  # Circus Flaminius / Campus Martius edge
+        [12.4765, 41.8947],  # Approach past Sacred Temples
+        [12.4754, 41.8954],  # Curia of Pompey (Eastern Porticus)
+    ]
+
+    if kind == "route":
+        return WebGLMapSpec(
+            map_id="rome_route_b4",
+            title="THE WALK TO THE SENATE",
+            subtitle="1.3 km through central Rome · Every block narrows the escape window",
+            duration_s=duration_s,
+            relief_bounds=(12.465, 41.885, 12.495, 41.903),
+            start_camera={"center_lon": 12.4848, "center_lat": 41.8925, "zoom": 15.45, "pitch": 36.0, "bearing": 0.0},
+            end_camera={"center_lon": 12.4764, "center_lat": 41.8950, "zoom": 15.65, "pitch": 36.0, "bearing": 0.0},
+            routes=[
+                {
+                    "coords": caesar_route_coords,
+                    "color": "#DF563D",
+                    "start_s": 0.5,
+                    "end_s": max(2.0, duration_s - 2.2),
+                    "dashed": False,
+                }
+            ],
+            markers=[
+                {
+                    "label": "DOMUS PUBLICA",
+                    "sublabel": "CAESAR DEPARTS · ~11:00 AM",
+                    "lon": 12.4865,
+                    "lat": 41.8919,
+                    "color": "#E5B567",
+                    "start_s": 0.2,
+                    "end_s": duration_s + 1.0,
+                    "offset_x": -290,
+                    "offset_y": 32,
+                },
+                {
+                    "label": "FORUM ROMANUM",
+                    "sublabel": "ARTEMIDORUS SCROLL WARNING",
+                    "lon": 12.4834,
+                    "lat": 41.8929,
+                    "color": "#E39B43",
+                    "start_s": 2.0,
+                    "end_s": duration_s + 1.0,
+                    "offset_x": 26,
+                    "offset_y": -82,
+                },
+                {
+                    "label": "CURIA OF POMPEY",
+                    "sublabel": "60 SENATORS WAITING INSIDE",
+                    "lon": 12.4754,
+                    "lat": 41.8954,
+                    "color": "#DF563D",
+                    "start_s": 1.2,
+                    "end_s": duration_s + 1.0,
+                    "offset_x": 28,
+                    "offset_y": -76,
+                },
+            ],
+            sea_and_region_labels=[
+                {"text": "TIBER RIVER", "lon": 12.4694, "lat": 41.8938, "kind": "sea", "size": 21},
+                {"text": "CAMPUS MARTIUS", "lon": 12.4754, "lat": 41.8984, "kind": "region", "size": 20},
+                {"text": "CAPITOLINE HILL", "lon": 12.4827, "lat": 41.8942, "kind": "region", "size": 17},
+                {"text": "PALATINE HILL", "lon": 12.4876, "lat": 41.8894, "kind": "region", "size": 19},
+            ],
+            palette="ancient_rome_parchment",
+            era_badge="MARCH 15, 44 BCE · 11:00 AM",
+            lock_horizon=True,
+            telemetry_subtitle="ANCIENT ROME · 44 BCE",
+            city_layers=city_layers,
+        )
+
+    return WebGLMapSpec(
+        map_id="rome_overview_b1",
+        title="ROME · MARCH 15, 44 BCE",
+        subtitle="Domus Publica to the Curia of Pompey — barely a 20-minute walk",
+        duration_s=duration_s,
+        relief_bounds=(12.465, 41.885, 12.495, 41.903),
+        start_camera={"center_lon": 12.4809, "center_lat": 41.8936, "zoom": 14.75, "pitch": 34.0, "bearing": 0.0},
+        end_camera={"center_lon": 12.4807, "center_lat": 41.8937, "zoom": 15.30, "pitch": 34.0, "bearing": 0.0},
+        routes=[
+            {
+                "coords": caesar_route_coords,
+                "color": "#DF563D",
+                "start_s": 1.0,
+                "end_s": max(2.5, duration_s - 1.6),
+                "dashed": False,
+            }
+        ],
+        markers=[
+            {
+                "label": "DOMUS PUBLICA",
+                "sublabel": "CAESAR'S RESIDENCE · DAWN",
+                "lon": 12.4865,
+                "lat": 41.8919,
+                "color": "#E5B567",
+                "start_s": 0.3,
+                "end_s": duration_s + 1.0,
+                "offset_x": -300,
+                "offset_y": 38,
+            },
+            {
+                "label": "CURIA OF POMPEY",
+                "sublabel": "SENATE SESSION · 1.3 KM WEST",
+                "lon": 12.4754,
+                "lat": 41.8954,
+                "color": "#DF563D",
+                "start_s": 2.0,
+                "end_s": duration_s + 1.0,
+                "offset_x": 28,
+                "offset_y": -74,
+            },
+        ],
+        sea_and_region_labels=[
+            {"text": "TIBER RIVER", "lon": 12.4704, "lat": 41.8942, "kind": "sea", "size": 21},
+            {"text": "CAMPUS MARTIUS", "lon": 12.4756, "lat": 41.8982, "kind": "region", "size": 20},
+            {"text": "FORUM ROMANUM", "lon": 12.4852, "lat": 41.8938, "kind": "region", "size": 17},
+            {"text": "PALATINE HILL", "lon": 12.4876, "lat": 41.8894, "kind": "region", "size": 19},
+        ],
+        palette="ancient_rome_parchment",
+        era_badge="IDES OF MARCH · 44 BCE",
+        lock_horizon=True,
+        telemetry_subtitle="ANCIENT ROME · 44 BCE",
+        city_layers=city_layers,
+    )
 
 
 def render_webgl_cinema_map(
@@ -799,7 +1404,11 @@ def render_webgl_cinema_map(
 ) -> dict[str, Any]:
     """Render a 2K 24fps zero-jitter 2x-supersampled MapLibre GL WebGL2 documentary map animation."""
     out_mp4.parent.mkdir(parents=True, exist_ok=True)
-    relief_png, land_ratio = _grade_relief_plate_paleo(spec.relief_bounds, out_mp4.with_suffix(".relief.png"))
+    if spec.city_layers:
+        relief_png = out_mp4.with_suffix(".relief.png")
+        land_ratio = 0.88
+    else:
+        relief_png, land_ratio = _grade_relief_plate_paleo(spec.relief_bounds, out_mp4.with_suffix(".relief.png"))
 
     html_path = out_mp4.with_suffix(".html")
     html_path.write_text(_build_maplibre_html(spec, relief_png, width=render_width, height=render_height), encoding="utf-8")
@@ -826,7 +1435,7 @@ def render_webgl_cinema_map(
         "-c:v",
         "libx264",
         "-preset",
-        "medium",
+        "veryfast",
         "-crf",
         "16",
         "-pix_fmt",
@@ -881,6 +1490,7 @@ def render_webgl_cinema_map(
         "map_id": spec.map_id,
         "path": str(out_mp4),
         "palette": spec.palette,
+        "lock_horizon": bool(spec.lock_horizon),
         "land_ratio": round(land_ratio, 3),
         "context_labels": [str(lbl.get("text", "")) for lbl in spec.sea_and_region_labels],
         "title_bbox": title_bbox,

@@ -1,0 +1,52 @@
+{
+  "schema": "ltx_scene_test/2",
+  "id": "ides_v5_loop5_batch_m4",
+  "asked": "Governed Antigravity super-realistic cinema batch ides_v5_loop5_batch_m4 under $15.00 SQLite WAL hard cap.",
+  "sound": "LTX native diegetic speech and physical foley; mastered downstream with scene-locked ambience.",
+  "ledger": {
+    "path": "/home/antigravity/vano1919/explainer-engine/jobs/ides_of_march_v5/ltx_batches/loop5_batch_m4/scene_ledger.json",
+    "caps": {
+      "modal_ltx": 1.25
+    }
+  },
+  "pictures": {
+    "manifest": "/home/antigravity/vano1919/explainer-engine/jobs/ides_of_march_v5/ltx_batches/loop5_batch_m4/pictures.json"
+  },
+  "shots": [
+    {
+      "shot_id": "b4_street_06_brutus_nudge_dlg",
+      "seconds": 5.5,
+      "seed": 5306,
+      "line": null,
+      "motion_prompt": "35mm HBO historical film medium close-up in warm Roman sunlight against marble columns, 50mm lens. Stern composed Decimus Brutus in crimson-bordered cream wool toga looks off-camera right, unsmiling, making a subtle firm gesture forward, speaking smoothly in English baritone: 'Move along, friend. The senators are already seated.' Lips close cleanly. Zero music.",
+      "picture": "b4_street_06_brutus_nudge_dlg"
+    },
+    {
+      "shot_id": "b4_street_07_keeps_walking_chain",
+      "seconds": 5.0,
+      "seed": 5307,
+      "line": null,
+      "motion_prompt": "35mm historical film seamless continuation in warm late-morning Roman sunlight. Decimus Brutus turns swiftly to keep pace ahead along the marble colonnade toward the distant shadow of Pompey's portico. Steady tracking glide, no dialogue, no music.",
+      "continue_frame": {
+        "pick": "sharpest_stillest",
+        "window_s": 0.35
+      }
+    },
+    {
+      "shot_id": "b5_steps_01_approach",
+      "seconds": 5.0,
+      "seed": 5401,
+      "line": null,
+      "motion_prompt": "35mm HBO historical film wide solemn tracking shot, high-contrast late-morning light cutting across the monumental travertine steps and fluted marble columns of the Curia of Pompey, Rome 44 BCE. Julius Caesar in his crimson-bordered cream toga climbs steadily up the steps toward the cool shadowed entrance. No dialogue, no music.",
+      "picture": "b5_steps_01_approach"
+    },
+    {
+      "shot_id": "b5_steps_02_caesar_ides_dlg",
+      "seconds": 5.5,
+      "seed": 5402,
+      "line": null,
+      "motion_prompt": "35mm HBO historical film medium close-up in warm directional sunlight against cool marble portico shadows, 50mm lens. Dignified unsmiling Julius Caesar in crimson-bordered cream toga pauses calmly looking off-camera right, arms lowered, speaking dryly in a deep resonant English baritone: 'Well, Spurinna \u2014 the Ides of March have come.' Lips close cleanly, steady gaze. Zero music.",
+      "picture": "b5_steps_02_caesar_ides_dlg"
+    }
+  ]
+}

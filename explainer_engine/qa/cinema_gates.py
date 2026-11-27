@@ -8,6 +8,8 @@ Catches the exact real-world visual and audio defects that legacy synthetic test
 """
 from __future__ import annotations
 
+import math
+import subprocess
 from pathlib import Path
 from typing import Any
 
@@ -1089,18 +1091,20 @@ def check_map_stability(
     max_mean_hf_shimmer: float = 2.6,
     max_peak_hf_shimmer: float = 4.2,
     max_p85_label_jerk_px: float = 0.55,
+    max_rotational_sway_deg: float = 0.35,
+    max_rot_oscillation_deg: float = 0.22,
     max_samples: int = 24,
 ) -> dict[str, Any]:
-    """Deterministic map stability gate measuring high-frequency WebGL shimmer and subpixel label jitter.
+    """Deterministic map stability gate measuring WebGL shimmer, label jitter, and camera gimbal sway.
 
     Samples consecutive frame triplets ``(t-1, t, t+1)`` across the map video:
-    1. High-frequency temporal shimmer: aligns consecutive luminance frames via subpixel ``phaseCorrelate``
-       to cancel smooth camera pan, then measures the MAD/mean energy in the spatial high-pass residual.
-       Thin aliased/dashed vector lines shimmer loudly even after translation compensation.
+    1. High-frequency temporal shimmer: aligns consecutive luminance frames via homography/``phaseCorrelate``
+       to cancel smooth camera pan, then measures the mean energy in the spatial high-pass residual.
     2. Label / corner feature jerk: tracks crisp corners across ``(t-1 -> t -> t+1)`` via PyrLK optical flow
        and measures second-order acceleration ``|(p_{t+1} - p_t) - (p_t - p_{t-1})|``.
-       Pre-rasterized bilinear sprites glide with near-zero jerk; per-frame ``fillText`` integer snapping
-       spikes jerk across frames.
+    3. Rotational camera sway & lateral wobble: fits ``cv2.estimateAffinePartial2D`` across consecutive
+       pairs to extract frame-to-frame rotation ``dtheta_deg`` and orthogonal lateral velocity residuals,
+       catching subtle horizon wobble ("ქანაობა") that pure translation checks miss.
     """
     cap = cv2.VideoCapture(str(video_path))
     if not cap.isOpened():
@@ -1146,6 +1150,9 @@ def check_map_stability(
 
     shimmers: list[float] = []
     jerks: list[float] = []
+    rot_deltas_deg: list[float] = []
+    rot_oscillations_deg: list[float] = []
+    trans_vecs: list[tuple[float, float]] = []
     hann_cache: np.ndarray | None = None
 
     for c in centers:
@@ -1163,7 +1170,7 @@ def check_map_stability(
         if hann_cache is None or hann_cache.shape != c0.shape:
             hann_cache = cv2.createHanningWindow((c0.shape[1], c0.shape[0]), cv2.CV_32F)
 
-        # 1. Track crisp features across (t-1 -> t -> t+1) for BOTH perspective alignment & second-order jerk
+        # 1. Track crisp features across (t-1 -> t -> t+1) for perspective alignment, jerk, and rotational sway
         roi0 = g0[y0:y1, x0:x1]
         roi1 = g1[y0:y1, x0:x1]
         roi2 = g2[y0:y1, x0:x1]
@@ -1183,6 +1190,16 @@ def check_map_stability(
                         flags=cv2.INTER_LINEAR,
                         borderMode=cv2.BORDER_REPLICATE,
                     )
+                aff01, _ = cv2.estimateAffinePartial2D(
+                    pts0[good01], pts1[good01], method=cv2.RANSAC, ransacReprojThreshold=2.0
+                )
+                theta01 = None
+                if aff01 is not None:
+                    theta01 = float(math.degrees(math.atan2(float(aff01[1, 0]), float(aff01[0, 0]))))
+                    rot_deltas_deg.append(abs(theta01))
+                    trans_vecs.append((float(aff01[0, 2]), float(aff01[1, 2])))
+            else:
+                theta01 = None
             good = good01 & (st2.ravel() == 1)
             if int(np.sum(good)) >= 6:
                 v01 = pts1[good] - pts0[good]
@@ -1191,6 +1208,14 @@ def check_map_stability(
                 valid_acc = accel[accel < 6.0]
                 if valid_acc.size >= 4:
                     jerks.extend(valid_acc.tolist())
+                if theta01 is not None and int(np.sum(good)) >= 8:
+                    aff12, _ = cv2.estimateAffinePartial2D(
+                        pts1[good], pts2[good], method=cv2.RANSAC, ransacReprojThreshold=2.0
+                    )
+                    if aff12 is not None:
+                        theta12 = float(math.degrees(math.atan2(float(aff12[1, 0]), float(aff12[0, 0]))))
+                        rot_deltas_deg.append(abs(theta12))
+                        rot_oscillations_deg.append(abs(theta12 - theta01))
 
         # 2. Motion-compensated high-frequency shimmer (homography cancels 3D tilt+zoom+pan; fallback phaseCorrelate)
         if c0_aligned is None:
@@ -1210,6 +1235,20 @@ def check_map_stability(
     peak_shimmer = float(np.max(shimmers)) if shimmers else 0.0
     med_jerk = float(np.median(jerks)) if jerks else 0.0
     p85_jerk = float(np.percentile(jerks, 85)) if jerks else 0.0
+    max_rot_sway = float(np.percentile(rot_deltas_deg, 95)) if rot_deltas_deg else 0.0
+    rot_osc_std = float(np.std(rot_oscillations_deg)) if len(rot_oscillations_deg) >= 2 else (
+        float(rot_oscillations_deg[0]) if rot_oscillations_deg else 0.0
+    )
+
+    lateral_sway_std = 0.0
+    if len(trans_vecs) >= 3:
+        arr = np.asarray(trans_vecs, dtype=np.float64)
+        mean_vec = np.mean(arr, axis=0)
+        norm = float(np.linalg.norm(mean_vec))
+        if norm > 0.05:
+            ortho = np.array([-mean_vec[1] / norm, mean_vec[0] / norm], dtype=np.float64)
+            lat_proj = arr @ ortho
+            lateral_sway_std = float(np.std(lat_proj))
 
     if mean_shimmer > max_mean_hf_shimmer:
         findings.append(f"High-frequency map shimmer {mean_shimmer:.2f} exceeds {max_mean_hf_shimmer:.2f} ceiling")
@@ -1217,6 +1256,14 @@ def check_map_stability(
         findings.append(f"Peak high-frequency map shimmer {peak_shimmer:.2f} exceeds {max_peak_hf_shimmer:.2f} ceiling")
     if p85_jerk > max_p85_label_jerk_px:
         findings.append(f"Label/feature jitter p85 jerk={p85_jerk:.3f}px/f^2 exceeds {max_p85_label_jerk_px:.2f}px/f^2 ceiling")
+    if max_rot_sway > max_rotational_sway_deg:
+        findings.append(
+            f"Map camera rotational sway {max_rot_sway:.3f}deg/frame exceeds {max_rotational_sway_deg:.2f}deg ceiling"
+        )
+    if rot_osc_std > max_rot_oscillation_deg:
+        findings.append(
+            f"Map camera rotational oscillation std={rot_osc_std:.3f}deg exceeds {max_rot_oscillation_deg:.2f}deg ceiling"
+        )
 
     return {
         "status": "PASS" if not findings else "FAIL",
@@ -1226,6 +1273,9 @@ def check_map_stability(
         "peak_hf_shimmer": round(peak_shimmer, 3),
         "median_label_jerk_px": round(med_jerk, 3),
         "p85_label_jerk_px": round(p85_jerk, 3),
+        "max_rot_sway_deg": round(max_rot_sway, 4),
+        "rot_oscillation_std_deg": round(rot_osc_std, 4),
+        "lateral_sway_std_px": round(lateral_sway_std, 4),
         "findings": findings,
     }
 
@@ -1932,5 +1982,652 @@ def run_full_cinema_audit(
         "failed_gates": failed_gates,
         "gates": results,
     }
+
+
+def _extract_env_descriptor(rgb: np.ndarray) -> np.ndarray:
+    """Compute a lighting- & background-weighted environment descriptor (Lab palette + multi-scale texture/gradients).
+
+    Weights the outer 65% frame border (walls, columns, lighting, atmosphere) higher than the central
+    foreground actor silhouette so genuine shot/reverse-shot camera angles in the SAME room score high
+    (>= 0.78) while disconnected rooms/palettes score sharply lower (< 0.65).
+    """
+    small = cv2.resize(rgb, (256, 144), interpolation=cv2.INTER_AREA)
+    h, w = small.shape[:2]
+    # Background weight mask: outer architectural ring weight=1.0, center actor box weight=0.35
+    mask = np.ones((h, w), dtype=np.float32)
+    mask[int(h * 0.22) : int(h * 0.85), int(w * 0.30) : int(w * 0.70)] = 0.35
+
+    lab = cv2.cvtColor(small, cv2.COLOR_RGB2LAB).astype(np.float32)
+    hsv = cv2.cvtColor(small, cv2.COLOR_RGB2HSV).astype(np.float32)
+
+    # 1. Weighted 1D perceptual histograms in Lab (L, a, b) + Hue/Sat (captures room lighting, stone/wood palette)
+    feats: list[np.ndarray] = []
+    for ch, bins, rng in (
+        (lab[..., 0], 16, (0.0, 256.0)),
+        (lab[..., 1], 16, (64.0, 192.0)),
+        (lab[..., 2], 16, (64.0, 192.0)),
+        (hsv[..., 0], 12, (0.0, 180.0)),
+        (hsv[..., 1], 12, (0.0, 256.0)),
+    ):
+        hist, _ = np.histogram(ch.ravel(), bins=bins, range=rng, weights=mask.ravel())
+        hist = hist.astype(np.float32)
+        hist /= float(np.linalg.norm(hist)) + 1e-8
+        feats.append(hist)
+
+    # 2. Multi-scale Sobel gradient orientation + architectural edge density in border zone
+    gray = cv2.cvtColor(small, cv2.COLOR_RGB2GRAY).astype(np.float32) / 255.0
+    gx = cv2.Sobel(gray, cv2.CV_32F, 1, 0, ksize=3)
+    gy = cv2.Sobel(gray, cv2.CV_32F, 0, 1, ksize=3)
+    mag = np.hypot(gx, gy) * mask
+    ang = (np.arctan2(gy, gx) + np.pi) * (180.0 / (2.0 * np.pi))
+    ori_hist, _ = np.histogram(ang.ravel(), bins=12, range=(0.0, 180.0), weights=mag.ravel())
+    ori_hist = ori_hist.astype(np.float32)
+    ori_hist /= float(np.linalg.norm(ori_hist)) + 1e-8
+    feats.append(ori_hist * 0.85)
+
+    # 3. Mean & std chromaticity anchor in Lab space (normalized vector)
+    w_sum = float(np.sum(mask)) + 1e-8
+    lab_stats: list[float] = []
+    for c in range(3):
+        mu = float(np.sum(lab[..., c] * mask) / w_sum)
+        sd = float(np.sqrt(np.sum(((lab[..., c] - mu) ** 2) * mask) / w_sum))
+        lab_stats.extend([mu / 255.0, sd / 128.0])
+    stat_v = np.array(lab_stats, dtype=np.float32)
+    stat_v /= float(np.linalg.norm(stat_v)) + 1e-8
+    feats.append(stat_v * 1.15)
+
+    vec = np.concatenate(feats, axis=0)
+    return vec / (float(np.linalg.norm(vec)) + 1e-8)
+
+
+def check_same_scene_environment_continuity(
+    video_path: Path,
+    scene_shots: list[dict[str, Any]],
+    *,
+    min_median_similarity: float = 0.78,
+    min_pair_similarity: float = 0.68,
+) -> dict[str, Any]:
+    """Verify cross-shot environment/lighting/material continuity for every multi-shot ``scene_id``.
+
+    Groups shots sharing the same ``scene_id`` (or ``scene_group``), samples 3 interior frames
+    per shot (25%, 50%, 75%), computes background-weighted Lab + architectural gradient embeddings,
+    and checks pairwise cosine similarity. Catches v4's Shot 1 -> Shot 2 room-teleportation bug.
+    """
+    cap = cv2.VideoCapture(str(video_path))
+    if not cap.isOpened():
+        raise FileNotFoundError(f"Could not open video: {video_path}")
+    fps = float(cap.get(cv2.CAP_PROP_FPS) or 24.0)
+    total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT) or 0)
+    cap.release()
+
+    by_scene: dict[str, list[dict[str, Any]]] = {}
+    for sh in scene_shots:
+        sid = str(sh.get("scene_id") or sh.get("scene_group") or "").strip()
+        if not sid:
+            continue
+        by_scene.setdefault(sid, []).append(sh)
+
+    multi_scenes = {k: v for k, v in by_scene.items() if len(v) >= 2}
+    if not multi_scenes or total_frames < 2:
+        return {
+            "status": "PASS",
+            "scenes_checked": 0,
+            "median_env_similarity": 1.0,
+            "min_env_similarity": 1.0,
+            "scenes": [],
+            "findings": [],
+        }
+
+    # Gather all required frame indices in one sequential decode pass
+    shot_frame_map: dict[tuple[str, int], list[int]] = {}
+    wanted: list[int] = []
+    for sc_id, shots in multi_scenes.items():
+        for idx, sh in enumerate(shots):
+            st = float(sh.get("start_s", 0.0))
+            en = float(sh.get("end_s", st + float(sh.get("duration_s", 1.0))))
+            dur = max(0.12, en - st)
+            f_idxs = [
+                max(0, min(total_frames - 1, int(round((st + dur * frac) * fps))))
+                for frac in (0.25, 0.50, 0.75)
+            ]
+            shot_frame_map[(sc_id, idx)] = f_idxs
+            wanted.extend(f_idxs)
+
+    frames = _read_frames_at_indices(video_path, wanted)
+    findings: list[str] = []
+    scene_reports: list[dict[str, Any]] = []
+    all_sims: list[float] = []
+
+    for sc_id, shots in multi_scenes.items():
+        descs: list[tuple[str, np.ndarray]] = []
+        for idx, sh in enumerate(shots):
+            f_idxs = shot_frame_map[(sc_id, idx)]
+            vecs = [_extract_env_descriptor(frames[fi]) for fi in f_idxs if fi in frames]
+            if not vecs:
+                continue
+            avg_v = np.mean(vecs, axis=0).astype(np.float32)
+            avg_v /= float(np.linalg.norm(avg_v)) + 1e-8
+            descs.append((str(sh.get("shot_id") or f"{sc_id}_{idx + 1}"), avg_v))
+
+        pair_sims: list[float] = []
+        pair_details: list[dict[str, Any]] = []
+        for i in range(len(descs)):
+            for j in range(i + 1, len(descs)):
+                sim = float(np.clip(np.dot(descs[i][1], descs[j][1]), -1.0, 1.0))
+                pair_sims.append(sim)
+                all_sims.append(sim)
+                pair_details.append(
+                    {"shot_a": descs[i][0], "shot_b": descs[j][0], "env_similarity": round(sim, 4)}
+                )
+
+        sc_med = float(np.median(pair_sims)) if pair_sims else 1.0
+        sc_min = float(np.min(pair_sims)) if pair_sims else 1.0
+        sc_ok = (sc_med >= min_median_similarity) and (sc_min >= min_pair_similarity)
+        if sc_med < min_median_similarity:
+            findings.append(
+                f"Scene {sc_id!r} median environment continuity {sc_med:.3f} < {min_median_similarity:.2f} "
+                "(shots look like disconnected environments)"
+            )
+        if sc_min < min_pair_similarity:
+            worst = min(pair_details, key=lambda x: x["env_similarity"])
+            findings.append(
+                f"Scene {sc_id!r} worst shot pair {worst['shot_a']} <-> {worst['shot_b']} "
+                f"env_similarity={sc_min:.3f} < {min_pair_similarity:.2f}"
+            )
+        scene_reports.append(
+            {
+                "scene_id": sc_id,
+                "shot_count": len(descs),
+                "median_env_similarity": round(sc_med, 4),
+                "min_env_similarity": round(sc_min, 4),
+                "passed": sc_ok,
+                "pairs": pair_details,
+            }
+        )
+
+    return {
+        "status": "PASS" if not findings else "FAIL",
+        "scenes_checked": len(scene_reports),
+        "median_env_similarity": round(float(np.median(all_sims)) if all_sims else 1.0, 4),
+        "min_env_similarity": round(float(np.min(all_sims)) if all_sims else 1.0, 4),
+        "scenes": scene_reports,
+        "findings": findings,
+    }
+
+
+def _radial_flow_divergence(gray_prev: np.ndarray, gray_next: np.ndarray) -> float:
+    """Estimate normalized radial optical-flow divergence (positive = zoom-in, negative = zoom-out)."""
+    flow = cv2.calcOpticalFlowFarneback(
+        gray_prev,
+        gray_next,
+        None,
+        pyr_scale=0.5,
+        levels=3,
+        winsize=15,
+        iterations=3,
+        poly_n=5,
+        poly_sigma=1.2,
+        flags=0,
+    )
+    h, w = gray_prev.shape[:2]
+    yy, xx = np.mgrid[0:h, 0:w].astype(np.float32)
+    rx = (xx - w * 0.5) / max(1.0, w * 0.5)
+    ry = (yy - h * 0.5) / max(1.0, h * 0.5)
+    r2 = rx * rx + ry * ry
+    ring = r2 > 0.08  # exclude center singularity
+    u = flow[..., 0] / max(1.0, w * 0.5)
+    v = flow[..., 1] / max(1.0, h * 0.5)
+    rad = (u[ring] * rx[ring] + v[ring] * ry[ring]) / (r2[ring] + 1e-6)
+    return float(np.median(rad)) if rad.size else 0.0
+
+
+def _affine_scale_and_anisotropy(gray_a: np.ndarray, gray_b: np.ndarray) -> tuple[float, float, int]:
+    """Estimate affine scale factor (sqrt(sx*sy)) and aspect stretch (|sx/sy - 1|) between two similar frames."""
+    pts_a = cv2.goodFeaturesToTrack(gray_a, maxCorners=220, qualityLevel=0.02, minDistance=8, blockSize=5)
+    if pts_a is None or len(pts_a) < 10:
+        return 1.0, 0.0, 0
+    pts_b, st, _ = cv2.calcOpticalFlowPyrLK(gray_a, gray_b, pts_a, None, winSize=(21, 21), maxLevel=3)
+    if pts_b is None or st is None:
+        return 1.0, 0.0, 0
+    good = st.ravel() == 1
+    if int(np.sum(good)) < 10:
+        return 1.0, 0.0, int(np.sum(good))
+    mat, inliers = cv2.estimateAffine2D(
+        pts_a[good].reshape(-1, 2),
+        pts_b[good].reshape(-1, 2),
+        method=cv2.RANSAC,
+        ransacReprojThreshold=3.0,
+    )
+    if mat is None or inliers is None or int(np.sum(inliers)) < 8:
+        return 1.0, 0.0, int(np.sum(inliers)) if inliers is not None else 0
+    sx = float(np.hypot(mat[0, 0], mat[1, 0]))
+    sy = float(np.hypot(mat[0, 1], mat[1, 1]))
+    if sx < 0.5 or sy < 0.5 or sx > 1.8 or sy > 1.8:
+        return 1.0, 0.0, int(np.sum(inliers))
+    scale = float(np.sqrt(sx * sy))
+    aniso = abs((sx / max(1e-6, sy)) - 1.0)
+    return scale, aniso, int(np.sum(inliers))
+
+
+def check_no_transition_stretch_or_zoom_jump(
+    video_path: Path,
+    shot_windows: list[dict[str, Any]],
+    *,
+    max_scale_jump: float = 0.045,
+    max_anisotropy_ratio: float = 0.040,
+    max_radial_div_jump: float = 0.055,
+) -> dict[str, Any]:
+    """Detect frame stretching, anisotropic aspect distortion, or zoom-jump glitches across cut boundaries.
+
+    Inspects frames ``[cut-2, cut-1, cut, cut+1]`` at each shot boundary:
+    - On chained handoffs (or visually continuous same-framing boundaries), measures affine scale
+      delta ``|scale - 1.0|``, anisotropic stretch ``|sx/sy - 1.0|``, and Farneback radial flow
+      divergence discontinuity across the boundary.
+    - Also checks within-clip radial divergence velocity reversals right before vs right after a cut
+      on chained clips so pre-stitch zoompan/ken-burns glitches are always caught deterministically.
+    """
+    cap = cv2.VideoCapture(str(video_path))
+    if not cap.isOpened():
+        raise FileNotFoundError(f"Could not open video: {video_path}")
+    fps = float(cap.get(cv2.CAP_PROP_FPS) or 24.0)
+    total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT) or 0)
+    cap.release()
+
+    if len(shot_windows) < 2 or total_frames < 5:
+        return {
+            "status": "PASS",
+            "boundaries_checked": 0,
+            "anomalies": 0,
+            "boundaries": [],
+            "findings": [],
+        }
+
+    pairs: list[dict[str, Any]] = []
+    wanted: list[int] = []
+    for i in range(len(shot_windows) - 1):
+        a = shot_windows[i]
+        b = shot_windows[i + 1]
+        cut_s = float(b.get("start_s", a.get("end_s", 0.0)))
+        b_idx = int(round(cut_s * fps))
+        if b_idx < 2 or b_idx >= total_frames - 2:
+            continue
+        idxs = [b_idx - 2, b_idx - 1, b_idx, b_idx + 1]
+        wanted.extend(idxs)
+        pairs.append({"a": a, "b": b, "cut_s": cut_s, "idxs": idxs})
+
+    frames = _read_frames_at_indices(video_path, wanted)
+    findings: list[str] = []
+    reports: list[dict[str, Any]] = []
+
+    for p in pairs:
+        i0, i1, i2, i3 = p["idxs"]
+        if any(ix not in frames for ix in (i0, i1, i2, i3)):
+            continue
+        g0 = cv2.cvtColor(cv2.resize(frames[i0], (320, 180), interpolation=cv2.INTER_AREA), cv2.COLOR_RGB2GRAY)
+        g1 = cv2.cvtColor(cv2.resize(frames[i1], (320, 180), interpolation=cv2.INTER_AREA), cv2.COLOR_RGB2GRAY)
+        g2 = cv2.cvtColor(cv2.resize(frames[i2], (320, 180), interpolation=cv2.INTER_AREA), cv2.COLOR_RGB2GRAY)
+        g3 = cv2.cvtColor(cv2.resize(frames[i3], (320, 180), interpolation=cv2.INTER_AREA), cv2.COLOR_RGB2GRAY)
+
+        a_id = str(p["a"].get("shot_id") or "shot_a")
+        b_id = str(p["b"].get("shot_id") or "shot_b")
+        is_chained = str(p["b"].get("chained_from") or "").strip() == a_id
+
+        # Check frame-pair visual correlation to distinguish true camera-angle hard cuts from continuous/chained seams
+        v1 = g1.astype(np.float32).ravel()
+        v2 = g2.astype(np.float32).ravel()
+        denom = float(np.linalg.norm(v1 - v1.mean()) * np.linalg.norm(v2 - v2.mean()))
+        corr = float(np.dot(v1 - v1.mean(), v2 - v2.mean()) / denom) if denom > 1e-6 else 0.0
+
+        div_before = _radial_flow_divergence(g0, g1)
+        div_after = _radial_flow_divergence(g2, g3)
+        div_across = _radial_flow_divergence(g1, g2) if (is_chained or corr >= 0.65) else 0.0
+
+        scale_across, aniso_across, inliers = (
+            _affine_scale_and_anisotropy(g1, g2) if (is_chained or corr >= 0.65) else (1.0, 0.0, 0)
+        )
+        scale_jump = abs(scale_across - 1.0)
+        div_step_jump = abs(div_across - 0.5 * (div_before + div_after)) if (is_chained or corr >= 0.65) else 0.0
+
+        passed = True
+        reason = "clean"
+        if is_chained or corr >= 0.65:
+            if scale_jump > max_scale_jump:
+                passed = False
+                reason = "zoom_scale_jump"
+                findings.append(
+                    f"Zoom/scale jump at {p['cut_s']:.2f}s ({a_id} -> {b_id}): "
+                    f"scale={scale_across:.4f} (|delta|={scale_jump:.4f} > {max_scale_jump:.3f})"
+                )
+            if aniso_across > max_anisotropy_ratio:
+                passed = False
+                reason = "anisotropic_frame_stretch"
+                findings.append(
+                    f"Frame aspect stretch at {p['cut_s']:.2f}s ({a_id} -> {b_id}): "
+                    f"anisotropy={aniso_across:.4f} > {max_anisotropy_ratio:.3f}"
+                )
+            if div_step_jump > max_radial_div_jump:
+                passed = False
+                reason = "radial_divergence_jump"
+                findings.append(
+                    f"Radial flow zoom-jump at {p['cut_s']:.2f}s ({a_id} -> {b_id}): "
+                    f"div_jump={div_step_jump:.4f} > {max_radial_div_jump:.3f} "
+                    f"(before={div_before:.4f}, across={div_across:.4f}, after={div_after:.4f})"
+                )
+
+        reports.append(
+            {
+                "cut_s": round(p["cut_s"], 3),
+                "from_shot": a_id,
+                "to_shot": b_id,
+                "is_chained": is_chained,
+                "boundary_corr": round(corr, 4),
+                "scale_across": round(scale_across, 4),
+                "anisotropy": round(aniso_across, 4),
+                "inliers": inliers,
+                "div_before": round(div_before, 4),
+                "div_across": round(div_across, 4),
+                "div_after": round(div_after, 4),
+                "div_jump": round(div_step_jump, 4),
+                "reason": reason,
+                "passed": passed,
+            }
+        )
+
+    return {
+        "status": "PASS" if not findings else "FAIL",
+        "boundaries_checked": len(reports),
+        "anomalies": len(findings),
+        "boundaries": reports,
+        "findings": findings,
+    }
+
+
+def check_dramatic_dialogue_presence(
+    shots: list[dict[str, Any]],
+    audio_path: Path,
+    *,
+    utterances: list[dict[str, Any]] | None = None,
+    min_voiced_shots: int = 2,
+    min_active_speech_ratio: float = 0.28,
+    max_narrator_overlap_s: float = 0.15,
+) -> dict[str, Any]:
+    """Enforce that dramatic dialogue shots contain real active spoken character dialogue (NOT silent staring)
+    AND zero narrator-over-dialogue collision."""
+    import soundfile as sf
+    from scipy.signal import butter, sosfiltfilt
+
+    p = Path(audio_path)
+    if not p.is_file():
+        raise FileNotFoundError(f"Audio file not found for dialogue check: {p}")
+
+    # Decode WAV directly or via ffmpeg if MP4/M4A passed
+    if p.suffix.lower() != ".wav":
+        tmp_wav = p.with_suffix(".diag_tmp.wav")
+        subprocess.run(
+            ["ffmpeg", "-y", "-v", "error", "-i", str(p), "-vn", "-ac", "1", "-ar", "16000", "-c:a", "pcm_s16le", str(tmp_wav)],
+            check=True,
+        )
+        try:
+            sig, sr = sf.read(str(tmp_wav), dtype="float32")
+        finally:
+            tmp_wav.unlink(missing_ok=True)
+    else:
+        sig, sr = sf.read(str(p), dtype="float32")
+    if sig.ndim > 1:
+        sig = sig.mean(axis=1)
+
+    # Human vocal formant band (300-3400 Hz)
+    nyq = 0.5 * sr
+    sos_vox = butter(3, [min(300.0, nyq * 0.4) / nyq, min(3400.0, nyq * 0.92) / nyq], btype="bandpass", output="sos")
+    vox = sosfiltfilt(sos_vox, sig.astype(np.float32)).astype(np.float32)
+
+    dialogue_shots = [
+        sh for sh in shots
+        if bool(sh.get("has_dialogue"))
+        or bool(sh.get("dialogue_line"))
+        or bool(sh.get("line"))
+    ]
+    findings: list[str] = []
+    shot_reports: list[dict[str, Any]] = []
+    voiced_ok = 0
+
+    if len(dialogue_shots) < min_voiced_shots:
+        findings.append(
+            f"Only {len(dialogue_shots)} dramatic dialogue shot(s) planned (minimum {min_voiced_shots} required; zero silent staring)"
+        )
+
+    hop = max(1, int(round(0.025 * sr)))
+    for sh in dialogue_shots:
+        sid = str(sh.get("shot_id") or "dialogue_shot")
+        st = float(sh.get("start_s", 0.0))
+        en = float(sh.get("end_s", st + float(sh.get("duration_s", 0.0))))
+        i0 = max(0, min(len(vox), int(round(st * sr))))
+        i1 = max(i0, min(len(vox), int(round(en * sr))))
+        seg = vox[i0:i1]
+        if len(seg) < hop:
+            active_ratio = 0.0
+            peak_db = -90.0
+        else:
+            n_blk = len(seg) // hop
+            blks = seg[: n_blk * hop].reshape(n_blk, hop)
+            rms_db = 20.0 * np.log10(np.sqrt(np.mean(blks * blks, axis=1)) + 1e-9)
+            active_ratio = float(np.mean(rms_db > -34.0))
+            peak_db = float(np.max(rms_db))
+
+        # Check narrator-over-dialogue collision
+        overlap_s = 0.0
+        for ut in utterances or []:
+            u0 = float(ut.get("start_s", 0.0))
+            u1 = float(ut.get("end_s", 0.0))
+            ov = max(0.0, min(en, u1) - max(st, u0))
+            overlap_s += ov
+
+        has_speech = active_ratio >= min_active_speech_ratio and peak_db > -28.0
+        no_collision = overlap_s <= max_narrator_overlap_s
+        if has_speech:
+            voiced_ok += 1
+        else:
+            findings.append(
+                f"Dialogue shot {sid!r} ({st:.2f}-{en:.2f}s) lacks audible character speech "
+                f"(active_ratio={active_ratio:.2f} < {min_active_speech_ratio:.2f}, peak={peak_db:.1f} dBFS)"
+            )
+        if not no_collision:
+            findings.append(
+                f"Narrator collides with character dialogue in {sid!r} ({st:.2f}-{en:.2f}s): overlap={overlap_s:.2f}s > {max_narrator_overlap_s:.2f}s"
+            )
+        shot_reports.append(
+            {
+                "shot_id": sid,
+                "start_s": round(st, 3),
+                "end_s": round(en, 3),
+                "active_speech_ratio": round(active_ratio, 3),
+                "peak_vocal_dbfs": round(peak_db, 2),
+                "narrator_overlap_s": round(overlap_s, 3),
+                "passed": has_speech and no_collision,
+            }
+        )
+
+    return {
+        "status": "PASS" if not findings else "FAIL",
+        "dialogue_shots_checked": len(dialogue_shots),
+        "voiced_shots_passed": voiced_ok,
+        "shots": shot_reports,
+        "findings": findings,
+    }
+
+
+def check_scene_first_routing(
+    shots: list[dict[str, Any]],
+    *,
+    min_shots_per_ltx_scene: int = 2,
+) -> dict[str, Any]:
+    """Enforce Scene-First Routing: EVERY LTX video shot MUST belong to a multi-shot ``scene_id`` (>= 2 shots).
+
+    Prevents 1-off LTX "video slideshows" during narrated exposition; abstract exposition routes
+    cleanly to ``still_25d``, ``map_action``, or ``drawing_explainer``.
+    """
+    ltx_routes = {"ltx", "ltx_video", "video"}
+    scene_counts: dict[str, list[str]] = {}
+    findings: list[str] = []
+    ltx_total = 0
+
+    for idx, sh in enumerate(shots):
+        route = str(sh.get("route") or sh.get("kind") or "").strip().lower()
+        if route not in ltx_routes:
+            continue
+        ltx_total += 1
+        sid = str(sh.get("shot_id") or f"shot_{idx + 1}")
+        sc = str(sh.get("scene_id") or sh.get("scene_group") or "").strip()
+        if not sc:
+            findings.append(f"LTX shot {sid!r} has no scene_id (1-off LTX slideshow clips are forbidden)")
+            continue
+        scene_counts.setdefault(sc, []).append(sid)
+
+    for sc, members in scene_counts.items():
+        if len(members) < min_shots_per_ltx_scene:
+            findings.append(
+                f"Scene {sc!r} has only {len(members)} LTX shot ({members[0]}); "
+                f"every LTX scene requires >= {min_shots_per_ltx_scene} connected shots (route exposition to 2.5D/map/explainer)"
+            )
+
+    return {
+        "status": "PASS" if not findings else "FAIL",
+        "ltx_shots_checked": ltx_total,
+        "ltx_scenes": {k: len(v) for k, v in scene_counts.items()},
+        "findings": findings,
+    }
+
+
+def check_audio_scene_bleed(
+    sfx_events: list[dict[str, Any]],
+    scene_ambiences: list[dict[str, Any]],
+    scene_windows: list[dict[str, Any]],
+    *,
+    max_bleed_s: float = 0.35,
+) -> dict[str, Any]:
+    """Fail-closed check ensuring zero SFX or scene ambience bleeds > ``max_bleed_s`` past its owning scene.
+
+    Eliminates v4's multi-second cross-scene audio bleed (e.g., wolf growls continuing into campfire scenes).
+    """
+    findings: list[str] = []
+    ordered_scenes = sorted(scene_windows, key=lambda s: float(s.get("start_s", 0.0)))
+
+    def _owner_scene(t: float) -> dict[str, Any] | None:
+        for sw in ordered_scenes:
+            if float(sw.get("start_s", 0.0)) - 0.05 <= t < float(sw.get("end_s", 0.0)):
+                return sw
+        return None
+
+    amb_bleeds: list[dict[str, Any]] = []
+    for idx, amb in enumerate(scene_ambiences):
+        st = float(amb.get("start_s", 0.0))
+        en = float(amb.get("effective_end_s", float(amb.get("end_s", st)) + float(amb.get("l_cut_tail_s", 0.0))))
+        owner = _owner_scene(st)
+        if owner is None:
+            continue
+        owner_end = float(owner.get("end_s", en))
+        bleed = en - owner_end
+        if bleed > max_bleed_s + 1e-6:
+            rec = {
+                "kind": "ambience",
+                "id": str(amb.get("shot_id") or amb.get("scene_environment") or f"amb_{idx + 1}"),
+                "owning_scene": str(owner.get("scene_id") or owner.get("shot_id") or "scene"),
+                "scene_end_s": round(owner_end, 3),
+                "audio_end_s": round(en, 3),
+                "bleed_s": round(bleed, 3),
+            }
+            amb_bleeds.append(rec)
+            findings.append(
+                f"Ambience {rec['id']!r} bleeds {bleed:.2f}s past owning scene {rec['owning_scene']!r} "
+                f"(end={owner_end:.2f}s, audio_end={en:.2f}s > +{max_bleed_s:.2f}s)"
+            )
+
+    sfx_bleeds: list[dict[str, Any]] = []
+    for idx, ev in enumerate(sfx_events):
+        t0 = float(ev.get("time_s", 0.0))
+        dur = float(ev.get("effective_duration_s", ev.get("max_duration_s", 0.0)))
+        audio_end = float(ev.get("effective_end_s", t0 + dur))
+        owner = _owner_scene(t0)
+        if owner is None:
+            continue
+        owner_end = float(owner.get("end_s", audio_end))
+        bleed = audio_end - owner_end
+        if bleed > max_bleed_s + 1e-6:
+            rec = {
+                "kind": "sfx",
+                "id": str(ev.get("label") or Path(str(ev.get("wav_path") or f"sfx_{idx + 1}")).stem),
+                "owning_scene": str(owner.get("scene_id") or owner.get("shot_id") or "scene"),
+                "scene_end_s": round(owner_end, 3),
+                "audio_end_s": round(audio_end, 3),
+                "bleed_s": round(bleed, 3),
+            }
+            sfx_bleeds.append(rec)
+            findings.append(
+                f"SFX {rec['id']!r} bleeds {bleed:.2f}s past owning scene {rec['owning_scene']!r} "
+                f"(end={owner_end:.2f}s, audio_end={audio_end:.2f}s > +{max_bleed_s:.2f}s)"
+            )
+
+    return {
+        "status": "PASS" if not findings else "FAIL",
+        "max_bleed_s": max_bleed_s,
+        "ambience_checked": len(scene_ambiences),
+        "sfx_checked": len(sfx_events),
+        "bleed_violations": amb_bleeds + sfx_bleeds,
+        "findings": findings,
+    }
+
+
+def check_music_to_voice_headroom(
+    voice_wav: Path,
+    music_wav: Path,
+    *,
+    min_headroom_db: float = 22.0,
+    max_headroom_db: float = 38.0,
+) -> dict[str, Any]:
+    """Verify modern documentary underscore sits cleanly 22-38 dB below active voice (never competing with speech)."""
+    import soundfile as sf
+
+    if not Path(voice_wav).is_file() or not Path(music_wav).is_file():
+        return {"status": "FAIL", "findings": ["Missing voice_wav or music_wav for headroom check"]}
+
+    v, sr_v = sf.read(str(voice_wav), dtype="float32", always_2d=True)
+    m, sr_m = sf.read(str(music_wav), dtype="float32", always_2d=True)
+    v_mono = v.mean(axis=1)
+    m_mono = m.mean(axis=1)
+    n = min(len(v_mono), len(m_mono))
+    v_mono = v_mono[:n]
+    m_mono = m_mono[:n]
+
+    active = np.abs(v_mono) > 0.015
+    if int(np.sum(active)) < max(100, int(0.2 * sr_v)):
+        return {"status": "FAIL", "findings": ["Insufficient active speech in voice_wav to measure headroom"]}
+
+    v_rms_db = float(20.0 * np.log10(float(np.sqrt(np.mean(v_mono[active] ** 2))) + 1e-12))
+    m_rms_db = float(20.0 * np.log10(float(np.sqrt(np.mean(m_mono[active] ** 2))) + 1e-12))
+    headroom_db = v_rms_db - m_rms_db
+
+    findings: list[str] = []
+    if headroom_db < min_headroom_db:
+        findings.append(
+            f"Music underscore too loud relative to voice: headroom={headroom_db:.1f} dB < required {min_headroom_db:.1f} dB "
+            f"(voice={v_rms_db:.1f} dBFS, music={m_rms_db:.1f} dBFS)"
+        )
+    if headroom_db > max_headroom_db:
+        findings.append(
+            f"Music underscore effectively inaudible: headroom={headroom_db:.1f} dB > max {max_headroom_db:.1f} dB "
+            f"(voice={v_rms_db:.1f} dBFS, music={m_rms_db:.1f} dBFS)"
+        )
+
+    return {
+        "status": "PASS" if not findings else "FAIL",
+        "voice_active_rms_dbfs": round(v_rms_db, 2),
+        "music_under_voice_rms_dbfs": round(m_rms_db, 2),
+        "headroom_db": round(headroom_db, 2),
+        "target_band_db": [min_headroom_db, max_headroom_db],
+        "findings": findings,
+    }
+
+
+
 
 

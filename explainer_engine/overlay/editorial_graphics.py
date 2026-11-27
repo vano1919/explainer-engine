@@ -79,6 +79,215 @@ class EditorialGraphicSpec:
                 )
 
 
+def _yunet_detect_boxes(
+    frame: Any,
+    *,
+    score_threshold: float = 0.55,
+    yunet_model_path: Path | None = None,
+) -> list[tuple[int, int, int, int]]:
+    import cv2
+
+    src_h, src_w = frame.shape[:2]
+    raw_boxes: list[tuple[int, int, int, int]] = []
+    repo_root = Path(__file__).resolve().parents[2]
+    candidate_models = [
+        yunet_model_path,
+        repo_root / "assets" / "models" / "face_detection_yunet_2023mar.onnx",
+        Path("assets/models/face_detection_yunet_2023mar.onnx"),
+    ]
+    model_file = next((m for m in candidate_models if m is not None and Path(m).is_file()), None)
+    if model_file is not None and hasattr(cv2, "FaceDetectorYN"):
+        det = cv2.FaceDetectorYN.create(
+            str(model_file),
+            "",
+            (src_w, src_h),
+            score_threshold=float(score_threshold),
+            nms_threshold=0.3,
+            top_k=50,
+        )
+        _, faces = det.detect(frame)
+        if faces is not None:
+            for row in faces:
+                x, y, w, h = (
+                    int(round(float(row[0]))),
+                    int(round(float(row[1]))),
+                    int(round(float(row[2]))),
+                    int(round(float(row[3]))),
+                )
+                if w >= 24 and h >= 24:
+                    raw_boxes.append((max(0, x), max(0, y), min(src_w, x + w), min(src_h, y + h)))
+
+    if not raw_boxes and hasattr(cv2, "CascadeClassifier") and hasattr(cv2, "data"):
+        gray = cv2.equalizeHist(cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY))
+        min_dim = max(36, int(min(src_w, src_h) * 0.08))
+        haar_dir = Path(cv2.data.haarcascades)  # type: ignore[attr-defined]
+        for cname in ("haarcascade_frontalface_default.xml", "haarcascade_frontalface_alt2.xml"):
+            cpath = haar_dir / cname
+            if not cpath.is_file():
+                continue
+            clf = cv2.CascadeClassifier(str(cpath))
+            if clf.empty():
+                continue
+            for x, y, w, h in clf.detectMultiScale(gray, scaleFactor=1.08, minNeighbors=4, minSize=(min_dim, min_dim)):
+                raw_boxes.append((int(x), int(y), int(x + w), int(y + h)))
+    return raw_boxes
+
+
+def detect_face_track(
+    media_path: Path,
+    *,
+    max_duration_s: float | None = None,
+    num_samples: int = 8,
+    target_w: int = 1920,
+    target_h: int = 1080,
+    score_threshold: float = 0.50,
+    yunet_model_path: Path | None = None,
+) -> list[dict[str, float]]:
+    """Track the primary subject's head silhouette across a video clip in 1920x1080 coordinates.
+
+    Returns smooth per-timestamp ellipse keyframes ``[{"t_s", "cx", "cy", "rx", "ry"}, ...]``
+    generously padded outside the detected face so highlight circles never cross eyes, nose, or mouth.
+    """
+    import cv2
+
+    p = Path(media_path)
+    if not p.is_file() or p.suffix.lower() in {".jpg", ".jpeg", ".png", ".webp", ".bmp"}:
+        return []
+    cap = cv2.VideoCapture(str(p))
+    if not cap.isOpened():
+        return []
+    fps = float(cap.get(cv2.CAP_PROP_FPS) or 24.0)
+    total = int(cap.get(cv2.CAP_PROP_FRAME_COUNT) or 0)
+    dur_s = total / max(1.0, fps)
+    if max_duration_s is not None:
+        dur_s = min(dur_s, float(max_duration_s))
+    n = max(2, int(num_samples))
+    sample_times = [dur_s * (i / float(n - 1)) for i in range(n)]
+    track: list[dict[str, float]] = []
+    try:
+        for ts in sample_times:
+            idx = max(0, min(max(0, total - 1), int(round(ts * fps))))
+            cap.set(cv2.CAP_PROP_POS_FRAMES, idx)
+            ok, bgr = cap.read()
+            if not ok or bgr is None or bgr.size == 0:
+                continue
+            src_h, src_w = bgr.shape[:2]
+            boxes = _yunet_detect_boxes(bgr, score_threshold=score_threshold, yunet_model_path=yunet_model_path)
+            if not boxes:
+                continue
+            # Track largest primary subject face
+            bx0, by0, bx1, by1 = max(boxes, key=lambda b: (b[2] - b[0]) * (b[3] - b[1]))
+            sx = target_w / float(src_w)
+            sy = target_h / float(src_h)
+            cx = ((bx0 + bx1) * 0.5) * sx
+            cy = ((by0 + by1) * 0.485) * sy
+            # Generous outer halo (0.86x width, 0.78x height radius) keeps stroke strictly outside hair, ears & chin
+            rx = max(165.0, ((bx1 - bx0) * sx) * 0.86)
+            ry = max(205.0, ((by1 - by0) * sy) * 0.78)
+            track.append(
+                {
+                    "t_s": round(ts, 3),
+                    "cx": round(cx, 1),
+                    "cy": round(cy, 1),
+                    "rx": round(rx, 1),
+                    "ry": round(ry, 1),
+                }
+            )
+    finally:
+        cap.release()
+    return track
+
+
+def detect_face_avoid_zones(
+    media_path: Path,
+    *,
+    sample_time_s: float = 0.5,
+    pad_x_ratio: float = 0.40,
+    pad_y_ratio: float = 0.48,
+    target_w: int = 1920,
+    target_h: int = 1080,
+    score_threshold: float = 0.55,
+    yunet_model_path: Path | None = None,
+    multi_frame_union: bool = True,
+) -> list[tuple[int, int, int, int]]:
+    """Detect human faces on CPU (OpenCV YuNet ``FaceDetectorYN`` primary, legacy Haar fallback) in 1920x1080 space.
+
+    For videos with ``multi_frame_union=True`` (default), samples across the full clip duration and returns
+    the padded union bounding box covering the subject's entire head trajectory so moving actors are never occluded.
+    """
+    import cv2
+
+    p = Path(media_path)
+    if not p.is_file():
+        return []
+
+    frames: list[Any] = []
+    if p.suffix.lower() in {".jpg", ".jpeg", ".png", ".webp", ".bmp"}:
+        im = cv2.imread(str(p))
+        if im is not None and im.size > 0:
+            frames.append(im)
+    else:
+        cap = cv2.VideoCapture(str(p))
+        if cap.isOpened():
+            fps = float(cap.get(cv2.CAP_PROP_FPS) or 24.0)
+            total = int(cap.get(cv2.CAP_PROP_FRAME_COUNT) or 0)
+            if multi_frame_union and total >= 8:
+                indices = sorted({int(round(i * (total - 1) / 6.0)) for i in range(7)})
+            else:
+                indices = [max(0, min(max(0, total - 1), int(round(sample_time_s * fps))))]
+            for idx in indices:
+                cap.set(cv2.CAP_PROP_POS_FRAMES, idx)
+                ok, bgr = cap.read()
+                if ok and bgr is not None and bgr.size > 0:
+                    frames.append(bgr)
+            cap.release()
+    if not frames:
+        return []
+
+    src_h, src_w = frames[0].shape[:2]
+    raw_boxes: list[tuple[int, int, int, int]] = []
+    for fr in frames:
+        raw_boxes.extend(_yunet_detect_boxes(fr, score_threshold=score_threshold, yunet_model_path=yunet_model_path))
+
+    if not raw_boxes:
+        return []
+
+    # Merge overlapping raw detections (across frames or detectors) into clean union avoid boxes
+    merged: list[list[int]] = []
+    for bx0, by0, bx1, by1 in sorted(raw_boxes, key=lambda b: (b[2] - b[0]) * (b[3] - b[1]), reverse=True):
+        placed = False
+        for m in merged:
+            ix0, iy0 = max(m[0], bx0), max(m[1], by0)
+            ix1, iy1 = min(m[2], bx1), min(m[3], by1)
+            if ix1 > ix0 and iy1 > iy0:
+                inter = (ix1 - ix0) * (iy1 - iy0)
+                area_b = max(1, (bx1 - bx0) * (by1 - by0))
+                if inter / float(area_b) >= 0.15:
+                    m[0] = min(m[0], bx0)
+                    m[1] = min(m[1], by0)
+                    m[2] = max(m[2], bx1)
+                    m[3] = max(m[3], by1)
+                    placed = True
+                    break
+        if not placed:
+            merged.append([bx0, by0, bx1, by1])
+
+    sx = target_w / float(src_w)
+    sy = target_h / float(src_h)
+    zones: list[tuple[int, int, int, int]] = []
+    for bx0, by0, bx1, by1 in merged:
+        bw = bx1 - bx0
+        bh = by1 - by0
+        px = int(round(bw * pad_x_ratio))
+        py = int(round(bh * pad_y_ratio))
+        zx0 = max(0, int(round((bx0 - px) * sx)))
+        zy0 = max(0, int(round((by0 - py) * sy)))
+        zx1 = min(target_w, int(round((bx1 + px) * sx)))
+        zy1 = min(target_h, int(round((by1 + py) * sy)))
+        zones.append((zx0, zy0, zx1, zy1))
+    return zones
+
+
 def _resolve_safe_floating_origin(
     lx: int,
     ly: int,
@@ -99,20 +308,37 @@ def _resolve_safe_floating_origin(
         x1, y1 = x0 + note_w, y0 + note_h
         return any(not (x1 <= zx0 or x0 >= zx1 or y1 <= zy0 or y0 >= zy1) for zx0, zy0, zx1, zy1 in zones)
 
-    candidates = [
+    raw_candidates = [
         (lx, ly),
+        (1260, 340),
+        (96, 340),
+        (1260, 680),
+        (96, 680),
         (lx, 760),
         (96, 760),
         (1320, 760),
         (96, 110),
         (1320, 110),
     ]
-    for cx, cy in candidates:
+    # Prefer requested origin if clear; otherwise pick the closest non-overlapping safe anchor
+    c0x = max(60, min(1920 - note_w - 40, lx))
+    c0y = max(70, min(1080 - note_h - 40, ly))
+    if not _overlaps(c0x, c0y):
+        return c0x, c0y
+
+    valid: list[tuple[float, int, int]] = []
+    for idx_c, (cx, cy) in enumerate(raw_candidates[1:]):
         cx_c = max(60, min(1920 - note_w - 40, cx))
         cy_c = max(70, min(1080 - note_h - 40, cy))
         if not _overlaps(cx_c, cy_c):
-            return cx_c, cy_c
-    return max(60, min(1920 - note_w - 40, lx)), max(70, min(1080 - note_h - 40, ly))
+            dist = ((cx_c - c0x) ** 2 + (cy_c - c0y) ** 2) ** 0.5
+            # Slight preference for clean horizontal eye-level side callouts (indices 0, 1)
+            bonus = -260.0 if idx_c in (0, 1) else 0.0
+            valid.append((dist + bonus, cx_c, cy_c))
+    if valid:
+        valid.sort(key=lambda t: t[0])
+        return valid[0][1], valid[0][2]
+    return c0x, c0y
 
 
 def _build_editorial_html(spec: EditorialGraphicSpec, *, width: int, height: int) -> str:
@@ -178,7 +404,7 @@ def _build_editorial_html(spec: EditorialGraphicSpec, *, width: int, height: int
         scrim_y = round((ly + 75) / 10.8, 1)
         body_html = f"""
         <div id="stage" class="stage-full">
-          <div class="floating-scrim" style="background: radial-gradient(ellipse 34% 22% at {scrim_x}% {scrim_y}%, rgba(4,7,12,0.74) 0%, rgba(4,7,12,0.34) 55%, rgba(4,7,12,0) 100%);"></div>
+          <div class="floating-scrim" style="background: radial-gradient(ellipse 46% 32% at {scrim_x}% {scrim_y}%, rgba(4,7,12,0.88) 0%, rgba(4,7,12,0.54) 56%, rgba(4,7,12,0) 100%);"></div>
           <svg id="rough-svg" class="full-svg" viewBox="0 0 1920 1080" width="1920" height="1080"></svg>
           <div class="floating-note" id="bbox-root" style="left:{lx}px; top:{ly}px;">
             <div class="eyebrow mono">{eyebrow}</div>
@@ -226,7 +452,7 @@ def _build_editorial_html(spec: EditorialGraphicSpec, *, width: int, height: int
         scrim_y = round((ly + 75) / 10.8, 1)
         body_html = f"""
         <div id="stage" class="stage-full">
-          <div class="floating-scrim" style="background: radial-gradient(ellipse 34% 22% at {scrim_x}% {scrim_y}%, rgba(4,7,12,0.74) 0%, rgba(4,7,12,0.34) 55%, rgba(4,7,12,0) 100%);"></div>
+          <div class="floating-scrim" style="background: radial-gradient(ellipse 50% 34% at {scrim_x}% {scrim_y}%, rgba(4,7,12,0.92) 0%, rgba(4,7,12,0.62) 55%, rgba(4,7,12,0) 100%);"></div>
           <svg id="rough-svg" class="full-svg" viewBox="0 0 1920 1080" width="1920" height="1080"></svg>
           <div class="floating-note" id="bbox-root" style="left:{lx}px; top:{ly}px;">
             <div class="eyebrow mono">{eyebrow}</div>
@@ -380,21 +606,99 @@ function addRoughNode(node) {{
   }});
 }}
 
+let chalkEllipseGroup = null;
+let chalkLeaderPath = null;
+let chalkBase = null;
+const faceTrack = Array.isArray(meta.face_track) ? meta.face_track : [];
+
+function sampleTrackAt(t) {{
+  if (!faceTrack.length) return null;
+  if (t <= faceTrack[0].t_s) return faceTrack[0];
+  const last = faceTrack[faceTrack.length - 1];
+  if (t >= last.t_s) return last;
+  for (let i = 0; i < faceTrack.length - 1; i++) {{
+    const a = faceTrack[i], b = faceTrack[i + 1];
+    if (t >= a.t_s && t <= b.t_s) {{
+      const u = (t - a.t_s) / Math.max(0.001, b.t_s - a.t_s);
+      return {{
+        cx: a.cx + (b.cx - a.cx) * u,
+        cy: a.cy + (b.cy - a.cy) * u,
+        rx: a.rx + (b.rx - a.rx) * u,
+        ry: a.ry + (b.ry - a.ry) * u,
+      }};
+    }}
+  }}
+  return last;
+}}
+
+function computeLeaderD(cx, cy, rx, ry, lx, ly) {{
+  let sx, sy, ex, ey, mx, my;
+  if (lx > cx + rx * 0.50) {{
+    sx = cx + rx * 1.02;
+    sy = cy - ry * 0.10;
+    ex = lx - 24;
+    ey = ly + 42;
+    mx = (sx + ex) * 0.5;
+    my = Math.min(sy, ey) - 24;
+  }} else if (lx + 420 < cx - rx * 0.50) {{
+    sx = cx - rx * 1.02;
+    sy = cy - ry * 0.10;
+    ex = lx + 440;
+    ey = ly + 42;
+    mx = (sx + ex) * 0.5;
+    my = Math.min(sy, ey) - 24;
+  }} else {{
+    const isBelow = ly >= cy;
+    sx = cx;
+    sy = isBelow ? (cy + ry * 1.02) : (cy - ry * 1.02);
+    ex = Math.max(lx + 40, Math.min(lx + 380, cx));
+    ey = isBelow ? (ly - 16) : (ly + 145);
+    mx = (sx + ex) * 0.5 + 18;
+    my = (sy + ey) * 0.5;
+  }}
+  return `M ${{sx.toFixed(1)}} ${{sy.toFixed(1)}} Q ${{mx.toFixed(1)}} ${{my.toFixed(1)}} ${{ex.toFixed(1)}} ${{ey.toFixed(1)}}`;
+}}
+
 // Build deterministic hand-drawn Rough.js chalk/ochre vector artwork
 if (template === "editorial_chapter_slate") {{
   addRoughNode(rc.line(30, 14, 610, 14, {{ stroke: accent, strokeWidth: 3.2, roughness: 1.7, bowing: 1.8, seed: 11 }}));
   addRoughNode(rc.line(110, 21, 530, 20, {{ stroke: accentCool, strokeWidth: 1.4, roughness: 1.4, bowing: 1.2, seed: 23 }}));
 }} else if (template === "chalk_circle_callout") {{
-  const cx = meta.cx || 960, cy = meta.cy || 540, rx = meta.rx || 180, ry = meta.ry || 120;
+  const t0 = sampleTrackAt(0.0);
+  const cx = t0 ? t0.cx : (meta.cx || 960);
+  const cy = t0 ? t0.cy : (meta.cy || 540);
+  const rx = t0 ? t0.rx : (meta.rx || 180);
+  const ry = t0 ? t0.ry : (meta.ry || 120);
   const lx = meta.label_x || Math.min(1320, cx + rx + 85), ly = meta.label_y || Math.max(150, cy - ry - 20);
-  addRoughNode(rc.ellipse(cx, cy, rx * 2, ry * 2, {{ stroke: accent, strokeWidth: 3.8, roughness: 2.1, bowing: 1.6, seed: 31 }}));
-  const sx = lx > cx ? cx + rx * 0.92 : cx - rx * 0.92;
-  const sy = cy - ry * 0.35;
-  const ex = lx > cx ? lx - 22 : lx + 420;
-  const ey = ly + 42;
-  const mx = (sx + ex) * 0.5;
-  const my = Math.min(sy, ey) - 42;
-  addRoughNode(rc.curve([[sx, sy], [mx, my], [ex, ey]], {{ stroke: "#F5E9D3", strokeWidth: 2.8, roughness: 1.6, seed: 37 }}));
+  chalkBase = {{ cx, cy, rx, ry, lx, ly }};
+  chalkEllipseGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+  chalkEllipseGroup.setAttribute("id", "chalk-ellipse-g");
+  const ellNode = rc.ellipse(cx, cy, rx * 2, ry * 2, {{ stroke: accent, strokeWidth: 3.8, roughness: 2.0, bowing: 1.5, seed: 31 }});
+  chalkEllipseGroup.appendChild(ellNode);
+  svg.appendChild(chalkEllipseGroup);
+  chalkEllipseGroup.querySelectorAll("path").forEach((p) => {{
+    p.setAttribute("stroke-linecap", "round");
+    p.setAttribute("stroke-linejoin", "round");
+    roughPaths.push(p);
+  }});
+  if (faceTrack.length >= 2) {{
+    chalkLeaderPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    chalkLeaderPath.setAttribute("d", computeLeaderD(cx, cy, rx, ry, lx, ly));
+    chalkLeaderPath.setAttribute("fill", "none");
+    chalkLeaderPath.setAttribute("stroke", "#F5E9D3");
+    chalkLeaderPath.setAttribute("stroke-width", "3.0");
+    chalkLeaderPath.setAttribute("stroke-linecap", "round");
+    svg.appendChild(chalkLeaderPath);
+    roughPaths.push(chalkLeaderPath);
+  }} else {{
+    const sx = lx > cx + rx * 0.50 ? cx + rx * 0.98 : (lx + 420 < cx - rx * 0.50 ? cx - rx * 0.98 : cx);
+    const sy = (lx > cx + rx * 0.50 || lx + 420 < cx - rx * 0.50) ? cy - ry * 0.12 : (ly >= cy ? cy + ry * 0.98 : cy - ry * 0.98);
+    const ex = lx > cx + rx * 0.50 ? lx - 24 : (lx + 420 < cx - rx * 0.50 ? lx + 440 : Math.max(lx + 40, Math.min(lx + 380, cx)));
+    const ey = (lx > cx + rx * 0.50 || lx + 420 < cx - rx * 0.50) ? ly + 42 : (ly >= cy ? ly - 16 : ly + 145);
+    const mx = (sx + ex) * 0.5;
+    const my = Math.min(sy, ey) - 24;
+    addRoughNode(rc.curve([[sx, sy], [mx, my], [ex, ey]], {{ stroke: "#F5E9D3", strokeWidth: 2.8, roughness: 1.6, seed: 37 }}));
+  }}
 }} else if (template === "handdrawn_stat_underline") {{
   addRoughNode(rc.line(8, 12, 430, 9, {{ stroke: accent, strokeWidth: 4.5, roughness: 2.0, bowing: 1.8, seed: 41 }}));
   addRoughNode(rc.line(18, 19, 360, 18, {{ stroke: accent, strokeWidth: 2.0, roughness: 1.8, bowing: 1.4, seed: 43 }}));
@@ -448,7 +752,23 @@ if (template === "handdrawn_stat_underline") {{
     .to("#stage", {{ opacity: 0, y: -8, duration: 0.45, ease: "power2.in" }}, outStart);
 }}
 
-window.__setTime = function(t) {{ tl.time(t, false); }};
+window.__setTime = function(t) {{
+  if (chalkEllipseGroup && chalkBase && faceTrack.length >= 2) {{
+    const cur = sampleTrackAt(t);
+    if (cur) {{
+      const sx = cur.rx / Math.max(1, chalkBase.rx);
+      const sy = cur.ry / Math.max(1, chalkBase.ry);
+      chalkEllipseGroup.setAttribute(
+        "transform",
+        `translate(${{cur.cx.toFixed(2)}} ${{cur.cy.toFixed(2)}}) scale(${{sx.toFixed(4)}} ${{sy.toFixed(4)}}) translate(${{(-chalkBase.cx).toFixed(2)}} ${{(-chalkBase.cy).toFixed(2)}})`
+      );
+      if (chalkLeaderPath) {{
+        chalkLeaderPath.setAttribute("d", computeLeaderD(cur.cx, cur.cy, cur.rx, cur.ry, chalkBase.lx, chalkBase.ly));
+      }}
+    }}
+  }}
+  tl.time(t, false);
+}};
 window.__getBBox = function() {{
   const el = document.getElementById("bbox-root");
   if (!el) return [0, 0, 0, 0];
@@ -469,9 +789,25 @@ def render_editorial_graphic_rgba(
     fps: int = 24,
     render_width: int = 1920,
     render_height: int = 1080,
+    auto_face_safe_source: Path | None = None,
+    face_sample_time_s: float = 0.5,
 ) -> dict[str, Any]:
     """Render a boxless Rough.js + GSAP 3.13 editorial graphic overlay to lossless PNG-RGBA MOV."""
     spec.validate()
+    detected_zones: list[tuple[int, int, int, int]] = []
+    if auto_face_safe_source is not None:
+        detected_zones = detect_face_avoid_zones(auto_face_safe_source, sample_time_s=face_sample_time_s, multi_frame_union=True)
+        if detected_zones:
+            existing = list(spec.meta.get("avoid_zones") or [])
+            spec.meta["avoid_zones"] = existing + [list(z) for z in detected_zones]
+        if spec.template == "chalk_circle_callout" and not spec.meta.get("face_track"):
+            track = detect_face_track(auto_face_safe_source, max_duration_s=spec.duration_s, num_samples=10)
+            if track:
+                spec.meta["face_track"] = track
+                spec.meta["cx"] = int(round(track[0]["cx"]))
+                spec.meta["cy"] = int(round(track[0]["cy"]))
+                spec.meta["rx"] = int(round(track[0]["rx"]))
+                spec.meta["ry"] = int(round(track[0]["ry"]))
     out_mov.parent.mkdir(parents=True, exist_ok=True)
     html_path = out_mov.with_suffix(".html")
     html_path.write_text(_build_editorial_html(spec, width=render_width, height=render_height), encoding="utf-8")
@@ -547,4 +883,5 @@ def render_editorial_graphic_rgba(
         "end_s": round(spec.start_s + spec.duration_s, 3),
         "duration_s": spec.duration_s,
         "bbox": bbox,
+        "avoid_zones": list(spec.meta.get("avoid_zones") or []),
     }
