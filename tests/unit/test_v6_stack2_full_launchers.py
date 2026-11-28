@@ -104,6 +104,20 @@ def test_hybrid_api_clients_dry_run_and_modal_deploy_manifest(tmp_path: Path) ->
     assert len(DEFAULT_WEIGHT_MANIFEST) >= 5
 
 
+def test_live_elevenlabs_speech_is_refused_and_reserves_nothing(tmp_path: Path) -> None:
+    guard = EpisodeBudgetGuard(episode_id="tts_live", cap_usd=10.00, db_path=tmp_path / "tts.sqlite3")
+    with pytest.raises(RuntimeError, match="ElevenLabs connector"):
+        run_elevenlabs_v4_tts(
+            job_id="live",
+            text="We hold the ridge until dawn.",
+            voice_id="voice_01",
+            out_wav=tmp_path / "v.wav",
+            budget_guard=guard,
+        )
+    assert guard.committed_usd == 0.0
+    assert not (tmp_path / "v.wav").exists()
+
+
 def test_stack2_cli_launcher_end_to_end_real_subprocess(tmp_path: Path) -> None:
     out_dir = tmp_path / "mvp_run"
     proc = subprocess.run(
