@@ -24,10 +24,7 @@ from explainer_engine.videolane.ltx_loop import (
     sha256_file,
     validate_acting_blocking_prompt,
 )
-from explainer_engine.videolane.multishot_scene_director import (
-    extract_axis_locked_coverage_plates,
-    validate_native_keyframe_plates,
-)
+from explainer_engine.videolane.multishot_scene_director import extract_axis_locked_coverage_plates
 
 
 def _write_mp4_from_frames(frames: list[np.ndarray], out_mp4: Path, fps: int = 24) -> Path:
@@ -38,25 +35,6 @@ def _write_mp4_from_frames(frames: list[np.ndarray], out_mp4: Path, fps: int = 2
         vw.write(fr)
     vw.release()
     return out_mp4
-
-
-def test_validate_native_keyframe_plates_blocks_crops_and_reuse() -> None:
-    bad_plan = [
-        {"shot_id": "s1", "route": "ltx_video", "picture": "temple_steps.png"},
-        {"shot_id": "s2", "route": "ltx_video", "picture": "temple_steps.png"},
-        {"shot_id": "s3", "route": "ltx_video", "picture": "crop_caesar.png", "derived_from_crop": True, "crop_upscale_ratio": 2.1},
-    ]
-    res = validate_native_keyframe_plates(bad_plan)
-    assert res["status"] == "FAIL"
-    assert any("reused 2 times" in f for f in res["findings"])
-    assert any("digitally cropped sub-plate" in f for f in res["findings"])
-
-    good_plan = [
-        {"shot_id": "s1", "route": "ltx_video", "picture": "angle_a.png", "plate_width": 1920, "plate_height": 1080},
-        {"shot_id": "s2", "route": "ltx_video", "picture": "angle_a.png", "chained_from": "s1"},
-        {"shot_id": "s3", "route": "ltx_video", "picture": "angle_b.png", "plate_width": 1920, "plate_height": 1080},
-    ]
-    assert validate_native_keyframe_plates(good_plan)["status"] == "PASS"
 
 
 def test_coverage_plates_cannot_be_cropped_at_any_width(tmp_path: Path) -> None:

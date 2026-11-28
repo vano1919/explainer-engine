@@ -20,7 +20,7 @@ Executes the full end-to-end Stack-2 control plane:
    Sync-3 / Seedance 2.5 / ElevenLabs v4 API escalations.
 6. Exports free-NLE ``.otio`` timeline (4 isolated audio stems + J/L-cuts + C2PA + NVENC AV1 safe config).
 7. Runs real OpenCV/FFmpeg QA smoke checks (``check_mouth_motion_sync``, ``check_acting_dynamics_and_freeze``,
-   ``validate_native_keyframe_plates``) when ``--run-qa-smoke`` is set.
+   ``check_shot_plate_diversity``) when ``--run-qa-smoke`` is set.
 """
 from __future__ import annotations
 
@@ -51,9 +51,9 @@ from explainer_engine.episode.mvp_drama_poc import build_stack2_drama_mvp_plan
 from explainer_engine.qa.cinema_gates import (
     check_acting_dynamics_and_freeze,
     check_mouth_motion_sync,
+    check_shot_plate_diversity,
 )
 from explainer_engine.studio.contact_sheet_slicer import slice_contact_sheet_3x3
-from explainer_engine.videolane.multishot_scene_director import validate_native_keyframe_plates
 
 
 def _create_synthetic_3x3_sheet(out_path: Path) -> Path:
@@ -110,17 +110,8 @@ def _run_local_qa_smoke(work_dir: Path, panel_paths: list[dict[str, Any]]) -> di
     acting_res = check_acting_dynamics_and_freeze(smoke_mp4, max_freeze_s=0.85, min_residual_subject_flow=0.08)
     # The synthetic clip has no face to detect: the gate measures a fixed box over the still centre of the frame
     mouth_res = check_mouth_motion_sync(smoke_mp4, has_dialogue=False, face_boxes=[[128.0, 50.0, 64.0, 64.0]] * 36)
-    plate_res = validate_native_keyframe_plates(
-        [
-            {
-                "shot_id": f"shot_{p['panel_index']:02d}",
-                "route": "ltx_video",
-                "plate_sha256": p["sha256"],
-                "plate_width": p["width"],
-                "plate_height": p["height"],
-            }
-            for p in panel_paths[:4]
-        ]
+    plate_res = check_shot_plate_diversity(
+        [{"shot_id": f"shot_{p['panel_index']:02d}", "plate_sha256": p["sha256"]} for p in panel_paths[:4]]
     )
 
     all_ok = (

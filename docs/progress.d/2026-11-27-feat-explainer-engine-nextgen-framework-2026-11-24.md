@@ -21,3 +21,8 @@
 - Not changed: `audio/elevenlabs_narrator.py` still calls the REST API, so `test_there_is_no_elevenlabs_rest_client_in_the_package` still fails on it.
 - Test: `tests/unit/test_v6_stack2_full_launchers.py`.
 - Cost: $0.00 (local only).
+
+### Stack-2: the duplicate plate validator removed again (2026-11-28)
+- Changed: the Stack-2 merge had brought back `videolane/multishot_scene_director.validate_native_keyframe_plates` and its test, which the integration above left out on purpose (it refused the real 1280x704 plates). Both are removed; the `cli/stack2_runner` smoke check uses `qa/cinema_gates.check_shot_plate_diversity` for plate reuse, and crops stay with `check_no_cropped_seed_plates` (BP-217).
+- Test: `tests/unit/test_v6_stack2_full_launchers.py` (the CLI run with `--run-qa-smoke`).
+- Cost: $0.00 (local only).

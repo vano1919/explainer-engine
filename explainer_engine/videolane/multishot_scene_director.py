@@ -984,66 +984,6 @@ def plan_dialogue_j_l_cuts(
     }
 
 
-
-
-def validate_native_keyframe_plates(
-    shot_specs: list[dict[str, Any]],
-    *,
-    min_width: int = 1280,
-    min_height: int = 720,
-    max_plate_reuse: int = 1,
-    max_crop_upscale: float = 1.35,
-) -> dict[str, Any]:
-    """Fail-closed guard preventing chopped sub-crops and repeated establishing plates in LTX plans.
-
-    Enforces two cinema quality laws:
-    1. No LTX shot may feed an aggressively cropped & upscaled slice of a wide image
-       (``derived_from_crop=True`` with ``crop_upscale_ratio > max_crop_upscale``).
-    2. No identical still plate (path or SHA-256) may be reused more than ``max_plate_reuse``
-       times across an episode unless explicitly marked ``chained_from`` an active shot.
-    """
-    findings: list[str] = []
-    plate_usage: dict[str, list[str]] = {}
-
-    for idx, spec in enumerate(shot_specs):
-        sid = str(spec.get("shot_id") or f"shot_{idx + 1}")
-        route = str(spec.get("route") or "ltx_video").strip().lower()
-        is_ltx = route in {"ltx", "ltx_video", "video"}
-
-        crop_ratio = float(spec.get("crop_upscale_ratio", 1.0) or 1.0)
-        if is_ltx and (bool(spec.get("derived_from_crop")) and crop_ratio > max_crop_upscale):
-            findings.append(
-                f"{sid}: digitally cropped sub-plate (upscale={crop_ratio:.2f}x > {max_crop_upscale:.2f}x) "
-                f"is forbidden as an LTX keyframe; generate a native anchor-locked angle plate"
-            )
-
-        w = int(spec.get("plate_width", min_width) or min_width)
-        h = int(spec.get("plate_height", min_height) or min_height)
-        if is_ltx and (w < min_width or h < min_height):
-            findings.append(f"{sid}: plate resolution {w}x{h} below minimum {min_width}x{min_height}")
-
-        if not str(spec.get("chained_from") or "").strip():
-            key = str(spec.get("plate_sha256") or spec.get("start_image_path") or spec.get("picture") or "").strip()
-            if key:
-                plate_usage.setdefault(key, []).append(sid)
-
-    reused: dict[str, list[str]] = {}
-    for key, sids in plate_usage.items():
-        if len(sids) > max_plate_reuse:
-            reused[key] = sids
-            findings.append(
-                f"Plate {key!r} reused {len(sids)} times across shots {sids} "
-                f"(max allowed={max_plate_reuse}; generate distinct camera angles/plates)"
-            )
-
-    return {
-        "status": "PASS" if not findings else "FAIL",
-        "shots_checked": len(shot_specs),
-        "reused_plates": reused,
-        "findings": findings,
-    }
-
-
 __all__ = [
     "SceneShotCard",
     "assemble_multishot_reel",
@@ -1060,6 +1000,5 @@ __all__ = [
     "upscale_ltx_clip_to_2k",
     "validate_chained_handoff_plan",
     "validate_eyeline_180_rule",
-    "validate_native_keyframe_plates",
     "validate_zero_pre_stitch_zoom",
 ]
