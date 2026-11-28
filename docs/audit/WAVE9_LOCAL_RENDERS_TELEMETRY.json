@@ -1,0 +1,136 @@
+{
+  "timestamp_utc": "2026-11-25T10:17:20Z",
+  "paid_spend_usd": 0.0,
+  "gates": {
+    "I_blender_3d": {
+      "status": "PASS",
+      "file": "gate_i_blender_3d.png",
+      "resolution": [
+        640,
+        360
+      ],
+      "pixel_std": 38.3,
+      "sha256": "3d063f9604b31810f85a38df943e389f8e404d276fa07faa3fa34a3c32be60b7",
+      "elapsed_sec": 2.211
+    },
+    "J_editorial_map": {
+      "status": "PASS",
+      "file": "gate_j_editorial_map.png",
+      "resolution": [
+        1280,
+        720
+      ],
+      "font_family": "Liberation Serif Regular",
+      "sha256": "ef2cdc72288d2c590623d6e7d8187ec46a92cf0eb745a2775b9379684bf36912",
+      "elapsed_sec": 0.105
+    },
+    "K_25d_parallax": {
+      "status": "PASS",
+      "file": "gate_k_25d_parallax.mp4",
+      "resolution": [
+        1280,
+        720
+      ],
+      "fps": "24/1",
+      "duration_sec": 3.0,
+      "sha256": "ac10e156a50c18dde1d4b27e6b4d027262ff73857df697cafafc3aa4aba0e100",
+      "elapsed_sec": 4.704
+    },
+    "F_H_multiscene_stereo_spotting": {
+      "status": "PASS",
+      "file": "gate_fghl_final_multiscene.mp4",
+      "duration_sec": 9.0,
+      "audio_sample_rate": 48000,
+      "audio_channels": 2,
+      "spotting_cues_mixed": 2,
+      "spotting_freshness_verified": true,
+      "sha256": "f4919e62d2a3e3513410c00c36ba866a778bb768b0ea4dc24774db7542e5cbf6",
+      "elapsed_sec": 1.45
+    },
+    "G_identity_lock": {
+      "status": "PASS",
+      "self_comparison_refused": true,
+      "self_reason": "Self-comparison prohibited for 'hero_01': candidate image matches reference path or SHA-256 identically",
+      "cross_image_status": "PASS",
+      "cross_image_similarity": 0.7037,
+      "elapsed_sec": 0.095
+    },
+    "L_perceptual_qa": {
+      "status": "PASS",
+      "analysis_mode": "multi_scene",
+      "duration_s": 9.0,
+      "signals": {
+        "passed": false,
+        "analysis_mode": "multi_scene",
+        "detected_scene_cuts": 0,
+        "mean_frame_diff": 0.03823,
+        "residual_motion_per_frame": 0.19941,
+        "residual_drift": 0.19865,
+        "no_melt_passed": false,
+        "audio_channels": 2,
+        "audio_sample_rate": 48000,
+        "audio_rms": 0.15471,
+        "audio_peak_dbfs": -4.49,
+        "audio_clipping_samples": 0,
+        "audio_stereo_balance_db": 0.17,
+        "audio_integrated_lufs": -14.0,
+        "audio_true_peak_dbtp": -4.5,
+        "audio_spectral_top3_ratio": 0.6729,
+        "youtube_editorial_checks": {
+          "target_lufs": -14.0,
+          "measured_lufs": -14.0,
+          "lufs_in_youtube_band": true,
+          "true_peak_dbtp": -4.5,
+          "true_peak_compliant": true,
+          "stereo_balance_compliant": true,
+          "hook_30s_visual_changes": 4
+        },
+        "temporal_coverage": {
+          "sampled_count": 9,
+          "first_timestamp_s": 0.45,
+          "last_timestamp_s": 8.55,
+          "max_gap_s": 1.013,
+          "uninspected_leading_s": 0.45,
+          "uninspected_trailing_s": 0.45,
+          "coverage_note": "Sampled 9 discrete frames; intervals up to 1.013s between frames were not visually inspected."
+        }
+      },
+      "defect_count": 2,
+      "defects": [
+        {
+          "defect_id": "SIG-VID-MELT",
+          "domain": "visual",
+          "severity": "high",
+          "description": "Deterministic no-melt check failed: residual_motion_per_frame above maximum 0.05",
+          "segment_ref": "0.45s-8.55s",
+          "status": "OPEN",
+          "corrective_action": ""
+        },
+        {
+          "defect_id": "SIG-AUD-SYNTHETIC-TONE",
+          "domain": "audio",
+          "severity": "high",
+          "description": "Audio spectrum is concentrated in <=3 pure frequencies (top3_ratio=0.673); synthetic tone/hum detected instead of natural speech/SFX.",
+          "segment_ref": "full_clip",
+          "status": "OPEN",
+          "corrective_action": ""
+        }
+      ],
+      "evaluate_clip_status": null,
+      "elapsed_sec": 3.885
+    },
+    "T_10min_extrapolation": {
+      "status": "PASS",
+      "local_paid_spend_usd": 0.0,
+      "measured_hardware": "2-vCPU Debian Linux VM (CPU Cycles + FFmpeg 5.1.9)",
+      "extrapolated_600s_local_compute_sec": {
+        "blender_20_hero_renders": 44.2,
+        "editorial_maps_15_stills": 1.6,
+        "25d_parallax_300s": 470.4,
+        "ffmpeg_assembly_and_spotting_600s": 96.7,
+        "total_local_sec": 612.9,
+        "total_local_min": 10.21
+      }
+    }
+  }
+}

@@ -77,8 +77,8 @@ def test_the_map_look_recolours_the_plate(raster):
 
 def test_map_lettering_uses_the_map_face_not_the_comic_face():
     f = D.font(40, "map")
-    assert "Inter" in " ".join(str(x) for x in f.getname())
-    assert "Comic" in " ".join(str(x) for x in D.font(40).getname())
+    assert "Liberation Serif" in " ".join(str(x) for x in f.getname())
+    assert "Comic" not in " ".join(str(x) for x in D.font(40).getname()) and "Liberation Serif" in " ".join(str(x) for x in D.font(40).getname())
 
 
 def test_tilt_leaves_no_empty_corner():

@@ -39,13 +39,28 @@ def sha256_file(path: Path | str | None) -> str | None:
     return h.hexdigest()
 
 
-def code_digest(rel_paths: tuple[str, ...] | list[str]) -> str:
-    """Return a 16-char normalized SHA-256 over the given repository-relative source files."""
+def code_digest(
+    rel_paths: tuple[str, ...] | list[str],
+    *,
+    optional_paths: tuple[str, ...] | list[str] = (),
+) -> str:
+    """Return a 16-char normalized SHA-256 over the given repository-relative source files.
+
+    Raises ``FileNotFoundError`` if any required path in ``rel_paths`` is missing so cache
+    fingerprints never silently ignore renamed or deleted source files.
+    """
     h = hashlib.sha256()
+    missing = [rel for rel in sorted(rel_paths) if not (REPO_ROOT / rel).is_file()]
+    if missing:
+        raise FileNotFoundError(f"Required code_digest source file(s) missing: {missing}")
     for rel in sorted(rel_paths):
         p = REPO_ROOT / rel
+        h.update(rel.encode("utf-8") + b"\0")
+        h.update(p.read_bytes().replace(b"\r\n", b"\n"))
+    for rel in sorted(optional_paths):
+        p = REPO_ROOT / rel
         if p.is_file():
-            h.update(rel.encode("utf-8") + b"\0")
+            h.update(b"opt:" + rel.encode("utf-8") + b"\0")
             h.update(p.read_bytes().replace(b"\r\n", b"\n"))
     return h.hexdigest()[:16]
 
@@ -57,9 +72,7 @@ PERCEPTION_CODE_FILES = (
 
 DIRECTOR_CODE_FILES = (
     "explainer_engine/production/living_director.py",
-    "explainer_engine/production/direction.py",
-    "explainer_engine/production/living.py",
-    "explainer_engine/production/living_fx.py",
+    "explainer_engine/fx25d/living.py",
     "explainer_engine/production/motion_isolation.py",
     "explainer_engine/production/perceive_picture.py",
 )

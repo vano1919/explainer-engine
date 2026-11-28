@@ -311,7 +311,7 @@ def _grey_frames(clip: Path, first: int, count: int, width: int = HANDOVER_W, sh
     w0, h0 = (int(v) for v in probe.stdout.strip().split(",")[:2])
     h = max(2, int(round(width * h0 / w0 / 2)) * 2)
     raw = sh(["ffmpeg", "-v", "error", "-i", str(clip), "-vf", f"select=gte(n\\,{int(first)}),scale={width}:{h},format=gray",
-              "-vsync", "0", "-frames:v", str(int(count)), "-f", "rawvideo", "-"], check=True, timeout=120,
+              "-fps_mode", "passthrough", "-frames:v", str(int(count)), "-f", "rawvideo", "-"], check=True, timeout=120,
              capture_output=True).stdout
     n = len(raw) // (width * h)
     return np.frombuffer(raw[:n * width * h], np.uint8).reshape(n, h, width).astype(np.float32)
@@ -392,7 +392,7 @@ def frame_png(clip: Path, index: int, png: Path, sh=subprocess.run, crop=None) -
     """Frame ``index`` (0-based, by decode order) of the clip as a PNG: the first picture of the next chained clip, cropped
     when the continuation plan reframes it (``fit_picture`` then brings it to the clip size)."""
     vf = f"select=eq(n\\,{int(index)})" + (f",{crop_filter(crop)}" if crop else "")
-    sh(["ffmpeg", "-y", "-loglevel", "error", "-i", str(clip), "-vf", vf, "-vsync", "0",
+    sh(["ffmpeg", "-y", "-loglevel", "error", "-i", str(clip), "-vf", vf, "-fps_mode", "passthrough",
         "-frames:v", "1", str(png)], check=True, timeout=60)
     if not Path(png).is_file() or Path(png).stat().st_size == 0:
         raise RuntimeError(f"frame {index} of {Path(clip).name} was not written")

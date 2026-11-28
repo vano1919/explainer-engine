@@ -20,6 +20,10 @@
           {
             "type": "command",
             "command": "cd \"$CLAUDE_PROJECT_DIR\" && \"$(command -v python3 || command -v python)\" -m explainer_engine.governance.hooks pre-bash"
+          },
+          {
+            "type": "command",
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && \"$(command -v python3 || command -v python)\" -m explainer_engine.governance.gateway_hook pre-bash-guard"
           }
         ]
       },
@@ -29,6 +33,10 @@
           {
             "type": "command",
             "command": "cd \"$CLAUDE_PROJECT_DIR\" && \"$(command -v python3 || command -v python)\" -m explainer_engine.governance.hooks pre-write"
+          },
+          {
+            "type": "command",
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && \"$(command -v python3 || command -v python)\" -m explainer_engine.governance.gateway_hook pre-write-guard"
           }
         ]
       },
@@ -62,6 +70,10 @@
           {
             "type": "command",
             "command": "cd \"$CLAUDE_PROJECT_DIR\" && \"$(command -v python3 || command -v python)\" -m explainer_engine.governance.hooks stop"
+          },
+          {
+            "type": "command",
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && \"$(command -v python3 || command -v python)\" -m explainer_engine.governance.gateway_hook stop-guard"
           }
         ]
       }
@@ -73,6 +85,19 @@
           {
             "type": "command",
             "command": "cd \"$CLAUDE_PROJECT_DIR\" && \"$(command -v python3 || command -v python)\" -m explainer_engine.governance.hooks post-edit"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && \"$(command -v python3 || command -v python)\" -m explainer_engine.governance.hooks post-bash"
+          },
+          {
+            "type": "command",
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && \"$(command -v python3 || command -v python)\" -m explainer_engine.governance.gateway_hook post-bash-guard"
           }
         ]
       }
@@ -123,5 +148,17 @@
     "type": "command",
     "command": "cd \"$CLAUDE_PROJECT_DIR\" && \"$(command -v python3 || command -v python)\" -m explainer_engine.governance.hooks statusline",
     "refreshInterval": 60
+  },
+  "permissions": {
+    "deny": [
+      "Edit(config/owner_approvals.json)",
+      "Write(config/owner_approvals.json)",
+      "Edit(config/spend_caps.json)",
+      "Write(config/spend_caps.json)",
+      "Bash(git reset --hard*)",
+      "Bash(modal secret create*--force*)",
+      "Bash(modal run*modal_ltx_jobs*)",
+      "Bash(modal run*modal_layout_jobs*)"
+    ]
   }
 }

@@ -52,10 +52,6 @@ def _map_font_expression(text: str) -> str:
     return match.group(1)
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="raster map renderer maps/draw.py uses assets/fonts/Inter.ttf (MAP_FONT); the owner's Liberation Serif rule is not yet applied there",
-)
 def test_draw_py_uses_liberation_serif_font():
     text = _DRAW_PY.read_text(encoding="utf-8")
     expression = _map_font_expression(text)

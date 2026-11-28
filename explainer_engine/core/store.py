@@ -17,6 +17,8 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
+import threading
 import logging
 import re
 import time
@@ -50,7 +52,7 @@ def replace_file(tmp: Path, path: Path, attempts: int = 20) -> None:
 def write_text_atomic(path: Path, text: str) -> Path:
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
-    tmp = path.with_name(path.name + ".tmp")
+    tmp = path.with_name(f"{path.name}.{os.getpid()}.{threading.get_ident()}.tmp")
     tmp.write_text(text, encoding="utf-8")
     replace_file(tmp, path)  # a crash mid-write never leaves a torn file
     return path

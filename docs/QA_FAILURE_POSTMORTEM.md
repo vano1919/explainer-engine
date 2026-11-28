@@ -1,0 +1,26 @@
+# QA Failure Postmortem — Why Multi-Defect Videos Passed Automated L3 Gates (2026-11-25)
+
+## Executive Summary
+During the v8 production audit (`stage_a_maps_and_25d.mp4`, `stage_a_ltx_trimmed_2k.mp4`, `film1_2min_2k_super_realistic.mp4`, `film2_2min_2k_stability_proof.mp4`), every automated deterministic check in `explainer_engine/qa/cinema_gates.py` returned `ALL PASS`, yet full Eyes-On / Ears-On human + multimodal inspection uncovered severe editorial, visual, cartographic, and audio defects.
+
+This postmortem documents the **8 structural blind spots** that allowed low-quality videos to pass and specifies the exact deterministic + fail-closed AI-Critic gates added to close each hole permanently.
+
+---
+
+## Forensic Root-Cause Table (8 Blind Spots)
+
+| # | Defect Observed in Rendered Films | Why Old QA Passed It | Permanent Closure Gate |
+|---|---|---|---|
+| 1 | **Disconnected Legacy QA Modules:** Existing `qa/dead_air.py`, `qa/sound_realism.py`, `qa/engagement.py`, `qa/viewer_critic.py`, and `scripting/docudrama_structure.py` were never called by `cinema_pipeline.py`. | `cinema_pipeline.py` only invoked the 5 local functions inside `cinema_gates.py`. | Wired all existing validators plus 7 new deterministic gates into `cinema_gates.run_full_cinema_audit()`. |
+| 2 | **6–14 Second Narration Dead Gaps (`Film 1`, `Film 2`):** Unplanned silent stretches where visuals held with only monotonous drone/ambience. | `check_audio_scene_consistency` only checked global LUFS, peak dBFS, and spectral centroid span — never inter-utterance speech gaps. | `check_narration_pacing_gaps()` in `cinema_gates.py` — FAIL if unplanned inter-utterance gap `> 3.5s` or continuous non-speech stretch `> 5.0s` without explicit `dramatic_breather: true`. |
+| 3 | **TTS Mispronunciation (`"Shackleto"` x3 in `Film 2`):** `edge-tts` clipped final consonants on proper nouns and delivered flat robotic prosody. | Zero ASR transcription verification existed against the approved script. | `check_tts_pronunciation_asr()` using local `faster-whisper` (`tiny.en`/`base.en`, `$0.00`) — FAIL if WER `> 8%` or any proper noun from the script is missing/garbled; switched test narrator to local neural **Kokoro-ONNX**. |
+| 4 | **Empty Blue Ocean Maps & Missing Geographic Labels (`Film 2` Weddell Sea / Scotia Sea):** 95% flat blue rectangle with zero sea/continent typography and conflicting palettes across maps. | Zero land-to-water ratio check, zero OCR/label presence check, and zero cross-map palette cohesion check. | `check_map_geographic_richness()` — FAIL if land/relief coverage `< 18%`, missing context typography, or conflicting map palettes within one episode; upgraded maps to `MapLibre GL JS` WebGL2 + Natural Earth + `hud_ocr.py`. |
+| 5 | **Bridge-vs-Map Spatial Collisions & Amateur Flat PIL Rectangles:** Lower-third cards collided with map badges/titles and used static opaque black PIL boxes. | Zero bounding-box overlap check between `overlay_spec` bridges and map HUD/labels; zero motion-graphics richness check. | `check_overlay_spatial_collisions()` — FAIL on any BBox overlap or concurrent bridge-over-map-title conflict; replaced static PIL boxes with `GSAP 3.13` (`SplitText` + `DrawSVG`) HTML5/SVG 24fps RGBA motion bridges. |
+| 6 | **Photo Repetition & 100% PowerPoint Cross-Dissolves (`Film 1`, `Film 2`):** Same stills re-used across cuts; every cut used slow `xfade` dissolves instead of crisp editorial hard cuts + J/L-cuts. | Zero source-SHA-256 deduplication check and zero transition grammar ratio check. | `check_edit_grammar_and_dedup()` — FAIL on duplicate `source_sha256` reuse or if `> 25%` of cuts use `xfade` dissolves (enforces `>= 75%` hard cuts + audio J/L-cut overlap). |
+| 7 | **0% Real Moving Video in Dramatic Scenes & Audio Pumping / Overpowering Map SFX:** Frozen 2.5D actors pretending to speak/blow horns; map SFX spiked over narration; ambience pumped during pauses. | Zero dramatic-scene real-video ratio check; zero SFX-vs-voice relative RMS check; zero pause-pumping gain-swing check. | `check_dramatic_real_video_ratio()` + `check_audio_ducking_and_sfx_balance()` — FAIL if dramatic showcase scenes lack real video (`LTX-2.5`), if map SFX exceeds `-6 dB` relative to voice, or if ambience pumps `> 5 dB` in speech gaps. |
+| 8 | **Zero Mandatory Multimodal AI Director-Critic Gate:** `perceptual_qa.py` defaulted `use_gemini=False`; `viewer_critic.py` read JSON text only and never watched or listened to the rendered MP4. | No fail-closed mechanism required a clean-room AI critic to actually watch/listen to the exact rendered MP4 bytes before sign-off. | `explainer_engine/qa/ai_critic_gate.py` + `ai_critic_verdict/1` schema + `.agents/skills/ai-media-critic/SKILL.md` — fail-closed verification requiring exact 64-char `video_sha256` match, `overall_score >= 8.5`, every sub-score `>= 7.5`, `0 critical_defects`, and `audio_visual_sync_verified == True`. |
+
+---
+
+## Regression Proof Requirement
+`tests/unit/test_ai_critic_and_ab_pipeline.py` encodes deterministic reproductions of all 8 defect classes (`14s` pause, `"Shackleto"` ASR mismatch, `95%` empty ocean map, bridge-vs-map collision, duplicate still + `100%` xfade, overpowering SFX, missing/mismatched AI critic SHA-256) and asserts that **every single one fails closed**.

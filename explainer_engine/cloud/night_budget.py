@@ -1,123 +1,112 @@
-"""File-locked night spending ledger for Modal GPU launches (and independent MODAL1 envelope enforcement)."""
+"""Night spending ledger for Modal GPU launches backed by cross-process SQLite transactions."""
 from __future__ import annotations
 
-import contextlib
 import json
 import os
-import time
 from pathlib import Path
+from typing import Any
 
-from explainer_engine.core import spend_caps
-
-try:
-    import fcntl
-except ImportError:  # pragma: no cover - Windows fallback
-    fcntl = None  # type: ignore[assignment]
+from explainer_engine.core import spend_caps, spend_ledger
 
 
 class NightCapExceeded(spend_caps.OverCeiling):
-    """Raised when a Modal launch would exceed the configured night total or independent envelope."""
+    """Raised when a Modal launch would exceed the strictest applicable budget ceiling or overrun block."""
 
 
-@contextlib.contextmanager
-def _lock(path: Path):
-    path.parent.mkdir(parents=True, exist_ok=True)
-    lp = path.with_suffix(path.suffix + ".lock")
-    with lp.open("a+", encoding="utf-8") as f:
-        if fcntl is not None:
-            fcntl.flock(f.fileno(), fcntl.LOCK_EX)
-        try:
-            yield
-        finally:
-            if fcntl is not None:
-                fcntl.flock(f.fileno(), fcntl.LOCK_UN)
+def default_night_ledger_path() -> Path:
+    """Return the durable night ledger path; in CI fails closed unless EE_DURABLE_LEDGER_PATH is set."""
+    durable = os.environ.get("EE_DURABLE_LEDGER_PATH")
+    if durable:
+        return Path(durable).expanduser()
+    if os.environ.get("CI") or os.environ.get("GITHUB_ACTIONS"):
+        return spend_ledger.default_ledger_path()
+    env_p = os.environ.get("EE_NIGHT_LEDGER")
+    if env_p:
+        return Path(env_p).expanduser()
+    return Path.home() / ".explainer_engine" / "night_ledger.sqlite3"
 
 
-def _atomic_write(path: Path, data: dict) -> None:
-    tmp = path.with_suffix(path.suffix + f".tmp.{os.getpid()}")
+def _resolve_sqlite_path(path: str | Path | None) -> Path:
+    if path is None:
+        return default_night_ledger_path()
+    p = Path(path)
+    if p.suffix.lower() == ".json":
+        return p.with_suffix(".sqlite3")
+    return p
+
+
+def _strictest_modal_cap() -> float:
+    """Resolve the strictest applicable authorized cumulative Modal cap from config/spend_caps.json."""
+    cfg = spend_caps.load()
+    caps: list[float] = []
+    modal_cfg = cfg.get("modal") or {}
+    if isinstance(modal_cfg.get("night_total_usd"), (int, float)) and not isinstance(
+        modal_cfg.get("night_total_usd"), bool
+    ):
+        caps.append(float(modal_cfg["night_total_usd"]))
+    ltx_cfg = cfg.get("modal_ltx") or {}
+    ep_cap = ltx_cfg.get("per_episode_usd")
+    run_cap = ltx_cfg.get("per_run_usd")
+    if isinstance(ep_cap, (int, float)) and not isinstance(ep_cap, bool) and ep_cap > 0:
+        caps.append(float(ep_cap))
+    elif isinstance(run_cap, (int, float)) and not isinstance(run_cap, bool) and run_cap > 0:
+        caps.append(float(run_cap))
+    if not caps:
+        raise NightCapExceeded("No authorized Modal spending cap configured in config/spend_caps.json (zero budget)")
+    return min(caps)
+
+
+def _per_run_modal_cap() -> float | None:
+    cfg = spend_caps.load()
+    ltx_cfg = cfg.get("modal_ltx") or {}
+    run_cap = ltx_cfg.get("per_run_usd")
+    if isinstance(run_cap, (int, float)) and not isinstance(run_cap, bool) and run_cap > 0:
+        return float(run_cap)
+    return None
+
+
+def _mirror_json(json_path: Path, row: dict[str, Any]) -> None:
+    if json_path.suffix.lower() != ".json":
+        return
+    json_path.parent.mkdir(parents=True, exist_ok=True)
+    data = json.loads(json_path.read_text(encoding="utf-8")) if json_path.is_file() else {"items": {}}
+    data.setdefault("items", {})[row["item_id"]] = row
+    tmp = json_path.with_suffix(f".json.tmp.{os.getpid()}")
     tmp.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    os.replace(tmp, path)
+    os.replace(tmp, json_path)
 
 
-def _load(path: Path) -> dict:
-    if not path.is_file():
-        return {"items": {}}
-    data = json.loads(path.read_text(encoding="utf-8"))
-    if not isinstance(data, dict):
-        return {"items": {}}
-    data.setdefault("items", {})
-    return data
+def reserve(path: str | Path | None, item: str, usd: float, why: str = "") -> dict[str, Any]:
+    """Atomically reserve ``usd`` for ``item`` under the strictest applicable Modal cap."""
+    db_path = _resolve_sqlite_path(path)
+    per_run = _per_run_modal_cap()
+    if per_run is not None and float(usd) > per_run + 1e-9:
+        raise NightCapExceeded(f"Single modal_ltx launch ${float(usd):.4f} exceeds per_run_usd ${per_run:.2f}")
+    cap_usd = _strictest_modal_cap()
+    try:
+        row = spend_ledger.reserve(
+            "modal_ltx",
+            item,
+            float(usd),
+            cap_usd=cap_usd,
+            stop_fraction=0.80,
+            why=why,
+            ledger_path=db_path,
+        )
+    except spend_caps.OverCeiling as exc:
+        raise NightCapExceeded(str(exc)) from None
+    if path is not None and Path(path).suffix.lower() == ".json":
+        _mirror_json(Path(path), row)
+    return row
 
 
-def _booked_usd(data: dict) -> float:
-    total = 0.0
-    for row in (data.get("items") or {}).values():
-        if not isinstance(row, dict):
-            continue
-        if row.get("state") == "SETTLED":
-            total += float(row.get("actual_usd", 0.0))
-        else:
-            total += float(row.get("reserved_usd", 0.0))
-    return round(total, 6)
-
-
-def reserve(path: str | Path, item: str, usd: float, why: str = "") -> dict:
-    """Reserve ``usd`` for ``item`` against both modal.night_total_usd (if set) and MODAL1 envelope."""
-    p = Path(path)
-    amount = round(max(0.0, float(usd)), 6)
-    cfg = spend_caps.load()
-    night_cap = (cfg.get("modal") or {}).get("night_total_usd")
-
-    # Enforce independent MODAL1 orchestration envelope when configured
-    env_services = (cfg.get("orchestration_envelopes") or {}).get("services") or {}
-    if "modal_modal1" in env_services:
-        try:
-            spend_caps.envelope_reserve("modal_modal1", item, amount)
-        except spend_caps.OverCeiling as exc:
-            raise NightCapExceeded(str(exc)) from None
-
-    with _lock(p):
-        data = _load(p)
-        if item in data["items"]:
-            raise NightCapExceeded(f"item {item!r} is already booked in {p}")
-        booked = _booked_usd(data)
-        if isinstance(night_cap, (int, float)) and not isinstance(night_cap, bool):
-            if booked + amount > float(night_cap) + 1e-9:
-                raise NightCapExceeded(
-                    f"booked ${booked:.4f} + request ${amount:.4f} exceeds modal.night_total_usd ${float(night_cap):.2f}"
-                )
-        row = {
-            "item": item,
-            "reserved_usd": amount,
-            "actual_usd": 0.0,
-            "state": "RESERVED",
-            "why": why,
-            "at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-        }
-        data["items"][item] = row
-        _atomic_write(p, data)
-        return row
-
-
-def settle(path: str | Path, item: str, usd: float) -> dict:
-    """Settle ``item`` with actual wall-clock ``usd`` in both the night ledger and MODAL1 envelope."""
-    p = Path(path)
-    actual = round(max(0.0, float(usd)), 6)
-    cfg = spend_caps.load()
-    env_services = (cfg.get("orchestration_envelopes") or {}).get("services") or {}
-    if "modal_modal1" in env_services:
-        try:
-            spend_caps.envelope_settle("modal_modal1", item, actual)
-        except spend_caps.OverCeiling:
-            pass
-
-    with _lock(p):
-        data = _load(p)
-        row = data["items"].get(item)
-        if not isinstance(row, dict):
-            raise NightCapExceeded(f"no reservation for {item!r} in {p}")
-        row["actual_usd"] = actual
-        row["state"] = "SETTLED"
-        row["settled_at"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
-        _atomic_write(p, data)
-        return row
+def settle(path: str | Path | None, item: str, usd: float) -> dict[str, Any]:
+    """Atomically settle ``item`` with actual wall-clock USD; marks OVERRUN loudly if exceeded."""
+    db_path = _resolve_sqlite_path(path)
+    try:
+        row = spend_ledger.settle("modal_ltx", item, float(usd), ledger_path=db_path)
+    except spend_caps.OverCeiling as exc:
+        raise NightCapExceeded(str(exc)) from None
+    if path is not None and Path(path).suffix.lower() == ".json":
+        _mirror_json(Path(path), row)
+    return row

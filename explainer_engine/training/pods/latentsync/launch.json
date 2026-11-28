@@ -1,0 +1,88 @@
+{
+  "_doc": "The launch file of modal_latentsync_jobs.py: the LatentSync 1.5 lip-sync refinement pass over a rendered clip (videolane/lipsync_pipeline.build_lipsync_refinement_command, schema lipsync_refinement_job/1, backend latentsync_1_5). Code only, never run: no paid run, no smoke and no price measured. Every pin was read on 2026-11-27 from public metadata: the code commit from the GitHub API (bytedance/LatentSync main), the model revision and each file's LFS sha256 from the Hugging Face API (paths-info at the pinned revision), the CLI flags from scripts/inference.py at the pinned commit. Two pins are still open, so launch_problems refuses this file and no GPU function is defined: base_image (no image digest decided) and face_detector.sha256 (the insightface buffalo_l zip has no published digest; its bytes were not downloaded). The first paid run also needs the creator's modal_latentsync line in config/spend_caps.json (missing = a zero budget), an owner approval bound to the run's manifest sha256 and an open ledger reservation.",
+  "app_name": "ee-latentsync-jobs",
+  "backend": "latentsync_1_5",
+  "model_repo": "ByteDance/LatentSync-1.5",
+  "model_revision": "32a20d29aead0498e3e885e90dbbe8027da1b61b",
+  "model_files": {
+    "latentsync_unet.pt": "6440b49a7ccceff56cdc001f5f17605216337f5bbd66fa360139768926e23f51",
+    "whisper/tiny.pt": "65147644a518d12f04e32d6f3b26facc3f8dd46e5390956a9424a650c0ce22b9"
+  },
+  "uses": {
+    "unet": "latentsync_unet.pt",
+    "whisper": "whisper/tiny.pt"
+  },
+  "whisper_link": "checkpoints/whisper/tiny.pt",
+  "whisper_why": "scripts/inference.py takes no flag for the audio encoder: it opens checkpoints/whisper/tiny.pt (relative to the code folder) because configs/unet/stage2.yaml has cross_attention_dim 384; the worker links that path to the pinned file on the Volume",
+  "vae": {
+    "repo": "stabilityai/sd-vae-ft-mse",
+    "revision": "31f26fdeee1355a5c34592e401dd41e45d25a493",
+    "files": {
+      "config.json": "92d3dfb746fca211a2c9e019e285f8597412211728dce3c5bcf4eda0f2d62e7e",
+      "diffusion_pytorch_model.safetensors": "a1d993488569e928462932c8c38a0760b874d166399b14414135bd9c42df5815"
+    },
+    "why": "scripts/inference.py loads AutoencoderKL.from_pretrained('stabilityai/sd-vae-ft-mse') by name, so the worker stages this revision into the Volume's HF cache, writes refs/main = the revision and runs with HF_HUB_OFFLINE=1: nothing is fetched at run time. The safetensors sha256 is the Hub's LFS sha256; config.json is a small git file whose sha256 was computed from its bytes at the revision (git blob 0db26717579be63eb0ddbf15b43faa43700dfe5a)"
+  },
+  "face_detector": {
+    "name": "buffalo_l",
+    "url": "https://github.com/deepinsight/insightface/releases/download/v0.7/buffalo_l.zip",
+    "bytes": 288621354,
+    "sha256": null,
+    "why": "latentsync/utils/face_detector.py builds insightface FaceAnalysis(root='checkpoints/auxiliary'), whose default model pack buffalo_l is downloaded from the v0.7 release when the folder is missing (insightface 0.7.3, the version requirements.txt pins). The GitHub release asset publishes no digest, so the sha256 stays null until the zip is fetched once and hashed; until then the launch is refused (OR-22)"
+  },
+  "latentsync_code": {
+    "repo": "https://github.com/bytedance/LatentSync.git",
+    "commit": "a229c3948406bc2cf6eaf4873e662e70c6a04746",
+    "requirements_blob": "38f9cd00f0e7411763c55df342cbb37defa2b655",
+    "licence": "SPDX:Apache-2.0"
+  },
+  "module": "scripts.inference",
+  "unet_config": "configs/unet/stage2.yaml",
+  "cli_flags": [
+    "--unet_config_path",
+    "--inference_ckpt_path",
+    "--video_path",
+    "--audio_path",
+    "--video_out_path",
+    "--inference_steps",
+    "--guidance_scale",
+    "--temp_dir",
+    "--seed",
+    "--enable_deepcache"
+  ],
+  "cli_source": "the argparse block of scripts/inference.py at a229c394 (and inference.sh, which runs python -m scripts.inference from the code folder)",
+  "settings_ranges": {
+    "inference_steps": [
+      20,
+      50
+    ],
+    "guidance_scale": [
+      1.0,
+      3.0
+    ]
+  },
+  "settings_source": "README.md at a229c394, section Inference: inference_steps [20-50], guidance_scale [1.0-3.0]; seed -1 means a random seed in scripts/inference.py and is refused (not reproducible)",
+  "min_vram_gb": 8,
+  "min_vram_source": "README.md at a229c394: minimum VRAM for inference 8 GB with LatentSync 1.5",
+  "gpu": "L4",
+  "gpu_vram_gb": 24,
+  "cpu": 4,
+  "memory_gib": 32,
+  "usd_per_h": 1.2436,
+  "prices_date": "2026-11-07",
+  "price_source": "cloud/modal_schedule (modal.com/pricing table of 2026-11-07): L4 + 4 cores + 32 GiB; the cheapest card of the table with at least 8 GB and fp16 (scripts/inference.py uses float16 only when the compute capability major is above 7, so a T4 would run in float32); an estimate, not measured and not re-read today",
+  "base_image": null,
+  "base_image_why": "not decided: the code wants python 3.10 with the pins of requirements.txt at the code commit (torch 2.5.1 cu121) and ffmpeg; a registry digest must be pinned (config/cloud_pins.json images) before any run",
+  "hf_out": "explainer-engine/latentsync/out",
+  "scaledown_window_s": 2,
+  "startup_timeout_s": 120,
+  "caps": {
+    "run_usd": 0.4,
+    "cold_start_s": 180
+  },
+  "caps_why": "a hard cap per job, not a measurement: the function timeout comes from it (cost_timeout: 0.9 x (cap - cold start at the rate) / rate = 880 s at $1.2436 per hour) and the most one launch can bill is that timeout plus the cold start ($0.366); the creator's line must be at least run_usd / 0.8",
+  "spend_line": "modal_latentsync",
+  "ledger_service": "modal_latentsync",
+  "operation_mode": "modal-latentsync-main",
+  "decided": null
+}

@@ -32,38 +32,104 @@
       "order": 1,
       "conditional": false,
       "dependencies": [],
-      "triggers": ["new_episode", "fact_check", "claim_map"],
-      "skills": ["science-grounding", "v-source-verification", "v-fact-check-workflow"],
-      "python_modules": ["explainer_engine.scripting.claim_ledger", "explainer_engine.scripting.claims"],
-      "required_inputs": ["topic_brief"],
-      "expected_outputs": ["research_dossier", "claim_map"],
-      "implementation_gaps": []
+      "triggers": [
+        "new_episode",
+        "fact_check",
+        "claim_map"
+      ],
+      "skills": [
+        "science-grounding",
+        "v-source-verification",
+        "v-fact-check-workflow"
+      ],
+      "python_modules": [
+        "explainer_engine.scripting.claim_ledger",
+        "explainer_engine.scripting.claims"
+      ],
+      "required_inputs": [
+        "topic_brief"
+      ],
+      "expected_outputs": [
+        "research_dossier",
+        "claim_map"
+      ],
+      "implementation_gaps": [],
+      "execution_category": "episode_stage"
     },
     {
       "stage_id": "S2_story_and_script",
       "name": "Story Architecture, Narration & Dialogue",
       "order": 2,
       "conditional": false,
-      "dependencies": ["S1_research"],
-      "triggers": ["story_structure", "script_write", "dialogue", "what_if"],
-      "skills": ["story-engine", "narration-script", "dialogue-scenes", "v-sw-story-structure", "v-viral-hooks"],
-      "python_modules": ["explainer_engine.scripting.story_lint", "explainer_engine.scripting.stage_guard", "explainer_engine.scripting.stated_theme"],
-      "required_inputs": ["research_dossier", "claim_map"],
-      "expected_outputs": ["approved_script", "beat_bridge_plan"],
-      "implementation_gaps": ["beat_level_bridge_selector_automation"]
+      "dependencies": [
+        "S1_research"
+      ],
+      "triggers": [
+        "story_structure",
+        "script_write",
+        "dialogue",
+        "what_if"
+      ],
+      "skills": [
+        "story-engine",
+        "narration-script",
+        "dialogue-scenes",
+        "v-sw-story-structure",
+        "v-viral-hooks"
+      ],
+      "python_modules": [
+        "explainer_engine.scripting.story_lint",
+        "explainer_engine.scripting.stage_guard",
+        "explainer_engine.scripting.stated_theme",
+        "explainer_engine.scripting.docudrama_structure"
+      ],
+      "required_inputs": [
+        "research_dossier",
+        "claim_map"
+      ],
+      "expected_outputs": [
+        "approved_script",
+        "beat_bridge_plan"
+      ],
+      "implementation_gaps": [
+        "beat_level_bridge_selector_automation"
+      ],
+      "execution_category": "episode_stage"
     },
     {
       "stage_id": "S3_film_direction",
       "name": "Film Visual Identity & Shot Planning",
       "order": 3,
       "conditional": false,
-      "dependencies": ["S2_story_and_script"],
-      "triggers": ["shot_plan", "visual_style", "director_book"],
-      "skills": ["film-direction", "visual-beats", "v-director-cinematic", "v-scenario-storyboards"],
-      "python_modules": ["explainer_engine.episode_film", "explainer_engine.production.build_shot"],
-      "required_inputs": ["approved_script", "episode_film_preset"],
-      "expected_outputs": ["shot_plan", "continuity_cards"],
-      "implementation_gaps": []
+      "dependencies": [
+        "S2_story_and_script"
+      ],
+      "triggers": [
+        "shot_plan",
+        "visual_style",
+        "director_book"
+      ],
+      "skills": [
+        "film-direction",
+        "visual-beats",
+        "v-director-cinematic",
+        "v-scenario-storyboards"
+      ],
+      "python_modules": [
+        "explainer_engine.episode_film",
+        "explainer_engine.production.build_shot",
+        "explainer_engine.episode.style_bible"
+      ],
+      "required_inputs": [
+        "approved_script",
+        "episode_film_preset"
+      ],
+      "expected_outputs": [
+        "shot_plan",
+        "continuity_cards"
+      ],
+      "implementation_gaps": [],
+      "execution_category": "episode_stage"
     },
     {
       "stage_id": "S4_blender_previs",
@@ -71,13 +137,31 @@
       "order": 4,
       "conditional": true,
       "condition_key": "needs_blender_previs",
-      "dependencies": ["S3_film_direction"],
-      "triggers": ["multi_character_staging", "camera_blocking", "spatial_reference"],
-      "skills": ["tool-blender-layout", "film-direction"],
-      "python_modules": ["explainer_engine.lab.scene_spec", "explainer_engine.lab.scene_render", "explainer_engine.lab.blender_blocking"],
-      "required_inputs": ["shot_plan"],
-      "expected_outputs": ["blender_reference_frames"],
-      "implementation_gaps": []
+      "dependencies": [
+        "S3_film_direction"
+      ],
+      "triggers": [
+        "multi_character_staging",
+        "camera_blocking",
+        "spatial_reference"
+      ],
+      "skills": [
+        "tool-blender-layout",
+        "film-direction"
+      ],
+      "python_modules": [
+        "explainer_engine.lab.scene_spec",
+        "explainer_engine.lab.scene_render",
+        "explainer_engine.lab.blender_blocking"
+      ],
+      "required_inputs": [
+        "shot_plan"
+      ],
+      "expected_outputs": [
+        "blender_reference_frames"
+      ],
+      "implementation_gaps": [],
+      "execution_category": "conditional_worker"
     },
     {
       "stage_id": "S5_gemini_images",
@@ -85,13 +169,35 @@
       "order": 5,
       "conditional": true,
       "condition_key": "needs_gemini_images",
-      "dependencies": ["S3_film_direction"],
-      "triggers": ["keyframe_generation", "scene_stills", "reference_image"],
-      "skills": ["tool-gemini-task-pictures", "v-visual-skills-image", "v-scenario-consistency"],
-      "python_modules": ["explainer_engine.imagegen.gemini", "explainer_engine.imagegen.picture_library"],
-      "required_inputs": ["shot_plan", "continuity_cards"],
-      "expected_outputs": ["scene_images", "image_provenance"],
-      "implementation_gaps": ["unattended_chat_interface_bridge"]
+      "dependencies": [
+        "S3_film_direction"
+      ],
+      "triggers": [
+        "keyframe_generation",
+        "scene_stills",
+        "reference_image"
+      ],
+      "skills": [
+        "tool-gemini-task-pictures",
+        "v-visual-skills-image",
+        "v-scenario-consistency"
+      ],
+      "python_modules": [
+        "explainer_engine.imagegen.gemini",
+        "explainer_engine.imagegen.picture_library"
+      ],
+      "required_inputs": [
+        "shot_plan",
+        "continuity_cards"
+      ],
+      "expected_outputs": [
+        "scene_images",
+        "image_provenance"
+      ],
+      "implementation_gaps": [
+        "unattended_chat_interface_bridge"
+      ],
+      "execution_category": "agent_browser_gate"
     },
     {
       "stage_id": "S6_ltx_video",
@@ -99,13 +205,34 @@
       "order": 6,
       "conditional": true,
       "condition_key": "needs_ltx_video",
-      "dependencies": ["S5_gemini_images"],
-      "triggers": ["animated_action", "speaking_shot", "ltx_clip"],
-      "skills": ["v-ltxv2-video", "modal-operations", "film-direction"],
-      "python_modules": ["explainer_engine.training.pods.ltx.modal_ltx_jobs", "explainer_engine.training.pods.ltx.modal_layout_jobs", "explainer_engine.qa.ltx_prompt_lint"],
-      "required_inputs": ["scene_images", "shot_plan"],
-      "expected_outputs": ["ltx_video_clips"],
-      "implementation_gaps": []
+      "dependencies": [
+        "S5_gemini_images"
+      ],
+      "triggers": [
+        "animated_action",
+        "speaking_shot",
+        "ltx_clip"
+      ],
+      "skills": [
+        "v-ltxv2-video",
+        "modal-operations",
+        "film-direction"
+      ],
+      "python_modules": [
+        "explainer_engine.training.pods.ltx.modal_ltx_jobs",
+        "explainer_engine.training.pods.ltx.modal_layout_jobs",
+        "explainer_engine.qa.ltx_prompt_lint",
+        "explainer_engine.videolane.ltx_loop"
+      ],
+      "required_inputs": [
+        "scene_images",
+        "shot_plan"
+      ],
+      "expected_outputs": [
+        "ltx_video_clips"
+      ],
+      "implementation_gaps": [],
+      "execution_category": "route_worker"
     },
     {
       "stage_id": "S7_maps_and_25d",
@@ -113,52 +240,138 @@
       "order": 7,
       "conditional": true,
       "condition_key": "needs_maps_or_25d",
-      "dependencies": ["S3_film_direction"],
-      "triggers": ["map_shot", "front_line", "parallax_25d", "atmospheric_fx"],
-      "skills": ["cartography", "film-direction"],
-      "python_modules": ["explainer_engine.maps.maplibre_spec", "explainer_engine.production.build_map_shot", "explainer_engine.fx25d.living", "explainer_engine.production.relief_regional"],
-      "required_inputs": ["shot_plan", "episode_film_preset"],
-      "expected_outputs": ["map_and_25d_clips"],
-      "implementation_gaps": []
+      "dependencies": [
+        "S3_film_direction"
+      ],
+      "triggers": [
+        "map_shot",
+        "front_line",
+        "parallax_25d",
+        "atmospheric_fx"
+      ],
+      "skills": [
+        "cartography",
+        "film-direction"
+      ],
+      "python_modules": [
+        "explainer_engine.maps.maplibre_spec",
+        "explainer_engine.production.build_map_shot",
+        "explainer_engine.fx25d.living",
+        "explainer_engine.production.relief_regional"
+      ],
+      "required_inputs": [
+        "shot_plan",
+        "episode_film_preset"
+      ],
+      "expected_outputs": [
+        "map_and_25d_clips"
+      ],
+      "implementation_gaps": [],
+      "execution_category": "conditional_worker"
     },
     {
       "stage_id": "S8_audio_and_sound",
       "name": "Narration, Character Dialogue, Music & SFX",
       "order": 8,
       "conditional": false,
-      "dependencies": ["S2_story_and_script"],
-      "triggers": ["narration_read", "dialogue_audio", "sound_design", "mix"],
-      "skills": ["elevenlabs-voice", "voice-search", "v-design-sound", "v-audio-production-skill"],
-      "python_modules": ["explainer_engine.audio.level", "explainer_engine.audio.layers", "explainer_engine.audio.val_stem_levels"],
-      "required_inputs": ["approved_script"],
-      "expected_outputs": ["audio_mix", "word_timings"],
-      "implementation_gaps": []
+      "dependencies": [
+        "S2_story_and_script"
+      ],
+      "triggers": [
+        "narration_read",
+        "dialogue_audio",
+        "sound_design",
+        "mix"
+      ],
+      "skills": [
+        "elevenlabs-voice",
+        "voice-search",
+        "v-design-sound",
+        "v-audio-production-skill"
+      ],
+      "python_modules": [
+        "explainer_engine.audio.level",
+        "explainer_engine.audio.layers",
+        "explainer_engine.audio.val_stem_levels"
+      ],
+      "required_inputs": [
+        "approved_script"
+      ],
+      "expected_outputs": [
+        "audio_mix",
+        "word_timings"
+      ],
+      "implementation_gaps": [],
+      "execution_category": "episode_stage"
     },
     {
       "stage_id": "S9_edit_and_render",
       "name": "FFmpeg Assembly, Color Finish & Upscale",
       "order": 9,
       "conditional": false,
-      "dependencies": ["S8_audio_and_sound"],
-      "triggers": ["assemble", "color_grade", "upscale", "render"],
-      "skills": ["v-ffmpeg-skill", "v-video-editing-skill", "v-color-grading-skill", "tool-upscale"],
-      "python_modules": ["explainer_engine.production.build_episode", "explainer_engine.finish.esrgan_cpu"],
-      "required_inputs": ["audio_mix", "shot_plan"],
-      "expected_outputs": ["rendered_master"],
-      "implementation_gaps": []
+      "dependencies": [
+        "S8_audio_and_sound"
+      ],
+      "triggers": [
+        "assemble",
+        "color_grade",
+        "upscale",
+        "render"
+      ],
+      "skills": [
+        "v-ffmpeg-skill",
+        "v-video-editing-skill",
+        "v-color-grading-skill",
+        "tool-upscale"
+      ],
+      "python_modules": [
+        "explainer_engine.production.build_episode",
+        "explainer_engine.finish.esrgan_cpu"
+      ],
+      "required_inputs": [
+        "audio_mix",
+        "shot_plan"
+      ],
+      "expected_outputs": [
+        "rendered_master"
+      ],
+      "implementation_gaps": [],
+      "execution_category": "episode_stage"
     },
     {
       "stage_id": "S10_qa_and_delivery",
       "name": "Technical QA, Multimodal Perceptual QA & Delivery Gate",
       "order": 10,
       "conditional": false,
-      "dependencies": ["S9_edit_and_render"],
-      "triggers": ["technical_qa", "perceptual_qa", "delivery_gate"],
-      "skills": ["tool-vision-qa", "v-qc-skill", "v-media-analysis-skill", "film-direction"],
-      "python_modules": ["explainer_engine.qa.technical_gate", "explainer_engine.qa.perceptual_qa", "explainer_engine.qa.delivery_gate"],
-      "required_inputs": ["rendered_master"],
-      "expected_outputs": ["technical_qa_report", "perceptual_qa_report", "delivery_manifest"],
-      "implementation_gaps": []
+      "dependencies": [
+        "S9_edit_and_render"
+      ],
+      "triggers": [
+        "technical_qa",
+        "perceptual_qa",
+        "delivery_gate"
+      ],
+      "skills": [
+        "tool-vision-qa",
+        "v-qc-skill",
+        "v-media-analysis-skill",
+        "film-direction"
+      ],
+      "python_modules": [
+        "explainer_engine.qa.technical_gate",
+        "explainer_engine.qa.perceptual_qa",
+        "explainer_engine.qa.delivery_gate"
+      ],
+      "required_inputs": [
+        "rendered_master"
+      ],
+      "expected_outputs": [
+        "technical_qa_report",
+        "perceptual_qa_report",
+        "delivery_manifest"
+      ],
+      "implementation_gaps": [],
+      "execution_category": "route_worker"
     }
   ]
 }

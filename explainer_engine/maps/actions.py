@@ -299,7 +299,12 @@ def draw(base: D.Canvas, p: dict, f: int, view: geo.View | None, look: dict | No
     ink, accent = (*col["ink"], 255), (*col["accent"], 255)
     px = (lambda ll: tuple(float(v) for v in view.to_px(*ll))) if view else None
     unit = base.h
-    for a in p["actions"]:
+    # Two-pass z-order: draw arrows, pulses, plumes, and regions first; render typography/labels on top.
+    overlay_kinds = ("label", "counter", "milestone")
+    ordered_actions = [a for a in p["actions"] if a["kind"] not in overlay_kinds] + [
+        a for a in p["actions"] if a["kind"] in overlay_kinds
+    ]
+    for a in ordered_actions:
         if f < a["start"]:
             continue
         c = D.Canvas(base.w, base.h, None, base.ss)
@@ -472,10 +477,46 @@ def _draw_one(c, a, p, f, view, col, ink, accent, px, unit) -> None:
         elif k == "label":
             cx, cy = px(a["from"])
             text = a.get("label") or a.get("name") or a["from_id"]
-            size = max(unit * 40 / 1080, 6.0)
-            alpha = int(255 * min(1.0, (f - a["start"] + 1) / 6))
-            c.text((cx + size * 0.35, cy - size * 0.35), text, size, (*col["ink"], alpha), anchor="lb",
-                   stroke=max(1.0, size * 0.12), stroke_fill=(*col["paper"], alpha))
+            size = max(unit * 34 / 1080, 10.0)
+            a_frac = min(1.0, (f - a["start"] + 1) / 6.0)
+            alpha = int(255 * a_frac)
+            # Determine if any route_arrow leaves/enters this node upward-right; offset label cleanly away from arrow vector
+            dy_sign = -1.0
+            dx_sign = 1.0
+            for other in p["actions"]:
+                if other["kind"] in PATH_KINDS and other.get("path") and px is not None:
+                    pts = [px(q) for q in other["path"]]
+                    if pts and math.hypot(pts[0][0] - cx, pts[0][1] - cy) < unit * 0.03 and len(pts) >= 2:
+                        vx, vy = pts[min(4, len(pts) - 1)][0] - pts[0][0], pts[min(4, len(pts) - 1)][1] - pts[0][1]
+                        if vy <= 0:
+                            dy_sign = 1.0  # arrow heads up/right -> place label below
+                        if vx > 0 and dy_sign > 0:
+                            dx_sign = 0.25
+                    elif pts and math.hypot(pts[-1][0] - cx, pts[-1][1] - cy) < unit * 0.03 and len(pts) >= 2:
+                        vx, vy = pts[-1][0] - pts[max(0, len(pts) - 5)][0], pts[-1][1] - pts[max(0, len(pts) - 5)][1]
+                        if vy < 0:
+                            dy_sign = -1.15  # arrow arrives from below -> place label cleanly above
+            # Draw crisp cartographic pin marker at exact coordinates
+            pin_r = max(3.0, unit * 0.008)
+            c.circle(cx, cy, pin_r + 2.0, fill=(22, 26, 32, alpha))
+            c.circle(cx, cy, pin_r, fill=(*col["paper"], alpha), outline=(*col["accent"], alpha), width=max(1.5, unit * 0.003))
+            # Editorial dark translucent pill badge behind Liberation Serif label
+            tw = c.text_width(text, size)
+            pad_x = size * 0.45
+            pad_y = size * 0.26
+            box_w = tw + pad_x * 2
+            box_h = size * 1.25 + pad_y * 2
+            lx = cx + dx_sign * size * 0.55
+            ly = cy + (size * 0.55 if dy_sign > 0 else -(box_h + size * 0.55))
+            lx = max(12.0, min(c.w - box_w - 12.0, lx))
+            ly = max(12.0, min(c.h - box_h - 12.0, ly))
+            # Subtle leader line from pin to badge edge
+            edge_x = max(lx, min(lx + box_w, cx))
+            edge_y = ly if dy_sign > 0 else ly + box_h
+            c.line([(cx, cy), (edge_x, edge_y)], (245, 240, 228, int(170 * a_frac)), max(1.2, unit * 0.002))
+            c.rect(lx, ly, lx + box_w, ly + box_h, fill=(20, 24, 30, int(218 * a_frac)),
+                   outline=(232, 222, 200, int(140 * a_frac)), width=max(1.0, unit * 0.0018), radius=size * 0.22)
+            c.text((lx + pad_x, ly + box_h * 0.5), text, size, (248, 244, 234, alpha), anchor="lm")
         elif k == "counter":
             v = float(a.get("value") or 0) * u
             text = f"{_fmt(v, a.get('value') or 0)} {a.get('unit') or ''}".strip()

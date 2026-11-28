@@ -1,0 +1,54 @@
+{
+  "schema_version": "prompt_golden_dataset/1",
+  "description": "Offline deterministic regression suite for historical docudrama & What-If prompts (zero paid calls).",
+  "cases": [
+    {
+      "case_id": "G01_ltx_silent_battle_wide",
+      "kind": "ltx_video",
+      "camera_move": "truck",
+      "has_spoken_dialogue": false,
+      "expected_pass": true,
+      "prompt": "Slow horizontal truck across a rain-soaked 1914 trench parapet as lanterns flicker in cold mist and soldiers brace along wooden duckboards. Ambient rain and distant artillery thunder; no speech, no dialogue."
+    },
+    {
+      "case_id": "G02_ltx_dialogue_commander",
+      "kind": "ltx_video",
+      "camera_move": "zoom_in",
+      "has_spoken_dialogue": true,
+      "expected_pass": true,
+      "prompt": "Subtle zoom_in on General Vance leaning over a candlelit linen map table as ink shadows shift across his brow. Vance says in a weathered low baritone: \"Hold the eastern ridge until dawn.\" Faint parchment rustle and distant wind."
+    },
+    {
+      "case_id": "G03_map_frontline_advance",
+      "kind": "map_shot",
+      "camera_move": "truck_zoom_out",
+      "has_spoken_dialogue": false,
+      "expected_pass": true,
+      "prompt": "Clean dark-relief regional cartography of the Meuse sector with crimson and slate front-line vectors advancing steadily from 14 October to 21 October."
+    },
+    {
+      "case_id": "G04_reject_retired_route_slop",
+      "kind": "ltx_video",
+      "camera_move": "truck",
+      "has_spoken_dialogue": false,
+      "expected_pass": false,
+      "prompt": "Render in Unreal Engine with masterpiece, best quality, 8k and Qwen-LoRA style. No speech."
+    },
+    {
+      "case_id": "G05_reject_invalid_camera_and_missing_voice",
+      "kind": "ltx_video",
+      "camera_move": "orbit",
+      "has_spoken_dialogue": true,
+      "expected_pass": false,
+      "prompt": "360-orbit around the general standing on the hill while he talks about the battle."
+    },
+    {
+      "case_id": "G06_reject_missing_no_speech_clause",
+      "kind": "ltx_video",
+      "camera_move": "zoom_out",
+      "has_spoken_dialogue": false,
+      "expected_pass": false,
+      "prompt": "Wide aerial pull back over the frozen harbor as steam rises from ironclad funnels at first light."
+    }
+  ]
+}

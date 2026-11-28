@@ -49,7 +49,7 @@ HF_REPO = "vano1919/tmr-artifacts"
 LAUNCH_PATH = Path(__file__).with_name("launch.json")
 LADDER_PATH = Path(os.environ.get("EE_LTX_LADDER") or Path(__file__).with_name("ladder.json"))
 NIGHT_LEDGER = Path(os.environ.get("EE_NIGHT_LEDGER") or
-                    "/mnt/project-files/explainer-engine/final_plan_2026-11-19/modal_stage/NIGHT_LEDGER_2026-11-19.json")
+                    (Path.home() / ".explainer_engine" / "night_ledger.sqlite3"))
 SECRET_NAME = "custom-secret"   # the owner's second Modal account holds his HF token under this name (his message 2026-11-19 20:41 UTC, plan thread 21:36 UTC); the key inside is HF_TOKEN
 PINS = ("model_repo", "model_revision", "model_files", "ltx_code", "module", "uses", "hf_out", "scaledown_window_s",
         "base_image")
@@ -278,6 +278,14 @@ def hf_path(launch: dict, job: dict, name: str) -> str:
     return f"{launch['hf_out']}/{job['run_id']}/{job['shot_id']}/{name}"
 
 
+STAGE_CPU_RATE_USD_PER_H = 0.32
+
+
+def stage_hard_bill_usd(timeout_s: int = 3600) -> float:
+    """Upper-bound USD estimate for CPU weight staging on Modal."""
+    return round(float(timeout_s) * STAGE_CPU_RATE_USD_PER_H / 3600.0, 4)
+
+
 def go_gate(env=os.environ, plan_sha: str | None = None):
     """EE_MODAL_GO = ``<the creator's message id>:<sha256[:12] of the plan he said yes to>`` (final audit B10)."""
     v = env.get("EE_MODAL_GO", "")
@@ -288,6 +296,170 @@ def go_gate(env=os.environ, plan_sha: str | None = None):
     if not plan_sha or m.group(2) != plan_sha[:12]:
         raise SystemExit("EE_MODAL_GO names another plan than this job's (OR-23); nothing was started")
     return v
+
+
+
+_SEEN_REMOTE_OPERATION_IDS: set[str] = set()
+
+
+def verify_remote_approval_payload(
+    approval_proof: dict | None,
+    *,
+    operation_mode: str,
+    expected_manifest_sha256: str | None = None,
+    estimated_max_usd: float | None = None,
+    signing_key: str | None = None,
+    registry_path: Path | None = None,
+    replay_db_path: Path | None = None,
+) -> dict:
+    """Enforce cryptographically or registry-authenticated owner approval proof inside remote Modal workers."""
+    import datetime as _dt
+    import hashlib as _hashlib
+    import hmac as _hmac
+
+    if not isinstance(approval_proof, dict):
+        raise RuntimeError("Remote worker refused: missing owner approval_proof payload")
+    aid = approval_proof.get("approval_id")
+    if not isinstance(aid, str) or not re.fullmatch(r"^cmsg_[A-Za-z0-9_-]{8,128}$", aid):
+        raise RuntimeError(f"Remote worker refused: invalid approval_id {aid!r}")
+    if approval_proof.get("provider") != "modal_modal1":
+        raise RuntimeError(f"Remote worker refused: invalid provider {approval_proof.get('provider')!r}")
+    msha = approval_proof.get("manifest_sha256")
+    if not isinstance(msha, str) or not re.fullmatch(r"^[0-9a-f]{64}$", msha):
+        raise RuntimeError("Remote worker refused: missing valid 64-char manifest_sha256")
+    if expected_manifest_sha256 is not None and msha != expected_manifest_sha256:
+        raise RuntimeError(
+            f"Remote worker refused: manifest_sha256 mismatch ({msha} != {expected_manifest_sha256})"
+        )
+    mode = approval_proof.get("operation_mode")
+    if mode != operation_mode and not (operation_mode == "modal-ltx-smoke" and mode == "modal-ltx-stage-and-smoke"):
+        raise RuntimeError(f"Remote worker refused: operation_mode mismatch ({mode!r} != {operation_mode!r})")
+    max_usd = approval_proof.get("max_usd")
+    if isinstance(max_usd, bool) or not isinstance(max_usd, (int, float)) or not math.isfinite(max_usd) or max_usd <= 0:
+        raise RuntimeError(f"Remote worker refused: invalid max_usd {max_usd!r}")
+    if estimated_max_usd is not None and float(max_usd) + 1e-9 < float(estimated_max_usd):
+        raise RuntimeError(
+            f"Remote worker refused: approval max_usd ${float(max_usd):.4f} < required ${float(estimated_max_usd):.4f}"
+        )
+    ev = approval_proof.get("owner_evidence")
+    if not isinstance(ev, str) or not ev.strip():
+        raise RuntimeError("Remote worker refused: missing owner_evidence")
+    exp_raw = approval_proof.get("expires_at")
+    if not isinstance(exp_raw, str) or not exp_raw.strip():
+        raise RuntimeError("Remote worker refused: missing expires_at")
+    exp = _dt.datetime.fromisoformat(exp_raw)
+    if exp.tzinfo is None:
+        exp = exp.replace(tzinfo=_dt.UTC)
+    if _dt.datetime.now(_dt.UTC) >= exp:
+        raise RuntimeError(f"Remote worker refused: approval {aid!r} expired at {exp_raw}")
+
+    # Replay protection: require unique operation_id
+    op_id = approval_proof.get("operation_id")
+    if not isinstance(op_id, str) or len(op_id.strip()) < 8:
+        raise RuntimeError("Remote worker refused: missing unique operation_id for replay protection")
+    if op_id in _SEEN_REMOTE_OPERATION_IDS:
+        raise RuntimeError(f"Remote worker refused: replayed operation_id {op_id!r}")
+    _replay_db = replay_db_path or (
+        Path(os.environ["EE_APPROVAL_REPLAY_DB"]) if os.environ.get("EE_APPROVAL_REPLAY_DB") else None
+    )
+    if _replay_db is not None:
+        from explainer_engine.core import approvals as _approvals
+        if _approvals.is_operation_consumed(op_id, db_path=_replay_db):
+            raise RuntimeError(f"Remote worker refused: replayed operation_id {op_id!r} in persistent ledger")
+
+    # Authenticity check: MUST verify either HMAC-SHA256 signature OR authoritative owner_approvals.json registry
+    authenticated = False
+    key = signing_key if signing_key is not None else (os.environ.get("OWNER_APPROVAL_SIGNING_KEY") or os.environ.get("EE_APPROVAL_HMAC_KEY"))
+    provided_hmac = approval_proof.get("approval_hmac")
+    if key and isinstance(provided_hmac, str) and re.fullmatch(r"^[0-9a-f]{64}$", provided_hmac):
+        try:
+            from explainer_engine.core import approvals as _approvals
+            hmac_ok = _approvals.verify_approval_hmac(approval_proof, signing_key=key)
+        except ImportError:
+            canonical = {
+                "approval_id": aid,
+                "provider": approval_proof.get("provider"),
+                "operation_mode": mode,
+                "manifest_sha256": msha,
+                "max_usd": round(float(max_usd), 6),
+                "expires_at": exp_raw,
+                "owner_evidence": ev,
+                "operation_id": op_id,
+            }
+            msg = json.dumps(canonical, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+            expected_sig = _hmac.new(key.encode("utf-8"), msg, _hashlib.sha256).hexdigest()
+            hmac_ok = _hmac.compare_digest(provided_hmac, expected_sig)
+        if hmac_ok:
+            authenticated = True
+        else:
+            raise RuntimeError("Remote worker refused: forged or invalid approval_hmac signature")
+
+    if not authenticated:
+        _parents = Path(__file__).resolve().parents
+        reg_p = registry_path or ((_parents[4] if len(_parents) > 4 else Path(__file__).resolve().parent) / "config" / "owner_approvals.json")
+        if reg_p.is_file():
+            reg_data = json.loads(reg_p.read_text(encoding="utf-8"))
+            reg_rec = (reg_data.get("approvals") or {}).get(aid)
+            if (
+                isinstance(reg_rec, dict)
+                and reg_rec.get("provider") == "modal_modal1"
+                and reg_rec.get("manifest_sha256") == msha
+                and reg_rec.get("operation_mode") == mode
+                and float(reg_rec.get("max_usd") or 0) >= float(max_usd)
+                and reg_rec.get("expires_at") == exp_raw
+                and reg_rec.get("owner_evidence") == ev
+            ):
+                authenticated = True
+
+    if not authenticated:
+        raise RuntimeError(
+            "Remote worker refused: unauthenticated/forged approval_proof (neither valid HMAC signature nor matching owner_approvals.json entry)"
+        )
+
+    if _replay_db is not None:
+        from explainer_engine.core import approvals as _approvals
+        try:
+            _approvals.record_consumed_operation(
+                op_id, approval_id=aid, manifest_sha256=msha, db_path=_replay_db
+            )
+        except Exception as exc:
+            raise RuntimeError(f"Remote worker refused: {exc}") from exc
+    _SEEN_REMOTE_OPERATION_IDS.add(op_id)
+    return approval_proof
+
+
+def verify_worker_approval(
+    env=os.environ,
+    *,
+    plan_sha: str,
+    operation_mode: str,
+    requested_usd: float,
+    registry_path: Path | None = None,
+) -> dict:
+    """Fail-closed owner approval verification directly inside the Modal worker entrypoint."""
+    from explainer_engine.core import approvals
+
+    go_val = go_gate(env=env, plan_sha=plan_sha)
+    card_id = go_val.split(":", 1)[0]
+    manifest_sha = str(env.get("EE_MODAL_APPROVAL_MANIFEST_SHA256") or "").strip()
+    effective_mode = str(env.get("EE_MODAL_OPERATION_MODE") or operation_mode).strip()
+    import uuid as _uuid
+    try:
+        proof_rec = approvals.verify_approval(
+            card_id,
+            provider="modal_modal1",
+            operation_mode=effective_mode,
+            manifest_sha256=manifest_sha,
+            requested_usd=requested_usd,
+            registry_path=registry_path,
+        )
+        op_id = f"op_{_uuid.uuid4().hex}"
+        hmac_key = str(env.get("OWNER_APPROVAL_SIGNING_KEY") or env.get("EE_APPROVAL_HMAC_KEY") or "").strip()
+        if hmac_key:
+            return approvals.sign_approval_proof(proof_rec, signing_key=hmac_key, operation_id=op_id)
+        return dict(proof_rec, operation_id=op_id)
+    except approvals.ApprovalError as exc:
+        raise SystemExit(f"owner approval verification failed: {exc}; nothing was started") from None
 
 
 def ladder_gate(rung: str, path=None, launch=None):
@@ -496,6 +668,7 @@ def night_settle(item: str, usd: float, path=None) -> None:
         NB.settle(path or NIGHT_LEDGER, item, usd)
     except NB.NightCapExceeded as exc:
         print("NIGHT LEDGER SETTLE FAILED:", exc, flush=True)
+        raise SystemExit(f"NIGHT LEDGER SETTLE FAILED: {exc}") from None
 
 
 def claim_launch(spec: dict, now=time.time) -> None:
@@ -1251,7 +1424,7 @@ def _grey_frames(clip: Path, first: int, count: int, width: int = HANDOVER_W, sh
     w0, h0 = (int(v) for v in probe.stdout.strip().split(",")[:2])
     h = max(2, int(round(width * h0 / w0 / 2)) * 2)
     raw = sh(["ffmpeg", "-v", "error", "-i", str(clip), "-vf", f"select=gte(n\\,{int(first)}),scale={width}:{h},format=gray",
-              "-vsync", "0", "-frames:v", str(int(count)), "-f", "rawvideo", "-"], check=True, timeout=120,
+              "-fps_mode", "passthrough", "-frames:v", str(int(count)), "-f", "rawvideo", "-"], check=True, timeout=120,
              capture_output=True).stdout
     n = len(raw) // (width * h)
     return np.frombuffer(raw[:n * width * h], np.uint8).reshape(n, h, width).astype(np.float32)
@@ -1363,7 +1536,7 @@ def frame_png(clip: Path, index: int, png: Path, sh=subprocess.run, crop=None) -
     """Frame ``index`` (0-based, by decode order) of the clip as a PNG: the start picture of the next chained shot, cropped
     when the continuation plan reframes it (``fit_picture`` then brings it to the clip size)."""
     vf = f"select=eq(n\\,{int(index)})" + (f",{crop_filter(crop)}" if crop else "")
-    sh(["ffmpeg", "-y", "-loglevel", "error", "-i", str(clip), "-vf", vf, "-vsync", "0",
+    sh(["ffmpeg", "-y", "-loglevel", "error", "-i", str(clip), "-vf", vf, "-fps_mode", "passthrough",
         "-frames:v", "1", str(png)], check=True, timeout=60)
     if not Path(png).is_file() or Path(png).stat().st_size == 0:
         raise RuntimeError(f"frame {index} of {Path(clip).name} was not written")
@@ -1532,6 +1705,13 @@ if modal is not None:
     app = modal.App(LAUNCH["app_name"])
     vol = modal.Volume.from_name("ee-weights", version=2)
     _code = LAUNCH.get("ltx_code") or {}
+    _p_list = Path(__file__).resolve().parents
+    _env_approvals = os.environ.get("EE_OWNER_APPROVALS_PATH", "").strip()
+    _approvals_src = (
+        Path(_env_approvals).expanduser()
+        if _env_approvals
+        else (_p_list[4] if len(_p_list) > 4 else Path(__file__).resolve().parent) / "config" / "owner_approvals.json"
+    )
     image = (modal.Image.from_registry(LAUNCH.get("base_image") or "python:3.12-slim", add_python="3.12")
              .apt_install("ffmpeg", "git")
              .run_commands(f'pip install -q "huggingface_hub=={LAUNCH.get("hf_hub_pin") or "1.33.0"}"',
@@ -1539,6 +1719,8 @@ if modal is not None:
                            f"{_code.get('commit')} && pip install -q -e /workspace/LTX-2/packages/ltx-core "
                            "-e /workspace/LTX-2/packages/ltx-pipelines")
              .add_local_file(str(LAUNCH_PATH), "/root/launch.json"))
+    if _approvals_src.is_file():
+        image = image.add_local_file(str(_approvals_src), "/root/config/owner_approvals.json")
     secrets = [modal.Secret.from_name(SECRET_NAME)]
 
     @app.function(image=image, cpu=(2.0, 2.0), memory=(4096, 4096), timeout=300, retries=0, secrets=secrets)
@@ -1552,7 +1734,8 @@ if modal is not None:
 
     @app.function(image=image, cpu=(float(STAGE_CPU),) * 2, memory=(STAGE_MEM_GIB * 1024,) * 2, timeout=STAGE_TIMEOUT_S,
                   retries=0, volumes={"/w": vol}, secrets=secrets)
-    def weights_stage(launch: dict, with_kind: bool = False):
+    def weights_stage(launch: dict, with_kind: bool = False, approval_proof: dict | None = None):
+        verify_remote_approval_payload(approval_proof, operation_mode="modal-ltx-stage-and-smoke")
         bad = stage_weights(launch, with_kind=with_kind)
         vol.commit()
         return bad
@@ -1562,7 +1745,8 @@ if modal is not None:
                       memory=(LAUNCH["memory_gib"] * 1024,) * 2, retries=0, volumes={"/w": vol}, secrets=secrets,
                       scaledown_window=LAUNCH["scaledown_window_s"], startup_timeout=LAUNCH["startup_timeout_s"])
 
-        def _remote_body(job, launch, timeout_s):
+        def _remote_body(job, launch, timeout_s, *, operation_mode: str = "modal-ltx-smoke"):
+            verify_remote_approval_payload(job.get("approval_proof"), operation_mode=operation_mode)
             from huggingface_hub import HfApi
             bad = container_gate(job, launch)
             if bad:
@@ -1572,11 +1756,11 @@ if modal is not None:
 
         @app.function(timeout=TIMEOUTS[0], **GPU_KW)
         def ltx_smoke(job: dict, launch: dict):
-            return _remote_body(job, launch, TIMEOUTS[0])
+            return _remote_body(job, launch, TIMEOUTS[0], operation_mode="modal-ltx-smoke")
 
         @app.function(timeout=TIMEOUTS[1], **GPU_KW)
         def ltx_main(job: dict, launch: dict):
-            return _remote_body(job, launch, TIMEOUTS[1])
+            return _remote_body(job, launch, TIMEOUTS[1], operation_mode="modal-ltx-main")
 
     @app.local_entrypoint()
     def check():
@@ -1591,9 +1775,19 @@ if modal is not None:
     @app.local_entrypoint()
     def stage(plan: str = "", with_kind: bool = False):
         preflight(LAUNCH)
-        print("GO card", go_gate(plan_sha=_sha(plan)), "stage timeout", STAGE_TIMEOUT_S, "s", flush=True)
+        plan_sha = _sha(plan)
+        stage_est = stage_hard_bill_usd(STAGE_TIMEOUT_S)
+        approval_proof = verify_worker_approval(plan_sha=plan_sha, operation_mode="modal-ltx-stage-and-smoke", requested_usd=stage_est)
+        print("GO card", go_gate(plan_sha=plan_sha), "stage timeout", STAGE_TIMEOUT_S, "s", flush=True)
         ladder_gate("L2")
-        bad = weights_stage.remote(LAUNCH, with_kind)
+        stage_item = f"ltx_stage_{run_id(plan_sha, LAUNCH)}_{worker_sha()[:8]}"
+        night_reserve(stage_item, stage_est, "L2 weights stage")
+        t_stage = time.time()
+        try:
+            bad = weights_stage.remote(LAUNCH, with_kind, approval_proof=approval_proof)
+        finally:
+            wall = time.time() - t_stage
+            night_settle(stage_item, round(wall * STAGE_CPU_RATE_USD_PER_H / 3600.0, 4))
         print("stage", bad or "all files on the Volume, sha256 match")
         if bad:
             raise SystemExit("the weights stage-in is not complete:\n" + "\n".join(bad))
@@ -1610,6 +1804,8 @@ if modal is not None:
     def smoke(picture: str = "", plan: str = ""):
         preflight(LAUNCH)
         plan_sha = _sha(plan)
+        smoke_est = hard_bill_usd(LAUNCH, TIMEOUTS[0])
+        approval_proof = verify_worker_approval(plan_sha=plan_sha, operation_mode="modal-ltx-smoke", requested_usd=smoke_est)
         print("GO card", go_gate(plan_sha=plan_sha), "smoke timeout", TIMEOUTS[0], "s", flush=True)
         ladder_gate("L3")
         smoke_item = f"ltx_smoke_{run_id(plan_sha, LAUNCH)}_{worker_sha()[:8]}"   # a repeat on FIXED bytes is a new item; the same bytes stay refused
@@ -1618,7 +1814,7 @@ if modal is not None:
         nat = native_spec(LAUNCH, SMOKE_JOB["seconds"])
         job = dict(SMOKE_JOB, fps=nat["fps"], width=nat["width"], height=nat["height"], start_bytes=pic,
                    start_sha256=hashlib.sha256(pic).hexdigest(), run_id=run_id(plan_sha, LAUNCH), launch_sha=launch_sha(LAUNCH),
-                   worker_sha=worker_sha(), nonce=uuid.uuid4().hex[:12], cheapest_waive=waivers())
+                   worker_sha=worker_sha(), nonce=uuid.uuid4().hex[:12], cheapest_waive=waivers(), approval_proof=approval_proof)
         t_smoke = time.time()
         try:
             res = ltx_smoke.remote(job, LAUNCH)
@@ -1644,6 +1840,11 @@ if modal is not None:
         why = kind_l2_problems(spec, LAUNCH, MR.load_ladder(LADDER_PATH))
         if why:
             raise SystemExit("\n".join(why))
+        approval_proof = verify_worker_approval(
+            plan_sha=spec["plan_sha256"],
+            operation_mode="modal-ltx-main",
+            requested_usd=hard_bill_usd(LAUNCH, TIMEOUTS[1]),
+        )
         print("GO card", go_gate(plan_sha=spec["plan_sha256"]), "timeout", TIMEOUTS[1], "s", flush=True)
         ladder_gate("L4")
         night_item = f"ltx_main_{spec['run_id']}"
@@ -1651,7 +1852,7 @@ if modal is not None:
         claim_launch(spec)
         t0, res = time.time(), None
         try:
-            res = ltx_main.remote(dict(spec, worker_sha=worker_sha(), nonce=uuid.uuid4().hex[:12], cheapest_waive=waivers()),
+            res = ltx_main.remote(dict(spec, worker_sha=worker_sha(), nonce=uuid.uuid4().hex[:12], cheapest_waive=waivers(), approval_proof=approval_proof),
                                   LAUNCH)
         finally:
             wall = time.time() - t0

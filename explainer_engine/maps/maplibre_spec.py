@@ -18,14 +18,7 @@ REQUIRED_SPEC_KEYS: tuple[str, ...] = (
     "towns",
     "footnote",
 )
-ALLOWED_CAMERA_MOVES: tuple[str, ...] = (
-    "truck",
-    "zoom_in",
-    "zoom_out",
-    "truck_zoom_in",
-    "truck_zoom_out",
-)
-FORBIDDEN_CAMERA_KEYS: tuple[str, ...] = ("bearing", "pitch", "rotation", "roll", "orbit")
+from explainer_engine.core.camera_vocab import ALLOWED_CAMERA_MOVES, FORBIDDEN_CAMERA_KEYS
 
 
 class ShotSpecError(Exception):

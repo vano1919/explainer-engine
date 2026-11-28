@@ -184,8 +184,14 @@ def check_protected_shell(cmd: str, cfg: dict, root: Path) -> str | None:
 
 
 def pre_bash(event: dict, root=None) -> int:
+    from explainer_engine.governance import gateway_hook as GH
+
     root = root_dir(root)
     cmd = (event.get("tool_input") or {}).get("command", "")
+    if cmd:
+        violations = GH.check_shell_command_for_gateway_bypass(cmd)
+        if violations:
+            return _deny("; ".join(violations))
     cfg = load(root)
     for argv in commands(cmd):
         msg = check_git(argv, root)
@@ -193,6 +199,25 @@ def pre_bash(event: dict, root=None) -> int:
             return _deny(msg)
     msg = check_protected_shell(cmd, cfg, root)
     return _deny(msg) if msg else 0
+
+
+def post_bash(event: dict, root=None) -> int:
+    """Record governed Bash execution results into jobs/gateway_audit.jsonl."""
+    root = root_dir(root)
+    ti = event.get("tool_input") if isinstance(event, dict) else {}
+    cmd = (ti or {}).get("command", "") if isinstance(ti, dict) else ""
+    tr = event.get("tool_response") if isinstance(event, dict) else {}
+    row = {
+        "at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        "hook": "post-bash",
+        "command_preview": str(cmd)[:200],
+        "exit_code": tr.get("exit_code") if isinstance(tr, dict) else None,
+    }
+    audit = root / "jobs" / "gateway_audit.jsonl"
+    audit.parent.mkdir(parents=True, exist_ok=True)
+    with audit.open("a", encoding="utf-8") as f:
+        f.write(json.dumps(row, ensure_ascii=False) + "\n")
+    return 0
 
 
 # ---- PreToolUse Write|Edit -------------------------------------------------------------------------------------------------
@@ -382,6 +407,11 @@ def stop(event: dict, root=None) -> int:
             fail = _tests_pass(root, cl["tests"])
             if fail:
                 problems.append(f"{phase}: {fail}")
+    from explainer_engine.governance import gateway_hook as GH
+
+    gw_stop = GH.check_stop_payload(event, root=root)
+    if gw_stop["decision"] != "allow":
+        problems.append(gw_stop["reason"])
     if problems:
         return _deny("The phase is not finished:\n  " + "\n  ".join(problems))
     return 0
@@ -413,7 +443,7 @@ def statusline(event: dict, root=None) -> int:
     return 0
 
 
-HOOKS = {"pre-bash": pre_bash, "pre-write": pre_write, "pre-agent": pre_agent, "post-edit": post_edit, "pre-switch": pre_switch,
+HOOKS = {"pre-bash": pre_bash, "post-bash": post_bash, "pre-write": pre_write, "pre-agent": pre_agent, "post-edit": post_edit, "pre-switch": pre_switch,
          "post-switch": post_switch, "prompt": prompt, "stop": stop, "stop-failure": stop_failure, "statusline": statusline}
 DENYING = {"pre-bash", "pre-write", "pre-agent", "pre-switch", "stop", "post-edit"}
 

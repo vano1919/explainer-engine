@@ -76,9 +76,12 @@ One canonical home per specification and per ID (D-23). Link to a document or an
 | [ASSET_SYSTEM](ASSET_SYSTEM.md) | asset records, naming, licences, generation rules | |
 | [AUDIO_SYSTEM](AUDIO_SYSTEM.md) | narration, mix, audio-event contract, licences, the sound director's checks | SD- |
 | [SOUND_LIBRARY](SOUND_LIBRARY.md) | the professional sound library (D-134): sources and their licences, the creator's licence scope (music only), originals, QC, the catalog and its search CLI, previews | LIB- |
+| [LOCAL_VOICE_CLONING_ODOM_BLUEPRINT](LOCAL_VOICE_CLONING_ODOM_BLUEPRINT.md) | future-episode lightweight local emotion-controlled Odom voice cloning architecture (Chatterbox-Turbo / CosyVoice2 / Orpheus-3B / F5-TTS) with narrator_polish and WER/SIM QA gates | |
 | [RENDERING_ARCHITECTURE](RENDERING_ARCHITECTURE.md) | current Python/FFmpeg assembler; historical Remotion proposal and renderer decision notes | |
 | [PIPELINE_ARCHITECTURE](PIPELINE_ARCHITECTURE.md) | target stages, failure classes, config and job record; current entry points and unimplemented coordinator are marked at the top | |
 | [QA_SPECIFICATION](QA_SPECIFICATION.md) | technical and editorial QA, review bundle | Q- |
+| [QA_FAILURE_POSTMORTEM](QA_FAILURE_POSTMORTEM.md) | root-cause postmortem of 8 blind spots that allowed defective renders to pass automated QA and the fail-closed deterministic + Clean-Room AI Critic fixes | |
+| [COMMERCIAL_STUDIOS_REVERSE_ENGINEERING](COMMERCIAL_STUDIOS_REVERSE_ENGINEERING.md) | reverse-engineered architecture of paid AI filmmaking studios (LTX Studio, Higgsfield Popcorn, Google Flow, Runway, Katalist, Animaps, HeyGen HyperFrames) mapped into open-source modules | |
 | [PUBLISHING_AND_ANALYTICS](PUBLISHING_AND_ANALYTICS.md) | cadence, first cycle, candidates, metrics, learning loop | |
 | [VAULT](VAULT.md) | where every trained file, dataset and branch is kept, the second copy, restore, the pod upload check; D-73 | VT- |
 | [LLM_API](LLM_API.md) | the Claude API client: routing by task class, prices, caps and ledger, response cache, batch, fallbacks, secret refusal, read-only repo tools; P0d | |

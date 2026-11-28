@@ -298,7 +298,7 @@ def _key():
     raise SystemExit(f"no BFL key in {KEY_ENV}")
 
 
-LEDGER_HELP = ("the run ledger (run.json); every BFL call reserves against config/spend_caps.json per_episode.bfl_usd and stops at 80 % "
+LEDGER_HELP = ("the run ledger (run.json); every BFL call reserves against config/spend_caps.json per_episode.bfl_usd and stops at 80 %% "
                "(D-56, CN-10)")
 NO_LEDGER = "refused: paid BFL calls run only inside a ledger (D-56); pass --ledger"
 

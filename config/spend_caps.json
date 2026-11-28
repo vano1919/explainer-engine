@@ -184,8 +184,9 @@
   },
   "modal_ltx": {
     "per_run_usd": 1.5,
-    "for": "the video route's LTX-2.5 distilled clips on Modal (D-132, training/pods/ltx/modal_ltx_jobs.py): each test run at most $1.5 (the ledger stops reservations at 80 %, $1.2); the episode line (per_episode_usd) follows rung L3. Not the Wan route's `modal` line, which stays unset",
-    "decided": "the creator, 2026-11-12 19:20 UTC, message cmsg_01Hnu5zB86sjUj5GtTgaUkPWWqRxqiE28kSDxnNPn41fng: \"ა\" (answer a of the card: $1 per LTX test run); raised to $1.5 at 19:53 UTC, message cmsg_01Hnu5zB86sjUj5GtTgaUkPWFCKTbNTauXZ3AGuHNgczrk: \"1\" (card option 1: $1.5, 3 chained clips in one app, no separate L3 smoke for this run)"
+    "per_episode_usd": 15.0,
+    "for": "the video route's LTX-2.5 distilled clips on Modal (D-132, training/pods/ltx/modal_ltx_jobs.py): each batch run at most $1.5 (the ledger stops reservations at 80 %, $1.2); episode hard cap $15.00 on MODAL1 (AntigravityRunner SQLite WAL cap). Not the Wan route's `modal` line, which stays unset",
+    "decided": "the creator, 2026-11-12 19:20/19:53 UTC ($1.5 per run); episode cap per_episode_usd = $15.00 explicitly confirmed by the creator on 2026-11-25 for The First Fire v3 Master Prompt v3.2"
   },
   "modal_cheap_video": {
     "per_run_usd": 1.2,
@@ -194,7 +195,9 @@
     "decided": "the creator, 2026-11-12 22:21 UTC, message cmsg_01Hnu5zB86sjUj5GtTgaUkPWBzaDXEQGLrQnKpeqMBwkj9: \"გაქვს მოდალზე 3 დოლარის ლიმიტი იმ მოდელებზე რაც მოდალზე მუშაობს\" ($3 on Modal for the models that run on Modal)"
   },
   "orchestration_envelopes": {
-    "_doc": "Pre-authorized independent engineering budget envelopes (owner 2026-11-23): Modal MODAL1 $20.00, DeepSeek $4.50, Claude API $50.00 (combined max $74.50). Budgets are independent and non-transferable.",
+    "_doc": "Legacy orchestration budget envelopes (unverified without owner_approvals.json record; disabled by default and never overrides stricter modal_ltx, modal_render, or overnight caps).",
+    "enabled": false,
+    "verified_owner_evidence": false,
     "combined_max_usd": 74.5,
     "services": {
       "modal_modal1": {

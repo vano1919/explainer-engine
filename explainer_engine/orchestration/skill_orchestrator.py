@@ -11,7 +11,6 @@ Coordinates and executes active Skills across production stages with:
 """
 from __future__ import annotations
 
-import contextlib
 import datetime
 import hashlib
 import importlib
@@ -22,9 +21,10 @@ try:
     import fcntl
 except ImportError:  # pragma: no cover - Windows fallback
     fcntl = None  # type: ignore[assignment]
+from collections.abc import Callable
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
 from explainer_engine.core.errors import ContractError
 from explainer_engine.core.store import write_json_atomic
@@ -32,7 +32,7 @@ from explainer_engine.core.store import write_json_atomic
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_REGISTRY = Path(__file__).resolve().parent / "skill_registry.json"
 SKILLS_DIR = ROOT / ".claude" / "skills"
-UTC = datetime.timezone.utc
+UTC = datetime.UTC
 
 StageExecutor = Callable[[dict[str, Any]], dict[str, Any]]
 
@@ -77,18 +77,59 @@ def load_registry(path: Path | None = None) -> dict[str, Any]:
     return data
 
 
+def _exec_story_and_script(payload: dict[str, Any]) -> dict[str, Any]:
+    """Validate docudrama episode structure; emit PASS + outputs ONLY when real artifact files exist on disk."""
+    from explainer_engine.scripting import docudrama_structure as DS
+
+    plan = payload.get("episode_plan")
+    if plan is None:
+        return {"status": "VALIDATED", "outputs": [], "notes": "No episode_plan provided for structural validation"}
+    rep = DS.validate_docudrama_structure(plan, is_full_episode=bool(payload.get("is_full_episode", True)))
+    if rep["status"] != "PASS":
+        return {"status": "FAIL", "outputs": [], "report": rep}
+    script_p = payload.get("approved_script_path")
+    bridge_p = payload.get("beat_bridge_plan_path")
+    if script_p and bridge_p and Path(script_p).is_file() and Path(bridge_p).is_file():
+        return {"status": "PASS", "outputs": ["approved_script", "beat_bridge_plan"], "report": rep}
+    return {
+        "status": "VALIDATED",
+        "outputs": [],
+        "report": rep,
+        "notes": "Episode structure validated; provide on-disk approved_script_path and beat_bridge_plan_path for PASS",
+    }
+
+
+def _exec_film_direction(payload: dict[str, Any]) -> dict[str, Any]:
+    """Validate & compile Film Style Bible directives; emit PASS + outputs ONLY when real artifact files exist."""
+    from explainer_engine.episode import style_bible as SB
+
+    bible = payload.get("style_bible")
+    if bible is None:
+        return {"status": "VALIDATED", "outputs": [], "notes": "No style_bible provided for directive compilation"}
+    directives = SB.render_layer_directives(bible)
+    shot_p = payload.get("shot_plan_path")
+    cards_p = payload.get("continuity_cards_path")
+    if shot_p and cards_p and Path(shot_p).is_file() and Path(cards_p).is_file():
+        return {"status": "PASS", "outputs": ["shot_plan", "continuity_cards"], "directives": directives}
+    return {
+        "status": "VALIDATED",
+        "outputs": [],
+        "directives": directives,
+        "notes": "Style bible directives compiled; provide on-disk shot_plan_path and continuity_cards_path for PASS",
+    }
+
+
 def _exec_blender_previs(payload: dict[str, Any]) -> dict[str, Any]:
     """Validate a blender_scene/1 spec; emit PASS only when real rendered reference frames exist on disk."""
     from explainer_engine.lab import scene_spec as SS
 
     spec_path = payload.get("scene_spec_path")
-    if spec_path:
-        spec = json.loads(Path(spec_path).read_text(encoding="utf-8"))
-    else:
-        spec = payload.get("scene_spec")
+    spec = json.loads(Path(spec_path).read_text(encoding="utf-8")) if spec_path else payload.get("scene_spec")
     if not isinstance(spec, dict):
         raise ContractError("S4_blender_previs requires scene_spec or scene_spec_path")
-    errors = SS.validate(spec) if hasattr(SS, "validate") else []
+    SS.check_schema(spec)
+    results = SS.validate_spec(spec)
+    errors = [r for r in results if isinstance(r, dict) and str(r.get("status", "")).upper() == "FAIL"]
     if errors:
         raise ContractError(f"Blender previs spec validation failed: {errors}")
     rendered = [Path(p) for p in (payload.get("rendered_frames") or [])]
@@ -108,41 +149,111 @@ def _exec_blender_previs(payload: dict[str, Any]) -> dict[str, Any]:
 
 
 def _exec_gemini_images(payload: dict[str, Any]) -> dict[str, Any]:
-    """Record Gemini reference-image provenance manifest; emit PASS only when real image files & manifest exist."""
+    """Record Gemini reference-image provenance manifest; emit PASS only when real decodable images & manifest exist."""
+    from PIL import Image, UnidentifiedImageError
+
     out_path = payload.get("provenance_path")
     images = list(payload.get("images") or [])
-    verified_images = [p for p in images if isinstance(p, (str, Path)) and Path(p).is_file()]
+    verified_records: list[dict[str, Any]] = []
+    for raw_p in images:
+        if not isinstance(raw_p, (str, Path)):
+            continue
+        p = Path(raw_p)
+        if not p.is_file():
+            raise ContractError(f"Reference image does not exist: {p}")
+        try:
+            with Image.open(p) as im:
+                im.verify()
+            with Image.open(p) as im2:
+                width, height = im2.size
+        except (OSError, UnidentifiedImageError) as exc:
+            raise ContractError(f"Reference image failed decode verification ({p}): {exc}") from exc
+        digest = hashlib.sha256(p.read_bytes()).hexdigest()
+        verified_records.append({"path": str(p), "width": width, "height": height, "sha256": digest})
     manifest = {
         "schema_version": "image_provenance/1",
         "mode": payload.get("generation_mode", "interactive_gemini_chat"),
-        "images": [str(p) for p in verified_images],
+        "images": [r["path"] for r in verified_records],
+        "verified_assets": verified_records,
         "ts": datetime.datetime.now(UTC).isoformat(),
     }
-    if out_path and verified_images:
+    if out_path and verified_records:
         write_json_atomic(Path(out_path), manifest)
         return {
             "status": "PASS",
             "outputs": ["scene_images", "image_provenance"],
-            "count": len(verified_images),
+            "count": len(verified_records),
         }
     return {
         "status": "VALIDATED",
         "outputs": [],
-        "count": len(verified_images),
+        "count": len(verified_records),
         "notes": "No verified on-disk images + provenance_path supplied; cannot mark PASS",
     }
 
 
 def _exec_ltx_video(payload: dict[str, Any]) -> dict[str, Any]:
-    """Select the LTX worker route (MODAL1); emit PASS only when an ingested video_clip_record/1 exists on disk."""
+    """Execute photo-first LTX loop when loop_shots+callables are supplied, or verify ingested video_clip_record/1."""
     from explainer_engine.episode.router import select_ltx_worker
+    from explainer_engine.videolane import ltx_loop as LL
+
+    if payload.get("modal_request") is not None:
+        from explainer_engine.videolane.adapters import GovernedModalLTXRequest
+
+        mreq = payload["modal_request"]
+        if not isinstance(mreq, GovernedModalLTXRequest):
+            mreq = GovernedModalLTXRequest(**mreq)
+        reservation = mreq.validate_and_reserve(
+            registry_path=payload.get("approval_registry_path"),
+            ledger_path=payload.get("spend_ledger_path"),
+        )
+        return {
+            "status": "AUTHORIZED",
+            "outputs": [],
+            "reservation": reservation,
+            "notes": "Paid Modal LTX request authorized and reserved; remote GPU execution remains explicit",
+        }
+
+    if payload.get("loop_shots") is not None:
+        loop_res = LL.run_continuous_shot_loop(
+            payload["loop_shots"],
+            vision_observer=payload["vision_observer"],
+            video_generator=payload["video_generator"],
+            qa_reviewer=payload["qa_reviewer"],
+            tail_extractor=payload["tail_extractor"],
+            upscaler_2k=payload.get("upscaler_2k"),
+            still_upscaler=payload.get("still_upscaler"),
+            video_upscaler=payload.get("video_upscaler"),
+            acting_style=str(payload.get("acting_style", "restrained documentary realism")),
+            upscaler_backend=str(payload.get("upscaler_backend", "realesrgan_x2")),
+        )
+        return {
+            "status": loop_res["status"],
+            "outputs": ["ltx_video_clips"] if loop_res["status"] == "PASS" else [],
+            "loop_result": loop_res,
+        }
 
     shot = payload.get("shot") or {}
     worker = select_ltx_worker(shot)
     rec_path = payload.get("clip_record_path")
     if rec_path and Path(rec_path).is_file():
         rec = json.loads(Path(rec_path).read_text(encoding="utf-8"))
-        if rec.get("schema") == "video_clip_record/1" and rec.get("status") != "FAIL":
+        rec_status = str(rec.get("status") or "").upper()
+        if rec.get("schema") == "video_clip_record/1" and rec_status == "PASS":
+            clip_ref = rec.get("clip_path") or rec.get("path") or rec.get("video_path")
+            if not clip_ref:
+                raise ContractError("video_clip_record/1 PASS requires a non-empty clip_path/path/video_path")
+            clip_p = Path(clip_ref)
+            if not clip_p.is_file() or clip_p.stat().st_size == 0:
+                raise ContractError(f"video_clip_record/1 clip file missing or empty: {clip_p}")
+            expected_sha = rec.get("sha256")
+            if not isinstance(expected_sha, str) or len(expected_sha) != 64:
+                raise ContractError("video_clip_record/1 PASS requires a valid 64-character sha256 digest")
+            actual_sha = hashlib.sha256(clip_p.read_bytes()).hexdigest()
+            if actual_sha != expected_sha:
+                raise ContractError(
+                    f"video_clip_record/1 SHA-256 mismatch for {clip_p}: expected {expected_sha}, got {actual_sha}"
+                )
             return {"status": "PASS", "outputs": ["ltx_video_clips"], "worker": worker, "clip_record_path": str(rec_path)}
     return {
         "status": "PLANNED",
@@ -164,6 +275,7 @@ def _exec_perceptual_qa(payload: dict[str, Any]) -> dict[str, Any]:
         out_dir=Path(payload.get("qa_out_dir", Path(video_path).parent / "qa")),
         use_gemini=bool(payload.get("use_gemini", False)),
         reviewer_model=str(payload.get("reviewer_model", PQA.DEFAULT_GEMINI_QA_MODEL)),
+        identity_checks=payload.get("identity_checks"),
     )
     return {"status": report["verdict"], "outputs": ["technical_qa_report", "perceptual_qa_report"], "report": report}
 
@@ -177,6 +289,8 @@ class SkillOrchestrator:
         self._stages: dict[str, dict[str, Any]] = {s["stage_id"]: s for s in self.registry["stages"]}
         self._retired: set[str] = set(self.registry.get("retired_skills", []))
         self._executors: dict[str, StageExecutor] = {
+            "S2_story_and_script": _exec_story_and_script,
+            "S3_film_direction": _exec_film_direction,
             "S4_blender_previs": _exec_blender_previs,
             "S5_gemini_images": _exec_gemini_images,
             "S6_ltx_video": _exec_ltx_video,
@@ -340,6 +454,7 @@ class SkillOrchestrator:
         *,
         ledger_path: Path | None = None,
         checkpoint_path: Path | None = None,
+        state_path: Path | None = None,
         allow_gaps: bool = False,
     ) -> dict[str, Any]:
         """Execute all ready stages in topological order with hash-bound crash-safe checkpoint persistence."""
@@ -348,6 +463,12 @@ class SkillOrchestrator:
                 f"Plan is not ready: missing_inputs={plan.blocked_missing_inputs}, "
                 f"implementation_gaps={plan.blocked_implementation_gaps}"
             )
+        for st in plan.stages:
+            st_meta = self._stages[st.stage_id]
+            if st_meta.get("execution_category") == "not_implemented":
+                raise ContractError(f"Stage {st.stage_id!r} is marked not_implemented and cannot be executed")
+            if st.stage_id not in self._executors:
+                raise ContractError(f"Pre-run refusal: no executable Python handler registered for stage {st.stage_id!r}")
         plan_hash = self._plan_fingerprint(plan, stage_payloads)
         done_stages: set[str] = set()
         results: dict[str, Any] = {}
@@ -357,15 +478,47 @@ class SkillOrchestrator:
                 done_stages = set(cp.get("completed_stages", []))
                 results = dict(cp.get("results", {}))
 
+        from explainer_engine.core.execution_gateway import ProductionStateMachine
+
+        effective_state_path = (
+            state_path
+            or (checkpoint_path.with_name("production_state.json") if checkpoint_path else None)
+            or (ledger_path.with_name("production_state.json") if ledger_path else None)
+            or (ROOT / "jobs" / "orchestrator_state" / f"{plan_hash[:16]}_production_state.json")
+        )
+        ordered_ids = tuple(s.stage_id for s in plan.stages)
+        deps_map = {
+            s.stage_id: tuple(
+                d
+                for d in (
+                    self._stages[s.stage_id].get("dependencies")
+                    or self._stages[s.stage_id].get("depends_on")
+                    or []
+                )
+                if d in ordered_ids
+            )
+            for s in plan.stages
+        }
+        sm = ProductionStateMachine(
+            effective_state_path,
+            episode_id=str(plan.episode_id if hasattr(plan, "episode_id") else "orchestrated"),
+            ordered_stages=ordered_ids,
+            stage_dependencies=deps_map,
+        )
+
         status_rank = {"FAIL": 4, "ERROR": 4, "NEEDS_REVIEW": 3, "REVIEW": 3, "NOT_RUN": 2, "PLANNED": 1, "VALIDATED": 1, "PASS": 0}
         worst_status = "PASS"
 
         for st in plan.stages:
             if st.stage_id in done_stages:
-                prev_st = str((results.get(st.stage_id) or {}).get("status", "PASS")).upper()
-                if status_rank.get(prev_st, 3) > status_rank.get(worst_status, 0):
-                    worst_status = prev_st
-                continue
+                fresh_ok, _ = sm.is_stage_fresh(st.stage_id, input_fingerprints={"plan_hash": plan_hash})
+                if fresh_ok:
+                    prev_st = str((results.get(st.stage_id) or {}).get("status", "PASS")).upper()
+                    if status_rank.get(prev_st, 3) > status_rank.get(worst_status, 0):
+                        worst_status = prev_st
+                    continue
+                done_stages.discard(st.stage_id)
+            sm.mark_stage_started(st.stage_id, input_fingerprints={"plan_hash": plan_hash})
             res = self.run_stage(
                 st.stage_id,
                 stage_payloads.get(st.stage_id, {}),
@@ -374,17 +527,54 @@ class SkillOrchestrator:
             )
             results[st.stage_id] = res
             st_status = str(res.get("status") or "NOT_RUN").upper()
-            if st_status in ("FAIL", "ERROR"):
+            cand_paths: list[Any] = [
+                res.get("clip_record_path"),
+                res.get("provenance_path"),
+                res.get("output_path"),
+                (res.get("report") or {}).get("artifact_path") if isinstance(res.get("report"), dict) else None,
+            ]
+            if isinstance(res.get("loop_result"), dict):
+                for step in res["loop_result"].get("steps") or []:
+                    if isinstance(step, dict):
+                        cand_paths.extend([step.get("upscaled_clip_path"), step.get("upscaled_tail_frame_path"), step.get("clip_path")])
+            for k_out in ("provenance_path", "clip_record_path", "video_path"):
+                if k_out in (stage_payloads.get(st.stage_id) or {}):
+                    cand_paths.append(stage_payloads[st.stage_id][k_out])
+            out_files = list(dict.fromkeys(Path(v) for v in cand_paths if isinstance(v, (str, Path)) and Path(v).is_file()))
+            if st_status == "PASS" and not out_files:
+                marker = effective_state_path.parent / f"{st.stage_id}_result.json"
+                write_json_atomic(marker, {"stage_id": st.stage_id, "status": st_status, "outputs": res.get("outputs", [])})
+                out_files = [marker]
+            sm_status = st_status if st_status in ("PASS", "REVIEW", "FAIL", "NOT_RUN") else ("FAIL" if st_status == "ERROR" else "REVIEW")
+            sm.record_stage_completion(
+                st.stage_id,
+                status=sm_status,
+                output_paths=out_files,
+                input_fingerprints={"plan_hash": plan_hash},
+            )
+            if st_status != "PASS":
+                halted_status = "FAIL" if st_status in ("FAIL", "ERROR") else (st_status if st_status in status_rank else "NEEDS_REVIEW")
                 if checkpoint_path:
                     write_json_atomic(
                         checkpoint_path,
-                        {"plan_hash": plan_hash, "completed_stages": sorted(done_stages), "results": results, "failed_stage": st.stage_id},
+                        {
+                            "plan_hash": plan_hash,
+                            "completed_stages": sorted(done_stages),
+                            "results": results,
+                            "failed_stage": st.stage_id if halted_status == "FAIL" else None,
+                            "halted_stage": st.stage_id,
+                        },
                     )
-                return {"status": "FAIL", "failed_stage": st.stage_id, "completed_stages": sorted(done_stages), "results": results}
-            if status_rank.get(st_status, 3) > status_rank.get(worst_status, 0):
-                worst_status = st_status if st_status in status_rank else "NEEDS_REVIEW"
-            if st_status == "PASS":
-                done_stages.add(st.stage_id)
+                out_halt = {
+                    "status": halted_status,
+                    "halted_stage": st.stage_id,
+                    "completed_stages": sorted(done_stages),
+                    "results": results,
+                }
+                if halted_status == "FAIL":
+                    out_halt["failed_stage"] = st.stage_id
+                return out_halt
+            done_stages.add(st.stage_id)
             if checkpoint_path:
                 write_json_atomic(
                     checkpoint_path,

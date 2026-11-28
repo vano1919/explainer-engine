@@ -394,6 +394,64 @@
         "full"
       ],
       "description": "Q7 (the creator 2026-11-13, D-138): a sample run or the full episode; the 60 % video gate is REVIEW on a sample and FAIL on a full episode; absent = full"
+    },
+    "fps": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 120
+    },
+    "render_size": {
+      "type": "array",
+      "items": {
+        "type": "integer",
+        "minimum": 64
+      },
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "enable_post_assembly_spotting": {
+      "type": "boolean"
+    },
+    "character_references": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "character_id",
+          "reference_image"
+        ],
+        "properties": {
+          "character_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "reference_image": {
+            "type": "string",
+            "minLength": 1
+          },
+          "candidate_image": {
+            "type": "string",
+            "minLength": 1
+          },
+          "pose_tag": {
+            "type": "string"
+          },
+          "face_width_ratio": {
+            "type": "number",
+            "minimum": 0.0,
+            "maximum": 1.0
+          },
+          "threshold": {
+            "type": "number",
+            "minimum": 0.0,
+            "maximum": 1.0
+          },
+          "mandatory": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": true
+      }
     }
   }
 }

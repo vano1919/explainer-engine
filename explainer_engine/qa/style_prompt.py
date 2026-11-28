@@ -129,5 +129,12 @@ def main(argv: list[str]) -> int:
     return 1 if bad else 0
 
 
+def check_super_realistic_prompt(prompt: str) -> list[dict[str, str]]:
+    """Active super-realistic cinema style-purity linter (supersedes legacy LoRA cartoon rules)."""
+    from explainer_engine.episode.style_bible import lint_super_realistic_prompt
+
+    return [{"rule": "SR-STYLE-01", "severity": "FAIL", "detail": v} for v in lint_super_realistic_prompt(prompt)]
+
+
 if __name__ == "__main__":
     raise SystemExit(main(sys.argv[1:]))

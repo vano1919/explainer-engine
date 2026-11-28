@@ -26,7 +26,7 @@ import time
 from pathlib import Path
 
 from explainer_engine.core.errors import ConfigError, ContractError
-from explainer_engine.core.store import write_json_atomic, write_text_atomic
+from explainer_engine.core.store import replace_file, write_json_atomic, write_text_atomic
 from explainer_engine.episode import timing as TM
 from explainer_engine.qa import gates as G
 
@@ -118,6 +118,15 @@ class Episode:
     def timed_script(self) -> dict:
         return TM.timed_script(self.script, self.timing())
 
+    def state_machine(self):
+        from explainer_engine.core.execution_gateway import EPISODE_RUNNER_DEPENDENCIES, ProductionStateMachine
+
+        return ProductionStateMachine(
+            self.path("production/production_state.json"),
+            episode_id=str(self.manifest.get("episode_id") or self.root.name),
+            stage_dependencies=EPISODE_RUNNER_DEPENDENCIES,
+        )
+
 
 def _stage_inputs(ep: Episode, stage: str) -> dict:
     """The files a stage reads besides the script and the record before it."""
@@ -152,14 +161,35 @@ def fingerprint(ep: Episode, stage: str) -> str:
 
 
 def state(ep: Episode) -> list[dict]:
-    """Every stage: its record's verdict, fresh or stale, rehearsal or not."""
+    """Every stage: its record's verdict, authoritative SHA-256 freshness, rehearsal or not."""
+    sm = ep.state_machine()
+    sm_stages = sm.data.get("stages") or {}
+    cfg = {"size": list(ep.size), "fps": ep.fps}
     out = []
     for s in STAGES:
         rec = read_record(ep.root, s)
+        sm_ok = False
+        if s in sm_stages:
+            sm_ok, _ = sm.is_stage_fresh(s, input_fingerprints=_stage_inputs(ep, s), config=cfg)
         out.append({"stage": s, "gate": GATES[s], "status": rec["verdict"]["status"] if rec else None,
-                    "fresh": bool(rec) and rec.get("fingerprint") == fingerprint(ep, s),
+                    "fresh": bool(rec) and rec.get("fingerprint") == fingerprint(ep, s) and sm_ok,
                     "rehearsal": bool(rec and rec.get("rehearsal")), "at": rec.get("at") if rec else None})
     return out
+
+
+def _collect_stage_output_paths(ep: Episode, stage: str, outputs: dict) -> list[Path]:
+    paths: list[Path] = []
+    rec_p = record_path(ep.root, stage)
+    if rec_p.is_file():
+        paths.append(rec_p)
+    for val in (outputs or {}).values():
+        if isinstance(val, str) and val.strip():
+            cand = Path(val)
+            if not cand.is_absolute():
+                cand = ep.root / cand
+            if cand.is_file() and cand not in paths:
+                paths.append(cand)
+    return paths
 
 
 def check_before(ep: Episode, stage: str) -> bool:
@@ -174,6 +204,12 @@ def check_before(ep: Episode, stage: str) -> bool:
         raise StageRefused(f"{stage} ({GATES[stage]}) needs the record of {prev} ({GATES[prev]}); run that stage first")
     if rec.get("fingerprint") != fingerprint(ep, prev):
         raise StageRefused(f"the record of {prev} is stale (its inputs changed since it ran); run {prev} again first")
+    sm = ep.state_machine()
+    sm_stages = sm.data.get("stages") or {}
+    if prev in sm_stages:
+        ok_sm, blockers = sm.can_start_stage(stage, allow_rehearsal=ep.rehearsal)
+        if not ok_sm:
+            raise StageRefused(f"execution gateway refused {stage}: {'; '.join(blockers)}")
     status = rec["verdict"]["status"]
     if status not in GO_ON and not ep.rehearsal:
         raise StageRefused(f"{prev} ended {status} ({', '.join(rec['verdict'].get('failed') or rec['verdict'].get('not_run') or [])}); "
@@ -181,11 +217,37 @@ def check_before(ep: Episode, stage: str) -> bool:
     return bool(rec.get("rehearsal")) or status not in GO_ON
 
 
+def _sync_legacy_prereq_to_sm(ep: Episode, sm, stage: str) -> None:
+    """If an older test wrote production/stages/<prev>.json without production_state.json, seed it honestly."""
+    i = STAGES.index(stage)
+    for prev in STAGES[:i]:
+        if prev not in (sm.data.get("stages") or {}):
+            prec = read_record(ep.root, prev)
+            if prec is not None:
+                sm.record_stage_completion(
+                    prev,
+                    status=prec["verdict"]["status"],
+                    output_paths=_collect_stage_output_paths(ep, prev, prec.get("outputs") or {}),
+                    input_fingerprints=_stage_inputs(ep, prev),
+                    config={"size": list(ep.size), "fps": ep.fps},
+                    rehearsal=bool(prec.get("rehearsal")),
+                    allow_rehearsal=True,
+                )
+
+
 def run_stage(ep: Episode, stage: str) -> dict:
     stage = ALIASES.get(stage, stage)
     if stage not in STAGES:
         raise ConfigError(f"unknown stage {stage!r}: one of {', '.join(STAGES)} or G1..G10")
     rehearsal = check_before(ep, stage)
+    sm = ep.state_machine()
+    _sync_legacy_prereq_to_sm(ep, sm, stage)
+    in_fps = _stage_inputs(ep, stage)
+    cfg = {"size": list(ep.size), "fps": ep.fps}
+    try:
+        sm.mark_stage_started(stage, input_fingerprints=in_fps, config=cfg, allow_rehearsal=ep.rehearsal)
+    except ContractError as exc:
+        raise StageRefused(str(exc)) from exc
     t0 = time.time()
     fp = fingerprint(ep, stage)
     try:
@@ -203,17 +265,47 @@ def run_stage(ep: Episode, stage: str) -> dict:
            "verdict": verdict, "rows": rows, "outputs": outputs, "rehearsal": rehearsal, "fingerprint": fp,
            "elapsed_s": round(time.time() - t0, 2), "at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}
     write_json_atomic(record_path(ep.root, stage), rec)
+    sm.record_stage_completion(
+        stage,
+        status=verdict["status"],
+        output_paths=_collect_stage_output_paths(ep, stage, outputs),
+        input_fingerprints=in_fps,
+        config=cfg,
+        rehearsal=rehearsal,
+        allow_rehearsal=ep.rehearsal,
+        qa_summary={"gate": GATES[stage], "failed": verdict.get("failed") or [], "not_run": verdict.get("not_run") or []},
+    )
+    if stage == "assemble" and outputs.get("post_assembly_spotting") and verdict["status"] in GO_ON:
+        spot_paths = [
+            ep.root / outputs["post_assembly_spotting"],
+            *([] if not outputs.get("spotted_mix_wav") else [ep.root / outputs["spotted_mix_wav"]]),
+        ]
+        sm.record_stage_completion(
+            "post_assembly_spotting",
+            status="PASS",
+            output_paths=[p for p in spot_paths if p.is_file()],
+            input_fingerprints={"master": _sha(ep.root / outputs["master"]) if outputs.get("master") else None},
+            config=cfg,
+            rehearsal=rehearsal,
+            allow_rehearsal=ep.rehearsal,
+        )
     return rec
 
 
 def run_to(ep: Episode, last: str) -> list[dict]:
-    """Every stage up to ``last``; a stage with a fresh record is kept (``--force`` runs it again). Stops at the first stage
-    that is refused or whose verdict does not let the next one start."""
+    """Every stage up to ``last``; a stage with a fresh record AND intact SHA-256 outputs is kept (``--force`` runs it again).
+    Stops at the first stage that is refused or whose verdict does not let the next one start."""
     last = ALIASES.get(last, last)
+    sm = ep.state_machine()
     done = []
     for s in STAGES[: STAGES.index(last) + 1]:
         rec = read_record(ep.root, s)
-        if rec and not ep.force and rec.get("fingerprint") == fingerprint(ep, s):
+        in_fps = _stage_inputs(ep, s)
+        cfg = {"size": list(ep.size), "fps": ep.fps}
+        sm_fresh = False
+        if s in (sm.data.get("stages") or {}):
+            sm_fresh, _ = sm.is_stage_fresh(s, input_fingerprints=in_fps, config=cfg)
+        if rec and not ep.force and rec.get("fingerprint") == fingerprint(ep, s) and sm_fresh:
             done.append(dict(rec, reused=True))
         else:
             done.append(run_stage(ep, s))
@@ -823,9 +915,83 @@ def stage_assemble(ep: Episode, rehearsal: bool):
     if not left:
         rows.append(G.row("master_frames_match_the_shots", res["total_frames"] == planned,
                           f"master {res['total_frames']} frames, the shots {planned}", res["total_frames"]))
+    out_meta = {"master": str(master.relative_to(ep.root)) if not left else None, "chunks": res["chunks"]["count"],
+                "left": left}
+    # Bridge overlay compilation (P1): compile and composite onto master when visual bridges are configured
+    bridges_file = ep.path("editing/visual_bridges.json")
+    bridges_list = list(script.get("visual_bridges") or [])
+    if not bridges_list and bridges_file.is_file():
+        bdoc = json.loads(bridges_file.read_text(encoding="utf-8"))
+        bridges_list = list(bdoc.get("bridges") or bdoc if isinstance(bdoc, list) else [])
+    if not left and bridges_list:
+        from explainer_engine.overlay import bridge_compiler as BC
+
+        style_bible_p = ep.path("planning/film_style_bible.json")
+        style_bible = json.loads(style_bible_p.read_text(encoding="utf-8")) if style_bible_p.is_file() else None
+        ep_dur = sum(float(r.get("duration_sec") or 0.0) for r in records)
+        spec = BC.compile_bridges_to_overlay_spec(
+            bridges_list,
+            style_bible=style_bible,
+            fps=ep.fps,
+            size=ep.size,
+            episode_duration_s=ep_dur if ep_dur > 0 else None,
+        )
+        spec_p = ep.path("editing/overlay_spec.json")
+        write_json_atomic(spec_p, spec)
+        bridged_tmp = ep.path(f"renders/final/{ep.manifest['episode_id']}_bridged.mp4")
+        comp = BC.composite_bridges_onto_video(master, spec, bridged_tmp, work_dir=ep.path("editing/bridge_pngs"))
+        replace_file(bridged_tmp, master)
+        comp["output_video"] = str(master)
+        res["bridge_overlay"] = comp
+        out_meta["overlay_spec"] = str(spec_p.relative_to(ep.root))
+        rows.append(G.row("bridge_overlays_composited", True,
+                          f"{comp['bridges_composited']} bridge overlay(s) composited with {Path(comp['font_path']).name}",
+                          comp["sha256"]))
+
+    # Post-assembly sound spotting (P1): analyze assembled master, resolve real WAV assets, mix onto master
+    spot_cfg_p = ep.path("audio/spotted_cues_config.json")
+    if not left and (ep.manifest.get("enable_post_assembly_spotting") or spot_cfg_p.is_file()):
+        import subprocess
+        from explainer_engine.audio import post_assembly_spotting as PAS
+
+        spot_cfg = json.loads(spot_cfg_p.read_text(encoding="utf-8")) if spot_cfg_p.is_file() else {}
+        events = PAS.detect_visual_event_timestamps(
+            master,
+            ep.path("audio/spotting_work"),
+            sample_fps=float(spot_cfg.get("sample_fps", 4.0)),
+            diff_threshold=float(spot_cfg.get("diff_threshold", 0.04)),
+        )
+        cues = PAS.resolve_spotted_cues(
+            master,
+            events,
+            ep.sound_library,
+            asset_map=spot_cfg.get("asset_map"),
+            require_human_approval=bool(spot_cfg.get("require_human_approval", False)),
+        )
+        spot_out = ep.path("audio/post_assembly_spotting.json")
+        spot_rec = PAS.build_spotting_record(master, cues, out_path=spot_out, require_verified_assets=True)
+        sound_plan_p = ep.path("audio/sound_plan.json")
+        if sound_plan_p.is_file():
+            PAS.integrate_spotted_cues_into_sound_plan(sound_plan_p, spot_rec, preview_video=master)
+        spotted_wav = ep.path("audio/stems/mix_spotted.wav")
+        mix_info = PAS.mix_spotted_cues_onto_audio(mix, spot_rec, spotted_wav, preview_video=master)
+        if mix_info["cues_mixed"] > 0:
+            remux_tmp = ep.path(f"renders/final/{ep.manifest['episode_id']}_spotted.mp4")
+            subprocess.run(
+                ["ffmpeg", "-y", "-v", "error", "-i", str(master), "-i", str(spotted_wav),
+                 "-map", "0:v:0", "-map", "1:a:0", "-c:v", "copy", "-c:a", "aac", "-shortest", str(remux_tmp)],
+                check=True, capture_output=True, text=True, timeout=180,
+            )
+            replace_file(remux_tmp, master)
+        res["post_assembly_spotting"] = {"record": str(spot_out.relative_to(ep.root)), "mix": mix_info}
+        out_meta["post_assembly_spotting"] = str(spot_out.relative_to(ep.root))
+        out_meta["spotted_mix_wav"] = str(spotted_wav.relative_to(ep.root))
+        rows.append(G.row("post_assembly_spotting_mixed", spot_rec["validation"]["status"] == "PASS",
+                          f"{mix_info['cues_mixed']} verified sound asset(s) mixed onto assembled master",
+                          mix_info["output_sha256"]))
+
     write_json_atomic(ep.path("production/master.json"), res)
-    return rows, {"master": str(master.relative_to(ep.root)) if not left else None, "chunks": res["chunks"]["count"],
-                  "left": left}
+    return rows, out_meta
 
 
 def paid_lines(root: Path) -> list[dict]:
@@ -888,8 +1054,96 @@ def stage_qa(ep: Episode, rehearsal: bool):
         rep_av = AVR.event_report(E.events_report(script, TM.spines_of(ep.timing()), ep.fps), plan, sheet_doc, audio, realism)
         write_json_atomic(ep.path("qa/av_event_report.json"), rep_av)
         write_text_atomic(ep.path("qa/av_event_report.md"), AVR.markdown(rep_av))
-    acc = dict(acc, gates=list(acc["gates"]) + realism_rows)
-    if realism_rows:
+    identity_rows = []
+    id_cfg_p = ep.path("planning/identity_checks.json")
+    raw_char_refs = ep.manifest.get("character_references")
+    if isinstance(raw_char_refs, dict):
+        id_specs = [
+            {"character_id": k, **(v if isinstance(v, dict) else {"reference_image": str(v)})}
+            for k, v in raw_char_refs.items()
+        ]
+    elif isinstance(raw_char_refs, list):
+        id_specs = list(raw_char_refs)
+    else:
+        id_specs = []
+    if not id_specs and id_cfg_p.is_file():
+        id_doc = json.loads(id_cfg_p.read_text(encoding="utf-8"))
+        id_specs = list(id_doc.get("checks") or (id_doc if isinstance(id_doc, list) else []))
+    if id_specs:
+        from explainer_engine.qa import identity_lock as IL
+
+        id_results = []
+        for idx, spec in enumerate(id_specs):
+            char_id = str(spec.get("character_id", f"char_{idx}"))
+            mandatory = bool(spec.get("mandatory", True))
+            ref_p = Path(spec["reference_image"])
+            if not ref_p.is_absolute():
+                ref_p = ep.root / ref_p
+            cand_raw = spec.get("candidate_image")
+            cand_p: Path | None = None
+            if cand_raw:
+                cand_p = Path(cand_raw)
+                if not cand_p.is_absolute():
+                    cand_p = ep.root / cand_p
+            else:
+                for rec in records:
+                    shot_chars = set(rec.get("character_ids") or [])
+                    if (char_id in shot_chars or not shot_chars) and rec.get("source_start_keyframe"):
+                        cand_p = Path(rec["source_start_keyframe"])
+                        break
+
+            # Never substitute reference_image as candidate_image (zero self-comparison PASS)
+            if cand_p is None or not cand_p.is_file() or (ref_p.is_file() and cand_p.resolve() == ref_p.resolve()):
+                reason = (
+                    f"Missing distinct rendered candidate image for {char_id!r} (self-comparison against reference prohibited)"
+                )
+                id_results.append({
+                    "schema": "identity_lock_check/1",
+                    "character_id": char_id,
+                    "status": "FAIL" if mandatory else "NOT_RUN",
+                    "failure_kind": "missing_or_self_candidate",
+                    "mandatory": mandatory,
+                    "reason": reason,
+                })
+                identity_rows.append(G.row(f"identity_lock_{char_id}", False if mandatory else None, reason, None))
+                continue
+
+            res_id = IL.check_cross_scene_identity(
+                ref_p,
+                cand_p,
+                character_id=char_id,
+                pose_tag=str(spec.get("pose_tag", "frontal")),
+                face_width_ratio=float(spec.get("face_width_ratio", 0.18)),
+                threshold=float(spec.get("threshold", IL.DEFAULT_SIMILARITY_REVIEW_THRESHOLD)),
+                mandatory=mandatory,
+                allow_missing_reference_status=True,
+            )
+            id_results.append(res_id)
+            if res_id["status"] == "PASS":
+                identity_rows.append(G.row(f"identity_lock_{char_id}", True, res_id["reason"], res_id["similarity"]))
+            elif res_id["status"] == "NOT_APPLICABLE":
+                if mandatory and not bool(spec.get("allow_not_applicable_pass", False)):
+                    identity_rows.append(G.row(f"identity_lock_{char_id}", False, res_id["reason"], "NOT_APPLICABLE", level=G.REVIEW))
+                else:
+                    identity_rows.append(G.row(f"identity_lock_{char_id}", True, res_id["reason"], "NOT_APPLICABLE"))
+            elif res_id["status"] in ("REVIEW", "MISSING_REFERENCE"):
+                identity_rows.append(G.row(f"identity_lock_{char_id}", False, res_id["reason"], res_id["similarity"], level=G.REVIEW))
+            else:
+                identity_rows.append(G.row(f"identity_lock_{char_id}", False, res_id["reason"], res_id["similarity"]))
+        write_json_atomic(ep.path("qa/identity_lock_report.json"), {"checks": id_results})
+    elif ep.manifest.get("canonical_characters"):
+        identity_rows.append(
+            G.row(
+                "identity_lock_configured",
+                False,
+                "Episode declares canonical_characters but has no planning/identity_checks.json configured",
+                0,
+                level=G.REVIEW,
+            )
+        )
+
+    acc = dict(acc, gates=list(acc["gates"]) + realism_rows + identity_rows)
+    if realism_rows or identity_rows:
         acc["status"] = G.verdict(acc["gates"])["status"]
     manifest = {"schema": "episode_production_manifest/4.3", "episode_id": ctx.episode_id, "title": ctx.title,
                 "historical_period": ctx.era_id, "rehearsal": rehearsal, "master_video": video,

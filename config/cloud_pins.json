@@ -193,6 +193,26 @@
         "tokenizer.json": "7d4046bf0505a327dd5a0abbb427ecd4fc82f99c2ceaa170bc61ecde12809b0c",
         "tokenizer.model": "1299c11d7cf632ef3b4e11937501358ada021bbdf7c47638d13c0ee982f2e79c"
       }
+    },
+    "lipsync_latentsync": {
+      "id": "ByteDance/LatentSync-1.5",
+      "revision": "32a20d29aead0498e3e885e90dbbe8027da1b61b",
+      "file": "latentsync_unet.pt",
+      "sha256": "6440b49a7ccceff56cdc001f5f17605216337f5bbd66fa360139768926e23f51",
+      "sha256_file": "latentsync_unet.pt",
+      "sha256_files": {
+        "latentsync_unet.pt": "6440b49a7ccceff56cdc001f5f17605216337f5bbd66fa360139768926e23f51",
+        "whisper/tiny.pt": "65147644a518d12f04e32d6f3b26facc3f8dd46e5390956a9424a650c0ce22b9"
+      },
+      "code": {
+        "repo": "https://github.com/bytedance/LatentSync",
+        "commit": "a229c3948406bc2cf6eaf4873e662e70c6a04746"
+      },
+      "licence": "SPDX:Apache-2.0",
+      "weights_licence": "openrail++",
+      "smoke_verified": false,
+      "legacy": false,
+      "note": "the lip-sync refinement pass over a rendered clip (videolane/lipsync_pipeline, backend latentsync_1_5; worker training/pods/latentsync/modal_latentsync_jobs.py, never run). Revision and LFS sha256 read from the Hub API (paths-info) on 2026-11-27; code commit = bytedance/LatentSync main read from the GitHub API on 2026-11-27, its LICENSE is Apache-2.0; the model card's own licence tag is openrail++ (recorded, never gating, D-115). The VAE and face-detector pins it also needs are in the launch file"
     }
   },
   "blender": {

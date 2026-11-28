@@ -1,0 +1,121 @@
+{
+  "schema": "film_style_bible/1",
+  "film_id": "super_realistic_cinema_35mm_master",
+  "era": "universal_historical_docudrama",
+  "title": "Super-Realistic 35mm Historical Docudrama Master Style Bible",
+  "supersedes": [
+    "config/visual_style_presets.json#crossworld_main_style_v1",
+    "config/visual_style_presets.json#bande_dessinee_3d_cinematic_adventure",
+    "explainer_engine/design/palette.json"
+  ],
+  "visual_identity": {
+    "look_words": "Photorealistic live-action 35mm historical cinema captured on ARRI Alexa with anamorphic vintage lenses, natural shallow depth of field, physically accurate motivated lighting, weathered historical wool/linen/leather/iron/stone patina, authentic human skin pores and natural expressions, Kodak 2383 muted filmic contrast, subtle organic 35mm film grain, soft optical edge vignette.",
+    "palette_hex": [
+      "#1E2329",
+      "#3A424A",
+      "#6B5B4B",
+      "#A68B64",
+      "#8C3B2B",
+      "#D9D2C5"
+    ],
+    "lut_3d_path": "assets/luts/historical_docudrama_35mm.cube",
+    "grade_preset": "historical_docudrama_35mm",
+    "forbidden_tokens": [
+      "cartoon",
+      "comic",
+      "anime",
+      "manga",
+      "cel-shaded",
+      "cel shaded",
+      "clay",
+      "3d render",
+      "pixar",
+      "disney",
+      "flat vector",
+      "neon",
+      "glossy cgi",
+      "storybook",
+      "painted look",
+      "painterly illustration",
+      "comicneue",
+      "bangers",
+      "main_style_5709"
+    ]
+  },
+  "map_aesthetic": {
+    "style_preset": "natural_earth_10m_shaded_relief_cinema",
+    "font": "Liberation Serif",
+    "display_font": "Cinzel",
+    "relief_sources": [
+      "NE1_HR.tif",
+      "SR_HR.tif"
+    ],
+    "palette_mode": "temperate_europe",
+    "unified_grade_required": true
+  },
+  "photo_direction": {
+    "lighting": "Physically motivated natural daylight, overcast mist, twilight sky, or real firelight/torchlight with honest shadows and zero synthetic neon rims.",
+    "lens_grammar": "35mm/50mm cinema prime, subtle anamorphic bokeh, authentic film dynamic range, grounded eye-level documentary framing.",
+    "anchor_lock_required": true,
+    "before_state_required_for_action_shots": true,
+    "negative_prompt": "cartoon, comic, anime, cel-shaded, storybook illustration, 3d render, pixar, plastic skin, glossy cgi, flat vector, neon colors, text, watermark, logo, modern clothing, modern architecture"
+  },
+  "acting_and_motion": {
+    "acting_register": "restrained_documentary_realism",
+    "motion_discipline": "Grounded live-action human micro-acting, natural weight and gravity, explicit prop continuity end-states, zero cartoon exaggeration, 4.0-6.0s tight LTX-2.5 clips with 0.5s handles and BP-187 0.35-0.50s post-speech tail trim.",
+    "preferred_camera_moves": [
+      "truck",
+      "zoom_in",
+      "zoom_out",
+      "truck_zoom_in",
+      "truck_zoom_out"
+    ],
+    "ltx_duration_bounds_s": [
+      4.0,
+      6.0
+    ],
+    "bp187_post_speech_tail_s": [
+      0.35,
+      0.5
+    ]
+  },
+  "visual_bridges": {
+    "typography": "Liberation Serif",
+    "display_typography": "Cinzel",
+    "accent_hex": "#A6382E",
+    "pacing": "title-safe dark scrim gradient, 0.35s smooth alpha fade, never obscuring faces"
+  },
+  "sound_palette": {
+    "ambience_character": "Scene-locked physical roomtone and era-accurate environment ambience (zero unrelated rain beds) with 0.55s equal-power crossfades.",
+    "music_mood": "Restrained low-register historical documentary underscore ducked -10 to -14 dB beneath narration and diegetic dialogue.",
+    "foley_realism": "Verified CC0-1.0 WAV foley and map-action SFX synced within 40ms of visual beats, 30ms anti-pop cut fades, mastered to -14.0 LUFS / <= -1.0 dBTP (48kHz stereo)."
+  },
+  "delivery_master": {
+    "width": 2560,
+    "height": 1440,
+    "fps": 24,
+    "pix_fmt": "yuv420p",
+    "audio_sample_rate": 48000,
+    "audio_channels": 2,
+    "target_lufs": -14.0,
+    "max_true_peak_dbtp": -1.0,
+    "narrator_dialogue_ratio_target": [
+      0.7,
+      0.3
+    ],
+    "route_mix_target": {
+      "ltx_video": [
+        0.4,
+        0.5
+      ],
+      "still_25d": [
+        0.3,
+        0.4
+      ],
+      "map_action": [
+        0.15,
+        0.2
+      ]
+    }
+  }
+}
