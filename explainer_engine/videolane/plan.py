@@ -28,7 +28,19 @@ SIZES = ("extreme_wide", "wide", "medium_wide", "medium", "over_the_shoulder", "
          "extreme_close_up")
 SIZE_STEP = {"extreme_wide": 0, "wide": 1, "medium_wide": 2, "medium": 3, "over_the_shoulder": 3, "medium_close_up": 4,
              "close_up": 5, "extreme_close_up": 6}
-SPEAKING_CLOSE = ("close_up", "extreme_close_up")   # the creator 2026-11-12 20:37 UTC: weak mouths, no speaking close-up
+SPEAKING_CLOSE = ("close_up", "extreme_close_up")
+LIPSYNC_BACKENDS = ("latentsync_1_5", "latentsync_1_6", "musetalk_1_5")
+
+
+def _lipsync_route_declared(shot: dict) -> bool:
+    """BP-205 as decided 2026-11-27: a speaking close-up is allowed when the shot declares the voice-first route (the
+    line's WAV pinned by sha256, LTX a2v, a refinement backend); acceptance still needs the mouth-to-voice gate."""
+    ls = shot.get("lipsync") or {}
+    audio = ls.get("audio") or {}
+    import re
+
+    return (ls.get("route") == "ltx_a2v_plus_lipsync_refinement" and ls.get("refinement_backend") in LIPSYNC_BACKENDS
+            and bool(audio.get("hf_path")) and re.fullmatch(r"[0-9a-f]{64}", str(audio.get("sha256") or "")) is not None)   # the creator 2026-11-12 20:37 UTC: weak mouths, no speaking close-up
 MOVING = ("push", "pull", "pan_left", "pan_right", "tilt_up", "tilt_down", "track_left", "track_right")
 SPEECH_ONSET_S = 0.75        # measured: LTX-2.5 starts the line about 0.75 s into a clip (battle scene, 2026-11-12); house
 WORDS_PER_S = 2.6            # engineering default for a line without an estimate (conversational English, ~155 wpm)
@@ -162,8 +174,10 @@ def findings(script: dict, max_s: float = 10.0) -> list[dict]:
                 out.append(_f("VL-02", sid, G.FAIL, "two lines in one LTX clip: LTX leaves 0.85-1.0 s between "
                               "sentences; one clip, one line"))
             size = (s.get("camera_spec") or {}).get("shot_size")
-            if has_line and character_line and size in SPEAKING_CLOSE:
-                out.append(_f("VL-02", sid, G.FAIL, f"a speaking {size}: LTX mouths are weak, a close-up is silent"))
+            if has_line and character_line and size in SPEAKING_CLOSE and not _lipsync_route_declared(s):
+                out.append(_f("VL-02", sid, G.FAIL, f"a speaking {size} without the lip-sync route: LTX mouths are weak; "
+                              "declare lipsync {route: ltx_a2v_plus_lipsync_refinement, refinement_backend, audio "
+                              "{hf_path, sha256}} (BP-205) or make the close-up silent"))
             if mode == "continuation":
                 src = ep.get("continuity_from")
                 if not src or src not in ids:

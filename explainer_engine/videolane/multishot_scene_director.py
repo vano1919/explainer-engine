@@ -7,15 +7,21 @@ Coordinates:
    and ``Helios`` (60s Apache 2.0) long-take specification adapter.
 4. Post-render 2K (2560x1440 @ 24fps) Lanczos/micro-contrast upscaling + natural reaction-beat
    tail trimming (0.55-0.70s BP-187 cushion so actors never freeze abruptly after speaking/acting).
+5. Deterministic J-cut / L-cut planning for speaker turns inside a scene (BP-215).
+
+Cropped coverage plates are banned (BP-217): every camera angle is generated as a native full frame.
 """
 from __future__ import annotations
 
 import json
+import math
 import subprocess
 from pathlib import Path
-from typing import Any
+from typing import Any, NoReturn
 
+from explainer_engine.episode.word_timeline_compiler import enforce_dialogue_breath_tail, is_dialogue_shot
 from explainer_engine.qa.ai_critic_gate import sha256_file
+from explainer_engine.standards import sourced_rules
 from explainer_engine.studio.scenebuilder import SceneShotCard, plan_dramatic_scene_sequence
 
 
@@ -698,6 +704,14 @@ def normalize_ltx_clip_uniform(
     }
 
 
+def _probe_duration_s(path: Path) -> float:
+    out = subprocess.check_output(
+        ["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "json", str(path)],
+        text=True,
+    )
+    return float(json.loads(out)["format"]["duration"])
+
+
 def stitch_scene_zero_stretch(
     clip_specs: list[dict[str, Any]],
     out_mp4: Path,
@@ -736,6 +750,22 @@ def stitch_scene_zero_stretch(
             _, n_b = resolved_frames[i + 1]
             resolved_frames[i + 1] = (0, n_b)
             handoff_records.append({"from_shot": a_id, "to_shot": b.get("shot_id"), **hf})
+
+    # 1b. A dialogue clip's resolved window (including a handoff trim) must keep every word and its breath tail
+    for i, spec in enumerate(clip_specs):
+        if not is_dialogue_shot(spec):
+            continue
+        st_f, n_f = resolved_frames[i]
+        window: dict[str, Any] = {
+            "shot_id": str(spec.get("shot_id") or f"shot_{i + 1}"),
+            "speech_start_s": spec.get("speech_start_s"),
+            "speech_end_s": spec.get("speech_end_s"),
+            "trim_start_s": st_f / float(fps),
+            "source_duration_s": _probe_duration_s(Path(spec["clip_path"])),
+        }
+        if n_f is not None:
+            window["duration_s"] = n_f / float(fps)
+        enforce_dialogue_breath_tail(window)
 
     # 2. Uniformly normalize every clip with ZERO zoom/stretch
     norm_paths: list[Path] = []
@@ -829,79 +859,129 @@ def validate_eyeline_180_rule(shot_specs: list[dict[str, Any]]) -> dict[str, Any
     }
 
 
-def extract_axis_locked_coverage_plates(
-    master_wide_path: Path,
-    crops: list[dict[str, Any]],
-    out_dir: Path,
+CROPPED_PLATE_BAN_MESSAGE = (
+    "Cropped coverage plates are permanently banned; generate native full-frame camera angles per shot."
+)
+
+
+def extract_axis_locked_coverage_plates(*_args: Any, **_kwargs: Any) -> NoReturn:
+    """Banned (BP-217). Slicing close-ups or mediums out of a wide plate is never allowed; the name stays so that
+    an old caller fails loudly instead of falling back to its own crop."""
+    raise RuntimeError(CROPPED_PLATE_BAN_MESSAGE)
+
+
+J_L_CUT_MIN_OVERLAP_S = float(sourced_rules.T("BP-215", "overlap_min_s"))
+J_L_CUT_MAX_OVERLAP_S = float(sourced_rules.T("BP-215", "overlap_max_s"))
+J_L_CUT_DEFAULT_OVERLAP_S = float(sourced_rules.T("BP-215", "overlap_default_s"))
+
+
+def plan_dialogue_j_l_cuts(
+    shots: list[dict[str, Any]],
     *,
-    target_width: int = 1280,
-    target_height: int = 720,
-    min_rel_w: float = 0.72,
-    max_upscale_ratio: float = 1.35,
-    allow_destructive_crop: bool = False,
-) -> dict[str, dict[str, Any]]:
-    """Derive 100% environment-, lighting-, wardrobe-, and 180-degree-axis-locked coverage plates
-    directly from ONE approved wide master plate (zero column morphing, zero wardrobe drift, zero mystery extras).
+    overlap_s: float = J_L_CUT_DEFAULT_OVERLAP_S,
+    fps: int = 24,
+) -> dict[str, Any]:
+    """Place every shot's sound and picture so speaker turns inside a scene overlap as J-cuts and L-cuts.
 
-    Each crop spec defines normalized ``(cx, cy, rel_w)`` in ``[0..1]`` coordinates (16:9 aspect-locked)
-    plus ``shot_id``, ``focus_subject``, and ``facing_dir`` (``left`` / ``right``).
+    Each shot needs ``shot_id``, ``scene_id``, ``trim_start_s`` (default 0) and ``duration_s``; a dialogue shot
+    also needs ``speaker``, ``speech_start_s`` and ``speech_end_s`` (source clip clock).
+
+    At a change of speaker inside one scene the incoming sound starts ``overlap_s`` before the outgoing sound
+    ends, which is inside the outgoing breath tail, so two voices never collide. A J-cut holds the outgoing
+    picture to the end of its sound; an L-cut moves to the incoming picture as its sound starts. Turns alternate
+    J, L, J within a scene unless the incoming shot sets ``cut_in`` to ``"j"`` or ``"l"``. Every other boundary
+    is a straight cut. Picture and sound of a clip always share one origin, so lips stay in sync.
     """
-    from PIL import Image, ImageFilter
+    if not J_L_CUT_MIN_OVERLAP_S - 1e-9 <= overlap_s <= J_L_CUT_MAX_OVERLAP_S + 1e-9:
+        raise ValueError(
+            f"overlap_s={overlap_s} is outside {J_L_CUT_MIN_OVERLAP_S:.2f}..{J_L_CUT_MAX_OVERLAP_S:.2f}s"
+        )
+    lowest = math.ceil(J_L_CUT_MIN_OVERLAP_S * fps - 1e-6)
+    highest = math.floor(J_L_CUT_MAX_OVERLAP_S * fps + 1e-6)
+    overlap = min(highest, max(lowest, round(overlap_s * fps))) / float(fps)
 
-    master_wide_path = Path(master_wide_path).resolve()
-    if not master_wide_path.is_file():
-        raise FileNotFoundError(f"Master wide plate not found: {master_wide_path}")
-    out_dir = Path(out_dir).resolve()
-    out_dir.mkdir(parents=True, exist_ok=True)
+    planned: list[dict[str, Any]] = []
+    cuts: list[dict[str, Any]] = []
+    turns_in_scene: dict[str, int] = {}
+    for idx, raw in enumerate(shots):
+        sid = str(raw.get("shot_id") or "").strip()
+        scene = str(raw.get("scene_id") or "").strip()
+        if not sid or not scene:
+            raise ValueError(f"shot #{idx + 1} needs shot_id and scene_id")
+        if any(p["shot_id"] == sid for p in planned):
+            raise ValueError(f"duplicate shot_id {sid!r}")
+        dialogue = is_dialogue_shot(raw)
+        speaker = str(raw.get("speaker") or "").strip().lower()
+        trim_in = float(raw.get("trim_start_s", 0.0))
+        if dialogue:
+            if not speaker:
+                raise ValueError(f"{sid}: a dialogue shot needs a speaker")
+            source_out = enforce_dialogue_breath_tail(raw)["play_out_s"]
+        else:
+            source_out = trim_in + float(raw["duration_s"])
+        length = source_out - trim_in
+        if length <= 2 * overlap:
+            raise ValueError(f"{sid}: {length:.2f}s is too short for {overlap:.2f}s overlaps on both sides")
 
-    target_ar = float(target_width) / float(target_height)
-    results: dict[str, dict[str, Any]] = {}
-    with Image.open(master_wide_path) as im:
-        rgb = im.convert("RGB")
-        mw, mh = rgb.size
-        for spec in crops:
-            sid = str(spec["shot_id"])
-            cx = float(spec.get("cx", 0.5)) * mw
-            cy = float(spec.get("cy", 0.5)) * mh
-            raw_rel_w = float(spec.get("rel_w", 0.75))
-            if not allow_destructive_crop and raw_rel_w < min_rel_w:
-                raise ValueError(
-                    f"Shot {sid!r}: destructive digital sub-crop rel_w={raw_rel_w:.2f} < {min_rel_w:.2f} "
-                    f"is forbidden for LTX plates (generate native angle plates from locked anchors instead)"
-                )
-            rel_w = max(0.28, min(1.0, raw_rel_w))
-            cw = rel_w * mw
-            ch = cw / target_ar
-            if ch > mh:
-                ch = float(mh)
-                cw = ch * target_ar
-            upscale_ratio = max(float(target_width) / max(1.0, cw), float(target_height) / max(1.0, ch))
-            if not allow_destructive_crop and upscale_ratio > max_upscale_ratio:
-                raise ValueError(
-                    f"Shot {sid!r}: crop upscale ratio {upscale_ratio:.2f}x > {max_upscale_ratio:.2f}x "
-                    f"produces soft/chopped LTX inputs; generate a native high-res keyframe instead"
-                )
-            x0 = max(0.0, min(mw - cw, cx - cw * 0.5))
-            y0 = max(0.0, min(mh - ch, cy - ch * 0.5))
-            box = (int(round(x0)), int(round(y0)), int(round(x0 + cw)), int(round(y0 + ch)))
-            cropped = rgb.crop(box)
-            up = cropped.resize((target_width, target_height), Image.Resampling.LANCZOS)
-            if upscale_ratio > 1.05:
-                up = up.filter(ImageFilter.UnsharpMask(radius=0.8, percent=65, threshold=3))
-            out_p = out_dir / f"{sid}_plate.png"
-            up.save(out_p, format="PNG")
-            results[sid] = {
+        kind = "straight"
+        audio_start = 0.0
+        if planned:
+            prev = planned[-1]
+            audio_start = prev["audio_end_s"]
+            picture_cut = audio_start
+            if dialogue and prev["has_dialogue"] and prev["scene_id"] == scene and prev["speaker"] != speaker:
+                turn = turns_in_scene.get(scene, 0)
+                turns_in_scene[scene] = turn + 1
+                kind = str(raw.get("cut_in") or ("j" if turn % 2 == 0 else "l")).lower()
+                if kind not in ("j", "l"):
+                    raise ValueError(f"{sid}: cut_in must be 'j' or 'l', not {kind!r}")
+                audio_start = prev["audio_end_s"] - overlap
+                picture_cut = prev["audio_end_s"] if kind == "j" else audio_start
+            prev["picture_end_s"] = picture_cut
+            cuts.append(
+                {
+                    "from_shot": prev["shot_id"],
+                    "to_shot": sid,
+                    "scene_id": scene,
+                    "kind": kind,
+                    "picture_cut_s": picture_cut,
+                    "audio_overlap_s": prev["audio_end_s"] - audio_start,
+                }
+            )
+        else:
+            picture_cut = 0.0
+        planned.append(
+            {
                 "shot_id": sid,
-                "path": str(out_p),
-                "sha256": sha256_file(out_p),
-                "source_master": str(master_wide_path),
-                "crop_box": list(box),
-                "width": target_width,
-                "height": target_height,
-                "focus_subject": str(spec.get("focus_subject") or ""),
-                "facing_dir": str(spec.get("facing_dir") or ""),
+                "scene_id": scene,
+                "speaker": speaker,
+                "has_dialogue": dialogue,
+                "speech_start_s": raw.get("speech_start_s"),
+                "speech_end_s": raw.get("speech_end_s"),
+                "audio_start_s": audio_start,
+                "audio_end_s": audio_start + length,
+                "audio_source_in_s": trim_in,
+                "audio_source_out_s": source_out,
+                "picture_start_s": picture_cut,
+                "picture_end_s": audio_start + length,
             }
-    return results
+        )
+
+    for item in planned:
+        origin = item["audio_start_s"] - item["audio_source_in_s"]
+        item["picture_source_in_s"] = item["picture_start_s"] - origin
+        item["picture_source_out_s"] = item["picture_end_s"] - origin
+        item["picture_start_frame"] = round(item["picture_source_in_s"] * fps)
+        item["picture_num_frames"] = round(item["picture_end_s"] * fps) - round(item["picture_start_s"] * fps)
+
+    return {
+        "schema": "dialogue_jl_cut_plan/1",
+        "fps": fps,
+        "overlap_s": overlap,
+        "total_duration_s": planned[-1]["audio_end_s"] if planned else 0.0,
+        "shots": planned,
+        "cuts": cuts,
+    }
 
 
 
@@ -973,6 +1053,7 @@ __all__ = [
     "extract_exact_handoff_frame",
     "find_exact_handoff_frame",
     "normalize_ltx_clip_uniform",
+    "plan_dialogue_j_l_cuts",
     "plan_dramatic_scene_sequence",
     "plan_hybrid_scene_continuity",
     "stitch_scene_zero_stretch",

@@ -10,6 +10,7 @@ import pytest
 import soundfile as sf
 from PIL import Image
 
+from explainer_engine.core.errors import ContractError
 from explainer_engine.explainer.drawing_explainer import DrawingExplainerSpec, _build_explainer_html
 from explainer_engine.qa.cinema_gates import (
     check_acting_dynamics_and_freeze,
@@ -39,25 +40,6 @@ def _write_mp4_from_frames(frames: list[np.ndarray], out_mp4: Path, fps: int = 2
     return out_mp4
 
 
-def test_anti_crop_plate_guard_blocks_destructive_subcrops(tmp_path: Path) -> None:
-    wide = tmp_path / "wide_master.png"
-    Image.new("RGB", (1920, 1080), color=(90, 80, 70)).save(wide)
-
-    with pytest.raises(ValueError, match="destructive digital sub-crop"):
-        extract_axis_locked_coverage_plates(
-            wide,
-            [{"shot_id": "s1", "cx": 0.35, "cy": 0.5, "rel_w": 0.42}],
-            tmp_path / "out_bad",
-        )
-
-    ok = extract_axis_locked_coverage_plates(
-        wide,
-        [{"shot_id": "s_ok", "cx": 0.5, "cy": 0.5, "rel_w": 0.85, "focus_subject": "caesar", "facing_dir": "right"}],
-        tmp_path / "out_ok",
-    )
-    assert "s_ok" in ok and Path(ok["s_ok"]["path"]).is_file()
-
-
 def test_validate_native_keyframe_plates_blocks_crops_and_reuse() -> None:
     bad_plan = [
         {"shot_id": "s1", "route": "ltx_video", "picture": "temple_steps.png"},
@@ -75,6 +57,15 @@ def test_validate_native_keyframe_plates_blocks_crops_and_reuse() -> None:
         {"shot_id": "s3", "route": "ltx_video", "picture": "angle_b.png", "plate_width": 1920, "plate_height": 1080},
     ]
     assert validate_native_keyframe_plates(good_plan)["status"] == "PASS"
+
+
+def test_coverage_plates_cannot_be_cropped_at_any_width(tmp_path: Path) -> None:
+    wide = tmp_path / "wide_master.png"
+    Image.new("RGB", (1920, 1080), color=(90, 80, 70)).save(wide)
+    for rel_w in (0.42, 0.85):
+        with pytest.raises(RuntimeError, match="permanently banned"):
+            extract_axis_locked_coverage_plates(wide, [{"shot_id": "s", "cx": 0.5, "cy": 0.5, "rel_w": rel_w}], tmp_path / "o")
+    assert not (tmp_path / "o").exists()
 
 
 def test_closeup_dialogue_routes_to_voice_first_lipsync_and_silent_locks_mouth(tmp_path: Path) -> None:
@@ -95,8 +86,9 @@ def test_closeup_dialogue_routes_to_voice_first_lipsync_and_silent_locks_mouth(t
     )
 
     # Frontal medium_close_up dialogue is ALLOWED (never banned) and routes to Voice-First A2V + LatentSync!
-    p_cu = build_photo_grounded_prompt(
-        obs,
+    line_wav = tmp_path / "caesar.wav"
+    sf.write(str(line_wav), np.zeros(16000, dtype=np.float32), 16000)
+    cu_args = dict(
         camera_move="zoom_in",
         action_beat="turns his head toward Spurinna with a sharp ironic glance",
         acting_style="physically grounded cinema acting",
@@ -106,6 +98,10 @@ def test_closeup_dialogue_routes_to_voice_first_lipsync_and_silent_locks_mouth(t
         shot_scale="medium_close_up",
         camera_framing="frontal",
     )
+    # Fail-closed: a speaking close-up without its voice-first WAV is never prompted as a text-driven talking face
+    with pytest.raises(ContractError, match="voice-first"):
+        build_photo_grounded_prompt(obs, **cu_args)
+    p_cu = build_photo_grounded_prompt(obs, **cu_args, audio_driver_path=line_wav)
     assert "audio-driven cinema close-up acting" in p_cu.lower()
     assert "lips close cleanly" in p_cu.lower()
 
@@ -114,13 +110,25 @@ def test_closeup_dialogue_routes_to_voice_first_lipsync_and_silent_locks_mouth(t
         spoken_line="The Ides of March have come.",
         shot_scale="close_up",
         camera_framing="frontal",
-        audio_driver_path=tmp_path / "caesar.wav",
+        audio_driver_path=line_wav,
         preferred_backend="latentsync_1_6",
     )
     assert plan_cu.route == "ltx_a2v_plus_lipsync_refinement"
     assert plan_cu.primary_engine == "ltx_a2v"
     assert plan_cu.refinement_backend == "latentsync_1_6"
     assert plan_cu.requires_voice_first_wav is True
+    from explainer_engine.videolane.lipsync_pipeline import require_voice_first_inputs
+
+    pin = require_voice_first_inputs(plan_cu)
+    assert pin["path"] == str(line_wav) and len(pin["sha256"]) == 64
+
+    # A wider dialogue shot without a WAV keeps the clip-spoken route; with a WAV it is audio-driven
+    wide = plan_dialogue_lipsync_route(spoken_line="Move along.", shot_scale="medium_wide", camera_framing="over_the_shoulder")
+    assert (wide.route, wide.requires_voice_first_wav) == ("ltx_i2v_clip_spoken", False)
+    wide_wav = plan_dialogue_lipsync_route(
+        spoken_line="Move along.", shot_scale="medium_wide", camera_framing="over_the_shoulder", audio_driver_path=line_wav
+    )
+    assert wide_wav.route == "ltx_a2v_direct" and wide_wav.refinement_backend is None
 
     job_ls = build_lipsync_refinement_command(
         backend="latentsync_1_6",
@@ -154,51 +162,68 @@ def test_validate_acting_blocking_prompt() -> None:
     assert len(bad) == 1
     good = validate_acting_blocking_prompt("Caesar pauses mid-stride, turning his shoulder with arms lowered as he steps forward.")
     assert good == []
+    # whole words only: 'handsome' is no hand, the stone steps are no step, a pause is no action
+    still = validate_acting_blocking_prompt("Handsome Caesar pauses on the stone steps, arms lowered, steady posture.")
+    assert len(still) == 1
 
 
-def test_mouth_motion_sync_gate_catches_silent_flap_and_passes_still_mouth(tmp_path: Path) -> None:
-    # 1. Silent shot with still mouth -> PASS
-    base = np.full((180, 320, 3), 80, dtype=np.uint8)
-    still_frames = [base.copy() for _ in range(24)]
-    still_mp4 = _write_mp4_from_frames(still_frames, tmp_path / "silent_clean.mp4")
-    r_ok = check_mouth_motion_sync(still_mp4, has_dialogue=False)
-    assert r_ok["status"] == "PASS"
+def _face_clip(path: Path, mouth_open: list[float], fps: int = 24) -> tuple[Path, list[list[float]]]:
+    """A textured head that bobs, with a mouth whose opening follows ``mouth_open`` (0 closed .. 1 open)."""
+    rng = np.random.default_rng(3)
+    bg = rng.integers(40, 70, size=(360, 640, 3), dtype=np.uint8)
+    frames, boxes = [], []
+    for i, k in enumerate(mouth_open):
+        fr = bg.copy()
+        x, y, size = 250 + (i % 6), 90 + (i % 4), 140
+        cv2.rectangle(fr, (x, y), (x + size, y + size), (150, 170, 200), -1)
+        tex = rng.integers(0, 25, size=(size, size, 3), dtype=np.uint8)
+        fr[y : y + size, x : x + size] = np.clip(fr[y : y + size, x : x + size].astype(int) - tex, 0, 255).astype(np.uint8)
+        cv2.circle(fr, (x + 45, y + 50), 9, (30, 30, 30), -1)
+        cv2.circle(fr, (x + 95, y + 50), 9, (30, 30, 30), -1)
+        h = int(4 + 26 * k)
+        cv2.rectangle(fr, (x + 48, y + 108 - h // 2), (x + 92, y + 108 + h // 2), (20, 10, 10), -1)
+        frames.append(fr)
+        boxes.append([x, y, size, size])
+    return _write_mp4_from_frames(frames, path, fps), boxes
 
-    # 2. Silent shot with flapping mouth in lower-face ROI -> FAIL
-    flap_frames = []
-    for i in range(24):
-        fr = base.copy()
-        dy = (i % 4) * 5
-        cv2.rectangle(fr, (130, 82 + dy), (190, 96 + dy), (240, 240, 240), -1)
-        cv2.rectangle(fr, (135, 86 + dy), (185, 92 + dy), (15, 15, 15), -1)
-        flap_frames.append(fr)
-    flap_mp4 = _write_mp4_from_frames(flap_frames, tmp_path / "silent_flap.mp4")
-    r_bad = check_mouth_motion_sync(flap_mp4, has_dialogue=False, max_silent_mouth_flow=0.25)
-    assert r_bad["status"] == "FAIL"
-    assert any("Phantom mouth movement" in f for f in r_bad["findings"])
 
-    # 3. Dialogue shot with audio silence while mouth flaps -> FAIL
-    sr = 16000
-    t = np.linspace(0, 1.0, sr, endpoint=False, dtype=np.float32)
-    # First half silent, second half 800Hz speech formant
-    audio = np.zeros(sr, dtype=np.float32)
-    audio[sr // 2 :] = 0.35 * np.sin(2.0 * np.pi * 800.0 * t[sr // 2 :])
-    wav_p = tmp_path / "dlg.wav"
-    sf.write(str(wav_p), audio, sr)
+def _voice_wav(path: Path, envelope: np.ndarray, n: int, sr: int = 16000) -> Path:
+    t = np.arange(int(sr * n / 24)) / sr
+    sf.write(str(path), (0.3 * np.sin(2 * np.pi * 900 * t) * np.interp(t, np.arange(n) / 24, envelope)).astype(np.float32), sr)
+    return path
 
-    # Mouth flaps ONLY in first half (during silence!) and freezes during speech -> FAIL
-    desync_frames = []
-    for i in range(24):
-        fr = base.copy()
-        if i < 12:
-            dy = (i % 3) * 6
-            cv2.rectangle(fr, (130, 80 + dy), (190, 96 + dy), (250, 250, 250), -1)
-        else:
-            cv2.rectangle(fr, (130, 84), (190, 96), (250, 250, 250), -1)
-        desync_frames.append(fr)
-    desync_mp4 = _write_mp4_from_frames(desync_frames, tmp_path / "desync.mp4")
-    r_desync = check_mouth_motion_sync(desync_mp4, has_dialogue=True, audio_path=wav_p)
-    assert r_desync["status"] == "FAIL"
+
+def test_mouth_gate_measures_the_face_not_the_frame(tmp_path: Path) -> None:
+    n = 96
+    talk = np.random.default_rng(11).random(n)
+    still_mp4, still_boxes = _face_clip(tmp_path / "still.mp4", [0.0] * n)
+    talk_mp4, talk_boxes = _face_clip(tmp_path / "talk.mp4", [float(v) for v in talk])
+
+    # A closed mouth on a moving head passes; a talking mouth on a silent shot is phantom speech
+    assert check_mouth_motion_sync(still_mp4, has_dialogue=False, face_boxes=still_boxes)["status"] == "PASS"
+    phantom = check_mouth_motion_sync(talk_mp4, has_dialogue=False, face_boxes=talk_boxes)
+    assert phantom["status"] == "FAIL" and "Phantom speech" in phantom["findings"][0]
+
+    # The voice is loud where the mouth articulates -> PASS
+    articulation = np.convolve(np.abs(np.diff(talk, prepend=talk[0])), np.ones(2) / 2, mode="same")
+    ok = check_mouth_motion_sync(talk_mp4, has_dialogue=True, audio_path=_voice_wav(tmp_path / "s.wav", articulation, n),
+                                 face_boxes=talk_boxes)
+    assert ok["status"] == "PASS", ok
+
+    # Desync: the mouth talks in the first half, the voice speaks only in the second -> FAIL
+    half = np.where(np.arange(n) < n // 2, talk, 0.0)
+    desync_mp4, desync_boxes = _face_clip(tmp_path / "desync.mp4", [float(v) for v in half])
+    late_voice = np.where(np.arange(n) >= n // 2, 1.0, 0.0)
+    bad = check_mouth_motion_sync(desync_mp4, has_dialogue=True, audio_path=_voice_wav(tmp_path / "d.wav", late_voice, n),
+                                  face_boxes=desync_boxes)
+    assert bad["status"] == "FAIL", bad
+
+
+def test_mouth_gate_says_not_run_without_a_face(tmp_path: Path) -> None:
+    frames = [np.full((180, 320, 3), 80, dtype=np.uint8) for _ in range(24)]
+    clip = _write_mp4_from_frames(frames, tmp_path / "no_face.mp4")
+    res = check_mouth_motion_sync(clip, has_dialogue=False)
+    assert res["status"] == "NOT_RUN"
 
 
 def test_acting_dynamics_and_freeze_gate(tmp_path: Path) -> None:
@@ -254,10 +279,10 @@ def test_shot_plate_diversity_and_drawing_explainer_layout_and_batch_hygiene(tmp
     assert "white-space:nowrap;" in html_out
     assert "rc.rectangle(1340, 678, 460, 24" in html_out
 
-    # Scene batch JSON has zero hardcoded /home/antigravity paths and zero raw medium close-up dialogue
+    # Scene batch JSON has no absolute home paths and no text-prompted medium close-up dialogue
     batch_path = Path("explainer_engine/training/pods/ltx/scenes/ides_v5_loop5_batch_m4.json")
     raw = batch_path.read_text(encoding="utf-8")
-    assert "/home/antigravity" not in raw
+    assert '"/home/' not in raw and '"/Users/' not in raw
     data = json.loads(raw)
     for sh in data["shots"]:
         if "dlg" in sh["shot_id"]:

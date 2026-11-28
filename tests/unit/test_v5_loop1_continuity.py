@@ -166,7 +166,7 @@ def test_no_transition_stretch_or_zoom_jump_catches_zoom_and_stretch(tmp_path: P
     assert res_stretch["status"] == "FAIL", res_stretch
 
 
-def test_eyeline_180_rule_and_axis_locked_coverage_plates(tmp_path: Path) -> None:
+def test_eyeline_180_rule_and_banned_coverage_plates(tmp_path: Path) -> None:
     from explainer_engine.videolane.multishot_scene_director import (
         extract_axis_locked_coverage_plates,
         validate_eyeline_180_rule,
@@ -185,17 +185,7 @@ def test_eyeline_180_rule_and_axis_locked_coverage_plates(tmp_path: Path) -> Non
     ]
     assert validate_eyeline_180_rule(bad)["status"] == "FAIL"
 
-    master = tmp_path / "wide.png"
-    cv2.imwrite(str(master), np.full((720, 1280, 3), (60, 80, 120), dtype=np.uint8))
-    plates = extract_axis_locked_coverage_plates(
-        master,
-        [
-            {"shot_id": "left_actor", "cx": 0.35, "cy": 0.5, "rel_w": 0.45, "focus_subject": "caesar", "facing_dir": "right"},
-            {"shot_id": "right_actor", "cx": 0.75, "cy": 0.5, "rel_w": 0.45, "focus_subject": "calpurnia", "facing_dir": "left"},
-        ],
-        tmp_path / "plates",
-        allow_destructive_crop=True,
-    )
-    assert Path(plates["left_actor"]["path"]).is_file()
-    assert Path(plates["right_actor"]["path"]).is_file()
+    with pytest.raises(RuntimeError, match="permanently banned"):
+        extract_axis_locked_coverage_plates(tmp_path / "wide.png", [], tmp_path / "plates")
+    assert not (tmp_path / "plates").exists()
 

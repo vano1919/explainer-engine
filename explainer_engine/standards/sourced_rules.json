@@ -7825,10 +7825,10 @@
       "area": "videolane",
       "status": "house",
       "severity": "FAIL",
-      "decided": "the creator, 2026-11-15 (Truce 1914 Pass-1 rebuild, Step 7 & Correction C2)",
-      "statement": "Use LTX only where it is natural (C2): atmospheric environments (smoke, fire, snow, fog, water), slow camera moves, wide/far shots, silhouettes, over-the-shoulder or from-behind framings, and simple single-person actions. Close-up/MCU talking faces, two-person hand/facial interactions, and small props in hands (photographs, scissors, footballs, tins) are routed to 2.5D living photos (with voice), OTS/from-behind framings, or close 2.5D object inserts.",
+      "decided": "the creator, 2026-11-15 (Truce 1914 Pass-1 rebuild, Step 7 & Correction C2); close-up dialogue changed by the creator, 2026-11-27",
+      "statement": "Use LTX only where it is natural (C2): atmospheric environments (smoke, fire, snow, fog, water), slow camera moves, wide/far shots, silhouettes, over-the-shoulder or from-behind framings, and simple single-person actions. Small props in hands and two-person hand/facial interactions are routed to 2.5D living photos or close 2.5D inserts. A speaking close-up/MCU is rendered only through the voice-first route (the line's WAV first, LTX a2v, a LatentSync or MuseTalk refinement pass) and accepted only when the mouth-to-voice gate (BP-219) passes; never as a text-prompted talking face.",
       "thresholds": {
-        "forbid_ltx_speaking_close": true,
+        "speaking_close_requires_lipsync_route": true,
         "forbid_ltx_small_hand_props": true,
         "forbid_ltx_two_person_close_contact": true
       },
@@ -7844,7 +7844,10 @@
           "url": "https://huggingface.co/Kijai/LTX2.3_comfy/discussions/32"
         }
       ],
-      "enforced_by": [],
+      "enforced_by": [
+        "explainer_engine/videolane/lipsync_pipeline.py:require_voice_first_inputs",
+        "explainer_engine/videolane/plan.py:_lipsync_route_declared"
+      ],
       "supersedes": []
     },
     {
@@ -8029,7 +8032,8 @@
         }
       ],
       "enforced_by": [
-        "explainer_engine/validators/tech_qa.py"
+        "explainer_engine/validators/tech_qa.py",
+        "explainer_engine/qa/cinema_gates.py:check_acting_dynamics_and_freeze"
       ],
       "supersedes": []
     },
@@ -8092,6 +8096,123 @@
       ],
       "enforced_by": [
         "explainer_engine/validators/story.py"
+      ],
+      "supersedes": []
+    },
+    {
+      "id": "BP-214",
+      "area": "editing",
+      "status": "house",
+      "severity": "FAIL",
+      "decided": "the creator, 2026-11-27 (v5 cinema hardening)",
+      "statement": "A spoken dialogue clip is never cut inside a word: the played window keeps speech_start_s..speech_end_s and at least min_post_speech_tail_s of breath after the last word; a trim or duration that cuts earlier, or a dialogue shot without measured speech times, fails closed.",
+      "thresholds": {
+        "min_post_speech_tail_s": 0.35
+      },
+      "sources": [],
+      "enforced_by": [
+        "explainer_engine/episode/word_timeline_compiler.py:enforce_dialogue_breath_tail"
+      ],
+      "supersedes": []
+    },
+    {
+      "id": "BP-215",
+      "area": "editing",
+      "status": "house",
+      "severity": "FAIL",
+      "decided": "the creator, 2026-11-27 (v5 cinema hardening)",
+      "statement": "Inside one scene a change of speaker is a J-cut or an L-cut: the incoming audio overlaps the outgoing breath tail by overlap_min_s..overlap_max_s, picture and sound of each clip stay in sync, and a dramatic scene keeps one continuous room-tone bed across all its shots.",
+      "thresholds": {
+        "overlap_min_s": 0.2,
+        "overlap_max_s": 0.35,
+        "overlap_default_s": 0.25
+      },
+      "sources": [],
+      "enforced_by": [
+        "explainer_engine/videolane/multishot_scene_director.py:plan_dialogue_j_l_cuts",
+        "explainer_engine/audio/broadcast_cinema_mix.py:consolidate_scene_room_tone"
+      ],
+      "supersedes": []
+    },
+    {
+      "id": "BP-216",
+      "area": "audio",
+      "status": "house",
+      "severity": "FAIL",
+      "decided": "the creator, 2026-11-27 (v5 cinema hardening)",
+      "statement": "A generated dialogue stem is cleaned gently: one RNNoise pass at rnnoise_mix, a high-pass at highpass_hz, pauses lowered by no more than max_pause_reduction_db so room tone never drops to digital silence, and every speaker of a scene levelled to target_lufs within tolerance_lu.",
+      "thresholds": {
+        "rnnoise_mix": 0.45,
+        "highpass_hz": 95,
+        "max_pause_reduction_db": 14.0,
+        "target_lufs": -17.5,
+        "tolerance_lu": 0.8
+      },
+      "sources": [],
+      "enforced_by": [
+        "explainer_engine/audio/narrator_polish.py:clean_ltx_dialogue_stem",
+        "explainer_engine/audio/narrator_polish.py:match_scene_speaker_loudness"
+      ],
+      "supersedes": []
+    },
+    {
+      "id": "BP-217",
+      "area": "pictures",
+      "status": "house",
+      "severity": "FAIL",
+      "decided": "the creator, 2026-11-27 (v5 cinema hardening)",
+      "statement": "A seed plate is a native full-frame picture: it is never cut out of a wider plate, and a person is never matted out and pasted onto a separate background; a plate with several people, or a person in a location, is generated in one light (multi-reference anchors or a 3D-blocked render). phash_hamming_max and containment_score_min are the measured limits of the duplicate and sub-rectangle detectors.",
+      "thresholds": {
+        "phash_hamming_max": 4,
+        "containment_score_min": 0.95,
+        "native_plate_methods": [
+          "multi_reference_anchor",
+          "blender_blocked_render"
+        ]
+      },
+      "sources": [],
+      "enforced_by": [
+        "explainer_engine/qa/cinema_gates.py:check_no_cropped_seed_plates",
+        "explainer_engine/qa/cinema_gates.py:check_no_cutout_compositing"
+      ],
+      "supersedes": []
+    },
+    {
+      "id": "BP-218",
+      "area": "qa",
+      "status": "house",
+      "severity": "FAIL",
+      "decided": "the creator, 2026-11-27 (drama-first acting and lip-sync quality)",
+      "statement": "Acting dynamics: a frame step whose mean absolute difference is below freeze_mad_max counts as frozen (the freeze length is BP-211's), and a clip whose median subject motion after the camera's own move is removed stays below min_residual_subject_flow is a mannequin performance.",
+      "thresholds": {
+        "freeze_mad_max": 0.65,
+        "min_residual_subject_flow": 0.12
+      },
+      "sources": [],
+      "enforced_by": [
+        "explainer_engine/qa/cinema_gates.py:check_acting_dynamics_and_freeze"
+      ],
+      "supersedes": []
+    },
+    {
+      "id": "BP-219",
+      "area": "faces",
+      "status": "house",
+      "severity": "FAIL",
+      "decided": "the creator, 2026-11-27 (drama-first acting and lip-sync quality)",
+      "statement": "Mouth-to-voice sync, measured on the tracked face with the head's own motion removed: a dialogue clip's mouth motion follows the vocal band with a correlation of at least min_mouth_voice_corr at a lag inside lag_frames; a silent clip's mouth moves at most silent_mouth_rel_max times the upper face; with a face on fewer than min_face_cover of the frames nothing is measured (NOT_RUN). First calibration on the v5 clips: 11 of 12 dialogue clips with a face at 0.34-0.69, silent clips with a face at 1.34-2.00.",
+      "thresholds": {
+        "min_mouth_voice_corr": 0.3,
+        "lag_frames": [
+          -2,
+          6
+        ],
+        "silent_mouth_rel_max": 2.6,
+        "min_face_cover": 0.5
+      },
+      "sources": [],
+      "enforced_by": [
+        "explainer_engine/qa/cinema_gates.py:check_mouth_motion_sync"
       ],
       "supersedes": []
     }

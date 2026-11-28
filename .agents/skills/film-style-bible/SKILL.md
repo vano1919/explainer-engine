@@ -18,5 +18,9 @@ Prevent visual, tonal, or acting drift between maps, reference photos, 2.5D livi
 5. `visual_bridges`: `Liberation Serif` typography, tight dynamic `textbbox` sizing, smooth alpha fade-in/fade-out, unified film grade.
 6. `sound_palette`: strictly scene-locked `scene_environment` ambience (never constant unrelated rain across dry/map scenes), synchronized CC0 map-action SFX, subtle ducked documentary underscore, and ITU-R BS.1770-4 `-14.0 LUFS` / `<= -1.0 dBTP` mastering.
 
+## Permanent Plate Bans (BP-217, fail-closed)
+- **No cropped coverage plates.** Close-ups, mediums and reverses are never cut out of a wider plate; each camera angle is generated as a native full frame (`check_no_cropped_seed_plates`).
+- **No foreground cutouts on mismatched backgrounds.** A person is never matted out (`grabCut`, RMBG, `rembg`) and alpha-pasted onto another location, such as an indoor portrait on an outdoor street. Multi-character and character-in-location plates are generated natively in one unified light, by `multi_reference_anchor` or `blender_blocked_render` (`check_no_cutout_compositing`).
+
 ## Usage
 Call `validate_film_style_bible(bible)` before production starts and inject `render_layer_directives(bible)` into map specs, photo turn-packs, 2.5D renders, visual bridges, and scene-locked sound plans.

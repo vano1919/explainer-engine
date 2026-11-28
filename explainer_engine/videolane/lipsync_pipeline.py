@@ -13,12 +13,19 @@ drama-first docudramas and "What If" miniseries (80%+ live dramatic scenes with 
      lip-sync refinement pass directly over the rendered LTX clip, preserving 35mm lighting,
      film grain, and facial identity while locking phoneme-accurate mouth/teeth motion.
    - ``musetalk_1_5``: TMElyralab MuseTalk 1.5 real-time latent-space lip-sync fallback.
+
+Fail-closed (BP-205 as decided 2026-11-27): a speaking close-up is accepted only with its voice-first WAV pinned by
+sha256, a refinement pass and a passing mouth-to-voice sync gate (``qa.cinema_gates.check_mouth_motion_sync``). A wider
+dialogue shot without a WAV keeps the clip-spoken LTX route; with a WAV it is driven by the audio (``a2v``).
 """
 from __future__ import annotations
 
+import hashlib
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any
+
+from explainer_engine.core.errors import ContractError
 
 CLOSE_UP_SCALES = frozenset({"close_up", "extreme_close_up", "medium_close_up"})
 SUPPORTED_LIPSYNC_BACKENDS = frozenset({"ltx_a2v", "latentsync_1_5", "latentsync_1_6", "musetalk_1_5"})
@@ -65,7 +72,7 @@ def plan_dialogue_lipsync_route(
         )
 
     scale = str(shot_scale or "medium").strip().lower().replace("-", "_").replace(" ", "_")
-    framing = str(camera_framing or "frontal").strip().lower().replace("-", "_").replace(" ", "_")
+    framing = str(camera_framing or "unspecified").strip().lower().replace("-", "_").replace(" ", "_")
     driver = str(audio_driver_path or "").strip()
 
     if not spoken_line or not str(spoken_line).strip():
@@ -87,7 +94,7 @@ def plan_dialogue_lipsync_route(
             ),
         )
 
-    is_close_or_frontal = scale in CLOSE_UP_SCALES or framing in {"frontal", "three_quarter", "front"}
+    is_close_or_frontal = scale in CLOSE_UP_SCALES or framing in {"frontal", "front"}
     if is_close_or_frontal:
         ref_backend = preferred_backend if preferred_backend != "ltx_a2v" else "latentsync_1_5"
         return DialogueLipSyncPlan(
@@ -109,6 +116,23 @@ def plan_dialogue_lipsync_route(
             ),
         )
 
+    if not driver:
+        # No voice-first WAV for a wider shot: the clip speaks its line itself (D-131), as before this route existed.
+        return DialogueLipSyncPlan(
+            shot_id=shot_id,
+            shot_scale=scale,
+            camera_framing=framing,
+            route="ltx_i2v_clip_spoken",
+            primary_engine="ltx_i2v",
+            refinement_backend=None,
+            requires_voice_first_wav=False,
+            audio_driver_path="",
+            inference_steps=0,
+            guidance_scale=0.0,
+            min_syncnet_confidence=0.0,
+            prompt_directive="Natural jaw cadence, motivated eye-line, lips close cleanly at sentence end.",
+        )
+
     return DialogueLipSyncPlan(
         shot_id=shot_id,
         shot_scale=scale,
@@ -126,6 +150,23 @@ def plan_dialogue_lipsync_route(
             "blocking, motivated eye-line, lips close cleanly at sentence end."
         ),
     )
+
+
+def require_voice_first_inputs(plan: DialogueLipSyncPlan) -> dict[str, Any]:
+    """Fail closed before anything is rendered: an audio-driven plan needs its WAV on disk, pinned by sha256, and a
+    close-up needs its refinement pass. Returns the ``audio`` block an ``a2v`` request carries (empty without audio)."""
+    if not plan.requires_voice_first_wav:
+        return {}
+    wav = Path(plan.audio_driver_path) if plan.audio_driver_path else None
+    if wav is None or not wav.is_file():
+        raise ContractError(
+            f"{plan.shot_id}: route {plan.route} needs the voice-first dialogue WAV first (audio_driver_path), "
+            f"got {plan.audio_driver_path or 'none'}"
+        )
+    if plan.route == "ltx_a2v_plus_lipsync_refinement" and plan.refinement_backend not in SUPPORTED_LIPSYNC_BACKENDS - {"ltx_a2v"}:
+        raise ContractError(f"{plan.shot_id}: a speaking close-up needs a lip-sync refinement backend")
+    digest = hashlib.sha256(wav.read_bytes()).hexdigest()
+    return {"path": str(wav), "sha256": digest}
 
 
 def build_lipsync_refinement_command(
@@ -215,4 +256,5 @@ __all__ = [
     "SUPPORTED_LIPSYNC_BACKENDS",
     "build_lipsync_refinement_command",
     "plan_dialogue_lipsync_route",
+    "require_voice_first_inputs",
 ]

@@ -108,7 +108,8 @@ def _run_local_qa_smoke(work_dir: Path, panel_paths: list[dict[str, Any]]) -> di
     vw.release()
 
     acting_res = check_acting_dynamics_and_freeze(smoke_mp4, max_freeze_s=0.85, min_residual_subject_flow=0.08)
-    mouth_res = check_mouth_motion_sync(smoke_mp4, has_dialogue=False, max_silent_mouth_flow=0.55)
+    # The synthetic clip has no face to detect: the gate measures a fixed box over the still centre of the frame
+    mouth_res = check_mouth_motion_sync(smoke_mp4, has_dialogue=False, face_boxes=[[128.0, 50.0, 64.0, 64.0]] * 36)
     plate_res = validate_native_keyframe_plates(
         [
             {

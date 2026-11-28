@@ -5,16 +5,23 @@ Catches the exact real-world visual and audio defects that legacy synthetic test
 2. Mid-Frame Seam/Tear Detector: detects artificial horizontal/vertical gradient discontinuity splits.
 3. Audio-Scene Consistency Gate: verifies no rain on dry/map shots, synced SFX on every map shot,
    ITU-R BS.1770-4 loudness/peak compliance, and real acoustic variation across scene boundaries.
+4. Cropped Seed Plate Gate and Cutout Compositing Gate (BP-217): every seed plate is a native full frame; no
+   person is matted out and pasted onto a separate background.
 """
 from __future__ import annotations
 
+import ast
+import json
 import math
+import re
 import subprocess
 from pathlib import Path
 from typing import Any, cast
 
 import cv2
 import numpy as np
+
+from explainer_engine.standards import sourced_rules
 
 
 def _read_frames_at_times(video_path: Path, times_s: list[float]) -> list[np.ndarray]:
@@ -1871,6 +1878,323 @@ def check_word_to_shot_sync(
     }
 
 
+_SEED_PLATE_KEYS = ("seed_plate_path", "plate_path", "start_picture", "source_image_path", "image_path")
+_PLATE_LAYERS = ("provenance", "plate", "seed_plate", "extra")
+
+
+def _spec_layers(spec: dict[str, Any]) -> list[dict[str, Any]]:
+    return [spec] + [spec[k] for k in _PLATE_LAYERS if isinstance(spec.get(k), dict)]
+
+
+def _shrink_plate(gray: np.ndarray, width: int = 640) -> np.ndarray:
+    if gray.shape[1] <= width:
+        return gray
+    height = max(8, round(gray.shape[0] * width / gray.shape[1]))
+    return cv2.resize(gray, (width, height), interpolation=cv2.INTER_AREA)
+
+
+def _sub_rect_score(master: np.ndarray, candidate: np.ndarray) -> tuple[float, float]:
+    """Best correlation of ``candidate`` as a smaller rectangle of ``master`` (both gray), and its relative width."""
+
+    def search(width: int, scales: np.ndarray) -> tuple[float, float]:
+        height = max(8, round(master.shape[0] * width / master.shape[1]))
+        big = cv2.resize(master, (width, height), interpolation=cv2.INTER_AREA)
+        best_score, best_scale = -1.0, 0.0
+        for scale in scales:
+            tw = round(width * float(scale))
+            th = round(tw * candidate.shape[0] / candidate.shape[1])
+            if tw < 16 or th < 16 or tw > width or th > height:
+                continue
+            templ = cv2.resize(candidate, (tw, th), interpolation=cv2.INTER_AREA)
+            if float(templ.std()) < 4.0:
+                continue
+            score = float(np.nan_to_num(cv2.matchTemplate(big, templ, cv2.TM_CCOEFF_NORMED), nan=-1.0,
+                                        posinf=-1.0, neginf=-1.0).max())
+            if score > best_score:
+                best_score, best_scale = score, float(scale)
+        return best_score, best_scale
+
+    score, scale = search(128, np.arange(0.25, 0.961, 0.02))
+    if score < 0.60:
+        return score, scale
+    # Only the finer pass is trusted: small pictures correlate too easily
+    return search(384, np.arange(max(0.2, scale - 0.024), min(0.97, scale + 0.0241), 0.004))
+
+
+def check_no_cropped_seed_plates(
+    shot_specs: list[dict[str, Any]],
+    *,
+    base_dir: Path | None = None,
+    max_phash_hamming: int | None = None,
+    containment_score_min: float | None = None,
+) -> dict[str, Any]:
+    """Reject any shot whose seed plate was cut out of another plate (BP-217).
+
+    Declared evidence: ``crop_from_master``, ``rel_w`` / ``rel_h`` below 1.0, ``crop_box`` or ``source_master`` on
+    the spec or its ``provenance`` / ``plate`` / ``seed_plate`` / ``extra`` block. Measured evidence, between the
+    different plate files of the specs: a near-identical perceptual hash, or one plate found as a smaller rectangle
+    inside another. A shot and the parent it is chained from are not compared (the handoff frame is meant to match).
+    A named plate that cannot be read fails: it cannot be proven native.
+    """
+    import hashlib
+
+    import imagehash
+    from PIL import Image
+
+    hamming_max = int(sourced_rules.T("BP-217", "phash_hamming_max") if max_phash_hamming is None else max_phash_hamming)
+    score_min = float(
+        sourced_rules.T("BP-217", "containment_score_min") if containment_score_min is None else containment_score_min
+    )
+    findings: list[str] = []
+    if not shot_specs:
+        findings.append("no shot specs given: seed plates cannot be proven native")
+
+    plates: dict[str, dict[str, Any]] = {}
+    for idx, spec in enumerate(shot_specs):
+        sid = str(spec.get("shot_id") or f"shot_{idx + 1}")
+        raw_path = ""
+        for layer in _spec_layers(spec):
+            if layer.get("crop_from_master"):
+                findings.append(f"{sid}: crop_from_master={layer['crop_from_master']!r} (cropped plates are banned)")
+            for key in ("rel_w", "rel_h"):
+                if layer.get(key) is not None and float(layer[key]) < 1.0 - 1e-6:
+                    findings.append(f"{sid}: {key}={float(layer[key]):.3f} < 1.0 is a sub-region of a wider plate")
+            for key in ("crop_box", "source_master"):
+                if layer.get(key):
+                    findings.append(f"{sid}: {key}={layer[key]!r} records a crop of another plate")
+            raw_path = raw_path or next((str(layer[k]) for k in _SEED_PLATE_KEYS if layer.get(k)), "")
+        if not raw_path:
+            continue
+        plate = Path(raw_path)
+        if base_dir is not None and not plate.is_absolute():
+            plate = Path(base_dir) / plate
+        data = np.fromfile(str(plate), dtype=np.uint8) if plate.is_file() else np.zeros(0, dtype=np.uint8)
+        gray = cv2.imdecode(data, cv2.IMREAD_GRAYSCALE) if data.size else None
+        if gray is None:
+            findings.append(f"{sid}: seed plate {raw_path!r} is missing or unreadable")
+            continue
+        digest = hashlib.sha256(data.tobytes()).hexdigest()
+        row = plates.setdefault(digest, {"path": raw_path, "gray": _shrink_plate(gray), "shots": [], "parents": set()})
+        row["shots"].append(sid)
+        if spec.get("chained_from"):
+            row["parents"].add(str(spec["chained_from"]))
+
+    rows = list(plates.values())
+    for row in rows:
+        row["phash"] = imagehash.phash(Image.fromarray(row["gray"]))
+        row["flat"] = float(row["gray"].std()) < 4.0
+
+    matches: list[dict[str, Any]] = []
+    for i, a in enumerate(rows):
+        for j in range(i + 1, len(rows)):
+            b = rows[j]
+            if a["flat"] or b["flat"] or a["parents"] & set(b["shots"]) or b["parents"] & set(a["shots"]):
+                continue
+            hamming = int(a["phash"] - b["phash"])
+            if hamming <= hamming_max:
+                matches.append({"kind": "perceptual_duplicate", "shots_a": a["shots"], "shots_b": b["shots"],
+                                "phash_hamming": hamming})
+                findings.append(
+                    f"{', '.join(b['shots'])}: seed plate is a near copy of the plate of {', '.join(a['shots'])} "
+                    f"(pHash distance {hamming} <= {hamming_max})"
+                )
+                continue
+            for master, part in ((a, b), (b, a)):
+                score, rel_w = _sub_rect_score(master["gray"], part["gray"])
+                if score >= score_min:
+                    matches.append({"kind": "sub_rectangle", "master_shots": master["shots"],
+                                    "cropped_shots": part["shots"], "score": round(score, 3),
+                                    "rel_w": round(rel_w, 3)})
+                    findings.append(
+                        f"{', '.join(part['shots'])}: seed plate is a sub-rectangle (rel_w~{rel_w:.2f}, "
+                        f"match {score:.3f}) of the plate of {', '.join(master['shots'])}"
+                    )
+                    break
+
+    return {
+        "status": "PASS" if not findings else "FAIL",
+        "shots_checked": len(shot_specs),
+        "plates_compared": len(rows),
+        "matches": matches,
+        "findings": findings,
+    }
+
+
+_CUTOUT_NAMES = {"grabCut", "rembg", "composite_person_onto_bg", "composite_clean"}
+# The repository's own matting helper keeps serving the retired card route; a job script may not call it.
+_JOB_CUTOUT_NAMES = _CUTOUT_NAMES | {"birefnet_mask"}
+_RMBG_MODEL_RE = re.compile(r"briaai[/]rmbg|\brmbg[-_]?\d", re.IGNORECASE)
+_CUTOUT_TEXT_RE = re.compile(
+    r"grabcut|rembg|rmbg|composite_person_onto_bg|composite_clean|alpha_paste", re.IGNORECASE
+)
+_CUTOUT_MANIFEST_KEYS = {
+    "method", "tool", "tools", "operation", "operations", "compositing", "pipeline", "plate_method", "generator",
+    "script", "path", "plate_path", "seed_plate_path", "start_picture", "source_image_path", "cutout",
+}
+_JOB_SHELL_SUFFIXES = {".sh", ".ps1", ".bat", ".ipynb"}
+
+
+def _cutout_hits_in_python(path: Path, names: set[str]) -> list[tuple[int, str]]:
+    """(line, what) of every forbidden cutout import, name, call argument or matting model id; docstrings are ignored."""
+    tree = ast.parse(path.read_text(encoding="utf-8-sig"), filename=str(path))
+    docstrings: set[int] = set()
+    for node in ast.walk(tree):
+        if isinstance(node, (ast.Module, ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)) and node.body:
+            first = node.body[0]
+            if isinstance(first, ast.Expr) and isinstance(first.value, ast.Constant):
+                docstrings.add(id(first.value))
+
+    def banned(name: str) -> bool:
+        return name in names or name.lower().startswith("rmbg")
+
+    exact = names | {"RMBG"}
+    hits: set[tuple[int, str]] = set()
+    for node in ast.walk(tree):
+        if isinstance(node, (ast.Import, ast.ImportFrom)):
+            module = node.module if isinstance(node, ast.ImportFrom) else None
+            dotted = [alias.name for alias in node.names] + ([module] if module else [])
+            for item in dotted:
+                for part in item.split("."):
+                    if banned(part):
+                        hits.add((node.lineno, f"import of {part}"))
+        elif isinstance(node, ast.Name) and banned(node.id):
+            hits.add((node.lineno, node.id))
+        elif isinstance(node, ast.Attribute) and banned(node.attr):
+            hits.add((node.lineno, node.attr))
+        elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)) and banned(node.name):
+            hits.add((node.lineno, f"definition of {node.name}"))
+        elif (isinstance(node, ast.Constant) and isinstance(node.value, str) and id(node) not in docstrings
+              and _RMBG_MODEL_RE.search(node.value)):
+            hits.add((node.lineno, "RMBG matting model id"))
+        if isinstance(node, ast.Call):
+            for arg in [*node.args, *(kw.value for kw in node.keywords)]:
+                for sub_node in ast.walk(arg):
+                    if isinstance(sub_node, ast.Constant) and isinstance(sub_node.value, str):
+                        words = sub_node.value.split()
+                        command = len(words) > 1 and words[0] == "rembg"
+                        if command or (len(words) == 1 and words[0] in exact):
+                            hits.add((sub_node.lineno, f"call argument {words[0]!r}"))
+    return sorted(hits)
+
+
+def _walk_dicts(node: Any):
+    if isinstance(node, dict):
+        yield node
+        for value in node.values():
+            yield from _walk_dicts(value)
+    elif isinstance(node, list):
+        for value in node:
+            yield from _walk_dicts(value)
+
+
+def check_no_cutout_compositing(
+    repo_root: Path,
+    job_dir: Path,
+    *,
+    shot_specs: list[dict[str, Any]] | None = None,
+    require_provenance: bool = False,
+) -> dict[str, Any]:
+    """Fail when a person is cut out of one picture and pasted onto another (BP-217).
+
+    Static part: every Python file of ``<repo_root>/explainer_engine``, ``<repo_root>/scripts`` and ``job_dir`` is
+    parsed and checked for ``cv2.grabCut``, ``rembg``, RMBG models and ``composite_person_onto_bg`` /
+    ``composite_clean``; job shell scripts and notebooks are searched as text. Manifest part: the job's JSON files
+    may not record such a step, and every shot entry (``shot_id``) that declares several ``characters``, or
+    characters in a ``location``, must declare a native ``plate_method``. With ``require_provenance`` a job that declares no such
+    shot at all fails as well, because nothing was proven. A file that cannot be parsed fails.
+    """
+    repo_root, job_dir = Path(repo_root), Path(job_dir)
+    native = set(sourced_rules.T("BP-217", "native_plate_methods"))
+    findings: list[str] = []
+    for label, folder in (("repo_root/explainer_engine", repo_root / "explainer_engine"), ("job_dir", job_dir)):
+        if not folder.is_dir():
+            findings.append(f"{label} {str(folder)!r} is not a directory: nothing could be scanned")
+
+    def files(folder: Path):
+        for item in sorted(folder.rglob("*")) if folder.is_dir() else []:
+            inside = set(item.relative_to(folder).parts)
+            if item.is_file() and not {"__pycache__", ".venv", "venv", "node_modules"} & inside:
+                yield item
+
+    def shown(item: Path) -> str:
+        for root in (repo_root, job_dir):
+            if item.is_relative_to(root):
+                return item.relative_to(root).as_posix()
+        return item.as_posix()
+
+    job_files = list(files(job_dir))
+    python_files: dict[Path, set[str]] = {
+        item.resolve(): _CUTOUT_NAMES
+        for folder in (repo_root / "explainer_engine", repo_root / "scripts")
+        for item in files(folder)
+        if item.suffix == ".py"
+    }
+    python_files.update({item.resolve(): _JOB_CUTOUT_NAMES for item in job_files if item.suffix == ".py"})
+    repo_root, job_dir = repo_root.resolve(), job_dir.resolve()
+    for item, names in python_files.items():
+        try:
+            for line, what in _cutout_hits_in_python(item, names):
+                findings.append(f"{shown(item)}:{line}: forbidden cutout compositing ({what})")
+        except (SyntaxError, UnicodeDecodeError, ValueError) as exc:
+            findings.append(f"{shown(item)}: cannot be parsed, so it cannot be cleared ({exc.__class__.__name__})")
+
+    declared: list[tuple[str, dict[str, Any]]] = [("shot_specs", spec) for spec in shot_specs or []]
+    manifests = 0
+    for item in job_files:
+        if item.suffix in _JOB_SHELL_SUFFIXES:
+            found = _CUTOUT_TEXT_RE.search(item.read_text(encoding="utf-8", errors="replace"))
+            if found:
+                findings.append(f"{shown(item.resolve())}: forbidden cutout compositing ({found.group(0)})")
+        if item.suffix not in (".json", ".jsonl"):
+            continue
+        manifests += 1
+        try:
+            text = item.read_text(encoding="utf-8-sig")
+            docs = (
+                [json.loads(row) for row in text.splitlines() if row.strip()]
+                if item.suffix == ".jsonl"
+                else [json.loads(text)]
+            )
+        except (json.JSONDecodeError, UnicodeDecodeError) as exc:
+            findings.append(f"{shown(item.resolve())}: unreadable manifest ({exc.__class__.__name__})")
+            continue
+        declared.extend((shown(item.resolve()), row) for doc in docs for row in _walk_dicts(doc))
+
+    character_shots = 0
+    for source, row in declared:
+        sid = str(row.get("shot_id") or "entry")
+        for key, value in row.items():
+            if _CUTOUT_TEXT_RE.search(str(key)) and value:
+                findings.append(f"{source}: {sid} records a cutout compositing step ({key})")
+            elif str(key).lower() in _CUTOUT_MANIFEST_KEYS:
+                found = _CUTOUT_TEXT_RE.search(json.dumps(value, ensure_ascii=False, default=str))
+                if found:
+                    findings.append(f"{source}: {sid} records a cutout compositing step ({key}: {found.group(0)})")
+        characters = row.get("characters") or row.get("character_ids")
+        if not row.get("shot_id") or not isinstance(characters, list) or not characters:
+            continue
+        if len(characters) < 2 and not (row.get("location") or row.get("location_id")):
+            continue
+        character_shots += 1
+        provenance = row.get("provenance") if isinstance(row.get("provenance"), dict) else {}
+        method = str(row.get("plate_method") or provenance.get("plate_method") or "")
+        if method not in native:
+            findings.append(
+                f"{source}: {sid} places characters in one picture but its plate_method is {method or 'missing'!r}; "
+                f"it must be one of {sorted(native)}"
+            )
+    if require_provenance and not character_shots:
+        findings.append("no shot declares its characters and plate_method: native generation is not proven")
+
+    return {
+        "status": "PASS" if not findings else "FAIL",
+        "python_files_scanned": len(python_files),
+        "manifests_scanned": manifests,
+        "character_shots_declared": character_shots,
+        "findings": findings,
+    }
+
+
 def run_full_cinema_audit(
     video_path: Path,
     *,
@@ -1898,8 +2222,16 @@ def run_full_cinema_audit(
     silence_drops: list[dict[str, Any]] | None = None,
     word_timestamps: list[dict[str, Any]] | None = None,
     word_shot_anchors: list[dict[str, Any]] | None = None,
+    seed_plate_specs: list[dict[str, Any]] | None = None,
+    repo_root: Path | None = None,
+    job_dir: Path | None = None,
+    enforce_v5_contracts: bool = False,
 ) -> dict[str, Any]:
-    """Run every deterministic L3 gate PLUS optional v3.2/v4.0 contracts & fail-closed AI Media Critic."""
+    """Run every deterministic L3 gate PLUS optional v3.2/v4.0 contracts & fail-closed AI Media Critic.
+
+    ``enforce_v5_contracts`` makes the seed plate and cutout compositing gates mandatory (BP-217); without it each
+    runs when its inputs are given.
+    """
     from explainer_engine.qa.ai_critic_gate import verify_ai_critic_verdict
 
     delivery = check_master_delivery_specs(
@@ -1965,6 +2297,19 @@ def run_full_cinema_audit(
                 shot_windows,
                 word_timestamps,
                 word_shot_anchors,
+            )
+
+    if enforce_v5_contracts or seed_plate_specs is not None:
+        results["cropped_seed_plates"] = check_no_cropped_seed_plates(seed_plate_specs or [], base_dir=repo_root)
+    if enforce_v5_contracts or job_dir is not None:
+        if repo_root is None or job_dir is None:
+            results["cutout_compositing"] = {"status": "FAIL", "findings": ["repo_root and job_dir are required"]}
+        else:
+            results["cutout_compositing"] = check_no_cutout_compositing(
+                repo_root,
+                job_dir,
+                shot_specs=seed_plate_specs,
+                require_provenance=enforce_v5_contracts,
             )
 
     if require_ai_critic:
@@ -2629,168 +2974,240 @@ def check_music_to_voice_headroom(
     }
 
 
+_FACE_CROP = 128
+_SKIMAGE_FACE_DETECTOR: Any = None
+
+
+def _faces_in(gray: np.ndarray) -> list[tuple[float, float, float, float]]:
+    """Faces ``(x, y, w, h)`` in a gray frame: YuNet when its model is installed (qa/pixels), else scikit-image's
+    bundled LBP frontal-face cascade (no download)."""
+    global _SKIMAGE_FACE_DETECTOR
+    from explainer_engine.qa import pixels as PX
+
+    model = PX.yunet_path()
+    if model is not None and hasattr(cv2, "FaceDetectorYN"):
+        h, w = gray.shape[:2]
+        det = cv2.FaceDetectorYN.create(str(model), "", (w, h), 0.6)
+        _, found = det.detect(cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR))
+        return [tuple(float(v) for v in row[:4]) for row in (found if found is not None else [])]
+    if _SKIMAGE_FACE_DETECTOR is None:
+        from skimage import data as skdata
+        from skimage.feature import Cascade
+
+        _SKIMAGE_FACE_DETECTOR = Cascade(skdata.lbp_frontal_face_cascade_filename())
+    small_w = 320
+    k = gray.shape[1] / float(small_w)
+    small = cv2.resize(gray, (small_w, max(1, round(gray.shape[0] / k))), interpolation=cv2.INTER_AREA)
+    hits = _SKIMAGE_FACE_DETECTOR.detect_multi_scale(
+        img=small.astype(np.float64) / 255.0, scale_factor=1.15, step_ratio=1, min_size=(24, 24), max_size=(240, 240)
+    )
+    return [(d["c"] * k, d["r"] * k, d["width"] * k, d["height"] * k) for d in hits]
+
+
+def _track_face(frames: list[np.ndarray], *, every: int = 2) -> tuple[np.ndarray | None, float]:
+    """One face box per frame (the same person throughout, interpolated between detections) and the share of the
+    sampled frames where a face was found."""
+    idx: list[int] = []
+    boxes: list[tuple[float, float, float, float]] = []
+    prev: tuple[float, float, float, float] | None = None
+    sampled = range(0, len(frames), every)
+    for i in sampled:
+        found = _faces_in(frames[i])
+        if not found:
+            continue
+        if prev is None:
+            pick = max(found, key=lambda f: f[2] * f[3])
+        else:
+            p = prev
+            pick = min(found, key=lambda f: abs(f[0] + f[2] / 2 - p[0] - p[2] / 2) + abs(f[1] + f[3] / 2 - p[1] - p[3] / 2))
+        idx.append(i)
+        boxes.append(pick)
+        prev = pick
+    cover = len(idx) / max(1, len(sampled))
+    if len(idx) < 2:
+        return None, cover
+    arr = np.asarray(boxes, dtype=np.float64)
+    kernel = np.ones(3) / 3.0
+    smooth = [np.convolve(np.pad(arr[:, j], 1, mode="edge"), kernel, "valid") for j in range(4)]
+    per = np.stack([np.interp(np.arange(len(frames)), idx, smooth[j]) for j in range(4)], axis=1)
+    return per, cover
+
+
+def _face_crop(gray: np.ndarray, box: np.ndarray) -> np.ndarray:
+    x, y, w, h = (float(v) for v in box)
+    side = max(w, h) * 1.15
+    cx, cy = x + w / 2.0, y + h / 2.0 + 0.08 * h
+    n = _FACE_CROP
+    m = np.float32([[n / side, 0, n / 2 - cx * n / side], [0, n / side, n / 2 - cy * n / side]])
+    return cv2.warpAffine(gray, m, (n, n), flags=cv2.INTER_LINEAR, borderMode=cv2.BORDER_REPLICATE)
+
+
+def _mouth_and_face_motion(frames: list[np.ndarray], boxes: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    """Per frame step: vertical motion of the mouth and of the upper face, after the head's own move, zoom and tilt
+    (an affine fit on the upper face) is taken out, so a walking or turning head is not a speaking mouth."""
+    n = _FACE_CROP
+    yy, xx = np.mgrid[0:n, 0:n]
+    fit = yy < 0.55 * n
+    design = np.stack([np.ones(int(fit.sum())), xx[fit], yy[fit]], axis=1)
+    mouth, upper = [], []
+    for i in range(len(frames) - 1):
+        a = _face_crop(frames[i], boxes[i])
+        b = _face_crop(frames[i + 1], boxes[i])
+        vy = cv2.calcOpticalFlowFarneback(a, b, cast(Any, None), 0.5, 2, 9, 2, 5, 1.1, 0)[..., 1].astype(np.float64)
+        coef, *_ = np.linalg.lstsq(design, vy[fit], rcond=None)
+        resid = np.abs(vy - (coef[0] + coef[1] * xx + coef[2] * yy))
+        mouth.append(float(resid[int(0.66 * n) : int(0.92 * n), int(0.30 * n) : int(0.70 * n)].mean()))
+        upper.append(float(resid[int(0.20 * n) : int(0.50 * n), int(0.25 * n) : int(0.75 * n)].mean()))
+    return np.asarray(mouth), np.asarray(upper)
+
+
 def check_mouth_motion_sync(
     clip_mp4: Path,
     *,
     has_dialogue: bool,
     audio_path: Path | None = None,
-    mouth_roi_norm: tuple[float, float, float, float] | None = None,
-    max_silent_mouth_flow: float = 0.55,
-    min_dialogue_mouth_audio_corr: float = 0.15,
-    max_pause_flap_ratio: float = 1.45,
+    face_boxes: np.ndarray | list[list[float]] | None = None,
 ) -> dict[str, Any]:
-    """Detect phantom mouth-flapping on silent/narrated LTX clips AND lip-desync on dialogue clips.
+    """Mouth-to-voice gate (BP-219) measured on the speaker's face, not the frame centre.
 
-    Measures lower-face mouth ROI optical-flow energy frame-by-frame:
-    - When ``has_dialogue=False``: fails if mean mouth ROI motion exceeds ``max_silent_mouth_flow``
-      (catching LTX talking-mouth hallucinations during narrator-over shots).
-    - When ``has_dialogue=True``: aligns mouth motion energy against vocal-band (300-3400 Hz) RMS
-      from ``audio_path`` (or the clip's own audio track) and fails if correlation is below
-      ``min_dialogue_mouth_audio_corr`` OR if mouth movement during silent pauses exceeds
-      ``max_pause_flap_ratio`` times active-speech mouth movement.
+    The face is detected and tracked on every frame; inside it the mouth's vertical motion is measured after the head's
+    own move, zoom and tilt are removed. A dialogue clip passes when that motion follows the voice (vocal band
+    300-3400 Hz) with a correlation of at least ``min_mouth_voice_corr`` at a lag inside ``lag_frames``; a silent clip
+    fails when the mouth moves ``silent_mouth_rel_max`` times more than the upper face (a talking mouth). Without a
+    face on ``min_face_cover`` of the frames the result is ``NOT_RUN``: nothing was measured (an over-the-shoulder or
+    back view). ``face_boxes`` (one ``x, y, w, h`` per frame) replaces the detector, for tests.
     """
+    from explainer_engine.standards import sourced_rules as SR
+
+    corr_min = float(SR.T("BP-219", "min_mouth_voice_corr"))
+    lag_lo, lag_hi = (int(v) for v in SR.T("BP-219", "lag_frames"))
+    rel_max = float(SR.T("BP-219", "silent_mouth_rel_max"))
+    cover_min = float(SR.T("BP-219", "min_face_cover"))
     p = Path(clip_mp4)
     if not p.is_file():
         raise FileNotFoundError(f"Clip not found for mouth-motion QA: {p}")
-
     cap = cv2.VideoCapture(str(p))
     if not cap.isOpened():
         raise RuntimeError(f"Could not open video for mouth-motion QA: {p}")
     fps = float(cap.get(cv2.CAP_PROP_FPS) or 24.0)
-    frames_gray: list[np.ndarray] = []
+    frames: list[np.ndarray] = []
+    scale = 1.0
     try:
         while True:
             ok, bgr = cap.read()
             if not ok or bgr is None:
                 break
-            small = cv2.resize(bgr, (320, 180), interpolation=cv2.INTER_AREA)
-            frames_gray.append(cv2.cvtColor(small, cv2.COLOR_BGR2GRAY))
+            if face_boxes is None and bgr.shape[1] > 640:
+                scale = 640.0 / bgr.shape[1]
+                bgr = cv2.resize(bgr, (640, round(bgr.shape[0] * scale)), interpolation=cv2.INTER_AREA)
+            frames.append(cv2.cvtColor(bgr, cv2.COLOR_BGR2GRAY))
     finally:
         cap.release()
+    if len(frames) < 4:
+        return {"status": "FAIL", "has_dialogue": has_dialogue, "findings": ["Clip too short for mouth-motion check"]}
 
-    if len(frames_gray) < 4:
-        return {"status": "FAIL", "findings": ["Clip too short for mouth-motion sync check"]}
-
-    h, w = frames_gray[0].shape[:2]
-    if mouth_roi_norm is not None:
-        rx0, ry0, rx1, ry1 = mouth_roi_norm
-        x0, y0 = max(0, int(rx0 * w)), max(0, int(ry0 * h))
-        x1, y1 = min(w, max(x0 + 8, int(rx1 * w))), min(h, max(y0 + 8, int(ry1 * h)))
+    if face_boxes is not None:
+        boxes, cover = np.asarray(face_boxes, dtype=np.float64)[: len(frames)], 1.0
+        if len(boxes) < len(frames):
+            raise ValueError("face_boxes needs one box per frame")
     else:
-        # Default upper-center portrait lower-face region (works when face detector is unavailable)
-        x0, y0, x1, y1 = int(w * 0.36), int(h * 0.38), int(w * 0.64), int(h * 0.62)
-
-    mouth_energy: list[float] = []
-    for i in range(len(frames_gray) - 1):
-        g0 = frames_gray[i][y0:y1, x0:x1]
-        g1 = frames_gray[i + 1][y0:y1, x0:x1]
-        flow = cv2.calcOpticalFlowFarneback(
-            g0, g1, cast(Any, None), 0.5, 2, 9, 2, 5, 1.1, 0
-        )
-        mag = np.sqrt(flow[..., 0] ** 2 + flow[..., 1] ** 2)
-        mouth_energy.append(float(np.mean(mag)))
-
-    m_arr = np.asarray(mouth_energy, dtype=np.float32)
-    mean_flow = float(np.mean(m_arr))
-    p95_flow = float(np.percentile(m_arr, 95))
-    findings: list[str] = []
-
-    if not has_dialogue:
-        if mean_flow > max_silent_mouth_flow or p95_flow > max_silent_mouth_flow * 2.2:
-            findings.append(
-                f"Phantom mouth movement on silent/narrated shot: mean_mouth_flow={mean_flow:.3f} "
-                f"(p95={p95_flow:.3f}) > ceiling {max_silent_mouth_flow:.3f}"
-            )
+        boxes, cover = _track_face(frames)
+    if boxes is None or cover < cover_min:
         return {
-            "status": "PASS" if not findings else "FAIL",
-            "has_dialogue": False,
-            "mean_mouth_flow": round(mean_flow, 4),
-            "p95_mouth_flow": round(p95_flow, 4),
-            "findings": findings,
+            "status": "NOT_RUN",
+            "has_dialogue": has_dialogue,
+            "face_cover": round(cover, 3),
+            "findings": [f"No face on {cover:.0%} of the frames (needs {cover_min:.0%}): the mouth was not measured"],
         }
+    mouth, upper = _mouth_and_face_motion(frames, boxes)
+    rel = float(np.mean(mouth) / max(1e-4, float(np.mean(upper))))
+    report: dict[str, Any] = {
+        "has_dialogue": has_dialogue,
+        "face_cover": round(cover, 3),
+        "mean_mouth_motion": round(float(np.mean(mouth)), 4),
+        "mouth_to_face_ratio": round(rel, 3),
+    }
+    findings: list[str] = []
+    if not has_dialogue:
+        if rel > rel_max:
+            findings.append(
+                f"Phantom speech on a silent shot: the mouth moves {rel:.2f}x the upper face (ceiling {rel_max:.2f}x)"
+            )
+        return {"status": "PASS" if not findings else "FAIL", **report, "findings": findings}
 
-    # Dialogue shot: correlate mouth energy with vocal-band RMS
     import soundfile as sf
     from scipy.signal import butter, sosfiltfilt
 
-    src_audio = Path(audio_path) if audio_path is not None else p
-    if src_audio.suffix.lower() != ".wav":
-        tmp_wav = p.with_suffix(".mouth_qa_tmp.wav")
+    src = Path(audio_path) if audio_path is not None else p
+    if src.suffix.lower() != ".wav":
+        tmp = p.with_suffix(".mouth_qa_tmp.wav")
         subprocess.run(
-            ["ffmpeg", "-y", "-v", "error", "-i", str(src_audio), "-vn", "-ac", "1", "-ar", "16000", "-c:a", "pcm_s16le", str(tmp_wav)],
-            check=True,
+            ["ffmpeg", "-y", "-v", "error", "-i", str(src), "-vn", "-ac", "1", "-ar", "16000", str(tmp)], check=True
         )
         try:
-            sig, sr = sf.read(str(tmp_wav), dtype="float32")
+            sig, sr = sf.read(str(tmp), dtype="float32")
         finally:
-            tmp_wav.unlink(missing_ok=True)
+            tmp.unlink(missing_ok=True)
     else:
-        sig, sr = sf.read(str(src_audio), dtype="float32")
+        sig, sr = sf.read(str(src), dtype="float32")
     if sig.ndim > 1:
         sig = sig.mean(axis=1)
-
     nyq = 0.5 * sr
-    sos = butter(3, [min(300.0, nyq * 0.4) / nyq, min(3400.0, nyq * 0.92) / nyq], btype="bandpass", output="sos")
-    vox = sosfiltfilt(sos, sig.astype(np.float32)).astype(np.float32)
-
-    spf = max(1, int(round(sr / max(1.0, fps))))
-    n_steps = min(len(m_arr), max(1, len(vox) // spf))
-    a_rms = np.asarray(
-        [float(np.sqrt(np.mean(vox[i * spf : (i + 1) * spf] ** 2))) for i in range(n_steps)],
-        dtype=np.float32,
+    sos = butter(3, [300.0 / nyq, min(3400.0, nyq * 0.92) / nyq], btype="bandpass", output="sos")
+    vox = sosfiltfilt(sos, sig.astype(np.float64))
+    per_frame = sr / fps
+    n = len(mouth)
+    env = np.asarray(
+        [float(np.sqrt(np.mean(vox[int(i * per_frame) : int((i + 1) * per_frame)] ** 2) + 1e-12)) for i in range(n)]
     )
-    m_sync = m_arr[:n_steps]
-
-    if float(np.std(m_sync)) < 1e-6 or float(np.std(a_rms)) < 1e-6:
-        corr = 0.0
-    else:
-        corr = float(np.corrcoef(m_sync, a_rms)[0, 1])
-
-    thresh = max(1e-4, float(np.percentile(a_rms, 40)))
-    active_mask = a_rms >= thresh * 1.4
-    silent_mask = a_rms < thresh * 0.6
-    pause_flap_ratio = 0.0
-    if int(np.sum(active_mask)) >= 2 and int(np.sum(silent_mask)) >= 2:
-        act_m = float(np.mean(m_sync[active_mask]))
-        sil_m = float(np.mean(m_sync[silent_mask]))
-        pause_flap_ratio = sil_m / max(1e-4, act_m)
-        if pause_flap_ratio > max_pause_flap_ratio:
-            findings.append(
-                f"Lip-sync pause flap detected: silent-pause mouth motion is {pause_flap_ratio:.2f}x "
-                f"active-speech mouth motion (ceiling {max_pause_flap_ratio:.2f}x)"
-            )
-
-    if corr < min_dialogue_mouth_audio_corr:
+    if float(np.max(env)) <= 1e-6:
+        findings.append("The dialogue audio is silent: nothing to sync the mouth to")
+        return {"status": "FAIL", **report, "findings": findings}
+    motion = np.convolve(mouth - float(np.mean(mouth)), np.ones(3) / 3.0, mode="same")
+    best_corr, best_lag = -1.0, 0
+    for lag in range(lag_lo, lag_hi + 1):
+        a = motion[max(0, -lag) : n - max(0, lag)]
+        b = env[max(0, lag) : n - max(0, -lag)]
+        if len(a) < 8 or float(np.std(a)) < 1e-9 or float(np.std(b)) < 1e-9:
+            continue
+        c = float(np.corrcoef(a, b)[0, 1])
+        if c > best_corr:
+            best_corr, best_lag = c, lag
+    report.update(mouth_voice_corr=round(best_corr, 3), lag_frames=best_lag)
+    if best_corr < corr_min:
         findings.append(
-            f"Poor mouth-to-voice correlation={corr:.3f} < {min_dialogue_mouth_audio_corr:.3f} "
-            f"(refilm with OTS/profile framing or audio-driven lip-sync)"
+            f"The mouth does not follow the voice: correlation {best_corr:.2f} < {corr_min:.2f} "
+            f"(best lag {best_lag} frames, searched {lag_lo}..{lag_hi})"
         )
-
-    return {
-        "status": "PASS" if not findings else "FAIL",
-        "has_dialogue": True,
-        "mouth_audio_corr": round(corr, 4),
-        "pause_flap_ratio": round(pause_flap_ratio, 4),
-        "mean_mouth_flow": round(mean_flow, 4),
-        "findings": findings,
-    }
+    return {"status": "PASS" if not findings else "FAIL", **report, "findings": findings}
 
 
 def check_acting_dynamics_and_freeze(
     video_path: Path,
     *,
-    max_freeze_s: float = 0.85,
-    freeze_diff_thresh: float = 0.65,
-    min_residual_subject_flow: float = 0.12,
+    max_freeze_s: float | None = None,
+    freeze_diff_thresh: float | None = None,
+    min_residual_subject_flow: float | None = None,
     sample_stride: int = 2,
 ) -> dict[str, Any]:
     """Detect frozen clips AND stiff mannequin acting (static subject with camera-only creep).
+
+    Thresholds come from the registry: the freeze length from BP-211 (``freeze_min_s``; a hypothesis, so a freeze is
+    REVIEW), the frozen-frame difference and the subject motion floor from BP-218 (a house rule, FAIL). Status is the
+    worst finding: FAIL, then REVIEW, else PASS.
 
     1. Tracks consecutive near-identical frames (``mean_abs_diff < freeze_diff_thresh``); fails if
        any freeze stretch exceeds ``max_freeze_s`` (catching 1.46s frozen tails/clips).
     2. Computes foreground/subject optical-flow residual after subtracting global median camera
        translation so a stiff statue with slow camera zoom/pan fails as ``static_subject_with_camera_creep``.
     """
+    from explainer_engine.standards import sourced_rules as SR
+
+    max_freeze_s = float(SR.T("BP-211", "freeze_min_s") if max_freeze_s is None else max_freeze_s)
+    freeze_diff_thresh = float(SR.T("BP-218", "freeze_mad_max") if freeze_diff_thresh is None else freeze_diff_thresh)
+    min_residual_subject_flow = float(
+        SR.T("BP-218", "min_residual_subject_flow") if min_residual_subject_flow is None else min_residual_subject_flow
+    )
     p = Path(video_path)
     if not p.is_file():
         raise FileNotFoundError(f"Video not found for acting/freeze QA: {p}")
@@ -2842,18 +3259,21 @@ def check_acting_dynamics_and_freeze(
 
     med_res_flow = float(np.median(residual_flows)) if residual_flows else 0.0
     findings: list[str] = []
+    levels: list[str] = []
     if max_freeze_run > max_freeze_s:
+        levels.append(SR.level("BP-211", "FAIL"))
         findings.append(
             f"Freeze frame detected: {max_freeze_run:.2f}s static stretch > ceiling {max_freeze_s:.2f}s"
         )
     if med_res_flow < min_residual_subject_flow:
+        levels.append(SR.level("BP-218", "FAIL"))
         findings.append(
             f"Static subject / mannequin acting detected: median residual subject flow={med_res_flow:.3f} "
             f"< {min_residual_subject_flow:.3f} (actor barely moves independent of camera)"
         )
 
     return {
-        "status": "PASS" if not findings else "FAIL",
+        "status": "FAIL" if "FAIL" in levels else "REVIEW" if levels else "PASS",
         "max_freeze_s": round(max_freeze_run, 3),
         "median_residual_subject_flow": round(med_res_flow, 4),
         "findings": findings,
