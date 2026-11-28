@@ -323,7 +323,7 @@ def check(path: str) -> int:
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--ref", default="HEAD")
-    ap.add_argument("--prompt-file", default=str(REPO / "docs/CLAUDE_ADVERSARIAL_REVIEW_AND_2H_EXECUTION_PLAN_PROMPT.md"))
+    ap.add_argument("--prompt-file", default=str(REPO / "docs/prompts/CLAUDE_ADVERSARIAL_REVIEW_AND_2H_EXECUTION_PLAN_PROMPT.md"))
     ap.add_argument("--out", default=str(REPO / "docs/CLAUDE_FABLE_52_MEGA_BLUEPRINT_FOR_GEMINI.md"))
     ap.add_argument("--model", default=MODEL)
     ap.add_argument("--effort", default="high", choices=["low", "medium", "high", "xhigh", "max"])
